@@ -1,0 +1,493 @@
+[
+  {
+    "slug": "soptaher-chhok",
+    "width": 2160,
+    "height": 2320,
+    "labels": [
+      {
+        "text": "আমার সপ্তাহ",
+        "changedPixels": 10293
+      },
+      {
+        "text": "কাজের ফাঁকে নিজের জন্যও একটু সময়",
+        "changedPixels": 6333
+      },
+      {
+        "text": "দিন / সময়",
+        "changedPixels": 1683
+      },
+      {
+        "text": "সকাল",
+        "changedPixels": 1545
+      },
+      {
+        "text": "দুপুর",
+        "changedPixels": 1470
+      },
+      {
+        "text": "বিকেল",
+        "changedPixels": 1938
+      },
+      {
+        "text": "রাত",
+        "changedPixels": 1049
+      },
+      {
+        "text": "শনিবার",
+        "changedPixels": 2302
+      },
+      {
+        "text": "রবিবার",
+        "changedPixels": 2346
+      },
+      {
+        "text": "সোমবার",
+        "changedPixels": 2372
+      },
+      {
+        "text": "মঙ্গলবার",
+        "changedPixels": 2620
+      },
+      {
+        "text": "বুধবার",
+        "changedPixels": 2120
+      },
+      {
+        "text": "বৃহস্পতিবার",
+        "changedPixels": 3651
+      },
+      {
+        "text": "শুক্রবার",
+        "changedPixels": 2341
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "হাঁটা ও বিরতি",
+        "changedPixels": 3532
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "হাঁটা ও বিরতি",
+        "changedPixels": 3532
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "হাঁটা ও বিরতি",
+        "changedPixels": 3532
+      },
+      {
+        "text": "বই ও খাতা গুছানো",
+        "changedPixels": 4346
+      },
+      {
+        "text": "পরিবারের সময়",
+        "changedPixels": 3942
+      },
+      {
+        "text": "সপ্তাহের ছক · একটুখানি",
+        "changedPixels": 3822
+      },
+      {
+        "text": "নিজের মতো করে বদলে নিন",
+        "changedPixels": 3314
+      }
+    ]
+  },
+  {
+    "slug": "chhotto-para",
+    "width": 2160,
+    "height": 2160,
+    "labels": [
+      {
+        "text": "ছোট্ট পাড়া",
+        "changedPixels": 4597
+      },
+      {
+        "text": "গ্রামের উঠোন",
+        "changedPixels": 2404
+      },
+      {
+        "text": "এক বিকেলের গল্প",
+        "changedPixels": 10196
+      }
+    ]
+  },
+  {
+    "slug": "sobuj-kon",
+    "width": 1800,
+    "height": 1440,
+    "labels": [
+      {
+        "text": "আমার সবুজ কোণ",
+        "changedPixels": 9539
+      },
+      {
+        "text": "নিজের মতো সাজানো বারান্দা",
+        "changedPixels": 3498
+      },
+      {
+        "text": "সাজানোর ছবি · মাপ অনুযায়ী নির্মাণ বা গাছের পরিচর্যার পরিকল্পনা নয়",
+        "changedPixels": 6720
+      }
+    ]
+  },
+  {
+    "slug": "kagojer-mela",
+    "width": 1440,
+    "height": 1440,
+    "labels": [
+      {
+        "text": "আমার কাগজের পাখি",
+        "changedPixels": 10285
+      },
+      {
+        "text": "কাগজের মেলা",
+        "changedPixels": 1727
+      }
+    ]
+  },
+  {
+    "slug": "bhashar-chhobi",
+    "width": 1200,
+    "height": 1480,
+    "labels": [
+      {
+        "text": "আমাদের ভাষার ছবিখাতা",
+        "changedPixels": 4489
+      },
+      {
+        "text": "আপনার বলা নাম",
+        "changedPixels": 1957
+      },
+      {
+        "text": "পেয়ারা",
+        "changedPixels": 9607
+      },
+      {
+        "text": "পরিচিত নাম: পেয়ারা",
+        "changedPixels": 3731
+      },
+      {
+        "text": "আপনাদের এলাকায় কী বলে?",
+        "changedPixels": 4180
+      },
+      {
+        "text": "নিজের দেওয়া শব্দ দিয়ে তৈরি · অভিধানের তথ্য নয়",
+        "changedPixels": 4212
+      }
+    ]
+  },
+  {
+    "slug": "alpana",
+    "width": 1600,
+    "height": 1600,
+    "labels": []
+  },
+  {
+    "slug": "lekhar-poster",
+    "width": 1600,
+    "height": 1600,
+    "labels": [
+      {
+        "text": "একটু থামি,",
+        "changedPixels": 20898
+      },
+      {
+        "text": "একটু ভালো থাকি।",
+        "changedPixels": 33014
+      },
+      {
+        "text": "একটুখানি · কথার পোস্টার",
+        "changedPixels": 3764
+      }
+    ]
+  },
+  {
+    "slug": "riksharong",
+    "width": 1600,
+    "height": 1600,
+    "labels": [
+      {
+        "text": "ভালো থাকুক সবাই",
+        "changedPixels": 17797
+      },
+      {
+        "text": "একটুখানি · রিকশার রং",
+        "changedPixels": 3445
+      }
+    ]
+  },
+  {
+    "slug": "nokshar-khata",
+    "width": 1440,
+    "height": 1500,
+    "labels": [
+      {
+        "text": "একটুখানি · নকশার খাতা",
+        "changedPixels": 3773
+      }
+    ]
+  },
+  {
+    "slug": "chhobi-jora",
+    "width": 1600,
+    "height": 1600,
+    "labels": [
+      {
+        "text": "ছবি দিন",
+        "changedPixels": 2817
+      },
+      {
+        "text": "ছবি দিন",
+        "changedPixels": 2811
+      },
+      {
+        "text": "একসঙ্গে কাটানো সময়",
+        "changedPixels": 13437
+      },
+      {
+        "text": "একটুখানি · ছবি জোড়া",
+        "changedPixels": 3325
+      }
+    ]
+  },
+  {
+    "slug": "soptaher-chhok",
+    "width": 2160,
+    "height": 2320,
+    "labels": [
+      {
+        "text": "আমার সপ্তাহ",
+        "changedPixels": 10293
+      },
+      {
+        "text": "কাজের ফাঁকে নিজের জন্যও একটু সময়",
+        "changedPixels": 6333
+      },
+      {
+        "text": "দিন / সময়",
+        "changedPixels": 1683
+      },
+      {
+        "text": "সকাল",
+        "changedPixels": 1545
+      },
+      {
+        "text": "দুপুর",
+        "changedPixels": 1470
+      },
+      {
+        "text": "বিকেল",
+        "changedPixels": 1938
+      },
+      {
+        "text": "রাত",
+        "changedPixels": 1049
+      },
+      {
+        "text": "শনিবার",
+        "changedPixels": 2302
+      },
+      {
+        "text": "রবিবার",
+        "changedPixels": 2346
+      },
+      {
+        "text": "সোমবার",
+        "changedPixels": 2372
+      },
+      {
+        "text": "মঙ্গলবার",
+        "changedPixels": 2620
+      },
+      {
+        "text": "বুধবার",
+        "changedPixels": 2120
+      },
+      {
+        "text": "বৃহস্পতিবার",
+        "changedPixels": 3651
+      },
+      {
+        "text": "শুক্রবার",
+        "changedPixels": 2341
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "হাঁটা ও বিরতি",
+        "changedPixels": 3532
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "হাঁটা ও বিরতি",
+        "changedPixels": 3532
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "হাঁটা ও বিরতি",
+        "changedPixels": 3532
+      },
+      {
+        "text": "বই ও খাতা গুছানো",
+        "changedPixels": 4346
+      },
+      {
+        "text": "পরিবারের সময়",
+        "changedPixels": 3942
+      },
+      {
+        "text": "সপ্তাহের ছক · একটুখানি",
+        "changedPixels": 3822
+      },
+      {
+        "text": "নিজের মতো করে বদলে নিন",
+        "changedPixels": 3314
+      }
+    ]
+  },
+  {
+    "slug": "soptaher-chhok",
+    "width": 2160,
+    "height": 2320,
+    "labels": [
+      {
+        "text": "আমার সপ্তাহ",
+        "changedPixels": 10293
+      },
+      {
+        "text": "কাজের ফাঁকে নিজের জন্যও একটু সময়",
+        "changedPixels": 6333
+      },
+      {
+        "text": "দিন / সময়",
+        "changedPixels": 1683
+      },
+      {
+        "text": "সকাল",
+        "changedPixels": 1545
+      },
+      {
+        "text": "দুপুর",
+        "changedPixels": 1470
+      },
+      {
+        "text": "বিকেল",
+        "changedPixels": 1938
+      },
+      {
+        "text": "রাত",
+        "changedPixels": 1049
+      },
+      {
+        "text": "শনিবার",
+        "changedPixels": 2302
+      },
+      {
+        "text": "রবিবার",
+        "changedPixels": 2346
+      },
+      {
+        "text": "সোমবার",
+        "changedPixels": 2372
+      },
+      {
+        "text": "মঙ্গলবার",
+        "changedPixels": 2620
+      },
+      {
+        "text": "বুধবার",
+        "changedPixels": 2120
+      },
+      {
+        "text": "বৃহস্পতিবার",
+        "changedPixels": 3651
+      },
+      {
+        "text": "শুক্রবার",
+        "changedPixels": 2341
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "হাঁটা ও বিরতি",
+        "changedPixels": 3532
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "হাঁটা ও বিরতি",
+        "changedPixels": 3532
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "নিজের পড়া",
+        "changedPixels": 2997
+      },
+      {
+        "text": "হাঁটা ও বিরতি",
+        "changedPixels": 3532
+      },
+      {
+        "text": "বই ও খাতা গুছানো",
+        "changedPixels": 4346
+      },
+      {
+        "text": "পরিবারের সময়",
+        "changedPixels": 3942
+      },
+      {
+        "text": "সপ্তাহের ছক · একটুখানি",
+        "changedPixels": 3822
+      },
+      {
+        "text": "নিজের মতো করে বদলে নিন",
+        "changedPixels": 3314
+      }
+    ]
+  }
+]

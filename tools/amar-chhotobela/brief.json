@@ -1,0 +1,103 @@
+{
+  "id": "amar-chhotobela",
+  "name": "আমার ছোটবেলা",
+  "englishName": "My childhood postcard",
+  "status": "Working Bengali Next.js app implemented locally; not publicly deployed or piloted",
+  "asOf": "2026-10-09",
+  "userTask": "Make a small Bangla postcard of personal childhood memories that a friend can answer with their own card.",
+  "audienceHypothesis": "Adults who enjoy exchanging childhood memories with friends or relatives. Recruit people from different places, generations and levels of digital confidence. This is a hypothesis, not demographic evidence.",
+  "boundedV1": [
+    "Fully Bengali pages and help, with a self-hosted Noto Sans Bengali font.",
+    "An editor-reviewed set of 12 original illustrated memories, including games, objects and everyday moments from different settings.",
+    "Choose 1 to 8 memories, add an optional name, preview one postcard layout and download a PNG.",
+    "Include the invitation: তোমার ছোটবেলা কেমন ছিল?",
+    "Keep selections in page memory; provide a clear reset button."
+  ],
+  "exclusions": [
+    "Accounts, public galleries, comments, leaderboards and personality or national-identity scores.",
+    "Face uploads, AI image generation, copyrighted characters and music.",
+    "Theme collections, travel maps and automatic Facebook posting.",
+    "Persistent storage and production analytics in the first pilot."
+  ],
+  "journey": [
+    "Read a one-sentence example and see the available memories.",
+    "Select 1 to 8 memories; add a name only if wanted.",
+    "Review the postcard and edit any selection.",
+    "Download it and choose where to share it.",
+    "Reset to make another card."
+  ],
+  "differentiator": "A personal memory collage with a conversational invitation. Unseen Bangladesh records visited places. Generic AI nostalgia formats alter photos. This tool uses the user's own chosen memories; novelty and demand remain unproven.",
+  "dataAndPrivacy": {
+    "content": "Checked-in memory data and original local illustrations; record artwork ownership and review language before use.",
+    "userData": "Optional name and selected memory IDs stay in browser memory. Do not send them to a server, include them in URLs or log them.",
+    "sharing": "Only the downloaded image contains the chosen name and memories. Explain that the user controls sharing.",
+    "pilotRecords": "With consent, record anonymous task outcomes and aggregate counts manually. Do not collect postcard contents or profile links."
+  },
+  "acceptanceCriteria": [
+    "A person can complete the task on a 360px-wide screen without horizontal scrolling or account creation.",
+    "All choices, editing, reset and download controls work by keyboard; selection state is announced and does not depend on color.",
+    "The preview and downloaded PNG show the same selected memories and readable Bangla, including after fonts finish loading.",
+    "Allow only 1 to 8 selected memories; show clear messages when the selection cannot be previewed or exported.",
+    "Treat the optional name as plain text, limit it to 40 characters and prevent long names from overflowing.",
+    "A failed export shows an actionable retry message and preserves selections.",
+    "A network inspection confirms that no name or selected memory IDs leave the browser."
+  ],
+  "manualPilot": {
+    "status": "Proposed decision thresholds; no pilot has run",
+    "usabilityParticipants": 20,
+    "usabilityTask": "Ask each adult to make and download a card without instructions. Record where help is needed; repair blocking issues before the sharing pilot.",
+    "qualifiedStarts": 100,
+    "startDefinition": "A consenting non-team tester selects at least one memory. Count each recruited tester once.",
+    "completionDefinition": "The tester reaches a valid postcard preview with 1 to 8 memories.",
+    "exportDefinition": "A PNG download completes; clicking the button alone does not count.",
+    "proposedCompletionRate": 0.6,
+    "proposedExportRate": 0.2,
+    "rateDenominator": "The same 100 qualified starts",
+    "interpretation": "Completion and exports assess the tool. Ask separately about voluntary sharing; neither exports nor this small sample proves virality."
+  },
+  "nextJsArchitecture": {
+    "publicPage": "App Router server page for instructions, metadata and the public link preview.",
+    "interaction": "One client builder owns selections, optional name, validation and reset.",
+    "content": "One checked-in memory data file plus local artwork and a licensed self-hosted Bangla font.",
+    "export": "Use one native Canvas renderer for the visible postcard and PNG download after fonts are ready; also expose the selected content as accessible text.",
+    "backend": "None. No database, API routes, authentication or social-platform access.",
+    "checks": "A small selection-validation check and a manual Bangla export check on Android Chrome and iPhone Safari."
+  },
+  "dependenciesToCheckBeforeAdd": [
+    "Inspect package.json, lockfile and existing UI/export helpers when implementation begins.",
+    "Use installed Next.js, React and TypeScript if present; check current Next.js documentation before setup.",
+    "Try native Canvas, document.fonts and Blob downloads first. Add an export dependency only if a reproducible Bangla or mobile problem requires it.",
+    "Check the Bangla font license and rendering. Do not add a UI library or icon package for this page."
+  ],
+  "risks": [
+    "A one-use novelty can fade quickly; no viral forecast is justified.",
+    "The initial memory set may exclude some experiences. Let testers say none fit and revise the content.",
+    "Bangla shaping, long names and mobile downloads require real-device checks.",
+    "Exported names and memories become visible wherever the user shares the image."
+  ],
+  "sources": [
+    {
+      "id": "S03",
+      "url": "https://thebangladeshtoday.com/bangla/social-media/2026/09/09/166107",
+      "date": "2026-09-09",
+      "supports": "Reported participation in a nostalgia photo format; no measured demand for this tool."
+    },
+    {
+      "id": "S02",
+      "url": "https://www.thedailystar.net/news/technology/news/map-has-been-going-viral-theres-more-it-4292301",
+      "date": "2026-10-07",
+      "supports": "Reported sharing of personal travel maps; proposed postcard mechanism is an inference."
+    },
+    {
+      "id": "S01",
+      "url": "https://unseenbangladesh.com/",
+      "checked": "2026-10-09",
+      "supports": "Existing travel-map product and adjacent features."
+    },
+    {
+      "id": "S20",
+      "url": "https://nextjs.org/docs/app/getting-started/server-and-client-components",
+      "supports": "Server-rendered public page with focused browser interaction."
+    }
+  ]
+}

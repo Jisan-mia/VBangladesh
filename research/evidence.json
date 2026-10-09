@@ -1,0 +1,1228 @@
+{
+  "asOf": "2026-10-09",
+  "timezone": "Asia/Dhaka",
+  "sources": [
+    {
+      "id": "S01",
+      "title": "Unseen Bangladesh",
+      "url": "https://unseenbangladesh.com/",
+      "date": "Product · checked 9 Oct 2026",
+      "kind": "direct",
+      "note": "District maps and downloads. The current site also covers guides, trivia and other travel features. Product claims do not establish adoption.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S02",
+      "title": "The Daily Star · The viral map",
+      "url": "https://www.thedailystar.net/news/technology/news/map-has-been-going-viral-theres-more-it-4292301",
+      "date": "Updated 7 Oct 2026",
+      "kind": "press",
+      "note": "Reports Facebook distribution and interviews the creator. Traffic and hosting statements are reported claims, not audited analytics.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S03",
+      "title": "The Bangladesh Today · 1990s nostalgia",
+      "url": "https://thebangladeshtoday.com/bangla/social-media/2026/09/09/166107",
+      "date": "9 Sep 2026",
+      "kind": "press",
+      "note": "Reports local participation in a nostalgia photo format. It does not measure the size or duration of the trend.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S04",
+      "title": "DataReportal · Digital 2026: Bangladesh",
+      "url": "https://datareportal.com/reports/digital-2026-bangladesh",
+      "date": "Data: late 2025",
+      "kind": "context",
+      "note": "82.8 million internet users, 47.0% penetration and 64.0 million social media identities. Facebook ad reach is not a count of unique active people.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S05",
+      "title": "Google Trends · Bangladesh, past 24 hours",
+      "url": "https://trends.google.com/trending?geo=BD",
+      "date": "Observed 9 Oct 2026, about 13:22 BDT",
+      "kind": "direct",
+      "note": "Earlier draft: first 25 of 88 rows at about 13:22 BDT. A later public-web check on 9 Oct matched the six selected buckets and showed 89 rows. This changing snapshot is not a national ranking.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S06",
+      "title": "Google Trends · Twelve-month comparison",
+      "url": "https://trends.google.com/trends/explore?date=today%2012-m&geo=BD&q=cricket,recipe,job%20circular,weather,bus%20ticket",
+      "date": "Observed 9 Oct 2026",
+      "kind": "direct",
+      "note": "Bangladesh, past 12 months, Web Search, all categories, five English search terms. We verified all 53 displayed weekly rows and the displayed averages in Chrome on 9 Oct 2026. The final week is incomplete. The chart did not load in the in-app browser.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S07",
+      "title": "Google · Trends data methodology",
+      "url": "https://support.google.com/trends/answer/4365533?hl=en",
+      "date": "Documentation · checked 9 Oct 2026",
+      "kind": "method",
+      "note": "Explore uses a sampled, normalized index from 0 to 100. Low-volume terms can show zero. Search interest is not polling data.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S08",
+      "title": "Google · Trending Now methodology",
+      "url": "https://support.google.com/trends/answer/3076011?hl=en-uk",
+      "date": "Documentation · checked 9 Oct 2026",
+      "kind": "method",
+      "note": "Trending Now shows news-related surges. Traffic is bucketed and growth compares with a predicted baseline. Queries can form clusters.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S09",
+      "title": "The Daily Star · Household cost pressure",
+      "url": "https://www.thedailystar.net/health/food/price-essentials/news/high-prices-pumps-trickling-every-thing-4281581",
+      "date": "Updated 24 Sep 2026",
+      "kind": "press",
+      "note": "Reports higher commute and grocery costs after a fuel-price change. Interview examples do not form a representative survey.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S10",
+      "title": "Bangladesh Bank · Inflation Dynamics",
+      "url": "https://www.bb.org.bd/pub/quaterly/inflation/qidq4fy26.pdf",
+      "date": "Period: Apr–Jun 2026",
+      "kind": "official",
+      "note": "Year-on-year headline inflation averaged about 9.21%. The report identifies pressure from food and energy. This is historical context, not today’s item prices.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S11",
+      "title": "The Business Standard · Job applications",
+      "url": "https://www.tbsnews.net/bangladesh/private-jobs-dry-21-lakh-chase-1485-govt-posts-1553871",
+      "date": "26 Sep 2026",
+      "kind": "press",
+      "note": "Reports 21.23 lakh applications for 1,485 DSS posts. Applications closed in June. This is not an open vacancy notice.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S12",
+      "title": "BSS · DSCC Clean Care",
+      "url": "https://www.bssnews.net/others/429323",
+      "date": "28 Sep 2026",
+      "kind": "reported claim",
+      "note": "DSCC reports 1,461 complaints and 1,020 resolutions. The figures come from an institutional release, not an independent service audit.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S13",
+      "title": "Financial Express · Bosila canal initiative",
+      "url": "https://thefinancialexpress.com.bd/national/footsteps-bangladesh-to-clean-and-restore-40-foot-canal-in-bosila",
+      "date": "7 Oct 2026",
+      "kind": "reported claim",
+      "note": "Announces a Footsteps cleanup for 10–14 October. As of this report, the event is a plan. Expected volunteers are not completed impact.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S14",
+      "title": "BD Clean · About",
+      "url": "https://bdclean.org/about",
+      "date": "Organization page · checked 9 Oct 2026",
+      "kind": "self-report",
+      "note": "Describes an existing volunteer network and local cleanup activity. A potential partner, not an empty market.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S15",
+      "title": "BazarBoard · Google Play",
+      "url": "https://play.google.com/store/apps/details?hl=en_US&id=ai.saifullah.bazarboard",
+      "date": "Listing updated 22 Jul 2026",
+      "kind": "product claim",
+      "note": "Advertises community price submissions and history. This review did not audit price accuracy or adoption.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S16",
+      "title": "TBS Graduates · nearU founder interview",
+      "url": "https://tbsgraduates.net/interviews/how-four-young-founders-turned-a-frustration-into-nearu/",
+      "date": "14 Aug 2026",
+      "kind": "interview",
+      "note": "Profiles an existing events and experiences service. The founders’ audience and impact claims are not audited. The product homepage did not load during this check.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S17",
+      "title": "Deshi Buli · Google Play",
+      "url": "https://play.google.com/store/apps/details?id=com.zaksoft.localvasha",
+      "date": "Listing updated 30 Jul 2026",
+      "kind": "product claim",
+      "note": "Already advertises regional words, audio, quizzes and contributions. Features are listing claims.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S18",
+      "title": "The Daily Star · Baishakhi games festival",
+      "url": "https://www.thedailystar.net/sports/more-sports/news/pictures-paltan-hosts-baishakhi-games-fest-4151576",
+      "date": "14 Apr 2026",
+      "kind": "press",
+      "note": "A reported example of participation in traditional games. It supports an experiment, not a national demand estimate.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S19",
+      "title": "স্মৃতির স্বাদ · Food and memory",
+      "url": "https://sritirshaad.com/",
+      "date": "Project · checked 9 Oct 2026",
+      "kind": "direct",
+      "note": "Lustre Dwip, with EMK Centre support, documents Chakma food and personal memories in phase one. A private family record is a different task. Adoption was not measured.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S20",
+      "title": "Next.js · Server and Client Components",
+      "url": "https://nextjs.org/docs/app/getting-started/server-and-client-components",
+      "date": "Documentation · checked 9 Oct 2026",
+      "kind": "technical",
+      "note": "Supports server-rendered public pages and focused browser interactions. Framework features do not guarantee SEO results.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S21",
+      "title": "Next.js · Metadata and OG images",
+      "url": "https://nextjs.org/docs/app/getting-started/metadata-and-og-images",
+      "date": "Documentation · checked 9 Oct 2026",
+      "kind": "technical",
+      "note": "Built-in metadata and Open Graph image conventions support search and link previews.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S22",
+      "title": "BSS · Revised bus fares",
+      "url": "https://www.bssnews.net/bangla/news-flash/343623",
+      "date": "23 Sep 2026",
+      "kind": "press",
+      "note": "Reports fare changes and category-specific rules. The actual route fare schedules and gazette still need verification before a fare tool can launch.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S23",
+      "title": "The Business Standard · Train-ticket friction",
+      "url": "https://www.tbsnews.net/bangladesh/train-ticket-woes-passengers-battle-online-system-and-unauthorised-sales-1389656",
+      "date": "17 Mar 2026",
+      "kind": "press",
+      "note": "Passenger interviews describe digital access and booking difficulties. This is specific reported experience, not a full usability audit.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S24",
+      "title": "Ekhon TV · Tel Koi",
+      "url": "https://ekhon.tv/national-news/69ae933cb611d6ec45653d29",
+      "date": "9 Mar 2026",
+      "kind": "press",
+      "note": "Reports a crowdsourced fuel tool. Conflicting station totals were excluded. A live fuel directory already has a local precedent.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S25",
+      "title": "Meta · How we combat scraping",
+      "url": "https://about.fb.com/news/2021/04/how-we-combat-scraping/",
+      "date": "15 Apr 2021 · historical policy explanation",
+      "kind": "method",
+      "note": "Explains that automated collection requires permission. It is not a grant of access to Facebook data.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S26",
+      "title": "BrainKhela",
+      "url": "https://brainkhela.com/",
+      "date": "Product · checked 9 Oct 2026",
+      "kind": "product claim",
+      "note": "Already advertises free Bangla quizzes and games without signup. A broad quiz collection faces existing supply.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S27",
+      "title": "Kombeshi · Bangla food and cost tools",
+      "url": "https://kombeshi.com/",
+      "date": "Product · checked 9 Oct 2026",
+      "kind": "product claim",
+      "note": "Advertises meal cost, weekly plans, price comparison and TCB indexes. This research did not audit accuracy or adoption.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S28",
+      "title": "Department of Agricultural Marketing · Market prices",
+      "url": "https://market.dam.gov.bd/",
+      "date": "Official service · checked 9 Oct 2026",
+      "kind": "official",
+      "note": "An existing source for market price reports. Availability, reuse rights, update frequency and integration still need a check before product use.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S29",
+      "title": "Jaatra · Dhaka bus journeys",
+      "url": "https://jaatra.bd/",
+      "date": "Product · checked 9 Oct 2026",
+      "kind": "product claim",
+      "note": "Already advertises routes, transfers and fares. Its FAQ describes simulated vehicle positions until operator GPS becomes available. This research did not audit route accuracy.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S30",
+      "title": "Prothom Alo · Notun Kuri memories",
+      "url": "https://en.prothomalo.com/entertainment/television/d2hrqy1bfv",
+      "date": "15 Aug 2025",
+      "kind": "press",
+      "note": "Reports old photos and memories on Facebook after an announcement that Notun Kuri will return. An event-specific observation, not a national nostalgia survey.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S31",
+      "title": "ICPSR · Meta Content Library",
+      "url": "https://www.icpsr.umich.edu/sites/somar/meta-content-library",
+      "date": "Access documentation · checked 9 Oct 2026",
+      "kind": "method",
+      "note": "Public social content research has controlled access and researcher eligibility. This session has no Meta Content Library access.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S32",
+      "title": "Google · Trends API",
+      "url": "https://developers.google.com/search/apis/trends",
+      "date": "API documentation · checked 9 Oct 2026",
+      "kind": "technical",
+      "note": "The official API is an alpha with limited access. Its consistently scaled data differs from the Explore index. This session has no API access.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S33",
+      "title": "The Daily Star · Student flood coordination",
+      "url": "https://tds-images.thedailystar.net/tech-startup/news/du-students-launch-website-coordinate-flood-relief-efforts-3687776",
+      "date": "27 Aug 2024",
+      "kind": "press",
+      "note": "A historical example of students using a website to coordinate relief requests. Current operation was not verified. Emergency response needs verification and accountable operators.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S34",
+      "title": "Dhaka Tribune · Affordable food videos",
+      "url": "https://www.dhakatribune.com/feature/food/421309/food-vlogging-is-booming-but-who-tells-viewers",
+      "date": "4 Oct 2026",
+      "kind": "press",
+      "note": "Editorial observations of cheap meal and portion-focused videos. No national prevalence measure. Mentioned prices are not current verified offers.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S35",
+      "title": "Old Board Questions",
+      "url": "https://www.board-questions.me/",
+      "date": "Product · checked 9 Oct 2026",
+      "kind": "product claim",
+      "note": "A free SSC/HSC past-paper website. This research did not audit paper accuracy, permissions or adoption. It shows existing educational supply.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S36",
+      "title": "Next.js · Static exports",
+      "url": "https://nextjs.org/docs/app/guides/static-exports",
+      "date": "Documentation · checked 9 Oct 2026",
+      "kind": "technical",
+      "note": "A browser-only Next.js product can use a static export. Server features require a compatible server deployment.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S37",
+      "title": "Meta · Public-interest research tools",
+      "url": "https://about.fb.com/news/2023/11/new-tools-to-support-independent-research/",
+      "date": "Documentation · checked 9 Oct 2026",
+      "kind": "method",
+      "note": "Describes application access for qualified academic and nonprofit research. CrowdTangle retired on 14 Aug 2024. This project has no restricted research access.",
+      "retrieved": "2026-10-09"
+    },
+    {
+      "id": "S38",
+      "title": "Google · Search terms and Topics",
+      "url": "https://support.google.com/trends/answer/4359550?hl=en",
+      "date": "Documentation · checked 9 Oct 2026",
+      "kind": "method",
+      "note": "Terms do not automatically cover all synonyms or spellings. Topics can include the same concept across languages. Five English terms do not measure national interest in five subjects.",
+      "retrieved": "2026-10-09"
+    }
+  ],
+  "ideas": [
+    {
+      "id": "chhotobela",
+      "bn": "আমার ছোটবেলা",
+      "name": "My childhood postcard",
+      "track": "culture",
+      "tag": "First experiment",
+      "scores": {
+        "share": 5,
+        "utility": 2,
+        "impact": 2,
+        "ease": 5,
+        "evidence": 3
+      },
+      "effort": "2–3 focused build days",
+      "problem": "Help a person express a familiar memory in a form that friends can answer.",
+      "mvp": "Choose games, everyday moments and objects. Add an optional name. Download one Bangla postcard. Keep all inputs in the browser.",
+      "share": "The card asks: “তোমার ছোটবেলা কেমন ছিল?” A friend can make a different card from the same link.",
+      "difference": "A personal memory collage. No travel score, identity test or “real Bangladeshi” rank.",
+      "evidence": "Nostalgia reports in August 2025 and September 2026, plus October map-sharing reports, support a timely experiment. They do not prove demand.",
+      "sources": [
+        "S03",
+        "S30",
+        "S02"
+      ],
+      "competitor": "Unseen Bangladesh and generic nostalgia-card tools are adjacent. No dedicated local equivalent surfaced in this bounded search. That does not prove novelty.",
+      "test": "Let 20 adults try it without instructions. Then observe at least 100 qualified starts. Look for completion and voluntary sharing.",
+      "risk": "A one-use novelty can fade fast. Represent different places and generations. Use original art. Names and memories stay private until the user exports them.",
+      "next": "If people want a useful second action, add a small traditional-play invitation. Do not add a social feed."
+    },
+    {
+      "id": "bazar-note",
+      "bn": "বাজার নোট",
+      "name": "A household basket, made clear",
+      "track": "utility",
+      "tag": "Best durable utility",
+      "scores": {
+        "share": 3,
+        "utility": 5,
+        "impact": 4,
+        "ease": 4,
+        "evidence": 4
+      },
+      "effort": "3–5 focused build days",
+      "problem": "A household or student needs a clear list and a total before the next bazaar trip.",
+      "mvp": "Enter item, amount, unit and price. See the basket total and budget difference. Export a list. Save locally with a clear delete control.",
+      "share": "Send the actual shopping list to a household member. Keep budget and totals optional on the export.",
+      "difference": "Turn the user’s own prices into a useful basket. BazarBoard already targets community price discovery.",
+      "evidence": "Recent cost-pressure reporting and quarterly inflation data support the problem. They do not prove people will enter prices manually.",
+      "sources": [
+        "S09",
+        "S10",
+        "S15",
+        "S27",
+        "S28"
+      ],
+      "competitor": "BazarBoard, Kombeshi, official DAM reports, phone calculators, paper lists and household chats. The proposed task uses the household’s own prices. Current habits remain the main competitor.",
+      "test": "Ask 15 households or students to use it for two real shopping trips. At least 8 must choose to use it again.",
+      "risk": "Do not label entered prices as live market data. Support piece, hali, kg and litre explicitly. Do not promise savings.",
+      "next": "Add basket comparison only after users keep records. Use dated, attributable external prices only with a reliable data owner."
+    },
+    {
+      "id": "ek-ghonta",
+      "bn": "এক ঘণ্টা ভালো কাজ",
+      "name": "One useful local action",
+      "track": "community",
+      "tag": "Best direct social benefit",
+      "scores": {
+        "share": 3,
+        "utility": 4,
+        "impact": 5,
+        "ease": 2,
+        "evidence": 3
+      },
+      "effort": "4–6 build days + weekly editor",
+      "problem": "A person wants to help but cannot easily judge which local action fits their time.",
+      "mvp": "List five organizer-confirmed actions in one city. Show date, duration, conditions and official signup. Expire each listing automatically.",
+      "share": "Create a simple invitation for friends. Report attendance only when the organizer confirms it.",
+      "difference": "Help people find a first action across existing organizers. Let established groups manage volunteers.",
+      "evidence": "Existing volunteer networks and a newly announced canal initiative show real activity. Demand for a separate discovery site is untested.",
+      "sources": [
+        "S13",
+        "S14"
+      ],
+      "competitor": "Organizer pages and existing volunteer networks. Partnership is more useful than another volunteer database.",
+      "test": "Interview three organizers. Pilot with two willing partners. Confirm at least 10 attendances before expanding.",
+      "risk": "A short event can need more than one hour. Show the real duration. Do not collect donations, publish volunteer contacts or certify unverified impact.",
+      "next": "Expand only when an editor and organizer can keep dates, eligibility and cancellation notices current."
+    },
+    {
+      "id": "deadline",
+      "bn": "শেষ তারিখ",
+      "name": "My application checklist",
+      "track": "utility",
+      "tag": "Validate next",
+      "scores": {
+        "share": 2,
+        "utility": 5,
+        "impact": 4,
+        "ease": 4,
+        "evidence": 4
+      },
+      "effort": "3–5 focused build days",
+      "problem": "An applicant needs to keep official links, documents and deadlines in one place.",
+      "mvp": "A private checklist with user-entered deadlines, official links and calendar export. Keep the user’s application details on their device.",
+      "share": "Export a blank checklist for a study group. Never include application IDs, fees paid or personal files by default.",
+      "difference": "Personal task completion, not another job-circular feed or eligibility predictor.",
+      "evidence": "September reporting describes intense demand for government posts. It does not measure missed deadlines or demand for a tracker.",
+      "sources": [
+        "S11"
+      ],
+      "competitor": "Calendars, notes, spreadsheets and official application portals. Interviews must show a gap in those tools.",
+      "test": "Recruit 15 applicants with real open applications. Observe whether they use the checklist during one deadline cycle.",
+      "risk": "Wrong dates cause harm. Require a source link and a date check. Calendar export is not a guaranteed reminder service.",
+      "next": "Add a curated notice feed only with a named editor and a correction process."
+    },
+    {
+      "id": "rannakhata",
+      "bn": "আমাদের রান্নাখাতা",
+      "name": "A family recipe card",
+      "track": "culture",
+      "tag": "Useful cultural alternative",
+      "scores": {
+        "share": 4,
+        "utility": 4,
+        "impact": 3,
+        "ease": 4,
+        "evidence": 2
+      },
+      "effort": "3–4 focused build days",
+      "problem": "A family wants to preserve its own version of a dish in readable Bangla.",
+      "mvp": "Enter ingredients, amounts, steps and a family note. Print or download the recipe. Keep the record private.",
+      "share": "Send the card to a relative who wants to cook the dish. Attribute the cook only with their agreement.",
+      "difference": "A private household record. স্মৃতির স্বাদ already documents Chakma food and memory as public cultural heritage.",
+      "evidence": "Existing food-memory work supports cultural relevance. Direct demand for this recorder remains untested.",
+      "sources": [
+        "S19"
+      ],
+      "competitor": "Recipe apps, notebooks and family chats. স্মৃতির স্বাদ documents Chakma food and memory publicly. The proposed difference is a private printable family record.",
+      "test": "Ask 10 families to record one recipe with an older relative. Confirm that another person can use at least 7 cards.",
+      "risk": "Avoid claims about health benefits or food safety. Do not declare one recipe the authentic version of a community.",
+      "next": "Add audio only if families need it and contributors consent."
+    },
+    {
+      "id": "cholo-kheli",
+      "bn": "চলো খেলি",
+      "name": "Choose a game for this group",
+      "track": "culture",
+      "tag": "Good second cultural test",
+      "scores": {
+        "share": 4,
+        "utility": 3,
+        "impact": 4,
+        "ease": 4,
+        "evidence": 3
+      },
+      "effort": "3–5 days + rules review",
+      "problem": "Friends or families need a quick way to choose an offline game.",
+      "mvp": "Select group size, space and available equipment. Get one of eight reviewed games with simple rules and an invitation card.",
+      "share": "A group shares one practical plan for its next meet-up.",
+      "difference": "Help people arrange offline play. BrainKhela already offers online quizzes and games.",
+      "evidence": "A 2026 traditional-games festival confirms participation in one setting. The website idea still needs observation.",
+      "sources": [
+        "S18",
+        "S26"
+      ],
+      "competitor": "Game explainers, online games and group chats. The useful gap is group setup and accessible rule cards.",
+      "test": "Give five groups a card. At least three must arrange and complete a game without extra instructions.",
+      "risk": "Rules vary by place. State the version. Include seated options. Avoid unsafe activities and unknown venue claims.",
+      "next": "Extend the first memory-card tool only if users ask for a real group activity."
+    },
+    {
+      "id": "bhara",
+      "bn": "ভাড়া কত?",
+      "name": "A verified fare card",
+      "track": "utility",
+      "tag": "Hold for reliable data",
+      "scores": {
+        "share": 4,
+        "utility": 5,
+        "impact": 4,
+        "ease": 1,
+        "evidence": 3
+      },
+      "effort": "5–8 days + route verification",
+      "problem": "A commuter wants clear evidence for a specific route fare.",
+      "mvp": "Five verified routes with vehicle class, approved fare, effective date and source. Download a readable reference card.",
+      "share": "Send a useful route card to another commuter.",
+      "difference": "Explain a checked route. Do not reduce the problem to a distance × rate formula.",
+      "evidence": "September fare changes and reported fare disputes create a timely need. Exact route schedules still need primary verification.",
+      "sources": [
+        "S22",
+        "S09",
+        "S29"
+      ],
+      "competitor": "Jaatra already advertises Dhaka bus journeys, transfers and fares. Official schedules remain the authority. A route-specific card needs a clear accuracy advantage.",
+      "test": "Validate all five routes against current primary schedules. Interview 10 regular commuters about actual use.",
+      "risk": "Wrong fares can provoke conflict. Route, vehicle, minimum fare and other adjustments matter. Do not launch from a press summary.",
+      "next": "Proceed only when someone owns updates after each fare change."
+    },
+    {
+      "id": "free-afternoon",
+      "bn": "এই সপ্তাহে ফ্রি",
+      "name": "A practical free afternoon",
+      "track": "community",
+      "tag": "Hold for a narrow gap",
+      "scores": {
+        "share": 4,
+        "utility": 4,
+        "impact": 3,
+        "ease": 2,
+        "evidence": 2
+      },
+      "effort": "4–6 days + weekly editor",
+      "problem": "A person wants a local activity with clear costs and practical details.",
+      "mvp": "Ten checked options in one city with entry cost, travel notes, times and source. Export a small outing plan.",
+      "share": "Invite a friend using a specific plan instead of a vague event link.",
+      "difference": "Only pursue a verified affordability gap. nearU already offers event and experience discovery.",
+      "evidence": "Existing services show supply. They do not prove an unmet need for another directory.",
+      "sources": [
+        "S16"
+      ],
+      "competitor": "nearU, ticket sites and local event pages. A general directory is not a strong first project.",
+      "test": "Ask 10 users to compare our shortlist with nearU. Continue only if the cost details change their decision.",
+      "risk": "Free entry does not mean a free trip. Remove expired events. Avoid unsupported safety or accessibility claims.",
+      "next": "Choose a specific audience and locality before writing a larger catalogue."
+    }
+  ],
+  "trends": {
+    "source": "S06",
+    "terms": [
+      "cricket",
+      "recipe",
+      "job circular",
+      "weather",
+      "bus ticket"
+    ],
+    "displayedAverages": [
+      9,
+      1,
+      2,
+      60,
+      1
+    ],
+    "rows": [
+      {
+        "week": "2025-10-05",
+        "values": [
+          20,
+          0,
+          2,
+          54,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2025-10-12",
+        "values": [
+          14,
+          0,
+          2,
+          48,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2025-10-19",
+        "values": [
+          17,
+          0,
+          2,
+          49,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2025-10-26",
+        "values": [
+          18,
+          0,
+          2,
+          58,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2025-11-02",
+        "values": [
+          12,
+          0,
+          2,
+          52,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2025-11-09",
+        "values": [
+          11,
+          0,
+          2,
+          41,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2025-11-16",
+        "values": [
+          13,
+          1,
+          2,
+          42,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2025-11-23",
+        "values": [
+          13,
+          0,
+          2,
+          47,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2025-11-30",
+        "values": [
+          11,
+          1,
+          2,
+          43,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2025-12-07",
+        "values": [
+          7,
+          1,
+          2,
+          42,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2025-12-14",
+        "values": [
+          7,
+          1,
+          2,
+          45,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2025-12-21",
+        "values": [
+          5,
+          1,
+          2,
+          56,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2025-12-28",
+        "values": [
+          5,
+          1,
+          2,
+          76,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-01-04",
+        "values": [
+          6,
+          1,
+          2,
+          66,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-01-11",
+        "values": [
+          7,
+          1,
+          2,
+          47,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-01-18",
+        "values": [
+          8,
+          1,
+          2,
+          41,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-01-25",
+        "values": [
+          8,
+          1,
+          2,
+          42,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-02-01",
+        "values": [
+          11,
+          1,
+          1,
+          44,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-02-08",
+        "values": [
+          14,
+          1,
+          1,
+          36,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-02-15",
+        "values": [
+          13,
+          2,
+          1,
+          36,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-02-22",
+        "values": [
+          19,
+          1,
+          2,
+          43,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-03-01",
+        "values": [
+          12,
+          0,
+          2,
+          48,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-03-08",
+        "values": [
+          15,
+          0,
+          2,
+          62,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-03-15",
+        "values": [
+          10,
+          1,
+          1,
+          79,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-03-22",
+        "values": [
+          5,
+          0,
+          2,
+          61,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-03-29",
+        "values": [
+          5,
+          0,
+          2,
+          62,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-04-05",
+        "values": [
+          5,
+          1,
+          2,
+          62,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-04-12",
+        "values": [
+          7,
+          1,
+          2,
+          62,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-04-19",
+        "values": [
+          9,
+          1,
+          2,
+          64,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-04-26",
+        "values": [
+          9,
+          1,
+          2,
+          100,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-05-03",
+        "values": [
+          7,
+          0,
+          2,
+          84,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-05-10",
+        "values": [
+          8,
+          0,
+          2,
+          83,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-05-17",
+        "values": [
+          7,
+          0,
+          2,
+          90,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-05-24",
+        "values": [
+          5,
+          1,
+          1,
+          94,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-05-31",
+        "values": [
+          5,
+          1,
+          2,
+          88,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-06-07",
+        "values": [
+          10,
+          1,
+          2,
+          75,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-06-14",
+        "values": [
+          10,
+          0,
+          2,
+          63,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-06-21",
+        "values": [
+          6,
+          1,
+          2,
+          57,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-06-28",
+        "values": [
+          6,
+          0,
+          1,
+          58,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-07-05",
+        "values": [
+          6,
+          0,
+          1,
+          69,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-07-12",
+        "values": [
+          5,
+          0,
+          1,
+          72,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-07-19",
+        "values": [
+          4,
+          0,
+          2,
+          69,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-07-26",
+        "values": [
+          3,
+          1,
+          2,
+          62,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-08-02",
+        "values": [
+          4,
+          1,
+          1,
+          61,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-08-09",
+        "values": [
+          6,
+          1,
+          2,
+          57,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-08-16",
+        "values": [
+          6,
+          1,
+          1,
+          58,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-08-23",
+        "values": [
+          5,
+          1,
+          2,
+          58,
+          1
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-08-30",
+        "values": [
+          5,
+          1,
+          1,
+          55,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-09-06",
+        "values": [
+          5,
+          1,
+          1,
+          57,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-09-13",
+        "values": [
+          4,
+          1,
+          1,
+          62,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-09-20",
+        "values": [
+          5,
+          1,
+          2,
+          61,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-09-27",
+        "values": [
+          8,
+          0,
+          2,
+          59,
+          0
+        ],
+        "partial": false
+      },
+      {
+        "week": "2026-10-04",
+        "values": [
+          5,
+          0,
+          2,
+          60,
+          1
+        ],
+        "partial": true
+      }
+    ],
+    "method": "Manual transcription of the rendered accessible chart table. Not an official CSV export. Bangladesh / Past 12 months / All categories / Web Search / search terms, not Topics. Last week incomplete.",
+    "capturedOn": "2026-10-09",
+    "averageNote": "Google-displayed averages, not arithmetic means calculated from the rounded transcribed rows. The moving original URL will show a different window at a later date.",
+    "verifiedOn": "2026-10-09",
+    "verification": "All 53 displayed rows and averages checked against the rendered Chrome accessibility table. The saved CSV remains a manual transcription, not a Google CSV export."
+  },
+  "limits": [
+    "No directly inspected Facebook post/comment corpus.",
+    "No representative survey or psychological profiling.",
+    "Google Trends English terms are a deliberately small, biased comparison.",
+    "No unattended monitoring is active."
+  ],
+  "dailyTrends": {
+    "source": "S05",
+    "observedAt": "2026-10-09T13:22:00+06:00",
+    "timePrecision": "approximate",
+    "region": "Bangladesh",
+    "window": "Past 24 hours",
+    "sort": "By relevance",
+    "selection": "Six selected examples from the first 25 of 88 displayed rows. Not a top-six ranking.",
+    "rows": [
+      {
+        "query": "bangladesh vs afghanistan",
+        "trafficBucket": "100K+"
+      },
+      {
+        "query": "santos vs flamengo",
+        "trafficBucket": "20K+"
+      },
+      {
+        "query": "bangladesh vs australia",
+        "trafficBucket": "10K+"
+      },
+      {
+        "query": "neymar",
+        "trafficBucket": "5K+"
+      },
+      {
+        "query": "আরিফিন শুভ",
+        "trafficBucket": "2K+"
+      },
+      {
+        "query": "পর্যটক",
+        "trafficBucket": "2K+"
+      }
+    ],
+    "limits": "Buckets are not exact search counts or unique people. Query clusters can overlap. Do not sum the values.",
+    "recheckedOn": "2026-10-09",
+    "recheckNote": "The six selected buckets matched a later public-web check. The changing feed then showed 89 rows."
+  },
+  "planningNote": "All idea scores, priority labels, build durations and pilot thresholds are proposals and judgments, not measured demand, benchmarks or success probabilities."
+}

@@ -1,0 +1,33 @@
+{
+  "checks": [
+    {
+      "name": "Scene one drag is one history step; click is not history",
+      "pass": true,
+      "result": {
+        "sceneInitial": "translate(355 360)",
+        "sceneMoved": "translate(407.6187744140625 389.23265075683594)"
+      }
+    },
+    {
+      "name": "Scene Escape cancels drag; keyboard move and delete are undoable",
+      "pass": true
+    },
+    {
+      "name": "Garden drag into empty slot commits once and undo restores contents",
+      "pass": true,
+      "result": {
+        "from": 0,
+        "to": 3
+      }
+    },
+    {
+      "name": "Garden swaps occupied slots and Escape cancels active drag",
+      "pass": true
+    },
+    {
+      "name": "Garden keyboard move/delete and no-op preset preserve history correctly",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

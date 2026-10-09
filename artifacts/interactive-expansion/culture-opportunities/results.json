@@ -1,0 +1,65 @@
+{
+  "checkedAt": "2026-10-09T11:57:36.482Z",
+  "checks": [
+    {
+      "name": "Alpana commits one mirrored stroke and one undo step",
+      "pass": true,
+      "result": {
+        "copies": 16,
+        "pathSamples": 17
+      }
+    },
+    {
+      "name": "Alpana Escape cancels active stroke and export is disabled while drawing",
+      "pass": true
+    },
+    {
+      "name": "Alpana pointer capture commits when released outside canvas",
+      "pass": true
+    },
+    {
+      "name": "Alpana clear is confirmed, cancellable, and undoable",
+      "pass": true
+    },
+    {
+      "name": "Alpana PNG has finished mirrored artwork in all quadrants",
+      "pass": true,
+      "result": {
+        "width": 1600,
+        "height": 1600,
+        "quadrants": [
+          9712,
+          9712,
+          9712,
+          9712
+        ]
+      }
+    },
+    {
+      "name": "Alpana A4 guide contains the same vectors without editing guides",
+      "pass": true
+    },
+    {
+      "name": "Bird preset and undo preserve name; no-op preset preserves redo",
+      "pass": true
+    },
+    {
+      "name": "Language object switch is atomic and current-object click preserves edits",
+      "pass": true
+    },
+    {
+      "name": "Memory ordering updates postcard and undo restores original order",
+      "pass": true
+    },
+    {
+      "name": "Alpana real touch drawing and native touch cancel at 390px",
+      "pass": true
+    }
+  ],
+  "errors": [
+    {
+      "type": "warning",
+      "message": "The resource http://127.0.0.1:3100/fonts/bangla.woff2 was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally."
+    }
+  ]
+}

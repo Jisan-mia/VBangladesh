@@ -1,0 +1,117 @@
+{
+  "id": "bazar-note",
+  "name": "বাজার নোট",
+  "englishName": "My household basket",
+  "status": "Working Bengali Next.js app implemented locally; not publicly deployed or piloted",
+  "asOf": "2026-10-09",
+  "userTask": "Prepare a shopping list using personal prices, see the total against a budget and send the list to another household member.",
+  "audienceHypothesis": "Adults who plan household shopping, including students who share grocery costs. Whether they will enter prices manually is untested; this is not a national audience estimate.",
+  "boundedV1": [
+    "One Bangla-first basket with editable item name, quantity, unit and price per selected unit.",
+    "Support piece, hali, kg and litre without unit conversion; clearly label each price basis.",
+    "Calculate each line total, basket total and difference from an optional BDT budget.",
+    "Save one current basket on the device; show saved state and provide clear all.",
+    "Download a plain-text list or print it. Exclude prices and budget by default; let the user explicitly include them."
+  ],
+  "exclusions": [
+    "Live market prices, scraping, crowdsourced submissions and retailer recommendations.",
+    "Accounts, cloud sync, payment, delivery and cross-device collaboration.",
+    "Price forecasts, claimed savings, meal plans and financial advice.",
+    "Historical basket comparison and automatic unit conversion."
+  ],
+  "journey": [
+    "Add an item and choose its quantity and unit.",
+    "Enter the known or estimated price per selected unit.",
+    "Review line totals; add a budget only if useful.",
+    "Edit or remove items until the list is ready.",
+    "Preview the export, choose whether to include money amounts and download or print.",
+    "Reopen the current basket for a second shopping trip or clear it."
+  ],
+  "differentiator": "A private editable household list using the user's own prices. Kombeshi already advertises shopping lists and retailer price comparisons; DAM publishes market information; BazarBoard advertises community price reports. The proposed gap is a simple personal workflow, not unique price discovery. Paper lists, calculators and family chats are the main alternatives.",
+  "dataAndPrivacy": {
+    "content": "No external price feed. Label every amount as entered by the user and not verified live market data.",
+    "userData": "Store only the current basket and optional budget in localStorage. Send neither to a server nor into public URLs.",
+    "storageFailure": "If storage is blocked, full or unreadable, show that saving failed and preserve the visible basket. Do not overwrite unreadable stored data silently; offer an explicit reset.",
+    "deletion": "Clear all removes the saved basket only after a clear user action. Explain that clearing browser data also removes it.",
+    "sharing": "Preview the exact exported content; default to item names, quantities and units without money amounts.",
+    "pilotRecords": "Use consenting household IDs and manual repeat-use tallies; do not collect their budgets or item-level spending."
+  },
+  "acceptanceCriteria": [
+    "Add, edit, remove, save, reopen, export and clear a basket on a 360px-wide screen with accessible labels and keyboard controls.",
+    "Accept Bangla and Latin digits. Reject blank, negative, non-finite or malformed values; quantities must be positive and prices may be zero. Limit amounts to two decimal places.",
+    "Calculate prices in integer poisha and quantities in hundredths; round each line once to the nearest poisha and sum line totals.",
+    "The displayed and exported totals match. A check confirms 1.50 kg at Tk120.50 totals Tk180.75 and two pieces at Tk10 total Tk20.",
+    "Budget difference is labeled as remaining or over budget; a negative result is never hidden.",
+    "Unit and price basis remain explicit after reopening and exporting; changing a unit never silently converts a quantity or price.",
+    "Money amounts remain absent from the default export and appear only after explicit selection.",
+    "Storage and export errors preserve the visible basket and tell the user what failed.",
+    "A network inspection confirms that basket contents and budget stay on the device."
+  ],
+  "manualPilot": {
+    "status": "Proposed decision threshold; no pilot has run",
+    "households": 15,
+    "task": "Use the tool during two real shopping trips. Include students who share a household basket where relevant.",
+    "repeatDefinition": "A household chooses to use the tool on its second trip without a researcher prompting it to do so.",
+    "proposedRepeatHouseholds": 8,
+    "records": "Manually record first-use completion, entry burden, sharing usefulness and second-trip use with consent.",
+    "interpretation": "Eight of 15 repeating would justify another small iteration. It would not establish savings or national product demand."
+  },
+  "nextJsArchitecture": {
+    "publicPage": "App Router server page for instructions, privacy explanation, metadata and public link preview.",
+    "interaction": "One client basket editor owns user entries and storage status.",
+    "calculation": "One small pure module parses amounts and computes line totals, basket total and budget difference; the UI and export use the same result.",
+    "storage": "Read and validate one localStorage record in the browser; no compatibility migrations or cloud layer.",
+    "export": "Native Blob text download and print CSS; use the same basket data and explicit export choice.",
+    "backend": "None. No API routes, price service, database or authentication.",
+    "checks": "Small assertions for fractional quantities, Bangla digits, rounding, invalid amounts and an over-budget basket; manual reopen/export and storage-failure checks."
+  },
+  "dependenciesToCheckBeforeAdd": [
+    "Inspect package.json, lockfile and existing form, money and storage helpers when implementation begins.",
+    "Use installed Next.js, React and TypeScript if present; read current Next.js documentation before setup.",
+    "Use native localStorage, Blob downloads, Intl formatting and printing. No spreadsheet, money, database or UI package is needed for this bounded version.",
+    "If an installed validation package already fits the project, use its documented capabilities before adding another package."
+  ],
+  "risks": [
+    "Manual entry may cost more effort than the current habit; the second-trip pilot must test this.",
+    "Entered prices can be wrong or outdated. Do not present them as an official price or promised saving.",
+    "A price entered per kg versus per purchased packet changes the total; clear unit labeling is essential.",
+    "Local records are lost when browser data is cleared and are visible to others who use the same browser profile."
+  ],
+  "sources": [
+    {
+      "id": "S09",
+      "url": "https://www.thedailystar.net/health/food/price-essentials/news/high-prices-pumps-trickling-every-thing-4281581",
+      "date": "2026-09-24",
+      "supports": "Reported household cost pressure; manual-entry product demand remains untested."
+    },
+    {
+      "id": "S10",
+      "url": "https://www.bb.org.bd/pub/quaterly/inflation/qidq4fy26.pdf",
+      "date": "Apr-Jun 2026",
+      "supports": "Historical inflation context; not current item prices."
+    },
+    {
+      "id": "S15",
+      "url": "https://play.google.com/store/apps/details?hl=en_US&id=ai.saifullah.bazarboard",
+      "checked": "2026-10-09",
+      "supports": "BazarBoard's advertised community price workflow; accuracy and adoption not audited."
+    },
+    {
+      "name": "Kombeshi",
+      "url": "https://kombeshi.com/",
+      "checked": "2026-10-09",
+      "supports": "Existing shopping-list and retailer-price comparison claims; freshness and accuracy not audited."
+    },
+    {
+      "name": "Department of Agricultural Marketing",
+      "url": "https://dam.gov.bd/",
+      "checked": "2026-10-09",
+      "supports": "Existing official market-information service; do not embed an unchecked moving price feed."
+    },
+    {
+      "id": "S20",
+      "url": "https://nextjs.org/docs/app/getting-started/server-and-client-components",
+      "supports": "Server-rendered public page with a browser-only editor."
+    }
+  ]
+}

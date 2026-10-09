@@ -1,0 +1,10 @@
+{
+  "checks": [
+    "Word: wrong answer/retry, native keyboard solve, no duplicate score, reveal, touch tiles, skip, completion, clipboard/txt report and reset passed",
+    "Routine: mouse drag, Escape rollback, one-step undo/redo, canvas keyboard swap, typing isolation and accessible two-cell swap passed",
+    "Routine: real touch drag, pointercancel rollback, extra-pointer ignored, undo, PNG2160×2320 and one-page A4 print passed",
+    "Fixed production routine PNG visually verified: Bengali title, day/time headings, populated cells and footer all present."
+  ],
+  "errors": [],
+  "browser": "Installed Google Chrome, headless desktop and CDP touch input. Safari/WebKit and Firefox not verified."
+}

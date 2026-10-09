@@ -1,0 +1,9 @@
+{
+  "results": [
+    "Rickshaw: region colour, undo, motif and Bengali caption",
+    "Grid: continuous touch strokes, one-step undo/redo, touch cancellation, keyboard paint",
+    "Poster: keyboard/touch movement, undo and four large lines stay inside artwork",
+    "Collage: local upload, incomplete-export protection, duplicate, crop/zoom, gesture undo and invalid file rejection"
+  ],
+  "errors": []
+}

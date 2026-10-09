@@ -1,0 +1,213 @@
+{
+  "base": "http://127.0.0.1:3100",
+  "results": [
+    {
+      "slug": "amar-chhotobela",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "bazar-note",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "ek-ghonta",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "deadline",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "rannakhata",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "cholo-kheli",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "bhara",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "free-afternoon",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "chhotto-para",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "alpana",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "kagojer-mela",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "bhashar-chhobi",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "sobuj-kon",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "amar-chhotobela",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "bazar-note",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "ek-ghonta",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "deadline",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "rannakhata",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "cholo-kheli",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "bhara",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "free-afternoon",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "chhotto-para",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "alpana",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "kagojer-mela",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "bhashar-chhobi",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "sobuj-kon",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "chhotto-para",
+      "check": "png",
+      "file": "/tmp/ektukhani-navigation-qa/chhotto-para.png",
+      "bytes": 274500
+    },
+    {
+      "slug": "chhotto-para",
+      "check": "png",
+      "file": "/tmp/ektukhani-navigation-qa/chhotto-para-story.png",
+      "bytes": 196226
+    },
+    {
+      "slug": "alpana",
+      "check": "png",
+      "file": "/tmp/ektukhani-navigation-qa/alpana.png",
+      "bytes": 416166
+    },
+    {
+      "slug": "kagojer-mela",
+      "check": "png",
+      "file": "/tmp/ektukhani-navigation-qa/kagojer-mela.png",
+      "bytes": 117630
+    },
+    {
+      "slug": "bhashar-chhobi",
+      "check": "png",
+      "file": "/tmp/ektukhani-navigation-qa/bhashar-chhobi.png",
+      "bytes": 121312
+    },
+    {
+      "slug": "sobuj-kon",
+      "check": "png",
+      "file": "/tmp/ektukhani-navigation-qa/sobuj-kon.png",
+      "bytes": 260182
+    },
+    {
+      "slug": "kagojer-mela",
+      "check": "print",
+      "pageCount": 1,
+      "namedPage": "tool-kagojer-mela",
+      "size": {
+        "width": 594.95996,
+        "height": 841.91998
+      }
+    },
+    {
+      "slug": "alpana",
+      "check": "print",
+      "pageCount": 1,
+      "namedPage": "tool-alpana",
+      "size": {
+        "width": 594.95996,
+        "height": 841.91998
+      }
+    },
+    {
+      "slug": "bhashar-chhobi",
+      "check": "print",
+      "pageCount": 1,
+      "namedPage": "tool-bhashar-chhobi",
+      "size": {
+        "width": 594.95996,
+        "height": 841.91998
+      }
+    },
+    {
+      "slug": "sobuj-kon",
+      "check": "print",
+      "pageCount": 1,
+      "namedPage": "tool-sobuj-kon",
+      "size": {
+        "width": 594.95996,
+        "height": 841.91998
+      }
+    }
+  ],
+  "errors": [],
+  "badResponses": []
+}

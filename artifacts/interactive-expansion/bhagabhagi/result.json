@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-10-09T11:56:57.157Z",
+  "origin": "http://127.0.0.1:3100",
+  "checks": [
+    {
+      "width": 320,
+      "status": "pass",
+      "assertions": "names, duplicate validation, Bengali decimals, rounding, payer protection, edit, remove, undo/redo, clipboard, download equality, reset/undo, no overflow, no runtime errors"
+    },
+    {
+      "width": 1280,
+      "status": "pass",
+      "assertions": "names, duplicate validation, Bengali decimals, rounding, payer protection, edit, remove, undo/redo, clipboard, download equality, reset/undo, no overflow, no runtime errors"
+    }
+  ]
+}

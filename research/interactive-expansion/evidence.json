@@ -1,0 +1,280 @@
+{
+  "title": "Seven distinct browser tools for একটুখানি",
+  "checkedOn": "2026-10-09",
+  "timezone": "Asia/Dhaka",
+  "scope": "Public primary-source discovery and product feasibility; no app code or third-party artwork copied.",
+  "conclusion": "Build seven different interaction models: paint regions, edit repeat grids, solve letter tiles, crop and arrange photos, compose type, settle shared costs, and edit a weekly time grid. Cultural recognition and competing products establish relevance or precedent; they do not establish demand for this implementation.",
+  "limitations": [
+    "No representative Bangladesh Facebook dataset or new Google Trends measurements were obtained. No viral probability or population-wide preference is estimated.",
+    "Store download buckets are worldwide platform counts, not Bangladeshi active users. Reviews and vendor popularity claims are not independently audited.",
+    "Search results can be stale: the ShobdoJot listing initially showed 4.5/202 reviews, while the directly opened page showed 4.4/344. The stable 10K+ download bucket is retained; no growth rate is inferred.",
+    "UNESCO Jamdani's canonical page returned a human-verification interstitial on direct open; the official indexed description and Bangladesh reporting page remain cultural context, not current usage evidence.",
+    "PhotoCardBD /index could not be reopened, but the root homepage and public instructions were accessible. No opaque frame counter is treated as verified downloads.",
+    "No global uniqueness claim. No commercial site's frames, photographs, puzzle database, logo, or code has a verified reuse grant here."
+  ],
+  "rankingBasis": "Editorial prioritization of interaction depth, distinction from the existing 13 tools, useful outputs, and practical browser implementation—not a numerical market forecast.",
+  "recommendations": [
+    {
+      "rank": 1,
+      "slug": "rickshaw-rong",
+      "name": "রিকশার রং",
+      "interaction": "Paint a complete original rickshaw rear panel: tap regions to fill, place original bird/flower/sun motifs, resize or mirror selected motifs, undo and reset.",
+      "output": "PNG panel plus optional printable colouring outline; share a design challenge with friends.",
+      "evidence": [
+        "unesco-rickshaw",
+        "posterbd"
+      ],
+      "evidenceAssessment": "Strong Bangladesh cultural relevance; no verified traffic for a browser painter.",
+      "hypothesis": "Directly making a panel is more engaging than choosing a name-card theme.",
+      "differentiation": "A region-and-stamp painting surface, rather than the existing scene builder or a name-only rickshaw generator.",
+      "minimumVersion": "One original outlined panel, 8 colours, 6 original stamps, selection, delete, undo, PNG.",
+      "resources": "Draw original SVG artwork. UNESCO photographs are references only. Do not copy cinema characters or a living artist's panel.",
+      "avoid": "Do not call a simplified editor an authentic artisan technique, or claim proceeds support artists without an arrangement."
+    },
+    {
+      "rank": 2,
+      "slug": "nokshar-bunon",
+      "name": "নকশার বুনন",
+      "interaction": "Tap or drag across a 12×12 cell grid; erase, mirror, undo and see the motif repeat live across a fabric-like preview.",
+      "output": "Seamless repeat PNG and a numbered A4 grid for making an original paper or stitch pattern.",
+      "evidence": [
+        "unesco-jamdani",
+        "piskel"
+      ],
+      "evidenceAssessment": "Cultural relevance plus a globally established pixel-editor mechanism; no Bangladesh demand measurement.",
+      "hypothesis": "A small mobile-friendly repeat editor can turn passive pattern browsing into making and exchanging patterns.",
+      "differentiation": "Direct cell editing and tiling, distinct from alpana's radial motif composition.",
+      "minimumVersion": "Two or three colours, fixed grid, repeat preview, horizontal mirror, erase, undo, clear, PNG and print.",
+      "resources": "Original grid data and generated geometry. Piskel is Apache-2.0 if code is ever reused, but a small independent grid avoids importing its desktop-oriented editor.",
+      "avoid": "Label the product original grid patterns, not authentic Jamdani weaving instructions."
+    },
+    {
+      "rank": 3,
+      "slug": "shobdo-khela",
+      "name": "শব্দ সাজাই",
+      "interaction": "Read an original clue, tap grapheme-safe Bengali tiles into answer slots, move a tile back, request a hint and check the answer.",
+      "output": "Spoiler-free results card and challenge number; practice can be replayed without account or payment.",
+      "evidence": [
+        "shobdojot",
+        "shobdle",
+        "bengali-dictionary"
+      ],
+      "evidenceAssessment": "Best direct local category signal: Bangladesh developer listing with 10K+ worldwide downloads, updated 2026-08-06. This is not evidence of Bangladesh active-user scale.",
+      "hypothesis": "A short free clue puzzle can attract repeat sessions and friendly sharing without money rewards.",
+      "differentiation": "An actual playable digital puzzle, unlike the existing offline-game selector.",
+      "minimumVersion": "20–30 original reviewed everyday clues; pre-segmented answer tiles preserving vowel signs/conjuncts; deterministic challenge selection; reset and score.",
+      "resources": "Author a small original clue/answer list. Shobdle and MinhasKamal/BengaliDictionary are GPL-3.0; do not silently copy them into the product.",
+      "avoid": "Do not use competitor branding, promise learning outcomes or offer cash/prizes. Reviews include conflicting payout claims; no accusation or earning mechanism is adopted."
+    },
+    {
+      "rank": 4,
+      "slug": "shoptaher-chhok",
+      "name": "সপ্তাহের ছক",
+      "interaction": "Select day and time, create coloured blocks, edit or move them, copy a day and flag overlapping time blocks.",
+      "output": "Phone-friendly weekly image and A4 landscape routine with a clear legend.",
+      "evidence": [
+        "twc-routine"
+      ],
+      "evidenceAssessment": "A Bangladesh institution publishes class routines dated 2026-01-07; evidence of the scheduling workflow, not usage of a planner.",
+      "hypothesis": "Editable visual routines can help students and families share a legible plan in a group chat.",
+      "differentiation": "Recurring weekly time placement, distinct from the deadline tracker and one-off outing planner.",
+      "minimumVersion": "Seven editable days, user-entered times, 20 bounded blocks, colour categories, overlap detection, copy-day, print/PNG.",
+      "resources": "User-entered events and original layout. Link official institution schedules as examples; do not republish their PDFs or claim live institutional data.",
+      "avoid": "No automated school timetable, official holidays, notifications, or external calendar sync promised."
+    },
+    {
+      "rank": 5,
+      "slug": "bhagabhagi",
+      "name": "ভাগাভাগি",
+      "interaction": "Add 2–8 people and expenses with payer; edit or remove entries; see each person's paid amount, equal share, net balance and deterministic settlement arrows immediately.",
+      "output": "Copyable Bengali settlement report and downloaded text file for a friend or family group.",
+      "evidence": [
+        "bkash-group",
+        "splitwise"
+      ],
+      "evidenceAssessment": "Official bKash supports group payment workflows. Splitwise self-reports millions of groups and a 2025–2026 dataset; global evidence, not Bangladesh demand.",
+      "hypothesis": "An account-free, Bengali, visibly transparent balance calculation is useful when one person is collecting a group's numbers.",
+      "differentiation": "Who-owes-whom accounting across multiple payers; existing বাজার নোট totals one shopping list.",
+      "minimumVersion": "Equal allocation among all named people, exact integer poisha, explicit deterministic remainder rule, editable expenses, zero-sum balances and settlement report.",
+      "resources": "Original arithmetic and SVG/CSS bars; existing Bengali font. No financial-service code, logos, transaction APIs or credentials needed.",
+      "avoid": "No payment, debt collection, synchronization, financial advice or claim that the transfer list is mathematically minimal."
+    },
+    {
+      "rank": 6,
+      "slug": "chhobi-jora",
+      "name": "ছবি জোড়া",
+      "interaction": "Choose 2–6 local photos, rearrange slots, crop and zoom each photo, rotate, change gaps and corner shape; see changes immediately.",
+      "output": "Flattened PNG/JPEG collage for printing or sharing; optional short Bengali caption.",
+      "evidence": [
+        "posterbd",
+        "photocardbd",
+        "canva-collage"
+      ],
+      "evidenceAssessment": "Two Bangladesh-facing products advertise photo editing. No independent traffic or Bangladesh user count verified.",
+      "hypothesis": "A focused local-only photo workflow can be useful if it is faster and clearer than existing suites.",
+      "differentiation": "Manipulates the user's actual photos; existing memory cards and dialect cards use curated illustrations.",
+      "minimumVersion": "Three original layouts, drag/reorder buttons, per-photo crop/zoom, swap slots, remove, reset and raster download.",
+      "resources": "Only user-selected images and original frames; canvas processing in browser. Keep EXIF or file contents out of server uploads. Competitor frames are not reusable assets.",
+      "avoid": "No AI background removal, cloud backup, collaboration or uniqueness claim. PosterBD already advertises six-photo collages."
+    },
+    {
+      "rank": 7,
+      "slug": "lekhar-poster",
+      "name": "লেখার পোস্টার",
+      "interaction": "Compose a short Bengali heading and supporting line; directly adjust alignment, scale, line spacing, colours, outline/shadow and text position within print-safe bounds.",
+      "output": "Original typographic PNG and A4 print poster for a club notice, personal message or room.",
+      "evidence": [
+        "posterbd",
+        "photocardbd",
+        "atma-description",
+        "atma-license"
+      ],
+      "evidenceAssessment": "Local competitor precedent and an openly licensed Bengali display font; specific demand remains untested.",
+      "hypothesis": "A typography-first workspace may be useful if it offers meaningful control beyond name input and theme selection.",
+      "differentiation": "Editable type composition and layout, not another recoloured card or dialect-object label.",
+      "minimumVersion": "One main and one supporting text block, keyboard-friendly positioning, three original compositions, colour/size/alignment controls, PNG.",
+      "resources": "Existing self-hosted Bengali font is sufficient. Atma is a Bengali/Latin display family under OFL-1.1; if added, ship its copyright/license and preserve font naming conditions.",
+      "avoid": "Do not copy branded news-card layouts or third-party quotations/templates. This is the lowest-differentiation candidate and should be tested first with a simple prototype."
+    }
+  ],
+  "sources": [
+    {
+      "id": "unesco-rickshaw",
+      "url": "https://www.unesco.org/en/articles/rickshaw-painting-colourful-heritage-bangladesh?hub=80094",
+      "publisher": "UNESCO",
+      "date": "2026-05-30",
+      "updated": "2026-07-01",
+      "access": "Public primary page",
+      "finding": "Describes rickshaw panels as cultural storytelling surfaces, including rural scenes, birds and animals, and links observing them to intergenerational curiosity.",
+      "traction": "No product-use statistics."
+    },
+    {
+      "id": "unesco-jamdani",
+      "url": "https://ich.unesco.org/en/RL/traditional-art-of-jamdani-weaving-00879",
+      "publisher": "UNESCO",
+      "date": "2013 inscription",
+      "access": "Official indexed description; direct page presented human verification",
+      "finding": "Documents Bangladesh's traditional Jamdani weaving. This supports cultural context only.",
+      "traction": "No digital-tool metrics.",
+      "secondaryOfficialUrl": "https://f5vip11.unesco.org/en-state/bangladesh-BD?info=periodic-reporting"
+    },
+    {
+      "id": "piskel",
+      "url": "https://github.com/piskelapp/piskel",
+      "publisher": "Piskel maintainers",
+      "date": null,
+      "access": "Public source repository checked 2026-10-09",
+      "finding": "Browser pixel editor with PNG/GIF export. README says mobile is unsupported.",
+      "traction": "Repository displayed 12.8k stars and 917 forks; global developer interest, not active users.",
+      "license": "Apache-2.0 code; separately check any embedded third-party assets before reuse."
+    },
+    {
+      "id": "shobdojot",
+      "url": "https://play.google.com/store/apps/details?id=com.shobdojot",
+      "publisher": "Google Play listing / LogicLoom Labs",
+      "date": "2026-08-06 app update",
+      "access": "Direct public listing",
+      "finding": "Clue-and-scrambled-Bengali-letter puzzle; developer location Bangladesh.",
+      "traction": "10K+ worldwide downloads as displayed on 2026-10-09. Individual reviews mention both enjoyment and payout concerns; neither is a representative survey or a verified factual finding about payouts."
+    },
+    {
+      "id": "shobdle",
+      "url": "https://github.com/ahnaf-zaman/Shobdle",
+      "publisher": "Ahnaf Zaman",
+      "date": "README: Summer of Making 2025",
+      "access": "Public source repository",
+      "finding": "Existing Bangla Wordle implementation handles vowel-conjunct feedback.",
+      "traction": "1 star / 0 forks displayed; confirms existence only.",
+      "license": "GPL-3.0"
+    },
+    {
+      "id": "bengali-dictionary",
+      "url": "https://github.com/MinhasKamal/BengaliDictionary",
+      "publisher": "Minhas Kamal",
+      "date": "README citation year 2016",
+      "access": "Public source repository",
+      "finding": "Bengali word lists and translations are available, but the project states GPL-3.0.",
+      "traction": "Not used to estimate consumer demand.",
+      "license": "GPL-3.0; original small word/clue list recommended for this scope."
+    },
+    {
+      "id": "bkash-group",
+      "url": "https://www.bkash.com/en/products-services/group-send-money",
+      "publisher": "bKash",
+      "date": null,
+      "access": "Current public service page checked 2026-10-09",
+      "finding": "Allows a customer to pay a group of 2–7 other customers equal or different amounts. This is a payment feature, not the proposed settlement calculator.",
+      "traction": "No group-feature usage count published on the inspected page."
+    },
+    {
+      "id": "splitwise",
+      "url": "https://blog.splitwise.com/2026/05/15/so-how-much-does-a-bach-party-actually-cost/",
+      "publisher": "Splitwise",
+      "date": "2026-05-15",
+      "updated": "2026-06-25",
+      "access": "First-party article",
+      "finding": "Describes shared-cost tracking and reports analysis of tens of thousands of 2025–2026 trip groups.",
+      "traction": "Vendor says millions of friend groups use Splitwise; global self-reported scale, not Bangladesh data."
+    },
+    {
+      "id": "posterbd",
+      "url": "https://www.posterbd.com/",
+      "publisher": "PosterBD / SM Developer",
+      "date": null,
+      "access": "Current public page checked 2026-10-09",
+      "finding": "Advertises browser frame editing, crop, filters, text placement, six-photo collages and PNG/share output.",
+      "traction": "100+ frames and 7+ tools are inventory claims, not users. Its '#1' wording is unverified marketing."
+    },
+    {
+      "id": "photocardbd",
+      "url": "https://photocardbd.com/",
+      "publisher": "Photo Card BD",
+      "date": null,
+      "access": "Public root homepage and instructions",
+      "finding": "Bangladesh-facing photo frame editor; instructions describe choosing an image and downloading it, plus a registered designer contribution panel.",
+      "traction": "Popularity claims and visible counters are first-party, unverified and not used as user totals.",
+      "instructionsUrl": "https://www.photocardbd.com/how-to-use"
+    },
+    {
+      "id": "canva-collage",
+      "url": "https://www.canva.com/create/photo-collages/",
+      "publisher": "Canva",
+      "date": null,
+      "access": "Current public product page",
+      "finding": "Established drag/drop photo arrangement with crop and PNG/JPG sharing. The page advertises starting without login.",
+      "traction": "No Bangladesh or collage-specific user count verified."
+    },
+    {
+      "id": "twc-routine",
+      "url": "https://www.twc.edu.bd/routine/class/",
+      "publisher": "Technical Women College, Singra, Natore",
+      "date": "2026-01-07 routine entries",
+      "access": "Official institutional listing",
+      "finding": "Publishes class routines for grades 6–8 with dated entries. A local example of the recurring timetable workflow.",
+      "traction": "No user demand statistics."
+    },
+    {
+      "id": "atma-description",
+      "url": "https://github.com/google/fonts/blob/main/ofl/atma/DESCRIPTION.en_us.html",
+      "publisher": "Google Fonts / Black Foundry",
+      "date": null,
+      "access": "Official repository",
+      "finding": "Atma is an original Bengali and Latin typeface family."
+    },
+    {
+      "id": "atma-license",
+      "url": "https://github.com/google/fonts/blob/main/ofl/atma/OFL.txt",
+      "publisher": "Google Fonts / Atma authors",
+      "date": "OFL version 1.1; 2007-02-26",
+      "access": "Official license file",
+      "finding": "Font embedding and redistribution permitted under OFL conditions; include copyright and license. Documents created with the font are not required to adopt the font license.",
+      "license": "SIL Open Font License 1.1"
+    }
+  ],
+  "validationPlan": [
+    "For each editor, observe whether a person can make one distinct output and find download without instruction; capture completion and error counts only with explicit test participation.",
+    "Test Bengali labels, conjunct rendering, keyboard controls, mobile touch targets, reduced-motion preferences and PNG/print output.",
+    "Share only user-chosen output; no hidden public gallery, upload, contact collection or automatic Facebook posting.",
+    "Measure actual repeat use and voluntary sharing after release before describing any idea as viral or proven."
+  ]
+}

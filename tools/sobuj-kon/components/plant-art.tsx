@@ -1,0 +1,13 @@
+import type { PlantId } from '../lib/garden';
+
+function Leaf({ x, y, turn = 0 }: { x: number; y: number; turn?: number }) {
+  return <g transform={`translate(${x} ${y}) rotate(${turn})`}><path d="M0 0C-24-4-29-29-7-39 8-26 12-8 0 0Z" fill="#587e4a"/><path d="M0 0-7-28" stroke="#38563b" strokeWidth="2" fill="none"/></g>;
+}
+export function PlantArt({ kind, pot }: { kind: PlantId; pot: string }) {
+  return <g strokeLinejoin="round"><ellipse cx="0" cy="7" rx="52" ry="14" fill="#3c493b" opacity=".12"/><path d="M-35-60h70L26 0Q0 12-26 0Z" fill={pot} stroke="#805343" strokeWidth="2"/><path d="M-28-48h8L-14-1h-8Z" fill="#fff3db" opacity=".24"/><ellipse cx="0" cy="-60" rx="36" ry="10" fill="#b78060" stroke="#805343" strokeWidth="2"/><ellipse cx="0" cy="-61" rx="28" ry="6" fill="#5b4936"/>
+    {kind==='vine'&&<g><path d="M0-65C-5-121-52-112-61-62S-33-23-52 7M2-66c18-64 62-53 64-3S42-22 55-6M0-65v-72" fill="none" stroke="#537a43" strokeWidth="4"/>{[[-3,-104,20],[-27,-98,-35],[-55,-66,-40],[-47,-28,80],[13,-100,75],[48,-94,110],[59,-54,45],[0,-131,-35]].map(([x,y,turn],i)=><Leaf key={i} x={x} y={y} turn={turn}/>)}</g>}
+    {kind==='basil'&&<g><path d="M0-62v-117M0-97l-30-27M0-120l30-27M0-148l-24-17" stroke="#496541" strokeWidth="4" fill="none"/>{[[-1,-85,65],[-12,-95,-55],[-22,-118,-20],[22,-129,85],[-2,-137,55],[-13,-151,-35],[3,-165,30],[0,-172,-12]].map(([x,y,turn],i)=><g key={i} transform={`translate(${x} ${y}) rotate(${turn})`}><ellipse cx="0" cy="-10" rx="12" ry="19" fill={i%2?'#628b4f':'#81a15b'} stroke="#476d3d" strokeWidth="1.5"/></g>)}</g>}
+    {kind==='aloe'&&<g stroke="#426c53" strokeWidth="2"><path d="M0-60Q-66-78-75-140q64 22 75 80" fill="#7d9e66"/><path d="M0-61q-53-60-33-126 37 51 33 126" fill="#7fa66f"/><path d="M0-61q-17-69 9-147 23 69-9 147" fill="#65916a"/><path d="M0-60q4-98 70-128-2 81-70 128" fill="#82a374"/><path d="M0-60q38-62 83-55-31 51-83 55" fill="#60876a"/><path d="M-25-144-9-91M12-160 7-95M47-149 17-96" stroke="#c4d4a2" strokeWidth="3" fill="none"/></g>}
+    {(kind==='marigold'||kind==='hibiscus')&&<g><path d="M0-60v-117M0-98l-41-43M0-117l37-43" stroke="#476f42" strokeWidth="4" fill="none"/>{[[-3,-77,70],[-19,-103,-30],[18,-112,90],[0,-136,-45]].map(([x,y,turn],i)=><Leaf key={i} x={x} y={y} turn={turn}/>)}{[[-41,-144],[37,-163],[0,-181]].map(([x,y],i)=><g key={i} transform={`translate(${x} ${y})`}>{Array.from({length:kind==='marigold'?10:5},(_,j)=><ellipse key={j} cx="0" cy="-11" rx={kind==='marigold'?9:12} ry="15" transform={`rotate(${j*(kind==='marigold'?36:72)})`} fill={kind==='marigold'?(j%2?'#e9ad38':'#f5c457'):(j%2?'#bc4a47':'#d76458')} stroke={kind==='marigold'?'#d39630':'#af4940'} strokeWidth="1"/>)}<circle r="7" fill="#e4bc4e"/></g>)}</g>}
+  </g>;
+}

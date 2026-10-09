@@ -1,0 +1,13 @@
+{
+  "checks": [
+    {
+      "name": "Scene real touch drag, touch cancel, and one-step undo at 390px",
+      "pass": true
+    },
+    {
+      "name": "Garden real touch move and native cancel at 390px",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

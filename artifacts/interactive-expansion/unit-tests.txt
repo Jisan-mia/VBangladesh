@@ -1,0 +1,1016 @@
+
+> test
+> node --import tsx --test shared/tests/*.test.ts tools/*/tests/*.test.ts
+
+TAP version 13
+# Subtest: the consolidated registry contains each of the twenty tools exactly once
+ok 1 - the consolidated registry contains each of the twenty tools exactly once
+  ---
+  duration_ms: 0.713917
+  type: 'test'
+  ...
+# Subtest: registered content identifies the route that loads it
+ok 2 - registered content identifies the route that loads it
+  ---
+  duration_ms: 0.197542
+  type: 'test'
+  ...
+# Subtest: unknown, nested and inherited object names are not tool routes
+ok 3 - unknown, nested and inherited object names are not tool routes
+  ---
+  duration_ms: 0.05675
+  type: 'test'
+  ...
+# Subtest: published tool metadata keeps canonical and social URLs on its own nested route
+ok 4 - published tool metadata keeps canonical and social URLs on its own nested route
+  ---
+  duration_ms: 0.519417
+  type: 'test'
+  ...
+# Subtest: guide and privacy metadata resolve within their tool instead of the app root
+ok 5 - guide and privacy metadata resolve within their tool instead of the app root
+  ---
+  duration_ms: 0.373875
+  type: 'test'
+  ...
+# Subtest: unpublished tool metadata has no invented canonical or social URL and stays unindexed
+ok 6 - unpublished tool metadata has no invented canonical or social URL and stays unindexed
+  ---
+  duration_ms: 0.149625
+  type: 'test'
+  ...
+# Subtest: hub metadata uses its own root-level route without a tool prefix
+ok 7 - hub metadata uses its own root-level route without a tool prefix
+  ---
+  duration_ms: 0.132167
+  type: 'test'
+  ...
+# Subtest: tool schemas describe one application at its route rather than twenty separate websites
+ok 8 - tool schemas describe one application at its route rather than twenty separate websites
+  ---
+  duration_ms: 0.345167
+  type: 'test'
+  ...
+# Subtest: tool FAQ schema preserves the complete visible content
+ok 9 - tool FAQ schema preserves the complete visible content
+  ---
+  duration_ms: 1.0185
+  type: 'test'
+  ...
+# Subtest: published breadcrumbs lead from the hub to the matching tool
+ok 10 - published breadcrumbs lead from the hub to the matching tool
+  ---
+  duration_ms: 0.558625
+  type: 'test'
+  ...
+# Subtest: unpublished application schema omits deployment URLs
+ok 11 - unpublished application schema omits deployment URLs
+  ---
+  duration_ms: 0.118792
+  type: 'test'
+  ...
+# Subtest: the published sitemap contains all sixty-three pages once under the public origin
+ok 12 - the published sitemap contains all sixty-three pages once under the public origin
+  ---
+  duration_ms: 0.125667
+  type: 'test'
+  ...
+# Subtest: published robots point at the consolidated sitemap
+ok 13 - published robots point at the consolidated sitemap
+  ---
+  duration_ms: 0.059125
+  type: 'test'
+  ...
+# Subtest: unpublished routes do not publish a sitemap or allow indexing
+ok 14 - unpublished routes do not publish a sitemap or allow indexing
+  ---
+  duration_ms: 0.052917
+  type: 'test'
+  ...
+# Subtest: an unpublished preview has no invented public domain
+ok 15 - an unpublished preview has no invented public domain
+  ---
+  duration_ms: 0.367583
+  type: 'test'
+  ...
+# Subtest: a public origin must use HTTPS and contain no credentials or path
+ok 16 - a public origin must use HTTPS and contain no credentials or path
+  ---
+  duration_ms: 0.570958
+  type: 'test'
+  ...
+# Subtest: schema text cannot terminate its enclosing script
+ok 17 - schema text cannot terminate its enclosing script
+  ---
+  duration_ms: 0.437125
+  type: 'test'
+  ...
+# Subtest: pointer coordinates describe the same artwork location at different screen sizes
+ok 18 - pointer coordinates describe the same artwork location at different screen sizes
+  ---
+  duration_ms: 1.874583
+  type: 'test'
+  ...
+# Subtest: letterboxing keeps the drawing centered
+ok 19 - letterboxing keeps the drawing centered
+  ---
+  duration_ms: 0.131958
+  type: 'test'
+  ...
+# Subtest: points outside the drawing area are bounded before mirrored rotation
+ok 20 - points outside the drawing area are bounded before mirrored rotation
+  ---
+  duration_ms: 0.085792
+  type: 'test'
+  ...
+# Subtest: invalid canvas dimensions are rejected
+ok 21 - invalid canvas dimensions are rejected
+  ---
+  duration_ms: 0.180042
+  type: 'test'
+  ...
+# Subtest: nearby pointer samples do not allocate another point
+ok 22 - nearby pointer samples do not allocate another point
+  ---
+  duration_ms: 0.071667
+  type: 'test'
+  ...
+# Subtest: long strokes stay bounded while preserving their beginning and current endpoint
+ok 23 - long strokes stay bounded while preserving their beginning and current endpoint
+  ---
+  duration_ms: 5.981
+  type: 'test'
+  ...
+# Subtest: mirroring makes two copies per sector while radial-only makes one
+ok 24 - mirroring makes two copies per sector while radial-only makes one
+  ---
+  duration_ms: 0.21125
+  type: 'test'
+  ...
+# Subtest: all mirrored transforms use canonical angles
+ok 25 - all mirrored transforms use canonical angles
+  ---
+  duration_ms: 0.119917
+  type: 'test'
+  ...
+# Subtest: a tap produces a visible round-ended path
+ok 26 - a tap produces a visible round-ended path
+  ---
+  duration_ms: 0.365084
+  type: 'test'
+  ...
+# Subtest: the stroke limit preserves existing work
+ok 27 - the stroke limit preserves existing work
+  ---
+  duration_ms: 0.400459
+  type: 'test'
+  ...
+# Subtest: committing a completed stroke does not mutate previous history
+ok 28 - committing a completed stroke does not mutate previous history
+  ---
+  duration_ms: 0.0615
+  type: 'test'
+  ...
+# Subtest: screen and tracing artwork contain the same mirrored vectors
+ok 29 - screen and tracing artwork contain the same mirrored vectors
+  ---
+  duration_ms: 7.332583
+  type: 'test'
+  ...
+# Subtest: radial copies lie on the requested circle and leave no duplicated closing point
+ok 30 - radial copies lie on the requested circle and leave no duplicated closing point
+  ---
+  duration_ms: 0.652
+  type: 'test'
+  ...
+# Subtest: each outward motif points along its radius
+ok 31 - each outward motif points along its radius
+  ---
+  duration_ms: 0.087
+  type: 'test'
+  ...
+# Subtest: invalid counts and radii cannot create a broken SVG
+ok 32 - invalid counts and radii cannot create a broken SVG
+  ---
+  duration_ms: 0.187417
+  type: 'test'
+  ...
+# Subtest: every density preserves the selected rotational symmetry
+ok 33 - every density preserves the selected rotational symmetry
+  ---
+  duration_ms: 0.188208
+  type: 'test'
+  ...
+# Subtest: all radial motifs stay inside the outer boundary at every allowed density
+ok 34 - all radial motifs stay inside the outer boundary at every allowed density
+  ---
+  duration_ms: 0.081
+  type: 'test'
+  ...
+# Subtest: denser patterns add motif copies instead of merely changing their labels
+ok 35 - denser patterns add motif copies instead of merely changing their labels
+  ---
+  duration_ms: 0.056959
+  type: 'test'
+  ...
+# Subtest: square-border positions repeat under a quarter turn
+ok 36 - square-border positions repeat under a quarter turn
+  ---
+  duration_ms: 0.262833
+  type: 'test'
+  ...
+# Subtest: border motifs have room around all four canvas edges
+ok 37 - border motifs have room around all four canvas edges
+  ---
+  duration_ms: 0.0795
+  type: 'test'
+  ...
+# Subtest: the 180 mm artwork fits within the declared A4 print margins
+ok 38 - the 180 mm artwork fits within the declared A4 print margins
+  ---
+  duration_ms: 0.226083
+  type: 'test'
+  ...
+# Subtest: unsupported settings are rejected instead of rendering a different density
+ok 39 - unsupported settings are rejected instead of rendering a different density
+  ---
+  duration_ms: 0.712709
+  type: 'test'
+  ...
+# Subtest: radial and border coordinates use at most three decimal places without negative zero
+ok 40 - radial and border coordinates use at most three decimal places without negative zero
+  ---
+  duration_ms: 1.093041
+  type: 'test'
+  ...
+# Subtest: the known hydration mismatch is serialized as a stable three-decimal coordinate
+ok 41 - the known hydration mismatch is serialized as a stable three-decimal coordinate
+  ---
+  duration_ms: 0.077459
+  type: 'test'
+  ...
+# Subtest: a full card still lets a person remove a memory
+ok 42 - a full card still lets a person remove a memory
+  ---
+  duration_ms: 0.750334
+  type: 'test'
+  ...
+# Subtest: a ninth memory cannot enter a full card
+ok 43 - a ninth memory cannot enter a full card
+  ---
+  duration_ms: 0.106375
+  type: 'test'
+  ...
+# Subtest: the postcard preserves the order a person chose
+ok 44 - the postcard preserves the order a person chose
+  ---
+  duration_ms: 0.116459
+  type: 'test'
+  ...
+# Subtest: removing and choosing again moves a memory to the end
+ok 45 - removing and choosing again moves a memory to the end
+  ---
+  duration_ms: 0.103792
+  type: 'test'
+  ...
+# Subtest: a blank postcard does not invent memories
+ok 46 - a blank postcard does not invent memories
+  ---
+  duration_ms: 0.061666
+  type: 'test'
+  ...
+# Subtest: names remain plain text and only redundant whitespace is removed
+ok 47 - names remain plain text and only redundant whitespace is removed
+  ---
+  duration_ms: 0.089333
+  type: 'test'
+  ...
+# Subtest: long names are rejected before they enter the renderer
+ok 48 - long names are rejected before they enter the renderer
+  ---
+  duration_ms: 0.251667
+  type: 'test'
+  ...
+# Subtest: unknown memory identifiers cannot become export content
+ok 49 - unknown memory identifiers cannot become export content
+  ---
+  duration_ms: 0.073709
+  type: 'test'
+  ...
+# Subtest: duplicate memories cannot become export content
+ok 50 - duplicate memories cannot become export content
+  ---
+  duration_ms: 0.254459
+  type: 'test'
+  ...
+# Subtest: the export content rejects more than eight memories
+ok 51 - the export content rejects more than eight memories
+  ---
+  duration_ms: 0.286209
+  type: 'test'
+  ...
+# Subtest: moving a selected memory changes export order without mutating the previous selection
+ok 52 - moving a selected memory changes export order without mutating the previous selection
+  ---
+  duration_ms: 0.100041
+  type: 'test'
+  ...
+# Subtest: moving beyond either end or moving an unselected memory creates no history change
+ok 53 - moving beyond either end or moving an unselected memory creates no history change
+  ---
+  duration_ms: 0.064292
+  type: 'test'
+  ...
+# Subtest: Bangla and Latin decimals become exact hundredths
+ok 54 - Bangla and Latin decimals become exact hundredths
+  ---
+  duration_ms: 0.544375
+  type: 'test'
+  ...
+# Subtest: empty, negative, incomplete and malformed amounts fail instead of becoming zero
+ok 55 - empty, negative, incomplete and malformed amounts fail instead of becoming zero
+  ---
+  duration_ms: 0.327542
+  type: 'test'
+  ...
+# Subtest: fractional line totals round once before summing
+ok 56 - fractional line totals round once before summing
+  ---
+  duration_ms: 0.069833
+  type: 'test'
+  ...
+# Subtest: storage validation rejects corrupt shapes, duplicate IDs and unsafe quantities
+ok 57 - storage validation rejects corrupt shapes, duplicate IDs and unsafe quantities
+  ---
+  duration_ms: 0.472375
+  type: 'test'
+  ...
+# Subtest: default export contains items and units without prices, total or budget
+ok 58 - default export contains items and units without prices, total or budget
+  ---
+  duration_ms: 19.942083
+  type: 'test'
+  ...
+# Subtest: money export uses the same line totals and labels an over-budget basket
+ok 59 - money export uses the same line totals and labels an over-budget basket
+  ---
+  duration_ms: 0.354625
+  type: 'test'
+  ...
+# Subtest: explicit save refuses to overwrite unreadable stored data
+ok 60 - explicit save refuses to overwrite unreadable stored data
+  ---
+  duration_ms: 0.161917
+  type: 'test'
+  ...
+# Subtest: save and reopen retain quantities, unit basis and zero prices
+ok 61 - save and reopen retain quantities, unit basis and zero prices
+  ---
+  duration_ms: 0.150416
+  type: 'test'
+  ...
+# Subtest: blocked or full storage reports failure without changing the supplied basket
+ok 62 - blocked or full storage reports failure without changing the supplied basket
+  ---
+  duration_ms: 0.240333
+  type: 'test'
+  ...
+# Subtest: maximum permitted baskets keep exact safe integer arithmetic
+ok 63 - maximum permitted baskets keep exact safe integer arithmetic
+  ---
+  duration_ms: 0.419583
+  type: 'test'
+  ...
+# Subtest: restored numeric fields use Bengali digits and round-trip without losing a poisha
+ok 64 - restored numeric fields use Bengali digits and round-trip without losing a poisha
+  ---
+  duration_ms: 0.4045
+  type: 'test'
+  ...
+# Subtest: Bengali decimals are parsed as exact integer poisha
+ok 65 - Bengali decimals are parsed as exact integer poisha
+  ---
+  duration_ms: 2.0295
+  type: 'test'
+  ...
+# Subtest: malformed, zero, negative, excessive and overprecise amounts are rejected
+ok 66 - malformed, zero, negative, excessive and overprecise amounts are rejected
+  ---
+  duration_ms: 0.49025
+  type: 'test'
+  ...
+# Subtest: division preserves all poisha with a stable one-poisha remainder rule
+ok 67 - division preserves all poisha with a stable one-poisha remainder rule
+  ---
+  duration_ms: 0.104041
+  type: 'test'
+  ...
+# Subtest: total allocation cannot drift over many expenses
+ok 68 - total allocation cannot drift over many expenses
+  ---
+  duration_ms: 0.705625
+  type: 'test'
+  ...
+# Subtest: settlements close every balance exactly without mutating the ledger
+ok 69 - settlements close every balance exactly without mutating the ledger
+  ---
+  duration_ms: 0.205583
+  type: 'test'
+  ...
+# Subtest: settlement order and amounts are deterministic
+ok 70 - settlement order and amounts are deterministic
+  ---
+  duration_ms: 0.140583
+  type: 'test'
+  ...
+# Subtest: a debtor can settle with several creditors without negative or self transfers
+ok 71 - a debtor can settle with several creditors without negative or self transfers
+  ---
+  duration_ms: 0.152416
+  type: 'test'
+  ...
+# Subtest: adding, editing and removing expenses changes totals without losing balance
+ok 72 - adding, editing and removing expenses changes totals without losing balance
+  ---
+  duration_ms: 0.128542
+  type: 'test'
+  ...
+# Subtest: all group sizes and remainder boundaries conserve cost and settle exactly
+ok 73 - all group sizes and remainder boundaries conserve cost and settle exactly
+  ---
+  duration_ms: 0.891958
+  type: 'test'
+  ...
+# Subtest: untrusted ledgers cannot introduce invalid members, names, payers or amounts
+ok 74 - untrusted ledgers cannot introduce invalid members, names, payers or amounts
+  ---
+  duration_ms: 0.408291
+  type: 'test'
+  ...
+# Subtest: removing a payer cannot silently discard recorded spending
+ok 75 - removing a payer cannot silently discard recorded spending
+  ---
+  duration_ms: 0.154458
+  type: 'test'
+  ...
+# Subtest: a non-payer can leave and the remaining group is recalculated
+ok 76 - a non-payer can leave and the remaining group is recalculated
+  ---
+  duration_ms: 0.0785
+  type: 'test'
+  ...
+# Subtest: the last two people cannot be removed
+ok 77 - the last two people cannot be removed
+  ---
+  duration_ms: 0.04425
+  type: 'test'
+  ...
+# Subtest: member and expense limits reject oversized ledgers at the calculation boundary
+ok 78 - member and expense limits reject oversized ledgers at the calculation boundary
+  ---
+  duration_ms: 0.09275
+  type: 'test'
+  ...
+# Subtest: visually identical Bengali names cannot bypass duplicate detection
+ok 79 - visually identical Bengali names cannot bypass duplicate detection
+  ---
+  duration_ms: 0.060041
+  type: 'test'
+  ...
+# Subtest: reports use current names and amounts and explain the rounding rule
+ok 80 - reports use current names and amounts and explain the rounding rule
+  ---
+  duration_ms: 33.383084
+  type: 'test'
+  ...
+# Subtest: amount editing preserves a single poisha
+ok 81 - amount editing preserves a single poisha
+  ---
+  duration_ms: 0.133416
+  type: 'test'
+  ...
+# Subtest: published matrix matches representative near, middle and end routes
+ok 82 - published matrix matches representative near, middle and end routes
+  ---
+  duration_ms: 0.686458
+  type: 'test'
+  ...
+# Subtest: every supported route is symmetric and uses a published fare band
+ok 83 - every supported route is symmetric and uses a published fare band
+  ---
+  duration_ms: 0.275292
+  type: 'test'
+  ...
+# Subtest: same, fractional and unknown stations are not a free trip
+ok 84 - same, fractional and unknown stations are not a free trip
+  ---
+  duration_ms: 0.068666
+  type: 'test'
+  ...
+# Subtest: Bengali counts and whole round-trip fares
+ok 85 - Bengali counts and whole round-trip fares
+  ---
+  duration_ms: 1.274042
+  type: 'test'
+  ...
+# Subtest: limits preserve complete Bangla graphemes
+ok 86 - limits preserve complete Bangla graphemes
+  ---
+  duration_ms: 0.43225
+  type: 'test'
+  ...
+# Subtest: long captions fit in two bounded lines
+ok 87 - long captions fit in two bounded lines
+  ---
+  duration_ms: 0.402375
+  type: 'test'
+  ...
+# Subtest: all illustrated objects have unique IDs and Bangla names
+ok 88 - all illustrated objects have unique IDs and Bangla names
+  ---
+  duration_ms: 0.111292
+  type: 'test'
+  ...
+# Subtest: selecting the current object preserves the person's own word and pronunciation
+ok 89 - selecting the current object preserves the person's own word and pronunciation
+  ---
+  duration_ms: 0.057875
+  type: 'test'
+  ...
+# Subtest: switching the picture updates its name together and preserves the person's area
+ok 90 - switching the picture updates its name together and preserves the person's area
+  ---
+  duration_ms: 0.1885
+  type: 'test'
+  ...
+# Subtest: all layouts keep photo frames apart and inside poster
+ok 91 - all layouts keep photo frames apart and inside poster
+  ---
+  duration_ms: 0.726042
+  type: 'test'
+  ...
+# Subtest: cover crops never expose empty space at maximum pan
+ok 92 - cover crops never expose empty space at maximum pan
+  ---
+  duration_ms: 0.326083
+  type: 'test'
+  ...
+# Subtest: untrusted file types and oversized inputs are rejected before decoding
+ok 93 - untrusted file types and oversized inputs are rejected before decoding
+  ---
+  duration_ms: 1.873709
+  type: 'test'
+  ...
+# Subtest: post and story exports have exact requested aspect ratios
+ok 94 - post and story exports have exact requested aspect ratios
+  ---
+  duration_ms: 0.339625
+  type: 'test'
+  ...
+# Subtest: both formats preserve the complete scene aspect ratio between the heading and caption
+ok 95 - both formats preserve the complete scene aspect ratio between the heading and caption
+  ---
+  duration_ms: 0.108958
+  type: 'test'
+  ...
+# Subtest: undo and redo restore complete documents including arrays and caption
+ok 96 - undo and redo restore complete documents including arrays and caption
+  ---
+  duration_ms: 0.688042
+  type: 'test'
+  ...
+# Subtest: no-op commits preserve redo and a real new edit removes the old branch
+ok 97 - no-op commits preserve redo and a real new edit removes the old branch
+  ---
+  duration_ms: 0.080916
+  type: 'test'
+  ...
+# Subtest: only the most recent fifty commits can be undone and empty actions do nothing
+ok 98 - only the most recent fifty commits can be undone and empty actions do nothing
+  ---
+  duration_ms: 0.208917
+  type: 'test'
+  ...
+# Subtest: a drag preserves the grabbed offset and remains inside the ground
+ok 99 - a drag preserves the grabbed offset and remains inside the ground
+  ---
+  duration_ms: 0.163542
+  type: 'test'
+  ...
+# Subtest: many drag previews become one undo step and cancellation leaves history intact
+ok 100 - many drag previews become one undo step and cancellation leaves history intact
+  ---
+  duration_ms: 0.09575
+  type: 'test'
+  ...
+# Subtest: unchanged large photo documents preserve redo while edits make one entry
+ok 101 - unchanged large photo documents preserve redo while edits make one entry
+  ---
+  duration_ms: 0.064917
+  type: 'test'
+  ...
+# Subtest: tap positions stay on the inset diamond including all four distant edges
+ok 102 - tap positions stay on the inset diamond including all four distant edges
+  ---
+  duration_ms: 0.828791
+  type: 'test'
+  ...
+# Subtest: add, reposition and remove only affect the chosen object and preserve the original scene
+ok 103 - add, reposition and remove only affect the chosen object and preserve the original scene
+  ---
+  duration_ms: 0.189417
+  type: 'test'
+  ...
+# Subtest: the scene limit and duplicate IDs cannot silently overwrite artwork
+ok 104 - the scene limit and duplicate IDs cannot silently overwrite artwork
+  ---
+  duration_ms: 0.194416
+  type: 'test'
+  ...
+# Subtest: starter objects all lie inside the usable ground and have unique identities
+ok 105 - starter objects all lie inside the usable ground and have unique identities
+  ---
+  duration_ms: 0.207833
+  type: 'test'
+  ...
+# Subtest: player counts accept complete Bengali and English whole numbers
+ok 106 - player counts accept complete Bengali and English whole numbers
+  ---
+  duration_ms: 0.512959
+  type: 'test'
+  ...
+# Subtest: a seated group needs no supplies for word relay
+ok 107 - a seated group needs no supplies for word relay
+  ---
+  duration_ms: 0.126167
+  type: 'test'
+  ...
+# Subtest: all required supplies must be available
+ok 108 - all required supplies must be available
+  ---
+  duration_ms: 0.084958
+  type: 'test'
+  ...
+# Subtest: running games need an open field and equally sized teams
+ok 109 - running games need an open field and equally sized teams
+  ---
+  duration_ms: 0.119292
+  type: 'test'
+  ...
+# Subtest: a real no-match combination does not silently loosen the requirements
+ok 110 - a real no-match combination does not silently loosen the requirements
+  ---
+  duration_ms: 0.326709
+  type: 'test'
+  ...
+# Subtest: invalid filter values do not select accidental games
+ok 111 - invalid filter values do not select accidental games
+  ---
+  duration_ms: 0.058542
+  type: 'test'
+  ...
+# Subtest: invitations contain the chosen rules, Bangla numbers and no invented appointment
+ok 112 - invitations contain the chosen rules, Bangla numbers and no invented appointment
+  ---
+  duration_ms: 21.975959
+  type: 'test'
+  ...
+# Subtest: every game has a complete, explicitly named variant and unique ID
+ok 113 - every game has a complete, explicitly named variant and unique ID
+  ---
+  duration_ms: 0.087542
+  type: 'test'
+  ...
+# Subtest: Bengali and Latin dates both represent Dhaka time, independent of device timezone
+ok 114 - Bengali and Latin dates both represent Dhaka time, independent of device timezone
+  ---
+  duration_ms: 0.61525
+  type: 'test'
+  ...
+# Subtest: impossible dates, missing values and malformed times fail
+ok 115 - impossible dates, missing values and malformed times fail
+  ---
+  duration_ms: 0.248291
+  type: 'test'
+  ...
+# Subtest: restored fields contain Bengali digits and round-trip across UTC date boundaries
+ok 116 - restored fields contain Bengali digits and round-trip across UTC date boundaries
+  ---
+  duration_ms: 2.451333
+  type: 'test'
+  ...
+# Subtest: deadline states use Dhaka calendar days and completion is explicit
+ok 117 - deadline states use Dhaka calendar days and completion is explicit
+  ---
+  duration_ms: 0.247208
+  type: 'test'
+  ...
+# Subtest: source URLs reject script schemes, credentials and malformed links
+ok 118 - source URLs reject script schemes, credentials and malformed links
+  ---
+  duration_ms: 0.353959
+  type: 'test'
+  ...
+# Subtest: stored records reject malformed tasks, duplicate IDs, unsafe dates and control characters
+ok 119 - stored records reject malformed tasks, duplicate IDs, unsafe dates and control characters
+  ---
+  duration_ms: 2.013709
+  type: 'test'
+  ...
+# Subtest: calendar export escapes text, folds UTF-8 safely and retains exact UTC time
+ok 120 - calendar export escapes text, folds UTF-8 safely and retains exact UTC time
+  ---
+  duration_ms: 1.253291
+  type: 'test'
+  ...
+# Subtest: plain-text export contains the same deadline and all checklist states
+ok 121 - plain-text export contains the same deadline and all checklist states
+  ---
+  duration_ms: 26.252125
+  type: 'test'
+  ...
+# Subtest: explicit save will not replace unreadable stored data
+ok 122 - explicit save will not replace unreadable stored data
+  ---
+  duration_ms: 0.273625
+  type: 'test'
+  ...
+# Subtest: saving and reopening preserves task progress without changing the supplied list
+ok 123 - saving and reopening preserves task progress without changing the supplied list
+  ---
+  duration_ms: 0.49875
+  type: 'test'
+  ...
+# Subtest: an event is visible until, but not at, its end time
+ok 124 - an event is visible until, but not at, its end time
+  ---
+  duration_ms: 1.574167
+  type: 'test'
+  ...
+# Subtest: unconfirmed and cancelled events never receive a listing
+ok 125 - unconfirmed and cancelled events never receive a listing
+  ---
+  duration_ms: 0.172042
+  type: 'test'
+  ...
+# Subtest: checks older than 24 hours and future checks cannot publish an event
+ok 126 - checks older than 24 hours and future checks cannot publish an event
+  ---
+  duration_ms: 0.097167
+  type: 'test'
+  ...
+# Subtest: each external link must be a public HTTPS address without credentials
+ok 127 - each external link must be a public HTTPS address without credentials
+  ---
+  duration_ms: 0.289375
+  type: 'test'
+  ...
+# Subtest: invalid times, mismatched durations and missing confirmation fail validation
+ok 128 - invalid times, mismatched durations and missing confirmation fail validation
+  ---
+  duration_ms: 0.107125
+  type: 'test'
+  ...
+# Subtest: empty or malformed editorial data leaves an honest empty list
+ok 129 - empty or malformed editorial data leaves an honest empty list
+  ---
+  duration_ms: 0.04125
+  type: 'test'
+  ...
+# Subtest: each time and setting gives a complete self-directed plan
+ok 130 - each time and setting gives a complete self-directed plan
+  ---
+  duration_ms: 0.461
+  type: 'test'
+  ...
+# Subtest: invalid selectors are rejected without silently substituting a plan
+ok 131 - invalid selectors are rejected without silently substituting a plan
+  ---
+  duration_ms: 0.065333
+  type: 'test'
+  ...
+# Subtest: an invitation includes the action and duration without claiming an event
+ok 132 - an invitation includes the action and duration without claiming an event
+  ---
+  duration_ms: 20.128291
+  type: 'test'
+  ...
+# Subtest: Bengali whole taka accepts zero and rejects malformed or out-of-bound input
+ok 133 - Bengali whole taka accepts zero and rejects malformed or out-of-bound input
+  ---
+  duration_ms: 0.477375
+  type: 'test'
+  ...
+# Subtest: group total is not multiplied by group size and overspend stays visible
+ok 134 - group total is not multiplied by group size and overspend stays visible
+  ---
+  duration_ms: 0.459791
+  type: 'test'
+  ...
+# Subtest: both itineraries account for all selected minutes
+ok 135 - both itineraries account for all selected minutes
+  ---
+  duration_ms: 0.278208
+  type: 'test'
+  ...
+# Subtest: all settings have useful steps and invitation preserves user wording
+ok 136 - all settings have useful steps and invitation preserves user wording
+  ---
+  duration_ms: 13.467084
+  type: 'test'
+  ...
+# Subtest: both mirrored cut-outs and their control points fit the A4 safe print area
+ok 137 - both mirrored cut-outs and their control points fit the A4 safe print area
+  ---
+  duration_ms: 0.528291
+  type: 'test'
+  ...
+# Subtest: the two printable shapes are exact reflections and remain separated
+ok 138 - the two printable shapes are exact reflections and remain separated
+  ---
+  duration_ms: 0.17775
+  type: 'test'
+  ...
+# Subtest: feet stay attached at the common fold line and provide two equal base halves
+ok 139 - feet stay attached at the common fold line and provide two equal base halves
+  ---
+  duration_ms: 0.090083
+  type: 'test'
+  ...
+# Subtest: print captions have a short bounded name or a meaningful default
+ok 140 - print captions have a short bounded name or a meaningful default
+  ---
+  duration_ms: 0.055584
+  type: 'test'
+  ...
+# Subtest: poster movement is bounded for square and story
+ok 141 - poster movement is bounded for square and story
+  ---
+  duration_ms: 1.129625
+  type: 'test'
+  ...
+# Subtest: poster text stays within four bounded lines
+ok 142 - poster text stays within four bounded lines
+  ---
+  duration_ms: 0.140583
+  type: 'test'
+  ...
+# Subtest: four large lines stay above attribution and below the top margin
+ok 143 - four large lines stay above attribution and below the top margin
+  ---
+  duration_ms: 0.11475
+  type: 'test'
+  ...
+# Subtest: mirrored corners stay within grid and paint does not mutate history
+ok 144 - mirrored corners stay within grid and paint does not mutate history
+  ---
+  duration_ms: 1.404708
+  type: 'test'
+  ...
+# Subtest: fast pointer moves fill intermediate cells in either direction
+ok 145 - fast pointer moves fill intermediate cells in either direction
+  ---
+  duration_ms: 0.282416
+  type: 'test'
+  ...
+# Subtest: a blank recipe cannot be exported as a finished record
+ok 146 - a blank recipe cannot be exported as a finished record
+  ---
+  duration_ms: 0.768833
+  type: 'test'
+  ...
+# Subtest: export preserves a family note and ordered cooking steps
+ok 147 - export preserves a family note and ordered cooking steps
+  ---
+  duration_ms: 0.394167
+  type: 'test'
+  ...
+# Subtest: blank lines and Windows line endings do not create empty ingredients
+ok 148 - blank lines and Windows line endings do not create empty ingredients
+  ---
+  duration_ms: 0.052416
+  type: 'test'
+  ...
+# Subtest: optional personal details do not leave empty headings in the export
+ok 149 - optional personal details do not leave empty headings in the export
+  ---
+  duration_ms: 0.160083
+  type: 'test'
+  ...
+# Subtest: thirty ingredients and twenty steps are accepted at the boundary
+ok 150 - thirty ingredients and twenty steps are accepted at the boundary
+  ---
+  duration_ms: 0.100375
+  type: 'test'
+  ...
+# Subtest: a thirty-first ingredient must be shortened before export
+ok 151 - a thirty-first ingredient must be shortened before export
+  ---
+  duration_ms: 0.165208
+  type: 'test'
+  ...
+# Subtest: a twenty-first cooking step must be shortened before export
+ok 152 - a twenty-first cooking step must be shortened before export
+  ---
+  duration_ms: 0.057667
+  type: 'test'
+  ...
+# Subtest: an oversized title is rejected without silently cutting the record
+ok 153 - an oversized title is rejected without silently cutting the record
+  ---
+  duration_ms: 0.052333
+  type: 'test'
+  ...
+# Subtest: servings stay exactly as written and never scale ingredient amounts
+ok 154 - servings stay exactly as written and never scale ingredient amounts
+  ---
+  duration_ms: 0.212417
+  type: 'test'
+  ...
+# Subtest: a multiline memory remains text with its line breaks intact
+ok 155 - a multiline memory remains text with its line breaks intact
+  ---
+  duration_ms: 0.295292
+  type: 'test'
+  ...
+# Subtest: each original clue has intact tile order and a unique identity
+ok 156 - each original clue has intact tile order and a unique identity
+  ---
+  duration_ms: 0.848792
+  type: 'test'
+  ...
+# Subtest: a tile cannot be consumed twice, removed tiles return, and incomplete checks do not count
+ok 157 - a tile cannot be consumed twice, removed tiles return, and incomplete checks do not count
+  ---
+  duration_ms: 0.137417
+  type: 'test'
+  ...
+# Subtest: incorrect answers allow retry while solving awards one result only
+ok 158 - incorrect answers allow retry while solving awards one result only
+  ---
+  duration_ms: 0.158708
+  type: 'test'
+  ...
+# Subtest: revealed and skipped answers never count as solved and the game ends at twelve
+ok 159 - revealed and skipped answers never count as solved and the game ends at twelve
+  ---
+  duration_ms: 12.864042
+  type: 'test'
+  ...
+# Subtest: replacement and removal affect exactly the selected slot
+ok 160 - replacement and removal affect exactly the selected slot
+  ---
+  duration_ms: 0.630542
+  type: 'test'
+  ...
+# Subtest: invalid indices cannot add invisible plants
+ok 161 - invalid indices cannot add invisible plants
+  ---
+  duration_ms: 0.06175
+  type: 'test'
+  ...
+# Subtest: shopping list counts actual duplicate plants and omits removed ones
+ok 162 - shopping list counts actual duplicate plants and omits removed ones
+  ---
+  duration_ms: 0.0915
+  type: 'test'
+  ...
+# Subtest: moving to an occupied slot swaps plants without loss and keeps the source immutable
+ok 163 - moving to an occupied slot swaps plants without loss and keeps the source immutable
+  ---
+  duration_ms: 2.423958
+  type: 'test'
+  ...
+# Subtest: a pot moves into an empty slot and is picked up without jumping to the pointer
+ok 164 - a pot moves into an empty slot and is picked up without jumping to the pointer
+  ---
+  duration_ms: 1.382667
+  type: 'test'
+  ...
+# Subtest: all 28 cells hit correctly while gaps and outside areas do not hit
+ok 165 - all 28 cells hit correctly while gaps and outside areas do not hit
+  ---
+  duration_ms: 0.56375
+  type: 'test'
+  ...
+# Subtest: swapping preserves text and color, can move into an empty cell and undoes as one change
+ok 166 - swapping preserves text and color, can move into an empty cell and undoes as one change
+  ---
+  duration_ms: 0.461792
+  type: 'test'
+  ...
+# Subtest: editing affects one cell and Bengali grapheme limits never split a conjunct
+ok 167 - editing affects one cell and Bengali grapheme limits never split a conjunct
+  ---
+  duration_ms: 8.546125
+  type: 'test'
+  ...
+1..167
+# tests 167
+# suites 0
+# pass 167
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1031.023333

@@ -1,0 +1,323 @@
+{
+  "base": "http://127.0.0.1:3100",
+  "results": [
+    {
+      "slug": "amar-chhotobela",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "bazar-note",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "ek-ghonta",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "deadline",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "rannakhata",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "cholo-kheli",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "bhara",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "free-afternoon",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "chhotto-para",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "alpana",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "kagojer-mela",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "bhashar-chhobi",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "sobuj-kon",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "riksharong",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "nokshar-khata",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "lekhar-poster",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "chhobi-jora",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "shobdo-khela",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "soptaher-chhok",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "bhagabhagi",
+      "width": 320,
+      "check": "navigation"
+    },
+    {
+      "slug": "amar-chhotobela",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "bazar-note",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "ek-ghonta",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "deadline",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "rannakhata",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "cholo-kheli",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "bhara",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "free-afternoon",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "chhotto-para",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "alpana",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "kagojer-mela",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "bhashar-chhobi",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "sobuj-kon",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "riksharong",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "nokshar-khata",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "lekhar-poster",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "chhobi-jora",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "shobdo-khela",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "soptaher-chhok",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "bhagabhagi",
+      "width": 1280,
+      "check": "navigation"
+    },
+    {
+      "slug": "chhotto-para",
+      "check": "png",
+      "file": "/Users/jisanmia/Documents/ChatGPT/VBangladesh/artifacts/interactive-expansion/navigation/chhotto-para.png",
+      "bytes": 303613
+    },
+    {
+      "slug": "chhotto-para",
+      "check": "png",
+      "file": "/Users/jisanmia/Documents/ChatGPT/VBangladesh/artifacts/interactive-expansion/navigation/chhotto-para-story.png",
+      "bytes": 196226
+    },
+    {
+      "slug": "alpana",
+      "check": "png",
+      "file": "/Users/jisanmia/Documents/ChatGPT/VBangladesh/artifacts/interactive-expansion/navigation/alpana.png",
+      "bytes": 416166
+    },
+    {
+      "slug": "kagojer-mela",
+      "check": "png",
+      "file": "/Users/jisanmia/Documents/ChatGPT/VBangladesh/artifacts/interactive-expansion/navigation/kagojer-mela.png",
+      "bytes": 117630
+    },
+    {
+      "slug": "bhashar-chhobi",
+      "check": "png",
+      "file": "/Users/jisanmia/Documents/ChatGPT/VBangladesh/artifacts/interactive-expansion/navigation/bhashar-chhobi.png",
+      "bytes": 121312
+    },
+    {
+      "slug": "sobuj-kon",
+      "check": "png",
+      "file": "/Users/jisanmia/Documents/ChatGPT/VBangladesh/artifacts/interactive-expansion/navigation/sobuj-kon.png",
+      "bytes": 260182
+    },
+    {
+      "slug": "riksharong",
+      "check": "png",
+      "file": "/Users/jisanmia/Documents/ChatGPT/VBangladesh/artifacts/interactive-expansion/navigation/riksharong.png",
+      "bytes": 151270
+    },
+    {
+      "slug": "nokshar-khata",
+      "check": "png",
+      "file": "/Users/jisanmia/Documents/ChatGPT/VBangladesh/artifacts/interactive-expansion/navigation/nokshar-khata.png",
+      "bytes": 60101
+    },
+    {
+      "slug": "lekhar-poster",
+      "check": "png",
+      "file": "/Users/jisanmia/Documents/ChatGPT/VBangladesh/artifacts/interactive-expansion/navigation/lekhar-poster.png",
+      "bytes": 111202
+    },
+    {
+      "slug": "chhobi-jora",
+      "check": "png",
+      "file": "/Users/jisanmia/Documents/ChatGPT/VBangladesh/artifacts/interactive-expansion/navigation/chhobi-jora.png",
+      "bytes": 989861
+    },
+    {
+      "slug": "soptaher-chhok",
+      "check": "png",
+      "file": "/Users/jisanmia/Documents/ChatGPT/VBangladesh/artifacts/interactive-expansion/navigation/soptaher-chhok.png",
+      "bytes": 296232
+    },
+    {
+      "slug": "kagojer-mela",
+      "check": "print",
+      "pageCount": 1,
+      "namedPage": "tool-kagojer-mela",
+      "size": {
+        "width": 594.95996,
+        "height": 841.91998
+      }
+    },
+    {
+      "slug": "alpana",
+      "check": "print",
+      "pageCount": 1,
+      "namedPage": "tool-alpana",
+      "size": {
+        "width": 594.95996,
+        "height": 841.91998
+      }
+    },
+    {
+      "slug": "bhashar-chhobi",
+      "check": "print",
+      "pageCount": 1,
+      "namedPage": "tool-bhashar-chhobi",
+      "size": {
+        "width": 594.95996,
+        "height": 841.91998
+      }
+    },
+    {
+      "slug": "sobuj-kon",
+      "check": "print",
+      "pageCount": 1,
+      "namedPage": "tool-sobuj-kon",
+      "size": {
+        "width": 594.95996,
+        "height": 841.91998
+      }
+    },
+    {
+      "slug": "soptaher-chhok",
+      "check": "print",
+      "pageCount": 1,
+      "namedPage": "tool-soptaher-chhok",
+      "size": {
+        "width": 594.95996,
+        "height": 841.91998
+      }
+    }
+  ],
+  "errors": [],
+  "badResponses": []
+}
