@@ -138,7 +138,7 @@ function checkToolSchema(html, slug) {
   assert.deepEqual(answers, faq.mainEntity.map(item => item.acceptedAnswer.text.replace(/\s+/g, ' ').trim()), `${path}: visible answers match schema`);
 }
 
-assert.equal(toolSlugs.length, 20, 'registry contains all twenty tools');
+assert.equal(toolSlugs.length, 12, 'registry contains all twelve tools');
 assert.equal(new Set(toolSlugs).size, toolSlugs.length, 'registry slugs are unique');
 for (const path of routes) {
   const response = await request(path);

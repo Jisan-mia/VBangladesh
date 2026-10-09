@@ -6,16 +6,8 @@ import sitemap from '../../app/sitemap';
 import { pageMetadata, siteMetadata, websiteSchema } from '../seo';
 
 const expectedSlugs = [
-  'alpana', 'amar-chhotobela', 'bazar-note', 'bhara', 'bhashar-chhobi',
-  'chhotto-para', 'cholo-kheli', 'deadline', 'ek-ghonta', 'free-afternoon',
-  'kagojer-mela', 'rannakhata', 'sobuj-kon',
-  'riksharong',
-  'nokshar-khata',
-  'lekhar-poster',
-  'chhobi-jora',
-  'shobdo-khela',
-  'soptaher-chhok',
-  'bhagabhagi',
+  'alpana', 'amar-chhotobela', 'bazar-note', 'bhagabhagi', 'bhara', 'bhashar-chhobi',
+  'chhotto-para', 'cholo-kheli', 'rannakhata', 'riksharong', 'shobdo-khela', 'shubhechha',
 ].sort();
 const origin = 'https://example.org';
 const expectedPaths = ['/', '/about', '/privacy', ...expectedSlugs.flatMap(slug => [`/${slug}`, `/${slug}/guide`, `/${slug}/privacy`])];
@@ -37,7 +29,7 @@ function contentFor(slug: string) {
   return site;
 }
 
-test('the consolidated registry contains each of the twenty tools exactly once', () => {
+test('the consolidated registry contains each of the twelve tools exactly once', () => {
   assert.deepEqual([...toolSlugs].sort(), expectedSlugs);
 });
 

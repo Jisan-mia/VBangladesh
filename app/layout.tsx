@@ -3,6 +3,7 @@ import type { Viewport } from 'next';
 import '../shared/base.css';
 import '../shared/creative.css';
 import '../shared/hub-shell.css';
+import '../shared/share-kit.css';
 import '../components/home.css';
 
 export const viewport: Viewport = { themeColor: '#1d2b53', width: 'device-width', initialScale: 1 };

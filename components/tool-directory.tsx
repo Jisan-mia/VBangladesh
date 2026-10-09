@@ -2,8 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { catalog, categories, flagship } from "../lib/catalog";
 
-const illustratedTools = new Set(["chhotto-para", "alpana", "kagojer-mela", "bhashar-chhobi", "sobuj-kon", "riksharong", "nokshar-khata", "lekhar-poster", "chhobi-jora", "shobdo-khela", "soptaher-chhok", "bhagabhagi"]);
+const illustratedTools = new Set(["chhotto-para", "alpana", "bhashar-chhobi", "riksharong", "shobdo-khela", "bhagabhagi"]);
 
+// The fallback drawing (hands offering a heart) doubles as the greeting-card preview.
 function ToolDrawing({ slug }: { slug: string }) {
   const stroke = "#192943";
   if (slug === "rannakhata") return <svg viewBox="0 0 320 210" fill="none" aria-hidden="true">
@@ -32,18 +33,6 @@ function ToolDrawing({ slug }: { slug: string }) {
     <path d="M53 108h112l-7 74H63Z" fill="#ffcf63" stroke={stroke} strokeWidth="1.5" />
     <path d="M85 137h46m-34 13h22" stroke="#ba8029" strokeWidth="2" strokeLinecap="round" />
   </svg>;
-  if (slug === "deadline") return <svg viewBox="0 0 320 210" fill="none" aria-hidden="true">
-    <g transform="rotate(-5 153 106)">
-      <rect x="74" y="39" width="157" height="143" rx="5" fill="#fff" stroke={stroke} strokeWidth="1.5" />
-      <path d="M79 39h147a5 5 0 0 1 5 5v27H74V44a5 5 0 0 1 5-5Z" fill="#e44b32" />
-      <path d="M106 27v24m95-24v24" stroke={stroke} strokeWidth="5" strokeLinecap="round" />
-      <path d="M98 91h11m18 0h11m18 0h11m18 0h11m-98 26h11m18 0h11m18 0h11m18 0h11m-98 26h11m18 0h11m18 0h11" stroke="#b7c1d1" strokeWidth="5" strokeLinecap="round" />
-      <circle cx="161" cy="118" r="16" stroke="#e44b32" strokeWidth="2" />
-    </g>
-    <circle cx="241" cy="150" r="31" fill="#c6d9fd" stroke={stroke} strokeWidth="1.5" />
-    <path d="M241 131v20l12 7" stroke={stroke} strokeWidth="2.5" strokeLinecap="round" />
-    <path d="m51 86-10-5m13-4-3-11" stroke="#e44b32" strokeWidth="2" strokeLinecap="round" />
-  </svg>;
   if (slug === "bhara") return <svg viewBox="0 0 320 210" fill="none" aria-hidden="true">
     <path d="M35 177h250" stroke={stroke} strokeWidth="2" />
     <path d="M64 63h182a18 18 0 0 1 18 18v70H51V76a13 13 0 0 1 13-13Z" fill="#fff" stroke={stroke} strokeWidth="1.5" />
@@ -67,17 +56,6 @@ function ToolDrawing({ slug }: { slug: string }) {
       <circle cx="-23" cy="48" r="10" fill="#fff" stroke={stroke} strokeWidth="1.5" />
     </g>
     <path d="m56 38-8-9m-2 21-12-2m231 114 10 6m-20 5 3 10" stroke="#5b80d6" strokeWidth="2" strokeLinecap="round" />
-  </svg>;
-  if (slug === "free-afternoon") return <svg viewBox="0 0 320 210" fill="none" aria-hidden="true">
-    <circle cx="231" cy="60" r="27" fill="#ffca54" />
-    <path d="M52 174h216" stroke={stroke} strokeWidth="1.5" />
-    <rect x="80" y="90" width="134" height="15" rx="3" fill="#7e9ddf" stroke={stroke} strokeWidth="1.5" />
-    <rect x="80" y="111" width="134" height="15" rx="3" fill="#7e9ddf" stroke={stroke} strokeWidth="1.5" />
-    <path d="M71 137h153v12H71Z" fill="#7e9ddf" stroke={stroke} strokeWidth="1.5" />
-    <path d="M90 84v53m115-53v53M89 150v23m118-23v23" stroke={stroke} strokeWidth="3" />
-    <path d="M143 114h18v22h-18Z" fill="#e44b32" stroke={stroke} strokeWidth="1.5" />
-    <path d="M161 117c14-3 14 16 0 13m-15-25c-8-7 8-10 0-17m12 17c-8-7 8-10 0-17" stroke={stroke} strokeWidth="1.5" />
-    <path d="M46 168c-8-30-14-49-1-78 10 33 12 49 1 78Zm5-21c9-32 22-39 33-36-6 20-17 32-33 36Z" fill="#76a984" />
   </svg>;
   return <svg viewBox="0 0 320 210" fill="none" aria-hidden="true">
     <path d="M89 58h130v106H89Z" fill="#fff" stroke={stroke} strokeWidth="1.5" />

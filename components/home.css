@@ -58,7 +58,7 @@
 .home-preview-art{position:absolute;inset:8px}
 .home-preview-art img{object-fit:contain}
 .home-example{display:none}
-.home-preview-chhotto-para{background:#e8f0f2}.home-preview-alpana{background:#f8e3dd}.home-preview-kagojer-mela{background:#e3edff}.home-preview-bhashar-chhobi{background:#f2e9f4}.home-preview-sobuj-kon{background:#e6f1e8}.home-preview-rannakhata{background:#fbece6}.home-preview-bazar-note{background:#e9f2e9}.home-preview-deadline{background:#fff1cd}.home-preview-bhara{background:#e6f0f8}.home-preview-cholo-kheli{background:#e9efff}.home-preview-free-afternoon{background:#fff1d6}.home-preview-ek-ghonta{background:#fbe8e6}
+.home-preview-chhotto-para{background:#e8f0f2}.home-preview-alpana{background:#f8e3dd}.home-preview-bhashar-chhobi{background:#f2e9f4}.home-preview-rannakhata{background:#fbece6}.home-preview-bazar-note{background:#e9f2e9}.home-preview-bhara{background:#e6f0f8}.home-preview-cholo-kheli{background:#e9efff}.home-preview-shubhechha{background:#fbe8e6}
 .home-tool-copy{display:flex;flex-direction:column;min-width:0}
 .home-tool h4{margin:0 0 2px;font-family:var(--font-display);font-size:19px;line-height:1.45}
 .home-tool-description{margin:0 0 6px;color:var(--muted);font-size:14px;line-height:1.65}
