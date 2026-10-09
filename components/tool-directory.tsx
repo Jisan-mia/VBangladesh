@@ -1,27 +1,11 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { catalog, categories, type ToolCategory } from "../lib/catalog";
+import { catalog, categories, flagship } from "../lib/catalog";
 
 const illustratedTools = new Set(["chhotto-para", "alpana", "kagojer-mela", "bhashar-chhobi", "sobuj-kon", "riksharong", "nokshar-khata", "lekhar-poster", "chhobi-jora", "shobdo-khela", "soptaher-chhok", "bhagabhagi"]);
-const numbers = new Intl.NumberFormat("bn-BD");
 
 function ToolDrawing({ slug }: { slug: string }) {
   const stroke = "#192943";
-  if (slug === "amar-chhotobela") return <svg viewBox="0 0 320 210" fill="none" aria-hidden="true">
-    <path d="M59 31h202v143H59Z" fill="#fff" stroke={stroke} strokeWidth="1.5" transform="rotate(-5 160 102)" />
-    <path d="M82 50h146v94H82Z" fill="#dcecff" transform="rotate(-5 155 98)" />
-    <g transform="rotate(-5 155 98)">
-      <path d="M101 115h108l-30 25h-52Z" fill="#e44b32" stroke={stroke} strokeWidth="1.5" strokeLinejoin="round" />
-      <path d="m128 115 34-40v40m0-40 32 40" fill="#ffdc78" stroke={stroke} strokeWidth="1.5" strokeLinejoin="round" />
-      <path d="m98 73-4 9m23-14-4 9m86-14-4 9m20 13-4 9" stroke="#6089cb" strokeWidth="2" strokeLinecap="round" />
-      <path d="M98 153h57" stroke={stroke} strokeWidth="2" strokeLinecap="round" />
-    </g>
-    <path d="m72 29 32-4 2 15-32 4Z" fill="#ffca54" opacity=".8" />
-    <path d="M43 178c12-8 19 8 31 0s19 8 31 0m97-6c12-8 19 8 31 0s19 8 31 0" stroke="#5b80d6" strokeWidth="1.5" />
-  </svg>;
   if (slug === "rannakhata") return <svg viewBox="0 0 320 210" fill="none" aria-hidden="true">
     <g transform="rotate(-6 151 110)">
       <rect x="87" y="25" width="143" height="163" rx="3" fill="#fff" stroke={stroke} strokeWidth="1.5" />
@@ -110,39 +94,31 @@ function ToolDrawing({ slug }: { slug: string }) {
 function ToolPreview({ slug }: { slug: string }) {
   if (illustratedTools.has(slug)) return <div className={"home-preview home-preview-" + slug} aria-hidden="true">
     <div className="home-preview-art"><Image src={"/previews/" + slug + ".png"} alt="" fill sizes="(max-width: 620px) 100vw, (max-width: 980px) 50vw, (max-width: 1280px) 33vw, 25vw" /></div>
-    <span className="home-example">উদাহরণ</span>
+    <span className="home-example">নমুনা</span>
   </div>;
   return <div className={"home-preview home-preview-" + slug}><ToolDrawing slug={slug} /></div>;
 }
 
 export function ToolDirectory() {
-  const [category, setCategory] = useState<ToolCategory | "সবগুলো">("সবগুলো");
-  const visibleTools = category === "সবগুলো" ? catalog : catalog.filter(tool => tool.category === category);
-  return <section className="home-container home-directory" id="tools" aria-labelledby="home-tools-title">
+  return <section className="home-container home-directory" id="more" aria-labelledby="home-tools-title">
     <div className="home-directory-heading">
-      <div><p className="home-kicker">আপনার পছন্দের তাক</p><h2 id="home-tools-title">আজ কী করতে চান?</h2></div>
-      <p>একটা বেছে নিন।<br />বাকি সব পরে করা যাবে।</p>
+      <h2 id="home-tools-title">আরও আছে, একটুখানি সময় পেলেই</h2>
+      <p>আঁকাআঁকি, পুরোনো দিনের গল্প, বন্ধুদের সাথে খেলা আর রোজকার হিসাব। যেটা ভালো লাগে, ছুঁয়ে দেখো।</p>
     </div>
-    <div className="home-filter-row">
-      <div className="home-filters" role="group" aria-label="কাজের ধরন">
-        {(["সবগুলো", ...categories] as const).map(item => <button type="button" key={item} aria-pressed={category === item} onClick={() => setCategory(item)}>
-          {item}<span aria-hidden="true">{numbers.format(item === "সবগুলো" ? catalog.length : catalog.filter(tool => tool.category === item).length)}</span>
-        </button>)}
-      </div>
-      <p className="home-result-count" role="status" aria-live="polite">{numbers.format(visibleTools.length)}টি টুল</p>
-    </div>
-    <ul className="home-tool-grid">
-      {visibleTools.map(tool => <li className="home-tool" key={tool.slug}>
-        <Link className="home-tool-link" href={"/" + tool.slug} prefetch={false} aria-labelledby={"tool-title-" + tool.slug}>
-          <ToolPreview slug={tool.slug} />
-          <div className="home-tool-copy">
-            <p className="home-tool-category">{tool.category}</p>
-            <h3 id={"tool-title-" + tool.slug}>{tool.name}</h3>
-            <p className="home-tool-description">{tool.description}</p>
-            <span className="home-tool-action">{tool.action}<svg viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true"><path d="M3 10h13M10 4l6 6-6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-          </div>
-        </Link>
-      </li>)}
-    </ul>
+    {categories.map(category => <div className="home-group" key={category}>
+      <h3>{category}</h3>
+      <ul className="home-tool-grid">
+        {catalog.filter(tool => tool.category === category && tool.slug !== flagship).map(tool => <li className="home-tool" key={tool.slug}>
+          <Link className="home-tool-link" href={"/" + tool.slug} prefetch={false}>
+            <ToolPreview slug={tool.slug} />
+            <div className="home-tool-copy">
+              <h4>{tool.name}</h4>
+              <p className="home-tool-description">{tool.description}</p>
+              <span className="home-tool-action">{tool.action}<svg viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true"><path d="M3 10h13M10 4l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+            </div>
+          </Link>
+        </li>)}
+      </ul>
+    </div>)}
   </section>;
 }

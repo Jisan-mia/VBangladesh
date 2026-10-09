@@ -19,7 +19,7 @@ type PageDescription = { title: string; description: string; path: string; image
 
 export function siteMetadata(page: PageDescription): Metadata {
   const origin = publicOrigin(process.env.SITE_URL);
-  const image = { url: page.image ?? '/social/ektukhani.png', alt: page.image ? page.title : 'একটুখানি — আঁকা, খেলা আর দরকারি ছোট কাজ' };
+  const image = { url: page.image ?? '/social/ektukhani.png', alt: page.image ? page.title : 'একটুখানি — ছোটবেলার স্মৃতির খাতা আর বাংলায় ছোট ছোট টুল' };
   return {
     title: page.title,
     description: page.description,

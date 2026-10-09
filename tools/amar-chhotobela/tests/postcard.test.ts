@@ -1,57 +1,50 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { moveMemory, createPostcard, MAX_MEMORIES, MAX_NAME_LENGTH, memories, toggleMemory } from "../lib/postcard";
+import { cleanName, createCard, decodeSelection, encodeSelection, memories, parseShareHash, possessive, shareHash, toggleMemory, MAX_NAME_LENGTH } from "../lib/postcard";
 
-test("a full card still lets a person remove a memory", () => {
-  const selected = memories.slice(0, MAX_MEMORIES).map((memory) => memory.id);
-  assert.deepEqual(toggleMemory(selected, selected[2]), selected.filter((_, index) => index !== 2));
+test("tapping a memory twice removes it again", () => {
+  assert.deepEqual(toggleMemory(toggleMemory([], "kite"), "kite"), []);
 });
 
-test("a ninth memory cannot enter a full card", () => {
-  const selected = memories.slice(0, MAX_MEMORIES).map((memory) => memory.id);
-  assert.deepEqual(toggleMemory(selected, memories[MAX_MEMORIES].id), selected);
+test("unknown memories cannot enter a card", () => {
+  assert.throws(() => toggleMemory([], "unrecognized"), RangeError);
 });
 
-test("the postcard preserves the order a person chose", () => {
-  assert.deepEqual(createPostcard("", ["kite", "rain", "letter"]).memories.map((memory) => memory.id), ["kite", "rain", "letter"]);
+test("memory ids are unique so share-link bit positions stay stable", () => {
+  assert.equal(new Set(memories.map(memory => memory.id)).size, memories.length);
 });
 
-test("removing and choosing again moves a memory to the end", () => {
-  const selected = toggleMemory(["kite", "rain"], "kite");
-  assert.deepEqual(toggleMemory(selected, "kite"), ["rain", "kite"]);
+test("a selection survives the share-link round trip, including the last memory", () => {
+  const selected = ["gollachhut", "hurricane", memories.at(-1)!.id] as const;
+  assert.deepEqual(decodeSelection(encodeSelection([...selected])), [...selected]);
 });
 
-test("a blank postcard does not invent memories", () => {
-  assert.deepEqual(createPostcard("   ", []).memories, []);
+test("a shared link brings back name and decade", () => {
+  const shared = parseShareHash(shareHash({ selected: ["kite", "salami"], name: "রাফি", decade: "90" }));
+  assert.deepEqual(shared, { selected: ["kite", "salami"], name: "রাফি", decade: "90" });
 });
 
-test("names remain plain text and only redundant whitespace is removed", () => {
-  assert.equal(createPostcard("  <রিমা>   আক্তার  ", ["rain"]).name, "<রিমা> আক্তার");
+test("hostile or empty hashes are ignored instead of crashing", () => {
+  assert.equal(parseShareHash(""), null);
+  assert.equal(parseShareHash("#m=%%%"), null);
+  assert.equal(parseShareHash("#m=0"), null);
+  assert.deepEqual(parseShareHash("#m=1&d=evil")?.decade, "");
 });
 
-test("long names are rejected before they enter the renderer", () => {
-  assert.throws(() => createPostcard("a".repeat(MAX_NAME_LENGTH + 1), []), RangeError);
+test("names lose control and direction-override characters and are capped", () => {
+  assert.equal(cleanName("  রিমা‮  আক্তার\n"), "রিমা আক্তার");
+  assert.equal(cleanName("ক".repeat(MAX_NAME_LENGTH + 10)).length, MAX_NAME_LENGTH);
 });
 
-test("unknown memory identifiers cannot become export content", () => {
-  assert.throws(() => createPostcard("", ["unrecognized"]), RangeError);
+test("Bangla possessive follows the name's ending", () => {
+  assert.equal(possessive("রাফি"), "রাফির");
+  assert.equal(possessive("জাহিদ"), "জাহিদের");
+  assert.equal(possessive("শরৎ"), "শরতের");
+  assert.equal(possessive("Nadia"), "Nadia-এর");
 });
 
-test("duplicate memories cannot become export content", () => {
-  assert.throws(() => createPostcard("", ["rain", "rain"]), RangeError);
-});
-
-test("the export content rejects more than eight memories", () => {
-  assert.throws(() => createPostcard("", memories.slice(0, MAX_MEMORIES + 1).map((memory) => memory.id)), RangeError);
-});
-
-test("moving a selected memory changes export order without mutating the previous selection", () => {
-  const selection = ["rain", "kite", "tiffin"];
-  const reordered = moveMemory(selection, "kite", -1);
-  assert.deepEqual([createPostcard("", reordered).memories.map(memory => memory.id), selection], [["kite", "rain", "tiffin"], ["rain", "kite", "tiffin"]]);
-});
-
-test("moving beyond either end or moving an unselected memory creates no history change", () => {
-  const selection = ["rain", "kite"];
-  assert.ok(moveMemory(selection, "rain", -1) === selection && moveMemory(selection, "kite", 1) === selection && moveMemory(selection, "tiffin", 1) === selection);
+test("the card counts picks and compares with a friend's link", () => {
+  const card = createCard({ selected: ["kite", "pond", "slate"], name: "", decade: "" }, { selected: ["kite", "slate", "meena"], name: "তানিয়া", decade: "" });
+  assert.equal(card.count, 3);
+  assert.equal(card.match, "তানিয়ার সাথে ২টা মিলে গেছে");
 });

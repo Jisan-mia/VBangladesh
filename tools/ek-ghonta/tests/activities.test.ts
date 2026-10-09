@@ -4,7 +4,7 @@ import { getCurrentActivities, parseActivity } from "../lib/activities";
 
 const activity = {
   id: "test-activity",
-  title: "পরীক্ষার আয়োজন",
+  title: "পরীক্ষার আয়োজন",
   city: "ঢাকা",
   location: "পরীক্ষার স্থান",
   startsAt: "2026-10-10T09:00:00+06:00",
@@ -12,9 +12,9 @@ const activity = {
   durationMinutes: 60,
   timezone: "Asia/Dhaka",
   costDescription: "প্রবেশে খরচ নেই",
-  eligibility: "প্রাপ্তবয়স্কদের জন্য",
-  requirements: ["আয়োজকের নির্দেশনা পড়ুন"],
-  organizerName: "পরীক্ষার আয়োজক",
+  eligibility: "প্রাপ্তবয়স্কদের জন্য",
+  requirements: ["আয়োজকের নির্দেশনা পড়ুন"],
+  organizerName: "পরীক্ষার আয়োজক",
   organizerUrl: "https://example.org/about",
   signupUrl: "https://example.org/join",
   sourceUrl: "https://example.org/event",

@@ -22,5 +22,5 @@ test("selecting the current object preserves the person's own word and pronuncia
 test("switching the picture updates its name together and preserves the person's area", () => {
   const card = { ...defaultCard, word: "নিজের শব্দ", area: "কুমিল্লা", pronunciation: "পুরোনো উচ্চারণ" };
   const changed = selectCardObject(card, "kite");
-  assert.deepEqual([changed.objectId, changed.word, changed.area, changed.pronunciation, card.word], ["kite", "ঘুড়ি", "কুমিল্লা", "", "নিজের শব্দ"]);
+  assert.deepEqual([changed.objectId, changed.word, changed.area, changed.pronunciation, card.word], ["kite", "ঘুড়ি", "কুমিল্লা", "", "নিজের শব্দ"]);
 });

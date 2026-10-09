@@ -1,108 +1,153 @@
-import type { PostcardContent } from "./postcard";
+import { bn, chapters, memories, type CardContent } from "./postcard";
 
-const WIDTH = 1200;
-const HEIGHT = 1420;
-const INK = "#292722";
-const TERRACOTTA = "#a63d29";
+export type CardFormat = "feed" | "story";
+export const cardSizes = { feed: { width: 1080, height: 1350 }, story: { width: 1080, height: 1920 } } as const;
+
+const INK = "#1d2b53";
+const RED = "#d23a2c";
+const MUTED = "#6a7590";
+const RULE = "#dfe7f4";
 const FONT = '"Bangla"';
+const tint = { khela: "#fde4ad", porda: "#d6e5fb", khabar: "#fbd6d0", school: "#d8efd6", bari: "#eadff6", utsob: "#ffdfc0" } as const;
+// Short labels keep a five-column grid readable when the image is shown at phone-feed size.
+const cardLabels: Record<string, string> = { kite: "ঘুড়ি", cricket: "ক্রিকেট", antenna: "অ্যান্টেনা", cassette: "ক্যাসেট", ittadi: "ইত্যাদি", meena: "মীনা", jhalmuri: "ঝালমুড়ি", achar: "আচার", pitha: "পিঠা", "ice-cream": "আইসক্রিম", "hawai-mithai": "হাওয়াই মিঠাই", molat: "মলাট", feather: "বইয়ে পালক", "new-books": "নতুন বই", tiffin: "টিফিন ভাগ", slate: "স্লেট-চক", assembly: "অ্যাসেম্বলি", hurricane: "হারিকেন", landphone: "ল্যান্ডফোন", "paper-boat": "কাগজের নৌকা", stories: "নানির গল্প", letter: "চিঠি", roof: "ছাদের বিকেল", salami: "সালামি", dhak: "পূজার ঢাক", fair: "নাগরদোলা", nanabari: "নানাবাড়ি", pond: "পুকুরে সাঁতার", "eid-moon": "চাঁদ দেখা" };
+// One row per chapter, whatever order the memories array is in.
+const cardOrder = chapters.flatMap(chapter => memories.filter(memory => memory.chapter === chapter.id));
 
-type FittedLine = { x: number; y: number; size: number; width: number; weight?: number };
+type Segment = { text: string; color: string; weight?: number };
 
-function fittedText(context: CanvasRenderingContext2D, text: string, line: FittedLine) {
-  let size = line.size;
-  context.font = `${line.weight ?? 400} ${size}px ${FONT}`;
-  while (context.measureText(text).width > line.width && size > 16) {
-    context.font = `${line.weight ?? 400} ${--size}px ${FONT}`;
+function fit(context: CanvasRenderingContext2D, segments: Segment[], x: number, y: number, size: number, maxWidth: number, align: "left" | "center" | "right" = "left") {
+  const measure = () => segments.reduce((total, part) => { context.font = `${part.weight ?? 500} ${size}px ${FONT}`; return total + context.measureText(part.text).width; }, 0);
+  let width = measure();
+  while (width > maxWidth && size > 14) { size -= 1; width = measure(); }
+  let cursor = align === "center" ? x - width / 2 : align === "right" ? x - width : x;
+  context.textAlign = "left";
+  for (const part of segments) {
+    context.font = `${part.weight ?? 500} ${size}px ${FONT}`;
+    context.fillStyle = part.color;
+    context.fillText(part.text, cursor, y);
+    cursor += context.measureText(part.text).width;
   }
-  context.fillText(text, line.x, line.y);
 }
 
-function drawStationery(context: CanvasRenderingContext2D) {
-  context.fillStyle = "#ffffff";
-  context.fillRect(0, 0, WIDTH, HEIGHT);
-  context.strokeStyle = "#dedbd3";
+function roundedRect(context: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
+  context.beginPath();
+  context.roundRect(x, y, width, height, radius);
+}
+
+function drawPaper(context: CanvasRenderingContext2D, width: number, height: number) {
+  context.fillStyle = "#fffdf8";
+  context.fillRect(0, 0, width, height);
+  context.strokeStyle = RULE;
   context.lineWidth = 2;
-  context.strokeRect(36, 36, WIDTH - 72, HEIGHT - 72);
-  context.strokeStyle = "#e9e6df";
-  for (let y = 418; y < 1170; y += 170) {
-    context.beginPath();
-    context.moveTo(82, y);
-    context.lineTo(1118, y);
-    context.stroke();
+  for (let y = 96; y < height; y += 54) {
+    context.beginPath(); context.moveTo(0, y); context.lineTo(width, y); context.stroke();
   }
-  context.fillStyle = "#d8ad39";
-  context.fillRect(82, 76, 90, 8);
-  context.strokeStyle = TERRACOTTA;
-  context.lineWidth = 4;
-  context.strokeRect(992, 85, 111, 130);
-  context.save();
-  context.translate(1004, 100);
-  context.scale(2.05, 2.05);
-  context.lineWidth = 1.4;
-  context.stroke(new Path2D("M5 24 16 34h17l10-10H5Zm11 0 8-16 9 16M24 8v16M7 39c5-4 10 4 15 0s10 4 17 0"));
-  context.restore();
+  context.strokeStyle = "#f2b3ad";
+  context.lineWidth = 3;
+  for (const x of [52, 60]) { context.beginPath(); context.moveTo(x, 0); context.lineTo(x, height); context.stroke(); }
 }
 
-function drawMemories(context: CanvasRenderingContext2D, postcard: PostcardContent) {
-  postcard.memories.forEach((memory, index) => {
-    const x = 88 + (index % 2) * 540;
-    const y = 506 + Math.floor(index / 2) * 170;
+function drawLabel(context: CanvasRenderingContext2D, card: CardContent, x: number, y: number) {
+  const width = 300, height = 132;
+  context.fillStyle = "#ffffff";
+  roundedRect(context, x, y, width, height, 18);
+  context.fill();
+  context.strokeStyle = INK;
+  context.lineWidth = 3;
+  context.stroke();
+  const rows: Array<[string, string]> = [["নাম", card.name], ["দশক", card.decade]];
+  rows.forEach(([key, value], index) => {
+    const rowY = y + 54 + index * 52;
+    fit(context, [{ text: key + ":", color: MUTED, weight: 500 }], x + 22, rowY, 26, 70);
+    context.strokeStyle = "#9aa6c2";
+    context.lineWidth = 2;
+    context.setLineDash([4, 6]);
+    context.beginPath(); context.moveTo(x + 92, rowY + 8); context.lineTo(x + width - 22, rowY + 8); context.stroke();
+    context.setLineDash([]);
+    if (value) fit(context, [{ text: value, color: INK, weight: 700 }], x + 96, rowY, 30, width - 122);
+  });
+}
+
+function drawTick(context: CanvasRenderingContext2D, x: number, y: number) {
+  context.strokeStyle = RED;
+  context.lineWidth = 5;
+  context.lineCap = "round";
+  context.lineJoin = "round";
+  context.beginPath(); context.moveTo(x, y); context.lineTo(x + 9, y + 10); context.lineTo(x + 28, y - 12); context.stroke();
+}
+
+function drawGrid(context: CanvasRenderingContext2D, card: CardContent, top: number, rowHeight: number) {
+  const left = 84, right = 1036, gap = 10, columns = 6;
+  const cellWidth = (right - left - gap * (columns - 1)) / columns;
+  cardOrder.forEach((memory, index) => {
+    const x = left + (index % columns) * (cellWidth + gap);
+    const y = top + Math.floor(index / columns) * (rowHeight + gap);
+    const picked = card.selected.has(memory.id);
+    roundedRect(context, x, y, cellWidth, rowHeight, 16);
+    if (picked) {
+      context.fillStyle = tint[memory.chapter];
+      context.fill();
+    } else {
+      context.fillStyle = "rgba(255,255,255,.85)";
+      context.fill();
+      context.strokeStyle = "#cdd6e6";
+      context.lineWidth = 2;
+      context.setLineDash([7, 7]);
+      context.stroke();
+      context.setLineDash([]);
+    }
+    const icon = Math.min(60, rowHeight * 0.46);
     context.save();
-    context.translate(x, y - 42);
-    context.scale(1.2, 1.2);
-    context.strokeStyle = TERRACOTTA;
-    context.lineWidth = 1.5;
+    context.translate(x + cellWidth / 2 - icon / 2, y + rowHeight * 0.12);
+    context.scale(icon / 48, icon / 48);
+    context.strokeStyle = picked ? INK : "#c3cbda";
+    context.lineWidth = picked ? 2.1 : 1.8;
     context.lineCap = "round";
     context.lineJoin = "round";
     context.stroke(new Path2D(memory.drawing));
     context.restore();
-    context.fillStyle = INK;
-    fittedText(context, memory.label, { x: x + 78, y, size: 37, width: 420 });
+    fit(context, [{ text: cardLabels[memory.id] ?? memory.label, color: picked ? INK : "#a7b0c2", weight: picked ? 700 : 500 }], x + cellWidth / 2, y + rowHeight - 20, 24, cellWidth - 12, "center");
+    if (picked) drawTick(context, x + cellWidth - 38, y + 24);
   });
-  if (!postcard.memories.length) {
-    context.fillStyle = "#8c8982";
-    fittedText(context, "তালিকা থেকে স্মৃতি বেছে নিন", { x: 90, y: 531, size: 34, width: 1000 });
-  }
 }
 
-export function drawPostcard(canvas: HTMLCanvasElement, postcard: PostcardContent) {
-  canvas.width = WIDTH;
-  canvas.height = HEIGHT;
+// Story keeps text out of the top ~250px and bottom ~180px that Facebook/Instagram cover with their own UI.
+const layouts = {
+  feed: { top: 48, title: 84, gridGap: 50, row: 128, lineGap: 54, matchGap: 48, line: 34, band: 1254, footer: 1316, ask: 32, site: 26 },
+  story: { top: 250, title: 92, gridGap: 54, row: 160, lineGap: 70, matchGap: 56, line: 40, band: 1680, footer: 1744, ask: 40, site: 32 },
+} as const;
+
+export function drawCard(canvas: HTMLCanvasElement, card: CardContent, format: CardFormat, site: string) {
+  const { width, height } = cardSizes[format];
+  const layout = layouts[format];
+  canvas.width = width;
+  canvas.height = height;
   const context = canvas.getContext("2d");
-  if (!context) throw new Error("ছবিটি তৈরি করা যাচ্ছে না।");
-  drawStationery(context);
-  context.fillStyle = "#787168";
-  fittedText(context, postcard.name || "স্মৃতির পোস্টকার্ড", { x: 86, y: 153, size: 34, width: 850 });
-  context.fillStyle = TERRACOTTA;
-  fittedText(context, postcard.title, { x: 82, y: 290, size: 98, width: 1020, weight: 700 });
+  if (!context) throw new Error("এই ব্রাউজারে ছবি বানানো যাচ্ছে না।");
+  drawPaper(context, width, height);
+  drawLabel(context, card, 736, layout.top);
+  fit(context, [{ text: "আমার ছোটবেলা", color: INK, weight: 700 }], 84, layout.top + 104, layout.title, 620);
+  fit(context, [{ text: `${bn(card.total)}টার মধ্যে `, color: INK }, { text: `${bn(card.count)}টা`, color: RED, weight: 800 }, { text: " আমার ছোটবেলায় ছিল", color: INK }], 84, layout.top + 196, 40, 952);
+  const gridTop = layout.top + 196 + layout.gridGap;
+  drawGrid(context, card, gridTop, layout.row);
+  let y = gridTop + chapters.length * (layout.row + 10) - 10 + layout.lineGap;
+  fit(context, [{ text: card.line, color: INK, weight: 600 }], 84, y, layout.line, 952);
+  if (card.match) { y += layout.matchGap; fit(context, [{ text: card.match, color: RED, weight: 700 }], 84, y, layout.line - 2, 952); }
   context.fillStyle = INK;
-  fittedText(context, postcard.caption, { x: 88, y: 365, size: 34, width: 1020 });
-  drawMemories(context, postcard);
-  context.strokeStyle = TERRACOTTA;
-  context.lineWidth = 2;
-  context.beginPath();
-  context.moveTo(85, 1224);
-  context.lineTo(1115, 1224);
-  context.stroke();
-  context.fillStyle = TERRACOTTA;
-  fittedText(context, postcard.invitation, { x: 88, y: 1292, size: 43, width: 1020, weight: 600 });
-  context.fillStyle = "#787168";
-  fittedText(context, "আমার ছোটবেলা · স্মৃতি দিয়ে তৈরি পোস্টকার্ড", { x: 88, y: 1360, size: 25, width: 1020 });
+  context.fillRect(0, layout.band, width, height - layout.band);
+  fit(context, [{ text: "তোমার কয়টা মেলে?", color: "#ffd166", weight: 700 }], 84, layout.footer, layout.ask, 520);
+  fit(context, [{ text: site, color: "#ffffff", weight: 600 }], 1036, layout.footer, layout.site, 420, "right");
 }
 
-export async function loadPostcardFont() {
-  await document.fonts.load('700 48px "Bangla"', "আমার ছোটবেলা");
+export async function loadCardFont() {
+  await document.fonts.load(`700 48px ${FONT}`, "আমার ছোটবেলা");
   await document.fonts.ready;
 }
 
-export async function postcardBlob(postcard: PostcardContent): Promise<Blob> {
-  await loadPostcardFont();
+export async function cardBlob(card: CardContent, format: CardFormat, site: string): Promise<Blob> {
+  await loadCardFont();
   const canvas = document.createElement("canvas");
-  drawPostcard(canvas, postcard);
-  return new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      if (blob) resolve(blob);
-      else reject(new Error("ছবিটি তৈরি করা যায়নি।"));
-    }, "image/png");
-  });
+  drawCard(canvas, card, format, site);
+  return new Promise((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error("ছবিটা বানানো গেল না।")), "image/png"));
 }

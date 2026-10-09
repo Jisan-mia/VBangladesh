@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { allocatePoisha, calculateLedger, initialLedger, inputAmount, ledgerReport, MAX_EXPENSE_AMOUNT, parsePoisha, removePerson, validateLedger, type Ledger } from '../lib/ledger';
 
-const people = [{ id: 'a', name: 'আশা' }, { id: 'b', name: 'বাবু' }, { id: 'c', name: 'চয়ন' }];
-const sample: Ledger = { people, expenses: [{ id: 'one', label: 'খাবার', payerId: 'a', amount: 10_001 }, { id: 'two', label: 'যাতায়াত', payerId: 'b', amount: 2_002 }] };
+const people = [{ id: 'a', name: 'আশা' }, { id: 'b', name: 'বাবু' }, { id: 'c', name: 'চয়ন' }];
+const sample: Ledger = { people, expenses: [{ id: 'one', label: 'খাবার', payerId: 'a', amount: 10_001 }, { id: 'two', label: 'যাতায়াত', payerId: 'b', amount: 2_002 }] };
 
 test('Bengali decimals are parsed as exact integer poisha', () => {
   assert.deepEqual([' ১২৩.৪৫ ', '০.০১', '9.9', '১০০০০০০'].map(parsePoisha), [12345, 1, 990, MAX_EXPENSE_AMOUNT]);
@@ -32,7 +32,7 @@ test('settlement order and amounts are deterministic', () => {
   assert.deepEqual(calculateLedger(sample).transfers.map(transfer => [transfer.from.id, transfer.to.id, transfer.amount]), [['b', 'a', 1999], ['c', 'a', 4001]]);
 });
 test('a debtor can settle with several creditors without negative or self transfers', () => {
-  const ledger = { people: [...people, { id: 'd', name: 'দিয়া' }], expenses: [{ id: 'one', label: 'খাবার', payerId: 'a', amount: 300 }, { id: 'two', label: 'ভাড়া', payerId: 'b', amount: 200 }] };
+  const ledger = { people: [...people, { id: 'd', name: 'দিয়া' }], expenses: [{ id: 'one', label: 'খাবার', payerId: 'a', amount: 300 }, { id: 'two', label: 'ভাড়া', payerId: 'b', amount: 200 }] };
   assert.deepEqual(calculateLedger(ledger).transfers.map(transfer => [transfer.from.id, transfer.to.id, transfer.amount]), [['c', 'a', 125], ['d', 'a', 50], ['d', 'b', 75]]);
 });
 test('adding, editing and removing expenses changes totals without losing balance', () => {
@@ -68,11 +68,11 @@ test('member and expense limits reject oversized ledgers at the calculation boun
   for (const ledger of [{ people: oversizedPeople, expenses: [] }, { people, expenses: oversizedExpenses }]) assert.throws(() => calculateLedger(ledger));
 });
 test('visually identical Bengali names cannot bypass duplicate detection', () => {
-  assert.throws(() => validateLedger({ people: [{ id: 'a', name: 'চয়ন' }, { id: 'b', name: 'চয়ন'.normalize('NFC') }], expenses: [] }), /একই নাম/);
+  assert.throws(() => validateLedger({ people: [{ id: 'a', name: 'চয়ন' }, { id: 'b', name: 'চয়ন'.normalize('NFC') }], expenses: [] }), /একই নাম/);
 });
 test('reports use current names and amounts and explain the rounding rule', () => {
   const report = ledgerReport(sample);
-  assert.ok(report.includes('বাবু → আশা: ১৯.৯৯ টাকা') && report.includes('চয়ন → আশা: ৪০.০১ টাকা'.normalize('NFC')) && report.includes('অবশিষ্ট পয়সা') && report.includes('টাকা পাঠানো হয় না'));
+  assert.ok(report.includes('বাবু → আশা: ১৯.৯৯ টাকা') && report.includes('চয়ন → আশা: ৪০.০১ টাকা'.normalize('NFC')) && report.includes('অবশিষ্ট পয়সা') && report.includes('টাকা পাঠানো হয় না'));
 });
 test('amount editing preserves a single poisha', () => {
   assert.equal(parsePoisha(inputAmount(1)), 1);

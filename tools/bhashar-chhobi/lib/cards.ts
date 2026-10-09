@@ -1,6 +1,6 @@
 export const objects = [
-  { id: 'guava', name: 'পেয়ারা', note: 'ফলের নাম' },
-  { id: 'kite', name: 'ঘুড়ি', note: 'খেলার সঙ্গী' },
+  { id: 'guava', name: 'পেয়ারা', note: 'ফলের নাম' },
+  { id: 'kite', name: 'ঘুড়ি', note: 'খেলার সঙ্গী' },
   { id: 'pitcher', name: 'কলস', note: 'ঘরের জিনিস' },
   { id: 'top', name: 'লাটিম', note: 'খেলার সঙ্গী' },
   { id: 'fish', name: 'মাছ', note: 'চেনা প্রাণী' },
@@ -22,7 +22,7 @@ export function cardLines(text: string) {
 }
 
 export type LanguageCard = { objectId: ObjectId; word: string; area: string; pronunciation: string; paletteIndex: number };
-export const defaultCard: LanguageCard = { objectId: 'guava', word: 'পেয়ারা', area: '', pronunciation: '', paletteIndex: 0 };
+export const defaultCard: LanguageCard = { objectId: 'guava', word: 'পেয়ারা', area: '', pronunciation: '', paletteIndex: 0 };
 
 export function selectCardObject(card: LanguageCard, objectId: ObjectId): LanguageCard {
   if (card.objectId === objectId) return card;

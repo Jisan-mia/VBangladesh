@@ -29,6 +29,6 @@ test("an invitation includes the action and duration without claiming an event",
   const invitation = createInvitation(plan);
   assert.ok(invitation.includes(plan.title));
   assert.ok(invitation.includes("৩০ মিনিট"));
-  assert.ok(invitation.includes("এটি কোনো আয়োজকের অনুষ্ঠান নয়"));
-  assert.ok(invitation.includes("সময় ও জায়গা আমরা আলোচনা করে ঠিক করব"));
+  assert.ok(invitation.includes("এটি কোনো আয়োজকের অনুষ্ঠান নয়"));
+  assert.ok(invitation.includes("সময় ও জায়গা আমরা আলোচনা করে ঠিক করব"));
 });
