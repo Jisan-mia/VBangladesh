@@ -27,7 +27,7 @@ export function DrawingCanvas({ settings, strokes, brush, svgRef, onStroke, onBu
   function start(event: PointerEvent<SVGSVGElement>) {
     if (active.current || !event.isPrimary || event.button !== 0) return;
     if (strokes.length >= MAX_STROKES) {
-      onNotice("৬০টি রেখা হয়েছে। নতুন করে আঁকতে একটি ধাপ ফেরান বা আঁকা মুছুন।");
+      onNotice("৬০টা রেখা হয়ে গেছে। আরও আঁকতে ‘এক ধাপ পেছাও’ চেপে একটা রেখা সরাও, নয়তো আঁকা মুছে দাও।");
       return;
     }
     event.preventDefault();
@@ -74,7 +74,7 @@ export function DrawingCanvas({ settings, strokes, brush, svgRef, onStroke, onBu
     frame.current = null;
     setActiveStroke(null);
     onBusyChange(false);
-    onNotice("এই রেখাটি বাতিল হয়েছে। আগের আঁকা আছে।");
+    onNotice("এই রেখাটা বাদ গেল। আগের আঁকা ঠিক আছে।");
   }
 
   return <AlpanaDrawing settings={settings} strokes={strokes} activeStroke={activeStroke} svgRef={svgRef} interaction={{

@@ -23,14 +23,14 @@ export function recipeLines(text: string): string[] {
 
 export function validateRecipe(draft: RecipeDraft): Partial<Record<keyof RecipeDraft, string>> {
   const errors: Partial<Record<keyof RecipeDraft, string>> = {};
-  if (!draft.title.trim()) errors.title = "রান্নার নাম লিখুন।";
-  if (!draft.ingredients.trim()) errors.ingredients = "অন্তত একটি উপকরণ লিখুন।";
-  if (!draft.steps.trim()) errors.steps = "অন্তত একটি ধাপ লিখুন।";
+  if (!draft.title.trim()) errors.title = "রান্নার নামটা লেখো।";
+  if (!draft.ingredients.trim()) errors.ingredients = "অন্তত একটা উপকরণ লেখো।";
+  if (!draft.steps.trim()) errors.steps = "অন্তত একটা ধাপ লেখো।";
   for (const field of recipeFields) {
-    if (draft[field].length > recipeLimits[field]) errors[field] = `এই ঘরে সর্বোচ্চ ${number.format(recipeLimits[field])} অক্ষর লিখুন।`;
+    if (draft[field].length > recipeLimits[field]) errors[field] = `এই ঘরে ${number.format(recipeLimits[field])} অক্ষরের মধ্যে লেখো।`;
   }
-  if (recipeLines(draft.ingredients).length > MAX_INGREDIENTS) errors.ingredients = "সর্বোচ্চ ৩০টি উপকরণ আলাদা লাইনে লিখুন।";
-  if (recipeLines(draft.steps).length > MAX_STEPS) errors.steps = "সর্বোচ্চ ২০টি ধাপ আলাদা লাইনে লিখুন।";
+  if (recipeLines(draft.ingredients).length > MAX_INGREDIENTS) errors.ingredients = "উপকরণ ৩০টার বেশি হয়ে গেছে। ৩০টার মধ্যে রাখো।";
+  if (recipeLines(draft.steps).length > MAX_STEPS) errors.steps = "ধাপ ২০টার বেশি হয়ে গেছে। ২০টার মধ্যে রাখো।";
   return errors;
 }
 
@@ -51,13 +51,13 @@ export function recipeText(draft: RecipeDraft): string {
   const card = recipeCard(draft);
   return [
     card.title,
-    ...(card.learnedFrom ? [`যাঁর কাছে শেখা: ${card.learnedFrom}`] : []),
+    ...(card.learnedFrom ? [`কার কাছে শেখা: ${card.learnedFrom}`] : []),
     ...(card.servings ? [`কতজনের জন্য: ${card.servings}`] : []),
     "\nউপকরণ",
     ...card.ingredients.map((ingredient) => `• ${ingredient}`),
-    "\nযেভাবে রান্না করবেন",
+    "\nযেভাবে রাঁধবে",
     ...card.steps.map((step, index) => `${number.format(index + 1)}. ${step}`),
-    ...(card.memory ? ["\nএই রান্নার সঙ্গে যে গল্প", card.memory] : []),
+    ...(card.memory ? ["\nএই রান্নার পেছনের গল্প", card.memory] : []),
     "\nআমাদের রান্নাখাতা",
   ].join("\n");
 }
@@ -66,7 +66,7 @@ export const exampleRecipe: RecipeDraft = {
   title: "শসা-টমেটোর সালাদ (নমুনা)",
   learnedFrom: "",
   servings: "২ জন (নমুনা)",
-  ingredients: "শসা — ১টি\nটমেটো — ১টি\nলেবুর রস — ১ চা-চামচ\nলবণ — স্বাদমতো",
-  steps: "শসা ও টমেটো ভালো করে ধুয়ে নিন।\nশসা ও টমেটো ছোট টুকরো করে কাটুন।\nলেবুর রস ও লবণ মিশিয়ে পরিবেশন করুন।",
+  ingredients: "শসা — ১টা\nটমেটো — ১টা\nলেবুর রস — ১ চা-চামচ\nলবণ — স্বাদমতো",
+  steps: "শসা আর টমেটো ভালো করে ধুয়ে নাও।\nদুটোই ছোট ছোট টুকরো করে কাটো।\nলেবুর রস আর লবণ মিশিয়ে খেতে দাও।",
   memory: "",
 };

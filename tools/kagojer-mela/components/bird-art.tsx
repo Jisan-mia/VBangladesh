@@ -38,7 +38,7 @@ export function StandingBird({ design, prefix }: { design: BirdDesign; prefix: s
 
 export function BirdPortrait({ design, prefix, svgRef }: { design: BirdDesign; prefix: string; svgRef?: Ref<SVGSVGElement> }) {
   const palette = paletteFor(design);
-  return <svg ref={svgRef} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720" width="1080" height="1080" role="img" aria-label={`${drawingName(design.name)}: সাজানো পাখির নমুনা`}>
+  return <svg ref={svgRef} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720" width="1080" height="1080" role="img" aria-label={`${drawingName(design.name)}: সাজানো কাগজের পাখির ছবি`}>
     <rect width="720" height="720" fill="#faf4e8" />
     <path d="M0 476C170 449 402 487 720 451V720H0Z" fill={palette.backdrop} />
     <path d="M69 475C223 458 493 490 649 467" fill="none" stroke="#d2c9b4" strokeWidth="1" />

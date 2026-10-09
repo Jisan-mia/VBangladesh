@@ -21,7 +21,7 @@ export type SceneObject = Position & { id: string; kind: ObjectKind };
 export const MAX_OBJECTS = 18;
 
 export function boundPosition(point: Position): Position {
-  if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) throw new Error('জায়গাটি বেছে নেওয়া যায়নি। আবার চাপুন।');
+  if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) throw new Error('জায়গাটা ধরা গেল না। আরেকবার চাপো।');
   const x = point.x - 480;
   const y = point.y - 425;
   const distance = Math.abs(x) / 355 + Math.abs(y) / 180;
@@ -30,8 +30,8 @@ export function boundPosition(point: Position): Position {
 }
 
 export function addObject(items: SceneObject[], object: Pick<SceneObject, 'id' | 'kind'>): SceneObject[] {
-  if (items.length >= MAX_OBJECTS) throw new Error('এক দৃশ্যে সর্বোচ্চ ১৮টি জিনিস রাখা যাবে। আগে একটি সরান।');
-  if (items.some(item => item.id === object.id)) throw new Error('জিনিসটি যোগ করা যায়নি। আবার চেষ্টা করুন।');
+  if (items.length >= MAX_OBJECTS) throw new Error('এক দৃশ্যে ১৮টার বেশি জিনিস বসানো যায় না। আগে একটা বাদ দাও।');
+  if (items.some(item => item.id === object.id)) throw new Error('জিনিসটা বসানো গেল না। আরেকবার চেষ্টা করো।');
   const position = boundPosition({ x: 480 + ((items.length % 3) - 1) * 42, y: 440 + (Math.floor(items.length / 3) % 3) * 23 });
   return [...items, { ...object, ...position }];
 }

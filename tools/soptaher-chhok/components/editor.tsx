@@ -14,7 +14,7 @@ export function Editor() {
   const editor = useHistory<Routine>(() => ({ title: 'আমার সপ্তাহ', cells: presetCells('study') }));
   const [selected, setSelected] = useState(0);
   const [destination, setDestination] = useState(1);
-  const [notice, setNotice] = useState('শুরুতে একটি নমুনা আছে। নিজের কাজ লিখে বদলে নিন।');
+  const [notice, setNotice] = useState('শুরুতে একটা নমুনা দেওয়া আছে। নিজের কাজ লিখে বদলে নাও।');
   const [preview, setPreview] = useState<{ source: number; point: Point; target: number | null } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const drag = useRef<CellDrag | null>(null);
@@ -28,7 +28,7 @@ export function Editor() {
     if (drag.current) return;
     editor.commit(value => ({ ...value, cells: swapCells(value.cells, from, to) }));
     setSelected(to);
-    setNotice(`${cellName(from)} ও ${cellName(to)}—দুই ঘরের কাজ ও রং বদলেছে।`);
+    setNotice(`${cellName(from)} আর ${cellName(to)}, দুই ঘরের কাজ আর রং অদলবদল হয়েছে।`);
   }
 
   function canvasPoint(point: Point): Point | null {
@@ -79,10 +79,10 @@ export function Editor() {
     setPreview(null);
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
     if (!active.moved) return;
-    if (active.target === null) { setNotice('ঘরের বাইরে ছেড়েছেন। কাজ আগের ঘরেই আছে।'); return; }
+    if (active.target === null) { setNotice('ঘরের বাইরে ছেড়েছ, কাজটা আগের ঘরেই আছে।'); return; }
     editor.commit({ ...active.routine, cells: swapCells(active.routine.cells, active.source, active.target) });
     setSelected(active.target);
-    setNotice('দুই ঘরের কাজ ও রং বদলেছে। আগের ধাপ বোতামে ফিরিয়ে নিতে পারবেন।');
+    setNotice('দুই ঘরের কাজ আর রং অদলবদল হয়েছে। ভুল হলে ‘এক ধাপ পেছাও’ চাপো।');
   }
 
   function cancelDrag(pointerId?: number) {
@@ -91,13 +91,13 @@ export function Editor() {
     drag.current = null;
     setPreview(null);
     if (svgRef.current?.hasPointerCapture(active.pointerId)) svgRef.current.releasePointerCapture(active.pointerId);
-    setNotice('টেনে বদলানো বাতিল হয়েছে। আগের ছকই আছে।');
+    setNotice('টানা বাতিল হয়েছে, ছক আগের মতোই আছে।');
   }
 
   function historyStep(step: 'undo' | 'redo') {
     if (drag.current) { cancelDrag(); return; }
     if (step === 'undo') editor.undo(); else editor.redo();
-    setNotice(step === 'undo' ? 'আগের ধাপে ফিরেছেন।' : 'পরের ধাপে ফিরেছেন।');
+    setNotice(step === 'undo' ? 'এক ধাপ পেছনে গেছে।' : 'এক ধাপ এগিয়েছে।');
   }
 
   function canvasKey(event: KeyboardEvent<SVGSVGElement>) {
@@ -122,7 +122,7 @@ export function Editor() {
   function preset(value: 'study' | 'home' | 'empty') {
     if (drag.current) return;
     editor.commit(routine => ({ ...routine, cells: presetCells(value) }));
-    setNotice(value === 'empty' ? 'ছক খালি হয়েছে। চাইলে আগের ধাপে ফিরতে পারবেন।' : 'নমুনা ছক এসেছে। নিজের মতো বদলে নিন।');
+    setNotice(value === 'empty' ? 'ছক খালি হয়ে গেছে। ভুল হলে ‘এক ধাপ পেছাও’ চাপো।' : 'নমুনা ছক চলে এসেছে। এবার নিজের মতো বদলে নাও।');
   }
 
   function changeTitle(text: string) {
@@ -131,17 +131,17 @@ export function Editor() {
 
   async function print() {
     try { await document.fonts.ready; window.print(); }
-    catch { setNotice('প্রিন্টের উইন্ডো খোলা যায়নি। ব্রাউজারের মেনু থেকে চেষ্টা করুন।'); }
+    catch { setNotice('প্রিন্টের পাতা খুলল না। ব্রাউজারের মেনু থেকে প্রিন্ট করে দেখো।'); }
   }
 
   return <div className="studio-grid week-editor">
     <div className="studio-preview week-preview">
-      <svg ref={svgRef} className="studio-art week-art" viewBox="0 0 1080 1160" width="1080" height="1160" role="img" tabIndex={0} aria-label={`${editor.value.title || 'আমার সপ্তাহ'}—সাত দিন ও চার বেলার কাজের ছক`} aria-describedby="week-keyboard-help" onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={finishDrag} onPointerCancel={event => cancelDrag(event.pointerId)} onLostPointerCapture={event => cancelDrag(event.pointerId)} onKeyDown={canvasKey}>
+      <svg ref={svgRef} className="studio-art week-art" viewBox="0 0 1080 1160" width="1080" height="1160" role="img" tabIndex={0} aria-label={`${editor.value.title || 'আমার সপ্তাহ'}: সাত দিন, চার বেলার রুটিনের ছক`} aria-describedby="week-keyboard-help" onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={finishDrag} onPointerCancel={event => cancelDrag(event.pointerId)} onLostPointerCapture={event => cancelDrag(event.pointerId)} onKeyDown={canvasKey}>
         <rect width="1080" height="1160" fill="#fcfbf7"/>
         <rect x="48" y="45" width="8" height="62" rx="3" fill="#d9aa50"/>
         <FittedSvgText x="76" y="82" fontSize={36} fontWeight="600" fill="#284977" maxWidth={940}>{editor.value.title || 'আমার সপ্তাহ'}</FittedSvgText>
         <text x="76" y="119" fontFamily="Bangla" fontSize="17" fill="#7a8798">কাজের ফাঁকে নিজের জন্যও একটু সময়</text>
-        <text x="60" y="182" fontFamily="Bangla" fontSize="18" fill="#78859a">দিন / সময়</text>
+        <text x="60" y="182" fontFamily="Bangla" fontSize="18" fill="#78859a">দিন / বেলা</text>
         {parts.map((part, column) => <g key={part}><rect x={grid.x + column * (grid.width + grid.gap)} y="157" width={grid.width} height="43" rx="6" fill="#37599a"/><text x={grid.x + column * (grid.width + grid.gap) + grid.width / 2} y="186" textAnchor="middle" fontFamily="Bangla" fontSize="22" fill="white">{part}</text></g>)}
         {days.map((day, row) => <text key={day} x="58" y={grid.y + row * (grid.height + grid.gap) + 63} fontFamily="Bangla" fontSize="23" fill="#425775">{day}</text>)}
         {editor.value.cells.map((cell, index) => {
@@ -155,22 +155,22 @@ export function Editor() {
         {preview && <g data-export-ignore="true" pointerEvents="none" transform={`translate(${preview.point.x} ${preview.point.y})`} opacity=".85"><rect width={grid.width} height={grid.height} rx="7" fill={colors.find(color => color.id === editor.value.cells[preview.source].color)!.fill} stroke="#37599a" strokeWidth="3"/>{cellLines(editor.value.cells[preview.source].text).map((line, index) => <FittedSvgText key={index} x="14" y={46 + index * 29} fontSize={22} maxWidth={grid.width - 28} fill="#33445e">{line}</FittedSvgText>)}</g>}
         <path d="M48 1100h984" stroke="#d9dfe5"/>
         <text x="48" y="1133" fontFamily="Bangla" fontSize="17" fill="#6c7a8e">সপ্তাহের ছক · একটুখানি</text>
-        <text x="1032" y="1133" textAnchor="end" fontFamily="Bangla" fontSize="15" fill="#8290a0">নিজের মতো করে বদলে নিন</text>
+        <text x="1032" y="1133" textAnchor="end" fontFamily="Bangla" fontSize="15" fill="#8290a0">নিজের হাতে সাজানো সপ্তাহ</text>
       </svg>
-      <p className="studio-note" id="week-keyboard-help">কাজের ঘর টেনে অন্য ঘরে নিন। ছবিতে ফোকাস থাকলে তিরচিহ্নে ঘর বাছুন, Shift ও তিরচিহ্নে বদলান, Delete দিয়ে লেখা মুছুন। Escape টান বাতিল করে।</p>
-      <div className="studio-history"><button type="button" disabled={!editor.canUndo || preview !== null} onClick={() => historyStep('undo')}>আগের ধাপ</button><button type="button" disabled={!editor.canRedo || preview !== null} onClick={() => historyStep('redo')}>পরের ধাপ</button></div>
+      <p className="studio-note" id="week-keyboard-help">কাজের ঘর চেপে ধরে অন্য ঘরে টেনে নাও। কিবোর্ডে: তিরচিহ্নে ঘর বাছো, Shift আর তিরচিহ্নে বদলাও, Delete চাপলে লেখা মুছবে, Escape চাপলে টানা বাতিল হবে।</p>
+      <div className="studio-history"><button type="button" disabled={!editor.canUndo || preview !== null} onClick={() => historyStep('undo')}>এক ধাপ পেছাও</button><button type="button" disabled={!editor.canRedo || preview !== null} onClick={() => historyStep('redo')}>এক ধাপ এগোও</button></div>
       <div inert={preview !== null}><ArtworkDownloads svgRef={svgRef} filename="আমার-সপ্তাহের-ছক"/></div>
-      <div className="studio-actions"><button type="button" disabled={preview !== null} onClick={print}>ছক প্রিন্ট করুন</button></div>
+      <div className="studio-actions"><button type="button" disabled={preview !== null} onClick={print}>ছক প্রিন্ট করো</button></div>
     </div>
     <div className="studio-panel" inert={preview !== null}>
-      <h2>একটি ঘর বেছে লিখুন</h2>
-      <div className="week-selectors"><label className="studio-label" htmlFor="week-day">দিন<select id="week-day" value={Math.floor(selected / 4)} onChange={event => setSelected(Number(event.target.value) * 4 + selected % 4)}>{days.map((day, index) => <option key={day} value={index}>{day}</option>)}</select></label><label className="studio-label" htmlFor="week-part">সময়<select id="week-part" value={selected % 4} onChange={event => setSelected(Math.floor(selected / 4) * 4 + Number(event.target.value))}>{parts.map((part, index) => <option key={part} value={index}>{part}</option>)}</select></label></div>
-      <label className="studio-label" htmlFor="week-task">{cellName(selected)}—কী করবেন?</label><input id="week-task" value={current.text} onChange={event => changeCell({ text: event.target.value })} placeholder="যেমন: গণিত অনুশীলন"/><p className="studio-note">সর্বোচ্চ ৩২টি অক্ষর বা অক্ষরগুচ্ছ। এই লেখাই ছবিতে থাকবে।</p>
+      <h2>একটা ঘর বেছে লেখো</h2>
+      <div className="week-selectors"><label className="studio-label" htmlFor="week-day">দিন<select id="week-day" value={Math.floor(selected / 4)} onChange={event => setSelected(Number(event.target.value) * 4 + selected % 4)}>{days.map((day, index) => <option key={day} value={index}>{day}</option>)}</select></label><label className="studio-label" htmlFor="week-part">বেলা<select id="week-part" value={selected % 4} onChange={event => setSelected(Math.floor(selected / 4) * 4 + Number(event.target.value))}>{parts.map((part, index) => <option key={part} value={index}>{part}</option>)}</select></label></div>
+      <label className="studio-label" htmlFor="week-task">{cellName(selected)}: কী করবে?</label><input id="week-task" value={current.text} onChange={event => changeCell({ text: event.target.value })} placeholder="যেমন: গণিত অনুশীলন"/><p className="studio-note">৩২ অক্ষরের মধ্যে লেখো। যা লিখবে, ছবিতে সেটাই থাকবে।</p>
       <fieldset><legend>ঘরের রং</legend><div className="studio-choices week-colors">{colors.map(color => <button type="button" key={color.id} aria-pressed={current.color === color.id} onClick={() => changeCell({ color: color.id })}><span style={{ background: color.fill }}/>{color.name}</button>)}</div></fieldset>
-      <div className="week-swap"><label className="studio-label" htmlFor="week-destination">কোন ঘরের সঙ্গে বদলাবেন?</label><select id="week-destination" value={destination} onChange={event => setDestination(Number(event.target.value))}>{editor.value.cells.map((cell, index) => <option key={index} value={index}>{cellName(index)}{cell.text ? ` — ${cell.text}` : ''}</option>)}</select><div className="studio-actions"><button type="button" disabled={selected === destination} onClick={() => swap(selected, destination)}>দুই ঘর বদলান</button><button type="button" disabled={!current.text} onClick={() => changeCell({ text: '' })}>এই ঘর খালি করুন</button></div></div>
+      <div className="week-swap"><label className="studio-label" htmlFor="week-destination">কোন ঘরের সাথে বদলাবে?</label><select id="week-destination" value={destination} onChange={event => setDestination(Number(event.target.value))}>{editor.value.cells.map((cell, index) => <option key={index} value={index}>{cellName(index)}{cell.text ? ` — ${cell.text}` : ''}</option>)}</select><div className="studio-actions"><button type="button" disabled={selected === destination} onClick={() => swap(selected, destination)}>দুই ঘর বদলাও</button><button type="button" disabled={!current.text} onClick={() => changeCell({ text: '' })}>এই ঘর খালি করো</button></div></div>
       <label className="studio-label" htmlFor="week-title">ছকের নাম</label><input id="week-title" value={editor.value.title} onChange={event => changeTitle(event.target.value)}/>
-      <fieldset className="week-presets"><legend>নমুনা থেকে শুরু করুন</legend><div className="studio-choices"><button type="button" onClick={() => preset('study')}>পড়া ও বিরতি</button><button type="button" onClick={() => preset('home')}>ঘরের কাজ</button><button type="button" onClick={() => preset('empty')}>ছক খালি করুন</button></div></fieldset>
-      <p className="studio-live" role="status">{notice}</p><p className="studio-note">এটি কোনো বিজ্ঞপ্তি পাঠায় না। পাতা বন্ধ করার আগে ছবি বা প্রিন্ট রেখে দিন।</p>
+      <fieldset className="week-presets"><legend>নমুনা থেকে শুরু করো</legend><div className="studio-choices"><button type="button" onClick={() => preset('study')}>পড়া ও বিরতি</button><button type="button" onClick={() => preset('home')}>ঘরের কাজ</button><button type="button" onClick={() => preset('empty')}>ছক খালি করো</button></div></fieldset>
+      <p className="studio-live" role="status">{notice}</p><p className="studio-note">এটা কোনো রিমাইন্ডার দেয় না। পাতা বন্ধের আগে ছবি নামিয়ে রাখো বা প্রিন্ট করে নাও।</p>
     </div>
   </div>;
 }

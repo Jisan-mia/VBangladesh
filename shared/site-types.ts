@@ -2,6 +2,8 @@ export type SiteContent = {
   slug: string;
   socialImage?: string;
   name: string;
+  /** Warmer H1 for StudioPage tools; the tool name then shows as a small label above it. */
+  headline?: string;
   title: string;
   description: string;
   lead: string;

@@ -5,8 +5,8 @@ import { calendarFile, dateInputs, deadlineState, formatDeadline, MAX_ENTRIES, M
 import { loadEntries, saveEntries, STORAGE_KEY } from '../lib/storage';
 
 type Draft = { title: string; source: string; date: string; time: string; tasks: string };
-const emptyDraft: Draft = { title: '', source: '', date: '', time: '২৩:৫৯', tasks: 'আবেদনের শর্ত মিলিয়ে দেখা\nকাগজপত্র প্রস্তুত করা\nআবেদন জমা দেওয়া' };
-const stateNames: Record<DeadlineState, string> = { upcoming: 'সময় আছে', today: 'আজ শেষ দিন', overdue: 'সময় পেরিয়েছে', done: 'শেষ করেছি' };
+const emptyDraft: Draft = { title: '', source: '', date: '', time: '২৩:৫৯', tasks: 'যোগ্যতা মিলিয়ে দেখা\nকাগজপত্র গোছানো\nআবেদন জমা দেওয়া' };
+const stateNames: Record<DeadlineState, string> = { upcoming: 'সময় আছে', today: 'আজ শেষ দিন', overdue: 'সময় শেষ', done: 'শেষ করেছি' };
 const banglaNumber = new Intl.NumberFormat('bn-BD');
 
 function downloadFile(file: { text: string; name: string; type: string }) {
@@ -44,8 +44,8 @@ export function DeadlinePlanner() {
     document.addEventListener('visibilitychange', refreshTime);
     try {
       const saved = loadEntries(window.localStorage);
-      if (saved) { setEntries(saved); setSavedSnapshot(JSON.stringify(saved)); setHasSaved(true); setStatus('সংরক্ষিত তালিকা খোলা হয়েছে।'); }
-    } catch { setStorageError(true); setStatus('সংরক্ষিত তালিকা পড়া যায়নি। পুরোনো তথ্য বদলানো হয়নি। নতুন তালিকা তৈরি করে ফাইল ডাউনলোড করতে পারবেন।'); }
+      if (saved) { setEntries(saved); setSavedSnapshot(JSON.stringify(saved)); setHasSaved(true); setStatus('আগে রেখে দেওয়া লিস্টটা খুলেছে।'); }
+    } catch { setStorageError(true); setStatus('আগে রাখা লিস্টটা পড়া গেল না। ওটা যেমন ছিল তেমনই আছে। চাইলে নতুন লিস্ট বানিয়ে ফাইল নামিয়ে রাখতে পারো।'); }
     setReady(true);
     return () => { window.clearInterval(interval); window.removeEventListener('focus', refreshTime); document.removeEventListener('visibilitychange', refreshTime); };
   }, []);
@@ -54,18 +54,18 @@ export function DeadlinePlanner() {
     event.preventDefault();
     setError('');
     try {
-      if (!draft.title.trim()) throw new Error('আবেদন বা কাজটির নাম লিখুন।');
-      if (!editingId && entries.length >= MAX_ENTRIES) throw new Error('এক তালিকায় সর্বোচ্চ ৫০টি আবেদন রাখা যাবে।');
+      if (!draft.title.trim()) throw new Error('আবেদনের একটা নাম লেখো।');
+      if (!editingId && entries.length >= MAX_ENTRIES) throw new Error('এক লিস্টে ৫০টার বেশি আবেদন রাখা যায় না।');
       const labels = draft.tasks.split(/\r?\n/).map(label => label.trim()).filter(Boolean);
-      if (labels.length > MAX_TASKS) throw new Error('এক আবেদনের জন্য সর্বোচ্চ ১২টি কাজ লিখুন।');
+      if (labels.length > MAX_TASKS) throw new Error('একটা আবেদনে ১২টার বেশি কাজ রাখা যায় না।');
       const existing = entries.find(entry => entry.id === editingId);
       const entry: Deadline = { id: editingId ?? crypto.randomUUID(), title: draft.title.trim(), source: validateSource(draft.source), dueAt: parseDeadline(draft.date, draft.time), complete: existing?.complete ?? false,
         tasks: labels.map(label => ({ label, done: existing?.tasks.find(task => task.label === label)?.done ?? false })) };
       const next = existing ? entries.map(item => item.id === entry.id ? entry : item) : [...entries, entry];
       setEntries(validateEntries(next));
-      setStatus(existing ? 'আবেদনের তথ্য বদলেছে। পরিবর্তন রাখতে আবার সংরক্ষণ করুন।' : 'আবেদনটি তালিকায় যোগ হয়েছে। বিজ্ঞপ্তির সঙ্গে তারিখ মিলিয়ে নিন।');
+      setStatus(existing ? 'বদলে গেছে। মনে রাখতে চাইলে আবার রেখে দাও।' : 'লিস্টে উঠে গেছে! সার্কুলারের সাথে তারিখটা একবার মিলিয়ে নিও।');
       setDraft(emptyDraft); setEditingId(null); titleInput.current?.focus();
-    } catch (failure) { setError(failure instanceof Error ? failure.message : 'আবেদনটি যোগ করা যায়নি। লেখা তথ্যগুলো মিলিয়ে নিন।'); }
+    } catch (failure) { setError(failure instanceof Error ? failure.message : 'আবেদনটা যোগ করা গেল না। যা লিখেছ, একবার দেখে নাও।'); }
   }
 
   function requestEdit(entry: Deadline) {
@@ -85,7 +85,7 @@ export function DeadlinePlanner() {
       const entry = entries.find(item => item.id === confirmation.editId);
       setConfirmation(null);
       if (entry) editEntry(entry);
-      else setStatus('আবেদনটি আর তালিকায় নেই। আপনি যা লিখছিলেন, তা বদলানো হয়নি।');
+      else setStatus('ওই আবেদনটা আর লিস্টে নেই। তুমি যা লিখছিলে, সেটা যেমন ছিল তেমনই আছে।');
       return;
     }
     if (confirmation === 'reopen') { reopen(); return; }
@@ -95,94 +95,94 @@ export function DeadlinePlanner() {
   function removeEntry(entry: Deadline) {
     setEntries(entries.filter(item => item.id !== entry.id));
     if (editingId === entry.id) { setDraft(emptyDraft); setEditingId(null); setError(''); }
-    setStatus(`${entry.title} তালিকা থেকে সরানো হয়েছে। পরিবর্তনটি রাখতে আবার সংরক্ষণ করুন।`);
+    setStatus(`${entry.title} লিস্ট থেকে বাদ গেল। এভাবেই রাখতে চাইলে আবার রেখে দাও।`);
   }
 
   function toggleTask(entry: Deadline, label: string) {
     setEntries(entries.map(item => item.id === entry.id ? { ...item, tasks: item.tasks.map(task => task.label === label ? { ...task, done: !task.done } : task) } : item));
-    setStatus('কাজের অগ্রগতি বদলেছে। রাখতে চাইলে আবার সংরক্ষণ করুন।');
+    setStatus('টিক বদলেছে। মনে রাখতে চাইলে আবার রেখে দাও।');
   }
 
   function saveCurrent() {
     try {
       saveEntries(window.localStorage, entries);
       setSavedSnapshot(JSON.stringify(entries)); setHasSaved(true); setStorageError(false);
-      setStatus('তালিকা এই ব্রাউজারে সংরক্ষণ হয়েছে। পরে বদলালে আবার রাখুন।');
-    } catch { setStorageError(true); setStatus('তালিকা সংরক্ষণ হয়নি। ব্রাউজারের অনুমতি, জায়গা বা পুরোনো তথ্যের সমস্যা হতে পারে। পর্দার তালিকা আছে। চাইলে ফাইল ডাউনলোড করে রাখুন।'); }
+      setStatus('রেখে দেওয়া হলো! এই ব্রাউজারে খুললেই লিস্টটা পাবে। পরে কিছু বদলালে আবার রেখে দিও।');
+    } catch { setStorageError(true); setStatus('লিস্টটা রাখা গেল না। ব্রাউজারে জায়গা বা অনুমতির সমস্যা থাকতে পারে, অথবা আগে রাখা লিস্টটা পড়া যাচ্ছে না। পর্দার লিস্ট ঠিক আছে, চাইলে ফাইল নামিয়ে রাখো।'); }
   }
 
   function reopen() {
     setConfirmation(null);
     try {
       const saved = loadEntries(window.localStorage);
-      if (!saved) { setHasSaved(false); setSavedSnapshot('[]'); setStorageError(false); setStatus('এই ব্রাউজারে কোনো সংরক্ষিত তালিকা নেই। বর্তমান তথ্য বদলানো হয়নি।'); return; }
+      if (!saved) { setHasSaved(false); setSavedSnapshot('[]'); setStorageError(false); setStatus('এই ব্রাউজারে আগে রাখা কোনো লিস্ট নেই। পর্দার লিস্ট যেমন ছিল, তেমনই আছে।'); return; }
       setEntries(saved); setSavedSnapshot(JSON.stringify(saved)); setHasSaved(true); setStorageError(false);
       setDraft(emptyDraft); setEditingId(null); setError('');
-      setStatus('সংরক্ষিত তালিকা খোলা হয়েছে।');
-    } catch { setStorageError(true); setStatus('সংরক্ষিত তালিকা খোলা যায়নি। পর্দার ও ব্রাউজারের তথ্য বদলানো হয়নি।'); }
+      setStatus('আগে রেখে দেওয়া লিস্টটা খুলেছে।');
+    } catch { setStorageError(true); setStatus('রাখা লিস্টটা খোলা গেল না। পর্দার আর ব্রাউজারের, দুই লিস্টই যেমন ছিল তেমন আছে।'); }
   }
 
   function clearStored() {
     try {
       window.localStorage.removeItem(STORAGE_KEY);
       setSavedSnapshot('[]'); setHasSaved(false); setStorageError(false);
-      if (confirmation === 'clear') { setEntries([]); setDraft(emptyDraft); setEditingId(null); setError(''); setStatus('এই তালিকা ও ব্রাউজারে সংরক্ষিত তথ্য মুছে গেছে।'); }
-      else setStatus('ব্রাউজারের পুরোনো তালিকা মুছে গেছে। পর্দার তথ্য আছে। চাইলে এবার সংরক্ষণ করুন।');
-    } catch { setStatus('ব্রাউজারের তথ্য মোছা যায়নি। কোনো তালিকা বদলানো হয়নি। ব্রাউজারের অনুমতি পরীক্ষা করুন।'); }
+      if (confirmation === 'clear') { setEntries([]); setDraft(emptyDraft); setEditingId(null); setError(''); setStatus('সব মুছে গেছে। পর্দায় বা ব্রাউজারে, কোথাও লিস্টটা আর নেই।'); }
+      else setStatus('ব্রাউজারের পুরোনো লিস্ট মুছে গেছে। পর্দার লিস্ট আছে, চাইলে এবার রেখে দাও।');
+    } catch { setStatus('মোছা গেল না, কোনো লিস্ট বদলায়নি। ব্রাউজারের সেটিংসে এই সাইটের অনুমতি দেখে আরেকবার চেষ্টা করো।'); }
     setConfirmation(null);
   }
 
   function exportCalendar(entry: Deadline) {
     try {
       downloadFile({ text: calendarFile(entry, Date.now()), name: 'shesh-tarikh.ics', type: 'text/calendar;charset=utf-8' });
-      setStatus(`${entry.title}: ক্যালেন্ডারের ফাইল প্রস্তুত। ফাইল খুলে ক্যালেন্ডারে যোগ করুন, তারপর মনে করিয়ে দেওয়ার সময় ঠিক করুন।`);
-    } catch { setStatus('ক্যালেন্ডারের ফাইল তৈরি হয়নি। আপনার তালিকা আছে। চাইলে তারিখটি ক্যালেন্ডারে নিজে লিখে রাখুন।'); }
+      setStatus(`${entry.title}: ক্যালেন্ডারের ফাইল তৈরি। ফাইলটা খুলে ক্যালেন্ডারে যোগ করো, তারপর রিমাইন্ডারের সময় ঠিক করে দাও।`);
+    } catch { setStatus('ক্যালেন্ডারের ফাইল বানানো গেল না। তোমার লিস্ট ঠিক আছে। চাইলে তারিখটা ক্যালেন্ডারে নিজেই লিখে রাখো।'); }
   }
 
   function exportText() {
-    try { downloadFile({ text: textList(orderedEntries), name: 'shesh-tarikh.txt', type: 'text/plain;charset=utf-8' }); setStatus('তালিকার ফাইল প্রস্তুত। ব্রাউজারের ডাউনলোডের তালিকা দেখুন।'); }
-    catch { setStatus('ফাইল ডাউনলোড করা যায়নি। নিচে তালিকার লেখা খুলে কপি করুন। আপনার তথ্য আছে।'); }
+    try { downloadFile({ text: textList(orderedEntries), name: 'shesh-tarikh.txt', type: 'text/plain;charset=utf-8' }); setStatus('লিস্টের ফাইল তৈরি। ব্রাউজারের ডাউনলোডে খুঁজে দেখো।'); }
+    catch { setStatus('ফাইলটা নামানো গেল না। তোমার লিস্ট ঠিক আছে, নিচে ‘লিস্টের লেখা দেখো’ খুলে কপি করে নাও।'); }
   }
 
   return <section className="deadline-tool container" id="tool" aria-labelledby="planner-heading">
-    <div className="deadline-tool-heading"><div><p className="eyebrow">আপনার আবেদনের তালিকা</p><h2 id="planner-heading">শেষ তারিখ লিখে রাখুন</h2></div><p>বিজ্ঞপ্তি দেখে তারিখ ও সময় লিখুন।<br />সব সময় ঢাকার হিসাবে দেখানো হবে।</p></div>
+    <div className="deadline-tool-heading"><div><p className="eyebrow">তোমার আবেদনের লিস্ট</p><h2 id="planner-heading">শেষ তারিখ লিখে রাখো</h2></div><p>সার্কুলার দেখে তারিখ আর সময় লেখো।<br />সময়টা ঢাকার হিসাবে ধরা হবে।</p></div>
     <div className="deadline-workspace">
       <div className="deadline-entry"><form onSubmit={addEntry} noValidate>
-        <div className="deadline-form-heading"><span aria-hidden="true">＋</span><h3>{editingId ? 'তথ্য বদলান' : 'আবেদন যোগ করুন'}</h3></div>
-        <label htmlFor="deadline-title">আবেদন বা কাজের নাম</label><input ref={titleInput} id="deadline-title" value={draft.title} maxLength={100} placeholder="যেমন: বিশ্ববিদ্যালয়ে ভর্তি আবেদন" onChange={event => setDraft({ ...draft, title: event.target.value })} required />
-        <label htmlFor="deadline-source">মূল বিজ্ঞপ্তির লিংক</label><input id="deadline-source" inputMode="url" value={draft.source} maxLength={2048} placeholder="https://…" autoComplete="off" onChange={event => setDraft({ ...draft, source: event.target.value })} aria-describedby="source-help" required /><p className="deadline-hint" id="source-help">বিজ্ঞপ্তি খুলে শেষ তারিখ ও সময় মিলিয়ে নিন।</p>
+        <div className="deadline-form-heading"><span aria-hidden="true">＋</span><h3>{editingId ? 'আবেদনটা বদলাও' : 'নতুন আবেদন যোগ করো'}</h3></div>
+        <label htmlFor="deadline-title">আবেদনের নাম</label><input ref={titleInput} id="deadline-title" value={draft.title} maxLength={100} placeholder="যেমন: বিশ্ববিদ্যালয় ভর্তি, ব্যাংকের চাকরি" onChange={event => setDraft({ ...draft, title: event.target.value })} required />
+        <label htmlFor="deadline-source">সার্কুলারের লিংক</label><input id="deadline-source" inputMode="url" value={draft.source} maxLength={2048} placeholder="https://…" autoComplete="off" onChange={event => setDraft({ ...draft, source: event.target.value })} aria-describedby="source-help" required /><p className="deadline-hint" id="source-help">সার্কুলার খুলে শেষ তারিখ আর সময়টা মিলিয়ে নাও।</p>
         <div className="deadline-date-fields"><div><label htmlFor="deadline-date">শেষ তারিখ</label><input id="deadline-date" value={draft.date} maxLength={10} placeholder="৩১/১০/২০২৬" onChange={event => setDraft({ ...draft, date: event.target.value })} aria-describedby="date-help" required /></div><div><label htmlFor="deadline-time">শেষ সময়</label><input id="deadline-time" value={draft.time} maxLength={5} placeholder="২৩:৫৯" onChange={event => setDraft({ ...draft, time: event.target.value })} aria-describedby="date-help" required /></div></div>
-        <p className="deadline-hint" id="date-help">দিন/মাস/বছর লিখুন, সময় দিন ২৪ ঘণ্টার হিসাবে। বাংলা বা ইংরেজি অঙ্ক দুটোই চলে। ২৩:৫৯ সময়টি বিজ্ঞপ্তি অনুযায়ী বদলান।</p>
-        <label htmlFor="deadline-tasks">বাকি কাজগুলো <span>চাইলে বদলান</span></label><textarea id="deadline-tasks" rows={4} value={draft.tasks} maxLength={1500} onChange={event => setDraft({ ...draft, tasks: event.target.value })} aria-describedby="tasks-help" /><p className="deadline-hint" id="tasks-help">প্রতি লাইনে একটি কাজ লিখুন, সর্বোচ্চ ১২টি। শুরুতে দেওয়া কাজগুলো চাইলে বদলান।</p>
-        {editingId && <p className="deadline-hint">“পরিবর্তন রাখুন” চাপলে তালিকা বদলাবে। যে কাজের লেখা বদলাননি, সেটির টিক থাকবে।</p>}{error && <p className="deadline-error" role="alert">{error}</p>}
-        <button className="button deadline-add" type="submit">{editingId ? 'পরিবর্তন রাখুন' : 'তালিকায় যোগ করুন'}<span aria-hidden="true">＋</span></button>
-        {editingId && <button type="button" className="deadline-text-button" onClick={() => { setDraft(emptyDraft); setEditingId(null); setError(''); }}>পরিবর্তন বাতিল</button>}
-      </form><p className="deadline-form-note">এখানে শুধু নিজের হিসাব রাখছেন। এখান থেকে কোনো আবেদন জমা হয় না।</p></div>
+        <p className="deadline-hint" id="date-help">দিন/মাস/বছর করে লেখো। সময় ২৪ ঘণ্টার হিসাবে, যেমন বিকেল ৫টা মানে ১৭:০০। বাংলা-ইংরেজি দুই অঙ্কই চলে। ২৩:৫৯ সার্কুলার দেখে বদলে নিও।</p>
+        <label htmlFor="deadline-tasks">কী কী কাজ বাকি <span>নিজের মতো বদলাও</span></label><textarea id="deadline-tasks" rows={4} value={draft.tasks} maxLength={1500} onChange={event => setDraft({ ...draft, tasks: event.target.value })} aria-describedby="tasks-help" /><p className="deadline-hint" id="tasks-help">প্রতি লাইনে একটা কাজ, ১২টার মধ্যে। আগে থেকে লেখাগুলো বদলাতে বা মুছতে পারো।</p>
+        {editingId && <p className="deadline-hint">“বদলটা রাখো” চাপলে লিস্ট বদলাবে। যে কাজের লেখা বদলাওনি, তার টিক থেকে যাবে।</p>}{error && <p className="deadline-error" role="alert">{error}</p>}
+        <button className="button deadline-add" type="submit">{editingId ? 'বদলটা রাখো' : 'লিস্টে যোগ করো'}<span aria-hidden="true">＋</span></button>
+        {editingId && <button type="button" className="deadline-text-button" onClick={() => { setDraft(emptyDraft); setEditingId(null); setError(''); }}>থাক, বদলাব না</button>}
+      </form><p className="deadline-form-note">এখানে শুধু নিজের হিসাব রাখছ। এখান থেকে কোনো আবেদন জমা হয় না।</p></div>
       <div className="deadline-agenda">
-        <div className="deadline-agenda-header"><h3>আপনার শেষ তারিখগুলো</h3><span>{banglaNumber.format(pending)}টি বাকি</span></div>
-        {entries.length === 0 ? <div className="deadline-empty"><svg width="115" height="118" viewBox="0 0 115 118" fill="none" aria-hidden="true"><path d="M24 28h70v69H24z" fill="#faf4f5" stroke="currentColor" strokeWidth="1.5"/><path d="M24 46h70M41 20v17M77 20v17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M39 61h8m10 0h8m10 0h8M39 77h8m10 0h8" stroke="currentColor" strokeWidth="2"/><circle cx="91" cy="94" r="15" fill="#fff" stroke="currentColor" strokeWidth="1.5"/><path d="m86 94 4 4 7-8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg><h3>এখনো কোনো আবেদন নেই</h3><p>আবেদন যোগ করুন। শেষ সময়<br />আর বাকি কাজ এখানে দেখবেন।</p></div> : <ol className="deadline-list">{orderedEntries.map(entry => {
+        <div className="deadline-agenda-header"><h3>তোমার শেষ তারিখগুলো</h3><span>{banglaNumber.format(pending)}টা বাকি</span></div>
+        {entries.length === 0 ? <div className="deadline-empty"><svg width="115" height="118" viewBox="0 0 115 118" fill="none" aria-hidden="true"><path d="M24 28h70v69H24z" fill="#faf4f5" stroke="currentColor" strokeWidth="1.5"/><path d="M24 46h70M41 20v17M77 20v17" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M39 61h8m10 0h8m10 0h8M39 77h8m10 0h8" stroke="currentColor" strokeWidth="2"/><circle cx="91" cy="94" r="15" fill="#fff" stroke="currentColor" strokeWidth="1.5"/><path d="m86 94 4 4 7-8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg><h3>এখনো কোনো আবেদন নেই</h3><p>একটা আবেদন যোগ করো। শেষ সময়<br />আর বাকি কাজ এখানে দেখবে।</p></div> : <ol className="deadline-list">{orderedEntries.map(entry => {
           const state = deadlineState(entry, now ?? 0);
           const doneCount = entry.tasks.filter(task => task.done).length;
           return <li key={entry.id} className="deadline-card" data-state={state}>
             <div className="deadline-card-top"><span className="deadline-state">{stateNames[state]}</span><span className="deadline-card-count">{banglaNumber.format(doneCount)}/{banglaNumber.format(entry.tasks.length)} কাজ</span></div>
             <h3>{entry.title}</h3><p className="deadline-due"><svg width="16" height="17" viewBox="0 0 16 17" fill="none" aria-hidden="true"><path d="M2 4h12v11H2zM2 7h12M5 1v5m6-5v5" stroke="currentColor" strokeWidth="1.2"/></svg><time dateTime={new Date(entry.dueAt).toISOString()}>{formatDeadline(entry.dueAt)}</time><span>ঢাকা</span></p>
-            <a className="deadline-source" href={entry.source} target="_blank" rel="noopener noreferrer">বিজ্ঞপ্তি খুলুন <span aria-hidden="true">↗</span><span className="screen-reader-only"> — নতুন ট্যাবে খুলবে</span></a>
-            {entry.tasks.length > 0 && <ul className="deadline-checklist" aria-label={`${entry.title}: প্রস্তুতির কাজ`}>{entry.tasks.map(task => <li key={task.label}><label><input type="checkbox" checked={task.done} onChange={() => toggleTask(entry, task.label)} /><span>{task.label}</span></label></li>)}</ul>}
-            <label className="deadline-complete"><input type="checkbox" checked={entry.complete} onChange={() => { setEntries(entries.map(item => item.id === entry.id ? { ...item, complete: !item.complete } : item)); setStatus('আবেদনের অবস্থা বদলেছে। পরিবর্তন রাখতে আবার সংরক্ষণ করুন।'); }} /><span>এই আবেদন শেষ করেছি</span></label>
-            <div className="deadline-card-actions"><button type="button" onClick={() => exportCalendar(entry)}>ক্যালেন্ডারে নিন <span aria-hidden="true">↓</span></button><button type="button" onClick={() => requestEdit(entry)} aria-label={`${entry.title}: তথ্য বদলান`}>বদলান</button><button type="button" className="deadline-delete" onClick={() => removeEntry(entry)} aria-label={`${entry.title} তালিকা থেকে সরান`}>সরান</button></div>
+            <a className="deadline-source" href={entry.source} target="_blank" rel="noopener noreferrer">সার্কুলার খোলো <span aria-hidden="true">↗</span><span className="screen-reader-only"> — নতুন ট্যাবে খুলবে</span></a>
+            {entry.tasks.length > 0 && <ul className="deadline-checklist" aria-label={`${entry.title}: বাকি কাজের লিস্ট`}>{entry.tasks.map(task => <li key={task.label}><label><input type="checkbox" checked={task.done} onChange={() => toggleTask(entry, task.label)} /><span>{task.label}</span></label></li>)}</ul>}
+            <label className="deadline-complete"><input type="checkbox" checked={entry.complete} onChange={() => { setEntries(entries.map(item => item.id === entry.id ? { ...item, complete: !item.complete } : item)); setStatus('আবেদনের অবস্থা বদলেছে। মনে রাখতে চাইলে আবার রেখে দাও।'); }} /><span>এই আবেদন শেষ করেছি</span></label>
+            <div className="deadline-card-actions"><button type="button" onClick={() => exportCalendar(entry)}>ক্যালেন্ডারে নাও <span aria-hidden="true">↓</span></button><button type="button" onClick={() => requestEdit(entry)} aria-label={`${entry.title} বদলাও`}>বদলাও</button><button type="button" className="deadline-delete" onClick={() => removeEntry(entry)} aria-label={`${entry.title} লিস্ট থেকে বাদ দাও`}>বাদ দাও</button></div>
           </li>;
         })}</ol>}
-        <p className="deadline-agenda-note">“সময় আছে” মানে আপনার লেখা শেষ সময় এখনো আসেনি। বিজ্ঞপ্তিতে কোনো পরিবর্তন এসেছে কি না, দেখে নিন।</p>
+        <p className="deadline-agenda-note">“সময় আছে” মানে তোমার লেখা শেষ সময় এখনো আসেনি। সার্কুলারে নতুন কিছু এল কি না, মাঝে মাঝে দেখে নিও।</p>
       </div>
     </div>
-    <div className="deadline-save"><div><strong><span aria-hidden="true" data-dirty={dirty}/>{!ready ? 'সংরক্ষিত তালিকা খোঁজা হচ্ছে…' : dirty ? 'নতুন পরিবর্তন সংরক্ষণ করা হয়নি' : hasSaved ? 'এই তালিকা ব্রাউজারে সংরক্ষিত আছে' : 'তালিকা শুধু এই পাতায় আছে'}</strong><p>নিজে থেকে সংরক্ষণ হয় না। তথ্য বদলালে আবার রাখুন।</p></div><div className="deadline-save-actions"><button type="button" className="button" disabled={!ready} onClick={saveCurrent}>এই ব্রাউজারে রাখুন</button><button type="button" className="button button-secondary" disabled={!ready} onClick={() => dirty || hasDraft ? setConfirmation('reopen') : reopen()}>রাখা তালিকা খুলুন</button><button type="button" className="deadline-text-button deadline-delete" disabled={!ready} onClick={() => setConfirmation('clear')}>সব মুছুন</button></div></div>
+    <div className="deadline-save"><div><strong><span aria-hidden="true" data-dirty={dirty}/>{!ready ? 'রাখা লিস্ট খোঁজা হচ্ছে…' : dirty ? 'নতুন বদলগুলো এখনো রাখা হয়নি' : hasSaved ? 'লিস্টটা এই ব্রাউজারে রাখা আছে' : 'লিস্টটা শুধু এই পাতায় আছে'}</strong><p>নিজে থেকে রাখা হয় না। কিছু বদলালে আবার রেখে দিও।</p></div><div className="deadline-save-actions"><button type="button" className="button" disabled={!ready} onClick={saveCurrent}>এই ব্রাউজারে রেখে দাও</button><button type="button" className="button button-secondary" disabled={!ready} onClick={() => dirty || hasDraft ? setConfirmation('reopen') : reopen()}>রাখা লিস্ট খোলো</button><button type="button" className="deadline-text-button deadline-delete" disabled={!ready} onClick={() => setConfirmation('clear')}>সব মুছে দাও</button></div></div>
     <p className="deadline-status" role="status" aria-live="polite">{status}</p>
-    {storageError && <button type="button" className="deadline-text-button deadline-delete" onClick={() => setConfirmation('stored')}>ব্রাউজারের পুরোনো তালিকা মুছুন</button>}
+    {storageError && <button type="button" className="deadline-text-button deadline-delete" onClick={() => setConfirmation('stored')}>ব্রাউজারের পুরোনো লিস্ট মুছে দাও</button>}
     {confirmation && <div className="deadline-confirm" role="alert">
-      <strong>{confirmingEdit ? 'এখনকার লেখা বাদ দিয়ে অন্য আবেদনটি খুলবেন?' : confirmation === 'reopen' ? 'বর্তমান তালিকা ও লেখা তথ্য বাদ দিয়ে আগের তালিকা খুলবেন?' : confirmation === 'clear' ? 'এই তালিকা ও ব্রাউজারে সংরক্ষিত তথ্য মুছবেন?' : 'শুধু ব্রাউজারের পুরোনো তালিকা মুছবেন?'}</strong>
-      <p>{confirmingEdit ? 'এখন যে তথ্য লিখছেন, তা বাদ যাবে। তালিকার আবেদনগুলো বদলাবে না।' : confirmation === 'stored' ? 'পর্দার তালিকা থাকবে। মুছে দেওয়া তথ্য আর ফেরত পাবেন না।' : 'পরে আর আগের তথ্য ফেরত পাবেন না। চাইলে আগে তালিকার ফাইল ডাউনলোড করুন।'}</p>
-      <div><button type="button" className="button" onClick={confirmAction}>{confirmingEdit ? 'হ্যাঁ, অন্য আবেদনটি খুলুন' : confirmation === 'reopen' ? 'হ্যাঁ, রাখা তালিকা খুলুন' : 'হ্যাঁ, মুছে দিন'}</button><button type="button" className="button button-secondary" onClick={() => setConfirmation(null)}>বাতিল</button></div>
+      <strong>{confirmingEdit ? 'এখন যা লিখছ, সেটা বাদ দিয়ে ওই আবেদনটা খুলবে?' : confirmation === 'reopen' ? 'পর্দার লিস্ট আর লেখা বাদ দিয়ে আগে রাখা লিস্টটা খুলবে?' : confirmation === 'clear' ? 'পর্দার লিস্ট আর ব্রাউজারে রাখা লিস্ট, সব মুছে দেবে?' : 'শুধু ব্রাউজারের পুরোনো লিস্টটা মুছে দেবে?'}</strong>
+      <p>{confirmingEdit ? 'যা লিখছিলে, সেটা চলে যাবে। লিস্টের আবেদনগুলো যেমন আছে তেমনই থাকবে।' : confirmation === 'stored' ? 'পর্দার লিস্ট থাকবে। মুছে দেওয়া লিস্ট আর ফেরত আসবে না।' : 'এরপর আর ফেরত আনা যাবে না। চাইলে আগে লিস্টের ফাইলটা নামিয়ে রাখো।'}</p>
+      <div><button type="button" className="button" onClick={confirmAction}>{confirmingEdit ? 'হ্যাঁ, ওটা খোলো' : confirmation === 'reopen' ? 'হ্যাঁ, রাখা লিস্ট খোলো' : 'হ্যাঁ, মুছে দাও'}</button><button type="button" className="button button-secondary" onClick={() => setConfirmation(null)}>না, থাক</button></div>
     </div>}
-    <div className="deadline-export"><div><p className="eyebrow">তালিকার একটি কপি রাখুন</p><h2>ক্যালেন্ডারেও তারিখ রাখুন</h2><p>আবেদনের পাশে “ক্যালেন্ডারে নিন” চাপুন। ফাইলটি নিজের ক্যালেন্ডারে যোগ করে মনে করিয়ে দেওয়ার সময় ঠিক করুন। শুধু ডাউনলোড করলে কোনো বার্তা আসবে না।</p><p>পুরো তালিকাও টেক্সট ফাইল হিসেবে রাখতে পারবেন। এতে আবেদনের নাম, লিংক, তারিখ ও কাজের অগ্রগতি থাকবে।</p><button type="button" className="button button-secondary" disabled={!entries.length} onClick={exportText}>তালিকা ডাউনলোড করুন <span aria-hidden="true">↓</span></button></div><div className="deadline-calendar-note"><span className="deadline-note-number" aria-hidden="true">মনে রাখুন</span><h3>তারিখ বদলালে<br />ক্যালেন্ডারেও ঠিক করুন</h3><p>এই তালিকা ক্যালেন্ডারের সঙ্গে যুক্ত নয়। এখানে তারিখ বদলালে ক্যালেন্ডারেও নিজে ঠিক করুন। একই ফাইল বারবার যোগ করলে একই কাজ একাধিকবার দেখা যেতে পারে।</p><details><summary>তালিকার লেখা দেখুন</summary><pre>{entries.length ? textList(orderedEntries) : 'আবেদন যোগ করলে তালিকার লেখা এখানে দেখবেন।'}</pre></details></div></div>
+    <div className="deadline-export"><div><p className="eyebrow">লিস্টের একটা কপি রাখো</p><h2>ক্যালেন্ডারেও তারিখটা তুলে রাখো</h2><p>আবেদনের পাশে “ক্যালেন্ডারে নাও” চাপো। ফাইলটা ক্যালেন্ডারে যোগ করে রিমাইন্ডারের সময় ঠিক করে দাও। শুধু নামিয়ে রাখলে কোনো রিমাইন্ডার আসবে না।</p><p>পুরো লিস্টটাও একটা টেক্সট ফাইলে রাখতে পারো। তাতে আবেদনের নাম, লিংক, তারিখ আর কোন কাজ হলো, সব থাকবে।</p><button type="button" className="button button-secondary" disabled={!entries.length} onClick={exportText}>পুরো লিস্ট ডাউনলোড করো <span aria-hidden="true">↓</span></button></div><div className="deadline-calendar-note"><span className="deadline-note-number" aria-hidden="true">মনে রেখো</span><h3>তারিখ বদলালে<br />ক্যালেন্ডারেও বদলে নিও</h3><p>এই লিস্ট আর তোমার ক্যালেন্ডার জোড়া না। এখানে তারিখ বদলালে ক্যালেন্ডারে নিজেই বদলাতে হবে। একই ফাইল বারবার যোগ করলে একই আবেদন কয়েকবার দেখাতে পারে।</p><details><summary>লিস্টের লেখা দেখো</summary><pre>{entries.length ? textList(orderedEntries) : 'আবেদন যোগ করলে লিস্টের লেখা এখানে দেখবে।'}</pre></details></div></div>
   </section>;
 }

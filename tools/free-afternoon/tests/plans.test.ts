@@ -16,5 +16,5 @@ test('both itineraries account for all selected minutes',()=>{
 test('all settings have useful steps and invitation preserves user wording',()=>{
  for(const setting of settings){assert.equal(ideas[setting.id].steps.length,3);assert.ok(ideas[setting.id].check);}
  const text=invitation({setting:'home',place:'পরিবারের বাসা',minutes:60,people:2,total:0});
- assert.match(text,/পরিবারের বাসা/);assert.match(text,/নিশ্চিত মূল্য নয়/);assert.match(text,/০ টাকা/);
+ assert.match(text,/পরিবারের বাসা/);assert.match(text,/নিশ্চিত দাম না/);assert.match(text,/০ টাকা/);
 });

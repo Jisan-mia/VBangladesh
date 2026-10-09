@@ -16,7 +16,7 @@ type CanvasBounds = { left: number; top: number; width: number; height: number }
 export function drawingPoint(client: DrawingPoint, bounds: CanvasBounds): DrawingPoint {
   const size = Math.min(bounds.width, bounds.height);
   if (!Number.isFinite(size) || size <= 0 || !Number.isFinite(client.x) || !Number.isFinite(client.y)) {
-    throw new RangeError("আঁকার জায়গার মাপ পাওয়া যায়নি।");
+    throw new RangeError("আঁকার জায়গাটা মাপা গেল না।");
   }
   const x = (client.x - bounds.left - bounds.width / 2) * 800 / size;
   const y = (client.y - bounds.top - bounds.height / 2) * 800 / size;
@@ -48,6 +48,6 @@ export function strokeTransforms(stroke: Pick<DrawingStroke, "symmetry" | "mirro
 
 export function addDrawingStroke(strokes: DrawingStroke[], stroke: DrawingStroke) {
   if (strokes.length >= MAX_STROKES || !stroke.points.length) return strokes;
-  if (stroke.points.length > MAX_STROKE_POINTS) throw new RangeError("রেখাটি অতিরিক্ত দীর্ঘ।");
+  if (stroke.points.length > MAX_STROKE_POINTS) throw new RangeError("রেখাটা অনেক লম্বা হয়ে গেছে।");
   return [...strokes, stroke];
 }

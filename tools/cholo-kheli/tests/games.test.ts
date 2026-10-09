@@ -49,7 +49,7 @@ test("invitations contain the chosen rules, Bangla numbers and no invented appoi
   assert.ok(invitation.includes("৪ জন"));
   assert.ok(invitation.includes(game.title));
   assert.ok(invitation.includes(game.rules[0]));
-  assert.ok(invitation.includes("সময় ও জায়গা আমরা আলোচনা করে ঠিক করব"));
+  assert.ok(invitation.includes("কখন, কোথায় খেলব, সবাই মিলে ঠিক করে নেব"));
   assert.ok(invitation.includes(game.care));
 });
 

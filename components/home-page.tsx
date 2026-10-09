@@ -5,7 +5,7 @@ import { MemorySketch } from "../tools/amar-chhotobela/components/memory-sketch"
 import { ToolDirectory } from "./tool-directory";
 import { BrandMark } from "./brand-mark";
 
-const heroMemories = ["alif-laila", "hurricane", "kite", "salami", "hawai-mithai", "landphone", "gollachhut", "new-books", "eid-moon", "cassette", "paper-boat", "pitha"];
+const heroMemories = ["alif-laila", "hurricane", "kite", "salami", "hawai-mithai", "landphone", "gollachhut", "new-books", "eid-moon", "nokia-snake", "paper-boat", "pitha"];
 const heroPicked = new Set(["alif-laila", "hurricane", "salami", "landphone", "new-books", "paper-boat", "eid-moon"]);
 
 function MiniKhata() {

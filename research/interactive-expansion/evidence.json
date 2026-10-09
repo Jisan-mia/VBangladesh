@@ -102,7 +102,7 @@
     {
       "rank": 6,
       "slug": "chhobi-jora",
-      "name": "ছবি জোড়া",
+      "name": "ছবি জোড়া",
       "interaction": "Choose 2–6 local photos, rearrange slots, crop and zoom each photo, rotate, change gaps and corner shape; see changes immediately.",
       "output": "Flattened PNG/JPEG collage for printing or sharing; optional short Bengali caption.",
       "evidence": [

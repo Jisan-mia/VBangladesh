@@ -2,6 +2,7 @@ import './product.css';
 import { Faq, JsonLd, PageFrame } from "../../shared/site-shell";
 import { site } from "./content";
 import { PostcardBuilder } from "./components/postcard-builder";
+import { Captions } from "./components/captions";
 
 export default function ChhotobelaPage() {
   return (
@@ -14,6 +15,11 @@ export default function ChhotobelaPage() {
           <p className="childhood-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="স্মৃতি মেলাও"><PostcardBuilder /></section>
+        <section className="container section childhood-captions" aria-labelledby="captions-title">
+          <h2 id="captions-title">ছোটবেলা নিয়ে ক্যাপশন</h2>
+          <p>খাতার ছবির সাথে পোস্টে লিখে দিতে পারো। পছন্দেরটায় ‘কপি’ চাপো।</p>
+          <Captions />
+        </section>
         <section className="container section childhood-guide" id="guide" aria-labelledby="guide-title">
           <h2 id="guide-title">{site.guideTitle}</h2>
           <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{new Intl.NumberFormat("bn-BD").format(index + 1)}</span><p>{step}</p></li>)}</ol>

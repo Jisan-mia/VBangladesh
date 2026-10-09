@@ -25,13 +25,13 @@ export function presetCells(preset: 'study' | 'home' | 'empty'): Cell[] {
   if (preset === 'study') {
     [0, 4, 8, 12, 16].forEach(index => { cells[index] = { text: 'নিজের পড়া', color: 'blue' }; });
     [2, 10, 18].forEach(index => { cells[index] = { text: 'হাঁটা ও বিরতি', color: 'green' }; });
-    cells[23] = { text: 'বই ও খাতা গুছানো', color: 'yellow' };
+    cells[23] = { text: 'বই-খাতা গোছানো', color: 'yellow' };
     cells[26] = { text: 'পরিবারের সময়', color: 'pink' };
   } else if (preset === 'home') {
-    cells[0] = { text: 'ঘর গুছানো', color: 'yellow' };
-    cells[5] = { text: 'বাজারের তালিকা', color: 'blue' };
+    cells[0] = { text: 'ঘর গোছানো', color: 'yellow' };
+    cells[5] = { text: 'বাজারের লিস্ট', color: 'blue' };
     cells[10] = { text: 'গাছে পানি', color: 'green' };
-    cells[15] = { text: 'কাপড় গুছানো', color: 'pink' };
+    cells[15] = { text: 'কাপড় গোছানো', color: 'pink' };
     cells[24] = { text: 'সকালের নাশতা', color: 'yellow' };
     cells[26] = { text: 'সবাই মিলে আড্ডা', color: 'green' };
   }

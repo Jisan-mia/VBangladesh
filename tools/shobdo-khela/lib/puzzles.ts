@@ -1,16 +1,16 @@
 export const puzzles = [
-  { id: 'book-fair', clue: 'যেখানে অনেক প্রকাশকের বই একসঙ্গে দেখা ও কেনা যায়।', parts: ['বই', 'মে', 'লা'] },
-  { id: 'hand-fan', clue: 'বিদ্যুৎ ছাড়াই হাতে নেড়ে বাতাস করার জিনিস।', parts: ['হাত', 'পা', 'খা'] },
-  { id: 'firefly', clue: 'অন্ধকারে ছোট্ট আলো জ্বেলে উড়ে বেড়ায় যে পোকা।', parts: ['জো', 'না', 'কি'] },
-  { id: 'kitchen', clue: 'ঘরের যে জায়গায় রান্না হয়।', parts: ['রান্না', 'ঘর'] },
-  { id: 'rainbow', clue: 'বৃষ্টির পরে আকাশে বাঁকা হয়ে ওঠা রঙের সারি।', parts: ['রং', 'ধ', 'নু'] },
-  { id: 'rail-car', clue: 'লোহার লাইনের ওপর দিয়ে চলে, একটার সঙ্গে আরেকটা বগি জোড়া থাকে।', parts: ['রেল', 'গা', 'ড়ি'] },
-  { id: 'watercolor', clue: 'পানিতে মিশিয়ে কাগজে আঁকার এক ধরনের রং।', parts: ['জল', 'রং'] },
-  { id: 'butterfly', clue: 'রঙিন ডানা মেলে ফুলের কাছে উড়তে দেখা যায়।', parts: ['প্র', 'জা', 'প', 'তি'] },
-  { id: 'mango-tree', clue: 'যে গাছের ডালে আম ধরে।', parts: ['আম', 'গাছ'] },
-  { id: 'swing', clue: 'বসে সামনে-পেছনে দুলতে ভালো লাগে যে খেলনায়।', parts: ['দোল', 'না'] },
-  { id: 'embroidered-quilt', clue: 'সেলাইয়ের নকশা দিয়ে সাজানো কাঁথা।', parts: ['নকশি', 'কাঁ', 'থা'] },
-  { id: 'kite', clue: 'সুতোর টানে আকাশে ওড়ানো কাগজের খেলনা।', parts: ['ঘু', 'ড়ি'] },
+  { id: 'book-fair', clue: 'ফেব্রুয়ারি এলেই যেখানে নতুন বইয়ের গন্ধ আর মানুষের ভিড়।', parts: ['বই', 'মে', 'লা'] },
+  { id: 'hand-fan', clue: 'কারেন্ট গেলে গরমে যেটা নেড়ে বাতাস খাই।', parts: ['হাত', 'পা', 'খা'] },
+  { id: 'firefly', clue: 'অন্ধকারে মিটিমিটি আলো জ্বেলে উড়ে বেড়ায় যে পোকা।', parts: ['জো', 'না', 'কি'] },
+  { id: 'kitchen', clue: 'বাড়ির যে ঘর থেকে ভাত-তরকারির ঘ্রাণ ভেসে আসে।', parts: ['রান্না', 'ঘর'] },
+  { id: 'rainbow', clue: 'বৃষ্টি থামলে আকাশজুড়ে বাঁকা হয়ে ওঠা সাত রং।', parts: ['রং', 'ধ', 'নু'] },
+  { id: 'rail-car', clue: 'ঝিকঝিক শব্দে লোহার লাইন ধরে চলে, পেছনে বগির পর বগি।', parts: ['রেল', 'গা', 'ড়ি'] },
+  { id: 'watercolor', clue: 'পানিতে গুলে তুলি দিয়ে কাগজে আঁকার রং।', parts: ['জল', 'রং'] },
+  { id: 'butterfly', clue: 'রঙিন ডানা মেলে ফুলে ফুলে উড়ে বেড়ায়।', parts: ['প্র', 'জা', 'প', 'তি'] },
+  { id: 'mango-tree', clue: 'কালবৈশাখী থামলেই যে গাছের তলায় কুড়াতে ছুটে যেতাম।', parts: ['আম', 'গাছ'] },
+  { id: 'swing', clue: 'গাছের ডালে দড়ি বেঁধে বানানো, বসে সামনে-পেছনে দোলা যায়।', parts: ['দোল', 'না'] },
+  { id: 'embroidered-quilt', clue: 'নানি-দাদির সুঁই-সুতায় ফুল-পাখি ফোটানো কাঁথা।', parts: ['নকশি', 'কাঁ', 'থা'] },
+  { id: 'kite', clue: 'নাটাই হাতে ছাদে উঠে যেটা আকাশে ওড়াই।', parts: ['ঘু', 'ড়ি'] },
 ] as const;
 export type Outcome = 'playing' | 'solved' | 'revealed' | 'skipped';
 export type Round = { picked: number[]; attempts: number; outcome: Outcome };
@@ -77,5 +77,5 @@ export function resultText(game: Game): string {
   const number = new Intl.NumberFormat('bn-BD');
   const result = score(game);
   const labels = { solved: 'নিজে মিলিয়েছি', revealed: 'উত্তর দেখেছি', skipped: 'বাদ দিয়েছি', playing: 'এখনো শেষ করিনি' };
-  return ['শব্দ সাজাই · একটুখানি', `${number.format(puzzles.length)}টি ধাঁধার মধ্যে নিজে মিলিয়েছি ${number.format(result.solved)}টি।`, `উত্তর দেখেছি ${number.format(result.revealed)}টি · বাদ দিয়েছি ${number.format(result.skipped)}টি`, '', ...game.rounds.map((round, index) => `ধাঁধা ${number.format(index + 1)}: ${labels[round.outcome]}${round.attempts ? ` · মিলিয়ে দেখেছি ${number.format(round.attempts)} বার` : ''}`), '', 'নিজের সময় নিয়ে শব্দ সাজানোর খেলা। কোনো সময়সীমা নেই।'].join('\n');
+  return ['শব্দ সাজাই · একটুখানি', `${number.format(puzzles.length)}টা ধাঁধার মধ্যে নিজে মিলিয়েছি ${number.format(result.solved)}টা!`, `উত্তর দেখেছি ${number.format(result.revealed)}টা · বাদ দিয়েছি ${number.format(result.skipped)}টা`, '', ...game.rounds.map((round, index) => `ধাঁধা ${number.format(index + 1)}: ${labels[round.outcome]}${round.attempts ? ` · মিলিয়ে দেখেছি ${number.format(round.attempts)} বার` : ''}`), '', 'চেনা বাংলা শব্দ নিয়ে খেলা, ঘড়ি নেই। তুমি কয়টা পারো?'].join('\n');
 }

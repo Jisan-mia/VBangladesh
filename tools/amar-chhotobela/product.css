@@ -52,7 +52,7 @@
 .khata-field{display:grid;gap:6px;font-weight:600}
 .khata-field small{font-weight:400;color:var(--muted);font-size:13px}
 .khata-field input{border:1.5px solid var(--dash);border-radius:12px;font-size:17px}
-.khata-chips{display:flex;flex-wrap:wrap;gap:8px;border:0;margin:0;padding:0;min-width:0}
+.khata-photo{display:grid;gap:6px;font-weight:600}.khata-photo small{font-weight:400;color:var(--muted);font-size:13px}.khata-photo>div{display:flex;align-items:center;gap:14px}.khata-photo label{position:relative;display:inline-flex;align-items:center;cursor:pointer}.khata-photo input{position:absolute;inset:0;opacity:0;cursor:pointer}.khata-photo label:focus-within{outline:3px solid var(--ink);outline-offset:3px}.khata-chips{display:flex;flex-wrap:wrap;gap:8px;border:0;margin:0;padding:0;min-width:0}
 .khata-chips legend{padding:0;margin-bottom:8px;font-weight:600}
 .khata-chips button{min-height:44px;padding:8px 14px;border:1.5px solid var(--dash);border-radius:999px;background:#fff;color:var(--ink);font-size:15px}
 .khata-chips button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
@@ -71,13 +71,10 @@
 .khata-friend h2{margin:0 0 12px;font-family:var(--font-display);font-size:21px;line-height:1.45}
 .khata-friend h2 span{color:var(--red)}
 
-.khata-save{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:#0d1530e6}
-.khata-save>div{display:grid;gap:10px;justify-items:center;max-width:420px;padding:18px;border-radius:18px;background:#fff;text-align:center}
-.khata-save h2{margin:0;font-size:22px}
-.khata-save p{margin:0;color:var(--muted);font-size:15px}
-.khata-save img{max-height:62vh;width:auto;border-radius:8px;box-shadow:0 6px 18px #0003}
 .khata-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
+.childhood-captions h2{font-family:var(--font-display);margin-bottom:6px}.childhood-captions>p{color:var(--muted);margin-bottom:16px}.khata-captions{display:grid;gap:10px;margin:0;padding:0;list-style:none}.khata-captions li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 16px;border:1px solid var(--rule);border-left:4px solid var(--hl);border-radius:12px;background:#fff}.khata-captions p{margin:0;font-size:16px;line-height:1.7}.khata-captions button{flex:none;min-height:44px;min-width:64px;padding:6px 12px;border:1.5px solid var(--ink);border-radius:10px;background:#fff;color:var(--ink);font-weight:600}
+@media(min-width:720px){.khata-captions{grid-template-columns:1fr 1fr}}
 .childhood-guide h2{font-family:var(--font-display);margin-bottom:18px}
 .childhood-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
 .childhood-guide li{display:flex;gap:14px;align-items:flex-start}

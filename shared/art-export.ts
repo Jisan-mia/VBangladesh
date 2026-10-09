@@ -2,7 +2,7 @@ const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
 
 async function fontData(path: string): Promise<string> {
   const response = await fetch(path);
-  if (!response.ok) throw new Error('বাংলা ফন্ট আনা যায়নি। আবার চেষ্টা করুন।');
+  if (!response.ok) throw new Error('বাংলা ফন্টটা আনা গেল না। আরেকবার চেষ্টা করো।');
   const bytes = new Uint8Array(await response.arrayBuffer());
   let binary = '';
   for (const byte of bytes) binary += String.fromCharCode(byte);
@@ -12,7 +12,7 @@ async function fontData(path: string): Promise<string> {
 export async function artworkSvgBlob(svg: SVGSVGElement): Promise<Blob> {
   const copy = svg.cloneNode(true) as SVGSVGElement;
   const bounds = svg.viewBox.baseVal;
-  if (!bounds.width || !bounds.height) throw new Error('ছবির মাপ পাওয়া যায়নি।');
+  if (!bounds.width || !bounds.height) throw new Error('ছবির মাপ পাওয়া গেল না।');
   copy.setAttribute('xmlns', SVG_NAMESPACE);
   copy.setAttribute('width', String(bounds.width));
   copy.setAttribute('height', String(bounds.height));
@@ -33,7 +33,7 @@ export async function svgPngBlob(svg: SVGSVGElement): Promise<Blob> {
       const image = new Image();
       // SVG decode() can resolve before its embedded fonts finish loading.
       image.onload = () => resolve(image);
-      image.onerror = () => reject(new Error('ছবি তৈরি করা যায়নি।'));
+      image.onerror = () => reject(new Error('ছবিটা বানানো গেল না।'));
       image.src = source;
     });
     const canvas = document.createElement('canvas');
@@ -41,13 +41,15 @@ export async function svgPngBlob(svg: SVGSVGElement): Promise<Blob> {
     canvas.width = Math.round(picture.width * scale);
     canvas.height = Math.round(picture.height * scale);
     const context = canvas.getContext('2d');
-    if (!context) throw new Error('এই ব্রাউজারে ছবি তৈরি করা যাচ্ছে না।');
+    if (!context) throw new Error('এই ব্রাউজারে ছবি বানানো যাচ্ছে না।');
     context.drawImage(picture, 0, 0, canvas.width, canvas.height);
-    return await new Promise<Blob>((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('ছবি তৈরি করা যায়নি।')), 'image/png'));
+    return await new Promise<Blob>((resolve, reject) => canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('ছবিটা বানানো গেল না।')), 'image/png'));
   } finally {
     URL.revokeObjectURL(source);
   }
 }
+
+export const isInAppBrowser = () => /FBAN|FBAV|FB_IAB|FBIOS|Messenger|Instagram/i.test(navigator.userAgent);
 
 export function saveBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);

@@ -132,3 +132,11 @@
   :where(.tool-ek-ghonta) .action-event-card { padding: 22px; }
   :where(.tool-ek-ghonta) .action-event-card dl > div { grid-template-columns: 1fr; gap: 4px; }
 }
+
+/* Phones: skip the decorative drawing so the planner starts near the first screen. */
+@media (max-width: 680px) {
+  :where(.tool-ek-ghonta) .action-hero { padding-top: 24px; padding-bottom: 24px; }
+  :where(.tool-ek-ghonta) .action-hero h1 { margin: 12px 0 14px; }
+  :where(.tool-ek-ghonta) .action-hero-cta { margin-top: 18px; }
+  :where(.tool-ek-ghonta) .action-hero-visual { display: none; }
+}

@@ -11,7 +11,7 @@ const emptyBasket: Basket = { items: [], budget: null };
 function budgetValue(value: string): { value: number | null; error: string } {
   if (!value.trim()) return { value: null, error: '' };
   try { return { value: parseHundredths(value), error: '' }; }
-  catch { return { value: null, error: 'বাজেটের পরিমাণটি ঠিক করে লিখুন। দশমিকের পরে সর্বোচ্চ দুই ঘর দিন। সর্বোচ্চ ৯,৯৯,৯৯৯.৯৯ টাকা লেখা যাবে।' }; }
+  catch { return { value: null, error: 'বাজেটটা ঠিক করে লেখো, যেমন ১০০০ বা ১৫০০.৫০। দশমিকের পরে দুই ঘরের বেশি না, আর ৯,৯৯,৯৯৯.৯৯ টাকার মধ্যে।' }; }
 }
 
 export function BasketEditor() {
@@ -45,11 +45,11 @@ export function BasketEditor() {
         setBudget(saved.budget === null ? '' : formatQuantity(saved.budget));
         setSavedSnapshot(JSON.stringify(saved));
         setHasSaved(true);
-        setStatus('সংরক্ষিত নোট খোলা হয়েছে।');
+        setStatus('আগের রাখা লিস্টটা খুলেছে।');
       }
     } catch {
       setStorageError(true);
-      setStatus('সংরক্ষিত নোট পড়া যায়নি। পুরোনো তথ্য বদলানো হয়নি। নতুন তালিকা তৈরি করে ফাইল ডাউনলোড করতে পারবেন।');
+      setStatus('আগের রাখা লিস্টটা পড়া গেল না। ওটা যেমন ছিল তেমনই আছে। নতুন লিস্ট বানিয়ে ফাইল নামিয়ে রাখতে পারো।');
     }
     setReady(true);
   }, []);
@@ -59,19 +59,19 @@ export function BasketEditor() {
     setFormError('');
     try {
       const quantity = parseHundredths(draft.quantity);
-      if (quantity === 0 || quantity > MAX_QUANTITY) throw new Error('পরিমাণ ০-এর বেশি এবং সর্বোচ্চ ৯৯৯৯.৯৯ হতে হবে।');
-      if (!draft.name.trim() || /[\u0000-\u001f\u007f]/.test(draft.name)) throw new Error('পণ্যের নাম লিখুন।');
-      if (!editingId && items.length >= MAX_ITEMS) throw new Error('এক তালিকায় সর্বোচ্চ ১০০টি পণ্য রাখা যাবে।');
+      if (quantity === 0 || quantity > MAX_QUANTITY) throw new Error('পরিমাণ ০-এর বেশি আর ৯৯৯৯.৯৯-এর মধ্যে লেখো।');
+      if (!draft.name.trim() || /[\u0000-\u001f\u007f]/.test(draft.name)) throw new Error('জিনিসের নামটা লেখো।');
+      if (!editingId && items.length >= MAX_ITEMS) throw new Error('এক লিস্টে ১০০টার বেশি জিনিস রাখা যায় না।');
       const item: Item = { id: editingId ?? crypto.randomUUID(), name: draft.name.trim(), quantity, unit: draft.unit, unitPrice: parseHundredths(draft.unitPrice) };
       const nextItems = editingId ? items.map(existing => existing.id === editingId ? item : existing) : [...items, item];
       setItems(validateBasket({ items: nextItems, budget: basket.budget }).items);
       setExportStatus('');
-      setStatus(editingId ? `${item.name}: তথ্য বদলেছে। রাখতে চাইলে আবার সংরক্ষণ করুন।` : `${item.name} তালিকায় যোগ হয়েছে।`);
+      setStatus(editingId ? `${item.name} বদলে গেছে। রাখতে চাইলে আবার “লিস্টটা রেখে দাও” চাপো।` : `${item.name} লিস্টে উঠেছে।`);
       setEditingId(null);
       setDraft(emptyDraft);
       nameInput.current?.focus();
     } catch (error) {
-      setFormError(error instanceof Error ? error.message : 'পণ্যটি যোগ করা যায়নি। লেখা তথ্যগুলো মিলিয়ে নিন।');
+      setFormError(error instanceof Error ? error.message : 'জিনিসটা যোগ করা গেল না। লেখাগুলো একবার দেখে নাও।');
     }
   }
 
@@ -86,20 +86,20 @@ export function BasketEditor() {
     setItems(items.filter(existing => existing.id !== item.id));
     setExportStatus('');
     if (editingId === item.id) { setEditingId(null); setDraft(emptyDraft); setFormError(''); }
-    setStatus(`${item.name} তালিকা থেকে সরানো হয়েছে। পরিবর্তনটি রাখতে আবার সংরক্ষণ করুন।`);
+    setStatus(`${item.name} লিস্ট থেকে বাদ গেছে। রাখতে চাইলে আবার “লিস্টটা রেখে দাও” চাপো।`);
   }
 
   function saveCurrent() {
-    if (parsedBudget.error) { setStatus('সংরক্ষণ করার আগে বাজেটের পরিমাণ ঠিক করুন।'); return; }
+    if (parsedBudget.error) { setStatus('রাখার আগে বাজেটটা ঠিক করে নাও।'); return; }
     try {
       saveBasket(window.localStorage, basket);
       setSavedSnapshot(JSON.stringify(basket));
       setHasSaved(true);
       setStorageError(false);
-      setStatus('তালিকা এই ব্রাউজারে সংরক্ষণ হয়েছে। পরে বদলালে আবার রাখুন।');
+      setStatus('রাখা হয়ে গেছে! পরে কিছু বদলালে আবার চেপে দিও।');
     } catch {
       setStorageError(true);
-      setStatus('নোট সংরক্ষণ হয়নি। ব্রাউজারে জায়গা বা অনুমতির সমস্যা থাকতে পারে, অথবা পুরোনো নোট পড়া যাচ্ছে না। পর্দার তালিকা আছে। চাইলে ফাইল ডাউনলোড করে রাখুন।');
+      setStatus('লিস্টটা রাখা গেল না। হয়তো ব্রাউজারে জায়গা কম বা অনুমতি নেই, নয়তো আগের রাখা লিস্টটা পড়া যাচ্ছে না। পর্দার লিস্ট ঠিক আছে, চাইলে ফাইলটা নামিয়ে রাখো।');
     }
   }
 
@@ -111,7 +111,7 @@ export function BasketEditor() {
         setHasSaved(false);
         setSavedSnapshot(JSON.stringify(emptyBasket));
         setStorageError(false);
-        setStatus('এই ব্রাউজারে কোনো সংরক্ষিত নোট নেই। বর্তমান তালিকা বদলানো হয়নি।');
+        setStatus('এই ব্রাউজারে কোনো লিস্ট রাখা নেই। এখনকার লিস্ট যেমন ছিল তেমনই আছে।');
         return;
       }
       setItems(saved.items);
@@ -124,10 +124,10 @@ export function BasketEditor() {
       setIncludeMoney(false);
       setExportStatus('');
       setStorageError(false);
-      setStatus('সংরক্ষিত নোট খোলা হয়েছে।');
+      setStatus('রাখা লিস্টটা খুলেছে।');
     } catch {
       setStorageError(true);
-      setStatus('সংরক্ষিত নোট খোলা যায়নি। পর্দার তালিকা ও আগের তথ্য বদলানো হয়নি।');
+      setStatus('রাখা লিস্টটা খোলা গেল না। পর্দার লিস্ট আর রাখা লিস্ট, দুটোই যেমন ছিল তেমনই আছে।');
     }
   }
 
@@ -139,10 +139,10 @@ export function BasketEditor() {
       setSavedSnapshot(JSON.stringify(emptyBasket));
       if (confirmation === 'clear') {
         setItems([]); setBudget(''); setDraft(emptyDraft); setEditingId(null); setFormError(''); setIncludeMoney(false); setExportStatus('');
-        setStatus('এই তালিকা ও ব্রাউজারে সংরক্ষিত নোট মুছে গেছে।');
-      } else setStatus('ব্রাউজারের পুরোনো নোট মুছে গেছে। পর্দার তালিকা আছে। চাইলে এবার সেটি সংরক্ষণ করুন।');
+        setStatus('সব মুছে গেছে। এবার নতুন করে শুরু করো।');
+      } else setStatus('আগের রাখা লিস্টটা মুছে গেছে। পর্দার লিস্ট ঠিক আছে, চাইলে এবার এটা রেখে দাও।');
     } catch {
-      setStatus('ব্রাউজারের নোট মোছা যায়নি। কোনো তথ্য বদলানো হয়নি। ব্রাউজারের অনুমতি পরীক্ষা করুন।');
+      setStatus('রাখা লিস্টটা মোছা গেল না, কিছুই বদলায়নি। ব্রাউজারের সেটিংসে এই সাইটের ডেটা রাখার অনুমতি আছে কি না, একবার দেখো।');
     }
     setConfirmation(null);
   }
@@ -154,73 +154,73 @@ export function BasketEditor() {
       link.href = url; link.download = 'bazar-note.txt';
       document.body.append(link); link.click(); link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 10000);
-      setExportStatus('ফাইল প্রস্তুত। ব্রাউজারের ডাউনলোডের তালিকা দেখুন।');
+      setExportStatus('হয়ে গেছে! ফাইলটা ব্রাউজারের ডাউনলোডে দেখো।');
     } catch {
-      setExportStatus('ফাইল ডাউনলোড করা যায়নি। নিচের লেখা কপি করুন বা প্রিন্ট করুন। আপনার তালিকা আছে।');
+      setExportStatus('ফাইলটা নামানো গেল না। প্রিভিউর লেখাটা কপি করো বা প্রিন্ট করো। তোমার লিস্ট ঠিকই আছে।');
     }
   }
 
   return <div className="bazar-tool" id="tool">
     <div className="bazar-tool-heading">
-      <div><p className="eyebrow">আপনার বাজারের হিসাব</p><h2>বাজারের তালিকা তৈরি করুন</h2></div>
-      <p>প্রথম পণ্যটি যোগ করুন।<br />দাম আপনি দেবেন; এটি যাচাই করা বাজারদর নয়।</p>
+      <div><p className="eyebrow">তোমার বাজারের হিসাব</p><h2>বাজারের লিস্টটা বানিয়ে ফেলো</h2></div>
+      <p>প্রথম জিনিসটা দিয়ে শুরু করো।<br />দাম তুমিই বসাবে, এটা বাজারের আজকের দর না।</p>
     </div>
     <div className="bazar-workspace">
       <div className="bazar-entry">
         <form onSubmit={addItem} noValidate>
-          <div className="bazar-form-heading"><span aria-hidden="true">+</span><h3>{editingId ? 'পণ্যটি বদলান' : 'কী কী লাগবে?'}</h3></div>
-          <label htmlFor="item-name">পণ্যের নাম</label>
+          <div className="bazar-form-heading"><span aria-hidden="true">+</span><h3>{editingId ? 'জিনিসটা ঠিক করো' : 'কী কী লাগবে?'}</h3></div>
+          <label htmlFor="item-name">জিনিসের নাম</label>
           <input ref={nameInput} id="item-name" value={draft.name} maxLength={80} placeholder="যেমন: চাল" autoComplete="off" onChange={event => setDraft({ ...draft, name: event.target.value })} required />
           <div className="bazar-input-pair">
             <div><label htmlFor="item-quantity">পরিমাণ</label><input id="item-quantity" inputMode="decimal" value={draft.quantity} maxLength={12} onChange={event => setDraft({ ...draft, quantity: event.target.value })} required /></div>
-            <div><label htmlFor="item-unit">একক</label><select id="item-unit" value={draft.unit} onChange={event => setDraft({ ...draft, unit: event.target.value as Unit })}>{Object.entries(units).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
+            <div><label htmlFor="item-unit">মাপ</label><select id="item-unit" value={draft.unit} onChange={event => setDraft({ ...draft, unit: event.target.value as Unit })}>{Object.entries(units).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
           </div>
           <label htmlFor="item-price">প্রতি {units[draft.unit]} কত টাকা?</label>
           <div className="bazar-price-input"><span aria-hidden="true">৳</span><input id="item-price" inputMode="decimal" value={draft.unitPrice} maxLength={14} placeholder="যেমন: ১২০.৫০" onChange={event => setDraft({ ...draft, unitPrice: event.target.value })} aria-describedby="price-help" required /></div>
-          <p id="price-help" className="bazar-hint">বাংলা বা ইংরেজি অঙ্কে লিখুন। একক বদলালে পরিমাণ ও দামও মিলিয়ে নিন।</p>
-          {editingId && <p className="bazar-hint">“পরিবর্তন রাখুন” চাপলে তালিকা ও মোট খরচ বদলাবে।</p>}
+          <p id="price-help" className="bazar-hint">বাংলা বা ইংরেজি, যেকোনো অঙ্কে লেখো। মাপ বদলালে পরিমাণ আর দামও নিজে ঠিক করে নিও।</p>
+          {editingId && <p className="bazar-hint">“বদলটা রাখো” চাপলে লিস্ট আর মোট খরচ নতুন করে হিসাব হবে।</p>}
           {formError && <p className="bazar-error" role="alert">{formError}</p>}
-          <button className="button bazar-add" type="submit">{editingId ? 'পরিবর্তন রাখুন' : 'তালিকায় যোগ করুন'}<span aria-hidden="true">＋</span></button>
-          {editingId && <button className="bazar-text-button" type="button" onClick={() => { setEditingId(null); setDraft(emptyDraft); setFormError(''); }}>পরিবর্তন বাতিল</button>}
+          <button className="button bazar-add" type="submit">{editingId ? 'বদলটা রাখো' : 'লিস্টে যোগ করো'}<span aria-hidden="true">＋</span></button>
+          {editingId && <button className="bazar-text-button" type="button" onClick={() => { setEditingId(null); setDraft(emptyDraft); setFormError(''); }}>থাক, বদলাব না</button>}
         </form>
         <div className="bazar-budget">
-          <label htmlFor="basket-budget">আপনার বাজেট <span>চাইলে দিন</span></label>
+          <label htmlFor="basket-budget">তোমার বাজেট <span>চাইলে দাও</span></label>
           <div className="bazar-price-input"><span aria-hidden="true">৳</span><input id="basket-budget" inputMode="decimal" value={budget} maxLength={14} placeholder="যেমন: ১০০০" onChange={event => { setBudget(event.target.value); setExportStatus(''); }} aria-invalid={!!parsedBudget.error} aria-describedby={parsedBudget.error ? 'budget-error' : 'budget-help'} /></div>
-          {parsedBudget.error ? <p id="budget-error" className="bazar-error" role="alert">{parsedBudget.error}</p> : <p id="budget-help" className="bazar-hint">বাজেট না দিলেও মোট খরচ দেখতে পাবেন।</p>}
+          {parsedBudget.error ? <p id="budget-error" className="bazar-error" role="alert">{parsedBudget.error}</p> : <p id="budget-help" className="bazar-hint">বাজেট না দিলেও মোট খরচ দেখবে।</p>}
         </div>
-        <div className="bazar-margin-note"><span aria-hidden="true" className="bazar-note-line" /><p>পরে আবার ব্যবহার করবেন?<br /><strong>তাহলে এই ব্রাউজারে রাখুন।</strong></p></div>
+        <div className="bazar-margin-note"><span aria-hidden="true" className="bazar-note-line" /><p>পরে আবার লাগবে?<br /><strong>নিচে “লিস্টটা রেখে দাও” চাপো।</strong></p></div>
       </div>
       <div className="bazar-ledger">
-        <div className="bazar-ledger-top"><span>আপনার তালিকা</span><span>{new Intl.NumberFormat('bn-BD').format(items.length)}টি পণ্য</span></div>
+        <div className="bazar-ledger-top"><span>তোমার লিস্ট</span><span>{new Intl.NumberFormat('bn-BD').format(items.length)}টা জিনিস</span></div>
         {items.length === 0 ? <div className="bazar-empty">
           <svg aria-hidden="true" width="100" height="108" viewBox="0 0 100 108" fill="none"><path d="M24 15h52v80H24z" stroke="currentColor" strokeWidth="1.5"/><path d="M38 10h25v12H38z" fill="#f2d379" stroke="currentColor" strokeWidth="1.5"/><path d="M36 42h29M36 54h29M36 66h19" stroke="currentColor" strokeWidth="1.5"/><circle cx="76" cy="81" r="15" fill="#fff" stroke="currentColor" strokeWidth="1.5"/><path d="M70 81h12M76 75v12" stroke="currentColor" strokeWidth="1.5"/></svg>
-          <h3>তালিকায় এখনো কিছু নেই</h3><p>প্রথম পণ্যটি যোগ করুন।<br />মোট খরচ এখানেই দেখবেন।</p>
+          <h3>লিস্টে এখনো কিছু নেই</h3><p>প্রথম জিনিসটা যোগ করো।<br />মোট কত হলো, এখানেই দেখবে।</p>
         </div> : <ol className="bazar-items">{items.map((item, index) => <li key={item.id}>
           <div className="bazar-item-main"><span className="bazar-item-number">{new Intl.NumberFormat('bn-BD').format(index + 1).padStart(2, '০')}</span><div><h3>{item.name}</h3><p>{formatQuantity(item.quantity)} {units[item.unit]} <span>×</span> {formatMoney(item.unitPrice)} টাকা / {units[item.unit]}</p></div><strong>{formatMoney(lineTotal(item))}<small>টাকা</small></strong></div>
-          <div className="bazar-item-actions"><button type="button" aria-label={`${item.name}: তথ্য বদলান`} onClick={() => editItem(item)}>বদলান</button><span aria-hidden="true"/><button type="button" aria-label={`${item.name} তালিকা থেকে সরান`} onClick={() => removeItem(item)}>সরান</button></div>
+          <div className="bazar-item-actions"><button type="button" aria-label={`${item.name} বদলাও`} onClick={() => editItem(item)}>বদলাও</button><span aria-hidden="true"/><button type="button" aria-label={`${item.name} লিস্ট থেকে বাদ দাও`} onClick={() => removeItem(item)}>বাদ দাও</button></div>
         </li>)}</ol>}
         <div className="bazar-total" aria-live="polite" aria-atomic="true"><span>সব মিলিয়ে</span><strong>৳ {formatMoney(total)}</strong>{difference !== null && !parsedBudget.error && <p className={difference < 0 ? 'bazar-over' : ''}>{difference < 0 ? 'বাজেটের বেশি' : 'বাজেট থেকে বাকি'} <b>{formatMoney(Math.abs(difference))} টাকা</b></p>}</div>
-        <p className="bazar-ledger-foot">প্রতি পণ্যের খরচ নিকটতম পয়সায় মেলানো হয়েছে।</p>
+        <p className="bazar-ledger-foot">প্রতিটা জিনিসের খরচ কাছের পয়সায় মিলিয়ে ধরা হয়েছে।</p>
       </div>
     </div>
     <div className="bazar-save-row">
-      <div><span className="bazar-save-dot" data-dirty={dirty} aria-hidden="true"/><strong>{!ready ? 'সংরক্ষিত নোট খোঁজা হচ্ছে…' : dirty ? 'নতুন পরিবর্তন সংরক্ষণ করা হয়নি' : hasSaved ? 'এই তালিকা ব্রাউজারে সংরক্ষিত আছে' : 'তালিকা শুধু এই পাতায় আছে'}</strong><p>নিজে থেকে সংরক্ষণ হয় না। এই ব্রাউজারে একটি নোট রাখতে পারবেন।</p></div>
-      <div className="bazar-save-actions"><button type="button" className="button" onClick={saveCurrent} disabled={!ready || !!parsedBudget.error}>এই ব্রাউজারে রাখুন</button><button type="button" className="button button-secondary" onClick={() => dirty || hasDraft ? setConfirmation('reopen') : reopen()} disabled={!ready}>রাখা নোট খুলুন</button><button type="button" className="bazar-text-button bazar-delete" onClick={() => setConfirmation('clear')} disabled={!ready}>সব মুছুন</button></div>
+      <div><span className="bazar-save-dot" data-dirty={dirty} aria-hidden="true"/><strong>{!ready ? 'রাখা লিস্ট খুঁজছি…' : dirty ? 'নতুন বদলগুলো এখনো রাখা হয়নি' : hasSaved ? 'এই লিস্টটা এই ব্রাউজারে রাখা আছে' : 'লিস্টটা শুধু এই পাতায় আছে'}</strong><p>নিজে থেকে জমা হয় না। চাপলে এই ব্রাউজারে একটা লিস্ট রাখা থাকবে।</p></div>
+      <div className="bazar-save-actions"><button type="button" className="button" onClick={saveCurrent} disabled={!ready || !!parsedBudget.error}>লিস্টটা রেখে দাও</button><button type="button" className="button button-secondary" onClick={() => dirty || hasDraft ? setConfirmation('reopen') : reopen()} disabled={!ready}>রাখা লিস্ট খোলো</button><button type="button" className="bazar-text-button bazar-delete" onClick={() => setConfirmation('clear')} disabled={!ready}>সব মুছে দাও</button></div>
     </div>
     <div className="bazar-status" role="status" aria-live="polite">{status}</div>
-    {storageError && <button className="bazar-text-button bazar-delete" type="button" onClick={() => setConfirmation('stored')}>ব্রাউজারের পুরোনো নোট মুছুন</button>}
+    {storageError && <button className="bazar-text-button bazar-delete" type="button" onClick={() => setConfirmation('stored')}>আগের রাখা লিস্টটা মুছে দাও</button>}
     {confirmation && <div className="bazar-confirm" role="alert">
-      <strong>{confirmation === 'reopen' ? 'বর্তমান তালিকা ও লেখা তথ্য বাদ দিয়ে আগের নোট খুলবেন?' : confirmation === 'clear' ? 'এই তালিকা ও ব্রাউজারে সংরক্ষিত নোট মুছবেন?' : 'শুধু ব্রাউজারের পুরোনো নোট মুছবেন?'}</strong>
-      <p>{confirmation === 'stored' ? 'পর্দার তালিকা থাকবে। মুছে দেওয়া নোট আর ফেরত পাবেন না।' : 'পরে আর আগের তথ্য ফেরত পাবেন না। চাইলে আগে ফাইল ডাউনলোড করুন।'}</p>
-      <div><button type="button" className="button" onClick={confirmation === 'reopen' ? reopen : clearStored}>{confirmation === 'reopen' ? 'হ্যাঁ, রাখা নোট খুলুন' : 'হ্যাঁ, মুছে দিন'}</button><button type="button" className="button button-secondary" onClick={() => setConfirmation(null)}>বাতিল</button></div>
+      <strong>{confirmation === 'reopen' ? 'এখনকার লিস্ট আর লেখাগুলো বাদ দিয়ে রাখা লিস্টটা খুলবে?' : confirmation === 'clear' ? 'এই লিস্ট আর ব্রাউজারে রাখা লিস্ট, দুটোই মুছে দেবে?' : 'শুধু ব্রাউজারে রাখা পুরোনো লিস্টটা মুছবে?'}</strong>
+      <p>{confirmation === 'stored' ? 'পর্দার লিস্টটা থাকবে, তবে মুছে দেওয়া লিস্ট আর ফেরত পাবে না।' : 'একবার গেলে আর ফেরত আনা যাবে না। চাইলে আগে ফাইলটা নামিয়ে রাখো।'}</p>
+      <div><button type="button" className="button" onClick={confirmation === 'reopen' ? reopen : clearStored}>{confirmation === 'reopen' ? 'হ্যাঁ, রাখা লিস্ট খোলো' : 'হ্যাঁ, মুছে দাও'}</button><button type="button" className="button button-secondary" onClick={() => setConfirmation(null)}>না, থাক</button></div>
     </div>}
     <section className="bazar-export" aria-labelledby="export-heading">
-      <div className="bazar-export-intro"><p className="eyebrow">তালিকার একটি কপি রাখুন</p><h2 id="export-heading">পাঠানোর আগে<br />তালিকা দেখে নিন</h2><p>নিজের জন্য রাখুন বা পরিবারের কাউকে পাঠান। প্রিভিউতে যে লেখা দেখছেন, ফাইল ও প্রিন্টে সেটিই থাকবে।</p>
-        <label className="bazar-money-choice"><input type="checkbox" checked={includeMoney} onChange={event => { setIncludeMoney(event.target.checked); setExportStatus(''); }} /><span>দাম ও বাজেটও রাখুন<small>শুরুতে শুধু পণ্যের নাম, পরিমাণ ও একক থাকবে।</small></span></label>
-        <div className="bazar-export-actions"><button type="button" className="button" disabled={!items.length || !!parsedBudget.error} onClick={downloadList}>ফাইল ডাউনলোড করুন <span aria-hidden="true">↓</span></button><button type="button" className="button button-secondary" disabled={!items.length || !!parsedBudget.error} onClick={() => { try { window.print(); } catch { setExportStatus('প্রিন্ট করা যাচ্ছে না। চাইলে তালিকার ফাইল ডাউনলোড করুন।'); } }}>প্রিন্ট করুন</button></div>
-        {!items.length && <p className="bazar-hint">আগে অন্তত একটি পণ্য যোগ করুন।</p>}{parsedBudget.error && <p className="bazar-error">ডাউনলোড বা প্রিন্টের আগে বাজেট ঠিক করুন অথবা ঘরটি খালি রাখুন।</p>}<p role="status" className="bazar-hint">{exportStatus}</p>
+      <div className="bazar-export-intro"><p className="eyebrow">লিস্টের একটা কপি রাখো</p><h2 id="export-heading">পাঠানোর আগে<br />একবার দেখে নাও</h2><p>নিজের কাছে রাখো, বা বাজারে যে যাবে তাকে পাঠাও। প্রিভিউতে যা দেখছ, ফাইলে আর প্রিন্টে ঠিক সেটাই থাকবে।</p>
+        <label className="bazar-money-choice"><input type="checkbox" checked={includeMoney} onChange={event => { setIncludeMoney(event.target.checked); setExportStatus(''); }} /><span>দাম আর বাজেটও রাখো<small>না বাছলে শুধু জিনিসের নাম, পরিমাণ আর মাপ থাকবে।</small></span></label>
+        <div className="bazar-export-actions"><button type="button" className="button" disabled={!items.length || !!parsedBudget.error} onClick={downloadList}>ফাইল ডাউনলোড করো <span aria-hidden="true">↓</span></button><button type="button" className="button button-secondary" disabled={!items.length || !!parsedBudget.error} onClick={() => { try { window.print(); } catch { setExportStatus('প্রিন্ট করা যাচ্ছে না। চাইলে লিস্টের ফাইলটা নামিয়ে নাও।'); } }}>প্রিন্ট করো</button></div>
+        {!items.length && <p className="bazar-hint">আগে অন্তত একটা জিনিস যোগ করো।</p>}{parsedBudget.error && <p className="bazar-error">নামানো বা প্রিন্টের আগে বাজেটটা ঠিক করো, নইলে ঘরটা খালি রাখো।</p>}<p role="status" className="bazar-hint">{exportStatus}</p>
       </div>
-      <div className="bazar-export-paper"><div className="bazar-preview-label"><span>পাঠানোর আগে দেখুন</span><span>{includeMoney ? 'দামসহ' : 'দাম ছাড়া'}</span></div><pre className="bazar-print-content">{items.length ? exportedText : 'বাজার নোট\n\nপণ্য যোগ করলে পাঠানোর তালিকা এখানে দেখবেন।'}</pre></div>
+      <div className="bazar-export-paper"><div className="bazar-preview-label"><span>যেমন দেখাবে</span><span>{includeMoney ? 'দামসহ' : 'দাম ছাড়া'}</span></div><pre className="bazar-print-content">{items.length ? exportedText : 'বাজার নোট\n\nজিনিস যোগ করলে লিস্টটা এখানে দেখবে।'}</pre></div>
     </section>
   </div>;
 }

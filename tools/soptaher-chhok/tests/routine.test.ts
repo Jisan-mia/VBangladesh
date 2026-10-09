@@ -17,7 +17,7 @@ test('swapping preserves text and color, can move into an empty cell and undoes 
   const next = swapCells(cells, 0, 1);
   assert.deepEqual(next[1], cells[0]);
   assert.deepEqual(next[0], cells[1]);
-  assert.equal(cells[0].text, 'ঘর গুছানো');
+  assert.equal(cells[0].text, 'ঘর গোছানো');
   const history = commitHistory(createHistory(cells), next);
   assert.equal(history.past.length, 1);
   assert.deepEqual(undoHistory(history).present, cells);

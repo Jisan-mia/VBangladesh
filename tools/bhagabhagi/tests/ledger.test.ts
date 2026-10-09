@@ -72,7 +72,7 @@ test('visually identical Bengali names cannot bypass duplicate detection', () =>
 });
 test('reports use current names and amounts and explain the rounding rule', () => {
   const report = ledgerReport(sample);
-  assert.ok(report.includes('বাবু → আশা: ১৯.৯৯ টাকা') && report.includes('চয়ন → আশা: ৪০.০১ টাকা'.normalize('NFC')) && report.includes('অবশিষ্ট পয়সা') && report.includes('টাকা পাঠানো হয় না'));
+  assert.ok(report.includes('বাবু → আশা: ১৯.৯৯ টাকা') && report.includes('চয়ন → আশা: ৪০.০১ টাকা'.normalize('NFC')) && report.includes('পয়সা বেঁচে গেলে') && report.includes('টাকা পাঠানো হয় না'));
 });
 test('amount editing preserves a single poisha', () => {
   assert.equal(parsePoisha(inputAmount(1)), 1);

@@ -8,10 +8,10 @@ export const MAX_AMOUNT = 99999999;
 
 export function parseHundredths(value: string): number {
   const normalized = value.trim().replace(/[০-৯]/g, digit => String('০১২৩৪৫৬৭৮৯'.indexOf(digit)));
-  if (!/^\d+(?:\.\d{1,2})?$/.test(normalized)) throw new Error('সংখ্যাটি ঠিক করে লিখুন। দশমিকের পরে সর্বোচ্চ দুই ঘর দিন।');
+  if (!/^\d+(?:\.\d{1,2})?$/.test(normalized)) throw new Error('সংখ্যাটা ঠিক করে লেখো, যেমন ২ বা ১.৫০। দশমিকের পরে দুই ঘরের বেশি না।');
   const [whole, fraction = ''] = normalized.split('.');
   const amount = Number(whole) * 100 + Number(fraction.padEnd(2, '0'));
-  if (!Number.isSafeInteger(amount) || amount > MAX_AMOUNT) throw new Error('৯,৯৯,৯৯৯.৯৯-এর বেশি লেখা যাবে না।');
+  if (!Number.isSafeInteger(amount) || amount > MAX_AMOUNT) throw new Error('৯,৯৯,৯৯৯.৯৯-এর বেশি লেখা যায় না।');
   return amount;
 }
 
@@ -41,7 +41,7 @@ function isAmount(value: unknown): value is number {
 
 export function validateBasket(value: unknown): Basket {
   if (!isRecord(value) || !Array.isArray(value.items) || value.items.length > MAX_ITEMS || (value.budget !== null && !isAmount(value.budget))) {
-    throw new Error('সংরক্ষিত নোটটি পড়া যাচ্ছে না।');
+    throw new Error('রাখা লিস্টটা পড়া যাচ্ছে না।');
   }
   const ids = new Set<string>();
   const items = value.items.map((item: unknown): Item => {
@@ -49,7 +49,7 @@ export function validateBasket(value: unknown): Basket {
       typeof item.name !== 'string' || !item.name.trim() || item.name.length > 80 || /[\u0000-\u001f\u007f]/.test(item.name) ||
       !isAmount(item.quantity) || item.quantity === 0 || item.quantity > MAX_QUANTITY || !isAmount(item.unitPrice) ||
       typeof item.unit !== 'string' || !Object.hasOwn(units, item.unit)) {
-      throw new Error('নোটের কিছু তথ্য ঠিক নেই। নাম, পরিমাণ ও দাম মিলিয়ে নিন।');
+      throw new Error('লিস্টের কিছু লেখা ঠিক নেই। নাম, পরিমাণ আর দাম একবার দেখে নাও।');
     }
     ids.add(item.id);
     return { id: item.id, name: item.name.trim(), quantity: item.quantity, unit: item.unit as Unit, unitPrice: item.unitPrice };
@@ -58,7 +58,7 @@ export function validateBasket(value: unknown): Basket {
 }
 
 export function exportList(basket: Basket, mode: 'items' | 'money'): string {
-  const lines = ['বাজার নোট', 'আমার বাজারের তালিকা', ''];
+  const lines = ['বাজার নোট', 'আমার বাজারের লিস্ট', ''];
   for (const [index, item] of basket.items.entries()) {
     lines.push(`${new Intl.NumberFormat('bn-BD').format(index + 1)}. ${item.name} — ${formatQuantity(item.quantity)} ${units[item.unit]}`);
     if (mode === 'money') lines.push(`   প্রতি ${units[item.unit]} ${formatMoney(item.unitPrice)} টাকা · মোট ${formatMoney(lineTotal(item))} টাকা`);
@@ -70,7 +70,7 @@ export function exportList(basket: Basket, mode: 'items' | 'money'): string {
       const difference = basket.budget - total;
       lines.push(`বাজেট: ${formatMoney(basket.budget)} টাকা`, `${difference < 0 ? 'বাজেটের বেশি' : 'বাজেট থেকে বাকি'}: ${formatMoney(Math.abs(difference))} টাকা`);
     }
-    lines.push('নিজের দেওয়া দাম। বর্তমান বাজারদর যাচাই করা হয়নি।');
+    lines.push('দাম নিজের দেওয়া, বাজারের আজকের দর না।');
   }
   return lines.join('\n');
 }

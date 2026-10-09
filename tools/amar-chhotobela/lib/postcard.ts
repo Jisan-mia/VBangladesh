@@ -9,7 +9,7 @@ export const chapters = [
   { id: "utsob", label: "উৎসব আর ছুটি" },
 ] as const;
 
-// Share links store picks as bit positions, so only append new memories at the end; never reorder or delete.
+// Share links store picks as bit positions: once links are public, only append new memories; never reorder or delete.
 export const memories = [
   { id: "gollachhut", chapter: "khela", label: "গোল্লাছুট", drawing: "M7 40h34M14 10a4 4 0 1 0 8 0 4 4 0 1 0-8 0M18 16l2 12-9 10m9-10 7 10M9 24l9-8 12 8m0-12 5-5m-1 18 7 3M34 9a3 3 0 1 0 6 0 3 3 0 1 0-6 0m3 4-3 11 6 11m-6-11-6 12" },
   { id: "kanamachhi", chapter: "khela", label: "কানামাছি", drawing: "M18 10a6 6 0 1 0 12 0 6 6 0 1 0-12 0M17 9h14m0 0 5-3m-5 3 5 3M24 16v14M24 21 11 16m13 5 13-5M24 30l-7 12m7-12 7 12" },
@@ -19,7 +19,7 @@ export const memories = [
   { id: "alif-laila", chapter: "porda", label: "আলিফ লায়লা", drawing: "M10 30h26c0-5-6-8-13-8s-13 3-13 8ZM36 30c4 0 8-4 10-8-4 1-7 3-10 4M10 28c-5 0-6-6-1-7 2 0 3 2 3 3M21 22c0-3 4-3 4 0M15 30l-2 5h20l-2-5M24 18c-3-3 3-5 0-8s3-5 1-7" },
   { id: "meena", chapter: "porda", label: "মীনা কার্টুন", drawing: "M16 38c-6-6-4-20 8-22 8-1 12 5 11 11-1 8-10 13-19 11ZM30 16c2-4 7-4 9 0-2 0-4 1-5 3M31 20h.5M16 38l-6 7m8-6-2 7M20 27c4 4 9 5 12 3" },
   { id: "antenna", chapter: "porda", label: "ছাদে অ্যান্টেনা ঘোরানো", drawing: "M24 46V12M10 8l14 8 14-8M12 14h24M15 20h18M18 26h12M14 37c0 4 20 4 20 0m0 0-3-2m3 2-1 3M40 2l3 3-3 3 3 3" },
-  { id: "cassette", chapter: "porda", label: "ক্যাসেটে গান", drawing: "M5 12h38v26H5ZM11 18h26v10H11ZM15 23a2 2 0 1 0 4 0 2 2 0 1 0-4 0m14 0a2 2 0 1 0 4 0 2 2 0 1 0-4 0M13 38l3-5h16l3 5" },
+  { id: "doraemon", chapter: "porda", label: "ডোরেমন", drawing: "M12 26a12 12 0 1 0 24 0 12 12 0 1 0-24 0M13 23h22M24 28v8M22 30a2 2 0 1 0 4 0 2 2 0 1 0-4 0M6 12c10 6 26 6 36 0" },
   { id: "brick-game", chapter: "porda", label: "ব্রিক গেম", drawing: "M12 4h24a3 3 0 0 1 3 3v34a3 3 0 0 1-3 3H12a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3ZM14 9h20v16H14ZM18 21h4v-4h4v4h4M17 31v6m-3-3h6M30 34a1.5 1.5 0 1 0 3 0 1.5 1.5 0 1 0-3 0m3-4a1.5 1.5 0 1 0 3 0 1.5 1.5 0 1 0-3 0" },
   { id: "hawai-mithai", chapter: "khabar", label: "হাওয়াই মিঠাই", drawing: "M24 31v15M17 30c-6 0-9-6-5-10-2-6 5-10 9-7 2-5 10-5 12 0 5-1 8 5 4 9 2 5-3 9-8 7-3 3-9 3-12 1ZM18 21c2-2 5-2 7 0m3-4c2-1 4 0 5 2" },
   { id: "ice-cream", chapter: "khabar", label: "কাঠি আইসক্রিম", drawing: "M17 6h14a3 3 0 0 1 3 3v20H14V9a3 3 0 0 1 3-3ZM22 29v13a2 2 0 0 0 4 0V29M14 21h20M18 29v4m11-4v5M20 11v6" },
@@ -43,9 +43,9 @@ export const memories = [
   { id: "pond", chapter: "utsob", label: "পুকুরে সাঁতার", drawing: "M4 32c4-3 8 3 12 0s8 3 12 0 8 3 12 0M4 40c4-3 8 3 12 0s8 3 12 0 8 3 12 0M20 24a4 4 0 1 0 8 0 4 4 0 1 0-8 0M28 25c4-6 10-6 12-2M12 22c2-4 6-5 8-3" },
   { id: "rannabati", chapter: "khela", label: "রান্নাবাটি", drawing: "M9 26h22l-2 12a5 5 0 0 1-5 4h-8a5 5 0 0 1-5-4ZM7 26h26M17 22h6M38 8v24M35 6a3 3 0 0 0 6 0M16 18c-2-2 2-4 0-6m8 6c-2-2 2-4 0-6" },
   { id: "ittadi", chapter: "porda", label: "ইত্যাদি দেখা", drawing: "M6 14h36v26H6ZM10 18h22v18H10ZM36 21h2m-2 6h2m-2 6h2M18 14l-6-10m18 10 6-10M12 40l-2 4m28-4 2 4" },
-  { id: "lozenge", chapter: "khabar", label: "লজেন্স", drawing: "M16 24a8 6 0 1 0 16 0 8 6 0 1 0-16 0M16 24l-9-6v12Zm16 0 9-6v12ZM21 20l6 8" },
+  { id: "chips-toy", chapter: "khabar", label: "চিপসের ভেতরের খেলনা", drawing: "M12 6h24l-2 6 2 6-2 6 2 6-2 6 2 6H12l2-6-2-6 2-6-2-6 2-6-2-6ZM24 17l2 5h5l-4 3 2 5-5-3-5 3 2-5-4-3h5Z" },
   { id: "assembly", chapter: "school", label: "অ্যাসেম্বলিতে জাতীয় সংগীত", drawing: "M10 44V4M5 44h10M10 6h28v18H10ZM17 15a5 5 0 1 0 10 0 5 5 0 1 0-10 0M22 32v8m8-8v8m8-8v8" },
-  { id: "roof", chapter: "bari", label: "ছাদের বিকেল", drawing: "M4 35h40M8 35V24h32v11M12 29h3m5 0h3m5 0h3m5 0h2M9 41h31M17 14a7 7 0 1 1 14 0M24 3V1m-12 9-4-2m28 2 4-2M9 17h30" },
+  { id: "nokia-snake", chapter: "bari", label: "নোকিয়ায় সাপ খেলা", drawing: "M16 4h16a3 3 0 0 1 3 3v34a3 3 0 0 1-3 3H16a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3ZM17 9h14v13H17ZM19 19h5v-4h4v4h2M18 28h2m4 0h2m4 0h2M18 33h2m4 0h2m4 0h2M18 38h2m4 0h2m4 0h2" },
   { id: "eid-moon", chapter: "utsob", label: "ঈদের চাঁদ দেখা", drawing: "M30 4a12 12 0 1 0 10 18 10 10 0 0 1-10-18ZM13 8l1.5 3 3 .5-2.2 2 .5 3-2.8-1.5-2.8 1.5.5-3-2.2-2 3-.5ZM4 42h40M8 42v-8h12v8m6 0V30h14v12" },
 ] as const;
 

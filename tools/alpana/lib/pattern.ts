@@ -38,7 +38,7 @@ export function roundSvgValue(value: number) {
 
 export function radialPositions(count: number, radius: number, phase = 0) {
   if (!Number.isInteger(count) || count < 1 || count > 144 || !Number.isFinite(radius) || radius < 0 || !Number.isFinite(phase)) {
-    throw new RangeError("নকশার বিন্যাসটি সঠিক নয়।");
+    throw new RangeError("নকশার সাজটা মিলছে না।");
   }
   return Array.from({ length: count }, (_, index) => {
     const angle = phase + index * 360 / count;
@@ -49,7 +49,7 @@ export function radialPositions(count: number, radius: number, phase = 0) {
 
 export function patternRings(settings: Pick<PatternSettings, "symmetry" | "density">) {
   if (!symmetries.includes(settings.symmetry) || !densities.some(item => item.id === settings.density)) {
-    throw new RangeError("নকশার ভাগ ও ঘনত্ব তালিকা থেকে বেছে নিন।");
+    throw new RangeError("নকশার ভাগ আর ঘনত্ব লিস্ট থেকে বেছে নাও।");
   }
   const count = settings.symmetry;
   if (settings.density === "light") return [{ radius: 187, size: 67, count, phase: -90 }];
@@ -65,7 +65,7 @@ export function patternRings(settings: Pick<PatternSettings, "symmetry" | "densi
 }
 
 export function borderPositions(symmetry: PatternSettings["symmetry"]) {
-  if (!symmetries.includes(symmetry)) throw new RangeError("নকশার ভাগ তালিকা থেকে বেছে নিন।");
+  if (!symmetries.includes(symmetry)) throw new RangeError("নকশার ভাগ লিস্ট থেকে বেছে নাও।");
   const perSide = symmetry / 2;
   return Array.from({ length: perSide * 4 }, (_, index) => {
     const side = Math.floor(index / perSide);

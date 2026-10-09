@@ -20,15 +20,15 @@ export function RecipeEditor() {
   }
 
   function fillExample() {
-    if (hasWriting && !window.confirm("নমুনা দিলে আপনার লেখা বদলে যাবে। দরকারি লেখা আগে ডাউনলোড করে রাখুন। নমুনা দেখবেন?")) return;
+    if (hasWriting && !window.confirm("নমুনা দেখালে তোমার লেখাটা মুছে যাবে। দরকারি হলে আগে ফাইলটা নামিয়ে রাখো। তবুও নমুনা দেখবে?")) return;
     setDraft({ ...exampleRecipe });
-    setStatus("নমুনা দেখানো হচ্ছে। এটি কোনো পরিবারের আসল রেসিপি বা স্মৃতি নয়। এবার আপনার রেসিপি অনুযায়ী বদলে নিন।");
+    setStatus("এটা শুধু নমুনা, কারো আসল রেসিপি বা গল্প না। এবার নিজের রান্না দিয়ে বদলে নাও।");
   }
 
   function clearRecipe() {
-    if (!window.confirm("এই পাতার সব লেখা মুছতে চান? দরকার হলে আগে রেসিপিটি ডাউনলোড করে রাখুন।")) return;
+    if (!window.confirm("এই পাতার সব লেখা মুছে দেবে? দরকার হলে আগে ফাইলটা নামিয়ে রাখো।")) return;
     setDraft(emptyRecipe());
-    setStatus("এই পাতার লেখা মুছে ফেলা হয়েছে। আগে ডাউনলোড করা ফাইল মুছে যায়নি।");
+    setStatus("এই পাতার লেখা মুছে গেছে। আগে ডাউনলোড করা ফাইল যেমন ছিল, তেমনই আছে।");
   }
 
   function downloadRecipe() {
@@ -42,9 +42,9 @@ export function RecipeEditor() {
       link.click();
       link.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
-      setStatus("টেক্সট ফাইল তৈরি হয়েছে। ব্রাউজারের ডাউনলোড তালিকা বা ফোনের ফাইল অ্যাপে দেখুন।");
+      setStatus("ডাউনলোড শুরু হয়েছে। ফোনের ডাউনলোড ফোল্ডার বা ফাইল অ্যাপে দেখো।");
     } catch {
-      setStatus("ফাইল ডাউনলোড করা যায়নি। ব্রাউজারে ডাউনলোডের অনুমতি দেখে আবার চেষ্টা করুন। আপনার লেখা পাতাতেই আছে।");
+      setStatus("ফাইলটা ডাউনলোড হলো না। ব্রাউজারে ডাউনলোডের অনুমতি আছে কি না দেখে আরেকবার চেষ্টা করো। তোমার লেখা পাতাতেই আছে।");
     }
   }
 
@@ -54,9 +54,9 @@ export function RecipeEditor() {
     try {
       await document.fonts.ready;
       window.print();
-      setStatus("প্রিন্টের উইন্ডো থেকে প্রিন্ট করুন বা পিডিএফ হিসেবে রাখুন। বাতিল করলেও পাতার লেখা থাকবে।");
+      setStatus("প্রিন্টের পাতা থেকে প্রিন্ট করো বা পিডিএফ করে রাখো। বাতিল করলেও লেখা এখানেই থাকবে।");
     } catch {
-      setStatus("প্রিন্টের উইন্ডো খোলা যায়নি। ব্রাউজারের মেনু থেকে প্রিন্ট করার চেষ্টা করুন।");
+      setStatus("প্রিন্টের পাতা খুলল না। ব্রাউজারের মেনু থেকে প্রিন্ট করে দেখো।");
     } finally {
       setPrintPending(false);
     }
@@ -64,27 +64,27 @@ export function RecipeEditor() {
 
   return <div className="ranna-editor">
     <form className="ranna-form" onSubmit={(event) => event.preventDefault()}>
-      <div className="ranna-form-top"><h3>আপনার রান্নার খাতা</h3><button className="ranna-text-button" type="button" onClick={fillExample}>একটি নমুনা দেখুন</button></div>
-      <p className="ranna-required-note">রান্নার নাম, উপকরণ ও ধাপ লিখলে প্রিন্ট বা ডাউনলোড করতে পারবেন।</p>
-      <div className="ranna-field"><label htmlFor="recipe-title">রান্নার নাম <span>প্রয়োজন</span></label><input id="recipe-title" value={draft.title} maxLength={recipeLimits.title} onChange={(event) => updateField("title", event.target.value)} placeholder="যেমন: ডাল ভর্তা" required autoComplete="off" /></div>
-      <div className="ranna-field-row"><div className="ranna-field"><label htmlFor="recipe-from">যাঁর কাছে শেখা <span>চাইলে</span></label><input id="recipe-from" value={draft.learnedFrom} maxLength={recipeLimits.learnedFrom} onChange={(event) => updateField("learnedFrom", event.target.value)} placeholder="যেমন: মায়ের রান্নার খাতা" autoComplete="off" /></div><div className="ranna-field"><label htmlFor="recipe-servings">কতজনের জন্য <span>চাইলে</span></label><input id="recipe-servings" value={draft.servings} maxLength={recipeLimits.servings} onChange={(event) => updateField("servings", event.target.value)} placeholder="যেমন: ৪ জন" autoComplete="off" /></div></div>
-      <div className="ranna-field"><label htmlFor="recipe-ingredients">উপকরণ ও পরিমাণ <span>প্রয়োজন</span></label><p id="ingredients-help">প্রতিটি উপকরণ আলাদা লাইনে লিখুন। সর্বোচ্চ ৩০টি।</p><textarea id="recipe-ingredients" rows={6} value={draft.ingredients} maxLength={recipeLimits.ingredients} onChange={(event) => updateField("ingredients", event.target.value)} placeholder={"ডাল — ১ কাপ\nপেঁয়াজ — ১টি"} required aria-describedby="ingredients-help ingredients-error" aria-invalid={Boolean(draft.ingredients.trim() && errors.ingredients)} /><p id="ingredients-error" className="ranna-field-error">{draft.ingredients.trim() && errors.ingredients}</p></div>
-      <div className="ranna-field"><label htmlFor="recipe-steps">রান্নার ধাপ <span>প্রয়োজন</span></label><p id="steps-help">প্রতিটি ধাপ আলাদা লাইনে লিখুন। নম্বর নিজে থেকে বসবে। সর্বোচ্চ ২০টি ধাপ।</p><textarea id="recipe-steps" rows={7} value={draft.steps} maxLength={recipeLimits.steps} onChange={(event) => updateField("steps", event.target.value)} placeholder={"প্রথমে যা করবেন…\nতারপরের কাজ…"} required aria-describedby="steps-help steps-error" aria-invalid={Boolean(draft.steps.trim() && errors.steps)} /><p id="steps-error" className="ranna-field-error">{draft.steps.trim() && errors.steps}</p></div>
-      <div className="ranna-field"><label htmlFor="recipe-memory">একটুখানি গল্প <span>চাইলে</span></label><p id="memory-help">কবে খেতেন, কার সঙ্গে রান্না করতেন, বা যে কথাটি মনে রাখতে চান।</p><textarea id="recipe-memory" rows={3} value={draft.memory} maxLength={recipeLimits.memory} onChange={(event) => updateField("memory", event.target.value)} placeholder="এই রান্নার সঙ্গে আপনার স্মৃতি…" aria-describedby="memory-help" /><span className="ranna-character-count">{banglaNumber.format(draft.memory.length)} / ৮০০</span></div>
-      <div className="ranna-form-bottom"><p>পাতা ছাড়ার আগে রেসিপি ডাউনলোড করে রাখুন।</p><button className="ranna-text-button" type="button" onClick={clearRecipe} disabled={!hasWriting}>সব মুছে ফেলুন</button></div>
+      <div className="ranna-form-top"><h3>তোমার রান্নার খাতা</h3><button className="ranna-text-button" type="button" onClick={fillExample}>একটা নমুনা দেখো</button></div>
+      <p className="ranna-required-note">রান্নার নাম, উপকরণ আর ধাপ লিখলেই ফাইল ডাউনলোড বা প্রিন্ট করতে পারবে।</p>
+      <div className="ranna-field"><label htmlFor="recipe-title">রান্নার নাম <span>লাগবেই</span></label><input id="recipe-title" value={draft.title} maxLength={recipeLimits.title} onChange={(event) => updateField("title", event.target.value)} placeholder="যেমন: ডাল ভর্তা" required autoComplete="off" /></div>
+      <div className="ranna-field-row"><div className="ranna-field"><label htmlFor="recipe-from">কার কাছে শেখা <span>চাইলে</span></label><input id="recipe-from" value={draft.learnedFrom} maxLength={recipeLimits.learnedFrom} onChange={(event) => updateField("learnedFrom", event.target.value)} placeholder="যেমন: মায়ের কাছে" autoComplete="off" /></div><div className="ranna-field"><label htmlFor="recipe-servings">কতজনের জন্য <span>চাইলে</span></label><input id="recipe-servings" value={draft.servings} maxLength={recipeLimits.servings} onChange={(event) => updateField("servings", event.target.value)} placeholder="যেমন: ৪ জন" autoComplete="off" /></div></div>
+      <div className="ranna-field"><label htmlFor="recipe-ingredients">উপকরণ আর মাপ <span>লাগবেই</span></label><p id="ingredients-help">একেক লাইনে একটা উপকরণ। ৩০টা পর্যন্ত।</p><textarea id="recipe-ingredients" rows={6} value={draft.ingredients} maxLength={recipeLimits.ingredients} onChange={(event) => updateField("ingredients", event.target.value)} placeholder={"ডাল — ১ কাপ\nপেঁয়াজ — ১টা"} required aria-describedby="ingredients-help ingredients-error" aria-invalid={Boolean(draft.ingredients.trim() && errors.ingredients)} /><p id="ingredients-error" className="ranna-field-error">{draft.ingredients.trim() && errors.ingredients}</p></div>
+      <div className="ranna-field"><label htmlFor="recipe-steps">রান্নার ধাপ <span>লাগবেই</span></label><p id="steps-help">একেক লাইনে একটা ধাপ। নম্বর নিজে থেকে বসবে। ২০টা পর্যন্ত।</p><textarea id="recipe-steps" rows={7} value={draft.steps} maxLength={recipeLimits.steps} onChange={(event) => updateField("steps", event.target.value)} placeholder={"প্রথমে কী করবে…\nতারপর…"} required aria-describedby="steps-help steps-error" aria-invalid={Boolean(draft.steps.trim() && errors.steps)} /><p id="steps-error" className="ranna-field-error">{draft.steps.trim() && errors.steps}</p></div>
+      <div className="ranna-field"><label htmlFor="recipe-memory">একটুখানি গল্প <span>চাইলে</span></label><p id="memory-help">কবে খাওয়া হতো, কার সাথে রাঁধতে, বা যে কথাটা মনে রাখতে চাও।</p><textarea id="recipe-memory" rows={3} value={draft.memory} maxLength={recipeLimits.memory} onChange={(event) => updateField("memory", event.target.value)} placeholder="যেমন: শীতের সকালে চুলার পাশে বসে খেতাম…" aria-describedby="memory-help" /><span className="ranna-character-count">{banglaNumber.format(draft.memory.length)} / ৮০০</span></div>
+      <div className="ranna-form-bottom"><p>পাতা ছাড়ার আগে ফাইলটা নামিয়ে রেখো।</p><button className="ranna-text-button" type="button" onClick={clearRecipe} disabled={!hasWriting}>সব মুছে দাও</button></div>
     </form>
     <div className="ranna-preview-wrap">
-      <div className="ranna-preview-top"><span>আপনার রেসিপির কার্ড</span><span>লিখলেই বদলাবে</span></div>
+      <div className="ranna-preview-top"><span>তোমার রেসিপি কার্ড</span><span>লিখলেই বদলাবে</span></div>
       <article className="ranna-sheet" aria-labelledby="recipe-card-title">
         <div className="ranna-sheet-brand"><span>আমাদের রান্নাখাতা</span><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M9 4c8 0 9 11 2 13l1 11H8l1-11C2 15 2 4 9 4Zm13 0v9m4-9v9m-8-9v9h8m-4 0v15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></div>
-        <h3 id="recipe-card-title">{card.title || "আপনার রান্নার নাম"}</h3>
-        {(card.learnedFrom || card.servings) && <div className="ranna-sheet-meta">{card.learnedFrom && <p><span>যাঁর কাছে শেখা</span>{card.learnedFrom}</p>}{card.servings && <p><span>কতজনের জন্য</span>{card.servings}</p>}</div>}
-        <section className="ranna-ingredient-section" aria-labelledby="card-ingredients-title"><h4 id="card-ingredients-title">যা যা লাগবে</h4>{card.ingredients.length ? <ul>{card.ingredients.map((ingredient, index) => <li key={index}>{ingredient}</li>)}</ul> : <p className="ranna-empty">উপকরণ ও পরিমাণ লিখলে এখানে দেখা যাবে।</p>}</section>
-        <section className="ranna-step-section" aria-labelledby="card-steps-title"><h4 id="card-steps-title">যেভাবে রান্না করবেন</h4>{card.steps.length ? <ol>{card.steps.map((step, index) => <li key={index}>{step}</li>)}</ol> : <p className="ranna-empty">আপনার লেখা ধাপগুলো এখানে সাজানো থাকবে।</p>}</section>
-        {card.memory && <section className="ranna-story" aria-labelledby="card-story-title"><h4 id="card-story-title">এই রান্নার সঙ্গে যে গল্প</h4><p>{card.memory}</p></section>}
-        <div className="ranna-sheet-end">আপনার লেখা রেসিপি · আমাদের রান্নাখাতা</div>
+        <h3 id="recipe-card-title">{card.title || "তোমার রান্নার নাম"}</h3>
+        {(card.learnedFrom || card.servings) && <div className="ranna-sheet-meta">{card.learnedFrom && <p><span>কার কাছে শেখা</span>{card.learnedFrom}</p>}{card.servings && <p><span>কতজনের জন্য</span>{card.servings}</p>}</div>}
+        <section className="ranna-ingredient-section" aria-labelledby="card-ingredients-title"><h4 id="card-ingredients-title">যা যা লাগবে</h4>{card.ingredients.length ? <ul>{card.ingredients.map((ingredient, index) => <li key={index}>{ingredient}</li>)}</ul> : <p className="ranna-empty">উপকরণ লিখলে এখানে দেখাবে।</p>}</section>
+        <section className="ranna-step-section" aria-labelledby="card-steps-title"><h4 id="card-steps-title">যেভাবে রাঁধবে</h4>{card.steps.length ? <ol>{card.steps.map((step, index) => <li key={index}>{step}</li>)}</ol> : <p className="ranna-empty">তোমার লেখা ধাপগুলো এখানে নম্বর দিয়ে সাজানো থাকবে।</p>}</section>
+        {card.memory && <section className="ranna-story" aria-labelledby="card-story-title"><h4 id="card-story-title">এই রান্নার পেছনের গল্প</h4><p>{card.memory}</p></section>}
+        <div className="ranna-sheet-end">নিজের লেখা রেসিপি · আমাদের রান্নাখাতা</div>
       </article>
-      <div className="ranna-export"><div className="ranna-export-actions"><button type="button" className="button" onClick={downloadRecipe} disabled={!ready}>ফাইল ডাউনলোড করুন <span aria-hidden="true">↓</span></button><button type="button" className="button-secondary" onClick={printRecipe} disabled={!ready || printPending}>{printPending ? "প্রিন্টের প্রস্তুতি…" : "কার্ড প্রিন্ট করুন"}</button></div><p className="ranna-export-help">{ready ? "নাম ও স্মৃতিসহ আপনার সব লেখা ফাইল ও প্রিন্ট করা কার্ডে থাকবে।" : "রান্নার নাম, উপকরণ ও ধাপ লিখুন। তারপর ডাউনলোড বা প্রিন্ট করুন।"}</p><p className="ranna-status" role="status" aria-live="polite">{status}</p><p className="ranna-count" role="status" aria-live="polite">{banglaNumber.format(card.ingredients.length)}টি উপকরণ · {banglaNumber.format(card.steps.length)}টি ধাপ</p></div>
+      <div className="ranna-export"><div className="ranna-export-actions"><button type="button" className="button" onClick={downloadRecipe} disabled={!ready}>ফাইল ডাউনলোড করো <span aria-hidden="true">↓</span></button><button type="button" className="button-secondary" onClick={printRecipe} disabled={!ready || printPending}>{printPending ? "প্রিন্টের জন্য তৈরি হচ্ছে…" : "কার্ড প্রিন্ট করো"}</button></div><p className="ranna-export-help">{ready ? "নাম আর গল্পসহ তোমার সব লেখা ফাইলে আর প্রিন্ট করা কার্ডে থাকবে।" : "রান্নার নাম, উপকরণ আর ধাপ লেখো, তারপর ডাউনলোড বা প্রিন্ট করো।"}</p><p className="ranna-status" role="status" aria-live="polite">{status}</p><p className="ranna-count" role="status" aria-live="polite">{banglaNumber.format(card.ingredients.length)}টা উপকরণ · {banglaNumber.format(card.steps.length)}টা ধাপ</p></div>
     </div>
   </div>;
 }

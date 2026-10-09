@@ -46,6 +46,6 @@ test('revealed and skipped answers never count as solved and the game ends at tw
   for (let index = game.index; index < puzzles.length; index++) game = nextPuzzle(game);
   assert.equal(game.index, puzzles.length);
   assert.equal(nextPuzzle(game), game);
-  assert.match(resultText(game), /নিজে মিলিয়েছি ০টি/);
+  assert.match(resultText(game), /নিজে মিলিয়েছি ০টা/);
   assert.ok(!resultText(game).includes(puzzles[0].parts.join('')));
 });

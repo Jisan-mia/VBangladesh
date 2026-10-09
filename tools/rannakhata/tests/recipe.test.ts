@@ -18,7 +18,7 @@ test("blank lines and Windows line endings do not create empty ingredients", () 
 });
 
 test("optional personal details do not leave empty headings in the export", () => {
-  assert.doesNotMatch(recipeText(validRecipe), /যাঁর কাছে শেখা|কতজনের জন্য|এই রান্নার সঙ্গে যে গল্প/);
+  assert.doesNotMatch(recipeText(validRecipe), /কার কাছে শেখা|কতজনের জন্য|এই রান্নার পেছনের গল্প/);
 });
 
 test("thirty ingredients and twenty steps are accepted at the boundary", () => {
