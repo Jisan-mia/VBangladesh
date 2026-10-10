@@ -18,6 +18,7 @@ import { site as mishtir_baksho } from '../tools/mishtir-baksho/content';
 import { site as taka_kothay } from '../tools/taka-kothay/content';
 import { site as amar_jersey } from '../tools/amar-jersey/content';
 import { site as boyos } from '../tools/boyos/content';
+import { site as iftar_plate } from '../tools/iftar-plate/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -40,6 +41,7 @@ export const toolContent = {
   'taka-kothay': taka_kothay,
   'amar-jersey': amar_jersey,
   'boyos': boyos,
+  'iftar-plate': iftar_plate,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
