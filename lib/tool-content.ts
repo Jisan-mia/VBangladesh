@@ -40,6 +40,7 @@ import { site as daknam } from '../tools/daknam/content';
 import { site as cha_mudra } from '../tools/cha-mudra/content';
 import { site as matir_bank } from '../tools/matir-bank/content';
 import { site as shesh_bol } from '../tools/shesh-bol/content';
+import { site as dhoyahin } from '../tools/dhoyahin/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -84,6 +85,7 @@ export const toolContent = {
   'cha-mudra': cha_mudra,
   'matir-bank': matir_bank,
   'shesh-bol': shesh_bol,
+  'dhoyahin': dhoyahin,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
