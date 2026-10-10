@@ -1193,3 +1193,4 @@ Human checks and shared changes that agents asked for, kept here so they survive
 - koto-cheno: names now go into short links (orchestrator's choice, for the personal preview).
 - Not done yet: tests on a real Android phone and in the Facebook in-app browser.
 - eidjatra: bump the tally event id (eid-ul-fitr-2027) right before each Eid's travel week. API wish: a ?prefix= filter on tally GET (it returns every id ever counted).
+- attiyo: a native speaker should review all 84 named chains (lib/kin.ts). Weakly sourced: জামাইবাবু (bn.wiktionary only) and বেয়াইন. শালা/শালী are left out (the dictionary also marks them as slurs). The card spells it ফুপা, with the dictionary's ফুফা in a note.
