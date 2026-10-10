@@ -68,6 +68,7 @@ import { site as jomi } from '../tools/jomi/content';
 import { site as ek_koti } from '../tools/ek-koti/content';
 import { site as rokto } from '../tools/rokto/content';
 import { site as cassette } from '../tools/cassette/content';
+import { site as jibh } from '../tools/jibh/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -140,6 +141,7 @@ export const toolContent = {
   'ek-koti': ek_koti,
   'rokto': rokto,
   'cassette': cassette,
+  'jibh': jibh,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
