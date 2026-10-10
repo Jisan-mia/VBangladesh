@@ -81,7 +81,7 @@ export const catalog = [
   { slug: "rokto", name: "রক্তদাতা কার্ড", description: "শেষ কবে রক্ত দিয়েছ? দেখো আবার কবে পারবে, বানাও রক্তদাতা কার্ড", category: "হিসাব-নিকাশ", action: "কার্ড বানাও" },
   { slug: "cassette", name: "আমার ক্যাসেট", description: "আমার ক্যাসেট: খুলে দেখো, খেলে দেখো।", category: "স্মৃতি আর গল্প", action: "শুরু করো" },
   { slug: "jibh", name: "জিভ কোন জেলার?", description: "জিভ কোন জেলার?: খুলে দেখো, খেলে দেখো।", category: "খাবারদাবার", action: "শুরু করো" },
-  { slug: "matcher-mon", name: "ম্যাচের মন", description: "ম্যাচের মন: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
+  { slug: "matcher-mon", name: "ম্যাচের মন", description: "খেলা দেখতে দেখতে মনের মুখে চাপো, টিভির ওয়ার্মের মতো মনের গ্রাফ বানাও", category: "খেলাধুলা", action: "গ্রাফ আঁকো" },
   { slug: "current-gelo", name: "কারেন্ট গেল!", description: "কারেন্ট গেল!: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
