@@ -95,7 +95,7 @@ export const catalog = [
   { slug: "bidyut-bill", name: "বিদ্যুৎ বিল কত?", description: "কোন যন্ত্রে মাসে কত ইউনিট, কত টাকা বিল আসে, পুরোনো মিটারে দেখো", category: "হিসাব-নিকাশ", action: "বিল হিসাব করো" },
   { slug: "mondop", name: "মণ্ডপ ঘুরি", description: "পূজায় প্রতিটা মণ্ডপ ঘুরে + চাপো, চালচিত্রে প্রদীপ জ্বলবে। বন্ধুর সাথে মেলাও", category: "উৎসব আর বিশ্বাস", action: "মণ্ডপ গুনি" },
   { slug: "grade-dao", name: "গ্রেড দাও", description: "ফুচকা, বর্ষা, লোকাল বাসকে A+ থেকে F দাও, দেখো দেশ কত দিল", category: "মজা আর কুইজ", action: "গ্রেড দাও" },
-  { slug: "adda", name: "আড্ডায় তুমি কে?", description: "আড্ডায় তুমি কে?: খুলে দেখো, খেলে দেখো।", category: "নিজেকে জানো", action: "শুরু করো" },
+  { slug: "adda", name: "আড্ডায় তুমি কে?", description: "৭টা প্রশ্নে দেখো আড্ডায় তুমি কোন গুটি, তারপর বন্ধুদের ডেকে বোর্ড ভরাও", category: "নিজেকে জানো", action: "গুটি বের করো" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.

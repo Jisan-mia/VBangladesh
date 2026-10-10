@@ -245,7 +245,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 15 | bidyut-bill | বিদ্যুৎ বিল কত? | হিসাব-নিকাশ | MO03 | done | #b-bidyut-bill |
 | 15 | mondop | মণ্ডপ ঘুরি | উৎসব আর বিশ্বাস | FA10 | done | #b-mondop |
 | 15 | grade-dao | গ্রেড দাও | মজা আর কুইজ | ID20 | done | #b-grade-dao |
-| 15 | adda | আড্ডায় তুমি কে? | নিজেকে জানো | ID17 | building | #b-adda |
+| 15 | adda | আড্ডায় তুমি কে? | নিজেকে জানো | ID17 | done | #b-adda |
 
 ### Wave deadlines and why
 
