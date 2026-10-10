@@ -207,7 +207,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 7 | flames | ফ্লেমস | মজা আর কুইজ | ID04 | done | #b-flames |
 | 7 | moner-boyos | মনের বয়স কত? | নিজেকে জানো | ID06 | building | #b-moner-boyos |
 | 7 | bagdhara | বাগধারার ছবি | ভাষা আর পড়াশোনা | ED04 | building | #b-bagdhara |
-| 8 | sehri-iftar | সেহরি-ইফতারের সময় | উৎসব আর বিশ্বাস | FA07 | todo | #b-sehri-iftar |
+| 8 | sehri-iftar | সেহরি-ইফতারের সময় | উৎসব আর বিশ্বাস | FA07 | building | #b-sehri-iftar |
 | 8 | chithi | চিঠি লিখি | পরিবার আর প্রবাস | TI07, TI10 | todo | #b-chithi |
 | 8 | bangla-typing | বাংলা টাইপিং স্পিড | ভাষা আর পড়াশোনা | ED06 | todo | #b-bangla-typing |
 | 8 | jam | জ্যামে জীবন | মজা আর কুইজ | CI01 | todo | #b-jam |

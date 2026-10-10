@@ -47,6 +47,7 @@ import { share as ghuri } from '../tools/ghuri/share';
 import { share as flames } from '../tools/flames/share';
 import { share as moner_boyos } from '../tools/moner-boyos/share';
 import { share as bagdhara } from '../tools/bagdhara/share';
+import { share as sehri_iftar } from '../tools/sehri-iftar/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -97,6 +98,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'flames': flames,
   'moner-boyos': moner_boyos,
   'bagdhara': bagdhara,
+  'sehri-iftar': sehri_iftar,
 };
 
 export function toolShare(tool: string): ToolShare | null {
