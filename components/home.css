@@ -49,7 +49,7 @@
 .home-directory-heading h2{margin:0 0 8px;font-family:var(--font-display);font-size:clamp(26px,5vw,38px);line-height:1.4}
 .home-directory-heading p{margin:0 0 8px;max-width:560px;color:var(--muted)}
 .home-group{padding-top:22px}
-.home-group h3{margin:0 0 12px;font-family:var(--font-display);font-size:20px;color:var(--red)}
+.home-group-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.home-group-head a{font-size:14px;font-weight:700;color:var(--ink);white-space:nowrap}.home-all-link{display:inline-flex;min-height:44px;align-items:center;font-weight:700;color:var(--red)}.home-group h3{margin:0 0 12px;font-family:var(--font-display);font-size:20px;color:var(--red)}
 .home-tool-grid{display:grid;gap:12px;margin:0;padding:0;list-style:none}
 .home-tool-link{display:grid;grid-template-columns:104px minmax(0,1fr);gap:14px;align-items:center;height:100%;padding:10px;border:1px solid var(--line);border-radius:16px;background:#fff;text-decoration:none}
 .home-tool-link:active{background:#f6f8fd}
@@ -60,7 +60,7 @@
 .home-example{display:none}
 .home-preview-chhotto-para{background:#e8f0f2}.home-preview-alpana{background:#f8e3dd}.home-preview-bhashar-chhobi{background:#f2e9f4}.home-preview-rannakhata{background:#fbece6}.home-preview-bazar-note{background:#e9f2e9}.home-preview-bhara{background:#e6f0f8}.home-preview-cholo-kheli{background:#e9efff}.home-preview-shubhechha{background:#fbe8e6}
 .home-tool-copy{display:flex;flex-direction:column;min-width:0}
-.home-tool h4{margin:0 0 2px;font-family:var(--font-display);font-size:19px;line-height:1.45}
+.home-tool :is(h2,h3,h4){margin:0 0 2px;font-family:var(--font-display);font-size:19px;line-height:1.45}
 .home-tool-description{margin:0 0 6px;color:var(--muted);font-size:14px;line-height:1.65}
 .home-tool-action{display:inline-flex;align-items:center;gap:6px;color:var(--red);font-size:14px;font-weight:700}
 
@@ -108,3 +108,13 @@
   .home-primary:hover{background:#bd3226}
 }
 @media(prefers-reduced-motion:reduce){.home-khata li[data-picked=true]{animation:none;background:var(--tint);border-color:transparent}}
+
+.home-preview-letter{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--font-display);font-size:44px;font-weight:800;color:#1d2b53;background:linear-gradient(135deg,#fff1cc,#fbd6d0)}
+.all-tools-page{padding-block:24px 48px}
+.all-tools-page h1{margin:0 0 6px;font-size:clamp(30px,6vw,46px)}
+.all-tools-lead{max-width:620px;color:var(--muted);margin:0 0 16px}
+.all-tools-search input{width:100%;min-height:52px;border:1.5px solid #c5cfe2;border-radius:14px;font-size:17px;padding-inline:16px}
+.all-tools-chips{margin:14px 0 4px}
+.all-tools .home-tool-grid{margin-top:8px}
+.all-tools-empty{padding:24px 0;color:var(--muted)}
+.all-tools-label{display:block;margin-bottom:6px;font-weight:600}

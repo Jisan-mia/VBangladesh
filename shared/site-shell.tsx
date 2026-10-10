@@ -9,7 +9,7 @@ import { serializeSchema, websiteSchema } from './seo';
 export function HubHeader() {
   return <header className="hub-header"><div className="container hub-header-inner">
     <Link className="hub-brand" href="/" aria-label="একটুখানি — প্রথম পাতা"><BrandMark />{brand.name}</Link>
-    <nav aria-label="মূল মেনু"><Link className="hub-flagship" href={`/${flagship}`}>আমার ছোটবেলা</Link><Link href="/#more">সব টুল</Link></nav>
+    <nav aria-label="মূল মেনু"><Link className="hub-flagship" href={`/${flagship}`}>আমার ছোটবেলা</Link><Link href="/tools">সব টুল</Link></nav>
   </div></header>;
 }
 
@@ -18,7 +18,7 @@ function HubFooterInner({ links }: { links: ReactNode }) {
 }
 
 export function HubFooter() {
-  return <HubFooterInner links={<><Link href="/#more">সব টুল</Link><Link href="/about">আমাদের কথা</Link><Link href="/privacy">গোপনীয়তা</Link></>} />;
+  return <HubFooterInner links={<><Link href="/tools">সব টুল</Link><Link href="/about">আমাদের কথা</Link><Link href="/privacy">গোপনীয়তা</Link></>} />;
 }
 
 export function HubFrame({ children }: { children: ReactNode }) {
@@ -34,7 +34,7 @@ export function PageFrame({ site, children }: { site: SiteContent; children: Rea
   return <div className="site-frame" style={{ '--accent': site.accent } as CSSProperties}>
     <a className="skip-link" href="#main">মূল অংশে যাও</a><HubHeader />
     <div className="container tool-navigation"><nav aria-label="তুমি এখানে" className="tool-crumbs"><Link href="/">একটুখানি</Link><span aria-hidden="true">/</span><Link href={path} className="tool-current">{site.name}</Link></nav><nav aria-label={`${site.name} সম্পর্কে`}><Link href={`${path}/guide`}>কীভাবে করবে</Link><Link href={`${path}/privacy`}>গোপনীয়তা</Link></nav></div>
-    <main id="main">{children}<section className="container related-tools" aria-labelledby="related-heading"><h2 id="related-heading">এগুলোও ভালো লাগতে পারে</h2><ul className="related-tools-list">{related.map(tool => <li key={tool.slug}><Link href={`/${tool.slug}`} prefetch={false}><strong>{tool.name}</strong><span>{tool.description}</span></Link></li>)}</ul><Link className="related-all" href="/#more">সব টুল একসাথে দেখো →</Link></section></main>
+    <main id="main">{children}<section className="container related-tools" aria-labelledby="related-heading"><h2 id="related-heading">এগুলোও ভালো লাগতে পারে</h2><ul className="related-tools-list">{related.map(tool => <li key={tool.slug}><Link href={`/${tool.slug}`} prefetch={false}><strong>{tool.name}</strong><span>{tool.description}</span></Link></li>)}</ul><Link className="related-all" href="/tools">সব টুল একসাথে দেখো →</Link></section></main>
     <HubFooterInner links={<><Link href={`${path}/guide`}>কীভাবে করবে</Link><Link href={`${path}/privacy`}>গোপনীয়তা</Link><Link href={`${path}#questions`}>প্রশ্ন-উত্তর</Link><Link href="/about">আমাদের কথা</Link></>} />
   </div>;
 }

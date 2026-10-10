@@ -9,7 +9,7 @@ assert.ok(['http:', 'https:'].includes(origin.protocol) && origin.pathname === '
 const publishedOrigin = publicOrigin(process.env.SITE_URL);
 const bengali = /[\u0980-\u09ff]/;
 const oldToolPort = /https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\]):(?:310[1-9]|311[0-3])(?:\/|$)/;
-const routes = ['/', '/about', '/privacy', ...toolSlugs.flatMap(slug => [`/${slug}`, `/${slug}/guide`, `/${slug}/privacy`])];
+const routes = ['/', '/tools', '/about', '/privacy', ...toolSlugs.flatMap(slug => [`/${slug}`, `/${slug}/guide`, `/${slug}/privacy`])];
 const routeSet = new Set(routes);
 const uniqueValues = { title: new Map(), description: new Map(), heading: new Map() };
 const assets = new Set(['/icon.svg', '/fonts/bangla.woff2', '/fonts/latin.woff2']);
@@ -114,10 +114,12 @@ function checkLinks(html, path) {
     if (path.endsWith('/guide') || path.endsWith('/privacy')) assert.ok(anchors.some(anchor => anchor.href === `/${slug}#tool`), `${path}: return to this tool`);
     assert.ok(!anchors.some(anchor => anchor.href === '/guide'), `${path}: no obsolete global guide link`);
   }
-  if (path === '/') {
+  // The homepage shows a selection and links to /tools, which must carry a named card for every tool.
+  if (path === '/') assert.ok(anchors.some(anchor => internalUrl(anchor.href, path)?.pathname === '/tools'), 'home links to the full tool list');
+  if (path === '/tools') {
     const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] || '';
     const cards = links(main);
-    for (const toolSlug of toolSlugs) assert.ok(cards.some(card => internalUrl(card.href, path)?.pathname === `/${toolSlug}` && bengali.test(card.text)), `home: named card for ${toolSlug}`);
+    for (const toolSlug of toolSlugs) assert.ok(cards.some(card => internalUrl(card.href, path)?.pathname === `/${toolSlug}` && bengali.test(card.text)), `tools: named card for ${toolSlug}`);
   }
 }
 

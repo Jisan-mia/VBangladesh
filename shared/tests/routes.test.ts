@@ -10,7 +10,7 @@ const expectedSlugs = [
   'chhotto-para', 'cholo-kheli', 'rannakhata', 'riksharong', 'shobdo-khela', 'shubhechha',
 ].sort();
 const origin = 'https://example.org';
-const expectedPaths = ['/', '/about', '/privacy', ...expectedSlugs.flatMap(slug => [`/${slug}`, `/${slug}/guide`, `/${slug}/privacy`])];
+const expectedPaths = ['/', '/tools', '/about', '/privacy', ...expectedSlugs.flatMap(slug => [`/${slug}`, `/${slug}/guide`, `/${slug}/privacy`])];
 
 function withSiteUrl(value: string | undefined, check: () => void) {
   const previous = process.env.SITE_URL;

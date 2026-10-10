@@ -1,34 +1,26 @@
-import Image from "next/image";
 import Link from "next/link";
 import { catalog, categories, flagship } from "../lib/catalog";
+import { previewSlugs } from "../lib/previews";
+import { ToolCard } from "./tool-card";
 
-// Each thumbnail is the tool's real share card (public/previews/<slug>.webp, made from the live page).
-function ToolPreview({ slug }: { slug: string }) {
-  return <div className={"home-preview home-preview-" + slug} aria-hidden="true">
-    <div className="home-preview-art"><Image src={"/previews/" + slug + ".webp"} alt="" fill sizes="(max-width: 640px) 104px, (max-width: 900px) 40vw, 25vw" /></div>
-  </div>;
-}
+// The homepage shows a few tools per category; the full, searchable list lives at /tools.
+const PER_CATEGORY = 4;
 
 export function ToolDirectory() {
+  const previews = new Set(previewSlugs());
   return <section className="home-container home-directory" id="more" aria-labelledby="home-tools-title">
     <div className="home-directory-heading">
       <h2 id="home-tools-title">আরও আছে, একটুখানি সময় পেলেই</h2>
-      <p>আঁকাআঁকি, পুরোনো দিনের গল্প, বন্ধুদের সাথে খেলা আর রোজকার হিসাব। যেটা ভালো লাগে, ছুঁয়ে দেখো।</p>
+      <p>খেলা, কুইজ, পুরোনো দিনের গল্প আর রোজকার হিসাব। যেটা ভালো লাগে, ছুঁয়ে দেখো।</p>
+      <Link className="home-all-link" href="/tools">সব টুল একসাথে দেখো ({new Intl.NumberFormat("bn-BD").format(catalog.length)}টা) →</Link>
     </div>
-    {categories.map(category => <div className="home-group" key={category}>
-      <h3>{category}</h3>
-      <ul className="home-tool-grid">
-        {catalog.filter(tool => tool.category === category && tool.slug !== flagship).map(tool => <li className="home-tool" key={tool.slug}>
-          <Link className="home-tool-link" href={"/" + tool.slug} prefetch={false}>
-            <ToolPreview slug={tool.slug} />
-            <div className="home-tool-copy">
-              <h4>{tool.name}</h4>
-              <p className="home-tool-description">{tool.description}</p>
-              <span className="home-tool-action">{tool.action}<svg viewBox="0 0 20 20" width="18" height="18" fill="none" aria-hidden="true"><path d="M3 10h13M10 4l6 6-6 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-            </div>
-          </Link>
-        </li>)}
-      </ul>
-    </div>)}
+    {categories.map((category, index) => {
+      const tools = catalog.filter(tool => tool.category === category && tool.slug !== flagship);
+      if (!tools.length) return null;
+      return <div className="home-group" key={category}>
+        <div className="home-group-head"><h3>{category}</h3>{tools.length > PER_CATEGORY && <Link href={`/tools#c=${index}`}>সবগুলো ({new Intl.NumberFormat("bn-BD").format(tools.length)}) →</Link>}</div>
+        <ul className="home-tool-grid">{tools.slice(0, PER_CATEGORY).map(tool => <li className="home-tool" key={tool.slug}><ToolCard tool={tool} hasPreview={previews.has(tool.slug)} level={4} /></li>)}</ul>
+      </div>;
+    })}
   </section>;
 }
