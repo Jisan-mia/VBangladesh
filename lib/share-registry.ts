@@ -66,6 +66,7 @@ import { share as namta } from '../tools/namta/share';
 import { share as prothom_ay } from '../tools/prothom-ay/share';
 import { share as ami_bolechhilam } from '../tools/ami-bolechhilam/share';
 import { share as mache_bhate } from '../tools/mache-bhate/share';
+import { share as jomi } from '../tools/jomi/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -135,6 +136,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'prothom-ay': prothom_ay,
   'ami-bolechhilam': ami_bolechhilam,
   'mache-bhate': mache_bhate,
+  'jomi': jomi,
 };
 
 export function toolShare(tool: string): ToolShare | null {

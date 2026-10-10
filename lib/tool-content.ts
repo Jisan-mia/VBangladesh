@@ -64,6 +64,7 @@ import { site as namta } from '../tools/namta/content';
 import { site as prothom_ay } from '../tools/prothom-ay/content';
 import { site as ami_bolechhilam } from '../tools/ami-bolechhilam/content';
 import { site as mache_bhate } from '../tools/mache-bhate/content';
+import { site as jomi } from '../tools/jomi/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -132,6 +133,7 @@ export const toolContent = {
   'prothom-ay': prothom_ay,
   'ami-bolechhilam': ami_bolechhilam,
   'mache-bhate': mache_bhate,
+  'jomi': jomi,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
