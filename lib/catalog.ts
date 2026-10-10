@@ -84,7 +84,7 @@ export const catalog = [
   { slug: "matcher-mon", name: "ম্যাচের মন", description: "খেলা দেখতে দেখতে মনের মুখে চাপো, টিভির ওয়ার্মের মতো মনের গ্রাফ বানাও", category: "খেলাধুলা", action: "গ্রাফ আঁকো" },
   { slug: "current-gelo", name: "কারেন্ট গেল!", description: "কারেন্ট গেলে-এলে চাপো, দেখো আজ কত ঘণ্টা অন্ধকারে কাটল", category: "হিসাব-নিকাশ", action: "হিসাব রাখো" },
   { slug: "projonmo", name: "জেন-জি না আব্বু-আম্মু?", description: "জেন-জির শব্দ না আব্বু-আম্মুর কথা, কোনটা বেশি বোঝো? ১০টা শব্দে দেখে নাও", category: "নিজেকে জানো", action: "খেলা শুরু করো" },
-  { slug: "mama-jaben", name: "মামা, যাবেন?", description: "মামা, যাবেন?: খুলে দেখো, খেলে দেখো।", category: "মজা আর কুইজ", action: "শুরু করো" },
+  { slug: "mama-jaben", name: "মামা, যাবেন?", description: "রিকশার মামার সাথে দরদাম করো, ন্যায্য ভাড়ায় রাজি করাতে পারো?", category: "মজা আর কুইজ", action: "দরদাম করো" },
   { slug: "mess-jibon", name: "হল-মেস জীবন", description: "ডিম-ডাল সপ্তাহ, ম্যাগি রাত… হল-মেসের ৪০টা মুহূর্তের কয়টা তোমার? মিল কার্ডে ফুটো করে দেখো", category: "স্মৃতি আর গল্প", action: "ফুটো করো" },
   { slug: "ekadosh", name: "স্বপ্নের একাদশ", description: "স্বপ্নের একাদশ: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
   { slug: "gorur-ojon", name: "গরুর ওজন কত?", description: "গরুর ওজন কত?: খুলে দেখো, খেলে দেখো।", category: "উৎসব আর বিশ্বাস", action: "শুরু করো" },
