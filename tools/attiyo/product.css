@@ -1,0 +1,127 @@
+.tool-attiyo{--accent:#a3324f;--accent-deep:#6e1f33;--ink:#1f3566;--muted:#6f6253;--paper:#f3ead8;--edge:#e2d2b2;--corner:#2b211c;--rose:#f7e3e6}
+.tool-attiyo .at-site{color:#2b211c}
+
+/* hero: two short lines so the album and the chips fit a phone's first screen */
+.tool-attiyo .at-hero{padding:12px 0 10px}
+.tool-attiyo .at-hero-kicker{margin:0 0 2px;font-size:13px;font-weight:600;color:var(--accent)}
+.tool-attiyo .at-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(25px,6.6vw,50px);line-height:1.25;font-weight:700;letter-spacing:0;color:var(--ink)}
+.tool-attiyo .at-hero h1 span{display:block;font-size:.72em;color:var(--accent)}
+
+.tool-attiyo .at{display:grid;gap:14px}
+.tool-attiyo .at>:not(.at-result){max-width:640px;min-width:0}
+
+/* opened from a friend's link: guess first */
+.tool-attiyo .at-quiz{padding:12px 14px;border-left:5px solid var(--accent);border-radius:12px;background:var(--rose)}
+.tool-attiyo .at-kicker{margin:0;font-size:13px;font-weight:700;color:var(--accent)}
+.tool-attiyo .at-quiz h2{margin:2px 0 10px;font-family:var(--font-display);font-size:clamp(19px,5vw,24px);line-height:1.4;color:var(--ink)}
+.tool-attiyo .at-quiz h2 span{color:var(--accent-deep)}
+.tool-attiyo .at-options{display:grid;gap:8px}
+.tool-attiyo .at-options button{min-height:48px;padding:8px 14px;border:1.5px solid var(--edge);border-radius:12px;background:#fffdf7;color:var(--ink);font-family:var(--font-display);font-size:18px;font-weight:700;text-align:left}
+.tool-attiyo .at-options button:disabled{opacity:1;cursor:default}
+.tool-attiyo .at-options button[data-state=right]{border-color:#2f6d3a;background:#e3efdc}
+.tool-attiyo .at-options button[data-state=wrong]{border-color:var(--accent);background:#f6dada;text-decoration:line-through}
+.tool-attiyo .at-options button[data-state=dim]{opacity:.5}
+.tool-attiyo .at-verdict{margin:8px 0 0;font-size:16px;line-height:1.6}
+.tool-attiyo .at-verdict:empty{display:none}
+.tool-attiyo .at-verdict b{font-family:var(--font-display);color:var(--accent-deep)}
+
+/* the album page: cream card, punched spine on the left, prints held by black photo corners */
+.tool-attiyo .at-page{position:relative;padding:12px 12px 12px 28px;border-radius:4px 12px 12px 4px;
+  background:radial-gradient(circle at 12px 22px,#d9c7a3 0 5px,transparent 6px) 0 0/24px 64px repeat-y,linear-gradient(90deg,#e6d6b4 0 24px,var(--paper) 24px);
+  box-shadow:0 10px 24px #2b211c24,0 2px 0 var(--edge),0 4px 0 #efe4cc,0 6px 0 #d8c59f}
+.tool-attiyo .at-strip{position:relative;display:flex;justify-content:center;gap:6px;margin:0;padding:6px 0 0;list-style:none}
+/* the fountain-pen line that joins the prints */
+.tool-attiyo .at-strip::before{content:"";position:absolute;left:12%;right:12%;top:40px;border-top:2px dotted var(--ink);opacity:.55}
+.tool-attiyo .at-print{position:relative;flex:0 1 74px;min-width:0;display:grid;justify-items:center;gap:6px}
+.tool-attiyo .at-photo{position:relative;display:block;width:100%;max-width:66px;padding:3px;background:#fffdf7;box-shadow:0 3px 8px #2b211c33;transform:rotate(-2deg)}
+.tool-attiyo .at-print:nth-child(even) .at-photo{transform:rotate(1.6deg)}
+.tool-attiyo .at-photo svg{display:block;width:100%;height:auto}
+.tool-attiyo .at-photo::after{content:"";position:absolute;inset:-3px;pointer-events:none;
+  background:linear-gradient(135deg,var(--corner) 50%,transparent 50%) left top/12px 12px no-repeat,linear-gradient(225deg,var(--corner) 50%,transparent 50%) right top/12px 12px no-repeat,linear-gradient(45deg,var(--corner) 50%,transparent 50%) left bottom/12px 12px no-repeat,linear-gradient(315deg,var(--corner) 50%,transparent 50%) right bottom/12px 12px no-repeat}
+.tool-attiyo .at-print[data-me=true] .at-photo{outline:2px dashed var(--accent);outline-offset:-6px}
+.tool-attiyo .at-print[data-end=true] .at-photo{animation:at-place .35s cubic-bezier(.3,1.5,.5,1) both}
+.tool-attiyo .at-print-ghost .at-photo{aspect-ratio:60/72;background:repeating-linear-gradient(135deg,#fffdf7 0 6px,#efe4cc 6px 12px)}
+@keyframes at-place{from{transform:translateY(-16px) rotate(-9deg);opacity:0}}
+.tool-attiyo .at-caption{max-width:100%;font-family:var(--font-display);font-size:13px;font-weight:700;line-height:1.25;text-align:center;color:var(--ink);overflow-wrap:anywhere}
+.tool-attiyo .at-print[data-end=true] .at-caption{color:var(--accent)}
+
+.tool-attiyo .at-answer{margin-top:10px;padding-top:8px;border-top:1px dashed #cdb98f}
+.tool-attiyo .at-chain{margin:0;font-size:15px;font-weight:600;color:var(--muted)}
+.tool-attiyo .at-term{margin:0;font-family:var(--font-display);font-size:clamp(38px,11vw,60px);font-weight:800;line-height:1.15;color:var(--accent);overflow-wrap:anywhere}
+.tool-attiyo .at-term-none{font-size:clamp(26px,7vw,36px)}
+.tool-attiyo .at-term-said{font-size:clamp(26px,7vw,36px);color:var(--ink)}
+.tool-attiyo .at-said{margin:2px 0 0;font-size:17px}
+.tool-attiyo .at-said b{font-family:var(--font-display);color:var(--ink)}
+.tool-attiyo .at-homes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0 0}
+.tool-attiyo .at-homes div{min-width:0;padding:6px 10px;border:1.5px dashed #cdb98f;border-radius:10px;background:#fffdf7}
+.tool-attiyo .at-homes div[data-mine=true]{border-style:solid;border-color:var(--ink)}
+.tool-attiyo .at-homes dt{font-size:12px;font-weight:600;color:var(--muted);line-height:1.4}
+.tool-attiyo .at-homes dd{margin:0;font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.35;color:var(--ink);overflow-wrap:anywhere}
+.tool-attiyo .at-homes small{font-family:var(--font-bengali);font-size:13px;font-weight:500;color:var(--muted)}
+.tool-attiyo .at-note{margin:8px 0 0;font-size:13.5px;line-height:1.6;color:var(--muted)}
+.tool-attiyo .at-note a{display:inline-flex;align-items:center;min-height:32px;color:var(--ink);text-underline-offset:3px;white-space:nowrap}
+
+/* the chips: each tap adds one step */
+.tool-attiyo .at-ask{margin:0 0 6px;font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--ink)}
+.tool-attiyo .at-chips{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.tool-attiyo .at-chips button{display:flex;align-items:center;justify-content:center;gap:2px;min-height:46px;padding:4px 2px;border:1.5px solid var(--ink);border-radius:12px;background:#fffdf7;color:var(--ink);font-size:15px;font-weight:700;line-height:1.2;box-shadow:0 3px 0 #1f356633;transition:transform .1s ease}
+.tool-attiyo .at-chips button i{font-style:normal;color:var(--accent);font-size:17px}
+.tool-attiyo .at-chips button:active{transform:translateY(2px);box-shadow:none}
+.tool-attiyo .at-chips button[data-blocked=true]{border-style:dashed;border-color:#b9b0a2;color:#8d8374;box-shadow:none}
+.tool-attiyo .at-chips button[data-blocked=true] i{color:#b9b0a2}
+.tool-attiyo .at-oops{min-height:0;margin:6px 0 0;font-size:15px;line-height:1.5;color:var(--accent-deep)}
+.tool-attiyo .at-oops:empty{margin:0}
+.tool-attiyo .at-tools{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;margin-top:8px}
+.tool-attiyo .at-tools .kit-secondary{min-height:44px;border-color:var(--ink);color:var(--ink)}
+.tool-attiyo .at-style legend{font-size:14px;color:var(--muted)}
+.tool-attiyo .at-style button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+
+/* result */
+.tool-attiyo .at-result{scroll-margin-top:12px;margin-top:18px;padding-top:22px;border-top:3px double var(--edge)}
+.tool-attiyo .at-result-head h2{margin:0 0 4px;font-family:var(--font-display);font-size:clamp(23px,5vw,34px);line-height:1.4;color:var(--ink)}
+.tool-attiyo .at-result-head h2 em{font-style:normal;color:var(--accent)}
+.tool-attiyo .at-result-head p{margin:0 0 12px;color:var(--muted)}
+.tool-attiyo .at-result-body{display:grid;gap:20px}
+.tool-attiyo .at-controls{display:grid;gap:16px;align-content:start}
+.tool-attiyo .at-field{display:grid;gap:6px;font-weight:600}
+.tool-attiyo .at-field small{font-weight:400;color:var(--muted);font-size:13px}
+.tool-attiyo .at-field input{border:1.5px solid var(--edge);border-radius:10px;font-size:17px}
+.tool-attiyo .at-everyone{margin-top:26px;padding:16px;border-radius:12px;background:var(--paper)}
+.tool-attiyo .at-everyone h3{margin:0 0 6px;font-family:var(--font-display);font-size:21px;color:var(--ink)}
+.tool-attiyo .at-everyone>p{margin:0 0 10px;color:var(--muted);font-size:15px}
+.tool-attiyo .at-top{display:grid;gap:6px;margin:0 0 12px;padding:0;list-style:none;counter-reset:top}
+.tool-attiyo .at-top li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 10px;padding:8px 12px;border-radius:10px;background:#fffdf7}
+.tool-attiyo .at-top b{font-family:var(--font-display);font-size:19px;color:var(--accent)}
+.tool-attiyo .at-top span{grid-column:1;font-size:13px;color:var(--muted)}
+.tool-attiyo .at-top em{grid-column:2;grid-row:1/span 2;align-self:center;font-style:normal;font-weight:700}
+
+/* guide, sources and the full list */
+.tool-attiyo .at-guide h2,.tool-attiyo .at-list h2{font-family:var(--font-display);margin-bottom:8px;color:var(--ink)}
+.tool-attiyo .at-guide>p,.tool-attiyo .at-list>p{color:var(--muted)}
+.tool-attiyo .at-guide ol{display:grid;gap:14px;margin:0 0 16px;padding:0;list-style:none}
+.tool-attiyo .at-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-attiyo .at-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border:1.5px solid var(--ink);border-radius:50%;background:var(--paper);font-family:var(--font-display);font-weight:700;color:var(--ink)}
+.tool-attiyo .at-guide li p{margin:4px 0 0}
+.tool-attiyo .at-sources{font-size:14px}
+.tool-attiyo .at-list summary{display:flex;align-items:center;min-height:48px;padding:0 16px;border:1.5px solid var(--ink);border-radius:10px;background:var(--paper);font-weight:700;cursor:pointer;color:var(--ink)}
+.tool-attiyo .at-group{width:100%;margin-top:18px;border-collapse:collapse;table-layout:fixed;font-size:14px;line-height:1.45}
+.tool-attiyo .at-group caption{padding:0 0 6px;text-align:left;font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--ink)}
+.tool-attiyo .at-group thead th{padding:4px 6px;border-bottom:2px solid var(--ink);font-size:12px;font-weight:600;color:var(--muted);text-align:left}
+.tool-attiyo .at-group tbody th,.tool-attiyo .at-group td{padding:6px;border-bottom:1px solid var(--edge);text-align:left;vertical-align:top;overflow-wrap:anywhere}
+.tool-attiyo .at-group tbody th{font-weight:500;color:var(--muted)}
+.tool-attiyo .at-group td{font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--ink)}
+.tool-attiyo .at-group a{display:inline-block;min-width:24px;min-height:24px;text-align:center;color:var(--accent);text-decoration:none}
+.tool-attiyo .at-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media(min-width:720px){
+  .tool-attiyo .at-hero{padding:30px 0 18px}
+  .tool-attiyo .at-page{padding:18px 22px 18px 40px}
+  .tool-attiyo .at-print{flex-basis:96px}
+  .tool-attiyo .at-photo{max-width:84px}
+  .tool-attiyo .at-strip::before{top:52px}
+  .tool-attiyo .at-caption{font-size:15px}
+  .tool-attiyo .at-result-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:36px}
+}
+@media(hover:hover){.tool-attiyo .at-chips button:not([data-blocked=true]):hover{background:#fff;border-color:var(--accent)}}
+@media(prefers-reduced-motion:reduce){.tool-attiyo .at-chips button{transition:none}.tool-attiyo .at-print[data-end=true] .at-photo{animation:none}}
+.tool-attiyo .at-ask small{font-family:var(--font-bengali);font-size:14px;font-weight:500;color:var(--muted)}
