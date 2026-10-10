@@ -47,6 +47,7 @@ import { site as moner_boyos } from '../tools/moner-boyos/content';
 import { site as bagdhara } from '../tools/bagdhara/content';
 import { site as sehri_iftar } from '../tools/sehri-iftar/content';
 import { site as chithi } from '../tools/chithi/content';
+import { site as bangla_typing } from '../tools/bangla-typing/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -98,6 +99,7 @@ export const toolContent = {
   'bagdhara': bagdhara,
   'sehri-iftar': sehri_iftar,
   'chithi': chithi,
+  'bangla-typing': bangla_typing,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
