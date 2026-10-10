@@ -1,0 +1,85 @@
+.tool-jomi{--accent-deep:#2f5212;--ink:#1f2a14;--muted:#55624a;--paddy:#eef5e1;--paddy-line:#cfe0b4;--al:#b98a56;--steel:#8d939a;--gold:#e9b931;--night:#1d3815}
+.tool-jomi .jomi-page{color:var(--ink)}
+.tool-jomi .jomi-sr{position:absolute;width:1px;height:1px;margin:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero: short, so the field starts on the first phone screen */
+.jomi-hero{padding:16px 0 12px}
+.jomi-kicker{margin:0 0 4px;font-size:14px;font-weight:600;color:var(--accent)}
+.jomi-hero h1{margin:0 0 6px;font-size:clamp(30px,7.6vw,56px);line-height:1.25;letter-spacing:0}
+.jomi-hero h1 span{color:var(--accent)}
+.jomi-lead{margin:0;color:var(--muted);font-size:16px;line-height:1.6}
+
+/* the plot sheet: a paddy field seen from above, earthen ridge (আল) for a border, the amin's chain across the top */
+.jomi-plot{display:grid;gap:14px}
+.jomi-sheet{position:relative;display:grid;gap:12px;padding:20px 14px 14px;border:5px solid var(--al);border-radius:18px;background:var(--paddy);box-shadow:inset 0 0 0 2px #fff8,0 10px 24px #1f2a1418}
+.jomi-sheet:before{content:'';position:absolute;left:12px;right:12px;top:-12px;height:12px;background:radial-gradient(circle at 50% 50%,var(--gold) 0 3.5px,transparent 4px) 150px 50%/160px 12px repeat-x,radial-gradient(circle at 50% 50%,transparent 2px,var(--steel) 2.4px 3.6px,transparent 4px) 0 50%/16px 12px repeat-x,linear-gradient(var(--steel),var(--steel)) 0 50%/100% 2px no-repeat}
+.jomi-amount label{display:block;font-size:14px;font-weight:700;color:var(--muted)}
+.jomi-amount label small{font-weight:500}
+.jomi-amount-row{display:flex;align-items:baseline;gap:10px;border-bottom:3px solid var(--accent)}
+.jomi-amount-row[data-invalid=true]{border-color:#b3261e}
+.jomi-amount-row input{flex:1;min-width:0;width:100%;min-height:58px;padding:0 2px;border:0;border-radius:0;background:none;color:var(--ink);font-family:var(--font-display);font-size:44px;font-weight:800;line-height:1.2}
+.jomi-amount-row input:focus-visible{outline:none}
+.jomi-amount-row:focus-within{box-shadow:0 3px 0 var(--accent-deep)}
+.jomi-amount-row select{flex:none;width:auto;min-height:48px;padding:4px 34px 4px 14px;border:2px solid var(--accent);border-radius:999px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%234d7c1f' stroke-width='2'/%3E%3C/svg%3E") no-repeat right 12px center/12px 8px;color:var(--accent);font-family:var(--font-display);font-size:22px;font-weight:800;-webkit-appearance:none;appearance:none;cursor:pointer;align-self:center}
+.jomi-help{margin:4px 0 0;font-size:13px;line-height:1.5;color:var(--muted)}
+.jomi-help[data-invalid=true]{color:#b3261e;font-weight:600}
+.jomi-labels legend{margin-bottom:6px;font-size:14px;color:var(--muted)}
+.tool-jomi .kit-chips button{padding:6px 13px;border-color:var(--paddy-line);font-weight:600}
+.tool-jomi .kit-chips button[aria-pressed=true]{border-color:var(--accent);background:var(--accent);color:#fff}
+
+/* every other unit, like plots on a map */
+.jomi-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;margin:2px 0 0;padding:2px;overflow:hidden;list-style:none;border-radius:12px;background:var(--paddy-line);transition:opacity .2s}
+.jomi-list[data-stale=true]{opacity:.45}
+.jomi-list li{display:grid;align-content:start;min-width:0;padding:7px 10px 6px;background:#fff;line-height:1.3}
+.jomi-list strong{font-family:var(--font-display);font-size:clamp(18px,5.4vw,21px);font-weight:800;color:var(--ink);overflow-wrap:anywhere}
+.jomi-list strong[data-long="1"]{font-size:17px}.jomi-list strong[data-long="2"]{font-size:14px}
+.jomi-list span{font-size:14px;font-weight:600;color:var(--accent)}
+.jomi-note{margin:0;font-size:13px;line-height:1.6;color:var(--muted)}
+.jomi-note a{color:var(--accent);font-weight:600;white-space:nowrap}
+
+/* the field next to a football pitch */
+.jomi-stage{display:grid;gap:10px;margin:0}
+.jomi-stage canvas{display:block;width:100%;height:auto;border-radius:16px;background:var(--night)}
+.jomi-stage figcaption{display:grid;gap:2px}
+.jomi-stage figcaption strong{font-family:var(--font-display);font-size:20px;line-height:1.4}
+.jomi-stage figcaption span{font-size:13px;line-height:1.55;color:var(--muted)}
+.jomi-labels small{font-size:12px}
+
+/* opened from a link */
+.jomi-shared{display:grid;gap:8px;margin:0 0 14px;padding:12px 14px;border-left:5px solid var(--al);border-radius:12px;background:var(--paddy)}
+.jomi-shared p{margin:0;font-size:15px;line-height:1.6}
+.jomi-shared .kit-secondary{justify-self:start;border-color:var(--accent);color:var(--accent)}
+
+/* result card */
+.jomi-result{scroll-margin-top:12px;margin-top:32px;padding-top:22px;border-top:3px dashed var(--al)}
+.jomi-result h2{margin:0 0 6px;font-size:clamp(25px,5vw,34px);line-height:1.4}
+.jomi-result h2 span{color:var(--accent)}
+.jomi-line{margin:0 0 18px;color:var(--muted)}
+.jomi-result-body{display:grid;gap:22px}
+.jomi-controls{display:grid;gap:18px;align-content:start}
+.jomi-fine{margin:0;font-size:13px;line-height:1.6;color:var(--muted)}
+
+/* sources */
+.jomi-source h2,.jomi-guide h2{margin:0 0 10px}
+.jomi-source p{max-width:680px;color:var(--muted)}
+.jomi-table{width:100%;max-width:480px;margin:0 0 18px;border-collapse:collapse}
+.jomi-table caption{caption-side:top;padding:0 0 6px;text-align:left;font-weight:700}
+.jomi-table th,.jomi-table td{padding:8px 10px;border-bottom:1px solid var(--paddy-line);text-align:left}
+.jomi-table th{font-weight:600}.jomi-table th small{font-weight:400;color:var(--muted)}
+.jomi-table td{font-family:var(--font-display);font-weight:700;text-align:right;white-space:nowrap}
+.jomi-links{display:grid;gap:2px;margin:0;padding:0;list-style:none}
+.jomi-links a{min-height:44px;display:inline-flex;align-items:center;color:var(--accent);font-weight:600}
+
+.jomi-guide ol{display:grid;gap:14px;margin:12px 0 0;padding:0;list-style:none;max-width:720px}
+.jomi-guide li{display:flex;gap:14px;align-items:flex-start}
+.jomi-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--paddy);border:2px solid var(--al);font-weight:700}
+.jomi-guide li p{margin:4px 0 0}
+
+@media(max-width:359px){.jomi-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:560px){.jomi-list strong{font-size:26px}.jomi-list strong[data-long="1"]{font-size:21px}.jomi-list strong[data-long="2"]{font-size:17px}}
+@media(min-width:900px){
+  .jomi-hero{padding:36px 0 22px}
+  .jomi-plot{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:36px;align-items:start}
+  .jomi-result-body{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}
+}
+@media(prefers-reduced-motion:reduce){.jomi-list{transition:none}}

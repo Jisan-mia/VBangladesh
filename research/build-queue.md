@@ -226,7 +226,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 11 | prothom-ay | আমার প্রথম আয় | পরিবার আর প্রবাস | MO11 | done | #b-prothom-ay |
 | 11 | ami-bolechhilam | আমি বলেছিলাম! | খেলাধুলা | SP06 | building | #b-ami-bolechhilam |
 | 11 | mache-bhate | মাছে-ভাতে | খাবারদাবার | FO02 | building | #b-mache-bhate |
-| 11 | jomi | জমির মাপ | হিসাব-নিকাশ | MO02 | building | #b-jomi |
+| 11 | jomi | জমির মাপ | হিসাব-নিকাশ | MO02 | done | #b-jomi |
 | 12 | ek-koti | এক কোটি টাকা খরচ করো | মজা আর কুইজ | GA02 | todo | #b-ek-koti |
 | 12 | rokto | রক্তদাতা কার্ড | হিসাব-নিকাশ | HL02 | todo | #b-rokto |
 | 12 | cassette | আমার ক্যাসেট | স্মৃতি আর গল্প | NO02, CR03 | todo | #b-cassette |
