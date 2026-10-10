@@ -26,7 +26,7 @@ export const catalog = [
   { slug: "komon-porlo", name: "কয়টা কমন পড়ল?", description: "বিয়ে কবে? রেজাল্ট কত? চেনা প্রশ্নের কয়টা কমন পড়ল, দাগাও। এক লাইনে বিঙ্গো!", category: "মজা আর কুইজ", action: "প্রশ্নপত্র দাগাও" },
   { slug: "argentina-na-brazil", name: "আর্জেন্টিনা না ব্রাজিল?", description: "এক চাপে ছাদে দলের পতাকা তোলো, পাশের বাসার বন্ধুকে ডাকো", category: "খেলাধুলা", action: "পতাকা তোলো" },
   { slug: "koto-din-baki", name: "কত দিন বাকি?", description: "ঈদ, পূজা, বড়দিন, বৈশাখ — সব উৎসবের দিন গোনো।", category: "উৎসব আর বিশ্বাস", action: "দিন গোনো" },
-  { slug: "mishtir-baksho", name: "মিষ্টির বাক্স", description: "দেশের নামকরা মিষ্টির কয়টা খেয়েছ? বাক্সে তোলো, গুনে দেখো।", category: "খাবারদাবার", action: "বাক্স সাজাও" },
+  { slug: "mishtir-baksho", name: "মিষ্টির বাক্স", description: "চমচম, কাঁচাগোল্লা, বগুড়ার দই… দেশের ৪০টা নামকরা মিষ্টির কয়টা খেয়েছ?", category: "খাবারদাবার", action: "বাক্স সাজাও" },
   { slug: "taka-kothay", name: "টাকা কথায় লিখি", description: "যেকোনো টাকার অঙ্ক বাংলা আর ইংরেজি কথায় লিখে নাও।", category: "ভাষা আর পড়াশোনা", action: "কথায় লেখো" },
   { slug: "amar-jersey", name: "আমার জার্সি", description: "আমার জার্সি: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
