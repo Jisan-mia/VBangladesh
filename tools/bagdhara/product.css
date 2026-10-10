@@ -1,0 +1,123 @@
+.tool-bagdhara{--accent:#c62f22;--accent-deep:#8a1d14;--ink:#2a2018;--muted:#6e5d44;--paper:#f5ead0;--paper-edge:#e4cf9f;--rule:#cdb789;--right:#2f6d3a;--wrong:#c62f22}
+.tool-bagdhara .bg-site{color:var(--ink)}
+
+/* hero: two short lines so the first plate fits a phone's first screen */
+.tool-bagdhara .bg-hero{padding:14px 0 12px}
+.tool-bagdhara .bg-kicker{margin:0 0 4px;font-size:13px;font-weight:600;color:var(--accent)}
+.tool-bagdhara .bg-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(26px,6.6vw,52px);line-height:1.3;font-weight:700;letter-spacing:0}
+.tool-bagdhara .bg-hero h1 span{color:var(--accent)}
+
+/* opened from a friend's link */
+.tool-bagdhara .bg-friend{display:grid;gap:2px;margin:0 0 10px;padding:10px 14px;border-left:5px solid var(--accent);border-radius:10px;background:#fbeee6;font-size:14px}
+.tool-bagdhara .bg-friend strong{font-family:var(--font-display);font-size:18px;line-height:1.4}
+
+/* the grammar-book page: yellowed newsprint, a darker gutter on the left, age spots */
+.tool-bagdhara .bg-page{scroll-margin-top:12px;position:relative;overflow:hidden;padding:10px 14px 16px 20px;border-radius:4px 14px 14px 4px;
+  background:radial-gradient(circle at 88% 12%,#b8945a1f 0 18px,transparent 19px),radial-gradient(circle at 8% 86%,#b8945a17 0 26px,transparent 27px),linear-gradient(90deg,#d9c290 0,var(--paper) 14px,var(--paper) calc(100% - 10px),var(--paper-edge) 100%);
+  box-shadow:0 10px 24px #2a201826,0 2px 0 #cdb789,0 4px 0 #e9dbb8,0 6px 0 #c8b07c}
+.tool-bagdhara .bg-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-bottom:6px;border-bottom:3px double var(--ink);font-size:13px;font-weight:600;color:var(--muted)}
+.tool-bagdhara .bg-head p{margin:0;font-family:var(--font-display);font-size:16px}
+.tool-bagdhara .bg-head b{font-size:24px;line-height:1;color:var(--ink)}
+.tool-bagdhara .bg-marks{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px;margin:8px 0 0;padding:0;list-style:none}
+.tool-bagdhara .bg-marks li{position:relative;height:16px;border:1.5px solid var(--rule);border-radius:3px;background:#fffaf0}
+.tool-bagdhara .bg-marks li[data-state=now]{border-color:var(--ink)}
+.tool-bagdhara .bg-marks li[data-state=right]::after,.tool-bagdhara .bg-marks li[data-state=wrong]::after{position:absolute;inset:-6px 0 0;text-align:center;font-size:17px;font-weight:800;line-height:1;color:var(--accent)}
+.tool-bagdhara .bg-marks li[data-state=right]::after{content:"✓"}
+.tool-bagdhara .bg-marks li[data-state=wrong]::after{content:"✗"}
+
+.tool-bagdhara .bg-plate{margin:10px 0 0;padding:6px;border:1.5px solid var(--ink);background:#fffaf0;box-shadow:inset 0 0 0 3px #fffaf0,inset 0 0 0 4px var(--rule)}
+.tool-bagdhara .bg-plate svg{display:block;width:100%;height:auto;max-height:36vh}
+.tool-bagdhara .bg-plate figcaption{margin-top:2px;text-align:center;font-size:12px;font-style:italic;color:var(--muted)}
+.tool-bagdhara .bg-q{margin:10px 0 8px;font-family:var(--font-display);font-size:clamp(19px,5vw,25px);line-height:1.4;font-weight:700}
+.tool-bagdhara .bg-q span{color:var(--accent-deep)}
+.tool-bagdhara .bg-q em{font-style:normal;color:var(--accent)}
+.tool-bagdhara .bg-options{display:grid;gap:8px}
+.tool-bagdhara .bg-opt{display:flex;align-items:center;gap:10px;min-height:50px;padding:8px 12px;border:1.5px solid var(--rule);border-radius:10px;background:#fffaf0;color:var(--ink);font-size:16px;font-weight:600;line-height:1.4;text-align:left;cursor:pointer;transition:transform .1s ease,background-color .15s ease}
+.tool-bagdhara .bg-opt i{flex:none;display:grid;place-items:center;width:28px;height:28px;border:1.5px solid var(--ink);border-radius:50%;font-style:normal;font-family:var(--font-display);font-size:15px;font-weight:700}
+.tool-bagdhara .bg-opt:active{transform:translateY(1px)}
+.tool-bagdhara .bg-opt:disabled{cursor:default;opacity:1;color:var(--ink)}
+.tool-bagdhara .bg-opt[data-state=right]{border-color:var(--right);background:#e5efdc}
+.tool-bagdhara .bg-opt[data-state=right] i{border-color:var(--right);background:var(--right);color:#fff}
+.tool-bagdhara .bg-opt[data-state=wrong]{border-color:var(--wrong);background:#f8e1dc;text-decoration:line-through;text-decoration-color:var(--wrong);text-decoration-thickness:2px}
+.tool-bagdhara .bg-opt[data-state=wrong] i{border-color:var(--wrong);background:var(--wrong);color:#fff}
+.tool-bagdhara .bg-opt[data-state=dim]{opacity:.5}
+.tool-bagdhara .bg-reveal:empty{display:none}
+.tool-bagdhara .bg-reveal{display:grid;gap:6px;margin-top:12px;padding:12px;border-left:3px solid var(--accent);background:#fffaf0}
+.tool-bagdhara .bg-verdict{margin:0;font-family:var(--font-display);font-size:21px;font-weight:700;color:var(--wrong)}
+.tool-bagdhara .bg-verdict[data-right=true]{color:var(--right)}
+/* the teacher's pen lands on the verdict */
+.tool-bagdhara .bg-verdict::before{content:"✗";display:inline-block;margin-right:8px;color:var(--accent);animation:bg-stamp .35s cubic-bezier(.3,1.6,.5,1) both}
+.tool-bagdhara .bg-verdict[data-right=true]::before{content:"✓"}
+@keyframes bg-stamp{from{transform:scale(2.2) rotate(-18deg);opacity:0}to{transform:none;opacity:1}}
+.tool-bagdhara .bg-plate{animation:bg-turn .3s ease-out}
+@keyframes bg-turn{from{transform:perspective(600px) rotateY(-14deg) translateX(10px);opacity:.3}to{transform:none;opacity:1}}
+.tool-bagdhara .bg-meaning,.tool-bagdhara .bg-example{margin:0;font-size:16px;line-height:1.7}
+.tool-bagdhara .bg-example{color:var(--muted)}
+.tool-bagdhara .bg-source{justify-self:start;display:inline-flex;align-items:center;min-height:44px;font-size:14px;color:var(--muted);text-decoration:underline;text-underline-offset:3px}
+.tool-bagdhara .bg-next{width:100%}
+.tool-bagdhara .bg-end{padding:14px 2px 4px}
+.tool-bagdhara .bg-end .bg-q{font-size:clamp(25px,6.4vw,34px);margin-bottom:6px}
+.tool-bagdhara .bg-end .bg-meaning{margin-bottom:12px}
+.tool-bagdhara .bg-sub{margin:0;font-size:14px;color:var(--muted)}
+
+.tool-bagdhara .bg-sets{margin-top:16px}
+.tool-bagdhara .bg-sets legend{font-size:14px;color:var(--muted)}
+.tool-bagdhara .bg-sets button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+
+/* result */
+.tool-bagdhara .bg-result{scroll-margin-top:12px;margin-top:30px;padding-top:24px;border-top:3px double var(--rule)}
+.tool-bagdhara .bg-result-head h2{margin:0 0 4px;font-family:var(--font-display);font-size:clamp(25px,5vw,38px);line-height:1.4}
+.tool-bagdhara .bg-result-head h2 em{font-style:normal;color:var(--accent)}
+.tool-bagdhara .bg-result-head p{margin:0 0 12px;color:var(--muted)}
+.tool-bagdhara .bg-vs{display:grid;gap:12px;margin:0 0 16px;padding:14px;border-radius:12px;background:var(--paper)}
+.tool-bagdhara .bg-vs div{display:grid;gap:6px}
+.tool-bagdhara .bg-vs span{font-family:var(--font-display);font-weight:700}
+.tool-bagdhara .bg-vs p{margin:0;font-weight:600}
+.tool-bagdhara .bg-result-body{display:grid;gap:20px}
+.tool-bagdhara .bg-controls{display:grid;gap:16px;align-content:start}
+.tool-bagdhara .bg-field{display:grid;gap:6px;font-weight:600}
+.tool-bagdhara .bg-field small{font-weight:400;color:var(--muted);font-size:13px}
+.tool-bagdhara .bg-field input{border:1.5px solid var(--rule);border-radius:10px;font-size:17px}
+.tool-bagdhara .bg-again{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px}
+
+/* compare with everyone (opt-in) */
+.tool-bagdhara .bg-everyone{margin-top:28px;padding:18px;border-radius:12px;background:var(--paper)}
+.tool-bagdhara .bg-everyone h3{margin:0 0 6px;font-family:var(--font-display);font-size:21px}
+.tool-bagdhara .bg-everyone>p{margin:0 0 12px;color:var(--muted)}
+.tool-bagdhara .bg-rare{padding:10px 14px;border-left:5px solid var(--accent);border-radius:10px;background:#fffaf0}
+.tool-bagdhara .bg-bars{display:grid;gap:8px;margin:0 0 10px;padding:0;list-style:none}
+.tool-bagdhara .bg-bars li{display:grid;grid-template-columns:minmax(0,1fr) 46px;grid-template-areas:"label pct" "bar bar";gap:2px 8px;font-size:14px}
+.tool-bagdhara .bg-bars span{grid-area:label}
+.tool-bagdhara .bg-bars b{grid-area:pct;text-align:right}
+.tool-bagdhara .bg-bars i{grid-area:bar;display:block;height:8px;min-width:4px;border-radius:99px;background:var(--rule);transition:width .6s ease}
+.tool-bagdhara .bg-bars li[data-hit=true] i{background:var(--accent)}
+
+.tool-bagdhara .bg-guide h2,.tool-bagdhara .bg-list h2{font-family:var(--font-display);margin-bottom:8px}
+.tool-bagdhara .bg-guide>p,.tool-bagdhara .bg-list>p{color:var(--muted)}
+.tool-bagdhara .bg-guide ol{display:grid;gap:14px;margin:0 0 16px;padding:0;list-style:none}
+.tool-bagdhara .bg-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-bagdhara .bg-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border:1.5px solid var(--ink);border-radius:50%;background:var(--paper);font-family:var(--font-display);font-weight:700}
+.tool-bagdhara .bg-guide li p{margin:4px 0 0}
+.tool-bagdhara .bg-guide .bg-sources{font-size:14px}
+
+/* the static list (behind a details so it doesn't spoil the game) */
+.tool-bagdhara .bg-list summary{display:flex;align-items:center;min-height:48px;padding:0 16px;border:1.5px solid var(--ink);border-radius:10px;background:var(--paper);font-weight:700;cursor:pointer}
+.tool-bagdhara .bg-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:14px 0;padding:0;list-style:none}
+.tool-bagdhara .bg-grid li{display:grid;grid-template-columns:96px minmax(0,1fr);gap:2px 12px;align-content:start;padding:10px;border:1px solid var(--rule);border-radius:10px;background:var(--paper)}
+.tool-bagdhara .bg-grid li>*:not(.bg-thumb){grid-column:2}
+.tool-bagdhara .bg-thumb{grid-row:1/span 3;align-self:start;display:block;background:#fffaf0;border:1px solid var(--rule)}
+.tool-bagdhara .bg-thumb svg{display:block;width:100%;height:auto}
+.tool-bagdhara .bg-grid strong{font-family:var(--font-display);font-size:18px}
+.tool-bagdhara .bg-grid p{margin:0;line-height:1.6}
+.tool-bagdhara .bg-grid small{font-size:13px;color:var(--muted);line-height:1.6}
+
+.tool-bagdhara .bg-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media(min-width:720px){
+  .tool-bagdhara .bg-hero{padding:32px 0 20px}
+  .tool-bagdhara .bg-page{padding:16px 28px 22px 34px;max-width:720px}
+  .tool-bagdhara .bg-result-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:36px}
+  .tool-bagdhara .bg-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(hover:hover){.tool-bagdhara .bg-opt:not(:disabled):hover{background:#fff;border-color:var(--ink)}}
+@media(prefers-reduced-motion:reduce){.tool-bagdhara .bg-opt,.tool-bagdhara .bg-bars i{transition:none}.tool-bagdhara .bg-plate,.tool-bagdhara .bg-verdict::before{animation:none}}
