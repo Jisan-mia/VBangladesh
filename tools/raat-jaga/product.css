@@ -1,0 +1,118 @@
+/* রাত জেগে খেলা: a box TV glowing in a dark room at midnight, a crocheted cover on top, tea on the table;
+   through the window grille, one star for every World Cup night you stayed up for. Ticked nights turn the row itself to night. */
+.tool-raat-jaga{--accent:#0f7377;--accent-deep:#09484b;--ink:#1c1938;--muted:#5f5b7d;--line:#e4e1f0;--night:#15122e;--glow:#7fe3d6;--gold:#ffc94a;--wood:#86532f;--wood-dark:#5e381e;--frame:#3b6e5c;--grille:#26262f}
+.tool-raat-jaga .raat{color:var(--ink)}
+
+/* hero: one short block so the room and the first nights fit the first phone screen */
+.raat-hero{padding:14px 0 10px}
+.raat-kicker{margin:0 0 2px;font-size:14px;font-weight:600;color:var(--accent)}
+.raat-hero h1{margin:0 0 4px;font-family:var(--font-display);font-size:clamp(27px,7vw,52px);line-height:1.3;font-weight:700;letter-spacing:0}
+.raat-hero h1 span{color:var(--accent-deep);background:linear-gradient(transparent 62%,#ffc94a88 62% 88%,transparent 88%)}
+.raat-lead{max-width:600px;margin:0;color:var(--muted);font-size:15px;line-height:1.6}
+
+.rj{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;max-width:760px;margin-inline:auto}
+.rj-kicker{margin:0 0 2px;font-size:13px;font-weight:600;color:var(--accent)}
+
+/* opened from a friend's link */
+.rj-friend{display:grid;grid-template-columns:92px minmax(0,1fr);gap:14px;align-items:center;padding:12px;border-radius:16px;border-left:5px solid var(--accent);background:#eceffa}
+.rj-friend canvas{display:block;width:100%;height:auto;border-radius:6px;box-shadow:0 6px 16px #1c193833;transform:rotate(-3deg)}
+.rj-friend h2{margin:0 0 10px;font-family:var(--font-display);font-size:18px;line-height:1.45}
+.rj-friend h2 span{color:var(--accent)}
+.rj-friend .kit-primary{min-height:48px;font-size:16px}
+
+/* the room: TV on the left, window on the right, a wooden table under both */
+.rj-room{display:grid;grid-template-columns:minmax(0,1fr) 34%;grid-template-areas:"tv win" "tv tea" "table table" "count count";column-gap:16px;padding:14px 16px 12px;border-radius:20px;background:radial-gradient(90% 70% at 30% 62%,#1d4f56 0%,transparent 62%),linear-gradient(#1b1738,var(--night));color:#efeaff;overflow:hidden}
+.rj-room::after{content:"";grid-area:table;height:12px;margin:0 -16px;background:linear-gradient(var(--wood),var(--wood-dark));box-shadow:0 6px 10px #0006}
+
+.rj-tv{grid-area:tv;display:grid;justify-items:center;align-self:end;min-width:0}
+.rj-antenna{display:block;width:56%;height:auto;margin-bottom:-3px;fill:#9c97bd;stroke:#b9b4d6;stroke-width:2.5;stroke-linecap:round}
+/* the crocheted টিভির ঢাকনা, its scallops hanging over the cabinet's top edge */
+.rj-cover{position:relative;z-index:1;width:82%;height:13px;margin-bottom:-6px;background:radial-gradient(circle at 6px 5px,#f1ece0 4.5px,transparent 5px) 0 4px/12px 9px repeat-x,linear-gradient(#f1ece0,#f1ece0) top/100% 6px no-repeat}
+.rj-cabinet{display:grid;grid-template-columns:minmax(0,1fr) 24px;gap:8px;width:100%;padding:10px 9px 10px 10px;border-radius:14px;background:linear-gradient(160deg,#94603a,#6b3f22);box-shadow:inset 0 -4px 0 #0003,0 10px 18px #0007}
+.rj-screen{position:relative;display:grid;align-content:center;justify-items:center;gap:2px;aspect-ratio:4/3;padding:8px 6px;border-radius:22px/26px;background:radial-gradient(ellipse at 50% 42%,#2f8a83,#0f3b3d 72%,#0a2a2c);box-shadow:0 0 0 4px #2a1a10,0 0 26px #6fe3d066;color:#e6fffb;text-align:center;text-shadow:0 0 8px #7fe3d6aa;animation:rj-tune .4s ease-out}
+.rj-screen::after{content:"";position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(transparent 0 2px,#0000002e 2px 3px);pointer-events:none}
+.rj-screen small{font-size:clamp(10.5px,3vw,11.5px);line-height:1.35;opacity:.9}
+.rj-screen strong{font-family:var(--font-display);font-size:clamp(13px,3.8vw,15px);line-height:1.3}
+.rj-screen[data-on=false]{background:repeating-linear-gradient(0deg,#ffffff12 0 1px,transparent 1px 3px),radial-gradient(#3a5153,#101c1d);text-shadow:none}
+.rj-knobs{display:grid;align-content:start;gap:7px;padding-top:4px}
+.rj-knobs i{width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#eadbc6,#8d7a63);box-shadow:0 2px 0 #0005}
+.rj-knobs b{height:38px;margin-top:4px;border-radius:4px;background:repeating-linear-gradient(#3a2414 0 2px,#7b5434 2px 4px)}
+@keyframes rj-tune{from{transform:scaleY(.03);filter:brightness(2.4)}55%{transform:scaleY(1)}}
+
+/* the window: green-painted frame, iron grille, a crescent moon, and twenty places for stars */
+.rj-window{grid-area:win;position:relative;align-self:start;aspect-ratio:3/4;margin-top:6px;border:7px solid var(--frame);border-radius:6px;background:linear-gradient(#0a0920,#2a2358);box-shadow:inset 0 0 0 2px #0006,0 6px 14px #0005;overflow:hidden}
+.rj-window::before{content:"";position:absolute;left:12%;top:5%;width:18px;height:18px;border-radius:50%;box-shadow:inset -6px 3px 0 0 #fdf1c4}
+.rj-window::after{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(transparent 53%,var(--grille) 53% 56%,transparent 56%),linear-gradient(90deg,var(--grille) 3px,transparent 3px) -2px 0/25% 100%}
+.rj-window i{position:absolute;width:13px;height:13px;margin:-6.5px 0 0 -6.5px;color:#5a5688;transform:scale(.35);transition:transform .35s cubic-bezier(.3,1.6,.5,1),color .2s}
+.rj-window i::before{content:"";display:block;width:100%;height:100%;background:currentColor;clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.rj-window i[data-friend=true]{color:#8fb4ff;transform:scale(.75)}
+.rj-window i[data-on=true]{color:var(--gold);transform:scale(1);filter:drop-shadow(0 0 4px #ffc94a)}
+.rj-window i[data-on=true][data-friend=true]{transform:scale(1.3)}
+.rj-tea{grid-area:tea;align-self:end;justify-self:center;width:36px;height:auto;margin-bottom:-1px;fill:none;stroke:#f1ece0;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.rj-tea path:last-child{fill:#c8742e}
+.rj-steam{stroke:#ffffff80;animation:rj-steam 2.4s ease-in-out infinite alternate}
+@keyframes rj-steam{from{opacity:.25;transform:translateY(2px)}to{opacity:.9;transform:translateY(-2px)}}
+
+.rj-count{grid-area:count;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:0 12px;margin:10px 0 0}
+.rj-count-big{font-family:var(--font-display);font-size:21px;font-weight:700}
+.rj-count-big strong{color:var(--gold);font-size:30px}
+.rj-count-sub{font-size:13.5px;color:#cfc9f0}
+.rj-count-sub em{display:inline-block;margin-left:6px;padding:0 7px;border:1px solid #ffffff45;border-radius:999px;font-size:11.5px;font-style:normal}
+
+/* the nights, listed like the TV schedule: Bangladesh kickoff on the left, the match, a star to tick */
+.rj-sheet{scroll-margin-top:10px}
+.rj-rule{margin:0 0 6px;padding:10px 12px;border-radius:12px;background:#f1f0f8;font-size:14px;line-height:1.6}
+.rj-year{min-width:0;margin:0;padding:0;border:0}
+.rj-year legend{display:flex;align-items:baseline;gap:8px;padding:10px 0 6px;font-family:var(--font-display);font-size:20px;font-weight:700}
+.rj-year legend span{font-family:inherit;font-size:13px;font-weight:600;color:var(--muted)}
+.rj-night{display:grid;grid-template-columns:86px minmax(0,1fr) 30px;align-items:center;gap:10px;width:100%;min-height:64px;margin:0 0 6px;padding:8px 10px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer;transition:background-color .18s ease,border-color .18s ease,transform .1s ease}
+.rj-night:active{transform:scale(.985)}
+.rj-night[aria-pressed=true]{border-color:var(--night);background:linear-gradient(100deg,var(--night),#262052);color:#f4f1ff}
+.rj-when{display:grid;line-height:1.25}
+.rj-when strong{font-family:var(--font-display);font-size:16.5px;font-weight:700;color:var(--accent)}
+.rj-when small{font-size:11.5px;color:var(--muted)}
+.rj-match{display:grid;min-width:0;line-height:1.4}
+.rj-match small{font-size:12px;color:var(--muted)}
+.rj-match strong{font-size:15px;font-weight:700}
+.rj-night[aria-pressed=true] .rj-when strong{color:var(--glow)}
+.rj-night[aria-pressed=true] small{color:#c4bfe6}
+.rj-also{margin-left:6px;padding:0 7px;border-radius:999px;background:#dfe9ff;color:#22408a;font-size:11px;font-style:normal;font-weight:700}
+.rj-star{width:28px;height:28px;fill:none;stroke:#b7b3cf;stroke-width:1.6;stroke-linejoin:round;transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+.rj-night[aria-pressed=true] .rj-star{fill:var(--gold);stroke:var(--gold);transform:rotate(-12deg) scale(1.12)}
+.rj-source{margin:8px 0 0;font-size:12.5px;line-height:1.6;color:var(--muted)}
+
+/* result */
+.rj-result{scroll-margin-top:12px;margin-top:24px;padding-top:22px;border-top:2px solid var(--ink)}
+.rj-result-head h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(25px,5vw,36px);line-height:1.4}
+.rj-result-head h2 em{font-style:normal;color:var(--accent)}
+.rj-result-head p{margin:0 0 18px;color:var(--muted)}
+.rj-result-body{display:grid;gap:20px}
+.rj-controls{display:grid;gap:16px;align-content:start}
+.rj-field{display:grid;gap:6px;font-weight:600}
+.rj-field small{font-weight:400;color:var(--muted);font-size:13px}
+.rj-field input{border:1.5px solid #c9c5dc;border-radius:12px;font-size:17px}
+.rj-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.rj-everyone{margin-top:28px;padding:18px;border-radius:18px;background:#f1f0f8}
+.rj-everyone h3{margin:0 0 6px;font-family:var(--font-display);font-size:21px}
+.rj-everyone>p{margin:0 0 12px;color:var(--muted)}
+.rj-rare{display:grid;gap:10px}
+.rj-rare p{display:grid;margin:0;padding:12px 14px;border-left:5px solid var(--gold);border-radius:14px;background:#fff}
+.rj-rare span{font-size:13px;color:var(--muted)}
+.rj-rare em{font-style:normal;color:var(--accent);font-weight:700}
+
+.raat-guide h2{margin-bottom:18px;font-family:var(--font-display)}
+.raat-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.raat-guide li{display:flex;gap:14px;align-items:flex-start}
+.raat-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--night);color:var(--gold);font-weight:700}
+.raat-guide li p{margin:4px 0 0}
+
+@media(min-width:760px){
+  .rj-room{grid-template-columns:minmax(0,1fr) 30%;padding:22px 28px 16px}
+  .rj-room::after{margin:0 -28px}
+  .rj-tv{justify-self:center;width:min(100%,320px)}
+  .rj-screen strong{font-size:19px}
+  .rj-screen small{font-size:13.5px}
+  .rj-result-body{grid-template-columns:minmax(0,1fr) minmax(280px,340px);align-items:start}
+}
+@media(hover:hover){.rj-night:hover{border-color:var(--accent)}}
+@media(prefers-reduced-motion:reduce){.rj-screen,.rj-steam{animation:none}.rj-night,.rj-star,.rj-window i{transition:none}}

@@ -240,7 +240,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 14 | gorur-ojon | গরুর ওজন কত? | উৎসব আর বিশ্বাস | FA06, FA12 | done | #b-gorur-ojon |
 | 14 | starter-pack | দেশি স্টার্টার প্যাক | নিজেকে জানো | CR05 | done | #b-starter-pack |
 | 14 | mishron | দেশি মিশ্রণ | মজা আর কুইজ | GA03 | building | #b-mishron |
-| 14 | raat-jaga | রাত জেগে খেলা | খেলাধুলা | SP14 | building | #b-raat-jaga |
+| 14 | raat-jaga | রাত জেগে খেলা | খেলাধুলা | SP14 | done | #b-raat-jaga |
 | 14 | betoner-bhag | বেতনের ভাগ | হিসাব-নিকাশ | MO08 | building | #b-betoner-bhag |
 | 15 | bidyut-bill | বিদ্যুৎ বিল কত? | হিসাব-নিকাশ | MO03 | building | #b-bidyut-bill |
 | 15 | mondop | মণ্ডপ ঘুরি | উৎসব আর বিশ্বাস | FA10 | building | #b-mondop |
