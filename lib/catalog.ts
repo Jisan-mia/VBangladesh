@@ -27,6 +27,7 @@ export const catalog = [
   { slug: "argentina-na-brazil", name: "আর্জেন্টিনা না ব্রাজিল?", description: "এক চাপে ছাদে দলের পতাকা তোলো, পাশের বাসার বন্ধুকে ডাকো", category: "খেলাধুলা", action: "পতাকা তোলো" },
   { slug: "koto-din-baki", name: "কত দিন বাকি?", description: "ঈদ, পূজা, বড়দিন, বৈশাখ — সব উৎসবের দিন গোনো।", category: "উৎসব আর বিশ্বাস", action: "দিন গোনো" },
   { slug: "mishtir-baksho", name: "মিষ্টির বাক্স", description: "দেশের নামকরা মিষ্টির কয়টা খেয়েছ? বাক্সে তোলো, গুনে দেখো।", category: "খাবারদাবার", action: "বাক্স সাজাও" },
+  { slug: "taka-kothay", name: "টাকা কথায় লিখি", description: "যেকোনো টাকার অঙ্ক বাংলা আর ইংরেজি কথায় লিখে নাও।", category: "ভাষা আর পড়াশোনা", action: "কথায় লেখো" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.

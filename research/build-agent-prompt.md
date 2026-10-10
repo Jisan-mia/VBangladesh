@@ -40,7 +40,7 @@ The owner's bar: every tool must feel curated with care, emotion and interactivi
 ## Report back (SHORT, ≤200 words, exactly these lines)
 - `concept:` one line
 - `catalog:` description (≤90 chars, natural তুমি Bangla) | action (2–3 words)
-- `og:` "<title, with | before the highlighted part>" | "<subtitle>" | <bg hex> | <ink hex> | <accent hex> | <hash state for a nice filled card, or empty>
+- `og:` "<title, with | before the highlighted part>" | "<subtitle>" | <bg hex> | <ink hex> | <accent hex> | <hash state for a nice filled card, or empty> | <JS that makes the card canvas appear if it needs a tap first, e.g. clicking a choice, or empty>
 - `title/H1:` …
 - `tests:` N passed · `tsc:` clean for my files
 - `shots:` default + finished card paths
