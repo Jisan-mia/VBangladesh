@@ -179,7 +179,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 1 | mishtir-baksho | মিষ্টির বাক্স | খাবারদাবার | FO01 | done | #b-mishtir-baksho |
 | 2 | taka-kothay | টাকা কথায় লিখি | ভাষা আর পড়াশোনা | MO01 | building | #b-taka-kothay |
 | 2 | amar-jersey | আমার জার্সি | খেলাধুলা | SP02 | building | #b-amar-jersey |
-| 2 | boyos | বয়স কত? | হিসাব-নিকাশ | TI01, TI03 | todo | #b-boyos |
+| 2 | boyos | বয়স কত? | হিসাব-নিকাশ | TI01, TI03 | building | #b-boyos |
 | 2 | iftar-plate | ইফতারির প্লেট | উৎসব আর বিশ্বাস | FA05 | todo | #b-iftar-plate |
 | 2 | cinema-poster | সিনেমার পোস্টার | আঁকো আর সাজাও | CR02 | todo | #b-cinema-poster |
 | 3 | banan | শুদ্ধ বানান কোনটি? | ভাষা আর পড়াশোনা | ED03 | todo | #b-banan |
