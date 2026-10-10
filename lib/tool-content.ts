@@ -62,6 +62,7 @@ import { site as dhadha } from '../tools/dhadha/content';
 import { site as tokhon_ekhon } from '../tools/tokhon-ekhon/content';
 import { site as namta } from '../tools/namta/content';
 import { site as prothom_ay } from '../tools/prothom-ay/content';
+import { site as ami_bolechhilam } from '../tools/ami-bolechhilam/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -128,6 +129,7 @@ export const toolContent = {
   'tokhon-ekhon': tokhon_ekhon,
   'namta': namta,
   'prothom-ay': prothom_ay,
+  'ami-bolechhilam': ami_bolechhilam,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
