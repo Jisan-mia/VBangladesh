@@ -65,7 +65,7 @@ export const catalog = [
   { slug: "eider-din", name: "ঈদের দিন", description: "ঈদের দিনে কয়টা হলো? টিক দাও, জামার রঙে মেহেদি রাঙা হাত বানাও", category: "উৎসব আর বিশ্বাস", action: "টিক দাও" },
   { slug: "ganer-koli", name: "গানের কলি", description: "হাঁড়ি থেকে অক্ষর তোলো, ৩০ সেকেন্ডে গান ধরো, স্কোর রাখো এক ফোনে", category: "মজা আর কুইজ", action: "অক্ষর তোলো" },
   { slug: "attiyo", name: "কে কী হয়?", description: "কে কী হয়?: খুলে দেখো, খেলে দেখো।", category: "পরিবার আর প্রবাস", action: "শুরু করো" },
-  { slug: "studior-chhobi", name: "স্টুডিওর ছবি", description: "স্টুডিওর ছবি: খুলে দেখো, খেলে দেখো।", category: "আঁকো আর সাজাও", action: "শুরু করো" },
+  { slug: "studior-chhobi", name: "স্টুডিওর ছবি", description: "৯০-এর পাড়ার স্টুডিওর আঁকা ব্যাকড্রপে নিজের ছবি তোলো, কোণে কমলা তারিখসহ", category: "আঁকো আর সাজাও", action: "ছবি তোলো" },
   { slug: "koto-cheno", name: "আমাকে কতটা চেনো?", description: "৮টা প্রশ্নে নিজের স্লাম বুক লেখো, বন্ধুরা আন্দাজ করুক কে তোমাকে বেশি চেনে", category: "নিজেকে জানো", action: "স্লাম বুক লেখো" },
   { slug: "eidjatra", name: "ঈদযাত্রা", description: "ঈদযাত্রা: খুলে দেখো, খেলে দেখো।", category: "উৎসব আর বিশ্বাস", action: "শুরু করো" },
   { slug: "probash", name: "প্রবাস জীবন", description: "প্রবাস জীবন: খুলে দেখো, খেলে দেখো।", category: "পরিবার আর প্রবাস", action: "শুরু করো" },
