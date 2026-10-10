@@ -1202,3 +1202,4 @@ Human checks and shared changes that agents asked for, kept here so they survive
 - Tally design limit: the server keeps one vote list per browser per tool and replaces it on each vote. Tools with several pages or days (bagdhara, projonmo, dhadha, ami-bolechhilam, current-gelo) resend what they remember, so bagdhara loses its page-1 count when page 2 is compared. A real fix would key votes by (tool, voter, group).
 - Tally API now takes an optional `?prefix=` (used by eidjatra and current-gelo). Still to do: prune old days or events from tally_counts.
 - mama-jaben: a native speaker should review mama's Dhaka-colloquial lines for warmth and no caricature.
+- ekadosh: check about 20 player-name spellings against Bangla media (list in lib/players.ts). A women's pack is not built yet.
