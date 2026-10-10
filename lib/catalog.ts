@@ -33,7 +33,7 @@ export const catalog = [
   { slug: "iftar-plate", name: "ইফতারির প্লেট", description: "খেজুর, ছোলা, পেঁয়াজু, বেগুনি… ছুঁয়ে নিজের ইফতারির প্লেট সাজাও, বন্ধুদের দেখাও", category: "উৎসব আর বিশ্বাস", action: "প্লেট সাজাও" },
   { slug: "cinema-poster", name: "সিনেমার পোস্টার", description: "নিজের নামে পুরোনো দিনের হাতে আঁকা সিনেমার পোস্টার বানাও, বন্ধুকে সহশিল্পী করো", category: "আঁকো আর সাজাও", action: "পোস্টার বানাও" },
   { slug: "banan", name: "শুদ্ধ বানান কোনটি?", description: "শুদ্ধ বানান কোনটি?: খুলে দেখো, খেলে দেখো।", category: "ভাষা আর পড়াশোনা", action: "শুরু করো" },
-  { slug: "dom-atkano", name: "দম আটকানো ম্যাচ", description: "দম আটকানো ম্যাচ: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
+  { slug: "dom-atkano", name: "দম আটকানো ম্যাচ", description: "জয় আর কষ্টের সেই ম্যাচগুলো কতটা মনে আছে? ১০টা প্রশ্নের ক্রিকেট কুইজ খেলো", category: "খেলাধুলা", action: "কুইজ খেলো" },
   { slug: "salami-chek", name: "সালামির চেক", description: "মামা-খালার কাছে সালামি চাও খেলনা চেকে, সে এক চাপে সই করে ফেরত দেবে", category: "উৎসব আর বিশ্বাস", action: "চেক কাটো" },
   { slug: "eta-na-ota", name: "এটা না ওটা", description: "এটা না ওটা: খুলে দেখো, খেলে দেখো।", category: "মজা আর কুইজ", action: "শুরু করো" },
   { slug: "deshe-fera", name: "দেশে ফেরা", description: "দেশে ফেরা: খুলে দেখো, খেলে দেখো।", category: "পরিবার আর প্রবাস", action: "শুরু করো" },
