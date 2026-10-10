@@ -1,0 +1,91 @@
+.tool-koto-din-baki{--accent:#c62a1f;--accent-deep:#8e1b14;--ink:#2a2420;--muted:#6f6558;--line:#e4dccd;--paper:#fffdf6;--wall:#f3eee4}
+.tool-koto-din-baki .kdb{color:var(--ink)}
+
+/* hero: short, so the calendar page shows on a phone's first screen */
+.kdb-hero{padding:18px 0 12px}
+.kdb-kicker{margin:0 0 6px;font-size:13px;font-weight:600;color:var(--accent)}
+.kdb-hero h1{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(30px,7vw,56px);line-height:1.3;font-weight:700;letter-spacing:0}
+.kdb-hero h1 span{color:var(--accent)}
+.kdb-lead{max-width:560px;margin:0;color:var(--muted);font-size:15px;line-height:1.7}
+
+.kdb-builder{display:grid;gap:18px}
+.kdb-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* the calendar page; a new pick flips down from the binding like a fresh page */
+.kdb-stage{display:grid;gap:8px;justify-items:center}
+.kdb-card{perspective:1200px}
+.kdb-card canvas{transform-origin:50% 0;animation:kdb-page .45s cubic-bezier(.2,.8,.3,1)}
+@keyframes kdb-page{from{transform:rotateX(-38deg);opacity:.4}to{transform:none;opacity:1}}
+.kdb-source{max-width:520px;margin:0;color:var(--muted);font-size:13px;line-height:1.6;text-align:center}
+.kdb-source strong{color:var(--accent)}
+.kdb-source a{color:inherit;text-underline-offset:3px}
+
+/* day picker: little torn-off date slips, each with its own colour on top */
+.kdb-days{border:0;margin:0;padding:0;min-width:0;scroll-margin-top:12px}
+.kdb-days legend{padding:0;margin:0 0 8px;font-family:var(--font-display);font-size:18px;font-weight:700}
+.kdb-days>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.kdb-days button{position:relative;display:grid;align-content:center;justify-items:center;gap:0;min-height:58px;padding:10px 4px 6px;border:1.5px solid var(--line);border-top:6px solid var(--sw);border-radius:6px 6px 10px 10px;background:var(--paper);color:var(--ink);line-height:1.3;text-align:center;box-shadow:0 2px 0 #00000010;transition:transform .12s ease}
+.kdb-days strong{font-size:14px;font-weight:700}
+.kdb-days small{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.kdb-days button[aria-pressed=true]{border-color:var(--sw);background:var(--sw);color:#fff;box-shadow:0 3px 0 #00000030}
+.kdb-days button[aria-pressed=true] small{color:#ffffffd9}
+.kdb-days button:active{transform:translateY(2px)}
+[data-theme=eid]{--sw:#0e5a43}
+[data-theme=ramadan]{--sw:#1c3557}
+[data-theme=durga]{--sw:#a8121b}
+[data-theme=kali]{--sw:#2b1d3a}
+[data-theme=saraswati]{--sw:#a87400}
+[data-theme=buddha]{--sw:#9c560b}
+[data-theme=christmas]{--sw:#1d5b3a}
+[data-theme=national]{--sw:#006a4e}
+[data-theme=ekushe]{--sw:#151515}
+[data-theme=boishakh]{--sw:#c4231b}
+[data-theme=custom]{--sw:#1d2b53}
+
+/* own day */
+.kdb-own{display:grid;gap:14px;padding:16px;border:1.5px dashed var(--line);border-radius:14px;background:var(--paper)}
+.kdb-field{display:grid;gap:6px;font-weight:600}
+.kdb-field small{font-weight:400;color:var(--muted);font-size:13px}
+.kdb-field input{width:100%;min-height:48px;border:1.5px solid #c9c1b4;border-radius:12px;font-size:17px;background:#fff}
+.kdb-note{margin:0;color:var(--muted);font-size:13px}
+
+/* share */
+.kdb-send{display:grid;gap:14px;scroll-margin-top:16px;padding-top:6px}
+.kdb-send h2{margin:0;font-family:var(--font-display);font-size:clamp(22px,5vw,30px);line-height:1.4}
+
+/* opened from a friend's link */
+.kdb-friend{display:grid;gap:4px;padding:12px 14px;border-radius:16px;background:#fff1e8;border-left:6px solid var(--accent)}
+.kdb-friend-kicker{margin:0;font-size:13px;font-weight:700;color:var(--accent)}
+.kdb-friend h2{margin:0;font-family:var(--font-display);font-size:19px;line-height:1.45}
+.kdb-friend h2 span{color:var(--accent)}
+.kdb-friend p{margin:0;color:var(--muted);font-size:15px}
+.kdb-friend p a{display:inline-block;min-height:44px;line-height:44px;color:var(--accent);font-weight:700;text-underline-offset:4px}
+
+/* holiday table */
+.kdb-holidays h2,.kdb-guide h2{font-family:var(--font-display);font-size:clamp(22px,5vw,30px);line-height:1.4;margin:0 0 8px}
+.kdb-holidays>p{max-width:680px;color:var(--muted);font-size:15px;line-height:1.7}
+.kdb-holidays a{color:inherit;text-underline-offset:3px}
+.kdb-table-wrap{max-width:680px}
+.kdb-table{width:100%;border-collapse:collapse;font-size:15px;background:var(--paper)}
+.kdb-table th,.kdb-table td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.kdb-table thead th{font-size:13px;color:var(--muted);font-weight:600}
+.kdb-table tbody th{border-left:5px solid var(--sw);font-weight:700}
+.kdb-table tbody th small{display:block;font-weight:400;font-size:12px;color:var(--muted)}
+.kdb-table td:last-child{white-space:nowrap;text-align:right;font-variant-numeric:tabular-nums}
+.kdb-badge{display:inline-block;margin-left:6px;padding:0 6px;border:1.5px solid var(--accent);border-radius:6px;color:var(--accent);font-size:11px;font-weight:700;line-height:1.6;transform:rotate(-3deg)}
+.kdb-checked{color:var(--muted);font-size:13px}
+
+/* guide */
+.kdb-guide ol{display:grid;gap:12px;margin:0;padding:0;list-style:none;max-width:680px}
+.kdb-guide li{display:grid;grid-template-columns:36px 1fr;gap:12px;align-items:start}
+.kdb-guide li span{display:grid;place-items:center;width:36px;height:36px;border-radius:6px;border-top:4px solid var(--accent);background:var(--paper);box-shadow:0 1px 0 var(--line);font-family:var(--font-display);font-weight:700;color:var(--accent)}
+.kdb-guide li p{margin:4px 0 0;line-height:1.7}
+
+@media (min-width:860px){
+  .kdb-builder{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;column-gap:36px}
+  .kdb-friend{grid-column:1/-1}
+  .kdb-stage{grid-row:span 3}
+  .kdb-days>div{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media (max-width:340px){.kdb-days>div{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (prefers-reduced-motion:reduce){.kdb-card canvas{animation:none}.kdb-days button{transition:none}}

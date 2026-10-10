@@ -175,7 +175,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 1 | gpa | জিপিএ কত? | ভাষা আর পড়াশোনা | ED01 | building | #b-gpa |
 | 1 | komon-porlo | কয়টা কমন পড়ল? | মজা আর কুইজ | FM05, FM06, ID10, ID11 | done | #b-komon-porlo |
 | 1 | argentina-na-brazil | আর্জেন্টিনা না ব্রাজিল? | খেলাধুলা | SP01, SP13 | done | #b-argentina-na-brazil |
-| 1 | koto-din-baki | কত দিন বাকি? | উৎসব আর বিশ্বাস | FA02, FA11, TI09 | building | #b-koto-din-baki |
+| 1 | koto-din-baki | কত দিন বাকি? | উৎসব আর বিশ্বাস | FA02, FA11, TI09 | done | #b-koto-din-baki |
 | 1 | mishtir-baksho | মিষ্টির বাক্স | খাবারদাবার | FO01 | done | #b-mishtir-baksho |
 | 2 | taka-kothay | টাকা কথায় লিখি | ভাষা আর পড়াশোনা | MO01 | building | #b-taka-kothay |
 | 2 | amar-jersey | আমার জার্সি | খেলাধুলা | SP02 | building | #b-amar-jersey |
