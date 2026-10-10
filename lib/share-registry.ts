@@ -80,6 +80,7 @@ import { share as ekadosh } from '../tools/ekadosh/share';
 import { share as gorur_ojon } from '../tools/gorur-ojon/share';
 import { share as starter_pack } from '../tools/starter-pack/share';
 import { share as mishron } from '../tools/mishron/share';
+import { share as raat_jaga } from '../tools/raat-jaga/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -163,6 +164,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'gorur-ojon': gorur_ojon,
   'starter-pack': starter_pack,
   'mishron': mishron,
+  'raat-jaga': raat_jaga,
 };
 
 export function toolShare(tool: string): ToolShare | null {
