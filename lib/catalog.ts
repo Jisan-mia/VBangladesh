@@ -42,7 +42,7 @@ export const catalog = [
   { slug: "pitha", name: "পিঠা চেনো?", description: "ছবি দেখে ১০টা শীতের পিঠার নাম বলো, অন্য এলাকার নামও জেনে নাও", category: "খাবারদাবার", action: "পিঠা চেনো" },
   { slug: "upohar", name: "দাওয়াতে কত দেব?", description: "সম্পর্ক, দূরত্ব আর মেনু বেছে নাও, খামে উঠবে হালকা আন্দাজ আর মজার লাইন।", category: "পরিবার আর প্রবাস", action: "খাম সাজাও" },
   { slug: "namer-design", name: "নামের ডিজাইন", description: "নাম লেখো, ঢং বাছো: আলপনা, সোনালি, চক, নিয়ন বা নকশি সুতোয় নিজের নাম সাজাও", category: "আঁকো আর সাজাও", action: "নাম সাজাও" },
-  { slug: "dawat", name: "দাওয়াত কার্ড", description: "দাওয়াত কার্ড: খুলে দেখো, খেলে দেখো।", category: "পরিবার আর প্রবাস", action: "শুরু করো" },
+  { slug: "dawat", name: "দাওয়াত কার্ড", description: "বিয়ে, হলুদ, বৌভাত, আকিকা, জন্মদিনের সোনালি দাওয়াত কার্ড বানাও, মেসেঞ্জারে পাঠাও", category: "পরিবার আর প্রবাস", action: "দাওয়াত বানাও" },
   { slug: "desh-cheno", name: "দেশ চেনো", description: "দেশ চেনো: খুলে দেখো, খেলে দেখো।", category: "ভাষা আর পড়াশোনা", action: "শুরু করো" },
   { slug: "bhori", name: "ভরির হিসাব", description: "ভরির হিসাব: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
