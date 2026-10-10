@@ -35,8 +35,8 @@ test("names and messages lose control and direction-override characters and are 
 });
 
 test("text is NFC-normalized so the same name always makes the same link", () => {
-  assert.equal(cleanName("শোো".slice(0, 1) + "ো"), "শো");
-  assert.equal(shareHash({ occasion: "eid", preset: 0, text: null, name: "শো" }), shareHash({ occasion: "eid", preset: 0, text: null, name: "শো" }));
+  assert.equal(cleanName("শোো".slice(0, 1) + "ো"), "শো");
+  assert.equal(shareHash({ occasion: "eid", preset: 0, text: null, name: "শো" }), shareHash({ occasion: "eid", preset: 0, text: null, name: "শো" }));
 });
 
 test("every occasion has 3–4 presets that fit the card, and ids are unique", () => {
