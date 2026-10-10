@@ -52,7 +52,7 @@ export const catalog = [
   { slug: "cha-mudra", name: "চায়ের কাপে হিসাব", description: "যেকোনো দাম লেখো, দেখো কত কাপ চা আর কয়টা সিঙ্গারা হয়", category: "মজা আর কুইজ", action: "দাম মাপো" },
   { slug: "matir-bank", name: "মাটির ব্যাংক", description: "রোজ কত জমাবে আর কবে ভাঙবে বেছে নাও, দেখো ঈদে কত হবে", category: "হিসাব-নিকাশ", action: "পয়সা ফেলো" },
   { slug: "shesh-bol", name: "শেষ বলে ছয়", description: "শেষ বলে ছয়: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
-  { slug: "dhoyahin", name: "ধোঁয়াহীন দিন", description: "ধোঁয়াহীন দিন: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
+  { slug: "dhoyahin", name: "ধোঁয়াহীন দিন", description: "সিগারেট ছাড়ার দিন গোনো, টবের চারায় রোজ পাতা গজাবে, দেখো কত টাকা বাঁচল", category: "হিসাব-নিকাশ", action: "দিন গোনো" },
   { slug: "ghuri", name: "ঘুড়ি আর ফানুস", description: "নিজের ঘুড়ি বা ফানুস বানাও, নাম লেখো, সাকরাইনের আকাশে ওড়াও", category: "আঁকো আর সাজাও", action: "ঘুড়ি ওড়াও" },
   { slug: "flames", name: "ফ্লেমস", description: "স্কুলের খাতার সেই খেলা: দুটো নাম লেখো, অক্ষর কাটো, দেখো কী আসে। শুধু মজা!", category: "মজা আর কুইজ", action: "খেলে দেখো" },
   { slug: "moner-boyos", name: "মনের বয়স কত?", description: "মনের বয়স কত?: খুলে দেখো, খেলে দেখো।", category: "নিজেকে জানো", action: "শুরু করো" },
