@@ -78,7 +78,7 @@ export const catalog = [
   { slug: "mache-bhate", name: "মাছে-ভাতে", description: "৪০টা দেশি মাছের কয়টা খেয়েছ? ছুঁয়ে ডালায় তোলো, নিজের ডালার ছবি বানাও", category: "খাবারদাবার", action: "ডালা সাজাও" },
   { slug: "jomi", name: "জমির মাপ", description: "১ বিঘায় কত শতাংশ, কাঠায় কত বর্গফুট? মাপ লেখো, সব এককে সাথে সাথে দেখো", category: "হিসাব-নিকাশ", action: "মাপ লেখো" },
   { slug: "ek-koti", name: "এক কোটি টাকা খরচ করো", description: "এক কোটি টাকা খরচ করো: খুলে দেখো, খেলে দেখো।", category: "মজা আর কুইজ", action: "শুরু করো" },
-  { slug: "rokto", name: "রক্তদাতা কার্ড", description: "রক্তদাতা কার্ড: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
+  { slug: "rokto", name: "রক্তদাতা কার্ড", description: "শেষ কবে রক্ত দিয়েছ? দেখো আবার কবে পারবে, বানাও রক্তদাতা কার্ড", category: "হিসাব-নিকাশ", action: "কার্ড বানাও" },
   { slug: "cassette", name: "আমার ক্যাসেট", description: "আমার ক্যাসেট: খুলে দেখো, খেলে দেখো।", category: "স্মৃতি আর গল্প", action: "শুরু করো" },
   { slug: "jibh", name: "জিভ কোন জেলার?", description: "জিভ কোন জেলার?: খুলে দেখো, খেলে দেখো।", category: "খাবারদাবার", action: "শুরু করো" },
   { slug: "matcher-mon", name: "ম্যাচের মন", description: "ম্যাচের মন: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
