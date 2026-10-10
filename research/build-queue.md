@@ -1197,3 +1197,4 @@ Human checks and shared changes that agents asked for, kept here so they survive
 - tokhon-ekhon: regenerate lib/cpi.ts from the World Bank FP.CPI.TOTL API once a year. The data was fetched 2026-10-11 and covers 1986–2025.
 - dhadha: a human should review the riddle bank. About 18 of the 60 riddles have only one popular-list source (lib/riddles.ts). The tally is sent automatically on finish, with a privacy line under the chips.
 - ami-bolechhilam: a native speaker should check the team names (lib/seal.ts). The tally API keeps only one vote list per browser, so the tool resends earlier matches from localStorage.
+- mache-bhate: a native speaker should review the fish names. The page is 221KB of HTML (52KB gzipped), almost all inline fish SVG.
