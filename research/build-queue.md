@@ -1192,3 +1192,4 @@ Human checks and shared changes that agents asked for, kept here so they survive
 - studior-chhobi: shared change wanted, an optional vertical radius on `drawPhoto` for oval photos. `loadPhoto`'s 360px cap makes large photo frames soft.
 - koto-cheno: names now go into short links (orchestrator's choice, for the personal preview).
 - Not done yet: tests on a real Android phone and in the Facebook in-app browser.
+- eidjatra: bump the tally event id (eid-ul-fitr-2027) right before each Eid's travel week. API wish: a ?prefix= filter on tally GET (it returns every id ever counted).
