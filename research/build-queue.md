@@ -1206,3 +1206,4 @@ Human checks and shared changes that agents asked for, kept here so they survive
 - mishron: a native speaker should read all 200 item notes. Every Election Commission symbol is left out, which also drops everyday items such as আম, রিকশা, ঘুড়ি and হারিকেন. Revisit if that feels too strict.
 - mondop: Hindu community members should review all the copy, the moment chips and the lines. Bump the PUJA constant in lib/mondop.ts for 2027.
 - bidyut-bill: update lib/tariff.ts whenever BERC issues a new residential tariff. Current values are from the order of 3 June 2026 plus the 4 June amendment. The appliance wattages are typical values with no official source.
+- adda: a native speaker should confirm that the role name "কালো গুটি" reads only as the carrom piece, with no skin-colour meaning.
