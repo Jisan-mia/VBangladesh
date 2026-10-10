@@ -43,7 +43,7 @@ export const catalog = [
   { slug: "upohar", name: "দাওয়াতে কত দেব?", description: "সম্পর্ক, দূরত্ব আর মেনু বেছে নাও, খামে উঠবে হালকা আন্দাজ আর মজার লাইন।", category: "পরিবার আর প্রবাস", action: "খাম সাজাও" },
   { slug: "namer-design", name: "নামের ডিজাইন", description: "নাম লেখো, ঢং বাছো: আলপনা, সোনালি, চক, নিয়ন বা নকশি সুতোয় নিজের নাম সাজাও", category: "আঁকো আর সাজাও", action: "নাম সাজাও" },
   { slug: "dawat", name: "দাওয়াত কার্ড", description: "বিয়ে, হলুদ, বৌভাত, আকিকা, জন্মদিনের সোনালি দাওয়াত কার্ড বানাও, মেসেঞ্জারে পাঠাও", category: "পরিবার আর প্রবাস", action: "দাওয়াত বানাও" },
-  { slug: "desh-cheno", name: "দেশ চেনো", description: "দেশ চেনো: খুলে দেখো, খেলে দেখো।", category: "ভাষা আর পড়াশোনা", action: "শুরু করো" },
+  { slug: "desh-cheno", name: "দেশ চেনো", description: "চার্ট পেপারে দেশের ১০টা প্রশ্ন, প্রতিটা ঠিক উত্তরে একটা সোনালি তারা", category: "ভাষা আর পড়াশোনা", action: "খেলা শুরু করো" },
   { slug: "bhori", name: "ভরির হিসাব", description: "মায়ের বালা, নানুর হার: ভরি-আনা-রতি থেকে গ্রামে কত, দেখো আর কার্ড বানাও", category: "হিসাব-নিকাশ", action: "ওজন বসাও" },
 ] as const satisfies readonly ToolListing[];
 
