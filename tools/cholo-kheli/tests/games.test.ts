@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createGameInvitation, findGames, games, parsePlayerCount } from "../lib/games";
+import { drawings } from "../lib/drawings";
+import { createGameInvitation, findGames, games, parsePlayerCount, suggestGames } from "../lib/games";
 
 test("player counts accept complete Bengali and English whole numbers", () => {
   assert.equal(parsePlayerCount(" ১২ "), 12);
@@ -56,4 +57,35 @@ test("invitations contain the chosen rules, Bangla numbers and no invented appoi
 test("every game has a complete, explicitly named variant and unique ID", () => {
   assert.equal(new Set(games.map((game) => game.id)).size, games.length);
   assert.ok(games.every((game) => game.rules.length >= 4 && game.variant && game.ending && game.care));
+});
+
+test("the classic outdoor games ask for exactly what they need", () => {
+  const field = (players: number, equipment: string[]) => findGames({ players, space: "field", equipment }).map((game) => game.id);
+  assert.ok(field(6, []).includes("lukochuri"));
+  assert.ok(!field(6, []).includes("kanamachhi") && !field(6, []).includes("rumal-churi"));
+  assert.ok(field(6, ["cloth"]).includes("kanamachhi") && field(6, ["cloth"]).includes("rumal-churi"));
+  assert.ok(field(8, ["chalk"]).includes("dariabandha"));
+  assert.ok(!field(9, ["chalk"]).includes("dariabandha"), "দাঁড়িয়াবান্ধা needs two equal teams");
+  assert.ok(!field(14, ["chalk"]).includes("dariabandha"));
+  for (const id of ["kanamachhi", "rumal-churi", "lukochuri", "dariabandha"]) {
+    assert.ok(!findGames({ players: 8, space: "seated", equipment: ["chalk", "cloth", "paper", "marker"] }).some((game) => game.id === id), `${id} is not a sitting game`);
+  }
+});
+
+test("outside, the games that need the space come before sitting games", () => {
+  const ranked = suggestGames(findGames({ players: 6, space: "field", equipment: [] }), "field");
+  assert.equal(ranked[0].id, "lukochuri");
+  assert.ok(ranked.findIndex((game) => game.spaces.includes("seated")) > 0);
+  const seated = findGames({ players: 4, space: "seated", equipment: [] });
+  assert.deepEqual(suggestGames(seated, "seated"), seated);
+});
+
+test("every game has a poster drawing and a poster line, and invitations can carry the agreed time", () => {
+  for (const game of games) {
+    assert.ok(drawings[game.id]?.path, `${game.id}: drawing`);
+    assert.ok(game.line.length > 8 && game.line.length < 60, `${game.id}: line`);
+  }
+  const invitation = createGameInvitation(games[0], 4, "আজ বিকেল ৪টায়, স্কুলের মাঠে");
+  assert.ok(invitation.includes("কবে, কোথায়: আজ বিকেল ৪টায়, স্কুলের মাঠে।"));
+  assert.ok(!invitation.includes("সবাই মিলে ঠিক করে নেব"));
 });
