@@ -1178,3 +1178,17 @@ Add these to the named tool after it ships. They are not queued as tools. The fi
 - **Link:** `#a=<7 digits>&n=রাফি`, plus the group `&g=<role:name,…>` (≤ 6).
 - **Risks:** every role is flattering; no "কিপটে" or other mean labels.
 - **Simplicity:** 4/5
+
+## Follow-ups from agent reports
+
+Human checks and shared changes that agents asked for, kept here so they survive context resets.
+
+- `banan`: a native speaker should review the spellings.
+- Festival dates need an update every year: shubhechha, koto-din-baki, deshe-fera, matir-bank, eider-din (via koto-din-baki/lib).
+- sehri-iftar: enter the Islamic Foundation 1448 table when it is published (`TIMETABLE_1448 = null`), and double-check it.
+- amar-bochhor: bump `EDITION` each December.
+- cholo-kheli: someone should check the rules for দাঁড়িয়াবান্ধা and রুমাল চুরি.
+- bagdhara: a third set (the sober Ekushe set from the brief) can be added later. Sets are append-only.
+- studior-chhobi: shared change wanted, an optional vertical radius on `drawPhoto` for oval photos. `loadPhoto`'s 360px cap makes large photo frames soft.
+- koto-cheno: names now go into short links (orchestrator's choice, for the personal preview).
+- Not done yet: tests on a real Android phone and in the Facebook in-app browser.
