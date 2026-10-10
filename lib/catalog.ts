@@ -28,7 +28,7 @@ export const catalog = [
   { slug: "koto-din-baki", name: "কত দিন বাকি?", description: "ঈদ, পূজা, বড়দিন, বৈশাখ বা নিজের দিন, আর কত দিন বাকি দেখো", category: "উৎসব আর বিশ্বাস", action: "দিন গোনো" },
   { slug: "mishtir-baksho", name: "মিষ্টির বাক্স", description: "চমচম, কাঁচাগোল্লা, বগুড়ার দই… দেশের ৪০টা নামকরা মিষ্টির কয়টা খেয়েছ?", category: "খাবারদাবার", action: "বাক্স সাজাও" },
   { slug: "taka-kothay", name: "টাকা কথায় লিখি", description: "যেকোনো টাকার অঙ্ক বাংলা আর ইংরেজি কথায় লিখে নাও।", category: "ভাষা আর পড়াশোনা", action: "কথায় লেখো" },
-  { slug: "amar-jersey", name: "আমার জার্সি", description: "আমার জার্সি: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
+  { slug: "amar-jersey", name: "আমার জার্সি", description: "জার্সির পিঠে নিজের নাম আর নম্বর বসাও, পোস্ট বা প্রোফাইল ছবি বানাও", category: "খেলাধুলা", action: "জার্সি বানাও" },
   { slug: "boyos", name: "বয়স কত?", description: "বয়স কত?: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
   { slug: "iftar-plate", name: "ইফতারির প্লেট", description: "ইফতারির প্লেট: খুলে দেখো, খেলে দেখো।", category: "উৎসব আর বিশ্বাস", action: "শুরু করো" },
   { slug: "cinema-poster", name: "সিনেমার পোস্টার", description: "সিনেমার পোস্টার: খুলে দেখো, খেলে দেখো।", category: "আঁকো আর সাজাও", action: "শুরু করো" },
