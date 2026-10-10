@@ -71,6 +71,7 @@ import { share as ek_koti } from '../tools/ek-koti/share';
 import { share as rokto } from '../tools/rokto/share';
 import { share as cassette } from '../tools/cassette/share';
 import { share as jibh } from '../tools/jibh/share';
+import { share as matcher_mon } from '../tools/matcher-mon/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -145,6 +146,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'rokto': rokto,
   'cassette': cassette,
   'jibh': jibh,
+  'matcher-mon': matcher_mon,
 };
 
 export function toolShare(tool: string): ToolShare | null {
