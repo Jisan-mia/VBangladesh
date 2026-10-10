@@ -222,7 +222,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 10 | char-priyo | চার প্রিয় | নিজেকে জানো | CR04 | building | #b-char-priyo |
 | 10 | dhadha | আজকের ধাঁধা | মজা আর কুইজ | ED05 | building | #b-dhadha |
 | 10 | tokhon-ekhon | দাম তখন আর এখন | স্মৃতি আর গল্প | MO07 | building | #b-tokhon-ekhon |
-| 11 | namta | নামতা চ্যালেঞ্জ | ভাষা আর পড়াশোনা | ED09 | todo | #b-namta |
+| 11 | namta | নামতা চ্যালেঞ্জ | ভাষা আর পড়াশোনা | ED09 | building | #b-namta |
 | 11 | prothom-ay | আমার প্রথম আয় | পরিবার আর প্রবাস | MO11 | todo | #b-prothom-ay |
 | 11 | ami-bolechhilam | আমি বলেছিলাম! | খেলাধুলা | SP06 | todo | #b-ami-bolechhilam |
 | 11 | mache-bhate | মাছে-ভাতে | খাবারদাবার | FO02 | todo | #b-mache-bhate |

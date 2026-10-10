@@ -62,6 +62,7 @@ import { share as probash } from '../tools/probash/share';
 import { share as char_priyo } from '../tools/char-priyo/share';
 import { share as dhadha } from '../tools/dhadha/share';
 import { share as tokhon_ekhon } from '../tools/tokhon-ekhon/share';
+import { share as namta } from '../tools/namta/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -127,6 +128,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'char-priyo': char_priyo,
   'dhadha': dhadha,
   'tokhon-ekhon': tokhon_ekhon,
+  'namta': namta,
 };
 
 export function toolShare(tool: string): ToolShare | null {
