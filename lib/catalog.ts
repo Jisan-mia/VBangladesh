@@ -36,7 +36,7 @@ export const catalog = [
   { slug: "dom-atkano", name: "দম আটকানো ম্যাচ", description: "জয় আর কষ্টের সেই ম্যাচগুলো কতটা মনে আছে? ১০টা প্রশ্নের ক্রিকেট কুইজ খেলো", category: "খেলাধুলা", action: "কুইজ খেলো" },
   { slug: "salami-chek", name: "সালামির চেক", description: "মামা-খালার কাছে সালামি চাও খেলনা চেকে, সে এক চাপে সই করে ফেরত দেবে", category: "উৎসব আর বিশ্বাস", action: "চেক কাটো" },
   { slug: "eta-na-ota", name: "এটা না ওটা", description: "ফুচকা না চটপটি, শীত না বর্ষা? ১২টা দেশি তর্কে টোকা দাও, দেখো কে তোমার দলে", category: "মজা আর কুইজ", action: "তর্কে নামো" },
-  { slug: "deshe-fera", name: "দেশে ফেরা", description: "দেশে ফেরা: খুলে দেখো, খেলে দেখো।", category: "পরিবার আর প্রবাস", action: "শুরু করো" },
+  { slug: "deshe-fera", name: "দেশে ফেরা", description: "কত বছর প্রবাসে, কয়টা ঈদ দূরে, দেশে ফিরতে আর কত দিন — বাড়ির সবাই দিন গুনবে", category: "পরিবার আর প্রবাস", action: "ট্যাগ বানাও" },
   { slug: "biye-kobe", name: "কবে বিয়ে হবে?", description: "কবে বিয়ে হবে?: খুলে দেখো, খেলে দেখো।", category: "নিজেকে জানো", action: "শুরু করো" },
   { slug: "himu", name: "হুমায়ূনের বই", description: "হুমায়ূনের বই: খুলে দেখো, খেলে দেখো।", category: "স্মৃতি আর গল্প", action: "শুরু করো" },
   { slug: "pitha", name: "পিঠা চেনো?", description: "পিঠা চেনো?: খুলে দেখো, খেলে দেখো।", category: "খাবারদাবার", action: "শুরু করো" },

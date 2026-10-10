@@ -1,0 +1,113 @@
+.tool-deshe-fera{--accent:#0b6b4f;--accent-deep:#074a37;--ink:#1c2a2e;--muted:#5a6466;--case:#1d3a4a;--case-rib:#21424f;--handle:#0f2029;--kraft:#dcb98a;--kraft-edge:#b98f58;--brown:#2b1d10;--brown-muted:#7a5a33;--stamp:#b3261e;--twine:#efe2c4}
+.tool-deshe-fera .deshe{color:var(--ink)}
+
+/* hero: short, so the tag and the country chips sit on a phone's first screen */
+.deshe-hero{padding:18px 0 12px}
+.deshe-kicker{margin:0 0 4px;font-size:14px;font-weight:600;color:var(--accent)}
+.deshe-hero h1{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(26px,6.6vw,54px);line-height:1.3;font-weight:700;letter-spacing:0}
+.deshe-lead{max-width:600px;margin:0;color:var(--muted);font-size:15px;line-height:1.65}
+
+/* the suitcase, its handle, and the paper tag tied on with twine */
+.tag-stage{position:relative;padding:50px 14px 18px;border-radius:18px;background:repeating-linear-gradient(90deg,var(--case) 0 24px,var(--case-rib) 24px 34px);box-shadow:inset 0 0 0 6px #ffffff10,0 10px 24px #0f202933}
+.tag-stage::after{content:'';position:absolute;inset:8px;border:2px dashed #e9d9b844;border-radius:13px;pointer-events:none}
+.tag-handle{position:absolute;top:6px;left:50%;width:148px;height:38px;margin-left:-74px;border:11px solid var(--handle);border-bottom:0;border-radius:40px 40px 0 0}
+.tag-stage::before{content:'';position:absolute;top:30px;left:50%;width:12px;height:42px;margin-left:-4px;border:3px solid var(--twine);border-top:0;border-radius:0 0 8px 8px;z-index:2;transform:rotate(-4deg)}
+.tag{position:relative;max-width:380px;min-height:250px;margin:0 auto;padding:40px 18px 12px;background:var(--kraft);color:var(--brown);clip-path:polygon(44px 0,calc(100% - 44px) 0,100% 44px,100% 100%,0 100%,0 44px);transform:rotate(-1.5deg);filter:drop-shadow(0 8px 10px #00000055)}
+.tag-hole{position:absolute;top:12px;left:50%;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:var(--case);box-shadow:0 0 0 6px #efd9b0,0 0 0 7.5px var(--kraft-edge)}
+.tag p{margin:0}
+.tag small{display:block;font-size:12px;font-weight:600;color:var(--brown-muted);line-height:1.4}
+.tag-name{font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1.35;padding-bottom:6px;margin-bottom:6px!important;border-bottom:2px dashed #7a5a3366}
+.tag-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.tag-from{min-width:0;font-family:var(--font-display);font-size:21px;font-weight:700;line-height:1.35}
+.tag-stamp{flex:none;display:grid;place-items:center;width:92px;height:92px;margin:-6px -4px -18px 0!important;padding:8px;border:4px double var(--stamp);border-radius:50%;color:var(--stamp);font-family:var(--font-display);font-size:18px;font-weight:800;line-height:1.2;text-align:center;transform:rotate(-12deg);opacity:.9;animation:df-stamp .35s ease-out}
+.tag-to{font-family:var(--font-display);font-size:clamp(40px,12vw,54px);font-weight:800;line-height:1.25;padding-bottom:4px;border-bottom:3px solid var(--brown)}
+.tag-to span:first-child{color:var(--accent)}
+.tag-abroad{margin-top:8px!important;font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.35}
+.tag-eid{font-family:var(--font-display);font-size:19px;font-weight:700;color:var(--accent-deep)}
+.tag-eid small{display:inline;font-family:var(--font-bengali);font-weight:500}
+.tag-clock{margin-top:10px!important;padding-top:8px;border-top:2px dotted #7a5a3388;font-size:14px;line-height:1.6}
+.tag-clock span{display:block;color:var(--brown-muted)}
+.tag-clock strong{white-space:nowrap}
+.tag-stamp span{display:block;font-size:14px;font-weight:700}
+.df-loading .tag{min-height:300px}
+
+/* controls */
+.df-builder{display:grid;gap:18px}
+.df-controls{display:grid;gap:16px}
+.df-chips{min-width:0;margin:0;padding:0;border:0}
+.df-chips legend,.df-left legend,.df-back>label{padding:0;margin:0 0 6px;font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.4}
+.df-chips>div{display:flex;flex-wrap:wrap;gap:7px}
+.df-chips button{min-height:44px;padding:6px 13px;border:1.5px solid #b8c2c0;border-radius:999px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;line-height:1.3}
+.df-chips button[aria-pressed=true]{border-color:var(--accent);background:var(--accent);color:#fff}
+.df-left{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:8px;min-width:0;margin:0;padding:0;border:0}
+.df-left label{display:grid;gap:2px;min-width:0;font-size:12px;font-weight:600;color:var(--muted)}
+.df-left select,.df-back input{width:100%;min-height:48px;padding:8px 10px;border:1.5px solid var(--ink);border-radius:10px;background:#fff;color:var(--ink);font-size:17px;font-weight:600}
+.df-back>label small{font-family:var(--font-bengali);font-size:13px;font-weight:400;color:var(--muted)}
+.df-back>div{display:flex;align-items:center;gap:12px}
+.df-back input{flex:1;min-width:0}
+.df-back .kit-link{flex:none;min-height:44px}
+.df-hint,.df-problem{margin:6px 0 0;font-size:14px;line-height:1.6;color:var(--muted)}
+.df-problem{color:var(--stamp);font-weight:600}
+
+/* opened from a link: the family's view */
+.df-family{margin:0 0 26px;padding:16px 14px 18px;border-radius:16px;background:#f3ead9}
+.df-kicker{margin:0 0 2px;font-size:13px;font-weight:600;color:var(--accent)}
+.df-family h2{margin:0 0 14px;font-family:var(--font-display);font-size:clamp(24px,6.4vw,36px);line-height:1.35}
+.df-family h2>span{color:var(--accent-deep)}
+.df-days{display:block;color:var(--ink)!important}
+.df-days>span{display:block;color:var(--accent-deep);font-size:1.5em;line-height:1.2}
+.df-days b{font-size:1.5em;color:var(--stamp)}
+.df-note{margin:10px 0 14px;font-size:14px;color:var(--muted)}
+.df-reply{display:grid;gap:14px;margin-top:14px}
+.df-reply .kit-card{max-width:360px}
+.df-turn{margin:0 0 12px;font-family:var(--font-display);font-size:24px;line-height:1.4}
+.df-turn span{color:var(--accent)}
+
+/* result */
+.df-result{scroll-margin-top:12px;margin-top:28px;padding-top:20px;border-top:2px solid var(--case)}
+.df-result h2{margin:0 0 4px;font-family:var(--font-display);font-size:clamp(26px,5vw,38px);line-height:1.4}
+.df-result h2 em{font-style:normal;color:var(--accent)}
+.df-line{margin:0 0 14px;color:var(--muted)}
+.df-result-body{display:grid;gap:22px}
+.df-share{display:grid;gap:18px;align-content:start}
+.df-field{display:grid;gap:6px;font-weight:600}
+.df-field small{font-weight:400;color:var(--muted);font-size:13px}
+.df-field input{min-height:48px;border:1.5px solid #b8c2c0;border-radius:10px;font-size:17px}
+
+/* compare with everyone (opt-in) */
+.df-everyone{margin-top:26px;padding:18px;border-radius:14px;background:#eef3f1}
+.df-everyone h3{margin:0 0 6px;font-family:var(--font-display);font-size:21px}
+.df-everyone>p{margin:0 0 12px;color:var(--muted)}
+.df-everyone>p strong{color:var(--accent-deep)}
+.df-bars{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.df-bars li{display:grid;grid-template-columns:minmax(0,1fr) 46px;grid-template-areas:"label pct" "bar bar";gap:2px 8px;font-size:14px}
+.df-bars span{grid-area:label}
+.df-bars b{grid-area:pct;text-align:right}
+.df-bars i{grid-area:bar;display:block;height:8px;min-width:4px;border-radius:99px;background:#c3ccca;transition:width .6s ease}
+.df-bars li[data-mine=true] i{background:var(--accent)}
+.df-bars li[data-mine=true] span{font-weight:700}
+
+/* captions, method, guide */
+.deshe-captions h2,.deshe-method h2,.deshe-guide h2{font-family:var(--font-display);margin-bottom:10px}
+.deshe-captions>p{color:var(--muted)}
+.deshe-captions ul,.deshe-method ul{display:grid;gap:10px;max-width:760px;margin:0 0 16px;padding:0;list-style:none}
+.deshe-captions li{padding:10px 14px;border-left:4px solid var(--kraft-edge);background:#f7efe1;font-family:var(--font-display);font-size:18px;font-weight:600;line-height:1.6;user-select:all}
+.deshe-method li{padding:10px 14px;border-left:4px solid var(--accent);background:#eef3f1;line-height:1.7}
+.deshe-source{max-width:760px;font-size:14px;line-height:1.8;color:var(--muted)}
+.deshe-source a{color:var(--accent-deep)}
+.deshe-guide ol{display:grid;gap:14px;margin:12px 0 0;padding:0;list-style:none}
+.deshe-guide li{display:flex;gap:14px;align-items:flex-start}
+.deshe-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--case);color:#fff;font-weight:700}
+.deshe-guide li p{margin:4px 0 0}
+
+@keyframes df-stamp{from{opacity:0;transform:rotate(-12deg) scale(1.4)}}
+
+@media(min-width:720px){
+  .deshe-hero{padding:34px 0 22px}
+  .df-builder{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);align-items:start;gap:32px}
+  .tag-stage{padding:60px 28px 28px}
+  .df-result-body{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:36px}
+  .df-family{padding:22px 26px}
+  .df-reply{grid-template-columns:minmax(0,320px) minmax(0,1fr);align-items:start}
+}
+@media(prefers-reduced-motion:reduce){.tag-stamp{animation:none}.df-bars i{transition:none}}

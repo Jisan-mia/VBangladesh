@@ -186,7 +186,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 3 | dom-atkano | দম আটকানো ম্যাচ | খেলাধুলা | SP07, SP11 | done | #b-dom-atkano |
 | 3 | salami-chek | সালামির চেক | উৎসব আর বিশ্বাস | FA03 | done | #b-salami-chek |
 | 3 | eta-na-ota | এটা না ওটা | মজা আর কুইজ | ID07, SP03 | done | #b-eta-na-ota |
-| 3 | deshe-fera | দেশে ফেরা | পরিবার আর প্রবাস | TI05, TI06, TI04 | building | #b-deshe-fera |
+| 3 | deshe-fera | দেশে ফেরা | পরিবার আর প্রবাস | TI05, TI06, TI04 | done | #b-deshe-fera |
 | 4 | biye-kobe | কবে বিয়ে হবে? | নিজেকে জানো | ID05 | building | #b-biye-kobe |
 | 4 | himu | হুমায়ূনের বই | স্মৃতি আর গল্প | NO01 | building | #b-himu |
 | 4 | pitha | পিঠা চেনো? | খাবারদাবার | FO03 | building | #b-pitha |
