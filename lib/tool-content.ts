@@ -83,6 +83,7 @@ import { site as betoner_bhag } from '../tools/betoner-bhag/content';
 import { site as bidyut_bill } from '../tools/bidyut-bill/content';
 import { site as mondop } from '../tools/mondop/content';
 import { site as grade_dao } from '../tools/grade-dao/content';
+import { site as adda } from '../tools/adda/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -170,6 +171,7 @@ export const toolContent = {
   'bidyut-bill': bidyut_bill,
   'mondop': mondop,
   'grade-dao': grade_dao,
+  'adda': adda,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
