@@ -27,6 +27,7 @@ import { site as eta_na_ota } from '../tools/eta-na-ota/content';
 import { site as deshe_fera } from '../tools/deshe-fera/content';
 import { site as biye_kobe } from '../tools/biye-kobe/content';
 import { site as himu } from '../tools/himu/content';
+import { site as pitha } from '../tools/pitha/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -58,6 +59,7 @@ export const toolContent = {
   'deshe-fera': deshe_fera,
   'biye-kobe': biye_kobe,
   'himu': himu,
+  'pitha': pitha,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
