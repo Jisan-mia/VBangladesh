@@ -199,7 +199,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 5 | golir-ain | গলির ক্রিকেটের আইন | খেলাধুলা | SP09 | building | #b-golir-ain |
 | 6 | amar-bochhor | আমার বছর | স্মৃতি আর গল্প | CR07 | building | #b-amar-bochhor |
 | 6 | daknam | ডাকনাম কী হতো? | নিজেকে জানো | ID03 | building | #b-daknam |
-| 6 | cha-mudra | চায়ের কাপে হিসাব | মজা আর কুইজ | MO06, MO04 | todo | #b-cha-mudra |
+| 6 | cha-mudra | চায়ের কাপে হিসাব | মজা আর কুইজ | MO06, MO04 | building | #b-cha-mudra |
 | 6 | matir-bank | মাটির ব্যাংক | হিসাব-নিকাশ | MO09, CR09 | todo | #b-matir-bank |
 | 6 | shesh-bol | শেষ বলে ছয় | খেলাধুলা | SP15 | todo | #b-shesh-bol |
 | 7 | dhoyahin | ধোঁয়াহীন দিন | হিসাব-নিকাশ | HL04 | todo | #b-dhoyahin |
