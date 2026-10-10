@@ -1,4 +1,16 @@
 import type { ToolShare } from "../../shared/share-types";
+import { parseShareHash, previewTitle, shareHash, tallyIds } from "./lib/moner-boyos";
 
-// Sharing by short link isn't wired up for this tool yet.
-export const share: ToolShare | null = null;
+export const share: ToolShare = {
+  normalize(state) {
+    const shared = parseShareHash(state);
+    return shared ? shareHash(shared).slice(1) : null;
+  },
+  preview(state) {
+    return {
+      title: previewTitle(parseShareHash(state)),
+      description: "লাল চা না কোল্ড কফি, রেডিও না রিল, হাঁটা না রিকশা? ৮টা চেনা পছন্দে মেলার মেশিন মেপে দেবে তোমার মনের বয়স। শুধু মজার জন্য, ফ্রি।",
+    };
+  },
+  tally: tallyIds,
+};
