@@ -27,6 +27,7 @@ The owner's bar: every tool must feel curated with care, emotion and interactivi
 - **Link state:** pure encode/decode in `lib/` with tests (round-trip, hostile input, caps, NFC). `share.ts` implements ToolShare (normalize + personal preview title; `tally` only over fixed ids, never free text, names or photos). Opening a shared link shows it with a "your turn" banner.
 - **Data:** any factual data (dates, scores, history, spellings, rules) must be correct, with source URLs in a code comment, and visible "সূত্র/যাচাই" text where people rely on it. No religious rulings, no medical, legal or investment advice. Festival dates that depend on the moon are labelled "সম্ভাব্য".
 - **content.ts:** title ≤45 chars keyword-first, description 120–160 chars, unique human H1, ≥5 FAQ written the way people search, steps, and privacy text that says plainly what a shared link carries. Keep `id="tool"`, `<Faq>` and `<JsonLd>` (or use StudioPage with `headline`).
+- **Regex:** never put ড় ঢ় য় (or other nukta letters) literally inside a character-class range; the repo is NFC-normalized, which splits them and breaks the range. Use `\u09dc-\u09df`-style escapes.
 - **CSS:** mobile-first and scoped under `.tool-{SLUG}`, with tool tokens `--accent` and `--accent-deep`. Headings use `var(--font-display)`. Touch targets ≥44px, `aria-pressed` toggles, labels, `prefers-reduced-motion`, and no sideways scroll at 320px.
 
 ## Verify (required)
