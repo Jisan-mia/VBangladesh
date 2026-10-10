@@ -9,3 +9,6 @@ node_modules/
 
 # SQLite data for share links, tallies and suggestions (set DATA_DIR in production)
 data/
+
+# Screenshots from scripts/shot.mjs during development
+.shots/
