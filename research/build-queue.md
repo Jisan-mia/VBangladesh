@@ -208,7 +208,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 7 | moner-boyos | মনের বয়স কত? | নিজেকে জানো | ID06 | done | #b-moner-boyos |
 | 7 | bagdhara | বাগধারার ছবি | ভাষা আর পড়াশোনা | ED04 | building | #b-bagdhara |
 | 8 | sehri-iftar | সেহরি-ইফতারের সময় | উৎসব আর বিশ্বাস | FA07 | done | #b-sehri-iftar |
-| 8 | chithi | চিঠি লিখি | পরিবার আর প্রবাস | TI07, TI10 | building | #b-chithi |
+| 8 | chithi | চিঠি লিখি | পরিবার আর প্রবাস | TI07, TI10 | done | #b-chithi |
 | 8 | bangla-typing | বাংলা টাইপিং স্পিড | ভাষা আর পড়াশোনা | ED06 | building | #b-bangla-typing |
 | 8 | jam | জ্যামে জীবন | মজা আর কুইজ | CI01 | building | #b-jam |
 | 8 | bhorta | তুমি কোন ভর্তা? | নিজেকে জানো | ID16 | building | #b-bhorta |

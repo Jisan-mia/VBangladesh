@@ -58,7 +58,7 @@ export const catalog = [
   { slug: "moner-boyos", name: "মনের বয়স কত?", description: "৮টা চেনা পছন্দে মেলার মেশিন মাপবে তোমার মনের বয়স, ছাপবে টিকিট", category: "নিজেকে জানো", action: "মন মাপো" },
   { slug: "bagdhara", name: "বাগধারার ছবি", description: "বাগধারার ছবি: খুলে দেখো, খেলে দেখো।", category: "ভাষা আর পড়াশোনা", action: "শুরু করো" },
   { slug: "sehri-iftar", name: "সেহরি-ইফতারের সময়", description: "তোমার জেলায় সেহরি-ইফতার কখন, শুধু ইসলামিক ফাউন্ডেশনের সূচি থেকে", category: "উৎসব আর বিশ্বাস", action: "জেলা বেছে নাও" },
-  { slug: "chithi", name: "চিঠি লিখি", description: "চিঠি লিখি: খুলে দেখো, খেলে দেখো।", category: "পরিবার আর প্রবাস", action: "শুরু করো" },
+  { slug: "chithi", name: "চিঠি লিখি", description: "আম্মু, প্রবাসী ভাই বা বন্ধুকে হলুদ খামে পুরোনো দিনের মতো একটা চিঠি লেখো", category: "পরিবার আর প্রবাস", action: "চিঠি লেখো" },
   { slug: "bangla-typing", name: "বাংলা টাইপিং স্পিড", description: "বাংলা টাইপিং স্পিড: খুলে দেখো, খেলে দেখো।", category: "ভাষা আর পড়াশোনা", action: "শুরু করো" },
   { slug: "jam", name: "জ্যামে জীবন", description: "জ্যামে জীবন: খুলে দেখো, খেলে দেখো।", category: "মজা আর কুইজ", action: "শুরু করো" },
   { slug: "bhorta", name: "তুমি কোন ভর্তা?", description: "তুমি কোন ভর্তা?: খুলে দেখো, খেলে দেখো।", category: "নিজেকে জানো", action: "শুরু করো" },
