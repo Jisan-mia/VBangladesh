@@ -55,6 +55,7 @@ const expectedSlugs = [
   'dhadha',
   'tokhon-ekhon',
   'namta',
+  'prothom-ay',
 ].sort();
 const origin = 'https://example.org';
 const expectedPaths = ['/', '/tools', '/about', '/privacy', ...expectedSlugs.flatMap(slug => [`/${slug}`, `/${slug}/guide`, `/${slug}/privacy`])];
