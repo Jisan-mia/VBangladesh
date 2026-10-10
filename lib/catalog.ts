@@ -67,7 +67,7 @@ export const catalog = [
   { slug: "attiyo", name: "কে কী হয়?", description: "কে কী হয়?: খুলে দেখো, খেলে দেখো।", category: "পরিবার আর প্রবাস", action: "শুরু করো" },
   { slug: "studior-chhobi", name: "স্টুডিওর ছবি", description: "৯০-এর পাড়ার স্টুডিওর আঁকা ব্যাকড্রপে নিজের ছবি তোলো, কোণে কমলা তারিখসহ", category: "আঁকো আর সাজাও", action: "ছবি তোলো" },
   { slug: "koto-cheno", name: "আমাকে কতটা চেনো?", description: "৮টা প্রশ্নে নিজের স্লাম বুক লেখো, বন্ধুরা আন্দাজ করুক কে তোমাকে বেশি চেনে", category: "নিজেকে জানো", action: "স্লাম বুক লেখো" },
-  { slug: "eidjatra", name: "ঈদযাত্রা", description: "ঈদযাত্রা: খুলে দেখো, খেলে দেখো।", category: "উৎসব আর বিশ্বাস", action: "শুরু করো" },
+  { slug: "eidjatra", name: "ঈদযাত্রা", description: "বাড়ি যেতে কত ঘণ্টা লাগল? পথ, বাহন আর ঘণ্টা দাও, কাগজে আঁকা হবে তোমার ঈদযাত্রা", category: "উৎসব আর বিশ্বাস", action: "পথটা আঁকো" },
   { slug: "probash", name: "প্রবাস জীবন", description: "ভিডিও কলে ঈদ, লাগেজে শুঁটকি, একা ইফতার — প্রবাসের কয়টা মুহূর্তে সিল পড়ল?", category: "পরিবার আর প্রবাস", action: "সিল মারো" },
   { slug: "char-priyo", name: "চার প্রিয়", description: "চার প্রিয়: খুলে দেখো, খেলে দেখো।", category: "নিজেকে জানো", action: "শুরু করো" },
   { slug: "dhadha", name: "আজকের ধাঁধা", description: "আজকের ধাঁধা: খুলে দেখো, খেলে দেখো।", category: "মজা আর কুইজ", action: "শুরু করো" },
