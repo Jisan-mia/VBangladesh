@@ -12,3 +12,4 @@ data/
 
 # Screenshots from scripts/shot.mjs during development
 .shots/
+__pycache__/
