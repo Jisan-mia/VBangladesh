@@ -21,6 +21,7 @@ import { share as taka_kothay } from '../tools/taka-kothay/share';
 import { share as amar_jersey } from '../tools/amar-jersey/share';
 import { share as boyos } from '../tools/boyos/share';
 import { share as iftar_plate } from '../tools/iftar-plate/share';
+import { share as cinema_poster } from '../tools/cinema-poster/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -45,6 +46,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'amar-jersey': amar_jersey,
   'boyos': boyos,
   'iftar-plate': iftar_plate,
+  'cinema-poster': cinema_poster,
 };
 
 export function toolShare(tool: string): ToolShare | null {
