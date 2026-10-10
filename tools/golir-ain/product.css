@@ -1,0 +1,103 @@
+.tool-golir-ain{--ink:#2a1d18;--accent:#a8401f;--accent-deep:#6e2812;--chalk:#fbf7ee;--yellow:#ffd977;--charcoal:#1f1513;--muted:#6b5a52;--line:#e4d6cc;--plaster:#f3ece6}
+.tool-golir-ain .ga-page{color:var(--ink)}
+
+/* hero: short, so the wall is on a phone's first screen */
+.ga-hero{padding:14px 0 10px}
+.ga-kicker{margin:0 0 2px;font-size:14px;font-weight:600;color:var(--accent)}
+.ga-hero h1{margin:0 0 4px;font-family:var(--font-display);font-size:clamp(27px,7vw,56px);line-height:1.25;font-weight:700;letter-spacing:0}
+.ga-hero h1 span{color:var(--accent);white-space:nowrap}
+.ga-lead{max-width:560px;margin:0;color:var(--muted);font-size:15px;line-height:1.6}
+
+/* the wall: bricks, chalk, charcoal stumps */
+.ga-wall{position:relative;padding:12px 14px 12px 16px;border-radius:6px;color:var(--chalk);background:linear-gradient(#280c0638,#1e080480),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='126' height='50'%3E%3Crect width='126' height='50' fill='%23c4ad98'/%3E%3Crect width='60' height='22' fill='%23a5432a'/%3E%3Crect x='63' width='60' height='22' fill='%239b3c25'/%3E%3Crect y='25' width='28.5' height='22' fill='%23ad4b2f'/%3E%3Crect x='31.5' y='25' width='60' height='22' fill='%23943a21'/%3E%3Crect x='94.5' y='25' width='31.5' height='22' fill='%23b0553a'/%3E%3C/svg%3E") 0 0/126px 50px;box-shadow:0 10px 24px #2a1d1833;text-shadow:0 0 2px #fff6}
+.ga-wall-title{margin:0;font-family:var(--font-display);font-size:25px;font-weight:700;line-height:1.3}
+.ga-para{display:block;margin:0 0 6px}
+.ga-para input{width:100%;min-height:44px;padding:4px 2px;border:0;border-bottom:2px dashed #fbf7ee99;border-radius:0;background:transparent;color:var(--yellow);font-family:var(--font-display);font-size:19px;font-weight:700;text-shadow:inherit}
+.ga-para input::placeholder{color:#fbf7eeaa;font-family:inherit;font-weight:500;font-size:16px}
+.ga-para input:focus{outline:none;border-bottom-color:var(--yellow);border-bottom-style:solid}
+.ga-wall-body{display:grid;grid-template-columns:minmax(0,1fr) 60px;gap:8px;align-items:end}
+.ga-rules{margin:0;padding:0 0 0 26px;list-style:bengali;font-size:17px;font-weight:600;line-height:1.45}
+.ga-rules li{padding:2px 0;animation:ga-write .45s ease-out both}
+.ga-rules li::marker{color:var(--yellow);font-family:var(--font-display)}
+.ga-rules li[data-match=true]{text-decoration:underline wavy var(--yellow) 2px;text-underline-offset:6px}
+.ga-rules[data-many=true]{columns:2;column-gap:18px;font-size:14px;line-height:1.35;padding-left:22px}
+.ga-rules[data-many=true] li{break-inside:avoid}
+.ga-empty{margin:0;font-size:17px;opacity:.8}
+.ga-stumps{width:60px;height:98px;fill:none;stroke:var(--charcoal);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 1px #fbf7ee40)}
+.ga-line{margin:8px 0 0;padding-top:8px;border-top:2px dashed #fbf7ee55;font-size:15px;line-height:1.5;color:var(--chalk)}
+
+/* the rule chips */
+.ga-hint{margin:12px 0 4px;font-size:14px;color:var(--muted)}
+.ga-hint b{color:var(--ink);box-shadow:inset 0 -5px 0 var(--yellow)}
+.ga-group{border:0;margin:10px 0 0;padding:0;min-width:0}
+.ga-group legend{padding:0;margin:0 0 6px;font-family:var(--font-display);font-size:17px;font-weight:700}
+.ga-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ga-chips button{display:inline-flex;align-items:center;gap:6px;min-height:44px;max-width:100%;padding:6px 12px 6px 8px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer;transition:transform .12s ease,background-color .15s ease}
+.ga-chips svg{flex:none;width:18px;height:18px;fill:none;stroke:#d9c7bb;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.ga-chips button[aria-pressed=true]{border-color:var(--accent-deep);background:var(--accent);color:#fff}
+.ga-chips button[aria-pressed=true] svg{stroke:#fff}
+.ga-chips button[data-friend=true]{box-shadow:inset 0 -5px 0 var(--yellow)}
+.ga-chips button:active{transform:scale(.96)}
+
+/* opened from a friend's link */
+.ga-friend{display:grid;grid-template-columns:104px minmax(0,1fr);gap:14px;align-items:center;margin:0 0 16px;padding:12px;border-radius:16px;background:var(--plaster)}
+.ga-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 6px 16px #2a1d1833;transform:rotate(-3deg)}
+.ga-friend .ga-kicker{font-size:13px}
+.ga-friend h2{margin:0 0 10px;font-family:var(--font-display);font-size:19px;line-height:1.45}
+.ga-friend h2 span{color:var(--accent)}
+.ga-friend .kit-primary{min-height:48px;padding:8px 14px;font-size:15px;white-space:normal}
+
+/* result */
+.ga-result{scroll-margin-top:12px;margin-top:28px;padding-top:24px;border-top:2px dashed var(--line)}
+.ga-result-head h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(24px,5vw,36px);line-height:1.4}
+.ga-result-head em{font-style:normal;color:var(--accent)}
+.ga-result-head p{margin:0 0 18px;color:var(--muted)}
+.ga-result-body{display:grid;gap:22px}
+.ga-controls{display:grid;gap:18px;align-content:start}
+.ga-everyone{padding:16px;border-radius:16px;background:var(--plaster)}
+.ga-everyone h3{margin:0 0 6px;font-family:var(--font-display);font-size:20px}
+.ga-everyone>p{margin:0 0 12px;color:var(--muted);font-size:15px}
+.ga-rare{display:grid;gap:10px}
+.ga-rare p{display:grid;margin:0;padding:10px 12px;border-radius:12px;background:#fff;border-left:5px solid var(--accent)}
+.ga-rare span{font-size:13px;color:var(--muted)}
+.ga-rare strong{font-family:var(--font-display);font-size:19px}
+.ga-rare em{font-style:normal;color:var(--accent-deep);font-weight:600}
+.ga-proof{margin:16px 0 0;color:var(--muted);font-size:14px}
+.ga-proof strong{color:var(--ink)}
+.ga-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* guide */
+.ga-guide h2{font-family:var(--font-display);margin-bottom:6px}
+.ga-guide>p{color:var(--muted)}
+.ga-guide ol{display:grid;gap:14px;margin:14px 0 0;padding:0;list-style:none}
+.ga-guide li{display:flex;gap:14px;align-items:flex-start}
+.ga-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--plaster);color:var(--accent-deep);font-weight:700}
+.ga-guide li p{margin:4px 0 0}
+.ga-guide .ga-note{margin-top:18px;color:var(--ink)}
+.ga-guide .ga-note a{color:var(--accent-deep);font-weight:700}
+
+/* negative left inset keeps the ১ ২ ৩ markers outside the clip */
+@keyframes ga-write{from{clip-path:inset(0 100% 0 -40px);opacity:.4}to{clip-path:inset(0 0 0 -40px);opacity:1}}
+
+@media(max-width:350px){
+  .ga-wall{padding:10px 10px 10px 12px}
+  .ga-wall-title{font-size:22px}
+  .ga-rules{font-size:15.5px}
+  .ga-rules[data-many=true]{columns:1}
+  .ga-chips button{font-size:14px}
+}
+@media(min-width:720px){
+  .ga-hero{padding:34px 0 22px}
+  .ga-wall{max-width:680px;padding:22px 26px}
+  .ga-wall-title{font-size:34px}
+  .ga-rules{font-size:20px}
+  .ga-rules[data-many=true]{font-size:17px}
+  .ga-stumps{width:72px;height:118px}
+  .ga-wall-body{grid-template-columns:minmax(0,1fr) 72px}
+  .ga-group,.ga-hint{max-width:680px}
+  .ga-result-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:36px}
+  .ga-friend{grid-template-columns:150px 1fr;padding:16px 20px;max-width:680px}
+  .ga-friend h2{font-size:24px}
+}
+@media(hover:hover){.ga-chips button:hover{border-color:var(--accent)}}
+@media(prefers-reduced-motion:reduce){.ga-rules li{animation:none}.ga-chips button{transition:none}}

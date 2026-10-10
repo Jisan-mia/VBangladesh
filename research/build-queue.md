@@ -196,7 +196,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 5 | desh-cheno | দেশ চেনো | ভাষা আর পড়াশোনা | ED07 | done | #b-desh-cheno |
 | 5 | bhori | ভরির হিসাব | হিসাব-নিকাশ | MO05 | done | #b-bhori |
 | 5 | tong | টং-এর অর্ডার | খাবারদাবার | ID08, FO04 | done | #b-tong |
-| 5 | golir-ain | গলির ক্রিকেটের আইন | খেলাধুলা | SP09 | building | #b-golir-ain |
+| 5 | golir-ain | গলির ক্রিকেটের আইন | খেলাধুলা | SP09 | done | #b-golir-ain |
 | 6 | amar-bochhor | আমার বছর | স্মৃতি আর গল্প | CR07 | building | #b-amar-bochhor |
 | 6 | daknam | ডাকনাম কী হতো? | নিজেকে জানো | ID03 | building | #b-daknam |
 | 6 | cha-mudra | চায়ের কাপে হিসাব | মজা আর কুইজ | MO06, MO04 | done | #b-cha-mudra |
