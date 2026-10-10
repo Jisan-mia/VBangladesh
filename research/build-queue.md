@@ -177,7 +177,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 1 | argentina-na-brazil | আর্জেন্টিনা না ব্রাজিল? | খেলাধুলা | SP01, SP13 | done | #b-argentina-na-brazil |
 | 1 | koto-din-baki | কত দিন বাকি? | উৎসব আর বিশ্বাস | FA02, FA11, TI09 | done | #b-koto-din-baki |
 | 1 | mishtir-baksho | মিষ্টির বাক্স | খাবারদাবার | FO01 | done | #b-mishtir-baksho |
-| 2 | taka-kothay | টাকা কথায় লিখি | ভাষা আর পড়াশোনা | MO01 | building | #b-taka-kothay |
+| 2 | taka-kothay | টাকা কথায় লিখি | ভাষা আর পড়াশোনা | MO01 | done | #b-taka-kothay |
 | 2 | amar-jersey | আমার জার্সি | খেলাধুলা | SP02 | done | #b-amar-jersey |
 | 2 | boyos | বয়স কত? | হিসাব-নিকাশ | TI01, TI03 | building | #b-boyos |
 | 2 | iftar-plate | ইফতারির প্লেট | উৎসব আর বিশ্বাস | FA05 | building | #b-iftar-plate |

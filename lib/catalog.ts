@@ -27,7 +27,7 @@ export const catalog = [
   { slug: "argentina-na-brazil", name: "আর্জেন্টিনা না ব্রাজিল?", description: "এক চাপে ছাদে দলের পতাকা তোলো, পাশের বাসার বন্ধুকে ডাকো", category: "খেলাধুলা", action: "পতাকা তোলো" },
   { slug: "koto-din-baki", name: "কত দিন বাকি?", description: "ঈদ, পূজা, বড়দিন, বৈশাখ বা নিজের দিন, আর কত দিন বাকি দেখো", category: "উৎসব আর বিশ্বাস", action: "দিন গোনো" },
   { slug: "mishtir-baksho", name: "মিষ্টির বাক্স", description: "চমচম, কাঁচাগোল্লা, বগুড়ার দই… দেশের ৪০টা নামকরা মিষ্টির কয়টা খেয়েছ?", category: "খাবারদাবার", action: "বাক্স সাজাও" },
-  { slug: "taka-kothay", name: "টাকা কথায় লিখি", description: "যেকোনো টাকার অঙ্ক বাংলা আর ইংরেজি কথায় লিখে নাও।", category: "ভাষা আর পড়াশোনা", action: "কথায় লেখো" },
+  { slug: "taka-kothay", name: "টাকা কথায় লিখি", description: "যেকোনো টাকার অঙ্ক বাংলা আর ইংরেজি কথায়, চেক আর ফর্মের জন্য এক চাপে কপি", category: "ভাষা আর পড়াশোনা", action: "কথায় লেখো" },
   { slug: "amar-jersey", name: "আমার জার্সি", description: "জার্সির পিঠে নিজের নাম আর নম্বর বসাও, পোস্ট বা প্রোফাইল ছবি বানাও", category: "খেলাধুলা", action: "জার্সি বানাও" },
   { slug: "boyos", name: "বয়স কত?", description: "বয়স কত?: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
   { slug: "iftar-plate", name: "ইফতারির প্লেট", description: "ইফতারির প্লেট: খুলে দেখো, খেলে দেখো।", category: "উৎসব আর বিশ্বাস", action: "শুরু করো" },
