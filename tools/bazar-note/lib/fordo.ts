@@ -1,5 +1,6 @@
 import { basketTotal, MAX_AMOUNT, MAX_QUANTITY, units, type Item, type Unit } from './basket';
 import { isPreset, presets, type PresetId } from './presets';
+import { possessive } from '../../../shared/bangla';
 
 export const MAX_NAME = 24;
 export const SHARE_ITEM_NAME = 30;
@@ -19,12 +20,6 @@ export function cleanText(text: string, max: number) {
   return text.replace(/[\u0000-\u001f\u007f‪-‮⁦-⁩*]/g, ' ').trim().replace(/\s+/g, ' ').slice(0, max).trim();
 }
 
-// Bangla possessive: vowel endings take "র" (আম্মুর), consonants "এর" (রহিমের), Latin names "-এর".
-export function possessive(name: string) {
-  if (!/[ঀ-৿]$/.test(name)) return name + '-এর';
-  if (name.endsWith('ৎ')) return name.slice(0, -1) + 'তের';
-  return /[অ-ঔা-ৌৗ]$/.test(name) ? name + 'র' : name + 'ের';
-}
 
 export function fordoTitle({ name, preset }: Pick<Fordo, 'name' | 'preset'>) {
   const title = preset ? presets[preset].title : 'বাজারের ফর্দ';
@@ -92,3 +87,5 @@ export function readTicks(storage: Pick<Storage, 'getItem'>, key: string, count:
 }
 
 export const toggleTick = (ticks: readonly number[], index: number) => ticks.includes(index) ? ticks.filter(tick => tick !== index) : [...ticks, index].sort((a, b) => a - b);
+
+export { possessive };

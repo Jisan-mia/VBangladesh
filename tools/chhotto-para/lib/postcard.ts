@@ -1,4 +1,5 @@
 import { boundPosition, MAX_OBJECTS, objects, type ObjectKind, type SceneObject, type Setting } from './scene';
+import { possessive } from '../../../shared/bangla';
 
 export const MAX_PLACE_LENGTH = 24;
 export const MAX_DISTRICT_LENGTH = 16;
@@ -14,12 +15,6 @@ export function cleanText(value: string, max: number) {
   return value.normalize('NFC').replace(/[\u0000-\u001f\u007f‪-‮⁦-⁩]/g, '').trim().replace(/\s+/g, ' ').slice(0, max);
 }
 
-// Bangla possessive: vowel endings take "র" (রাফির), consonants "এর" (জাহিদের), Latin names "-এর".
-export function possessive(name: string) {
-  if (!/[ঀ-৿]$/.test(name)) return name + '-এর';
-  if (name.endsWith('ৎ')) return name.slice(0, -1) + 'তের';
-  return /[অ-ঔা-ৌৗ]$/.test(name) ? name + 'র' : name + 'ের';
-}
 
 // The most recently placed object with a memory decides the card's line, so it follows what the person added.
 const memories: Partial<Record<ObjectKind, string>> = {
@@ -94,3 +89,5 @@ export function parseShareHash(hash: string): Postcard | null {
     name: cleanText(params.get('n') ?? '', MAX_NAME_LENGTH),
   };
 }
+
+export { possessive };

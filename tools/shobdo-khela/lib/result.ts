@@ -1,4 +1,5 @@
 import { isDate, puzzleById, shiftDate, type Game, type Round } from './puzzles';
+import { possessive } from '../../../shared/bangla';
 
 export const MAX_NAME_LENGTH = 30;
 /** g: solved alone · h: solved with the hint · x: answer shown · s: skipped. Squares only, never the words. */
@@ -19,12 +20,6 @@ export function cleanName(name: string) {
   return name.normalize('NFC').replace(/[\u0000-\u001f\u007f‪-‮⁦-⁩]/g, '').trim().replace(/\s+/g, ' ').slice(0, MAX_NAME_LENGTH);
 }
 
-// Bangla possessive: vowel endings take "র" (রাফির), consonants "এর" (জাহিদের), Latin names "-এর".
-export function possessive(name: string) {
-  if (!/[ঀ-৿]$/.test(name)) return name + '-এর';
-  if (name.endsWith('ৎ')) return name.slice(0, -1) + 'তের';
-  return /[অ-ঔা-ৌৗ]$/.test(name) ? name + 'র' : name + 'ের';
-}
 
 export function markOf(round: Round): Mark {
   if (round.outcome === 'solved') return round.hint ? 'h' : 'g';
@@ -110,3 +105,5 @@ export function friendLine(friend: Shared, today: string) {
 }
 
 export const answerFor = (game: Game, index: number) => puzzleById(game.ids[index])?.parts.join('') ?? '';
+
+export { possessive };

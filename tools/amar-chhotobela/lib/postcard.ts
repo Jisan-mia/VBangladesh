@@ -1,3 +1,4 @@
+import { possessive } from "../../../shared/bangla";
 export const MAX_NAME_LENGTH = 30;
 
 export const chapters = [
@@ -117,12 +118,6 @@ export function parseShareHash(hash: string): Shared | null {
   return { selected, name: cleanName(params.get("n") ?? ""), decade: isDecadeId(decade) ? decade : "" };
 }
 
-// Bangla possessive: vowel endings take "র" (রাফির), consonants "এর" (জাহিদের), Latin names "-এর".
-export function possessive(name: string) {
-  if (!/[ঀ-৿]$/.test(name)) return name + "-এর";
-  if (name.endsWith("ৎ")) return name.slice(0, -1) + "তের";
-  return /[অ-ঔা-ৌৗ]$/.test(name) ? name + "র" : name + "ের";
-}
 
 export function memoryLine(count: number) {
   if (count === 0) return "এখনো কিছু মেলানো হয়নি।";
@@ -148,3 +143,5 @@ export function createCard(own: Shared, friend?: Shared | null): CardContent {
     selected,
   };
 }
+
+export { possessive };

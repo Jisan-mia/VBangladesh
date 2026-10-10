@@ -1,3 +1,4 @@
+import { possessive } from "../../../shared/bangla";
 // The rickshaw back-board: what the person picks, and how it travels in a share link.
 export const MAX_LINE = 28;
 export const MAX_NAME = 20;
@@ -116,9 +117,4 @@ const lines: Record<MotifId, string> = {
 };
 export const boardLine = (board: Pick<Board, "motif">) => lines[board.motif];
 
-// Bangla possessive: vowel endings take "র" (রাফির), consonants "এর" (জাহিদের), Latin names "-এর".
-export function possessive(name: string) {
-  if (!/[ঀ-৿]$/.test(name)) return name + "-এর";
-  if (name.endsWith("ৎ")) return name.slice(0, -1) + "তের";
-  return /[অ-ঔা-ৌৗ]$/.test(name) ? name + "র" : name + "ের";
-}
+export { possessive };

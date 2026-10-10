@@ -1,5 +1,6 @@
 import { DRAWING_RADIUS, MAX_STROKES, MAX_STROKE_POINTS, type DrawingPoint, type DrawingStroke } from "./drawing";
 import { densities, layouts, motifs, palettes, symmetries, type PatternSettings } from "./pattern";
+import { possessive } from "../../../shared/bangla";
 
 export const MAX_NAME_LENGTH = 30;
 /** Hand-drawn strokes may use at most this many link characters; /api/share accepts 8000 in all. */
@@ -28,12 +29,6 @@ export function cleanName(name: string) {
   return name.normalize("NFC").replace(/[\u0000-\u001f\u007f‪-‮⁦-⁩]/g, "").trim().replace(/\s+/g, " ").slice(0, MAX_NAME_LENGTH);
 }
 
-// Bangla possessive: vowel endings take "র" (রাফির), consonants "এর" (জাহিদের), Latin names "-এর".
-export function possessive(name: string) {
-  if (!/[ঀ-৿]$/.test(name)) return name + "-এর";
-  if (name.endsWith("ৎ")) return name.slice(0, -1) + "তের";
-  return /[অ-ঔা-ৌৗ]$/.test(name) ? name + "র" : name + "ের";
-}
 
 export function cardText({ occasion, mode, name }: Pick<Shared, "occasion" | "mode" | "name">) {
   const picked = occasions.find(item => item.id === occasion);
@@ -147,3 +142,5 @@ export function parseShareHash(hash: string): Shared | null {
   const occasion = occasions.find(item => item.id === params.get("o"))?.id ?? "";
   return { settings, mode, strokes, occasion, name: cleanName(params.get("n") ?? "") };
 }
+
+export { possessive };

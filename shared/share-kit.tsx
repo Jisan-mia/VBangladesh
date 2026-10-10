@@ -6,14 +6,21 @@ import { isInAppBrowser, saveBlob } from './art-export';
 import { loadPhoto, type CardFormat, type Photo } from './card-canvas';
 import { sendSuggestion, shareLink } from './share-client';
 
+/** True while the element is on screen. Re-attaches if the ref later points at a different element (e.g. a result that mounts after the first render). */
 export function useInView(ref: RefObject<Element | null>, threshold = 0.15) {
   const [inView, setInView] = useState(false);
+  const watched = useRef<{ element: Element; observer: IntersectionObserver } | null>(null);
   useEffect(() => {
-    if (!ref.current) return;
+    const element = ref.current;
+    if (watched.current?.element === element) return;
+    watched.current?.observer.disconnect();
+    watched.current = null;
+    if (!element) { setInView(false); return; }
     const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { threshold });
-    observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [ref, threshold]);
+    observer.observe(element);
+    watched.current = { element, observer };
+  });
+  useEffect(() => () => watched.current?.observer.disconnect(), []);
   return inView;
 }
 
