@@ -85,7 +85,7 @@ export const catalog = [
   { slug: "current-gelo", name: "কারেন্ট গেল!", description: "কারেন্ট গেল!: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
   { slug: "projonmo", name: "জেন-জি না আব্বু-আম্মু?", description: "জেন-জি না আব্বু-আম্মু?: খুলে দেখো, খেলে দেখো।", category: "নিজেকে জানো", action: "শুরু করো" },
   { slug: "mama-jaben", name: "মামা, যাবেন?", description: "মামা, যাবেন?: খুলে দেখো, খেলে দেখো।", category: "মজা আর কুইজ", action: "শুরু করো" },
-  { slug: "mess-jibon", name: "হল-মেস জীবন", description: "হল-মেস জীবন: খুলে দেখো, খেলে দেখো।", category: "স্মৃতি আর গল্প", action: "শুরু করো" },
+  { slug: "mess-jibon", name: "হল-মেস জীবন", description: "ডিম-ডাল সপ্তাহ, ম্যাগি রাত… হল-মেসের ৪০টা মুহূর্তের কয়টা তোমার? মিল কার্ডে ফুটো করে দেখো", category: "স্মৃতি আর গল্প", action: "ফুটো করো" },
   { slug: "ekadosh", name: "স্বপ্নের একাদশ", description: "স্বপ্নের একাদশ: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 

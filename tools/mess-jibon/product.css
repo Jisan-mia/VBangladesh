@@ -1,0 +1,108 @@
+.tool-mess-jibon{--accent:#1d5c8a;--accent-deep:#123f61;--ink-text:#1b2440;--muted:#56606e;--table:#26343c;--table-deep:#172127;--stock:#f2d98d;--print:#1d5c8a;--stamp:#c23a2b;--line:#d8dee6;--wash:#eef3f7;--star:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.tool-mess-jibon .mess-jibon{color:var(--ink-text)}
+
+/* hero: short, so the meal card and its first boxes are on a phone's first screen */
+.mj-hero{padding:14px 0 10px}
+.mj-hero-kicker{margin:0 0 2px;font-size:14px;font-weight:600;color:var(--accent)}
+.mj-hero h1{margin:0 0 4px;font-family:var(--font-display);font-size:clamp(26px,7vw,50px);line-height:1.25;font-weight:700;letter-spacing:0}
+.mj-hero h1 span{color:var(--accent)}
+.mj-lead{max-width:600px;margin:0;color:var(--muted);font-size:15px;line-height:1.6}
+
+/* a buff meal card printed in one blue, lying on the dark steel dining table; holes show the table through */
+.mj-table{padding:7px;border-radius:18px;background:repeating-linear-gradient(176deg,#ffffff06 0 2px,transparent 2px 9px),var(--table);box-shadow:0 10px 24px #17212733}
+.mj-card{scroll-margin-top:12px;padding:12px 11px 4px;border-radius:10px;background:radial-gradient(circle at 20% 10%,#fff4 0,transparent 40%),var(--stock);box-shadow:inset 0 0 0 5px var(--stock),inset 0 0 0 6.5px var(--print),0 6px 14px #0000004d;color:var(--print)}
+.mj-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:4px 6px 0}
+.mj-card-title{display:grid;margin:0;font-family:var(--font-display);font-size:27px;font-weight:800;line-height:1.15}
+.mj-card-title small{font-family:var(--font-body,inherit);font-size:12.5px;font-weight:600;letter-spacing:.02em}
+.mj-count{display:flex;align-items:baseline;gap:4px;margin:0;padding:2px 10px;border:2px solid var(--print);border-radius:10px;font-size:13px;font-weight:700;white-space:nowrap}
+.mj-count strong{font-family:var(--font-display);font-size:32px;line-height:1.2;font-weight:800;color:var(--stamp)}
+.mj-tier{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;margin:6px 6px 4px;font-size:14px;font-weight:600}
+.mj-tier strong{padding:0 8px;border:2px solid var(--stamp);border-radius:6px;color:var(--stamp);transform:rotate(-2deg)}
+.mj-tier span{display:inline-flex;align-items:center;gap:5px;color:var(--ink-text)}
+.mj-tier i,.mj-star{display:inline-block;width:14px;height:14px;background:var(--table);clip-path:var(--star)}
+.mj-proof{margin:0 6px 6px;font-size:13.5px;color:var(--ink-text)}
+
+.mj-section{border:0;margin:0 0 12px;padding:0;min-width:0}
+.mj-section legend{display:flex;align-items:center;gap:7px;padding:0;margin:4px 0 6px 4px;font-family:var(--font-display);font-size:17px;font-weight:700}
+.mj-section legend span{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--print);color:var(--stock);font-size:13px;line-height:1}
+
+/* the printed grid of boxes: a dotted punch target with the box number, until it's punched out */
+.mj-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1.5px solid var(--print);border-left:1.5px solid var(--print)}
+.mj-cell{position:relative;display:flex;align-items:center;gap:7px;min-width:0;min-height:62px;padding:6px 8px 6px 6px;border:0;border-right:1.5px solid var(--print);border-bottom:1.5px solid var(--print);border-radius:0;background:transparent;color:color-mix(in srgb,var(--print) 82%,var(--stock));font-size:14.5px;font-weight:600;line-height:1.3;text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.mj-hole{position:relative;flex:none;display:grid;place-items:center;width:30px;height:30px;border:2px dashed color-mix(in srgb,var(--print) 75%,transparent);border-radius:50%;font-size:12px;font-weight:700;color:var(--print)}
+.mj-label{min-width:0;overflow-wrap:anywhere}
+.mj-cell[aria-pressed=true]{color:var(--ink-text);font-weight:700}
+.mj-cell[aria-pressed=true] .mj-hole{border:0;background:radial-gradient(circle at 50% 62%,var(--table) 45%,var(--table-deep) 100%);box-shadow:0 0 0 2px #7a58144d,inset 0 3px 4px #000000b3;animation:mj-punch .3s cubic-bezier(.2,1.6,.4,1) both}
+.mj-cell[aria-pressed=true] .mj-hole b{visibility:hidden}
+/* the paper circle the punch knocks out, dropping away */
+.mj-cell[aria-pressed=true] .mj-hole::after{content:"";position:absolute;z-index:2;inset:0;border-radius:50%;background:var(--stock);box-shadow:0 1px 2px #0005;pointer-events:none;animation:mj-chad .7s ease-in forwards}
+.mj-star{position:absolute;top:5px;right:5px}
+.mj-cell:focus-visible{outline:3px solid var(--stamp);outline-offset:-4px}
+.mj-cell:active .mj-hole{transform:scale(.88)}
+.mj-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* opened from a roommate's link */
+.mj-friend{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;align-items:center;margin-bottom:12px;padding:12px;border-radius:18px;background:var(--wash)}
+.mj-friend canvas{width:100%;height:auto;border-radius:8px;box-shadow:0 6px 14px #17212740}
+.mj-kicker{margin:0 0 2px;font-size:13px;font-weight:700;color:var(--accent)}
+.mj-friend h2{margin:0 0 10px;font-family:var(--font-display);font-size:20px;line-height:1.4}
+.mj-friend em,.mj-result-head em{font-style:normal;color:var(--accent)}
+.mj-friend .kit-primary{min-height:48px;font-size:16px}
+
+/* result */
+.mj-result{scroll-margin-top:12px;margin-top:28px;padding-top:24px;border-top:2px dashed var(--line)}
+.mj-result-head h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(25px,5vw,36px);line-height:1.4}
+.mj-result-head p{margin:0 0 18px;color:var(--muted)}
+.mj-result-head strong{color:var(--stamp)}
+.mj-result-body{display:grid;gap:22px}
+.mj-controls{display:grid;gap:18px;align-content:start}
+.mj-fields{display:grid;gap:12px}
+.mj-field{display:grid;gap:6px;font-weight:600}
+.mj-field small{font-weight:400;color:var(--muted);font-size:13px}
+.mj-field input{min-height:48px;border:1.5px solid var(--line);border-radius:12px;font-size:17px}
+.mj-also{margin:0;padding:10px 12px;border-left:4px solid var(--accent);border-radius:0 12px 12px 0;background:var(--wash);font-size:14px;line-height:1.6;color:var(--muted)}
+.mj-also a{color:var(--accent-deep);font-weight:700}
+.mj-everyone{margin-top:24px;padding:16px;border-radius:16px;background:var(--wash)}
+.mj-everyone h3{margin:0 0 6px;font-family:var(--font-display);font-size:20px}
+.mj-everyone p{margin:0 0 10px}
+.mj-rare{display:grid;gap:10px;margin:0 0 14px}
+.mj-rare p{display:grid;margin:0;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff}
+.mj-rare span{font-size:13px;color:var(--muted)}
+.mj-rare strong{font-family:var(--font-display);font-size:20px}
+.mj-rare em{font-style:normal;color:var(--accent);font-weight:700}
+.mj-bars{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.mj-bars li{display:grid;grid-template-columns:minmax(0,9em) 1fr auto;gap:8px;align-items:center;font-size:14px}
+.mj-bars span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mj-bars i{height:10px;border-radius:999px;background:var(--accent);min-width:2px}
+.mj-bars b{font-weight:700;color:var(--accent-deep)}
+
+/* captions and guide */
+.mj-captions-section h2,.mj-guide h2{font-family:var(--font-display);margin-bottom:6px}
+.mj-captions-section>p{color:var(--muted);margin-bottom:14px}
+.mj-captions{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.mj-captions li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 10px 10px 14px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;background:#fff}
+.mj-captions p{margin:0;font-size:16px;line-height:1.7}
+.mj-captions button{flex:none;min-height:44px;min-width:64px;padding:6px 12px;border:1.5px solid var(--accent-deep);border-radius:10px;background:#fff;color:var(--accent-deep);font-weight:600}
+.mj-guide ol{display:grid;gap:14px;margin:12px 0 0;padding:0;list-style:none}
+.mj-guide li{display:flex;gap:14px;align-items:flex-start}
+.mj-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--wash);color:var(--accent);font-weight:700}
+.mj-guide li p{margin:4px 0 0}
+
+@keyframes mj-punch{from{transform:scale(.3)}70%{transform:scale(1.12)}}
+@keyframes mj-chad{0%{transform:none;opacity:1}100%{transform:translate(16px,74px) rotate(170deg) scale(.8);opacity:0}}
+
+@media(max-width:359px){.mj-grid{grid-template-columns:minmax(0,1fr)}}
+@media(min-width:720px){
+  .mj-hero{padding:30px 0 20px}
+  .mj-table{padding:14px}
+  .mj-card{padding:18px 18px 8px}
+  .mj-card-title{font-size:34px}
+  .mj-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .mj-result-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:36px}
+  .mj-fields{grid-template-columns:1fr 1fr}
+  .mj-friend{grid-template-columns:160px minmax(0,1fr);max-width:720px}
+  .mj-friend h2{font-size:24px}
+  .mj-captions{grid-template-columns:1fr 1fr}
+}
+@media(hover:hover){.mj-cell:hover{background:#ffffff38}.mj-cell:hover .mj-hole{border-color:var(--print)}}
+@media(prefers-reduced-motion:reduce){.mj-cell[aria-pressed=true] .mj-hole{animation:none}.mj-cell[aria-pressed=true] .mj-hole::after{display:none}.mj-cell:active .mj-hole{transform:none}}
