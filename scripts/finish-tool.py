@@ -1,10 +1,11 @@
 # Wires a finished tool into the site and commits only its files. Run from the repo root with the dev server up.
-# Usage: python3 scripts/finish-tool.py <slug> "<catalog description>" "<action>" "<og title with |>" "<og subtitle>" <bg> <ink> <accent> [hash]
+# Usage: python3 scripts/finish-tool.py <slug> "<catalog description>" "<action>" "<og title with |>" "<og subtitle>" <bg> <ink> <accent> [hash] [js to run before grabbing the card]
 import glob, re, subprocess, sys, unicodedata
 
 N = lambda text: unicodedata.normalize('NFC', text)
 slug, desc, action, og_title, og_sub, bg, ink, accent = sys.argv[1:9]
 hash_state = sys.argv[9] if len(sys.argv) > 9 else ''
+before = sys.argv[10] if len(sys.argv) > 10 else ''
 run = lambda cmd: subprocess.run(cmd, shell=isinstance(cmd, str), capture_output=True, text=True)
 
 # 1. The tool's own tests and types must be clean.
@@ -29,7 +30,7 @@ if count != 1: sys.exit(f'catalog row for {slug} not found')
 open('lib/catalog.ts', 'w').write(catalog)
 
 # 4. Thumbnail + social image from the live card, then point content.ts at the social image.
-og = run(['node', 'scripts/og-image.mjs', slug, f'public/previews/{slug}.webp', f'public/social/{slug}.png', og_title, og_sub, bg, ink, accent, hash_state])
+og = run(['node', 'scripts/og-image.mjs', slug, f'public/previews/{slug}.webp', f'public/social/{slug}.png', og_title, og_sub, bg, ink, accent, hash_state, before])
 if og.returncode: sys.exit('og image failed: ' + og.stderr[-800:])
 content_path = f'tools/{slug}/content.ts'
 content = open(content_path).read()
