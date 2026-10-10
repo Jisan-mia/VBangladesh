@@ -31,7 +31,7 @@ export const catalog = [
   { slug: "amar-jersey", name: "আমার জার্সি", description: "জার্সির পিঠে নিজের নাম আর নম্বর বসাও, পোস্ট বা প্রোফাইল ছবি বানাও", category: "খেলাধুলা", action: "জার্সি বানাও" },
   { slug: "boyos", name: "বয়স কত?", description: "বয়স কত?: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
   { slug: "iftar-plate", name: "ইফতারির প্লেট", description: "খেজুর, ছোলা, পেঁয়াজু, বেগুনি… ছুঁয়ে নিজের ইফতারির প্লেট সাজাও, বন্ধুদের দেখাও", category: "উৎসব আর বিশ্বাস", action: "প্লেট সাজাও" },
-  { slug: "cinema-poster", name: "সিনেমার পোস্টার", description: "সিনেমার পোস্টার: খুলে দেখো, খেলে দেখো।", category: "আঁকো আর সাজাও", action: "শুরু করো" },
+  { slug: "cinema-poster", name: "সিনেমার পোস্টার", description: "নিজের নামে পুরোনো দিনের হাতে আঁকা সিনেমার পোস্টার বানাও, বন্ধুকে সহশিল্পী করো", category: "আঁকো আর সাজাও", action: "পোস্টার বানাও" },
   { slug: "banan", name: "শুদ্ধ বানান কোনটি?", description: "শুদ্ধ বানান কোনটি?: খুলে দেখো, খেলে দেখো।", category: "ভাষা আর পড়াশোনা", action: "শুরু করো" },
   { slug: "dom-atkano", name: "দম আটকানো ম্যাচ", description: "দম আটকানো ম্যাচ: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
