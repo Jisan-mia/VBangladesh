@@ -220,7 +220,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 10 | eidjatra | ঈদযাত্রা | উৎসব আর বিশ্বাস | CI06 | done | #b-eidjatra |
 | 10 | probash | প্রবাস জীবন | পরিবার আর প্রবাস | TI08 | done | #b-probash |
 | 10 | char-priyo | চার প্রিয় | নিজেকে জানো | CR04 | done | #b-char-priyo |
-| 10 | dhadha | আজকের ধাঁধা | মজা আর কুইজ | ED05 | building | #b-dhadha |
+| 10 | dhadha | আজকের ধাঁধা | মজা আর কুইজ | ED05 | done | #b-dhadha |
 | 10 | tokhon-ekhon | দাম তখন আর এখন | স্মৃতি আর গল্প | MO07 | done | #b-tokhon-ekhon |
 | 11 | namta | নামতা চ্যালেঞ্জ | ভাষা আর পড়াশোনা | ED09 | done | #b-namta |
 | 11 | prothom-ay | আমার প্রথম আয় | পরিবার আর প্রবাস | MO11 | done | #b-prothom-ay |
