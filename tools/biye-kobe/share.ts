@@ -1,4 +1,17 @@
 import type { ToolShare } from "../../shared/share-types";
+import { parseShareHash, previewTitle, shareHash, timingIds } from "./lib/report";
 
-// Sharing by short link isn't wired up for this tool yet.
-export const share: ToolShare | null = null;
+export const share: ToolShare = {
+  normalize(state) {
+    const shared = parseShareHash(state);
+    return shared ? shareHash(shared).slice(1) : null;
+  },
+  preview(state) {
+    const shared = parseShareHash(state);
+    return {
+      title: shared ? previewTitle(shared) : "কবে বিয়ে হবে? ঘটকের রিপোর্ট দেখো",
+      description: "শুধু মজা! ৬টা দুষ্টু প্রশ্নের উত্তর দাও, ঘটকের ফাইল থেকে বেরোবে তোমার মজার রিপোর্ট। কোনো ভবিষ্যদ্বাণী না, কোনো চাপও না।",
+    };
+  },
+  tally: timingIds,
+};
