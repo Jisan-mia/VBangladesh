@@ -40,7 +40,7 @@ export const catalog = [
   { slug: "biye-kobe", name: "কবে বিয়ে হবে?", description: "ঘটকের ৬টা দুষ্টু প্রশ্নে টোকা দাও, পাও বিয়ের মজার রিপোর্ট। শুধু মজা!", category: "নিজেকে জানো", action: "ফাইল খোলো" },
   { slug: "himu", name: "হুমায়ূনের বই", description: "হুমায়ূন আহমেদের ৩০টা চেনা বইয়ের কয়টা পড়েছ? তাক মেলাও, বন্ধুকে পাঠাও", category: "স্মৃতি আর গল্প", action: "তাক মেলাই" },
   { slug: "pitha", name: "পিঠা চেনো?", description: "পিঠা চেনো?: খুলে দেখো, খেলে দেখো।", category: "খাবারদাবার", action: "শুরু করো" },
-  { slug: "upohar", name: "দাওয়াতে কত দেব?", description: "দাওয়াতে কত দেব?: খুলে দেখো, খেলে দেখো।", category: "পরিবার আর প্রবাস", action: "শুরু করো" },
+  { slug: "upohar", name: "দাওয়াতে কত দেব?", description: "সম্পর্ক, দূরত্ব আর মেনু বেছে নাও, খামে উঠবে হালকা আন্দাজ আর মজার লাইন।", category: "পরিবার আর প্রবাস", action: "খাম সাজাও" },
   { slug: "namer-design", name: "নামের ডিজাইন", description: "নামের ডিজাইন: খুলে দেখো, খেলে দেখো।", category: "আঁকো আর সাজাও", action: "শুরু করো" },
   { slug: "dawat", name: "দাওয়াত কার্ড", description: "দাওয়াত কার্ড: খুলে দেখো, খেলে দেখো।", category: "পরিবার আর প্রবাস", action: "শুরু করো" },
   { slug: "desh-cheno", name: "দেশ চেনো", description: "দেশ চেনো: খুলে দেখো, খেলে দেখো।", category: "ভাষা আর পড়াশোনা", action: "শুরু করো" },
