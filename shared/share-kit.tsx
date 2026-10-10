@@ -36,12 +36,14 @@ type ShareBarProps = {
   caption: string;
   /** The card's #hash state; when given, shared links reopen this exact card. */
   state?: string;
+  /** Never send `state` to our server; the link is the plain #hash. */
+  local?: boolean;
   disabled?: boolean;
   hint?: string;
 };
 
 /** Share (image + caption + link), download, and copy link — with the Facebook in-app browser fallback built in. */
-export function ShareBar({ tool, fileName, makeImage, imageKey, caption, state, disabled, hint }: ShareBarProps) {
+export function ShareBar({ tool, fileName, makeImage, imageKey, caption, state, local, disabled, hint }: ShareBarProps) {
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState('');
   const [canShareFiles, setCanShareFiles] = useState(false);
@@ -54,7 +56,7 @@ export function ShareBar({ tool, fileName, makeImage, imageKey, caption, state, 
   }, [fileName]);
   useEffect(() => { setManualLink(''); }, [imageKey]);
 
-  const link = () => state ? shareLink(tool, state) : Promise.resolve(window.location.origin + window.location.pathname);
+  const link = () => state ? shareLink(tool, state, local) : Promise.resolve(window.location.origin + window.location.pathname);
 
   async function share() {
     if (disabled || busy) return;
