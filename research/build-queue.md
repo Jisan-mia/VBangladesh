@@ -229,7 +229,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 11 | jomi | জমির মাপ | হিসাব-নিকাশ | MO02 | done | #b-jomi |
 | 12 | ek-koti | এক কোটি টাকা খরচ করো | মজা আর কুইজ | GA02 | building | #b-ek-koti |
 | 12 | rokto | রক্তদাতা কার্ড | হিসাব-নিকাশ | HL02 | building | #b-rokto |
-| 12 | cassette | আমার ক্যাসেট | স্মৃতি আর গল্প | NO02, CR03 | todo | #b-cassette |
+| 12 | cassette | আমার ক্যাসেট | স্মৃতি আর গল্প | NO02, CR03 | building | #b-cassette |
 | 12 | jibh | জিভ কোন জেলার? | খাবারদাবার | ID09 | todo | #b-jibh |
 | 12 | matcher-mon | ম্যাচের মন | খেলাধুলা | SP16 | todo | #b-matcher-mon |
 | 13 | current-gelo | কারেন্ট গেল! | হিসাব-নিকাশ | CI04 | todo | #b-current-gelo |

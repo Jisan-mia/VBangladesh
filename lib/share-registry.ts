@@ -69,6 +69,7 @@ import { share as mache_bhate } from '../tools/mache-bhate/share';
 import { share as jomi } from '../tools/jomi/share';
 import { share as ek_koti } from '../tools/ek-koti/share';
 import { share as rokto } from '../tools/rokto/share';
+import { share as cassette } from '../tools/cassette/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -141,6 +142,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'jomi': jomi,
   'ek-koti': ek_koti,
   'rokto': rokto,
+  'cassette': cassette,
 };
 
 export function toolShare(tool: string): ToolShare | null {
