@@ -71,6 +71,7 @@ export const catalog = [
   { slug: "probash", name: "প্রবাস জীবন", description: "ভিডিও কলে ঈদ, লাগেজে শুঁটকি, একা ইফতার — প্রবাসের কয়টা মুহূর্তে সিল পড়ল?", category: "পরিবার আর প্রবাস", action: "সিল মারো" },
   { slug: "char-priyo", name: "চার প্রিয়", description: "চার প্রিয়: খুলে দেখো, খেলে দেখো।", category: "নিজেকে জানো", action: "শুরু করো" },
   { slug: "dhadha", name: "আজকের ধাঁধা", description: "আজকের ধাঁধা: খুলে দেখো, খেলে দেখো।", category: "মজা আর কুইজ", action: "শুরু করো" },
+  { slug: "tokhon-ekhon", name: "দাম তখন আর এখন", description: "দাম তখন আর এখন: খুলে দেখো, খেলে দেখো।", category: "স্মৃতি আর গল্প", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.
