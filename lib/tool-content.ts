@@ -29,6 +29,7 @@ import { site as biye_kobe } from '../tools/biye-kobe/content';
 import { site as himu } from '../tools/himu/content';
 import { site as pitha } from '../tools/pitha/content';
 import { site as upohar } from '../tools/upohar/content';
+import { site as namer_design } from '../tools/namer-design/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -62,6 +63,7 @@ export const toolContent = {
   'himu': himu,
   'pitha': pitha,
   'upohar': upohar,
+  'namer-design': namer_design,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
