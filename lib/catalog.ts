@@ -24,7 +24,7 @@ export const catalog = [
   { slug: "bhagabhagi", name: "ভাগাভাগি", description: "ট্যুর বা আড্ডার খরচ লিখে দাও, কে কাকে কত দেবে, এক স্লিপে।", category: "হিসাব-নিকাশ", action: "হিসাব মেলাও" },
   { slug: "gpa", name: "জিপিএ কত?", description: "এসএসসি-এইচএসসির বিষয়ভিত্তিক গ্রেড দাও, জিপিএ দেখো।", category: "ভাষা আর পড়াশোনা", action: "জিপিএ দেখো" },
   { slug: "komon-porlo", name: "কয়টা কমন পড়ল?", description: "আত্মীয়দের চেনা প্রশ্নগুলোর কয়টা তোমার কপালে জুটেছে, দাগাও।", category: "মজা আর কুইজ", action: "দাগানো শুরু করো" },
-  { slug: "argentina-na-brazil", name: "আর্জেন্টিনা না ব্রাজিল?", description: "এক চাপে দল বাছো, ছাদে পতাকা ওড়াও, দেখো দেশের মানুষ কোন দিকে।", category: "খেলাধুলা", action: "দল বাছো" },
+  { slug: "argentina-na-brazil", name: "আর্জেন্টিনা না ব্রাজিল?", description: "এক চাপে ছাদে দলের পতাকা তোলো, পাশের বাসার বন্ধুকে ডাকো", category: "খেলাধুলা", action: "পতাকা তোলো" },
   { slug: "koto-din-baki", name: "কত দিন বাকি?", description: "ঈদ, পূজা, বড়দিন, বৈশাখ — সব উৎসবের দিন গোনো।", category: "উৎসব আর বিশ্বাস", action: "দিন গোনো" },
   { slug: "mishtir-baksho", name: "মিষ্টির বাক্স", description: "দেশের নামকরা মিষ্টির কয়টা খেয়েছ? বাক্সে তোলো, গুনে দেখো।", category: "খাবারদাবার", action: "বাক্স সাজাও" },
 ] as const satisfies readonly ToolListing[];
