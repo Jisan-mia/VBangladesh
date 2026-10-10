@@ -38,6 +38,7 @@ import { site as golir_ain } from '../tools/golir-ain/content';
 import { site as amar_bochhor } from '../tools/amar-bochhor/content';
 import { site as daknam } from '../tools/daknam/content';
 import { site as cha_mudra } from '../tools/cha-mudra/content';
+import { site as matir_bank } from '../tools/matir-bank/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -80,6 +81,7 @@ export const toolContent = {
   'amar-bochhor': amar_bochhor,
   'daknam': daknam,
   'cha-mudra': cha_mudra,
+  'matir-bank': matir_bank,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
