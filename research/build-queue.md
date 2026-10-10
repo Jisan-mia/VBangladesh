@@ -1203,3 +1203,4 @@ Human checks and shared changes that agents asked for, kept here so they survive
 - Tally API now takes an optional `?prefix=` (used by eidjatra and current-gelo). Still to do: prune old days or events from tally_counts.
 - mama-jaben: a native speaker should review mama's Dhaka-colloquial lines for warmth and no caricature.
 - ekadosh: check about 20 player-name spellings against Bangla media (list in lib/players.ts). A women's pack is not built yet.
+- mishron: a native speaker should read all 200 item notes. Every Election Commission symbol is left out, which also drops everyday items such as আম, রিকশা, ঘুড়ি and হারিকেন. Revisit if that feels too strict.
