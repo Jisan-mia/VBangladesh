@@ -74,7 +74,7 @@ export const catalog = [
   { slug: "tokhon-ekhon", name: "দাম তখন আর এখন", description: "জন্মসালের ১০০ টাকা এখন কত? সাল বেছে নাও, আব্বুর পুরোনো মানিব্যাগ খুলে দেখো", category: "স্মৃতি আর গল্প", action: "সাল বেছে নাও" },
   { slug: "namta", name: "নামতা চ্যালেঞ্জ", description: "২ থেকে ২০-এর নামতা খেলো, ভুল হলে স্লেট আলতো করে ঠিকটা দেখায়", category: "ভাষা আর পড়াশোনা", action: "নামতা খেলো" },
   { slug: "prothom-ay", name: "আমার প্রথম আয়", description: "প্রথম আয়ের টাকায় কী করেছিলে? তিন ছোঁয়ায় বানাও নিজের বাদামি খাম", category: "পরিবার আর প্রবাস", action: "খাম বানাও" },
-  { slug: "ami-bolechhilam", name: "আমি বলেছিলাম!", description: "আমি বলেছিলাম!: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
+  { slug: "ami-bolechhilam", name: "আমি বলেছিলাম!", description: "খেলার আগে ভবিষ্যদ্বাণী খামে সিল করো, খেলা শেষে খুলে বলো: আমি বলেছিলাম!", category: "খেলাধুলা", action: "খামে সিল করো" },
   { slug: "mache-bhate", name: "মাছে-ভাতে", description: "মাছে-ভাতে: খুলে দেখো, খেলে দেখো।", category: "খাবারদাবার", action: "শুরু করো" },
   { slug: "jomi", name: "জমির মাপ", description: "১ বিঘায় কত শতাংশ, কাঠায় কত বর্গফুট? মাপ লেখো, সব এককে সাথে সাথে দেখো", category: "হিসাব-নিকাশ", action: "মাপ লেখো" },
 ] as const satisfies readonly ToolListing[];

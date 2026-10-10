@@ -224,7 +224,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 10 | tokhon-ekhon | দাম তখন আর এখন | স্মৃতি আর গল্প | MO07 | done | #b-tokhon-ekhon |
 | 11 | namta | নামতা চ্যালেঞ্জ | ভাষা আর পড়াশোনা | ED09 | done | #b-namta |
 | 11 | prothom-ay | আমার প্রথম আয় | পরিবার আর প্রবাস | MO11 | done | #b-prothom-ay |
-| 11 | ami-bolechhilam | আমি বলেছিলাম! | খেলাধুলা | SP06 | building | #b-ami-bolechhilam |
+| 11 | ami-bolechhilam | আমি বলেছিলাম! | খেলাধুলা | SP06 | done | #b-ami-bolechhilam |
 | 11 | mache-bhate | মাছে-ভাতে | খাবারদাবার | FO02 | building | #b-mache-bhate |
 | 11 | jomi | জমির মাপ | হিসাব-নিকাশ | MO02 | done | #b-jomi |
 | 12 | ek-koti | এক কোটি টাকা খরচ করো | মজা আর কুইজ | GA02 | todo | #b-ek-koti |
