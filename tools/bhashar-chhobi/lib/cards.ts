@@ -1,30 +1,73 @@
+import { districtName, isDistrictId, type DistrictId } from './districts';
+
+export const MAX_WORD = 20;
+
 export const objects = [
-  { id: 'guava', name: 'পেয়ারা', note: 'ফলের নাম' },
-  { id: 'kite', name: 'ঘুড়ি', note: 'খেলার সঙ্গী' },
-  { id: 'pitcher', name: 'কলস', note: 'ঘরের জিনিস' },
-  { id: 'top', name: 'লাটিম', note: 'খেলার সঙ্গী' },
-  { id: 'fish', name: 'মাছ', note: 'চেনা প্রাণী' },
-  { id: 'lotus', name: 'শাপলা', note: 'চেনা ফুল' },
+  { id: 'guava', name: 'পেয়ারা', line: 'গাছে উঠে পাড়ার সময় এই নামেই ডাকাডাকি চলত।' },
+  { id: 'kite', name: 'ঘুড়ি', line: 'ছাদ থেকে সুতো ছাড়ার সময় মুখে এই নামটাই আসে।' },
+  { id: 'pitcher', name: 'কলস', line: 'পুকুরঘাট থেকে পানি আনার দিনে এই নামই শুনেছি।' },
+  { id: 'top', name: 'লাটিম', line: 'উঠানে ঘোরানোর সময় এই নামেই হাঁক দিতাম।' },
+  { id: 'fish', name: 'মাছ', line: 'ঘাটে জাল টানার সময় এই নামটাই শুনে এসেছি।' },
+  { id: 'lotus', name: 'শাপলা', line: 'বর্ষার বিলে এই নামেই ফোটে।' },
 ] as const;
 export type ObjectId = typeof objects[number]['id'];
-export const palettes = [
-  { name: 'নীল খাতা', paper: '#f1f4ff', ink: '#263876', line: '#bdc8e6', seal: '#f1c744' },
-  { name: 'লাল খাতা', paper: '#fff3ec', ink: '#8d302a', line: '#e9bcae', seal: '#dfb859' },
-  { name: 'সবুজ খাতা', paper: '#eef4e8', ink: '#305443', line: '#bbcfad', seal: '#efbb55' },
-] as const;
+const isObjectId = (id: string): id is ObjectId => objects.some(object => object.id === id);
+export const objectOf = (id: ObjectId) => objects.find(object => object.id === id)!;
+
+export type LanguageCard = { objectId: ObjectId; word: string; district: DistrictId | '' };
+export const defaultCard: LanguageCard = { objectId: 'guava', word: '', district: '' };
+
+const numbers = new Intl.NumberFormat('bn-BD');
+export const bn = (value: number) => numbers.format(value);
+
 const segmenter = new Intl.Segmenter('bn', { granularity: 'grapheme' });
+const unsafe = /[\u0000-\u001f\u007f‎‏‪-‮⁦-⁩]/g;
+
+/** While typing: no control or direction characters, at most `length` whole letters (a conjunct is never cut). */
 export function limitText(text: string, length: number) {
-  return Array.from(segmenter.segment(text.replace(/[\u0000-\u001f\u007f]/g, ' ')), part => part.segment).slice(0, length).join('');
-}
-export function cardLines(text: string) {
-  const letters = Array.from(segmenter.segment(text.trim()), part => part.segment);
-  return letters.length > 14 ? [letters.slice(0, 14).join(''), letters.slice(14, 28).join('')] : [letters.join('')];
+  return Array.from(segmenter.segment(text.replace(unsafe, ' ')), part => part.segment).slice(0, length).join('');
 }
 
-export type LanguageCard = { objectId: ObjectId; word: string; area: string; pronunciation: string; paletteIndex: number };
-export const defaultCard: LanguageCard = { objectId: 'guava', word: 'পেয়ারা', area: '', pronunciation: '', paletteIndex: 0 };
+/** For cards and links: NFC, single spaces, trimmed and capped. */
+export const cleanWord = (text: string) => limitText(text.normalize('NFC').replace(unsafe, ' ').replace(/\s+/g, ' ').trim(), MAX_WORD).trim();
 
+/** A new picture starts empty, so the card shows that picture's own name until you type yours. */
 export function selectCardObject(card: LanguageCard, objectId: ObjectId): LanguageCard {
-  if (card.objectId === objectId) return card;
-  return { ...card, objectId, word: objects.find(item => item.id === objectId)!.name, pronunciation: '' };
+  return card.objectId === objectId ? card : { ...card, objectId, word: '' };
+}
+
+export function shareHash(card: LanguageCard) {
+  const params = new URLSearchParams({ o: card.objectId });
+  const word = cleanWord(card.word);
+  if (word) params.set('w', word);
+  if (card.district) params.set('d', card.district);
+  return '#' + params.toString();
+}
+
+/** A shared card, or null for anything that isn't one (in-page anchors like #result included). */
+export function parseShareHash(hash: string): LanguageCard | null {
+  const params = new URLSearchParams(hash.replace(/^#/, ''));
+  const objectId = params.get('o') ?? '';
+  if (!isObjectId(objectId)) return null;
+  const district = params.get('d') ?? '';
+  return { objectId, word: cleanWord(params.get('w') ?? ''), district: isDistrictId(district) ? district : '' };
+}
+
+export type CardText = { word: string; place: string; kicker: string; bookName: string; line: string; match: string };
+
+export function cardText(card: LanguageCard, friend?: LanguageCard | null): CardText {
+  const object = objectOf(card.objectId);
+  const word = cleanWord(card.word) || object.name;
+  const place = card.district ? `${districtName(card.district)} জেলায়` : 'আমাদের এলাকায়';
+  let match = '';
+  if (friend && friend.objectId === card.objectId) {
+    const theirs = cleanWord(friend.word) || object.name;
+    match = theirs === word ? 'বন্ধুর ওখানেও ঠিক এই নাম!' : `${friend.district ? `${districtName(friend.district)} জেলায়` : 'বন্ধুর ওখানে'} বলে “${theirs}”`;
+  }
+  return { word, place, kicker: `${place} এটাকে বলে`, bookName: word === object.name ? '' : object.name, line: object.line, match };
+}
+
+export function previewTitle(card: LanguageCard) {
+  const { word, place } = cardText(card);
+  return `${place} ${objectOf(card.objectId).name}কে বলে “${word}” — তোমাদের ওখানে কী বলে?`;
 }
