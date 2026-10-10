@@ -1196,3 +1196,4 @@ Human checks and shared changes that agents asked for, kept here so they survive
 - attiyo: a native speaker should review all 84 named chains (lib/kin.ts). Weakly sourced: জামাইবাবু (bn.wiktionary only) and বেয়াইন. শালা/শালী are left out (the dictionary also marks them as slurs). The card spells it ফুপা, with the dictionary's ফুফা in a note.
 - tokhon-ekhon: regenerate lib/cpi.ts from the World Bank FP.CPI.TOTL API once a year. The data was fetched 2026-10-11 and covers 1986–2025.
 - dhadha: a human should review the riddle bank. About 18 of the 60 riddles have only one popular-list source (lib/riddles.ts). The tally is sent automatically on finish, with a privacy line under the chips.
+- ami-bolechhilam: a native speaker should check the team names (lib/seal.ts). The tally API keeps only one vote list per browser, so the tool resends earlier matches from localStorage.
