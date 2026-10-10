@@ -227,7 +227,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 11 | ami-bolechhilam | আমি বলেছিলাম! | খেলাধুলা | SP06 | done | #b-ami-bolechhilam |
 | 11 | mache-bhate | মাছে-ভাতে | খাবারদাবার | FO02 | done | #b-mache-bhate |
 | 11 | jomi | জমির মাপ | হিসাব-নিকাশ | MO02 | done | #b-jomi |
-| 12 | ek-koti | এক কোটি টাকা খরচ করো | মজা আর কুইজ | GA02 | building | #b-ek-koti |
+| 12 | ek-koti | এক কোটি টাকা খরচ করো | মজা আর কুইজ | GA02 | done | #b-ek-koti |
 | 12 | rokto | রক্তদাতা কার্ড | হিসাব-নিকাশ | HL02 | done | #b-rokto |
 | 12 | cassette | আমার ক্যাসেট | স্মৃতি আর গল্প | NO02, CR03 | building | #b-cassette |
 | 12 | jibh | জিভ কোন জেলার? | খাবারদাবার | ID09 | building | #b-jibh |
