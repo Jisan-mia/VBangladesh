@@ -74,6 +74,7 @@ import { share as jibh } from '../tools/jibh/share';
 import { share as matcher_mon } from '../tools/matcher-mon/share';
 import { share as current_gelo } from '../tools/current-gelo/share';
 import { share as projonmo } from '../tools/projonmo/share';
+import { share as mama_jaben } from '../tools/mama-jaben/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -151,6 +152,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'matcher-mon': matcher_mon,
   'current-gelo': current_gelo,
   'projonmo': projonmo,
+  'mama-jaben': mama_jaben,
 };
 
 export function toolShare(tool: string): ToolShare | null {
