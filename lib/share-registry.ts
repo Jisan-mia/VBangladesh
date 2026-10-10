@@ -83,6 +83,7 @@ import { share as mishron } from '../tools/mishron/share';
 import { share as raat_jaga } from '../tools/raat-jaga/share';
 import { share as betoner_bhag } from '../tools/betoner-bhag/share';
 import { share as bidyut_bill } from '../tools/bidyut-bill/share';
+import { share as mondop } from '../tools/mondop/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -169,6 +170,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'raat-jaga': raat_jaga,
   'betoner-bhag': betoner_bhag,
   'bidyut-bill': bidyut_bill,
+  'mondop': mondop,
 };
 
 export function toolShare(tool: string): ToolShare | null {

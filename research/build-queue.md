@@ -243,7 +243,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 14 | raat-jaga | রাত জেগে খেলা | খেলাধুলা | SP14 | building | #b-raat-jaga |
 | 14 | betoner-bhag | বেতনের ভাগ | হিসাব-নিকাশ | MO08 | building | #b-betoner-bhag |
 | 15 | bidyut-bill | বিদ্যুৎ বিল কত? | হিসাব-নিকাশ | MO03 | building | #b-bidyut-bill |
-| 15 | mondop | মণ্ডপ ঘুরি | উৎসব আর বিশ্বাস | FA10 | todo | #b-mondop |
+| 15 | mondop | মণ্ডপ ঘুরি | উৎসব আর বিশ্বাস | FA10 | building | #b-mondop |
 | 15 | grade-dao | গ্রেড দাও | মজা আর কুইজ | ID20 | todo | #b-grade-dao |
 | 15 | adda | আড্ডায় তুমি কে? | নিজেকে জানো | ID17 | todo | #b-adda |
 
