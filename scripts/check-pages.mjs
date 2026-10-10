@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { toolSlugs } from '../lib/tool-content.ts';
+import { catalog } from '../lib/catalog.ts';
 import { publicOrigin } from '../shared/seo.ts';
 
 assert.equal(process.argv.length, 2, 'Use SITE_CHECK_ORIGIN to select the single app origin; command flags are not supported.');
@@ -138,7 +139,7 @@ function checkToolSchema(html, slug) {
   assert.deepEqual(answers, faq.mainEntity.map(item => item.acceptedAnswer.text.replace(/\s+/g, ' ').trim()), `${path}: visible answers match schema`);
 }
 
-assert.equal(toolSlugs.length, 12, 'registry contains all twelve tools');
+assert.deepEqual([...toolSlugs].sort(), catalog.map(tool => tool.slug).sort(), 'every catalog tool has content and a route, and nothing else does');
 assert.equal(new Set(toolSlugs).size, toolSlugs.length, 'registry slugs are unique');
 for (const path of routes) {
   const response = await request(path);
