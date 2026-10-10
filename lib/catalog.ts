@@ -30,7 +30,7 @@ export const catalog = [
   { slug: "taka-kothay", name: "টাকা কথায় লিখি", description: "যেকোনো টাকার অঙ্ক বাংলা আর ইংরেজি কথায়, চেক আর ফর্মের জন্য এক চাপে কপি", category: "ভাষা আর পড়াশোনা", action: "কথায় লেখো" },
   { slug: "amar-jersey", name: "আমার জার্সি", description: "জার্সির পিঠে নিজের নাম আর নম্বর বসাও, পোস্ট বা প্রোফাইল ছবি বানাও", category: "খেলাধুলা", action: "জার্সি বানাও" },
   { slug: "boyos", name: "বয়স কত?", description: "বয়স কত?: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
-  { slug: "iftar-plate", name: "ইফতারির প্লেট", description: "ইফতারির প্লেট: খুলে দেখো, খেলে দেখো।", category: "উৎসব আর বিশ্বাস", action: "শুরু করো" },
+  { slug: "iftar-plate", name: "ইফতারির প্লেট", description: "খেজুর, ছোলা, পেঁয়াজু, বেগুনি… ছুঁয়ে নিজের ইফতারির প্লেট সাজাও, বন্ধুদের দেখাও", category: "উৎসব আর বিশ্বাস", action: "প্লেট সাজাও" },
   { slug: "cinema-poster", name: "সিনেমার পোস্টার", description: "সিনেমার পোস্টার: খুলে দেখো, খেলে দেখো।", category: "আঁকো আর সাজাও", action: "শুরু করো" },
   { slug: "banan", name: "শুদ্ধ বানান কোনটি?", description: "শুদ্ধ বানান কোনটি?: খুলে দেখো, খেলে দেখো।", category: "ভাষা আর পড়াশোনা", action: "শুরু করো" },
   { slug: "dom-atkano", name: "দম আটকানো ম্যাচ", description: "দম আটকানো ম্যাচ: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
