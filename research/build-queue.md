@@ -238,7 +238,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 13 | mess-jibon | হল-মেস জীবন | স্মৃতি আর গল্প | NO03 | done | #b-mess-jibon |
 | 13 | ekadosh | স্বপ্নের একাদশ | খেলাধুলা | SP05 | building | #b-ekadosh |
 | 14 | gorur-ojon | গরুর ওজন কত? | উৎসব আর বিশ্বাস | FA06, FA12 | building | #b-gorur-ojon |
-| 14 | starter-pack | দেশি স্টার্টার প্যাক | নিজেকে জানো | CR05 | todo | #b-starter-pack |
+| 14 | starter-pack | দেশি স্টার্টার প্যাক | নিজেকে জানো | CR05 | building | #b-starter-pack |
 | 14 | mishron | দেশি মিশ্রণ | মজা আর কুইজ | GA03 | todo | #b-mishron |
 | 14 | raat-jaga | রাত জেগে খেলা | খেলাধুলা | SP14 | todo | #b-raat-jaga |
 | 14 | betoner-bhag | বেতনের ভাগ | হিসাব-নিকাশ | MO08 | todo | #b-betoner-bhag |

@@ -76,6 +76,7 @@ import { site as mama_jaben } from '../tools/mama-jaben/content';
 import { site as mess_jibon } from '../tools/mess-jibon/content';
 import { site as ekadosh } from '../tools/ekadosh/content';
 import { site as gorur_ojon } from '../tools/gorur-ojon/content';
+import { site as starter_pack } from '../tools/starter-pack/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -156,6 +157,7 @@ export const toolContent = {
   'mess-jibon': mess_jibon,
   'ekadosh': ekadosh,
   'gorur-ojon': gorur_ojon,
+  'starter-pack': starter_pack,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];

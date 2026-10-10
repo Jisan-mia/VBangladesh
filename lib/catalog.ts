@@ -88,6 +88,7 @@ export const catalog = [
   { slug: "mess-jibon", name: "হল-মেস জীবন", description: "ডিম-ডাল সপ্তাহ, ম্যাগি রাত… হল-মেসের ৪০টা মুহূর্তের কয়টা তোমার? মিল কার্ডে ফুটো করে দেখো", category: "স্মৃতি আর গল্প", action: "ফুটো করো" },
   { slug: "ekadosh", name: "স্বপ্নের একাদশ", description: "স্বপ্নের একাদশ: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
   { slug: "gorur-ojon", name: "গরুর ওজন কত?", description: "গরুর ওজন কত?: খুলে দেখো, খেলে দেখো।", category: "উৎসব আর বিশ্বাস", action: "শুরু করো" },
+  { slug: "starter-pack", name: "দেশি স্টার্টার প্যাক", description: "দেশি স্টার্টার প্যাক: খুলে দেখো, খেলে দেখো।", category: "নিজেকে জানো", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.
