@@ -44,7 +44,7 @@ export const catalog = [
   { slug: "namer-design", name: "নামের ডিজাইন", description: "নাম লেখো, ঢং বাছো: আলপনা, সোনালি, চক, নিয়ন বা নকশি সুতোয় নিজের নাম সাজাও", category: "আঁকো আর সাজাও", action: "নাম সাজাও" },
   { slug: "dawat", name: "দাওয়াত কার্ড", description: "বিয়ে, হলুদ, বৌভাত, আকিকা, জন্মদিনের সোনালি দাওয়াত কার্ড বানাও, মেসেঞ্জারে পাঠাও", category: "পরিবার আর প্রবাস", action: "দাওয়াত বানাও" },
   { slug: "desh-cheno", name: "দেশ চেনো", description: "দেশ চেনো: খুলে দেখো, খেলে দেখো।", category: "ভাষা আর পড়াশোনা", action: "শুরু করো" },
-  { slug: "bhori", name: "ভরির হিসাব", description: "ভরির হিসাব: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
+  { slug: "bhori", name: "ভরির হিসাব", description: "মায়ের বালা, নানুর হার: ভরি-আনা-রতি থেকে গ্রামে কত, দেখো আর কার্ড বানাও", category: "হিসাব-নিকাশ", action: "ওজন বসাও" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.

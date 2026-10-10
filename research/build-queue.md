@@ -194,7 +194,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 4 | namer-design | নামের ডিজাইন | আঁকো আর সাজাও | ID02 | done | #b-namer-design |
 | 5 | dawat | দাওয়াত কার্ড | পরিবার আর প্রবাস | FM01, SP10 | done | #b-dawat |
 | 5 | desh-cheno | দেশ চেনো | ভাষা আর পড়াশোনা | ED07 | building | #b-desh-cheno |
-| 5 | bhori | ভরির হিসাব | হিসাব-নিকাশ | MO05 | building | #b-bhori |
+| 5 | bhori | ভরির হিসাব | হিসাব-নিকাশ | MO05 | done | #b-bhori |
 | 5 | tong | টং-এর অর্ডার | খাবারদাবার | ID08, FO04 | todo | #b-tong |
 | 5 | golir-ain | গলির ক্রিকেটের আইন | খেলাধুলা | SP09 | todo | #b-golir-ain |
 | 6 | amar-bochhor | আমার বছর | স্মৃতি আর গল্প | CR07 | todo | #b-amar-bochhor |
