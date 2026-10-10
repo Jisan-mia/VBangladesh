@@ -12,6 +12,11 @@ import { share as riksharong } from '../tools/riksharong/share';
 import { share as shobdo_khela } from '../tools/shobdo-khela/share';
 import { share as bhagabhagi } from '../tools/bhagabhagi/share';
 import { share as shubhechha } from '../tools/shubhechha/share';
+import { share as gpa } from '../tools/gpa/share';
+import { share as komon_porlo } from '../tools/komon-porlo/share';
+import { share as argentina_na_brazil } from '../tools/argentina-na-brazil/share';
+import { share as koto_din_baki } from '../tools/koto-din-baki/share';
+import { share as mishtir_baksho } from '../tools/mishtir-baksho/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -27,6 +32,11 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'shobdo-khela': shobdo_khela,
   'bhagabhagi': bhagabhagi,
   'shubhechha': shubhechha,
+  'gpa': gpa,
+  'komon-porlo': komon_porlo,
+  'argentina-na-brazil': argentina_na_brazil,
+  'koto-din-baki': koto_din_baki,
+  'mishtir-baksho': mishtir_baksho,
 };
 
 export function toolShare(tool: string): ToolShare | null {

@@ -10,6 +10,11 @@ import { site as riksharong } from '../tools/riksharong/content';
 import { site as shobdo_khela } from '../tools/shobdo-khela/content';
 import { site as bhagabhagi } from '../tools/bhagabhagi/content';
 import { site as shubhechha } from '../tools/shubhechha/content';
+import { site as gpa } from '../tools/gpa/content';
+import { site as komon_porlo } from '../tools/komon-porlo/content';
+import { site as argentina_na_brazil } from '../tools/argentina-na-brazil/content';
+import { site as koto_din_baki } from '../tools/koto-din-baki/content';
+import { site as mishtir_baksho } from '../tools/mishtir-baksho/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -24,6 +29,11 @@ export const toolContent = {
   'shobdo-khela': shobdo_khela,
   'bhagabhagi': bhagabhagi,
   'shubhechha': shubhechha,
+  'gpa': gpa,
+  'komon-porlo': komon_porlo,
+  'argentina-na-brazil': argentina_na_brazil,
+  'koto-din-baki': koto_din_baki,
+  'mishtir-baksho': mishtir_baksho,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];

@@ -8,6 +8,7 @@ import { pageMetadata, siteMetadata, websiteSchema } from '../seo';
 const expectedSlugs = [
   'alpana', 'amar-chhotobela', 'bazar-note', 'bhagabhagi', 'bhara', 'bhashar-chhobi',
   'chhotto-para', 'cholo-kheli', 'rannakhata', 'riksharong', 'shobdo-khela', 'shubhechha',
+  'gpa', 'komon-porlo', 'argentina-na-brazil', 'koto-din-baki', 'mishtir-baksho',
 ].sort();
 const origin = 'https://example.org';
 const expectedPaths = ['/', '/tools', '/about', '/privacy', ...expectedSlugs.flatMap(slug => [`/${slug}`, `/${slug}/guide`, `/${slug}/privacy`])];
