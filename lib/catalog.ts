@@ -83,6 +83,7 @@ export const catalog = [
   { slug: "jibh", name: "জিভ কোন জেলার?", description: "জিভ কোন জেলার?: খুলে দেখো, খেলে দেখো।", category: "খাবারদাবার", action: "শুরু করো" },
   { slug: "matcher-mon", name: "ম্যাচের মন", description: "খেলা দেখতে দেখতে মনের মুখে চাপো, টিভির ওয়ার্মের মতো মনের গ্রাফ বানাও", category: "খেলাধুলা", action: "গ্রাফ আঁকো" },
   { slug: "current-gelo", name: "কারেন্ট গেল!", description: "কারেন্ট গেল!: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
+  { slug: "projonmo", name: "জেন-জি না আব্বু-আম্মু?", description: "জেন-জি না আব্বু-আম্মু?: খুলে দেখো, খেলে দেখো।", category: "নিজেকে জানো", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.

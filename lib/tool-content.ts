@@ -71,6 +71,7 @@ import { site as cassette } from '../tools/cassette/content';
 import { site as jibh } from '../tools/jibh/content';
 import { site as matcher_mon } from '../tools/matcher-mon/content';
 import { site as current_gelo } from '../tools/current-gelo/content';
+import { site as projonmo } from '../tools/projonmo/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -146,6 +147,7 @@ export const toolContent = {
   'jibh': jibh,
   'matcher-mon': matcher_mon,
   'current-gelo': current_gelo,
+  'projonmo': projonmo,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
