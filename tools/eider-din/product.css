@@ -1,0 +1,116 @@
+.tool-eider-din{--ink:#2b1d16;--muted:#6b5b52;--accent:#1d7a4c;--accent-deep:#0f4a2d;--henna:#7a2a0d;--henna-soft:#7a2a0d66;--skin:#e7b48a;--skin-edge:#a8693f;--blush:#fbefe6;--line:#ead9cc}
+.tool-eider-din .eid-day{color:var(--ink)}
+
+/* hero: short, so the hand and the first ticks are on a phone's first screen */
+.eid-hero{padding:14px 0 10px}
+.eid-kicker{margin:0 0 2px;font-size:14px;font-weight:600;color:var(--henna)}
+.eid-hero h1{margin:0 0 4px;font-family:var(--font-display);font-size:clamp(28px,7vw,56px);line-height:1.25;font-weight:700;letter-spacing:0}
+.eid-hero h1 span{color:var(--henna);white-space:nowrap}
+.eid-lead{max-width:560px;margin:0;color:var(--muted);font-size:15px;line-height:1.6}
+
+/* the stage: the hand on the outfit colour, sticky so every tick visibly lands on it */
+.ed-pick{position:relative}
+.ed-stage{position:sticky;top:6px;z-index:5;display:grid;grid-template-columns:minmax(90px,1fr) auto;gap:10px;align-items:center;padding:8px 12px 8px 4px;border-radius:20px;color:var(--outfit-ink);background:radial-gradient(circle,color-mix(in srgb,var(--outfit-ink) 14%,transparent) 1.4px,transparent 1.8px) 0 0/22px 22px,var(--outfit);box-shadow:0 8px 20px #2b1d1626;transition:background-color .3s ease,color .3s ease}
+.ed-hand{display:block;width:100%;height:auto;overflow:visible}
+.ed-skin-edge{fill:none;stroke:var(--skin-edge);stroke-width:7;stroke-linejoin:round}
+.ed-skin{fill:var(--skin)}
+.ed-guide{fill:none;stroke:var(--henna);stroke-opacity:.28;stroke-width:1.1;stroke-dasharray:2.5 2.5}
+.ed-motif{fill:var(--henna);fill-rule:evenodd;transform-box:fill-box;transform-origin:center;animation:ed-dye .5s cubic-bezier(.3,1.4,.5,1) both}
+.ed-stage-side{display:grid;gap:6px;width:194px;min-width:0}
+.ed-count{margin:0;line-height:1}
+.ed-count strong{font-family:var(--font-display);font-size:42px;font-weight:800}
+.ed-count span{font-size:19px;font-weight:700;opacity:.8}
+.ed-swatches{border:0;margin:0;padding:0;min-width:0}
+.ed-swatches legend{padding:0;margin:0 0 4px;font-size:13px;font-weight:600}
+.ed-swatches div{display:grid;grid-template-columns:repeat(4,44px);gap:5px}
+.ed-swatches button{width:44px;height:44px;padding:0;border:2px solid color-mix(in srgb,var(--outfit-ink) 45%,transparent);border-radius:50%;background:var(--swatch);cursor:pointer;transition:transform .12s ease}
+.ed-swatches button[aria-pressed=true]{border-color:var(--outfit);box-shadow:0 0 0 3px var(--outfit-ink);transform:scale(.9)}
+.ed-swatches button:focus-visible{outline:3px solid var(--outfit-ink);outline-offset:3px}
+.ed-line{margin:0;font-size:14px;font-weight:600;line-height:1.45}
+
+/* everyone's colours */
+.ed-palette{margin:12px 0 0}
+.ed-palette p{margin:0 0 6px;font-size:14px;color:var(--muted)}
+.ed-palette strong{color:var(--ink)}
+.ed-palette div{display:flex;height:14px;border-radius:999px;overflow:hidden;box-shadow:inset 0 0 0 1px #2b1d1622}
+
+/* the tick list: henna chips */
+.ed-items{scroll-margin-top:200px;padding-top:12px}
+.ed-hint{margin:0 0 10px;font-size:14px;color:var(--muted)}
+.ed-chapter{border:0;margin:0 0 14px;padding:0;min-width:0}
+.ed-chapter legend{padding:0;margin:0 0 8px;font-family:var(--font-display);font-size:19px;font-weight:700}
+.ed-chapter legend small{font-family:var(--font-body,inherit);font-size:13px;font-weight:500;color:var(--muted)}
+.ed-chapter>div{display:flex;flex-wrap:wrap;gap:8px}
+.ed-chapter button{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:6px 14px 6px 9px;border:1.5px dashed var(--henna-soft);border-radius:999px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;line-height:1.3;cursor:pointer;transition:transform .12s ease,background-color .15s ease}
+.ed-chapter button svg{flex:none;width:20px;height:20px}
+.ed-chapter button circle{fill:none;stroke:var(--henna-soft);stroke-width:1.6}
+.ed-chapter button path{fill:none;stroke:transparent;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.ed-chapter button[aria-pressed=true]{border-style:solid;border-color:var(--henna);background:var(--henna);color:#fff8ec}
+.ed-chapter button[aria-pressed=true] circle{fill:#fff8ec;stroke:none}
+.ed-chapter button[aria-pressed=true] path{stroke:var(--henna)}
+.ed-chapter button:active{transform:scale(.95)}
+
+/* opened from a friend's link */
+.ed-friend{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;align-items:center;margin-bottom:12px;padding:12px;border-radius:18px;background:var(--blush)}
+.ed-friend canvas{width:100%;height:auto;border-radius:8px;box-shadow:0 6px 14px #2b1d1630}
+.ed-kicker{margin:0 0 2px;font-size:13px;font-weight:700;color:var(--henna)}
+.ed-friend h2{margin:0 0 10px;font-family:var(--font-display);font-size:20px;line-height:1.4}
+.ed-friend em,.ed-result-head em{font-style:normal;color:var(--henna)}
+.ed-friend .kit-primary{min-height:48px;font-size:16px}
+
+/* result */
+.ed-result{scroll-margin-top:12px;margin-top:28px;padding-top:24px;border-top:2px dashed var(--line)}
+.ed-result-head h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(25px,5vw,36px);line-height:1.4}
+.ed-result-head p{margin:0 0 18px;color:var(--muted)}
+.ed-result-body{display:grid;gap:22px}
+.ed-controls{display:grid;gap:18px;align-content:start}
+.ed-field{display:grid;gap:6px;font-weight:600}
+.ed-field small{font-weight:400;color:var(--muted);font-size:13px}
+.ed-field input{min-height:48px;border:1.5px solid var(--line);border-radius:12px;font-size:17px}
+.ed-date{margin:0;padding:10px 12px;border-left:4px solid var(--henna);border-radius:0 12px 12px 0;background:var(--blush);font-size:14px;line-height:1.6;color:var(--muted)}
+.ed-date strong{color:var(--ink)}
+.ed-date a{color:var(--henna);font-weight:600}
+.ed-everyone{margin-top:24px;padding:16px;border-radius:16px;background:var(--blush)}
+.ed-everyone h3{margin:0 0 6px;font-family:var(--font-display);font-size:20px}
+.ed-everyone p{margin:0 0 10px}
+.ed-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* captions and guide */
+.eid-captions h2,.eid-guide h2{font-family:var(--font-display);margin-bottom:6px}
+.eid-captions>p{color:var(--muted);margin-bottom:14px}
+.ed-captions{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.ed-captions li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 10px 10px 14px;border:1px solid var(--line);border-left:4px solid var(--henna);border-radius:12px;background:#fff}
+.ed-captions p{margin:0;font-size:16px;line-height:1.7}
+.ed-captions button{flex:none;min-height:44px;min-width:64px;padding:6px 12px;border:1.5px solid var(--accent-deep);border-radius:10px;background:#fff;color:var(--accent-deep);font-weight:600}
+.eid-guide ol{display:grid;gap:14px;margin:12px 0 0;padding:0;list-style:none}
+.eid-guide li{display:flex;gap:14px;align-items:flex-start}
+.eid-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--blush);color:var(--henna);font-weight:700}
+.eid-guide li p{margin:4px 0 0}
+
+@keyframes ed-dye{from{opacity:0;transform:scale(.4)}}
+
+/* very narrow phones: the swatches move under the hand row */
+@media(max-width:359px){
+  .ed-stage{grid-template-columns:88px minmax(0,1fr)}
+  .ed-stage-side{display:contents}
+  .ed-hand{grid-row:1/3}
+  .ed-swatches{grid-column:1/-1;grid-row:3}
+  .ed-swatches div{grid-template-columns:repeat(4,minmax(44px,1fr))}
+  .ed-swatches button{width:100%;border-radius:999px}
+  .ed-count strong{font-size:36px}
+}
+@media(min-width:760px){
+  .eid-hero{padding:30px 0 20px}
+  .ed-pick{display:grid;grid-template-columns:300px minmax(0,1fr);gap:28px;align-items:start}
+  .ed-stage{top:16px;grid-template-columns:1fr;padding:18px;justify-items:center;text-align:center}
+  .ed-hand{max-width:220px}
+  .ed-swatches legend{width:100%;text-align:center}
+  .ed-palette{grid-column:1}
+  .ed-items{grid-column:2;grid-row:1/span 2;padding-top:0;scroll-margin-top:16px}
+  .ed-result-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:36px}
+  .ed-friend{grid-template-columns:160px minmax(0,1fr);max-width:720px}
+  .ed-friend h2{font-size:24px}
+  .ed-captions{grid-template-columns:1fr 1fr}
+}
+@media(hover:hover){.ed-chapter button:hover{border-color:var(--henna)}}
+@media(prefers-reduced-motion:reduce){.ed-motif{animation:none}.ed-stage,.ed-chapter button,.ed-swatches button{transition:none}}

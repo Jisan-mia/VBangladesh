@@ -62,7 +62,7 @@ export const catalog = [
   { slug: "bangla-typing", name: "বাংলা টাইপিং স্পিড", description: "ফোনের বাংলা কিবোর্ডে ৬০ সেকেন্ড টাইপ করো, দেখো মিনিটে কয়টা শব্দ", category: "ভাষা আর পড়াশোনা", action: "টাইপ শুরু করো" },
   { slug: "jam", name: "জ্যামে জীবন", description: "রোজ কত মিনিট জ্যামে? দেখো জীবনের কত দিন গেল, তাতে কত কাপ চা হতো", category: "মজা আর কুইজ", action: "হিসাব করো" },
   { slug: "bhorta", name: "তুমি কোন ভর্তা?", description: "৬টা মজার প্রশ্নে শিলপাটায় বেটে দেখো, তুমি আলু, বেগুন না শুঁটকি ভর্তা", category: "নিজেকে জানো", action: "ভর্তা বাটো" },
-  { slug: "eider-din", name: "ঈদের দিন", description: "ঈদের দিন: খুলে দেখো, খেলে দেখো।", category: "উৎসব আর বিশ্বাস", action: "শুরু করো" },
+  { slug: "eider-din", name: "ঈদের দিন", description: "ঈদের দিনে কয়টা হলো? টিক দাও, জামার রঙে মেহেদি রাঙা হাত বানাও", category: "উৎসব আর বিশ্বাস", action: "টিক দাও" },
   { slug: "ganer-koli", name: "গানের কলি", description: "হাঁড়ি থেকে অক্ষর তোলো, ৩০ সেকেন্ডে গান ধরো, স্কোর রাখো এক ফোনে", category: "মজা আর কুইজ", action: "অক্ষর তোলো" },
   { slug: "attiyo", name: "কে কী হয়?", description: "কে কী হয়?: খুলে দেখো, খেলে দেখো।", category: "পরিবার আর প্রবাস", action: "শুরু করো" },
   { slug: "studior-chhobi", name: "স্টুডিওর ছবি", description: "স্টুডিওর ছবি: খুলে দেখো, খেলে দেখো।", category: "আঁকো আর সাজাও", action: "শুরু করো" },
