@@ -74,6 +74,7 @@ import { site as current_gelo } from '../tools/current-gelo/content';
 import { site as projonmo } from '../tools/projonmo/content';
 import { site as mama_jaben } from '../tools/mama-jaben/content';
 import { site as mess_jibon } from '../tools/mess-jibon/content';
+import { site as ekadosh } from '../tools/ekadosh/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -152,6 +153,7 @@ export const toolContent = {
   'projonmo': projonmo,
   'mama-jaben': mama_jaben,
   'mess-jibon': mess_jibon,
+  'ekadosh': ekadosh,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];

@@ -76,6 +76,7 @@ import { share as current_gelo } from '../tools/current-gelo/share';
 import { share as projonmo } from '../tools/projonmo/share';
 import { share as mama_jaben } from '../tools/mama-jaben/share';
 import { share as mess_jibon } from '../tools/mess-jibon/share';
+import { share as ekadosh } from '../tools/ekadosh/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -155,6 +156,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'projonmo': projonmo,
   'mama-jaben': mama_jaben,
   'mess-jibon': mess_jibon,
+  'ekadosh': ekadosh,
 };
 
 export function toolShare(tool: string): ToolShare | null {
