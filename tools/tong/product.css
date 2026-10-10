@@ -1,0 +1,108 @@
+.tool-tong{--accent:#b5532a;--accent-deep:#7d3417;--ink:#2b190c;--pen:#22408f;--pen-soft:#5a6da0;--print:#b8322a;--paper:#fbf5e6;--wood:#8f5e36;--wood-dark:#84532d;--gap:#3d2412;--muted:#6b5a4c;--line:#e7dccb}
+.tool-tong .tong-page{color:var(--ink)}
+.tool-tong .tong-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero: short so the chit and the first chips land on the first phone screen */
+.tong-hero{padding:18px 0 12px}
+.tong-hero-kicker{margin:0 0 4px;font-size:14px;font-weight:600;color:var(--accent)}
+.tong-hero h1{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(30px,7.4vw,58px);line-height:1.25;font-weight:700;letter-spacing:0}
+.tong-hero h1 span{color:var(--accent)}
+.tong-lead{max-width:580px;margin:0;color:var(--muted);font-size:15px;line-height:1.7}
+
+/* the bench: planks with dark gaps and a little grain */
+.tong-stall{display:grid;gap:18px}
+.tong-bench{padding:18px 14px 20px;border-radius:16px;background:repeating-linear-gradient(transparent 0 62px,var(--gap) 62px 65px),repeating-linear-gradient(92deg,#ffffff0d 0 2px,transparent 2px 19px),linear-gradient(var(--wood),var(--wood-dark))}
+
+/* the chit: memo-pad page, red glued top, a tea-glass ring left on it */
+.tong-chit{position:relative;margin:0;padding:22px 16px 14px;color:var(--pen);background:radial-gradient(circle at calc(100% - 46px) 46px,transparent 30px,#8f4e1f26 31px 35px,transparent 36px),repeating-linear-gradient(transparent 0 35px,#dde3ef 35px 36px),var(--paper);box-shadow:0 10px 22px #1e0f0559;transform:rotate(-1deg)}
+.tong-chit:before{content:'';position:absolute;inset:0 0 auto;height:10px;background:#a8322a;box-shadow:0 2px 0 #00000018}
+.tong-chit-head{margin:0 0 8px;font-size:13px;font-weight:600;color:var(--print)}
+.tong-chit-head b{font-family:var(--font-display);font-size:15px}
+.tong-chit-friends{margin:0 0 6px;padding:0 0 6px;list-style:none;border-bottom:2px dashed #c8cfe0}
+.tong-chit-friends li{display:flex;align-items:center;gap:8px;min-height:36px;font-family:var(--font-display);font-size:15px;line-height:1.35}
+.tong-chit-friends svg{flex:none;width:30px;height:30px}
+.tong-chit-friends b{color:var(--print)}
+.tong-chit-friends small{display:block;font-family:var(--font-bengali);font-size:12px;color:var(--pen-soft)}
+.tong-chit-mine{display:flex;align-items:center;gap:12px}
+.tong-cup{flex:none;width:72px;height:72px}
+.tong-chit-mine p{display:grid;margin:0;min-width:0;line-height:1.4}
+.tong-chit-mine strong{font-family:var(--font-display);font-size:28px;font-weight:700;animation:tong-write .45s ease-out}
+.tong-chit-mine span{font-family:var(--font-display);font-size:17px;font-weight:600}
+.tong-chit-mine span+span{font-size:15px;color:var(--pen-soft)}
+.tong-tea{transition:fill .35s ease}
+.tong-steam{stroke-dasharray:4 3;animation:tong-steam 2.4s linear infinite}
+@keyframes tong-write{from{clip-path:inset(0 0 0 100%)}to{clip-path:inset(0)}}
+@keyframes tong-steam{to{stroke-dashoffset:-14}}
+
+/* the picks */
+.tong-picks{display:grid;gap:16px}
+.tong-group{min-width:0;margin:0;padding:0;border:0}
+.tong-group legend{padding:0;margin-bottom:8px;font-family:var(--font-display);font-size:18px;font-weight:700}
+.tong-group legend small{font-family:var(--font-bengali);font-size:13px;font-weight:400;color:var(--muted)}
+.tong-teas,.tong-row{display:flex;flex-wrap:wrap;gap:8px}
+.tong-picks button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 14px;border:1.5px solid #d8c8b2;border-radius:999px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;transition:transform .12s ease,background-color .15s ease}
+.tong-picks button:active{transform:scale(.95)}
+.tong-picks button[aria-pressed=true]{border-color:var(--accent-deep);background:var(--accent);color:#fff}
+.tong-teas i{flex:none;width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 1.5px #2b190c55}
+.tong-sides{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tong-picks .tong-sides button{flex-direction:column;justify-content:center;gap:2px;min-height:76px;padding:8px 4px;border-radius:14px;font-size:14px;line-height:1.3;text-align:center}
+.tong-sides svg{width:34px;height:34px}
+.tong-sides button[aria-pressed=true] svg .tong-steam{stroke:#fff}
+
+/* opened from a friend's link */
+.tong-friend{margin:0 0 16px;padding:14px 16px;border-radius:16px;background:#fff1d6;border-left:6px solid var(--accent)}
+.tong-kicker{margin:0 0 2px;font-size:13px;font-weight:700;color:var(--print)}
+.tong-friend h2{margin:0 0 6px;font-family:var(--font-display);font-size:21px;line-height:1.45}
+.tong-friend h2 span{color:var(--accent)}
+.tong-friend p{margin:0;font-size:15px;line-height:1.6;color:var(--muted)}
+.tong-friend .kit-link{min-height:44px;font-size:15px;color:var(--accent-deep)}
+.tong-proof{display:inline-block;margin:0 0 12px;padding:6px 14px;border-radius:999px;background:#fff1d6;font-size:15px}
+.tong-proof strong{color:var(--accent-deep)}
+
+/* result */
+.tong-result{scroll-margin-top:12px;margin-top:30px;padding-top:24px;border-top:2px solid var(--ink)}
+.tong-result-head h2{margin:0 0 4px;font-family:var(--font-display);font-size:clamp(25px,5vw,36px);line-height:1.4}
+.tong-result-head p{margin:0 0 16px;color:var(--accent-deep);font-weight:600}
+.tong-result-body{display:grid;gap:22px}
+.tong-controls{display:grid;gap:18px;align-content:start}
+.tong-field{display:grid;gap:6px;font-weight:600}
+.tong-field small{font-weight:400;color:var(--muted);font-size:13px}
+.tong-field input{min-height:48px;border:1.5px solid #d8c8b2;border-radius:12px;font-size:17px}
+.tool-tong .kit-chips button[aria-pressed=true]{border-color:var(--ink);background:var(--ink)}
+
+/* opt-in tally */
+.tong-everyone{margin-top:28px;padding:18px;border-radius:16px;background:#f7efe3}
+.tong-everyone h3{margin:0 0 6px;font-family:var(--font-display);font-size:21px}
+.tong-everyone>p{margin:0 0 12px;color:var(--muted)}
+.tong-bars{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.tong-bars li{display:grid;grid-template-columns:minmax(0,1fr) 48px;grid-template-areas:"label pct" "bar bar";gap:2px 8px;font-size:15px}
+.tong-bars span{grid-area:label}
+.tong-bars b{grid-area:pct;text-align:right}
+.tong-bars i{grid-area:bar;display:block;height:8px;min-width:4px;border-radius:99px;background:var(--accent);transition:width .6s ease}
+.tong-bars .tong-bars-note{display:block;font-size:13px;color:var(--muted)}
+
+.tong-caption-section h2,.tong-guide h2{font-family:var(--font-display);margin:0 0 6px}
+.tong-caption-section>p{margin:0 0 14px;color:var(--muted)}
+.tong-captions{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.tong-captions li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 12px 12px 16px;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;background:#fff}
+.tong-captions p{margin:0;font-size:16px;line-height:1.7}
+.tong-captions button{flex:none;min-height:44px;min-width:64px;padding:6px 12px;border:1.5px solid var(--ink);border-radius:10px;background:#fff;color:var(--ink);font-weight:600}
+.tong-guide h2{margin-bottom:16px}
+.tong-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none;max-width:720px}
+.tong-guide li{display:flex;gap:14px;align-items:flex-start}
+.tong-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#f3d7a8;font-weight:700}
+.tong-guide li p{margin:4px 0 0}
+
+@media(min-width:720px){
+  .tong-captions{grid-template-columns:1fr 1fr}
+  .tong-sides{grid-template-columns:repeat(8,minmax(0,1fr))}
+}
+@media(min-width:900px){
+  .tong-hero{padding:36px 0 22px}
+  .tong-stall{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:36px;align-items:start}
+  .tong-bench{position:sticky;top:16px}
+  .tong-sides{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .tong-result-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:36px}
+}
+@media(hover:hover){.tong-picks button:hover{border-color:var(--accent)}}
+@media(prefers-reduced-motion:reduce){.tong-chit-mine strong,.tong-steam{animation:none}.tong-tea,.tong-picks button,.tong-bars i{transition:none}}
