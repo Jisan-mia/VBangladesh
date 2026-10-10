@@ -21,6 +21,7 @@ import { site as boyos } from '../tools/boyos/content';
 import { site as iftar_plate } from '../tools/iftar-plate/content';
 import { site as cinema_poster } from '../tools/cinema-poster/content';
 import { site as banan } from '../tools/banan/content';
+import { site as dom_atkano } from '../tools/dom-atkano/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -46,6 +47,7 @@ export const toolContent = {
   'iftar-plate': iftar_plate,
   'cinema-poster': cinema_poster,
   'banan': banan,
+  'dom-atkano': dom_atkano,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];

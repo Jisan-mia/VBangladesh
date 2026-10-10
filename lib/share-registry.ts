@@ -23,6 +23,7 @@ import { share as boyos } from '../tools/boyos/share';
 import { share as iftar_plate } from '../tools/iftar-plate/share';
 import { share as cinema_poster } from '../tools/cinema-poster/share';
 import { share as banan } from '../tools/banan/share';
+import { share as dom_atkano } from '../tools/dom-atkano/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -49,6 +50,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'iftar-plate': iftar_plate,
   'cinema-poster': cinema_poster,
   'banan': banan,
+  'dom-atkano': dom_atkano,
 };
 
 export function toolShare(tool: string): ToolShare | null {
