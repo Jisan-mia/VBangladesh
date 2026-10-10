@@ -72,7 +72,7 @@ export const catalog = [
   { slug: "char-priyo", name: "চার প্রিয়", description: "চার প্রিয়: খুলে দেখো, খেলে দেখো।", category: "নিজেকে জানো", action: "শুরু করো" },
   { slug: "dhadha", name: "আজকের ধাঁধা", description: "আজকের ধাঁধা: খুলে দেখো, খেলে দেখো।", category: "মজা আর কুইজ", action: "শুরু করো" },
   { slug: "tokhon-ekhon", name: "দাম তখন আর এখন", description: "জন্মসালের ১০০ টাকা এখন কত? সাল বেছে নাও, আব্বুর পুরোনো মানিব্যাগ খুলে দেখো", category: "স্মৃতি আর গল্প", action: "সাল বেছে নাও" },
-  { slug: "namta", name: "নামতা চ্যালেঞ্জ", description: "নামতা চ্যালেঞ্জ: খুলে দেখো, খেলে দেখো।", category: "ভাষা আর পড়াশোনা", action: "শুরু করো" },
+  { slug: "namta", name: "নামতা চ্যালেঞ্জ", description: "২ থেকে ২০-এর নামতা খেলো, ভুল হলে স্লেট আলতো করে ঠিকটা দেখায়", category: "ভাষা আর পড়াশোনা", action: "নামতা খেলো" },
   { slug: "prothom-ay", name: "আমার প্রথম আয়", description: "আমার প্রথম আয়: খুলে দেখো, খেলে দেখো।", category: "পরিবার আর প্রবাস", action: "শুরু করো" },
   { slug: "ami-bolechhilam", name: "আমি বলেছিলাম!", description: "আমি বলেছিলাম!: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
