@@ -1,0 +1,100 @@
+.tool-matir-bank{--accent:#17694a;--accent-deep:#0c4430;--sky:#f6c548;--sky-deep:#eba52d;--ink:#3b1608;--muted:#6e4422;--clay:#bf5a2c;--clay-dark:#7d3313;--cream:#fff3d6;--red:#c8302a;--coin:#f3c64a;--coin-rim:#a87512;--mat:#e8cf98;--mat-dark:#c79a52;--line:#ecd9b4}
+.tool-matir-bank .mb-wrap{color:var(--ink)}
+
+/* hero: short, so the bank and its button sit on the first phone screen */
+.mb-hero{padding:12px 0 10px}
+.mb-kicker{margin:0 0 2px;font-size:14px;font-weight:600;color:var(--accent)}
+.mb-hero h1{margin:0 0 4px;font-family:var(--font-display);font-size:clamp(28px,7.4vw,50px);line-height:1.25;font-weight:700;letter-spacing:0}
+.mb-hero h1 span{color:var(--clay)}
+.mb-lead{max-width:560px;margin:0;color:var(--muted);font-size:15px;line-height:1.6}
+
+.mb{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:760px;margin-inline:auto}
+.mb *{min-width:0}
+
+/* opened from a friend's link */
+.mb-friend{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:center;padding:12px 14px;border-left:5px solid var(--accent);border-radius:4px 16px 16px 4px;background:#fdf0cf}
+.mb-friend canvas{width:100%;height:auto;border-radius:6px;box-shadow:0 6px 16px #3b160826;transform:rotate(-3deg)}
+.mb-friend-kicker{margin:0 0 2px;font-size:13px;font-weight:700;color:var(--accent)}
+.mb-friend h2{margin:0 0 6px;font-family:var(--font-display);font-size:19px;line-height:1.45}
+.mb-friend h2 span{color:var(--clay-dark)}
+.mb-friend-progress{margin:0 0 8px;font-weight:700;font-size:15px}
+.mb-friend .kit-primary{min-height:48px;font-size:16px}
+
+/* the stage: a mela-yellow wall, the painted bank standing on a শীতলপাটি */
+.mb-stage{display:grid;justify-items:center;gap:6px;padding:14px 14px 16px;border-radius:20px;text-align:center;scroll-margin-top:12px;background:linear-gradient(var(--sky),var(--sky-deep));box-shadow:0 12px 30px #a8751233;overflow:hidden}
+.mb-scene{position:relative;display:grid;justify-items:center;width:calc(100% + 28px);margin:-4px -14px 0}
+.mb-scene::before{content:"";position:absolute;inset:auto 0 0;height:15%;border-top:5px solid var(--red);box-shadow:inset 0 3px var(--accent);background:repeating-conic-gradient(var(--mat) 0 25%,var(--mat-dark) 0 50%) 0 0/24px 12px}
+.mb-owner{margin:0;font-size:15px;font-weight:600;color:var(--muted)}
+.mb-owner span{color:var(--ink);font-weight:700}
+.mb-total{display:grid;margin:0;line-height:1.2}
+.mb-total strong{font-family:var(--font-display);font-size:clamp(40px,12vw,58px);font-weight:800;overflow-wrap:anywhere}
+.mb-total span{font-size:15px;font-weight:600}
+.mb-art{position:relative;display:block;width:min(60vw,230px);height:auto;overflow:visible}
+.mb-count{display:grid;margin:0;line-height:1.4}
+.mb-count b{font-family:var(--font-display);font-size:21px}
+.mb-count span{font-size:15px;font-weight:600;color:var(--clay-dark)}
+.mb-drop{width:100%;max-width:420px;min-height:56px;font-size:19px;font-family:var(--font-display)}
+.mb-stage-row{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px}
+.mb-stage .kit-link{color:var(--ink)}
+.mb-stage .kit-link:disabled{opacity:.4}
+.mb-problem{margin:0;padding:18px 4px;font-size:16px;font-weight:600;line-height:1.5}
+
+/* the goal: three short questions, written like a sum on a khata */
+.mb-goal{display:grid;gap:14px;padding:14px;border:1.5px solid var(--line);border-radius:16px;background:#fffaf0}
+.mb-chips{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;padding:0;border:0}
+.mb-chips legend{padding:0;margin-bottom:6px;font-family:var(--font-display);font-size:17px;font-weight:700}
+.mb-chips button{min-height:44px;padding:6px 14px;border:1.5px solid #dcc193;border-radius:999px;background:#fff;color:var(--ink);font-size:15px;font-weight:600}
+.mb-chips button[aria-pressed=true]{border-color:var(--accent-deep);background:var(--accent-deep);color:#fff}
+.mb-chips:disabled{opacity:.55}
+.mb-own{display:flex;align-items:center;gap:6px;min-height:44px;padding:0 4px 0 12px;border:1.5px dashed #dcc193;border-radius:999px;background:#fff;font-size:15px;font-weight:600}
+.mb-own input{width:96px;min-height:40px;padding:2px 8px;border:0;border-radius:999px;background:#f7ecd6;color:var(--ink);font-size:16px;font-weight:700}
+.mb-own:focus-within{outline:3px solid var(--accent);outline-offset:2px}
+.mb-own input:focus{outline:none}
+.mb-own[data-bad]{border-color:var(--red)}
+.mb-date input{width:auto;max-width:160px}
+.mb-date[data-on]{border-style:solid;border-color:var(--accent-deep)}
+.mb-sum{margin:0;padding-top:10px;border-top:1.5px dashed #dcc193;font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--accent-deep)}
+.mb-note,.mb-source{margin:0;font-size:13px;line-height:1.6;color:var(--muted)}
+.mb-source a{color:inherit;text-underline-offset:3px}
+.mb-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* one circle per coin: gold once it's in the bank */
+.mb-grid-wrap{display:grid;gap:8px}
+.mb-grid-title{margin:0;font-family:var(--font-display);font-size:17px;font-weight:700}
+.mb-grid-title small{margin-left:6px;font-family:inherit;font-size:13px;font-weight:500;color:var(--muted)}
+.mb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(18px,1fr));gap:5px;margin:0;padding:0;list-style:none}
+.mb-grid li{aspect-ratio:1;border:1.5px dashed #d7bd8e;border-radius:50%}
+.mb-grid li[data-on]{border:2px solid var(--coin-rim);background:radial-gradient(circle,var(--coin) 0 45%,#e8b73c 46% 55%,var(--coin) 56%)}
+
+.mb-result{display:grid;gap:12px;scroll-margin-top:12px;padding-top:18px;border-top:2px dashed #dcc193}
+.mb-result h2{margin:0;font-family:var(--font-display);font-size:22px}
+.mb-result-body{display:grid;gap:18px}
+.mb-controls{display:grid;gap:18px;align-content:start}
+.mb-field{display:grid;gap:4px;font-weight:700}
+.mb-field small,.mb-check small{font-weight:400;color:var(--muted);font-size:13px}
+.mb-field input{min-height:48px;border:1.5px solid #dcc193;border-radius:12px;font-size:17px}
+.mb-check{display:flex;align-items:flex-start;gap:10px;min-height:44px;font-weight:700;cursor:pointer}
+.mb-check input{flex:none;width:24px;height:24px;margin:2px 0 0;accent-color:var(--accent)}
+.mb-check span{display:grid}
+.tool-matir-bank .kit-chips button[aria-pressed=true]{border-color:var(--accent-deep);background:var(--accent-deep)}
+
+.mb-guide h2{font-family:var(--font-display);margin-bottom:10px}
+.mb-guide>p{color:var(--muted)}
+.mb-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.mb-guide li{display:flex;gap:14px;align-items:flex-start}
+.mb-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border:2px solid var(--coin-rim);border-radius:50%;background:var(--coin);font-weight:700}
+.mb-guide li p{margin:4px 0 0}
+
+@media(min-width:760px){.mb-art{width:250px}}
+@media(min-width:900px){.mb-result-body{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
+@media(prefers-reduced-motion:no-preference){
+  .mb-pot{transform-box:fill-box;transform-origin:50% 100%;animation:mb-wobble .5s ease-out .28s}
+  .mb-pot[data-cracked=true]{animation:mb-crack .45s ease-out}
+  .mb-coin{animation:mb-drop .42s cubic-bezier(.5,0,.9,.6) both}
+  .mb-grid li[data-on]{animation:mb-pop .3s ease-out}
+}
+.mb-coin{opacity:0}
+@keyframes mb-drop{0%{opacity:1;transform:translateY(-34px)}80%{opacity:1}100%{opacity:0;transform:translateY(36px) scaleY(.4)}}
+@keyframes mb-wobble{0%,100%{transform:none}30%{transform:rotate(-3deg)}65%{transform:rotate(2deg)}}
+@keyframes mb-crack{0%{transform:scale(1)}40%{transform:scale(1.06) rotate(-2deg)}100%{transform:none}}
+@keyframes mb-pop{from{transform:scale(.4)}}

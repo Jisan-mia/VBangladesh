@@ -50,7 +50,7 @@ export const catalog = [
   { slug: "amar-bochhor", name: "আমার বছর", description: "তোমার বছরের খাবার, জায়গা আর শব্দ ছুঁয়ে বানাও বার্ষিকীর প্রচ্ছদ", category: "স্মৃতি আর গল্প", action: "প্রচ্ছদ বানাও" },
   { slug: "daknam", name: "ডাকনাম কী হতো?", description: "বড় না ছোট, চঞ্চল না শান্ত? তিন চাপে দেখো ছোটবেলায় তোমার ডাকনাম কী হতো", category: "নিজেকে জানো", action: "ডাকনাম দেখো" },
   { slug: "cha-mudra", name: "চায়ের কাপে হিসাব", description: "যেকোনো দাম লেখো, দেখো কত কাপ চা আর কয়টা সিঙ্গারা হয়", category: "মজা আর কুইজ", action: "দাম মাপো" },
-  { slug: "matir-bank", name: "মাটির ব্যাংক", description: "মাটির ব্যাংক: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
+  { slug: "matir-bank", name: "মাটির ব্যাংক", description: "রোজ কত জমাবে আর কবে ভাঙবে বেছে নাও, দেখো ঈদে কত হবে", category: "হিসাব-নিকাশ", action: "পয়সা ফেলো" },
   { slug: "shesh-bol", name: "শেষ বলে ছয়", description: "শেষ বলে ছয়: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
   { slug: "dhoyahin", name: "ধোঁয়াহীন দিন", description: "ধোঁয়াহীন দিন: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
   { slug: "ghuri", name: "ঘুড়ি আর ফানুস", description: "ঘুড়ি আর ফানুস: খুলে দেখো, খেলে দেখো।", category: "আঁকো আর সাজাও", action: "শুরু করো" },

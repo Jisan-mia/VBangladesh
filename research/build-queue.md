@@ -200,7 +200,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 6 | amar-bochhor | আমার বছর | স্মৃতি আর গল্প | CR07 | done | #b-amar-bochhor |
 | 6 | daknam | ডাকনাম কী হতো? | নিজেকে জানো | ID03 | done | #b-daknam |
 | 6 | cha-mudra | চায়ের কাপে হিসাব | মজা আর কুইজ | MO06, MO04 | done | #b-cha-mudra |
-| 6 | matir-bank | মাটির ব্যাংক | হিসাব-নিকাশ | MO09, CR09 | building | #b-matir-bank |
+| 6 | matir-bank | মাটির ব্যাংক | হিসাব-নিকাশ | MO09, CR09 | done | #b-matir-bank |
 | 6 | shesh-bol | শেষ বলে ছয় | খেলাধুলা | SP15 | building | #b-shesh-bol |
 | 7 | dhoyahin | ধোঁয়াহীন দিন | হিসাব-নিকাশ | HL04 | building | #b-dhoyahin |
 | 7 | ghuri | ঘুড়ি আর ফানুস | আঁকো আর সাজাও | CR08, FA13 | building | #b-ghuri |
