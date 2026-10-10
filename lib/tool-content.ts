@@ -16,6 +16,7 @@ import { site as argentina_na_brazil } from '../tools/argentina-na-brazil/conten
 import { site as koto_din_baki } from '../tools/koto-din-baki/content';
 import { site as mishtir_baksho } from '../tools/mishtir-baksho/content';
 import { site as taka_kothay } from '../tools/taka-kothay/content';
+import { site as amar_jersey } from '../tools/amar-jersey/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -36,6 +37,7 @@ export const toolContent = {
   'koto-din-baki': koto_din_baki,
   'mishtir-baksho': mishtir_baksho,
   'taka-kothay': taka_kothay,
+  'amar-jersey': amar_jersey,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
