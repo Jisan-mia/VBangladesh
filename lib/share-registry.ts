@@ -51,6 +51,7 @@ import { share as sehri_iftar } from '../tools/sehri-iftar/share';
 import { share as chithi } from '../tools/chithi/share';
 import { share as bangla_typing } from '../tools/bangla-typing/share';
 import { share as jam } from '../tools/jam/share';
+import { share as bhorta } from '../tools/bhorta/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -105,6 +106,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'chithi': chithi,
   'bangla-typing': bangla_typing,
   'jam': jam,
+  'bhorta': bhorta,
 };
 
 export function toolShare(tool: string): ToolShare | null {

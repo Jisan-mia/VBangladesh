@@ -49,6 +49,7 @@ import { site as sehri_iftar } from '../tools/sehri-iftar/content';
 import { site as chithi } from '../tools/chithi/content';
 import { site as bangla_typing } from '../tools/bangla-typing/content';
 import { site as jam } from '../tools/jam/content';
+import { site as bhorta } from '../tools/bhorta/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -102,6 +103,7 @@ export const toolContent = {
   'chithi': chithi,
   'bangla-typing': bangla_typing,
   'jam': jam,
+  'bhorta': bhorta,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
