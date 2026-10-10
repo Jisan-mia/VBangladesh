@@ -173,7 +173,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | wave | slug | বাংলা নাম | category | idea IDs | status | brief |
 |---|---|---|---|---|---|---|
 | 1 | gpa | জিপিএ কত? | ভাষা আর পড়াশোনা | ED01 | building | #b-gpa |
-| 1 | komon-porlo | কয়টা কমন পড়ল? | মজা আর কুইজ | FM05, FM06, ID10, ID11 | building | #b-komon-porlo |
+| 1 | komon-porlo | কয়টা কমন পড়ল? | মজা আর কুইজ | FM05, FM06, ID10, ID11 | done | #b-komon-porlo |
 | 1 | argentina-na-brazil | আর্জেন্টিনা না ব্রাজিল? | খেলাধুলা | SP01, SP13 | done | #b-argentina-na-brazil |
 | 1 | koto-din-baki | কত দিন বাকি? | উৎসব আর বিশ্বাস | FA02, FA11, TI09 | building | #b-koto-din-baki |
 | 1 | mishtir-baksho | মিষ্টির বাক্স | খাবারদাবার | FO01 | building | #b-mishtir-baksho |
