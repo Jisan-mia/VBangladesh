@@ -93,7 +93,7 @@ export const catalog = [
   { slug: "raat-jaga", name: "রাত জেগে খেলা", description: "বিশ্বকাপের ২০টা মাঝরাতের ম্যাচের কয়টা জেগে দেখেছ? দাগাও, তারায় ভরা আকাশ বানাও", category: "খেলাধুলা", action: "রাত দাগাও" },
   { slug: "betoner-bhag", name: "বেতনের ভাগ", description: "বেতনের কত ভাগ কোথায় যায়, টিফিন ক্যারিয়ারের ছয় বাটিতে দেখো। শুধু শতাংশ", category: "হিসাব-নিকাশ", action: "ভাগ বসাও" },
   { slug: "bidyut-bill", name: "বিদ্যুৎ বিল কত?", description: "বিদ্যুৎ বিল কত?: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
-  { slug: "mondop", name: "মণ্ডপ ঘুরি", description: "মণ্ডপ ঘুরি: খুলে দেখো, খেলে দেখো।", category: "উৎসব আর বিশ্বাস", action: "শুরু করো" },
+  { slug: "mondop", name: "মণ্ডপ ঘুরি", description: "পূজায় প্রতিটা মণ্ডপ ঘুরে + চাপো, চালচিত্রে প্রদীপ জ্বলবে। বন্ধুর সাথে মেলাও", category: "উৎসব আর বিশ্বাস", action: "মণ্ডপ গুনি" },
   { slug: "grade-dao", name: "গ্রেড দাও", description: "ফুচকা, বর্ষা, লোকাল বাসকে A+ থেকে F দাও, দেখো দেশ কত দিল", category: "মজা আর কুইজ", action: "গ্রেড দাও" },
   { slug: "adda", name: "আড্ডায় তুমি কে?", description: "আড্ডায় তুমি কে?: খুলে দেখো, খেলে দেখো।", category: "নিজেকে জানো", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
