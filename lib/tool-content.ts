@@ -57,6 +57,7 @@ import { site as studior_chhobi } from '../tools/studior-chhobi/content';
 import { site as koto_cheno } from '../tools/koto-cheno/content';
 import { site as eidjatra } from '../tools/eidjatra/content';
 import { site as probash } from '../tools/probash/content';
+import { site as char_priyo } from '../tools/char-priyo/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -118,6 +119,7 @@ export const toolContent = {
   'koto-cheno': koto_cheno,
   'eidjatra': eidjatra,
   'probash': probash,
+  'char-priyo': char_priyo,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
