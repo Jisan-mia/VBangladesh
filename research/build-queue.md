@@ -215,7 +215,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 9 | eider-din | ঈদের দিন | উৎসব আর বিশ্বাস | FA09, FA14 | building | #b-eider-din |
 | 9 | ganer-koli | গানের কলি | মজা আর কুইজ | FM04 | building | #b-ganer-koli |
 | 9 | attiyo | কে কী হয়? | পরিবার আর প্রবাস | ID14 | building | #b-attiyo |
-| 9 | studior-chhobi | স্টুডিওর ছবি | আঁকো আর সাজাও | CR01 | todo | #b-studior-chhobi |
+| 9 | studior-chhobi | স্টুডিওর ছবি | আঁকো আর সাজাও | CR01 | building | #b-studior-chhobi |
 | 9 | koto-cheno | আমাকে কতটা চেনো? | নিজেকে জানো | ID12 | todo | #b-koto-cheno |
 | 10 | eidjatra | ঈদযাত্রা | উৎসব আর বিশ্বাস | CI06 | todo | #b-eidjatra |
 | 10 | probash | প্রবাস জীবন | পরিবার আর প্রবাস | TI08 | todo | #b-probash |
