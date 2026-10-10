@@ -55,6 +55,7 @@ import { site as ganer_koli } from '../tools/ganer-koli/content';
 import { site as attiyo } from '../tools/attiyo/content';
 import { site as studior_chhobi } from '../tools/studior-chhobi/content';
 import { site as koto_cheno } from '../tools/koto-cheno/content';
+import { site as eidjatra } from '../tools/eidjatra/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -114,6 +115,7 @@ export const toolContent = {
   'attiyo': attiyo,
   'studior-chhobi': studior_chhobi,
   'koto-cheno': koto_cheno,
+  'eidjatra': eidjatra,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
