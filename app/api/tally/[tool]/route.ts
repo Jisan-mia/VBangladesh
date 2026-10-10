@@ -4,11 +4,13 @@ import { toolShare } from '../../../../lib/share-registry';
 
 type Context = { params: Promise<{ tool: string }> };
 
+const prefixOf = (request: Request) => (new URL(request.url).searchParams.get('prefix') ?? '').slice(0, 40);
+
 // Anonymous "compare with everyone" counts. No name, photo or IP is stored, only a hashed random browser token.
-export async function GET(_request: Request, { params }: Context) {
+export async function GET(request: Request, { params }: Context) {
   const { tool } = await params;
   if (!toolShare(tool)?.tally) return fail('unknown-tool', 404);
-  return Response.json(readTally(tool), { headers: { 'Cache-Control': 'public, max-age=30' } });
+  return Response.json(readTally(tool, prefixOf(request)), { headers: { 'Cache-Control': 'public, max-age=30' } });
 }
 
 export async function POST(request: Request, { params }: Context) {
@@ -21,5 +23,5 @@ export async function POST(request: Request, { params }: Context) {
   const token = typeof body?.token === 'string' && /^[A-Za-z0-9_-]{16,64}$/.test(body.token) ? body.token : '';
   const items = Array.isArray(body?.items) ? body.items : null;
   if (!token || !items || items.length > allowed.length || !items.every(item => typeof item === 'string' && allowed.includes(item))) return fail('invalid', 400);
-  return Response.json(recordTally(tool, token, [...new Set(items as string[])]), { headers: { 'Cache-Control': 'no-store' } });
+  return Response.json(recordTally(tool, token, [...new Set(items as string[])], prefixOf(request)), { headers: { 'Cache-Control': 'no-store' } });
 }

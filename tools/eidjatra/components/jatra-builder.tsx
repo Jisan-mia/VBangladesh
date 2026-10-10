@@ -5,7 +5,7 @@ import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-
 import { addToTally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard, drawStage } from "../lib/draw-card";
-import { averageLine, bn, caption, clampHours, compareLine, defaults, divisions, HOURS, humanLine, MAX_NAME, modes, parseShareHash, possessive, readDigits, routeAverage, routeLabel, routeWords, shareHash, tallyId, tripLine, MIN_SAMPLE, mode, type Average, type DivisionId, type ModeId, type Trip } from "../lib/jatra";
+import { EVENT, averageLine, bn, caption, clampHours, compareLine, defaults, divisions, HOURS, humanLine, MAX_NAME, modes, parseShareHash, possessive, readDigits, routeAverage, routeLabel, routeWords, shareHash, tallyId, tripLine, MIN_SAMPLE, mode, type Average, type DivisionId, type ModeId, type Trip } from "../lib/jatra";
 
 const TOOL = "eidjatra";
 type Added = { status: "idle" | "sending" | "failed" } | { status: "done"; average: Average | null };
@@ -89,7 +89,7 @@ export function JatraBuilder() {
 
   async function addMine() {
     setAdded({ status: "sending" });
-    const tally = await addToTally(TOOL, [tallyId(trip)]);
+    const tally = await addToTally(TOOL, [tallyId(trip)], `${EVENT}:`);
     setAdded(tally ? { status: "done", average: routeAverage(tally.counts, trip) } : { status: "failed" });
   }
 

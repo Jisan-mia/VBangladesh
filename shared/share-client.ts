@@ -31,16 +31,17 @@ function voterToken() {
   }
 }
 
-export async function readTally(tool: string): Promise<Tally | null> {
+/** `prefix` returns only ids starting with it (plus the total), for tools whose ids pile up per day or event. */
+export async function readTally(tool: string, prefix = ""): Promise<Tally | null> {
   try {
-    const response = await fetch(`/api/tally/${tool}`);
+    const response = await fetch(`/api/tally/${tool}${prefix ? `?prefix=${encodeURIComponent(prefix)}` : ""}`);
     return response.ok ? await response.json() as Tally : null;
   } catch { return null; }
 }
 
-export async function addToTally(tool: string, items: readonly string[]): Promise<Tally | null> {
+export async function addToTally(tool: string, items: readonly string[], prefix = ""): Promise<Tally | null> {
   try {
-    const response = await fetch(`/api/tally/${tool}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: voterToken(), items }) });
+    const response = await fetch(`/api/tally/${tool}${prefix ? `?prefix=${encodeURIComponent(prefix)}` : ""}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: voterToken(), items }) });
     return response.ok ? await response.json() as Tally : null;
   } catch { return null; }
 }

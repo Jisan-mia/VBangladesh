@@ -36,19 +36,20 @@ export function getShare(id: string): { tool: string; state: string } | undefine
   return db().prepare('SELECT tool, state FROM shares WHERE id = ?').get(id) as { tool: string; state: string } | undefined;
 }
 
-export function readTally(tool: string): Tally {
+/** `prefix` keeps the reply small for tools whose ids pile up per day or event. */
+export function readTally(tool: string, prefix = ''): Tally {
   const rows = db().prepare('SELECT item, count FROM tally_counts WHERE tool = ?').all(tool) as Array<{ item: string; count: number }>;
   const counts: Record<string, number> = {};
   let total = 0;
   for (const row of rows) {
     if (row.item === TOTAL) total = row.count;
-    else counts[row.item] = row.count;
+    else if (row.item.startsWith(prefix)) counts[row.item] = row.count;
   }
   return { total, counts };
 }
 
 /** One vote per browser token per tool; voting again replaces the earlier picks instead of adding to them. */
-export function recordTally(tool: string, token: string, items: readonly string[]): Tally {
+export function recordTally(tool: string, token: string, items: readonly string[], prefix = ''): Tally {
   const voter = createHash('sha256').update(`${tool}:${token}`).digest('base64url').slice(0, 24);
   transaction(() => {
     const previous = db().prepare('SELECT items FROM tally_votes WHERE tool = ? AND voter = ?').get(tool, voter) as { items: string } | undefined;
@@ -60,7 +61,7 @@ export function recordTally(tool: string, token: string, items: readonly string[
     if (!previous) bump.run(tool, TOTAL, 1);
     db().prepare('INSERT INTO tally_votes (tool, voter, items, updated_at) VALUES (?, ?, ?, ?) ON CONFLICT (tool, voter) DO UPDATE SET items = excluded.items, updated_at = excluded.updated_at').run(tool, voter, JSON.stringify([...after]), Date.now());
   });
-  return readTally(tool);
+  return readTally(tool, prefix);
 }
 
 export function addSuggestion(tool: string, text: string) {
