@@ -87,7 +87,7 @@ export const catalog = [
   { slug: "mama-jaben", name: "মামা, যাবেন?", description: "রিকশার মামার সাথে দরদাম করো, ন্যায্য ভাড়ায় রাজি করাতে পারো?", category: "মজা আর কুইজ", action: "দরদাম করো" },
   { slug: "mess-jibon", name: "হল-মেস জীবন", description: "ডিম-ডাল সপ্তাহ, ম্যাগি রাত… হল-মেসের ৪০টা মুহূর্তের কয়টা তোমার? মিল কার্ডে ফুটো করে দেখো", category: "স্মৃতি আর গল্প", action: "ফুটো করো" },
   { slug: "ekadosh", name: "স্বপ্নের একাদশ", description: "স্বপ্নের একাদশ: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },
-  { slug: "gorur-ojon", name: "গরুর ওজন কত?", description: "গরুর ওজন কত?: খুলে দেখো, খেলে দেখো।", category: "উৎসব আর বিশ্বাস", action: "শুরু করো" },
+  { slug: "gorur-ojon", name: "গরুর ওজন কত?", description: "ফিতায় বুকের বেড় আর দৈর্ঘ্য মাপো, দেখো গরুর আনুমানিক ওজন কত মণ", category: "উৎসব আর বিশ্বাস", action: "ফিতা দিয়ে মাপো" },
   { slug: "starter-pack", name: "দেশি স্টার্টার প্যাক", description: "দেশি স্টার্টার প্যাক: খুলে দেখো, খেলে দেখো।", category: "নিজেকে জানো", action: "শুরু করো" },
   { slug: "mishron", name: "দেশি মিশ্রণ", description: "দেশি মিশ্রণ: খুলে দেখো, খেলে দেখো।", category: "মজা আর কুইজ", action: "শুরু করো" },
   { slug: "raat-jaga", name: "রাত জেগে খেলা", description: "রাত জেগে খেলা: খুলে দেখো, খেলে দেখো।", category: "খেলাধুলা", action: "শুরু করো" },

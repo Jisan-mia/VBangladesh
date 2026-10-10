@@ -1,0 +1,114 @@
+.tool-gorur-ojon{--accent-deep:#7a3104;--ink:#3a2210;--muted:#6b4f36;--sky:#cfe8f6;--earth:#e3c48d;--tape:#f7cf3d;--tick:#3b2a10;--marigold:#f08a1c;--marigold-deep:#c9600b;--pale:#fbe2ad;--steel:#8d979e}
+.tool-gorur-ojon .ojon-page{color:var(--ink)}
+
+/* hero: short, so the cow and the tape start on the first phone screen */
+.ojon-hero{padding:14px 0 10px}
+.ojon-kicker{margin:0 0 2px;font-size:14px;font-weight:600;color:var(--accent)}
+.ojon-hero h1{margin:0 0 4px;font-size:clamp(28px,7.4vw,54px);line-height:1.22;letter-spacing:0}
+.ojon-hero h1 span{color:var(--accent)}
+.ojon-lead{margin:0;color:var(--muted);font-size:15px;line-height:1.55}
+
+/* the হাট: sky, a bamboo fence, dusty ground, and the cow measured with a tailor's tape */
+.ojon-hat{display:grid;gap:12px}
+.ojon-stage{margin:0;overflow:hidden;border:3px solid var(--ink);border-radius:20px;background:linear-gradient(var(--sky),#eef7fc 85.5%,var(--earth) 85.5%)}
+.ojon-art{position:relative}
+.ojon-art svg{display:block;width:100%;height:auto}
+.ojon-cow{transform-box:view-box;transition:transform .35s cubic-bezier(.3,1.4,.6,1)}
+.ojon-leaders path{fill:none;stroke:var(--ink);stroke-width:1.4;stroke-dasharray:3 4}
+.ojon-tag path{stroke:var(--marigold-deep);stroke-width:2}
+.ojon-chip,.ojon-name{position:absolute;transform:translate(-50%,-50%);white-space:nowrap;pointer-events:none}
+.ojon-chip{padding:1px 9px;border:2px solid var(--ink);border-radius:999px;background:#fff;font-size:clamp(11px,3.3vw,15px);font-weight:700;line-height:1.5}
+.ojon-chip-point{border-style:dashed;font-weight:600}
+.ojon-name{max-width:40%;overflow:hidden;text-overflow:ellipsis;padding:0 8px;border:2px solid var(--marigold-deep);border-radius:8px;background:#fff3d1;font-family:var(--font-display);font-size:clamp(11px,3.2vw,15px);font-weight:800;line-height:1.5}
+.ojon-readout{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:10px;padding:2px 14px 10px;background:var(--earth)}
+.ojon-readout strong{font-family:var(--font-display);font-size:clamp(30px,8.6vw,44px);font-weight:800;line-height:1.15;color:var(--accent)}
+.ojon-readout span{font-size:15px;font-weight:600}
+.ojon-readout .ojon-about{flex-basis:100%;font-size:12px;font-weight:700;letter-spacing:.02em;color:var(--muted)}
+
+/* the two tapes */
+.ojon-sheet{display:grid;gap:12px}
+.ojon-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ojon-field{min-width:0}
+.ojon-field label{display:block;margin-bottom:4px;font-family:var(--font-display);font-size:16px;font-weight:700}
+.ojon-tape{display:flex;align-items:center;min-height:62px;padding:12px 0 4px;border-radius:12px;background:repeating-linear-gradient(90deg,var(--tick) 0 2px,transparent 2px 40px) 0 0/100% 13px no-repeat,repeating-linear-gradient(90deg,var(--tick) 0 1.2px,transparent 1.2px 8px) 0 0/100% 7px no-repeat,var(--tape);box-shadow:inset 0 -3px 0 #d9ae1f}
+.ojon-tape[data-invalid=true]{outline:3px solid #b3261e;outline-offset:1px}
+.ojon-tape button{flex:none;width:44px;min-height:46px;border:0;background:none;color:var(--ink);font-size:28px;font-weight:700;line-height:1;cursor:pointer}
+.ojon-tape button:disabled{opacity:.3;cursor:not-allowed}
+.ojon-tape input{flex:1;min-width:0;width:100%;min-height:44px;padding:0 2px;border:0;border-radius:8px;background:#fffbe8;color:var(--ink);font-family:var(--font-display);font-size:26px;font-weight:800;text-align:center}
+.ojon-tape:focus-within{box-shadow:inset 0 -3px 0 #d9ae1f,0 0 0 3px var(--ink)}
+.ojon-tape input:focus-visible{outline:none}
+.ojon-unit{flex:none;margin-left:4px;font-size:13px;font-weight:700}
+.ojon-hint{margin:4px 0 0;font-size:13px;line-height:1.45;color:var(--muted)}
+.ojon-hint[data-invalid=true]{color:#b3261e;font-weight:600}
+.tool-gorur-ojon .kit-chips button{border-color:#e0c79a;color:var(--ink);font-weight:600}
+.tool-gorur-ojon .kit-chips button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.ojon-units legend,.ojon-packets legend{font-size:14px}
+.ojon-note{margin:0;font-size:13px;line-height:1.6;color:var(--muted)}
+.ojon-note strong{color:var(--ink)}
+.ojon-note a,.ojon-eid a{color:var(--accent);font-weight:600}
+
+/* opened from a link */
+.ojon-shared{display:grid;gap:8px;margin:0 0 12px;padding:12px 14px;border-left:5px solid var(--marigold);border-radius:12px;background:var(--pale)}
+.ojon-shared p{margin:0;font-size:15px;line-height:1.6}
+.ojon-shared .kit-secondary{justify-self:start;border-color:var(--accent);color:var(--accent)}
+
+/* eid day: a garland on top, three steel bowls */
+.ojon-bhag{position:relative;display:grid;gap:12px;margin-top:34px;padding:26px 12px 16px;border-radius:18px;background:var(--pale)}
+.ojon-bhag:before{content:'';position:absolute;left:10px;right:10px;top:-9px;height:18px;background:radial-gradient(circle,var(--marigold) 0 7px,var(--marigold-deep) 7.5px 8.5px,transparent 9px) 0 50%/36px 18px repeat-x,radial-gradient(circle,#f9c22e 0 7px,var(--marigold-deep) 7.5px 8.5px,transparent 9px) 18px 50%/36px 18px repeat-x}
+.ojon-bhag h2{margin:0;font-size:clamp(22px,5.6vw,30px);line-height:1.3}
+.ojon-bhag h2 small{font-family:var(--font-body,inherit);font-size:14px;font-weight:600;color:var(--muted)}
+.ojon-eid{margin:-6px 0 0;font-size:13px;line-height:1.55;color:var(--muted)}
+.ojon-bhag-top .ojon-field{max-width:260px}
+.ojon-rite{margin:0;font-size:14px;line-height:1.55}
+.ojon-bowls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0;padding:0;list-style:none}
+.ojon-bowls li{display:grid;justify-items:center;align-content:start;gap:2px;min-width:0;padding:10px 2px 12px;border:2px solid #5b656b;border-radius:16px 16px 48px 48px/16px 16px 34px 34px;background:linear-gradient(90deg,#a3adb4,#f1f4f6 40%,#8d979e);text-align:center}
+.ojon-bowls li[data-empty]{opacity:.55}
+.ojon-bowls strong{font-family:var(--font-display);font-size:clamp(20px,6vw,28px);font-weight:800;line-height:1.2}
+.ojon-bowls strong small{font-size:13px}
+.ojon-bowls li>span{font-size:13px;font-weight:700;line-height:1.3}
+.ojon-part{display:grid;grid-template-columns:44px 44px;gap:2px 6px;justify-items:center;margin-top:2px}
+.ojon-part b{grid-row:1;grid-column:1/-1;font-size:13px;font-weight:600;white-space:nowrap}
+.ojon-part button:first-child{grid-row:2;grid-column:1}
+.ojon-part button:last-child{grid-row:2;grid-column:2}
+.ojon-part button{width:44px;height:44px;border:2px solid #5b656b;border-radius:50%;background:#fff;color:var(--ink);font-size:22px;font-weight:700;line-height:1;cursor:pointer}
+.ojon-part button:disabled{opacity:.3;cursor:not-allowed}
+.ojon-bhag-sum{margin:0;font-size:16px}
+.ojon-bhag-sum strong{font-family:var(--font-display);font-size:20px}
+
+/* result card */
+.ojon-result{scroll-margin-top:12px;margin-top:32px;padding-top:22px;border-top:3px dashed #d9b97c}
+.ojon-result h2{margin:0 0 6px;font-size:clamp(25px,5vw,34px);line-height:1.4}
+.ojon-result h2 span{color:var(--accent)}
+.ojon-line{margin:0 0 18px;color:var(--muted)}
+.ojon-result-body{display:grid;gap:22px}
+.ojon-controls{display:grid;gap:18px;align-content:start}
+.ojon-name-field{display:grid;gap:6px;font-weight:600}
+.ojon-name-field small{font-weight:400;font-size:13px;color:var(--muted)}
+.ojon-name-field input{min-height:48px;border:1.5px solid #d9b97c;border-radius:12px}
+
+/* how to measure, sources, guide */
+.ojon-how h2,.ojon-source h2,.ojon-guide h2{margin:0 0 10px}
+.ojon-how .ojon-art{max-width:520px;margin:0 0 14px;overflow:hidden;border:3px solid var(--ink);border-radius:20px;background:linear-gradient(var(--sky),#eef7fc 85.5%,var(--earth) 85.5%)}
+.ojon-how ol,.ojon-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none;max-width:720px}
+.ojon-how li,.ojon-guide li{display:flex;gap:14px;align-items:flex-start}
+.ojon-how li>span,.ojon-guide li>span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--tape);border:2px solid var(--ink);font-weight:700}
+.ojon-how li p,.ojon-guide li p{margin:4px 0 0}
+.ojon-source p{max-width:700px;color:var(--muted)}
+.ojon-source p strong{color:var(--ink)}
+.ojon-checked{font-weight:600}
+.ojon-links{display:grid;gap:2px;margin:0;padding:0;list-style:none}
+.ojon-links a{min-height:44px;display:inline-flex;align-items:center;color:var(--accent);font-weight:600}
+
+@media(max-width:359px){
+  .ojon-fields{grid-template-columns:1fr}
+  .ojon-bowls{grid-template-columns:1fr}
+  .ojon-bowls li{grid-template-columns:1fr auto;justify-items:start;align-items:center;padding:8px 10px;border-radius:16px 16px 34px 34px/16px 16px 24px 24px;text-align:left}
+  .ojon-bowls li>span{grid-column:1}
+  .ojon-part{grid-column:2;grid-row:1/span 2}
+}
+@media(min-width:900px){
+  .ojon-hero{padding:34px 0 20px}
+  .ojon-hat{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:32px;align-items:start}
+  .ojon-result-body{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}
+}
+@media(prefers-reduced-motion:reduce){.ojon-cow{transition:none}}
