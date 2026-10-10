@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { catalog, categories, flagship } from "../lib/catalog";
 
-const illustratedTools = new Set(["chhotto-para", "alpana", "bhashar-chhobi", "riksharong", "shobdo-khela", "bhagabhagi"]);
+// Thumbnails are each tool's real share card (public/previews/<slug>.webp); tools without one yet fall back to a drawing.
+const illustratedTools = new Set(["chhotto-para", "alpana", "bhashar-chhobi", "riksharong", "shobdo-khela", "cholo-kheli", "bazar-note", "bhara", "shubhechha"]);
 
 // The fallback drawing (hands offering a heart) doubles as the greeting-card preview.
 function ToolDrawing({ slug }: { slug: string }) {
@@ -71,7 +72,7 @@ function ToolDrawing({ slug }: { slug: string }) {
 
 function ToolPreview({ slug }: { slug: string }) {
   if (illustratedTools.has(slug)) return <div className={"home-preview home-preview-" + slug} aria-hidden="true">
-    <div className="home-preview-art"><Image src={"/previews/" + slug + ".png"} alt="" fill sizes="(max-width: 620px) 100vw, (max-width: 980px) 50vw, (max-width: 1280px) 33vw, 25vw" /></div>
+    <div className="home-preview-art"><Image src={"/previews/" + slug + ".webp"} alt="" fill sizes="(max-width: 620px) 100vw, (max-width: 980px) 50vw, (max-width: 1280px) 33vw, 25vw" /></div>
     <span className="home-example">নমুনা</span>
   </div>;
   return <div className={"home-preview home-preview-" + slug}><ToolDrawing slug={slug} /></div>;

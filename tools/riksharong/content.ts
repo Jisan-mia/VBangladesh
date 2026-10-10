@@ -1,7 +1,7 @@
 import type { SiteContent } from '../../shared/site-types';
 
 export const site: SiteContent = {
-  slug: 'riksharong',
+  slug: 'riksharong', socialImage: '/social/riksharong.png',
   name: 'রিকশার রং',
   title: 'রিকশা পেইন্টিং — নিজের রিকশা আর্ট বানাও',
   description: 'রিকশা পেইন্টিংয়ের ঢঙে রিকশার পেছনের বোর্ড রাঙাও: ময়ূর, রাজহাঁস, ফুল না নদী-নৌকা, পটিতে নিজের কথা। রিকশায় লাগিয়ে বন্ধুদের পাঠাও। ফ্রি, অ্যাকাউন্ট লাগে না।',

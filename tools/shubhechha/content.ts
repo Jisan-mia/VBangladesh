@@ -1,7 +1,7 @@
 import type { SiteContent } from "../../shared/site-types";
 
 export const site: SiteContent = {
-  slug: "shubhechha",
+  slug: "shubhechha", socialImage: "/social/shubhechha.png",
   name: "শুভেচ্ছা কার্ড",
   title: "শুভেচ্ছা কার্ড — শুভ বিজয়া, ঈদ, বিজয় দিবস",
   description: "শুভ বিজয়া, বিজয় দিবস, ঈদ মোবারক, শুভ নববর্ষ, নবান্ন আর একুশের কার্ড। নিজের নাম, কথা আর ছবি দিয়ে বানাও, পোস্ট বা স্টোরিতে দাও। ফ্রি, অ্যাকাউন্ট লাগে না।",

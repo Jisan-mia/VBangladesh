@@ -58,6 +58,11 @@ export function drawPhoto(context: CanvasRenderingContext2D, photo: Photo, cx: n
   context.beginPath(); context.arc(cx, cy, radius, 0, Math.PI * 2); context.stroke();
 }
 
+/** The address printed on cards: the real domain in production, the brand name on local previews (never "127.0.0.1:3100"). */
+export function siteLabel(host: string) {
+  return !host || /^(localhost|127\.|0\.0\.0\.0|\[::1\]|192\.168\.|10\.)/.test(host) || host.endsWith(".local") ? "একটুখানি" : host;
+}
+
 /** The dark band every card ends with: an invitation on the left, the site address on the right, so a screenshot still leads back here. */
 export function drawFooterBand(context: CanvasRenderingContext2D, format: CardFormat, ask: string, site: string, colors = { band: "#1d2b53", ask: "#ffd166", site: "#ffffff" }) {
   const { width, height } = cardSizes[format];
@@ -68,7 +73,7 @@ export function drawFooterBand(context: CanvasRenderingContext2D, format: CardFo
   context.fillStyle = colors.band;
   context.fillRect(0, top, width, height - top);
   fitText(context, [{ text: ask, color: colors.ask, weight: 700, display: true }], 84, baseline, story ? 40 : 32, 560);
-  fitText(context, [{ text: site, color: colors.site, weight: 600 }], width - 44, baseline, story ? 32 : 26, 400, "right");
+  fitText(context, [{ text: siteLabel(site), color: colors.site, weight: 600 }], width - 44, baseline, story ? 32 : 26, 400, "right");
   return top;
 }
 

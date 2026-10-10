@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { wrapText } from '../card-canvas';
+import { siteLabel, wrapText } from '../card-canvas';
 
 const byLength = { measureText: (text: string) => ({ width: text.length }) as TextMetrics };
 
@@ -14,4 +14,9 @@ test('overflowing text stops at the line limit and says so', () => {
 
 test('a single long word still gets its own line', () => {
   assert.deepEqual(wrapText(byLength, 'অন্তর্জালবিহীন', 4, 2), ['অন্তর্জালবিহীন']);
+});
+
+test('cards print the real domain, but never a local preview address', () => {
+  assert.equal(siteLabel('ektukhani.com'), 'ektukhani.com');
+  for (const local of ['127.0.0.1:3100', 'localhost:3000', '192.168.0.5:3100', '', 'mac.local']) assert.equal(siteLabel(local), 'একটুখানি');
 });

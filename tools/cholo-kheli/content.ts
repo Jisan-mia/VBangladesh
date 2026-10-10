@@ -1,7 +1,7 @@
 import type { SiteContent } from "../../shared/site-types";
 
 export const site: SiteContent = {
-  slug: "cholo-kheli",
+  slug: "cholo-kheli", socialImage: "/social/cholo-kheli.png",
   name: "চলো খেলি",
   title: "ছোটবেলার দেশি খেলা — নিয়ম আর খেলার দাওয়াত",
   description: "কয়জন আছ, ঘরে না মাঠে বলো: কানামাছি, গোল্লাছুট, লুকোচুরি, রুমাল চুরি থেকে খেলা খুঁজে দেব, সহজ নিয়মসহ। দাওয়াতের ছবি বানিয়ে পাড়ায় পাঠাও। ফ্রি।",

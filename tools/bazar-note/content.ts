@@ -1,7 +1,7 @@
 import type { SiteContent } from '../../shared/site-types';
 
 export const site: SiteContent = {
-  slug: 'bazar-note',
+  slug: 'bazar-note', socialImage: '/social/bazar-note.png',
   name: 'বাজার নোট',
   title: 'বাজারের লিস্ট — মাসিক ও রোজার বাজারের ফর্দ',
   description: 'সাপ্তাহিক, মাসের, রোজার বা ঈদের বাজারের লিস্ট এক ছোঁয়ায় বসাও, নিজের মতো বদলাও, তারপর যে বাজারে যাবে তাকে পাঠাও। সে টিক দিয়ে কিনবে। ফ্রি, অ্যাকাউন্ট লাগে না।',

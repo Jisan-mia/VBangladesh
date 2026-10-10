@@ -1,7 +1,7 @@
 import type { SiteContent } from '../../shared/site-types';
 
 export const site: SiteContent = {
-  slug: 'bhara',
+  slug: 'bhara', socialImage: '/social/bhara.png',
   name: 'ভাড়া কত?',
   accent: '#15544b',
   title: 'মেট্রোরেলের ভাড়ার তালিকা — কোন স্টেশনে কত',

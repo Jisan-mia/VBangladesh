@@ -1,7 +1,7 @@
 import type { SiteContent } from '../../shared/site-types';
 
 export const site: SiteContent = {
-  slug: 'shobdo-khela',
+  slug: 'shobdo-khela', socialImage: '/social/shobdo-khela.png',
   name: 'শব্দ সাজাই',
   title: 'বাংলা শব্দজট খেলা — রোজ ৫টা নতুন ধাঁধা',
   description: 'আজকের শব্দজট: সূত্র পড়ে টুকরো জুড়ে ৫টা চেনা বাংলা শব্দ বানাও, রঙিন ঘরের ফল বন্ধুকে পাঠাও। রোজ রাত ১২টায় নতুন। ফ্রি, অ্যাকাউন্ট লাগে না।',
