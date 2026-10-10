@@ -235,7 +235,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 13 | current-gelo | কারেন্ট গেল! | হিসাব-নিকাশ | CI04 | building | #b-current-gelo |
 | 13 | projonmo | জেন-জি না আব্বু-আম্মু? | নিজেকে জানো | ID19 | building | #b-projonmo |
 | 13 | mama-jaben | মামা, যাবেন? | মজা আর কুইজ | CI08 | building | #b-mama-jaben |
-| 13 | mess-jibon | হল-মেস জীবন | স্মৃতি আর গল্প | NO03 | todo | #b-mess-jibon |
+| 13 | mess-jibon | হল-মেস জীবন | স্মৃতি আর গল্প | NO03 | building | #b-mess-jibon |
 | 13 | ekadosh | স্বপ্নের একাদশ | খেলাধুলা | SP05 | todo | #b-ekadosh |
 | 14 | gorur-ojon | গরুর ওজন কত? | উৎসব আর বিশ্বাস | FA06, FA12 | todo | #b-gorur-ojon |
 | 14 | starter-pack | দেশি স্টার্টার প্যাক | নিজেকে জানো | CR05 | todo | #b-starter-pack |
