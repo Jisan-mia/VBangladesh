@@ -190,7 +190,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 4 | biye-kobe | কবে বিয়ে হবে? | নিজেকে জানো | ID05 | building | #b-biye-kobe |
 | 4 | himu | হুমায়ূনের বই | স্মৃতি আর গল্প | NO01 | building | #b-himu |
 | 4 | pitha | পিঠা চেনো? | খাবারদাবার | FO03 | building | #b-pitha |
-| 4 | upohar | দাওয়াতে কত দেব? | পরিবার আর প্রবাস | FM08 | todo | #b-upohar |
+| 4 | upohar | দাওয়াতে কত দেব? | পরিবার আর প্রবাস | FM08 | building | #b-upohar |
 | 4 | namer-design | নামের ডিজাইন | আঁকো আর সাজাও | ID02 | todo | #b-namer-design |
 | 5 | dawat | দাওয়াত কার্ড | পরিবার আর প্রবাস | FM01, SP10 | todo | #b-dawat |
 | 5 | desh-cheno | দেশ চেনো | ভাষা আর পড়াশোনা | ED07 | todo | #b-desh-cheno |

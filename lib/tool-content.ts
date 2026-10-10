@@ -28,6 +28,7 @@ import { site as deshe_fera } from '../tools/deshe-fera/content';
 import { site as biye_kobe } from '../tools/biye-kobe/content';
 import { site as himu } from '../tools/himu/content';
 import { site as pitha } from '../tools/pitha/content';
+import { site as upohar } from '../tools/upohar/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -60,6 +61,7 @@ export const toolContent = {
   'biye-kobe': biye_kobe,
   'himu': himu,
   'pitha': pitha,
+  'upohar': upohar,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];

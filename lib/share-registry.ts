@@ -30,6 +30,7 @@ import { share as deshe_fera } from '../tools/deshe-fera/share';
 import { share as biye_kobe } from '../tools/biye-kobe/share';
 import { share as himu } from '../tools/himu/share';
 import { share as pitha } from '../tools/pitha/share';
+import { share as upohar } from '../tools/upohar/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -63,6 +64,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'biye-kobe': biye_kobe,
   'himu': himu,
   'pitha': pitha,
+  'upohar': upohar,
 };
 
 export function toolShare(tool: string): ToolShare | null {
