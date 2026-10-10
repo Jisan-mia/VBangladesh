@@ -60,6 +60,7 @@ import { share as koto_cheno } from '../tools/koto-cheno/share';
 import { share as eidjatra } from '../tools/eidjatra/share';
 import { share as probash } from '../tools/probash/share';
 import { share as char_priyo } from '../tools/char-priyo/share';
+import { share as dhadha } from '../tools/dhadha/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -123,6 +124,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'eidjatra': eidjatra,
   'probash': probash,
   'char-priyo': char_priyo,
+  'dhadha': dhadha,
 };
 
 export function toolShare(tool: string): ToolShare | null {

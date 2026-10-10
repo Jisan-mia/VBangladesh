@@ -58,6 +58,7 @@ import { site as koto_cheno } from '../tools/koto-cheno/content';
 import { site as eidjatra } from '../tools/eidjatra/content';
 import { site as probash } from '../tools/probash/content';
 import { site as char_priyo } from '../tools/char-priyo/content';
+import { site as dhadha } from '../tools/dhadha/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -120,6 +121,7 @@ export const toolContent = {
   'eidjatra': eidjatra,
   'probash': probash,
   'char-priyo': char_priyo,
+  'dhadha': dhadha,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
