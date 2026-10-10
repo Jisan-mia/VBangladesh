@@ -1198,3 +1198,6 @@ Human checks and shared changes that agents asked for, kept here so they survive
 - dhadha: a human should review the riddle bank. About 18 of the 60 riddles have only one popular-list source (lib/riddles.ts). The tally is sent automatically on finish, with a privacy line under the chips.
 - ami-bolechhilam: a native speaker should check the team names (lib/seal.ts). The tally API keeps only one vote list per browser, so the tool resends earlier matches from localStorage.
 - mache-bhate: a native speaker should review the fish names. The page is 221KB of HTML (52KB gzipped), almost all inline fish SVG.
+- projonmo: before launch, two reviewers from each generation should check every meaning. স্লে and ক্রিঞ্জ have no Bangla source.
+- Tally design limit: the server keeps one vote list per browser per tool and replaces it on each vote. Tools with several pages or days (bagdhara, projonmo, dhadha, ami-bolechhilam, current-gelo) resend what they remember, so bagdhara loses its page-1 count when page 2 is compared. A real fix would key votes by (tool, voter, group).
+- Tally API now takes an optional `?prefix=` (used by eidjatra and current-gelo). Still to do: prune old days or events from tally_counts.
