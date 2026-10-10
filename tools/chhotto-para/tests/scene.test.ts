@@ -16,10 +16,9 @@ test('add, reposition and remove only affect the chosen object and preserve the 
   const original = starterScene();
   const added = addObject(original, { id: 'new', kind: 'bicycle' });
   const moved = moveObject(added, 'new', { x: 620, y: 390 });
-  assert.equal(original.length, 6);
-  assert.equal(added.length, 7);
-  assert.deepEqual(moved.slice(0, 6), original);
-  assert.deepEqual(moved[6], { id: 'new', kind: 'bicycle', x: 620, y: 390 });
+  assert.equal(added.length, original.length + 1);
+  assert.deepEqual(moved.slice(0, original.length), original);
+  assert.deepEqual(moved[original.length], { id: 'new', kind: 'bicycle', x: 620, y: 390 });
   assert.deepEqual(removeObject(moved, 'new'), original);
 });
 test('the scene limit and duplicate IDs cannot silently overwrite artwork', () => {

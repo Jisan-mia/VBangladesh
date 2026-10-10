@@ -22,7 +22,7 @@ export function AlpanaDrawing({ settings, strokes, activeStroke, svgRef, trace =
   const id = useId().replaceAll(":", "");
   const palette = palettes.find(item => item.id === settings.palette)!;
   return <svg ref={svgRef} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="1600" height="1600" role="img" aria-label="তোমার হাতে আঁকা আলপনা" {...interaction}>
-    <rect width="800" height="800" fill={trace ? "#ffffff" : palette.background} />
+    <rect data-floor="" width="800" height="800" fill={trace ? "#ffffff" : palette.background} />
     <g transform="translate(400 400)">
       {interaction && <g data-export-ignore="" fill="none" stroke={palette.ink} opacity=".28" strokeWidth="1" pointerEvents="none"><circle r="388" strokeDasharray="5 7" /><path d="M-388 0H388M0-388V388" strokeDasharray="5 7" /><circle r="4" /></g>}
       {strokes.map((stroke, index) => <Stroke key={index} stroke={stroke} id={id + "-stroke-" + index} trace={trace} />)}

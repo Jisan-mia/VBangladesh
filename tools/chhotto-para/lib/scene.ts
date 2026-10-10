@@ -47,11 +47,25 @@ export function removeObject(items: SceneObject[], id: string): SceneObject[] {
 
 export function starterScene(): SceneObject[] {
   return [
+    { id: 'starter-7', kind: 'clothesline', x: 575, y: 310 },
+    { id: 'starter-8', kind: 'plant', x: 232, y: 440 },
     { id: 'starter-1', kind: 'house', x: 355, y: 360 },
     { id: 'starter-2', kind: 'tree', x: 660, y: 370 },
     { id: 'starter-3', kind: 'tubewell', x: 680, y: 455 },
     { id: 'starter-4', kind: 'mat', x: 475, y: 495 },
     { id: 'starter-5', kind: 'cat', x: 535, y: 533 },
+    { id: 'starter-9', kind: 'stool', x: 398, y: 520 },
     { id: 'starter-6', kind: 'kite', x: 505, y: 365 },
+  ];
+}
+
+export function rooftopScene(): SceneObject[] {
+  return [
+    { id: 'roof-1', kind: 'tank', x: 335, y: 355 },
+    { id: 'roof-2', kind: 'clothesline', x: 615, y: 345 },
+    { id: 'roof-3', kind: 'plant', x: 685, y: 453 },
+    { id: 'roof-4', kind: 'chair', x: 445, y: 480 },
+    { id: 'roof-5', kind: 'tea', x: 530, y: 525 },
+    { id: 'roof-6', kind: 'kite', x: 515, y: 375 },
   ];
 }

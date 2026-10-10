@@ -1,38 +1,82 @@
 'use client';
 
-import { useRef, useState, type MouseEvent, type PointerEvent, type KeyboardEvent } from 'react';
-import { ArtworkDownloads } from '../../../shared/art-downloads';
+import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type PointerEvent } from 'react';
+import { cardSizes, loadCardFonts, type CardFormat } from '../../../shared/card-canvas';
+import { FormatToggle, ShareBar, StickyNext, useInView } from '../../../shared/share-kit';
 import { useHistory } from '../../../shared/use-history';
-import { addObject, moveObject, objects, removeObject, starterScene, MAX_OBJECTS, type ObjectKind, type Position, type SceneObject, type Setting } from '../lib/scene';
-import { sceneFormats, sceneFrame, sceneViewport, type SceneFormat } from '../lib/format';
 import { dragPosition, passedDragThreshold } from '../lib/drag';
+import { cardBlob, drawCard, svgImage } from '../lib/draw-postcard';
+import { bn, cardText, MAX_DISTRICT_LENGTH, MAX_NAME_LENGTH, MAX_PLACE_LENGTH, parseShareHash, possessive, shareHash, type Postcard } from '../lib/postcard';
+import { addObject, moveObject, objects, removeObject, rooftopScene, starterScene, MAX_OBJECTS, type ObjectKind, type Position, type SceneObject, type Setting } from '../lib/scene';
 import { ObjectArt } from './ObjectArt';
-import { SceneFront, SceneGround } from './SceneGround';
+import { ScenePicture, sceneViewport } from './ScenePicture';
 
-type SceneDocument = { setting: Setting; format: SceneFormat; items: SceneObject[]; caption: string };
+const TOOL = 'chhotto-para';
+type SceneDocument = { setting: Setting; items: SceneObject[] };
 type SceneDrag = { pointerId: number; id: string; origin: Position; start: Position; clientStart: Position; document: SceneDocument; moved: boolean; latest: SceneObject[] };
+const settings = [['courtyard', 'গ্রামের উঠোন'], ['rooftop', 'শহরের ছাদ']] as const;
 const directions = [
   { label: 'বাঁয়ে', x: -18, y: 0, symbol: '←', key: 'ArrowLeft' }, { label: 'ওপরে', x: 0, y: -18, symbol: '↑', key: 'ArrowUp' },
   { label: 'নিচে', x: 0, y: 18, symbol: '↓', key: 'ArrowDown' }, { label: 'ডানে', x: 18, y: 0, symbol: '→', key: 'ArrowRight' },
 ];
 
 export function SceneComposer() {
-  const editor = useHistory<SceneDocument>(() => ({ setting: 'courtyard', format: 'post', items: starterScene(), caption: 'এক বিকেলের গল্প' }));
-  const { setting, format, caption } = editor.value;
+  const editor = useHistory<SceneDocument>(() => ({ setting: 'courtyard', items: starterScene() }));
+  const { setting } = editor.value;
   const [preview, setPreview] = useState<SceneObject[] | null>(null);
   const items = preview ?? editor.value.items;
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [status, setStatus] = useState('');
   const [resetOpen, setResetOpen] = useState(false);
-  const svgRef = useRef<SVGSVGElement | null>(null);
+  const [place, setPlace] = useState('');
+  const [district, setDistrict] = useState('');
+  const [name, setName] = useState('');
+  const [format, setFormat] = useState<CardFormat>('feed');
+  const [site, setSite] = useState('');
+  const [friend, setFriend] = useState<Postcard | null>(null);
+  const [previewError, setPreviewError] = useState(false);
   const sceneRef = useRef<SVGSVGElement | null>(null);
+  const friendScene = useRef<SVGSVGElement | null>(null);
+  const card = useRef<HTMLCanvasElement>(null);
+  const friendCard = useRef<HTMLCanvasElement>(null);
+  const result = useRef<HTMLElement>(null);
+  const resultVisible = useInView(result);
   const drag = useRef<SceneDrag | null>(null);
   const suppressClick = useRef(false);
-  const layout = sceneFormats[format];
-  const frame = sceneFrame(format);
   const selected = items.find(item => item.id === selectedId);
   const selectedKind = selected ? objects[selected.kind] : null;
-  const sorted = items.slice().sort((left, right) => left.y - right.y);
+  const postcard: Postcard = { setting, items: editor.value.items, place, district, name };
+  const text = cardText(postcard);
+  const state = shareHash(postcard);
+
+  useEffect(() => {
+    // In-page anchors (#result) also change the hash, so only a real shared postcard replaces the friend's.
+    const readFriend = () => { const found = parseShareHash(window.location.hash); if (found) setFriend(found); };
+    readFriend();
+    setSite(window.location.host);
+    window.addEventListener('hashchange', readFriend);
+    return () => window.removeEventListener('hashchange', readFriend);
+  }, []);
+
+  // Redraw only on committed edits: a drag in progress would otherwise re-render the card on every frame.
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([loadCardFonts(text.greeting + text.line), sceneRef.current ? svgImage(sceneRef.current, sceneViewport.width, sceneViewport.height) : Promise.reject()]).then(([, scene]) => {
+      if (cancelled || !card.current) return;
+      drawCard(card.current, scene, text, format, site);
+      setPreviewError(false);
+    }).catch(() => { if (!cancelled) setPreviewError(true); });
+    return () => { cancelled = true; };
+  }, [editor.value, place, district, name, format, site]);
+
+  useEffect(() => {
+    if (!friend) return;
+    let cancelled = false;
+    Promise.all([loadCardFonts(), friendScene.current ? svgImage(friendScene.current, sceneViewport.width, sceneViewport.height) : Promise.reject()]).then(([, scene]) => {
+      if (!cancelled && friendCard.current) drawCard(friendCard.current, scene, cardText(friend), 'feed', site);
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [friend, site]);
 
   function update(change: Partial<SceneDocument>) {
     if (!drag.current) editor.commit(current => ({ ...current, ...change }));
@@ -43,7 +87,7 @@ export function SceneComposer() {
     try {
       const id = crypto.randomUUID();
       update({ items: addObject(items, { id, kind }) }); setSelectedId(id);
-      setStatus(`${objects[kind].label} বসানো হলো। টেনে বা নিচের তির চেপে জায়গামতো নাও।`);
+      setStatus(`${objects[kind].label} বসানো হলো। টেনে জায়গামতো নাও।`);
     } catch (error) { setStatus(error instanceof Error ? error.message : 'বসানো গেল না। আরেকবার চেষ্টা করো।'); }
   }
 
@@ -66,8 +110,7 @@ export function SceneComposer() {
     if ((event.nativeEvent as globalThis.PointerEvent).isPrimary === false) return;
     if (suppressClick.current) { suppressClick.current = false; return; }
     if (drag.current) return;
-    const target = event.target as Element;
-    if (!target.hasAttribute('data-ground')) return;
+    if (!(event.target as Element).hasAttribute('data-ground')) return;
     if (!selected) { setStatus('আগে একটা জিনিস ছুঁয়ে বেছে নাও, তারপর যেখানে বসাতে চাও সেখানে চাপো।'); return; }
     const point = scenePoint({ x: event.clientX, y: event.clientY });
     if (point) reposition(point);
@@ -124,7 +167,7 @@ export function SceneComposer() {
     drag.current = null;
     setPreview(null);
     suppressClick.current = true;
-    if (svgRef.current?.hasPointerCapture(active.pointerId)) svgRef.current.releasePointerCapture(active.pointerId);
+    if (sceneRef.current?.hasPointerCapture(active.pointerId)) sceneRef.current.releasePointerCapture(active.pointerId);
     setStatus('টানা থামানো হলো, জিনিসটা আগের জায়গায় ফিরে গেছে।');
   }
 
@@ -163,61 +206,73 @@ export function SceneComposer() {
   }
 
   function usePreset(value: Setting) {
-    const next = value === 'courtyard' ? starterScene() : [
-      { id: 'roof-1', kind: 'tank' as const, x: 335, y: 355 },
-      { id: 'roof-2', kind: 'clothesline' as const, x: 615, y: 345 },
-      { id: 'roof-3', kind: 'plant' as const, x: 685, y: 453 },
-      { id: 'roof-4', kind: 'chair' as const, x: 445, y: 480 },
-      { id: 'roof-5', kind: 'tea' as const, x: 530, y: 525 },
-      { id: 'roof-6', kind: 'kite' as const, x: 515, y: 375 },
-    ];
-    update({ setting: value, items: next }); setSelectedId(null);
-    setStatus('নমুনাটা সাজিয়ে দিলাম। তোমার লেখা আর ছবির মাপ যেমন ছিল তেমনই আছে।');
+    update({ setting: value, items: value === 'courtyard' ? starterScene() : rooftopScene() }); setSelectedId(null);
+    setStatus('নমুনাটা সাজিয়ে দিলাম। পছন্দ না হলে “এক ধাপ পেছাও” চাপো।');
   }
 
-  return <section className="para-composer container" id="tool" aria-labelledby="scene-heading">
-    <div className="para-tool-title"><div><p className="eyebrow">নিজের মতো সাজাও</p><h2 id="scene-heading">আজ কোথায় বসবে আড্ডা?</h2></div><div className="para-setting" aria-label="কোথায় সাজাবে">{([['courtyard', 'গ্রামের উঠোন'], ['rooftop', 'শহরের ছাদ']] as const).map(([value, label]) => <button type="button" key={value} aria-pressed={setting === value} onClick={() => { update({ setting: value }); setStatus(`এবার ${label}। বসানো জিনিসগুলো যেখানে ছিল সেখানেই আছে।`); }}>{label}</button>)}</div></div>
-    <div className="para-format"><span>ছবির মাপ</span><div className="para-setting" role="group" aria-label="ছবির মাপ">{(Object.keys(sceneFormats) as SceneFormat[]).map(value => <button type="button" key={value} aria-pressed={format === value} onClick={() => { update({ format: value }); setStatus(`এবার ${sceneFormats[value].label}-এর মাপে ছবি হবে। সাজানো দৃশ্য আর লেখা একই আছে।`); }}>{sceneFormats[value].label} <span>{sceneFormats[value].ratio}</span></button>)}</div></div>
-    <div className="para-editor-actions"><div><button type="button" disabled={!editor.canUndo || preview !== null} onClick={() => historyStep('undo')}>এক ধাপ পেছাও</button><button type="button" disabled={!editor.canRedo || preview !== null} onClick={() => historyStep('redo')}>এক ধাপ এগোও</button></div><div><span>নমুনা থেকে শুরু</span><button type="button" disabled={preview !== null} onClick={() => usePreset('courtyard')}>উঠোনের বিকেল</button><button type="button" disabled={preview !== null} onClick={() => usePreset('rooftop')}>ছাদের আড্ডা</button></div></div>
-    <div className="para-studio">
-      <div className="para-canvas-column">
-        <div className="para-canvas-wrap">
-          <div className="para-canvas-top"><span><span aria-hidden="true"/>তোমার পাড়া</span><span>{new Intl.NumberFormat('bn-BD').format(items.length)} / ১৮টা জিনিস</span></div>
-          <svg ref={svgRef} viewBox={`0 0 ${layout.width} ${layout.height}`} width={layout.width} height={layout.height} role="img" aria-label={`${layout.label} মাপে ${setting === 'courtyard' ? 'গ্রামের উঠোন' : 'শহরের ছাদ'}: ${items.map(item => objects[item.kind].label).join(', ')}${caption ? '। ' + caption : ''}`} tabIndex={0} aria-describedby="scene-keyboard-help" onKeyDown={canvasKey} onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={finishDrag} onPointerCancel={event => cancelDrag(event.pointerId)} onLostPointerCapture={event => cancelDrag(event.pointerId)} onClick={tapScene} className="para-canvas" xmlns="http://www.w3.org/2000/svg">
-            <rect width={layout.width} height={layout.height} fill="#faf6e9"/>
-            <text x="540" y={layout.titleY} textAnchor="middle" fontFamily="Bangla, sans-serif" fontSize={format === 'story' ? 48 : 30} fill="#657657">ছোট্ট পাড়া</text>
-            <text x="540" y={layout.settingY} textAnchor="middle" fontFamily="Bangla, sans-serif" fontSize={format === 'story' ? 24 : 18} fill="#939980">{setting === 'courtyard' ? 'গ্রামের উঠোন' : 'শহরের ছাদ'}</text>
-            {format === 'story' && <path d="M495 420h90M495 1630h90" fill="none" stroke="#c6c9ae" strokeWidth="2"/>}
-            <svg ref={sceneRef} {...frame} viewBox={`0 0 ${sceneViewport.width} ${sceneViewport.height}`}>
-            <circle cx="809" cy="112" r="38" fill="#edcf8c" opacity=".52"/>
-            <SceneGround setting={setting}/>
-            <path data-ground="true" d="m72 426 408-218 408 212-408 221Z" fill="transparent" cursor={selected ? 'crosshair' : 'default'}/>
-            {sorted.map(item => <g key={item.id} data-object-id={item.id} transform={`translate(${item.x} ${item.y})`} cursor="grab"><ObjectArt kind={item.kind}/></g>)}
-            <SceneFront setting={setting}/>
-            {selected && selectedKind && <g data-export-ignore="true" pointerEvents="none" transform={`translate(${selected.x} ${selected.y})`}><ellipse cy="4" rx={selectedKind.width / 2 + 9} ry="22" fill="none" stroke="#466b56" strokeWidth="2.5" strokeDasharray="6 5"/><rect x={-selectedKind.width / 2 - 10} y={-selectedKind.height - 10} width={selectedKind.width + 20} height={selectedKind.height + 34} rx="12" fill="none" stroke="#537860" strokeOpacity=".6" strokeWidth="1.5" strokeDasharray="4 6"/></g>}
-            </svg>
-            {caption && <text x="540" y={layout.captionY} textAnchor="middle" fontFamily="Bangla, sans-serif" fontSize="32" fontWeight="500" fill="#53634a">{caption}</text>}
-          </svg>
-          <p className="para-canvas-hint" id="scene-keyboard-help">জিনিস ধরে টেনে সরাও, বা একবার ছুঁয়ে বেছে নিয়ে মাটিতে যেখানে চাও চাপো। কিবোর্ডে ছবিটায় থেকে Enter দিয়ে বাছো, তির দিয়ে সরাও, Delete দিয়ে বাদ দাও।</p>
-        </div>
-        <div className="para-controls">
-          <div className="para-selection"><label htmlFor="selected-object">কোনটা সরাবে?</label><select id="selected-object" value={selectedId ?? ''} onChange={event => setSelectedId(event.target.value || null)}><option value="">একটা জিনিস বেছে নাও</option>{items.map((item, index) => <option key={item.id} value={item.id}>{objects[item.kind].label} · {new Intl.NumberFormat('bn-BD').format(index + 1)}</option>)}</select></div>
-          <div className="para-position"><span>জায়গা বদলাও</span><div>{directions.map(direction => <button type="button" key={direction.label} disabled={!selected} aria-label={selectedKind ? `${selectedKind.label} ${direction.label} সরাও` : `${direction.label} সরাও`} onClick={() => selected && reposition({ x: selected.x + direction.x, y: selected.y + direction.y })}><b aria-hidden="true">{direction.symbol}</b>{direction.label}</button>)}</div></div>
-          <button type="button" className="para-remove" disabled={!selected} onClick={removeSelected}>বাছা জিনিসটা বাদ দাও</button>
-        </div>
-        <p className="para-status" role="status" aria-live="polite">{status || 'একটা উঠোন সাজিয়ে রেখেছি। জিনিস বসিয়ে, সরিয়ে নিজের পাড়ার মতো করে নাও।'}</p>
+  const who = friend?.name ? possessive(friend.name) : 'তোমার বন্ধুর';
+  const caption = place.trim() ? `আমার পাড়া, ${text.place}। এমনই ছিল আমার ছোটবেলার বিকেল। তোমার পাড়াটা কেমন ছিল?` : 'নিজের পাড়াটা সাজিয়ে একটা পোস্টকার্ড বানালাম। তোমার পাড়াটা কেমন ছিল?';
+
+  return <div className="para-tool">
+    {friend && <section className="para-friend" aria-labelledby="friend-title">
+      <canvas ref={friendCard} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`${who} পাড়ার পোস্টকার্ড`} />
+      <div>
+        <p className="para-friend-kicker">তোমার নামে একটা পোস্টকার্ড এসেছে</p>
+        <h2 id="friend-title">{who} পাড়া, {cardText(friend).place} থেকে।<br /><span>তোমার পাড়াটা কেমন ছিল?</span></h2>
+        <a className="kit-primary" href="#para-scene">আমার পাড়া সাজাই</a>
       </div>
-      <aside className="para-shelf" aria-labelledby="shelf-heading">
-        <div className="para-shelf-title"><div><p className="eyebrow">যা যা বসানো যায়</p><h3 id="shelf-heading">ছুঁলেই বসে যাবে</h3></div><span aria-hidden="true">＋</span></div>
-        <div className="para-object-grid">{Object.entries(objects).map(([kind, object]) => <button key={kind} type="button" disabled={items.length >= MAX_OBJECTS} onClick={() => add(kind as ObjectKind)} aria-label={`${object.label} বসাও`}><svg viewBox={`${-object.width / 2 - 14} ${-object.height - 12} ${object.width + 28} ${object.height + 44}`} width="92" height="90" aria-hidden="true"><ObjectArt kind={kind as ObjectKind}/></svg><span>{object.label}</span><b aria-hidden="true">+</b></button>)}</div>
-        <p className="para-shelf-note">একই জিনিস কয়েকবারও বসাতে পারো। সব মিলিয়ে ১৮টা পর্যন্ত।</p>
-      </aside>
+      <div hidden><ScenePicture setting={friend.setting} items={friend.items} svgRef={friendScene} /></div>
+    </section>}
+
+    <div className="para-photo" id="para-scene">
+      <ScenePicture setting={setting} items={items} svgRef={sceneRef}
+        interaction={{ className: 'para-scene', tabIndex: 0, 'aria-describedby': 'scene-keyboard-help', onKeyDown: canvasKey, onPointerDown: startDrag, onPointerMove: moveDrag, onPointerUp: finishDrag, onPointerCancel: event => cancelDrag(event.pointerId), onLostPointerCapture: event => cancelDrag(event.pointerId), onClick: tapScene }}
+        ground={<path data-ground="true" d="m72 426 408-218 408 212-408 221Z" fill="transparent" cursor={selected ? 'crosshair' : 'default'} />}
+        overlay={selected && selectedKind && <g data-export-ignore="true" pointerEvents="none" transform={`translate(${selected.x} ${selected.y})`}><ellipse cy="4" rx={selectedKind.width / 2 + 9} ry="22" fill="none" stroke="#466b56" strokeWidth="3" strokeDasharray="6 5" /><rect x={-selectedKind.width / 2 - 10} y={-selectedKind.height - 10} width={selectedKind.width + 20} height={selectedKind.height + 34} rx="12" fill="none" stroke="#537860" strokeOpacity=".6" strokeWidth="2" strokeDasharray="4 6" /></g>} />
     </div>
-    <div className="para-finish">
-      <div className="para-caption"><label htmlFor="scene-caption">ছবির নিচে কী লিখবে? <span>চাইলে</span></label><input id="scene-caption" value={caption} maxLength={32} onChange={event => update({ caption: event.target.value })} placeholder="যেমন: নানাবাড়ির উঠোন"/><p>৩২ অক্ষরের মধ্যে লেখো। লেখাটাও ছবিতে থাকবে।</p></div>
-      <div className="para-download"><div inert={preview !== null}><ArtworkDownloads svgRef={svgRef} filename={`chhotto-para-${format}`}/></div><p>{layout.label}-এর মাপে ছবি নামবে। বাছার দাগ ছবিতে আসবে না।</p></div>
+    <p className="para-status" role="status" aria-live="polite">{status || 'জিনিস ধরে টেনে সরাও, নিচের তাক থেকে ছুঁয়ে নতুন বসাও।'}</p>
+
+    <div className="para-shelf" role="group" aria-label={`যা যা বসানো যায়, ${bn(items.length)} / ${bn(MAX_OBJECTS)}টা বসানো`}>
+      {(Object.keys(objects) as ObjectKind[]).map(kind => { const object = objects[kind]; return <button key={kind} type="button" disabled={items.length >= MAX_OBJECTS} onClick={() => add(kind)} aria-label={`${object.label} বসাও`}>
+        <svg viewBox={`${-object.width / 2 - 14} ${-object.height - 12} ${object.width + 28} ${object.height + 44}`} aria-hidden="true"><ObjectArt kind={kind} /></svg><span>{object.label}</span>
+      </button>; })}
     </div>
-    <div className="para-reset"><p>সাজানোটা কোথাও জমা থাকে না। পাতা বন্ধ করার আগে ছবিটা নামিয়ে রাখো।</p><button type="button" onClick={() => setResetOpen(true)}>সব সরিয়ে নতুন করে শুরু করো</button></div>
-    {resetOpen && <div className="para-reset-confirm" role="alert"><div><strong>সব জিনিস সরিয়ে খালি জায়গা থেকে শুরু করবে?</strong><p>তোমার লেখা আর উঠোন বা ছাদ যেমন আছে থাকবে। মন বদলালে “এক ধাপ পেছাও” চাপলেই জিনিসগুলো ফেরত আসবে।</p></div><button type="button" className="button" onClick={() => { update({ items: [] }); setSelectedId(null); setResetOpen(false); setStatus('সব সরানো হলো। তাক থেকে জিনিস ছুঁয়ে আবার সাজাও।'); }}>হ্যাঁ, সব সরাও</button><button type="button" className="button button-secondary" onClick={() => setResetOpen(false)}>না, থাক</button></div>}
-  </section>;
+
+    <div className="para-move">
+      <label className="para-select"><span>কোনটা সরাবে?</span><select value={selectedId ?? ''} onChange={event => setSelectedId(event.target.value || null)}><option value="">একটা জিনিস বেছে নাও</option>{items.map((item, index) => <option key={item.id} value={item.id}>{objects[item.kind].label} · {bn(index + 1)}</option>)}</select></label>
+      <div className="para-arrows" role="group" aria-label="জায়গা বদলাও">{directions.map(direction => <button type="button" key={direction.label} disabled={!selected} aria-label={selectedKind ? `${selectedKind.label} ${direction.label} সরাও` : `${direction.label} সরাও`} onClick={() => selected && reposition({ x: selected.x + direction.x, y: selected.y + direction.y })}><span aria-hidden="true">{direction.symbol}</span></button>)}</div>
+      <button type="button" className="para-remove" disabled={!selected} onClick={removeSelected}>বাদ দাও</button>
+    </div>
+    <p className="para-hint" id="scene-keyboard-help">একবার ছুঁয়ে বেছে নিয়ে মাটিতে অন্য কোথাও চাপলেও সরে যাবে। কিবোর্ডে ছবিটায় থেকে Enter দিয়ে বাছো, তির দিয়ে সরাও, Delete দিয়ে বাদ দাও।</p>
+
+    <div className="para-tools">
+      <div className="para-toggle" role="group" aria-label="কোথায় সাজাবে">{settings.map(([value, label]) => <button type="button" key={value} aria-pressed={setting === value} onClick={() => { update({ setting: value }); setStatus(`এবার ${label}। জিনিসগুলো যেখানে ছিল সেখানেই আছে।`); }}>{label}</button>)}</div>
+      <div className="para-history"><button type="button" disabled={!editor.canUndo || preview !== null} onClick={() => historyStep('undo')}>এক ধাপ পেছাও</button><button type="button" disabled={!editor.canRedo || preview !== null} onClick={() => historyStep('redo')}>এক ধাপ এগোও</button></div>
+      <p className="para-presets"><span>নতুন করে:</span><button type="button" className="kit-link" disabled={preview !== null} onClick={() => usePreset('courtyard')}>উঠোনের বিকেল</button><button type="button" className="kit-link" disabled={preview !== null} onClick={() => usePreset('rooftop')}>ছাদের আড্ডা</button><button type="button" className="kit-link" disabled={preview !== null || !items.length} onClick={() => setResetOpen(true)}>সব সরাও</button></p>
+    </div>
+    {resetOpen && <div className="para-confirm" role="alert"><p><strong>সব জিনিস সরিয়ে খালি জায়গা থেকে শুরু করবে?</strong> মন বদলালে “এক ধাপ পেছাও” চাপলেই ফেরত আসবে।</p><div><button type="button" className="kit-primary" onClick={() => { update({ items: [] }); setSelectedId(null); setResetOpen(false); setStatus('সব সরানো হলো। তাক থেকে জিনিস ছুঁয়ে আবার সাজাও।'); }}>হ্যাঁ, সব সরাও</button><button type="button" className="kit-secondary" onClick={() => setResetOpen(false)}>না, থাক</button></div></div>}
+
+    <StickyNext show={editor.canUndo && !resultVisible && preview === null} title={<><strong>পাড়া</strong> সাজানো হলো</>} sub="নাম লিখে পোস্টকার্ড বানাও" href="#result" label="পোস্টকার্ড বানাও" />
+
+    <section className="para-result" id="result" ref={result} aria-labelledby="result-title">
+      <h2 id="result-title">পাড়া থেকে একটা পোস্টকার্ড</h2>
+      <p className="para-result-lead">পাড়া বা গ্রামের নাম লিখলে ডাকঘরের সিলে আর শুভেচ্ছায় বসে যাবে।</p>
+      <div className="para-result-body">
+        <figure className="kit-card" data-format={format}>
+          <canvas ref={card} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="postcard-summary" />
+          <figcaption id="postcard-summary" className="para-sr">শুভেচ্ছা, {text.greeting}। {text.line} {text.signature}</figcaption>
+          {previewError && <p className="kit-status" role="alert">পোস্টকার্ডটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
+        </figure>
+        <div className="para-result-controls">
+          <label className="para-field"><span>পাড়া বা গ্রামের নাম</span><input value={place} maxLength={MAX_PLACE_LENGTH} onChange={event => setPlace(event.target.value)} placeholder="যেমন: কাশিমপুর" autoComplete="off" /></label>
+          <div className="para-field-row">
+            <label className="para-field"><span>জেলা <small>চাইলে</small></span><input value={district} maxLength={MAX_DISTRICT_LENGTH} onChange={event => setDistrict(event.target.value)} placeholder="যেমন: গাজীপুর" autoComplete="off" /></label>
+            <label className="para-field"><span>তোমার নাম <small>চাইলে</small></span><input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" /></label>
+          </div>
+          <FormatToggle value={format} onChange={setFormat} />
+          <ShareBar tool={TOOL} fileName="chhotto-para.png" makeImage={async () => cardBlob(await svgImage(sceneRef.current!, sceneViewport.width, sceneViewport.height), text, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} disabled={!editor.value.items.length || preview !== null} hint={editor.value.items.length ? 'লিংক পেলে বন্ধু তোমার পোস্টকার্ড দেখবে, তারপর নিজের পাড়াটা সাজাবে।' : 'আগে তাক থেকে কয়েকটা জিনিস বসাও।'} />
+        </div>
+      </div>
+    </section>
+  </div>;
 }

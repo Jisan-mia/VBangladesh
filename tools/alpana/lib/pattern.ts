@@ -3,11 +3,12 @@ export const motifs = [
   { id: "leaf", label: "পাতা" },
   { id: "geometry", label: "জ্যামিতিক" },
 ] as const;
+// The floor the alpana is drawn on. Ink and detail colours are also link codes for hand-drawn strokes: append floors, never reorder.
 export const palettes = [
-  { id: "clay", label: "মাটির রঙে সাদা", background: "#9c422f", ink: "#fff5d8", detail: "#efbd73" },
-  { id: "indigo", label: "নীলের ওপর সাদা", background: "#243f59", ink: "#fff6df", detail: "#dfb56c" },
-  { id: "green", label: "সবুজে হালকা হলুদ", background: "#324f40", ink: "#f8f1c9", detail: "#d2b570" },
-  { id: "paper", label: "সাদা কাগজে লাল", background: "#fffaf0", ink: "#9b3d2c", detail: "#9b742f" },
+  { id: "clay", label: "মাটির উঠোন", background: "#9c422f", ink: "#fff5d8", detail: "#efbd73" },
+  { id: "red", label: "লাল মেঝে", background: "#86241f", ink: "#fff3dc", detail: "#f2c47c" },
+  { id: "earth", label: "নিকানো উঠোন", background: "#5b4434", ink: "#fbf0d4", detail: "#dcb26a" },
+  { id: "paper", label: "সাদা কাগজ", background: "#fffaf0", ink: "#9b3d2c", detail: "#9b742f" },
 ] as const;
 export const symmetries = [6, 8, 12] as const;
 export const densities = [
@@ -29,6 +30,17 @@ export type PatternSettings = {
   layout: (typeof layouts)[number]["id"];
 };
 export const defaultSettings: PatternSettings = { motif: "flower", palette: "clay", symmetry: 8, density: "full", layout: "round" };
+// Ready designs people start from ("আলপনা ডিজাইন" is the top search). Each is just a combination of the choices above.
+export const presets: ReadonlyArray<{ id: string; label: string; settings: PatternSettings }> = [
+  { id: "boishakhi", label: "বৈশাখী ফুল", settings: defaultSettings },
+  { id: "lota", label: "লতাপাতার পাড়", settings: { motif: "leaf", palette: "red", symmetry: 12, density: "rich", layout: "border" } },
+  { id: "shohoj", label: "সহজ ফুল", settings: { motif: "flower", palette: "earth", symmetry: 6, density: "light", layout: "round" } },
+  { id: "padma", label: "পদ্মচক্র", settings: { motif: "flower", palette: "red", symmetry: 12, density: "rich", layout: "round" } },
+  { id: "chouko", label: "চৌকো নকশা", settings: { motif: "geometry", palette: "earth", symmetry: 8, density: "full", layout: "border" } },
+  { id: "patar-mala", label: "পাতার মালা", settings: { motif: "leaf", palette: "clay", symmetry: 8, density: "full", layout: "round" } },
+  { id: "tara", label: "তারা-নকশা", settings: { motif: "geometry", palette: "clay", symmetry: 12, density: "rich", layout: "round" } },
+  { id: "kagoj", label: "কাগজে আঁকার", settings: { motif: "flower", palette: "paper", symmetry: 8, density: "light", layout: "border" } },
+];
 export const printLayout = { pageWidthMm: 210, pageHeightMm: 297, marginMm: 12, artworkMm: 180, calibrationMm: 50 } as const;
 export const motifExtent = 68;
 
