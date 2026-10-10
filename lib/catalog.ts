@@ -94,7 +94,7 @@ export const catalog = [
   { slug: "betoner-bhag", name: "বেতনের ভাগ", description: "বেতনের ভাগ: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
   { slug: "bidyut-bill", name: "বিদ্যুৎ বিল কত?", description: "বিদ্যুৎ বিল কত?: খুলে দেখো, খেলে দেখো।", category: "হিসাব-নিকাশ", action: "শুরু করো" },
   { slug: "mondop", name: "মণ্ডপ ঘুরি", description: "মণ্ডপ ঘুরি: খুলে দেখো, খেলে দেখো।", category: "উৎসব আর বিশ্বাস", action: "শুরু করো" },
-  { slug: "grade-dao", name: "গ্রেড দাও", description: "গ্রেড দাও: খুলে দেখো, খেলে দেখো।", category: "মজা আর কুইজ", action: "শুরু করো" },
+  { slug: "grade-dao", name: "গ্রেড দাও", description: "ফুচকা, বর্ষা, লোকাল বাসকে A+ থেকে F দাও, দেখো দেশ কত দিল", category: "মজা আর কুইজ", action: "গ্রেড দাও" },
   { slug: "adda", name: "আড্ডায় তুমি কে?", description: "আড্ডায় তুমি কে?: খুলে দেখো, খেলে দেখো।", category: "নিজেকে জানো", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
