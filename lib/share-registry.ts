@@ -72,6 +72,7 @@ import { share as rokto } from '../tools/rokto/share';
 import { share as cassette } from '../tools/cassette/share';
 import { share as jibh } from '../tools/jibh/share';
 import { share as matcher_mon } from '../tools/matcher-mon/share';
+import { share as current_gelo } from '../tools/current-gelo/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -147,6 +148,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'cassette': cassette,
   'jibh': jibh,
   'matcher-mon': matcher_mon,
+  'current-gelo': current_gelo,
 };
 
 export function toolShare(tool: string): ToolShare | null {

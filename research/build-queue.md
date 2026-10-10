@@ -232,7 +232,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 12 | cassette | আমার ক্যাসেট | স্মৃতি আর গল্প | NO02, CR03 | building | #b-cassette |
 | 12 | jibh | জিভ কোন জেলার? | খাবারদাবার | ID09 | building | #b-jibh |
 | 12 | matcher-mon | ম্যাচের মন | খেলাধুলা | SP16 | building | #b-matcher-mon |
-| 13 | current-gelo | কারেন্ট গেল! | হিসাব-নিকাশ | CI04 | todo | #b-current-gelo |
+| 13 | current-gelo | কারেন্ট গেল! | হিসাব-নিকাশ | CI04 | building | #b-current-gelo |
 | 13 | projonmo | জেন-জি না আব্বু-আম্মু? | নিজেকে জানো | ID19 | todo | #b-projonmo |
 | 13 | mama-jaben | মামা, যাবেন? | মজা আর কুইজ | CI08 | todo | #b-mama-jaben |
 | 13 | mess-jibon | হল-মেস জীবন | স্মৃতি আর গল্প | NO03 | todo | #b-mess-jibon |
