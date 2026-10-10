@@ -187,7 +187,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 3 | salami-chek | সালামির চেক | উৎসব আর বিশ্বাস | FA03 | done | #b-salami-chek |
 | 3 | eta-na-ota | এটা না ওটা | মজা আর কুইজ | ID07, SP03 | building | #b-eta-na-ota |
 | 3 | deshe-fera | দেশে ফেরা | পরিবার আর প্রবাস | TI05, TI06, TI04 | building | #b-deshe-fera |
-| 4 | biye-kobe | কবে বিয়ে হবে? | নিজেকে জানো | ID05 | todo | #b-biye-kobe |
+| 4 | biye-kobe | কবে বিয়ে হবে? | নিজেকে জানো | ID05 | building | #b-biye-kobe |
 | 4 | himu | হুমায়ূনের বই | স্মৃতি আর গল্প | NO01 | todo | #b-himu |
 | 4 | pitha | পিঠা চেনো? | খাবারদাবার | FO03 | todo | #b-pitha |
 | 4 | upohar | দাওয়াতে কত দেব? | পরিবার আর প্রবাস | FM08 | todo | #b-upohar |
