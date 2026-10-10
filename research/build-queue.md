@@ -212,7 +212,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 8 | bangla-typing | বাংলা টাইপিং স্পিড | ভাষা আর পড়াশোনা | ED06 | building | #b-bangla-typing |
 | 8 | jam | জ্যামে জীবন | মজা আর কুইজ | CI01 | building | #b-jam |
 | 8 | bhorta | তুমি কোন ভর্তা? | নিজেকে জানো | ID16 | building | #b-bhorta |
-| 9 | eider-din | ঈদের দিন | উৎসব আর বিশ্বাস | FA09, FA14 | todo | #b-eider-din |
+| 9 | eider-din | ঈদের দিন | উৎসব আর বিশ্বাস | FA09, FA14 | building | #b-eider-din |
 | 9 | ganer-koli | গানের কলি | মজা আর কুইজ | FM04 | todo | #b-ganer-koli |
 | 9 | attiyo | কে কী হয়? | পরিবার আর প্রবাস | ID14 | todo | #b-attiyo |
 | 9 | studior-chhobi | স্টুডিওর ছবি | আঁকো আর সাজাও | CR01 | todo | #b-studior-chhobi |

@@ -62,6 +62,7 @@ export const catalog = [
   { slug: "bangla-typing", name: "বাংলা টাইপিং স্পিড", description: "বাংলা টাইপিং স্পিড: খুলে দেখো, খেলে দেখো।", category: "ভাষা আর পড়াশোনা", action: "শুরু করো" },
   { slug: "jam", name: "জ্যামে জীবন", description: "জ্যামে জীবন: খুলে দেখো, খেলে দেখো।", category: "মজা আর কুইজ", action: "শুরু করো" },
   { slug: "bhorta", name: "তুমি কোন ভর্তা?", description: "তুমি কোন ভর্তা?: খুলে দেখো, খেলে দেখো।", category: "নিজেকে জানো", action: "শুরু করো" },
+  { slug: "eider-din", name: "ঈদের দিন", description: "ঈদের দিন: খুলে দেখো, খেলে দেখো।", category: "উৎসব আর বিশ্বাস", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.
