@@ -9,7 +9,8 @@ const profile = mkdtempSync(join(tmpdir(), 'og-'));
 const port = 9300 + Math.floor(Math.random() * 600);
 const chrome = spawn('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', ['--headless=new', '--disable-gpu', '--hide-scrollbars', `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore' });
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-const done = code => { chrome.kill('SIGKILL'); rmSync(profile, { recursive: true, force: true }); process.exit(code); };
+// Chrome can still be flushing its profile right after the kill, so cleanup is best-effort.
+const done = code => { chrome.kill('SIGKILL'); setTimeout(() => { try { rmSync(profile, { recursive: true, force: true }); } catch {} process.exit(code); }, 400); };
 setTimeout(() => { console.error('timed out'); done(1); }, 90000);
 let target;
 for (let i = 0; i < 60 && !target; i++) { try { target = (await (await fetch(`http://127.0.0.1:${port}/json`)).json()).find(t => t.type === 'page'); } catch {} if (!target) await sleep(250); }
@@ -23,9 +24,16 @@ await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, devi
 await send('Page.enable');
 await send('Page.navigate', { url: `http://127.0.0.1:3100/${slug}${hash ? '#' + hash : ''}` });
 for (let i = 0; i < 120 && !events.some(e => e.method === 'Page.loadEventFired'); i++) await sleep(250);
-await sleep(4000);
+await sleep(2500);
 if (before) { await run(before); await sleep(1500); }
-const card = await run(`const c = document.querySelector('.kit-card canvas') || [...document.querySelectorAll('canvas')].sort((a, b) => b.width * b.height - a.width * a.height)[0]; return c ? c.toDataURL('image/png') : null;`);
+// A tool's first load in dev compiles on demand; wait for a drawn card instead of a fixed delay.
+let card = null;
+for (let i = 0; i < 30 && !card; i++) {
+  card = await run(`const c = document.querySelector('.kit-card canvas') || [...document.querySelectorAll('canvas')].sort((a, b) => b.width * b.height - a.width * a.height)[0]; return c && c.width > 300 ? c.toDataURL('image/png') : null;`);
+  if (!card) await sleep(500);
+}
+await sleep(800);
+card = await run(`const c = document.querySelector('.kit-card canvas') || [...document.querySelectorAll('canvas')].sort((a, b) => b.width * b.height - a.width * a.height)[0]; return c ? c.toDataURL('image/png') : null;`);
 if (!card) { console.error('no card canvas found'); done(1); }
 // Homepage thumbnails are small: 540px-wide WebP keeps them tens of KB instead of multi-MB PNGs.
 const thumb = await run(`const img = new Image(); img.src = ${JSON.stringify(card)}; await img.decode(); const c = document.createElement('canvas'); c.width = 540; c.height = Math.round(540 * img.height / img.width); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); return c.toDataURL('image/webp', 0.86);`);
