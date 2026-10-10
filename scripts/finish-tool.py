@@ -8,19 +8,19 @@ hash_state = sys.argv[9] if len(sys.argv) > 9 else ''
 before = sys.argv[10] if len(sys.argv) > 10 else ''
 run = lambda cmd: subprocess.run(cmd, shell=isinstance(cmd, str), capture_output=True, text=True)
 
-# 1. The tool's own tests and types must be clean.
+# 1. Normalize the tool's text to NFC first (read, then write), so the tests below catch anything NFC breaks (e.g. regex ranges over ড়/য়).
+for path in glob.glob(f'tools/{slug}/**/*', recursive=True):
+    if path.endswith(('.ts', '.tsx', '.css', '.json')):
+        raw = open(path, encoding='utf-8').read()
+        if N(raw) != raw: open(path, 'w', encoding='utf-8').write(N(raw))
+
+# 2. The tool's own tests and types must be clean.
 tests = glob.glob(f'tools/{slug}/tests/*.test.ts')
 if tests:
     result = run(['node', '--import', 'tsx', '--no-warnings', '--test', *tests])
     if result.returncode: sys.exit(f'tests failed for {slug}:\n' + result.stdout[-2000:])
 types = [line for line in run('npx tsc --noEmit').stdout.splitlines() if f'tools/{slug}/' in line or f'app/{slug}/' in line]
 if types: sys.exit('type errors:\n' + '\n'.join(types))
-
-# 2. Normalize the tool's text to NFC (read first, then write).
-for path in glob.glob(f'tools/{slug}/**/*', recursive=True):
-    if path.endswith(('.ts', '.tsx', '.css', '.json')):
-        raw = open(path, encoding='utf-8').read()
-        if N(raw) != raw: open(path, 'w', encoding='utf-8').write(N(raw))
 
 # 3. The catalog line shown on the homepage and /tools.
 catalog = open('lib/catalog.ts').read()
