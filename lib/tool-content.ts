@@ -79,6 +79,7 @@ import { site as gorur_ojon } from '../tools/gorur-ojon/content';
 import { site as starter_pack } from '../tools/starter-pack/content';
 import { site as mishron } from '../tools/mishron/content';
 import { site as raat_jaga } from '../tools/raat-jaga/content';
+import { site as betoner_bhag } from '../tools/betoner-bhag/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -162,6 +163,7 @@ export const toolContent = {
   'starter-pack': starter_pack,
   'mishron': mishron,
   'raat-jaga': raat_jaga,
+  'betoner-bhag': betoner_bhag,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
