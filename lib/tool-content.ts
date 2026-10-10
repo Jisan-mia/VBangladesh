@@ -24,6 +24,7 @@ import { site as banan } from '../tools/banan/content';
 import { site as dom_atkano } from '../tools/dom-atkano/content';
 import { site as salami_chek } from '../tools/salami-chek/content';
 import { site as eta_na_ota } from '../tools/eta-na-ota/content';
+import { site as deshe_fera } from '../tools/deshe-fera/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -52,6 +53,7 @@ export const toolContent = {
   'dom-atkano': dom_atkano,
   'salami-chek': salami_chek,
   'eta-na-ota': eta_na_ota,
+  'deshe-fera': deshe_fera,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
