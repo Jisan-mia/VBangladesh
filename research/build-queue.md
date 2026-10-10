@@ -204,7 +204,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 6 | shesh-bol | শেষ বলে ছয় | খেলাধুলা | SP15 | building | #b-shesh-bol |
 | 7 | dhoyahin | ধোঁয়াহীন দিন | হিসাব-নিকাশ | HL04 | building | #b-dhoyahin |
 | 7 | ghuri | ঘুড়ি আর ফানুস | আঁকো আর সাজাও | CR08, FA13 | building | #b-ghuri |
-| 7 | flames | ফ্লেমস | মজা আর কুইজ | ID04 | todo | #b-flames |
+| 7 | flames | ফ্লেমস | মজা আর কুইজ | ID04 | building | #b-flames |
 | 7 | moner-boyos | মনের বয়স কত? | নিজেকে জানো | ID06 | todo | #b-moner-boyos |
 | 7 | bagdhara | বাগধারার ছবি | ভাষা আর পড়াশোনা | ED04 | todo | #b-bagdhara |
 | 8 | sehri-iftar | সেহরি-ইফতারের সময় | উৎসব আর বিশ্বাস | FA07 | todo | #b-sehri-iftar |
