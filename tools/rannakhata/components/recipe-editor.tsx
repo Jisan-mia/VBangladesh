@@ -1,90 +1,204 @@
 "use client";
 
-import { useState } from "react";
-import { emptyRecipe, exampleRecipe, recipeCard, recipeLimits, recipeText, validateRecipe, type RecipeDraft } from "../lib/recipe";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { flushSync } from "react-dom";
+import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
+import { cardBlob, drawCard } from "../lib/draw-recipe";
+import { bn, possessive, RECIPE_ASK, cleanRecipe, dishHeadline, emptyRecipe, exampleRecipe, parseRecipeHash, recipeCard, recipeHash, recipeLimits, recipeLine, recipeText, validateRecipe, whoseChoices, whoseWord, type RecipeCard, type RecipeDraft } from "../lib/recipe";
 
-const banglaNumber = new Intl.NumberFormat("bn-BD");
+const TOOL = "rannakhata";
+const isChoice = (value: string) => (whoseChoices as readonly string[]).includes(value);
+
+/** The full recipe as a notebook page: what a shared link opens and what gets printed. */
+function RecipePage({ card }: { card: RecipeCard }) {
+  const who = whoseWord(card.learnedFrom);
+  return <article className="ranna-page ranna-sheet" aria-label={dishHeadline(card)}>
+    <div className="ranna-sheet-top"><span>আমাদের রান্নাখাতা{card.servings && ` · ${possessive(card.servings)} রান্না`}</span>{who && <span className="ranna-stamp">{who} রেসিপি</span>}</div>
+    <h3>{card.title}</h3>
+    {card.memory && <p className="ranna-sheet-story">“{card.memory}”</p>}
+    <h4>যা যা লাগবে</h4>
+    <ul>{card.ingredients.map((item, index) => <li key={index}>{item}</li>)}</ul>
+    <h4>যেভাবে রাঁধবে</h4>
+    <ol>{card.steps.map((step, index) => <li key={index}><span aria-hidden="true">{bn(index + 1)}</span>{step}</li>)}</ol>
+  </article>;
+}
 
 export function RecipeEditor() {
-  const [draft, setDraft] = useState<RecipeDraft>(emptyRecipe);
+  const [draft, setDraft] = useState<RecipeDraft>(exampleRecipe);
+  const [customWhose, setCustomWhose] = useState(false);
+  const [format, setFormat] = useState<CardFormat>("feed");
+  const [friend, setFriend] = useState<RecipeDraft | null>(null);
+  const [site, setSite] = useState("");
+  const [previewError, setPreviewError] = useState(false);
   const [status, setStatus] = useState("");
-  const [printPending, setPrintPending] = useState(false);
-  const card = recipeCard(draft);
+  const [friendStatus, setFriendStatus] = useState("");
+  const [typing, setTyping] = useState(false);
+  const [printTarget, setPrintTarget] = useState<"own" | "friend">("own");
+  const preview = useRef<HTMLCanvasElement>(null);
+  const result = useRef<HTMLElement>(null);
+  const resultVisible = useInView(result);
+  // The shared section mounts after the first render, so observe it through a ref that changes with it.
+  const [friendSection, setFriendSection] = useState<HTMLElement | null>(null);
+  const friendVisible = useInView(useMemo(() => ({ current: friendSection }), [friendSection]));
+  const card = useMemo(() => recipeCard(cleanRecipe(draft)), [draft]);
   const errors = validateRecipe(draft);
   const ready = Object.keys(errors).length === 0;
-  const hasWriting = Object.values(draft).some((value) => value.trim());
+  const state = ready ? recipeHash(draft).slice(1) : "";
+  const headline = dishHeadline(card);
+  const isSample = JSON.stringify(draft) === JSON.stringify(exampleRecipe);
+  const friendCard = friend && recipeCard(friend);
+  const otherWhose = customWhose || Boolean(draft.learnedFrom && !isChoice(draft.learnedFrom));
 
-  function updateField(field: keyof RecipeDraft, value: string) {
-    setDraft((current) => ({ ...current, [field]: value }));
+  useEffect(() => {
+    // In-page anchors (#result) also change the hash, so only a real shared recipe replaces the friend's.
+    const readFriend = () => { const shared = parseRecipeHash(window.location.hash); if (shared) setFriend(shared); };
+    readFriend();
+    window.addEventListener("hashchange", readFriend);
+    setSite(window.location.host);
+    return () => window.removeEventListener("hashchange", readFriend);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    loadCardFonts(card.title || "রান্নাখাতা").then(() => {
+      if (cancelled || !preview.current) return;
+      drawCard(preview.current, card, format, site);
+      setPreviewError(false);
+    }).catch(() => { if (!cancelled) setPreviewError(true); });
+    return () => { cancelled = true; };
+  }, [card, format, site]);
+
+  function update(field: keyof RecipeDraft, value: string) {
+    setDraft(current => ({ ...current, [field]: value }));
     setStatus("");
   }
 
-  function fillExample() {
-    if (hasWriting && !window.confirm("নমুনা দেখালে তোমার লেখাটা মুছে যাবে। দরকারি হলে আগে ফাইলটা নামিয়ে রাখো। তবুও নমুনা দেখবে?")) return;
-    setDraft({ ...exampleRecipe });
-    setStatus("এটা শুধু নমুনা, কারো আসল রেসিপি বা গল্প না। এবার নিজের রান্না দিয়ে বদলে নাও।");
+  function pickWhose(choice: string) {
+    setCustomWhose(false);
+    update("learnedFrom", draft.learnedFrom === choice ? "" : choice);
   }
 
-  function clearRecipe() {
-    if (!window.confirm("এই পাতার সব লেখা মুছে দেবে? দরকার হলে আগে ফাইলটা নামিয়ে রাখো।")) return;
+  function pickOther() {
+    if (otherWhose) { setCustomWhose(false); update("learnedFrom", ""); return; }
+    setCustomWhose(true);
+    if (isChoice(draft.learnedFrom)) update("learnedFrom", "");
+    requestAnimationFrame(() => document.getElementById("recipe-whose")?.focus());
+  }
+
+  function startBlank() {
+    if (!isSample && !window.confirm("এই পাতার লেখা মুছে নতুন পাতা নেবে? দরকার হলে আগে রেসিপিটা কপি করে রাখো।")) return;
     setDraft(emptyRecipe());
-    setStatus("এই পাতার লেখা মুছে গেছে। আগে ডাউনলোড করা ফাইল যেমন ছিল, তেমনই আছে।");
+    setCustomWhose(false);
+    document.getElementById("recipe-title")?.focus();
   }
 
-  function downloadRecipe() {
+  function takeFriendRecipe() {
+    if (!friend) return;
+    if (!isSample && !window.confirm("তোমার খাতার লেখাটা মুছে এই রেসিপিটা তুলবে?")) return;
+    setDraft(friend);
+    setCustomWhose(Boolean(friend.learnedFrom && !isChoice(friend.learnedFrom)));
+    setStatus("রেসিপিটা তোমার খাতায় উঠেছে। যা বদলাতে চাও, বদলে নাও।");
+    document.getElementById("khata")?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  async function copyText(target: RecipeDraft, say: (message: string) => void) {
     try {
-      const blob = new Blob(["\uFEFF", recipeText(draft)], { type: "text/plain;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "আমাদের-রান্নাখাতা.txt";
-      document.body.append(link);
-      link.click();
-      link.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
-      setStatus("ডাউনলোড শুরু হয়েছে। ফোনের ডাউনলোড ফোল্ডার বা ফাইল অ্যাপে দেখো।");
+      await navigator.clipboard.writeText(recipeText(target));
+      say("পুরো রেসিপিটা কপি হয়েছে। পরিবারের গ্রুপে পেস্ট করে দাও।");
     } catch {
-      setStatus("ফাইলটা ডাউনলোড হলো না। ব্রাউজারে ডাউনলোডের অনুমতি আছে কি না দেখে আরেকবার চেষ্টা করো। তোমার লেখা পাতাতেই আছে।");
+      say("কপি হলো না। ‘প্রিন্ট করো’ চেপে পিডিএফ করে রাখতে পারো।");
     }
   }
 
-  async function printRecipe() {
-    if (!ready) return;
-    setPrintPending(true);
-    try {
-      await document.fonts.ready;
-      window.print();
-      setStatus("প্রিন্টের পাতা থেকে প্রিন্ট করো বা পিডিএফ করে রাখো। বাতিল করলেও লেখা এখানেই থাকবে।");
-    } catch {
-      setStatus("প্রিন্টের পাতা খুলল না। ব্রাউজারের মেনু থেকে প্রিন্ট করে দেখো।");
-    } finally {
-      setPrintPending(false);
-    }
+  function printPage(target: "own" | "friend") {
+    // The print stylesheet keeps only the chosen page, so it must be in the DOM before the dialog opens.
+    flushSync(() => setPrintTarget(target));
+    window.print();
   }
 
-  return <div className="ranna-editor">
-    <form className="ranna-form" onSubmit={(event) => event.preventDefault()}>
-      <div className="ranna-form-top"><h3>তোমার রান্নার খাতা</h3><button className="ranna-text-button" type="button" onClick={fillExample}>একটা নমুনা দেখো</button></div>
-      <p className="ranna-required-note">রান্নার নাম, উপকরণ আর ধাপ লিখলেই ফাইল ডাউনলোড বা প্রিন্ট করতে পারবে।</p>
-      <div className="ranna-field"><label htmlFor="recipe-title">রান্নার নাম <span>লাগবেই</span></label><input id="recipe-title" value={draft.title} maxLength={recipeLimits.title} onChange={(event) => updateField("title", event.target.value)} placeholder="যেমন: ডাল ভর্তা" required autoComplete="off" /></div>
-      <div className="ranna-field-row"><div className="ranna-field"><label htmlFor="recipe-from">কার কাছে শেখা <span>চাইলে</span></label><input id="recipe-from" value={draft.learnedFrom} maxLength={recipeLimits.learnedFrom} onChange={(event) => updateField("learnedFrom", event.target.value)} placeholder="যেমন: মায়ের কাছে" autoComplete="off" /></div><div className="ranna-field"><label htmlFor="recipe-servings">কতজনের জন্য <span>চাইলে</span></label><input id="recipe-servings" value={draft.servings} maxLength={recipeLimits.servings} onChange={(event) => updateField("servings", event.target.value)} placeholder="যেমন: ৪ জন" autoComplete="off" /></div></div>
-      <div className="ranna-field"><label htmlFor="recipe-ingredients">উপকরণ আর মাপ <span>লাগবেই</span></label><p id="ingredients-help">একেক লাইনে একটা উপকরণ। ৩০টা পর্যন্ত।</p><textarea id="recipe-ingredients" rows={6} value={draft.ingredients} maxLength={recipeLimits.ingredients} onChange={(event) => updateField("ingredients", event.target.value)} placeholder={"ডাল — ১ কাপ\nপেঁয়াজ — ১টা"} required aria-describedby="ingredients-help ingredients-error" aria-invalid={Boolean(draft.ingredients.trim() && errors.ingredients)} /><p id="ingredients-error" className="ranna-field-error">{draft.ingredients.trim() && errors.ingredients}</p></div>
-      <div className="ranna-field"><label htmlFor="recipe-steps">রান্নার ধাপ <span>লাগবেই</span></label><p id="steps-help">একেক লাইনে একটা ধাপ। নম্বর নিজে থেকে বসবে। ২০টা পর্যন্ত।</p><textarea id="recipe-steps" rows={7} value={draft.steps} maxLength={recipeLimits.steps} onChange={(event) => updateField("steps", event.target.value)} placeholder={"প্রথমে কী করবে…\nতারপর…"} required aria-describedby="steps-help steps-error" aria-invalid={Boolean(draft.steps.trim() && errors.steps)} /><p id="steps-error" className="ranna-field-error">{draft.steps.trim() && errors.steps}</p></div>
-      <div className="ranna-field"><label htmlFor="recipe-memory">একটুখানি গল্প <span>চাইলে</span></label><p id="memory-help">কবে খাওয়া হতো, কার সাথে রাঁধতে, বা যে কথাটা মনে রাখতে চাও।</p><textarea id="recipe-memory" rows={3} value={draft.memory} maxLength={recipeLimits.memory} onChange={(event) => updateField("memory", event.target.value)} placeholder="যেমন: শীতের সকালে চুলার পাশে বসে খেতাম…" aria-describedby="memory-help" /><span className="ranna-character-count">{banglaNumber.format(draft.memory.length)} / ৮০০</span></div>
-      <div className="ranna-form-bottom"><p>পাতা ছাড়ার আগে ফাইলটা নামিয়ে রেখো।</p><button className="ranna-text-button" type="button" onClick={clearRecipe} disabled={!hasWriting}>সব মুছে দাও</button></div>
-    </form>
-    <div className="ranna-preview-wrap">
-      <div className="ranna-preview-top"><span>তোমার রেসিপি কার্ড</span><span>লিখলেই বদলাবে</span></div>
-      <article className="ranna-sheet" aria-labelledby="recipe-card-title">
-        <div className="ranna-sheet-brand"><span>আমাদের রান্নাখাতা</span><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M9 4c8 0 9 11 2 13l1 11H8l1-11C2 15 2 4 9 4Zm13 0v9m4-9v9m-8-9v9h8m-4 0v15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg></div>
-        <h3 id="recipe-card-title">{card.title || "তোমার রান্নার নাম"}</h3>
-        {(card.learnedFrom || card.servings) && <div className="ranna-sheet-meta">{card.learnedFrom && <p><span>কার কাছে শেখা</span>{card.learnedFrom}</p>}{card.servings && <p><span>কতজনের জন্য</span>{card.servings}</p>}</div>}
-        <section className="ranna-ingredient-section" aria-labelledby="card-ingredients-title"><h4 id="card-ingredients-title">যা যা লাগবে</h4>{card.ingredients.length ? <ul>{card.ingredients.map((ingredient, index) => <li key={index}>{ingredient}</li>)}</ul> : <p className="ranna-empty">উপকরণ লিখলে এখানে দেখাবে।</p>}</section>
-        <section className="ranna-step-section" aria-labelledby="card-steps-title"><h4 id="card-steps-title">যেভাবে রাঁধবে</h4>{card.steps.length ? <ol>{card.steps.map((step, index) => <li key={index}>{step}</li>)}</ol> : <p className="ranna-empty">তোমার লেখা ধাপগুলো এখানে নম্বর দিয়ে সাজানো থাকবে।</p>}</section>
-        {card.memory && <section className="ranna-story" aria-labelledby="card-story-title"><h4 id="card-story-title">এই রান্নার পেছনের গল্প</h4><p>{card.memory}</p></section>}
-        <div className="ranna-sheet-end">নিজের লেখা রেসিপি · আমাদের রান্নাখাতা</div>
-      </article>
-      <div className="ranna-export"><div className="ranna-export-actions"><button type="button" className="button" onClick={downloadRecipe} disabled={!ready}>ফাইল ডাউনলোড করো <span aria-hidden="true">↓</span></button><button type="button" className="button-secondary" onClick={printRecipe} disabled={!ready || printPending}>{printPending ? "প্রিন্টের জন্য তৈরি হচ্ছে…" : "কার্ড প্রিন্ট করো"}</button></div><p className="ranna-export-help">{ready ? "নাম আর গল্পসহ তোমার সব লেখা ফাইলে আর প্রিন্ট করা কার্ডে থাকবে।" : "রান্নার নাম, উপকরণ আর ধাপ লেখো, তারপর ডাউনলোড বা প্রিন্ট করো।"}</p><p className="ranna-status" role="status" aria-live="polite">{status}</p><p className="ranna-count" role="status" aria-live="polite">{banglaNumber.format(card.ingredients.length)}টা উপকরণ · {banglaNumber.format(card.steps.length)}টা ধাপ</p></div>
+  const caption = `${headline} — রেসিপিটা খাতায় লিখে রাখলাম, যাতে হারিয়ে না যায়। ${RECIPE_ASK}`;
+  const firstError = Object.values(errors)[0];
+  const field = (name: keyof RecipeDraft) => ({ value: draft[name], maxLength: recipeLimits[name], onChange: (event: { target: { value: string } }) => update(name, event.target.value) });
+
+  return (
+    <div className="ranna" data-print={printTarget}>
+      {friend && friendCard && (
+        <section className="ranna-friend" ref={setFriendSection} aria-labelledby="friend-title">
+          <p className="ranna-kicker">তোমার জন্য একটা রেসিপি এসেছে</p>
+          <h2 id="friend-title">{dishHeadline(friendCard)}</h2>
+          <p className="ranna-friend-sub">পুরো রেসিপিটা নিচে আছে। পড়ো, কপি করো, বা প্রিন্ট করে রান্নাঘরে রাখো।</p>
+          <RecipePage card={friendCard} />
+          <div className="ranna-actions">
+            <button type="button" className="kit-secondary" onClick={() => copyText(friend, setFriendStatus)}>রেসিপি কপি করো</button>
+            <button type="button" className="kit-secondary" onClick={() => printPage("friend")}>প্রিন্ট করো</button>
+          </div>
+          <p className="kit-status" role="status" aria-live="polite">{friendStatus}</p>
+          <div className="ranna-your-turn">
+            <p>{RECIPE_ASK}</p>
+            <a className="kit-primary" href="#khata">নিজেদের রান্নাটা লিখি</a>
+            <button type="button" className="kit-link" onClick={takeFriendRecipe}>এটাই নিজের খাতায় তুলে বদলাই</button>
+          </div>
+        </section>
+      )}
+
+      <form id="khata" className="ranna-page ranna-editor" aria-label="রেসিপির খাতা" onSubmit={event => event.preventDefault()} onFocus={() => setTyping(true)} onBlur={() => setTyping(false)}>
+        <div className="ranna-page-top">
+          <span>{isSample ? "নমুনা পাতা · নিজের রান্না দিয়ে বদলে নাও" : "তোমার খাতার পাতা"}</span>
+          <button type="button" className="kit-link" onClick={startBlank}>ফাঁকা পাতা নাও</button>
+        </div>
+
+        <label className="ranna-field ranna-title-field" htmlFor="recipe-title"><span>রান্নার নাম</span></label>
+        <input id="recipe-title" className="ranna-title-input" {...field("title")} placeholder="যেমন: ভাপা পিঠা" autoComplete="off" aria-invalid={Boolean(errors.title && draft.title)} />
+
+        <fieldset className="ranna-whose">
+          <legend>কার রেসিপি?</legend>
+          <div className="kit-chips">
+            {whoseChoices.map(choice => <button type="button" key={choice} aria-pressed={!otherWhose && draft.learnedFrom === choice} onClick={() => pickWhose(choice)}>{choice}</button>)}
+            <button type="button" aria-pressed={otherWhose} onClick={pickOther}>অন্য কেউ</button>
+          </div>
+          {otherWhose && <input id="recipe-whose" {...field("learnedFrom")} placeholder="যেমন: বড় মামি" aria-label="কার রেসিপি, লেখো" autoComplete="off" />}
+        </fieldset>
+
+        <label className="ranna-field ranna-inline"><span>কতজনের রান্না</span><input {...field("servings")} placeholder="যেমন: ৪ জন" autoComplete="off" /></label>
+
+        <label className="ranna-field" htmlFor="recipe-ingredients"><span>যা যা লাগবে <small>একেক লাইনে একটা, মাপসহ</small></span></label>
+        <textarea id="recipe-ingredients" className="ranna-lines" rows={5} {...field("ingredients")} placeholder={"চালের গুঁড়া — ২ কাপ\nখেজুরের গুড় — ১ কাপ"} aria-describedby="ingredients-error" aria-invalid={Boolean(errors.ingredients && draft.ingredients)} />
+        <p id="ingredients-error" className="ranna-error">{draft.ingredients.trim() && errors.ingredients}</p>
+
+        <label className="ranna-field" htmlFor="recipe-steps"><span>যেভাবে রাঁধবে <small>একেক লাইনে একটা ধাপ, নম্বর নিজেই বসবে</small></span></label>
+        <textarea id="recipe-steps" className="ranna-lines" rows={5} {...field("steps")} placeholder={"প্রথমে কী করবে…\nতারপর…"} aria-describedby="steps-error" aria-invalid={Boolean(errors.steps && draft.steps)} />
+        <p id="steps-error" className="ranna-error">{draft.steps.trim() && errors.steps}</p>
+
+        <label className="ranna-field" htmlFor="recipe-memory"><span>এই রান্নার গল্প <small>চাইলে</small></span></label>
+        <textarea id="recipe-memory" className="ranna-lines ranna-story-input" rows={3} {...field("memory")} placeholder="শীতের সকালে চুলার পাশে বসে…" aria-describedby="memory-count" />
+        <p id="memory-count" className="ranna-count">{bn(draft.memory.length)} / {bn(recipeLimits.memory)}</p>
+      </form>
+
+      <StickyNext show={ready && !resultVisible && !typing && !friendVisible} title={<strong>{headline}</strong>} sub={`${bn(card.ingredients.length)}টা উপকরণ · ${bn(card.steps.length)}টা ধাপ`} href="#result" label="পাতাটা দেখো" />
+
+      <section className="ranna-result" id="result" ref={result} aria-labelledby="result-title">
+        <h2 id="result-title">{ready ? <>খাতার পাতা তৈরি</> : "পাতাটা এখনো অর্ধেক লেখা"}</h2>
+        <p className="ranna-result-line">{ready ? recipeLine(card) : firstError}</p>
+        <div className="ranna-result-body">
+          <figure className="kit-card" data-format={format}>
+            <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="card-summary" />
+            <figcaption id="card-summary" className="screen-reader-only">{headline}। উপকরণ: {card.ingredients.join(", ")}। {recipeLine(card)}</figcaption>
+            {previewError && <p className="kit-status" role="alert">খাতার ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
+          </figure>
+          <div className="ranna-controls">
+            <FormatToggle value={format} onChange={setFormat} />
+            <ShareBar tool={TOOL} fileName="rannakhata.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} disabled={!ready} hint={ready ? "লিংক খুললে পরিবারের সবাই পুরো রেসিপিটা পড়তে, কপি বা প্রিন্ট করতে পারবে।" : ""} />
+            <div className="ranna-actions">
+              <button type="button" className="kit-secondary" onClick={() => copyText(draft, setStatus)} disabled={!ready}>রেসিপি কপি করো</button>
+              <button type="button" className="kit-secondary" onClick={() => printPage("own")} disabled={!ready}>প্রিন্ট করো</button>
+            </div>
+            <p className="kit-status" role="status" aria-live="polite">{status}</p>
+          </div>
+        </div>
+      </section>
+
+      {ready && <div className="ranna-print-own"><RecipePage card={card} /></div>}
     </div>
-  </div>;
+  );
 }

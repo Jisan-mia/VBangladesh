@@ -20,7 +20,8 @@ export function useInView(ref: RefObject<Element | null>, threshold = 0.15) {
     observer.observe(element);
     watched.current = { element, observer };
   });
-  useEffect(() => () => watched.current?.observer.disconnect(), []);
+  // Clear the record too: React StrictMode remounts with the same element, which must be observed again.
+  useEffect(() => () => { watched.current?.observer.disconnect(); watched.current = null; }, []);
   return inView;
 }
 

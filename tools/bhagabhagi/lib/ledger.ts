@@ -1,19 +1,47 @@
+import { MAX_SHARE_STATE } from '../../../shared/share-types';
+
 export type Person = { id: string; name: string };
 export type Expense = { id: string; label: string; payerId: string; amount: number };
-export type Ledger = { people: Person[]; expenses: Expense[] };
+export type Ledger = { trip?: string; people: Person[]; expenses: Expense[] };
 export type Balance = { person: Person; paid: number; share: number; net: number };
 export type Transfer = { from: Person; to: Person; amount: number };
 export const MAX_PEOPLE = 8;
 export const MAX_EXPENSES = 100;
 export const MAX_EXPENSE_AMOUNT = 100_000_000;
-export const initialLedger: Ledger = { people: [{ id: 'person-1', name: 'বন্ধু ১' }, { id: 'person-2', name: 'বন্ধু ২' }], expenses: [] };
+export const MAX_TRIP_LENGTH = 40;
+/** A blank khata: what "খাতা খালি করো" goes back to. */
+export const initialLedger: Ledger = { trip: '', people: [{ id: 'person-1', name: 'বন্ধু ১' }, { id: 'person-2', name: 'বন্ধু ২' }], expenses: [] };
+/** What the page opens with, so the slip is never empty: change the names and amounts to your own. */
+export const exampleLedger: Ledger = {
+  trip: 'কক্সবাজার ট্যুর',
+  people: ['রাফি', 'তানিয়া', 'সাকিব', 'মিম', 'জয়'].map((name, index) => ({ id: `p${index}`, name })),
+  expenses: [
+    { id: 'e0', label: 'ঢাকা-কক্সবাজার বাস', payerId: 'p1', amount: 600_000 },
+    { id: 'e1', label: 'হোটেল, দুই রাত', payerId: 'p0', amount: 900_000 },
+    { id: 'e2', label: 'সি-ফুড ডিনার', payerId: 'p2', amount: 425_000 },
+    { id: 'e3', label: 'ইজিবাইক আর ডাব', payerId: 'p3', amount: 120_000 },
+  ],
+};
+export const tripIdeas = ['কক্সবাজার ট্যুর', 'সাজেক ট্যুর', 'ইফতার পার্টি', 'বন্ধুদের আড্ডা'];
 
 function record(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+const unsafe = /[\u0000-\u001f\u007f\u2028\u2029\u202a-\u202e\u2066-\u2069]/;
 function safeText(value: unknown, limit: number): value is string {
-  return typeof value === 'string' && value.trim().length > 0 && value.length <= limit && !/[\u0000-\u001f\u007f\u2028\u2029\u202a-\u202e\u2066-\u2069]/.test(value);
+  return typeof value === 'string' && value.trim().length > 0 && value.length <= limit && !unsafe.test(value);
+}
+
+/** What the trip-name box keeps while typing: no control or bidi characters, at most 40 characters. */
+export function cleanTrip(value: string): string {
+  return value.replace(new RegExp(unsafe.source, 'g'), '').slice(0, MAX_TRIP_LENGTH);
+}
+
+function tripName(value: unknown): string {
+  if (value === undefined || value === '') return '';
+  if (typeof value !== 'string' || value.length > MAX_TRIP_LENGTH || unsafe.test(value)) throw new Error('ট্যুরের নাম ৪০ অক্ষরের মধ্যে লেখো।');
+  return value.normalize('NFC').replace(/\s+/g, ' ').trim();
 }
 
 export function parsePoisha(value: string): number {
@@ -44,9 +72,9 @@ export function validateLedger(value: unknown): Ledger {
     if (typeof expense.payerId !== 'string' || !personIds.has(expense.payerId)) throw new Error('টাকাটা কে দিয়েছে, নাম বেছে নাও।');
     if (typeof expense.amount !== 'number' || !Number.isSafeInteger(expense.amount) || expense.amount <= 0 || expense.amount > MAX_EXPENSE_AMOUNT) throw new Error('টাকার পরিমাণটা ঠিক নেই। আরেকবার লেখো।');
     expenseIds.add(expense.id);
-    return { id: expense.id, label: expense.label.trim(), payerId: expense.payerId, amount: expense.amount };
+    return { id: expense.id, label: expense.label.trim().normalize('NFC'), payerId: expense.payerId, amount: expense.amount };
   });
-  return { people, expenses };
+  return { trip: tripName(value.trip), people, expenses };
 }
 
 export function allocatePoisha(total: number, count: number): number[] {
@@ -101,13 +129,61 @@ export function inputAmount(poisha: number): string {
 
 export function ledgerReport(value: unknown): string {
   const { ledger, total, balances, transfers } = calculateLedger(value);
-  const lines = ['ভাগাভাগি — সমান ভাগের হিসাব', '', `মোট খরচ: ${formatMoney(total)} টাকা`, `কয়জন: ${new Intl.NumberFormat('bn-BD').format(ledger.people.length)} জন`, '', 'খরচের লিস্ট'];
+  const lines = [`${ledger.trip || 'ভাগাভাগি'} — সমান ভাগের হিসাব`, `মোট খরচ: ${formatMoney(total)} টাকা · ${new Intl.NumberFormat('bn-BD').format(ledger.people.length)} জন · জনপ্রতি ${perPerson(total, ledger.people.length)} টাকা`, '', 'কে কাকে দেবে'];
+  for (const transfer of transfers) lines.push(`${transfer.from.name} → ${transfer.to.name}: ${formatMoney(transfer.amount)} টাকা`);
+  if (transfers.length === 0) lines.push(ledger.expenses.length ? 'সবার হিসাব মিলে গেছে।' : 'এখনো কোনো খরচ যোগ হয়নি।');
+  lines.push('', 'খরচের লিস্ট');
   for (const expense of ledger.expenses) lines.push(`${expense.label}: ${formatMoney(expense.amount)} টাকা — দিয়েছে ${ledger.people.find(person => person.id === expense.payerId)!.name}`);
   lines.push('', 'সবার হিসাব');
   for (const balance of balances) lines.push(`${balance.person.name}: দিয়েছে ${formatMoney(balance.paid)}, ভাগ ${formatMoney(balance.share)}; ${balance.net > 0 ? 'পাবে' : balance.net < 0 ? 'দেবে' : 'বাকি'} ${formatMoney(Math.abs(balance.net))} টাকা`);
-  lines.push('', 'কে কাকে দেবে');
-  for (const transfer of transfers) lines.push(`${transfer.from.name} → ${transfer.to.name}: ${formatMoney(transfer.amount)} টাকা`);
-  if (transfers.length === 0) lines.push(ledger.expenses.length ? 'সবার হিসাব মিলে গেছে।' : 'এখনো কোনো খরচ যোগ হয়নি।');
   lines.push('', 'মোট খরচ সবার মধ্যে সমান ভাগ করা। ভাগের পর পয়সা বেঁচে গেলে লিস্টের প্রথম জন থেকে এক পয়সা করে যোগ হয়েছে।', 'যা লেখা হয়েছে, শুধু তার হিসাব। ভাগাভাগি দিয়ে টাকা পাঠানো হয় না।');
   return lines.join('\n');
+}
+
+/** "৳২০,৪৫০" — paisa only when there are any. */
+export function formatTaka(poisha: number): string {
+  return '৳' + new Intl.NumberFormat('bn-BD', { minimumFractionDigits: poisha % 100 ? 2 : 0, maximumFractionDigits: 2 }).format(poisha / 100);
+}
+
+/** Everyone's share, honest about the one-poisha remainder. */
+export function perPerson(total: number, count: number, format = formatMoney): string {
+  return `${total % count ? 'প্রায় ' : ''}${format(Math.floor(total / count))}`;
+}
+
+export function ledgerLine({ total, balances, transfers }: Pick<ReturnType<typeof calculateLedger>, 'total' | 'balances' | 'transfers'>): string {
+  if (!total) return 'খরচ লিখলেই হিসাব মিলবে।';
+  if (!transfers.length) return 'সবাই সমান দিয়েছে, কারও কাছে কারও পাওনা নেই!';
+  const top = balances.reduce((most, balance) => (balance.paid > most.paid ? balance : most));
+  if (top.paid * 2 > total) return `${top.person.name} একাই অর্ধেকের বেশি খরচ টেনেছে। ওর পাওনাটা আগে মিটিয়ে দাও!`;
+  return 'হিসাব পরিষ্কার, বন্ধুত্ব অটুট!';
+}
+
+// Bangla stays as-is (1 char instead of 9 percent-encoded ones) so a 100-expense ledger fits in one link; only URL syntax is escaped.
+const escapeValue = (text: string) => text.replace(/[\s%&=+#]/g, char => (char === ' ' ? '+' : encodeURIComponent(char)));
+
+/** t=trip, one p= per person in order, one e=<payer index>.<poisha>.<label> per expense. */
+export function ledgerHash(value: unknown): string {
+  const ledger = validateLedger(value);
+  const index = new Map(ledger.people.map((person, position) => [person.id, position]));
+  const parts = [
+    ...(ledger.trip ? [`t=${escapeValue(ledger.trip)}`] : []),
+    ...ledger.people.map(person => `p=${escapeValue(person.name)}`),
+    ...ledger.expenses.map(expense => `e=${index.get(expense.payerId)}.${expense.amount}.${escapeValue(expense.label)}`),
+  ];
+  return '#' + parts.join('&');
+}
+
+/** Rebuilds a shared ledger for read-only checking. Anything the editor could not have produced is rejected. */
+export function parseLedgerHash(hash: string): Ledger | null {
+  if (hash.length > MAX_SHARE_STATE * 9) return null;
+  const params = new URLSearchParams(hash.replace(/^#/, ''));
+  const people = params.getAll('p').map((name, index) => ({ id: `p${index}`, name }));
+  const expenses: Expense[] = [];
+  for (const [index, raw] of params.getAll('e').entries()) {
+    const match = /^([0-7])\.([1-9]\d{0,8})\.(.+)$/s.exec(raw);
+    if (!match) return null;
+    expenses.push({ id: `e${index}`, payerId: `p${match[1]}`, amount: Number(match[2]), label: match[3] });
+  }
+  if (!expenses.length) return null;
+  try { return validateLedger({ trip: params.get('t') ?? '', people, expenses }); } catch { return null; }
 }

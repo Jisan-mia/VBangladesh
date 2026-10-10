@@ -3,6 +3,22 @@ import { LedgerEditor } from './components/ledger-editor';
 import { site } from './content';
 import './product.css';
 
-export default function ProductPage() {
-  return <PageFrame site={site}><JsonLd site={site} /><section className="container split-hero"><div><p className="eyebrow">কক্সবাজার, সাজেক বা আড্ডার বিল</p><h1>ট্যুর শেষ, হিসাব বাকি?<br /><span>এবার মিলিয়ে ফেলো।</span></h1><p>{site.lead}</p><a className="button" href="#tool">{site.cta}<span aria-hidden="true">↓</span></a><p className="split-hero-note">সমান ভাগ · পয়সা পর্যন্ত হিসাব · অ্যাকাউন্ট লাগে না</p></div><div className="split-hero-art" aria-hidden="true"><svg viewBox="0 0 400 330" width="400" height="330"><path d="M25 252c54-4 117 10 170 0s119-17 180-3" fill="none" stroke="#b5c9bc"/><path d="M84 93h222v174H84z" fill="#e5ede4" transform="rotate(-7 190 180)"/><rect x="93" y="70" width="218" height="199" rx="5" fill="#fff" stroke="#a7b8a8"/><path d="M118 104h65m-65 17h114M118 232h168" stroke="#a7b8a8" strokeWidth="2"/><rect x="120" y="155" width="28" height="60" rx="3" fill="#e3b75e"/><rect x="175" y="135" width="28" height="80" rx="3" fill="#467a6a"/><rect x="230" y="176" width="28" height="39" rx="3" fill="#c27a61"/><path d="M104 172c-24-51-45-33-45-8s7 44 30 45m-5-10 6 10-11 4M294 136c22-24 52-11 52 19s-17 54-42 45m9-7-11 7 8 9" fill="none" stroke="#285b55" strokeWidth="2" strokeLinecap="round"/><circle cx="81" cy="45" r="18" fill="#e3b75e"/><circle cx="316" cy="290" r="10" fill="#c27a61"/><path d="m339 83 7-7m-11 0 7 7" stroke="#285b55" strokeWidth="2"/></svg><span>সবার খরচ, একই খাতায়</span></div></section><section className="split-tool-section" id="tool"><div className="container"><LedgerEditor /></div></section><section className="container split-explanation"><p className="eyebrow">হিসাবটা যেভাবে হয়</p><h2>যে বেশি দিয়েছে, সে পাবে।<br />যে কম দিয়েছে, সে দেবে।</h2><p>মোট খরচ সবার মধ্যে সমান ভাগ হয়। প্রত্যেকে যত টাকা দিয়েছে, তা থেকে নিজের ভাগ বাদ দিলেই বোঝা যায় কে পাবে আর কে দেবে। নাম বা খরচ বদলালে ফলও সাথে সাথে বদলায়।</p></section><Faq items={site.faq} /></PageFrame>;
+export default function BhagabhagiPage() {
+  return <PageFrame site={site}>
+    <JsonLd site={site} />
+    <div className="bhagabhagi">
+      <section className="split-hero container" aria-labelledby="split-title">
+        <p className="split-kicker">ট্যুরের হিসাবের খাতা · কক্সবাজার, সাজেক, ইফতার পার্টি</p>
+        <h1 id="split-title">ট্যুর শেষ, হিসাব বাকি?<br /><span>এক মিনিটে মিলিয়ে ফেলো</span></h1>
+        <p className="split-lead">{site.lead}</p>
+      </section>
+      <section className="container" id="tool" aria-label="খরচের হিসাব"><LedgerEditor /></section>
+      <section className="container section split-guide" id="guide" aria-labelledby="guide-title">
+        <h2 id="guide-title">{site.guideTitle}</h2>
+        <p>{site.guideIntro}</p>
+        <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{new Intl.NumberFormat('bn-BD').format(index + 1)}</span><p>{step}</p></li>)}</ol>
+      </section>
+      <Faq items={site.faq} />
+    </div>
+  </PageFrame>;
 }

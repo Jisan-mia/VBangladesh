@@ -3,7 +3,8 @@ export type Tally = { total: number; counts: Record<string, number> };
 
 /** A short /s/<id> link with a personal preview, or the plain #hash link if the API is unavailable. */
 export async function shareLink(tool: string, state: string): Promise<string> {
-  const fallback = `${window.location.origin}/${tool}#${state}`;
+  // Percent-encode Bangla so chat apps still recognise the whole fallback as one link.
+  const fallback = `${window.location.origin}/${tool}#${state.replace(/[^\x00-\x7f]+/g, encodeURIComponent)}`;
   try {
     const response = await fetch("/api/share", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ tool, state }) });
     if (!response.ok) return fallback;
