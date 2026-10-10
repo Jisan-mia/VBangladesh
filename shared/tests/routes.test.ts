@@ -133,7 +133,7 @@ test('the published sitemap contains all sixty-three pages once under the public
 
 test('published robots point at the consolidated sitemap', () => {
   withSiteUrl(origin, () => {
-    assert.deepEqual(robots(), { rules: { userAgent: '*', allow: '/' }, sitemap: `${origin}/sitemap.xml` });
+    assert.deepEqual(robots(), { rules: { userAgent: '*', allow: '/', disallow: '/api/' }, sitemap: `${origin}/sitemap.xml` });
   });
 });
 

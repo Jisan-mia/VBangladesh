@@ -1,10 +1,43 @@
 import './product.css';
 import { Faq, JsonLd, PageFrame } from '../../shared/site-shell';
 import { FareCalculator } from './components/fare-calculator';
+import { FareChart } from './components/fare-chart';
 import { site } from './content';
 import { fareSource } from './lib/fares';
-export default function HomePage(){return <PageFrame site={site}><JsonLd site={site}/>
-  <section className="container fare-hero"><div><p className="eyebrow">ঢাকা মেট্রোরেলের ভাড়া</p><h1>মেট্রোতে যাচ্ছ?<br/><span>ভাড়াটা দেখে নাও</span></h1><p className="fare-lead">{site.lead}</p><a className="button" href="#tool">{site.cta} <span aria-hidden="true">↓</span></a><p className="fare-small fare-hero-note">ফ্রি · অ্যাকাউন্ট লাগে না · বাংলা অঙ্কেও লেখা যায়</p></div><div className="fare-route-art" aria-hidden="true"><div className="fare-art-heading">মেট্রোরেল<br/><strong>যাতায়াতের হিসাব</strong></div><div className="fare-track"><span>উত্তরা উত্তর</span><i/><i/><i/><i/><span>মতিঝিল</span></div><svg viewBox="0 0 200 150"><path d="M55 124 37 145m108-21 18 21M57 131h88M65 143h70"/><rect x="45" y="10" width="110" height="114" rx="25"/><rect x="57" y="35" width="86" height="49" rx="7"/><path d="M100 35v49M80 23h40"/><circle cx="66" cy="105" r="7"/><circle cx="134" cy="105" r="7"/></svg><p>স্টেশন বাছো, ভাড়া জেনে নাও</p></div></section>
-  <section className="section fare-tool" id="tool" aria-labelledby="tool-heading"><div className="container"><div className="section-heading"><p className="eyebrow">উত্তরা উত্তর থেকে মতিঝিল</p><h2 id="tool-heading">কোথা থেকে কোথায় যাবে?</h2><p>স্টেশন বা কয়জন যাবে বদলালে হিসাবও সাথে সাথে বদলাবে।</p></div><FareCalculator/></div></section>
-  <section className="container section fare-source" aria-labelledby="source-heading"><div><p className="eyebrow">ভাড়া কোথা থেকে নেওয়া</p><h2 id="source-heading">ভাড়াগুলো কোথা থেকে,<br/>নিজেই মিলিয়ে নাও</h2></div><div><p>সব ভাড়া <strong>ডিএমটিসিএলের ওয়েবসাইটে দেওয়া সরকারি নথি</strong> থেকে নেওয়া। নথির তারিখ {fareSource.published}, আমরা মিলিয়ে দেখেছি {fareSource.checked}।</p><p>ভাড়া বা ট্রেনের সময় বদলালে এখানে নিজে থেকে বদলায় না। তাই বের হওয়ার আগে স্টেশনের নোটিশ বা ডিএমটিসিএলের সাইটে একবার দেখে নিও। এমআরটি পাস বা র‍্যাপিড পাসের ছাড়, অন্য কোনো ছাড়, আর স্টেশন পর্যন্ত রিকশা-বাসের খরচ এই হিসাবে নেই।</p><div className="fare-source-links"><a href={fareSource.page} rel="external">সরকারি ভাড়ার তালিকা দেখো ↗</a><a href={fareSource.document} rel="external">মূল নথি (PDF) দেখো ↗</a></div><p className="fare-small">একটুখানি স্বাধীনভাবে বানানো। আমরা ডিএমটিসিএলের কেউ না, টিকিটও বিক্রি করি না।</p></div></section>
-  <Faq items={site.faq}/></PageFrame>}
+
+export default function BharaPage() {
+  return <PageFrame site={site}>
+    <JsonLd site={site} />
+    <div className="bhara">
+      <section className="bhara-hero container" aria-labelledby="bhara-title">
+        <p className="bhara-kicker">ঢাকা মেট্রোরেল · উত্তরা উত্তর থেকে মতিঝিল</p>
+        <h1 id="bhara-title">মেট্রোতে যাচ্ছ?<br /><span>ভাড়াটা দেখে নাও</span></h1>
+        <p className="bhara-lead">{site.lead} <a href="#chart">পুরো ভাড়ার তালিকা ↓</a></p>
+      </section>
+
+      <section className="container" id="tool" aria-label="ভাড়ার হিসাব"><FareCalculator /></section>
+
+      <section className="container section bhara-chart" id="chart" aria-labelledby="chart-title">
+        <p className="bhara-kicker">ভাড়ার তালিকা</p>
+        <h2 id="chart-title">মেট্রোরেলের ভাড়ার চার্ট</h2>
+        <p className="bhara-muted">১৬টা স্টেশন, একক যাত্রার টিকিটে একজনের একবারের ভাড়া। একটা স্টেশন বেছে নাও, বাকি সব স্টেশনের ভাড়া দেখবে। দুই দিকেই ভাড়া একই।</p>
+        <FareChart />
+        <p className="bhara-chart-source">ভাড়া ডিএমটিসিএলের সরকারি নথি থেকে নেওয়া। নথির তারিখ {fareSource.published}, আমরা মিলিয়ে দেখেছি {fareSource.checked}।</p>
+      </section>
+
+      <section className="container section bhara-source" aria-labelledby="source-heading">
+        <h2 id="source-heading">ভাড়াগুলো কোথা থেকে, নিজেই মিলিয়ে নাও</h2>
+        <p>সব ভাড়া <strong>ডিএমটিসিএলের ওয়েবসাইটে দেওয়া সরকারি নথি</strong> থেকে নেওয়া। নথির তারিখ {fareSource.published}, আমরা মিলিয়ে দেখেছি {fareSource.checked}।</p>
+        <p>ভাড়া বা ট্রেনের সময় বদলালে এখানে নিজে থেকে বদলায় না। তাই বের হওয়ার আগে স্টেশনের নোটিশ বা ডিএমটিসিএলের সাইটে একবার দেখে নিও। এমআরটি পাস বা র‍্যাপিড পাসের ছাড়, অন্য কোনো ছাড়, আর স্টেশন পর্যন্ত রিকশা-বাসের খরচ এই হিসাবে নেই।</p>
+        <div className="bhara-source-links"><a href={fareSource.page} rel="external">সরকারি ভাড়ার তালিকা দেখো ↗</a><a href={fareSource.document} rel="external">মূল নথি (PDF) দেখো ↗</a></div>
+        <p className="bhara-small">একটুখানি স্বাধীনভাবে বানানো। আমরা ডিএমটিসিএলের কেউ না, টিকিটও বিক্রি করি না।</p>
+      </section>
+
+      <section className="container section bhara-guide" id="guide" aria-labelledby="guide-title">
+        <h2 id="guide-title">{site.guideTitle}</h2>
+        <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{new Intl.NumberFormat('bn-BD').format(index + 1)}</span><p>{step}</p></li>)}</ol>
+      </section>
+      <Faq items={site.faq} />
+    </div>
+  </PageFrame>;
+}

@@ -1,6 +1,9 @@
-export const units = { piece: 'পিস', hali: 'হালি', kg: 'কেজি', litre: 'লিটার' } as const;
+// Stored lists and share links use these keys: add new units, never rename or remove one.
+export const units = { kg: 'কেজি', gram: 'গ্রাম', litre: 'লিটার', piece: 'পিস', hali: 'হালি', dozen: 'ডজন', packet: 'প্যাকেট', aanti: 'আঁটি' } as const;
 export type Unit = keyof typeof units;
-export type Item = { id: string; name: string; quantity: number; unit: Unit; unitPrice: number };
+/** unitPrice is in poisha; null means the person hasn't put a price yet (presets never invent one). */
+export type Item = { id: string; name: string; quantity: number; unit: Unit; unitPrice: number | null };
+type Priced = Pick<Item, 'quantity' | 'unitPrice'>;
 export type Basket = { items: Item[]; budget: number | null };
 export const MAX_ITEMS = 100;
 export const MAX_QUANTITY = 999999;
@@ -15,11 +18,11 @@ export function parseHundredths(value: string): number {
   return amount;
 }
 
-export function lineTotal(item: Item): number {
-  return Math.floor((item.quantity * item.unitPrice + 50) / 100);
+export function lineTotal(item: Priced): number {
+  return item.unitPrice === null ? 0 : Math.floor((item.quantity * item.unitPrice + 50) / 100);
 }
 
-export function basketTotal(basket: Basket): number {
+export function basketTotal(basket: { items: Priced[] }): number {
   return basket.items.reduce((total, item) => total + lineTotal(item), 0);
 }
 
@@ -47,30 +50,34 @@ export function validateBasket(value: unknown): Basket {
   const items = value.items.map((item: unknown): Item => {
     if (!isRecord(item) || typeof item.id !== 'string' || !item.id || item.id.length > 80 || ids.has(item.id) ||
       typeof item.name !== 'string' || !item.name.trim() || item.name.length > 80 || /[\u0000-\u001f\u007f]/.test(item.name) ||
-      !isAmount(item.quantity) || item.quantity === 0 || item.quantity > MAX_QUANTITY || !isAmount(item.unitPrice) ||
+      !isAmount(item.quantity) || item.quantity === 0 || item.quantity > MAX_QUANTITY || (item.unitPrice !== null && !isAmount(item.unitPrice)) ||
       typeof item.unit !== 'string' || !Object.hasOwn(units, item.unit)) {
       throw new Error('লিস্টের কিছু লেখা ঠিক নেই। নাম, পরিমাণ আর দাম একবার দেখে নাও।');
     }
     ids.add(item.id);
-    return { id: item.id, name: item.name.trim(), quantity: item.quantity, unit: item.unit as Unit, unitPrice: item.unitPrice };
+    return { id: item.id, name: item.name.trim(), quantity: item.quantity, unit: item.unit as Unit, unitPrice: item.unitPrice as number | null };
   });
   return { items, budget: value.budget as number | null };
 }
 
-export function exportList(basket: Basket, mode: 'items' | 'money'): string {
-  const lines = ['বাজার নোট', 'আমার বাজারের লিস্ট', ''];
+export function exportList(basket: Pick<Basket, 'budget'> & { items: Omit<Item, 'id'>[] }, mode: 'items' | 'money', title = 'আমার বাজারের লিস্ট'): string {
+  const lines = [title, ''];
   for (const [index, item] of basket.items.entries()) {
     lines.push(`${new Intl.NumberFormat('bn-BD').format(index + 1)}. ${item.name} — ${formatQuantity(item.quantity)} ${units[item.unit]}`);
-    if (mode === 'money') lines.push(`   প্রতি ${units[item.unit]} ${formatMoney(item.unitPrice)} টাকা · মোট ${formatMoney(lineTotal(item))} টাকা`);
+    if (mode === 'money' && item.unitPrice !== null) lines.push(`   প্রতি ${units[item.unit]} ${formatMoney(item.unitPrice)} টাকা · মোট ${formatMoney(lineTotal(item))} টাকা`);
   }
   if (mode === 'money') {
+    // A list with only a budget has no total yet; "মোট ০.০০" would read as a real sum.
+    const priced = basket.items.some(item => item.unitPrice !== null);
     const total = basketTotal(basket);
-    lines.push('', `মোট: ${formatMoney(total)} টাকা`);
+    lines.push('');
+    if (priced) lines.push(`মোট: ${formatMoney(total)} টাকা`);
     if (basket.budget !== null) {
       const difference = basket.budget - total;
-      lines.push(`বাজেট: ${formatMoney(basket.budget)} টাকা`, `${difference < 0 ? 'বাজেটের বেশি' : 'বাজেট থেকে বাকি'}: ${formatMoney(Math.abs(difference))} টাকা`);
+      lines.push(`বাজেট: ${formatMoney(basket.budget)} টাকা`);
+      if (priced) lines.push(`${difference < 0 ? 'বাজেটের বেশি' : 'বাজেট থেকে বাকি'}: ${formatMoney(Math.abs(difference))} টাকা`);
     }
-    lines.push('দাম নিজের দেওয়া, বাজারের আজকের দর না।');
+    if (priced) lines.push('দাম নিজের দেওয়া, বাজারের আজকের দর না।');
   }
   return lines.join('\n');
 }

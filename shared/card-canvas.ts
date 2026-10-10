@@ -62,8 +62,9 @@ export function drawPhoto(context: CanvasRenderingContext2D, photo: Photo, cx: n
 export function drawFooterBand(context: CanvasRenderingContext2D, format: CardFormat, ask: string, site: string, colors = { band: "#1d2b53", ask: "#ffd166", site: "#ffffff" }) {
   const { width, height } = cardSizes[format];
   const story = format === "story";
-  const top = story ? height - 240 : height - 96;
-  const baseline = story ? top + 64 : height - 34;
+  const top = story ? height - 260 : height - 96;
+  // Story text must end above storySafe.bottom (the last 180px), where reply bars and buttons sit.
+  const baseline = story ? top + 62 : height - 34;
   context.fillStyle = colors.band;
   context.fillRect(0, top, width, height - top);
   fitText(context, [{ text: ask, color: colors.ask, weight: 700, display: true }], 84, baseline, story ? 40 : 32, 560);

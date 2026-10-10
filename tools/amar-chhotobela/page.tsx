@@ -3,6 +3,7 @@ import { Faq, JsonLd, PageFrame } from "../../shared/site-shell";
 import { site } from "./content";
 import { PostcardBuilder } from "./components/postcard-builder";
 import { Captions } from "./components/captions";
+import { SuggestBox } from "../../shared/share-kit";
 
 export default function ChhotobelaPage() {
   return (
@@ -25,6 +26,7 @@ export default function ChhotobelaPage() {
           <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{new Intl.NumberFormat("bn-BD").format(index + 1)}</span><p>{step}</p></li>)}</ol>
         </section>
         <Faq items={site.faq} />
+        <section className="container section childhood-suggest" aria-label="স্মৃতির পরামর্শ"><SuggestBox tool="amar-chhotobela" question="কোন স্মৃতিটা থাকা উচিত ছিল?" placeholder="যেমন: মার্বেল খেলা, বিটিভির শুক্রবারের সিনেমা" /></section>
       </div>
     </PageFrame>
   );
