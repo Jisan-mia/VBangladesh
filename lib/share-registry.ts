@@ -58,6 +58,7 @@ import { share as attiyo } from '../tools/attiyo/share';
 import { share as studior_chhobi } from '../tools/studior-chhobi/share';
 import { share as koto_cheno } from '../tools/koto-cheno/share';
 import { share as eidjatra } from '../tools/eidjatra/share';
+import { share as probash } from '../tools/probash/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -119,6 +120,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'studior-chhobi': studior_chhobi,
   'koto-cheno': koto_cheno,
   'eidjatra': eidjatra,
+  'probash': probash,
 };
 
 export function toolShare(tool: string): ToolShare | null {
