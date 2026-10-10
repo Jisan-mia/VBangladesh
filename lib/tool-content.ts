@@ -44,6 +44,7 @@ import { site as dhoyahin } from '../tools/dhoyahin/content';
 import { site as ghuri } from '../tools/ghuri/content';
 import { site as flames } from '../tools/flames/content';
 import { site as moner_boyos } from '../tools/moner-boyos/content';
+import { site as bagdhara } from '../tools/bagdhara/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -92,6 +93,7 @@ export const toolContent = {
   'ghuri': ghuri,
   'flames': flames,
   'moner-boyos': moner_boyos,
+  'bagdhara': bagdhara,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
