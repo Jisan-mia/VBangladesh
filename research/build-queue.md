@@ -182,7 +182,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 2 | boyos | বয়স কত? | হিসাব-নিকাশ | TI01, TI03 | done | #b-boyos |
 | 2 | iftar-plate | ইফতারির প্লেট | উৎসব আর বিশ্বাস | FA05 | done | #b-iftar-plate |
 | 2 | cinema-poster | সিনেমার পোস্টার | আঁকো আর সাজাও | CR02 | done | #b-cinema-poster |
-| 3 | banan | শুদ্ধ বানান কোনটি? | ভাষা আর পড়াশোনা | ED03 | building | #b-banan |
+| 3 | banan | শুদ্ধ বানান কোনটি? | ভাষা আর পড়াশোনা | ED03 | done | #b-banan |
 | 3 | dom-atkano | দম আটকানো ম্যাচ | খেলাধুলা | SP07, SP11 | done | #b-dom-atkano |
 | 3 | salami-chek | সালামির চেক | উৎসব আর বিশ্বাস | FA03 | done | #b-salami-chek |
 | 3 | eta-na-ota | এটা না ওটা | মজা আর কুইজ | ID07, SP03 | done | #b-eta-na-ota |
