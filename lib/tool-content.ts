@@ -23,6 +23,7 @@ import { site as cinema_poster } from '../tools/cinema-poster/content';
 import { site as banan } from '../tools/banan/content';
 import { site as dom_atkano } from '../tools/dom-atkano/content';
 import { site as salami_chek } from '../tools/salami-chek/content';
+import { site as eta_na_ota } from '../tools/eta-na-ota/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -50,6 +51,7 @@ export const toolContent = {
   'banan': banan,
   'dom-atkano': dom_atkano,
   'salami-chek': salami_chek,
+  'eta-na-ota': eta_na_ota,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
