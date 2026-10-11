@@ -5,7 +5,7 @@ Agents use Sonnet 5.5 with `research/copy-review-agent-prompt.md`; up to 5 run a
 | batch | tools | status |
 |---|---|---|
 | B0 site-wide | lib/catalog.ts descriptions+actions, lib/brand.ts, components/, shared/ strings, app/ pages | done |
-| B1 স্মৃতি | bhashar-chhobi amar-chhotobela himu amar-bochhor tokhon-ekhon cassette mess-jibon ghuri | building |
+| B1 স্মৃতি | bhashar-chhobi amar-chhotobela himu amar-bochhor tokhon-ekhon cassette mess-jibon ghuri | done |
 | B2 আঁকো+খাবার | chhotto-para alpana riksharong cinema-poster namer-design studior-chhobi rannakhata mishtir-baksho | done |
 | B3 খাবার+পরিবার | pitha tong mache-bhate jibh deshe-fera upohar dawat chithi | building |
 | B4 পরিবার+হিসাব | attiyo probash prothom-ay bazar-note bhara bhagabhagi boyos bhori | building |
@@ -24,4 +24,8 @@ Agents use Sonnet 5.5 with `research/copy-review-agent-prompt.md`; up to 5 run a
 | M1 Facebook groups map | channels-facebook.md | done |
 | M2 other channels + virality | channels-other.md | done |
 | M3 strategy, funnel, calendar, measurement, runbook | README.md, calendar.md, runbook.md | building |
-| M4–M6 Bangla post copy per category | posts/*.md | todo (after M1+M2) |
+| P1 posts স্মৃতি+আঁকো | posts/smriti-anko.md | building |
+| P2 posts খাবার+পরিবার | posts/khabar-poribar.md | todo |
+| P3 posts হিসাব+উৎসব | posts/hisab-utsob.md | todo |
+| P4 posts খেলা+ভাষা | posts/khela-bhasha.md | todo |
+| P5 posts মজা+নিজেকে জানো | posts/moja-nijeke.md | todo |
