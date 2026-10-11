@@ -23,9 +23,9 @@ Agents use Sonnet 5.5 with `research/copy-review-agent-prompt.md`; up to 5 run a
 |---|---|---|
 | M1 Facebook groups map | channels-facebook.md | done |
 | M2 other channels + virality | channels-other.md | done |
-| M3 strategy, funnel, calendar, measurement, runbook | README.md, calendar.md, runbook.md | building |
+| M3 strategy, funnel, calendar, measurement, runbook | README.md, calendar.md, runbook.md | done |
 | P1 posts স্মৃতি+আঁকো | posts/smriti-anko.md | building |
-| P2 posts খাবার+পরিবার | posts/khabar-poribar.md | todo |
+| P2 posts খাবার+পরিবার | posts/khabar-poribar.md | building |
 | P3 posts হিসাব+উৎসব | posts/hisab-utsob.md | todo |
 | P4 posts খেলা+ভাষা | posts/khela-bhasha.md | todo |
 | P5 posts মজা+নিজেকে জানো | posts/moja-nijeke.md | todo |
