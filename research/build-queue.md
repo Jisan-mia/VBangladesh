@@ -1229,3 +1229,8 @@ One agent per target tool, so no two agents edit the same folder. Status: todo, 
 - iftar-plate imports koto-din-baki/lib/countdown, which also pulls in shubhechha's greeting texts (about 28 KB of source). Moving the moon dates into a small shared module would trim it.
 - komon-porlo: three jam squares lean on drivers ("উল্টো দিকে রিকশা", "মামা, যাবেন? না", "মিটারে যাবে না"). They can't be edited without breaking old links, so a softer replacement would need a new pack version.
 - argentina-na-brazil: the আসল ফ্যান questions are pinned. Editing or reordering them would re-score every shared link.
+- Launch readiness (from the marketing plan, research/marketing/README.md Phase 0):
+  - add a privacy-safe daily hits counter (day, tool, src, kind) with no cookies, IPs or ids, plus a /s/<id> open counter;
+  - make the rate limiter correct behind a CDN (it is in-process and keyed on X-Forwarded-For today);
+  - choose hosting that serves static pages and images from a CDN (unseenbangladesh went down at about 1.3M visits in a day);
+  - test on real Android phones and in the Facebook in-app browser.
