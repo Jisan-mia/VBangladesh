@@ -7,7 +7,7 @@ import { searchKeywords } from '../search-keywords';
 const building = (description: string) => description.endsWith('খুলে দেখো, খেলে দেখো।');
 
 test('every finished tool has search keywords, and no unknown tool has any', () => {
-  const slugs = new Set(catalog.map((tool) => tool.slug));
+  const slugs = new Set<string>(catalog.map((tool) => tool.slug));
   for (const slug of Object.keys(searchKeywords)) assert.ok(slugs.has(slug), `${slug} is not in the catalog`);
   for (const tool of catalog) if (!building(tool.description)) assert.ok(searchKeywords[tool.slug], `${tool.slug} has no search keywords`);
 });

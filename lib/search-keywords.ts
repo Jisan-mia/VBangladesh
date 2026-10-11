@@ -1,5 +1,6 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "peoner-cycle": ["cycle game", "bicycle game", "cycle khela", "postman game", "brick game", "racing game", "bangla game", "সাইকেল গেম", "সাইকেলের খেলা", "পিয়ন", "ব্রিক গেম", "রেসিং গেম"],
   "handi-bhanga": ["handi bhanga", "hari vanga", "হাঁড়ি ভাঙা", "হাড়ি ভাঙা খেলা", "brick breaker", "ইট ভাঙার গেম", "ball paddle game", "বল লাঠি গেম", "mela game", "মেলার খেলা", "বাংলা গেম", "পুরোনো দিনের গেম"],
   "churui-tarao": ["churui", "chorui", "sparrow game", "bird game", "pakhi tarano", "kaktaruya", "scarecrow game", "চড়ুই", "পাখির গেম", "পাখি তাড়ানো", "কাকতাড়ুয়া", "ধানক্ষেত"],
   "chhok-jora": ["dots and boxes", "dot game", "box game", "dot box", "chhok jora", "ডট বক্স", "ডট খেলা", "বক্স খেলা", "ঘর খেলা", "খাতার খেলা", "দুজনের খেলা", "কাঁথা"],
