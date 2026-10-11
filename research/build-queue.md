@@ -1218,7 +1218,7 @@ One agent per target tool, so no two agents edit the same folder. Status: todo, 
 | boyos | ED08, TI02 | "অমুক তারিখে বয়স কত" (user-typed age limit) + a "জীবনের ঋতু" grid section | done |
 | shubhechha | FM02, CR06 | birthday + anniversary occasions; a square profile-frame format (16 Dec, 21 Feb, match days) | building |
 | argentina-na-brazil | SP08 | 8-question "আসল ফ্যান" test after picking a team; same rival-link loop | done |
-| bhagabhagi | MO12 | a meal-rate mode (total bazar ÷ total meals, meals per member) | building |
+| bhagabhagi | MO12 | a meal-rate mode (total bazar ÷ total meals, meals per member) | done |
 | banan | ED10 | an Ekushe "খাঁটি বাংলা" set, same two-choice mechanic | building |
 | cholo-kheli | FM03 | লুডু with a "কে জিতল" scoreboard | building |
 | salami-chek | FA04 | an "এবার কে কে দিল" list; amounts optional, never tallied | building |

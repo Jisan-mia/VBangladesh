@@ -28,17 +28,17 @@ function record(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-const unsafe = /[\u0000-\u001f\u007f\u2028\u2029\u202a-\u202e\u2066-\u2069]/;
+export const unsafe = /[\u0000-\u001f\u007f\u2028\u2029\u202a-\u202e\u2066-\u2069]/;
 function safeText(value: unknown, limit: number): value is string {
   return typeof value === 'string' && value.trim().length > 0 && value.length <= limit && !unsafe.test(value);
 }
 
-/** What the trip-name box keeps while typing: no control or bidi characters, at most 40 characters. */
-export function cleanTrip(value: string): string {
-  return value.replace(new RegExp(unsafe.source, 'g'), '').slice(0, MAX_TRIP_LENGTH);
+/** What a name box keeps while typing: no control or bidi characters, at most `limit` (40) characters. */
+export function cleanTrip(value: string, limit = MAX_TRIP_LENGTH): string {
+  return value.replace(new RegExp(unsafe.source, 'g'), '').slice(0, limit);
 }
 
-function tripName(value: unknown): string {
+export function tripName(value: unknown): string {
   if (value === undefined || value === '') return '';
   if (typeof value !== 'string' || value.length > MAX_TRIP_LENGTH || unsafe.test(value)) throw new Error('ট্যুরের নাম ৪০ অক্ষরের মধ্যে লেখো।');
   return value.normalize('NFC').replace(/\s+/g, ' ').trim();
@@ -159,7 +159,7 @@ export function ledgerLine({ total, balances, transfers }: Pick<ReturnType<typeo
 }
 
 // Bangla stays as-is (1 char instead of 9 percent-encoded ones) so a 100-expense ledger fits in one link; only URL syntax is escaped.
-const escapeValue = (text: string) => text.replace(/[\s%&=+#]/g, char => (char === ' ' ? '+' : encodeURIComponent(char)));
+export const escapeValue = (text: string) => text.replace(/[\s%&=+#]/g, char => (char === ' ' ? '+' : encodeURIComponent(char)));
 
 /** t=trip, one p= per person in order, one e=<payer index>.<poisha>.<label> per expense. */
 export function ledgerHash(value: unknown): string {

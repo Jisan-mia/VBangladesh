@@ -1,5 +1,6 @@
 import { BODY_FONT, DISPLAY_FONT, cardSizes, drawFooterBand, fitText, renderCard, roundedRect, type CardFormat } from "../../../shared/card-canvas";
 import { formatTaka, ledgerLine, perPerson, type calculateLedger } from "./ledger";
+import { balanceText, formatMeals, messLine, tk, type MessResult } from "./meal-rate";
 
 type Result = ReturnType<typeof calculateLedger>;
 const INK = "#1d2b53";
@@ -49,30 +50,25 @@ function drawStamp(context: CanvasRenderingContext2D, text: string, cx: number, 
   context.restore();
 }
 
-export function drawCard(canvas: HTMLCanvasElement, result: Result, format: CardFormat, site: string) {
+/** Teal cloth, footer band and an empty slip as tall as `slipHeight(footerTop)`, centred above the footer. */
+function slipBackdrop(canvas: HTMLCanvasElement, format: CardFormat, site: string, slipHeight: (footerTop: number) => number) {
   const { width: w, height: h } = cardSizes[format];
   const L = layouts[format];
   canvas.width = w;
   canvas.height = h;
   const context = canvas.getContext("2d");
   if (!context) throw new Error("এই ব্রাউজারে ছবি বানানো যাচ্ছে না।");
-  const { ledger, total, transfers } = result;
-  const count = ledger.people.length;
-
   context.fillStyle = "#24524c";
   context.fillRect(0, 0, w, h);
   context.strokeStyle = "rgba(255,255,255,0.05)";
   context.lineWidth = 14;
   for (let x = -h; x < w; x += 56) { context.beginPath(); context.moveTo(x, h); context.lineTo(x + h, 0); context.stroke(); }
 
-  // The slip is as long as its content, centred in the space above the footer.
-  const rows = Math.max(1, transfers.length);
-  const x0 = 84, x1 = w - 84, left = x0 + 56, right = x1 - 56;
+  const x0 = 84, x1 = w - 84;
   const footerTop = drawFooterBand(context, format, SLIP_ASK, site, { band: "#173b37", ask: "#ffd166", site: "#ffffff" });
-  const slipHeight = 64 + L.head + 30 + L.trip * 1.15 + 40 + L.label + 14 + L.big + 46 + L.heading * 1.5 + rows * L.row + 44 + L.line * 2.2 + 56;
-  const top = Math.max(L.top, L.top + (footerTop - 36 - L.top - slipHeight) / 2);
-  const bottom = top + slipHeight;
-
+  const height = slipHeight(footerTop);
+  const top = Math.max(L.top, L.top + (footerTop - 36 - L.top - height) / 2);
+  const bottom = top + height;
   context.save();
   context.translate(0, 12);
   context.fillStyle = "rgba(0,0,0,0.22)";
@@ -82,6 +78,23 @@ export function drawCard(canvas: HTMLCanvasElement, result: Result, format: Card
   context.fillStyle = "#fffcf3";
   slipPath(context, x0, x1, top, bottom);
   context.fill();
+  return { context, top, left: x0 + 56, right: x1 - 56 };
+}
+
+function drawRule(context: CanvasRenderingContext2D, left: number, right: number, y: number) {
+  context.strokeStyle = "#b9c3bf";
+  context.lineWidth = 3;
+  context.setLineDash([12, 10]);
+  context.beginPath(); context.moveTo(left, y); context.lineTo(right, y); context.stroke();
+  context.setLineDash([]);
+}
+
+export function drawCard(canvas: HTMLCanvasElement, result: Result, format: CardFormat, site: string) {
+  const { ledger, total, transfers } = result;
+  const count = ledger.people.length;
+  const rows = Math.max(1, transfers.length);
+  const L = layouts[format];
+  const { context, top, left, right } = slipBackdrop(canvas, format, site, () => 64 + L.head + 30 + L.trip * 1.15 + 40 + L.label + 14 + L.big + 46 + L.heading * 1.5 + rows * L.row + 44 + L.line * 2.2 + 56);
 
   let y = top + 64 + L.head;
   fitText(context, [{ text: "হিসাবের স্লিপ", color: MUTED, weight: 600 }], left, y, L.head, 400);
@@ -98,11 +111,7 @@ export function drawCard(canvas: HTMLCanvasElement, result: Result, format: Card
   fitText(context, [{ text: perPerson(total, count, formatTaka), color: TEAL, weight: 800, display: true }], half, y, L.big, right - half);
 
   y += 46;
-  context.strokeStyle = "#b9c3bf";
-  context.lineWidth = 3;
-  context.setLineDash([12, 10]);
-  context.beginPath(); context.moveTo(left, y - 20); context.lineTo(right, y - 20); context.stroke();
-  context.setLineDash([]);
+  drawRule(context, left, right, y - 20);
   y += L.heading * 1.5;
   fitText(context, [{ text: "কে কাকে দেবে", color: TEAL, weight: 700, display: true }], left, y, L.heading, 500);
 
@@ -135,3 +144,63 @@ export function drawCard(canvas: HTMLCanvasElement, result: Result, format: Card
 }
 
 export const cardBlob = (result: Result, format: CardFormat, site: string) => renderCard(canvas => drawCard(canvas, result, format, site));
+
+/** The mess slip: bazar and meal rate up top, then one ruled line per member — meals, share, and what they owe or get back. */
+export function drawMessCard(canvas: HTMLCanvasElement, result: MessResult, format: CardFormat, site: string) {
+  const { mess, members, totalHalf, rate } = result;
+  const L = layouts[format];
+  // A big mess (9–15 people) gets a smaller header so the member rows keep a readable size.
+  const k = members.length > 8 ? 0.75 : 1;
+  const fixed = 54 + L.head * k + 26 + L.trip * 1.15 * k + 36 + L.label + 12 + L.big * k + 40 + L.label + 10 + 38 + L.label + L.line * 2.2 + 52;
+  let row: number = L.row;
+  const { context, top, left, right } = slipBackdrop(canvas, format, site, footerTop => {
+    row = Math.min(L.row, (footerTop - 36 - L.top - fixed) / members.length);
+    return fixed + members.length * row;
+  });
+  const size = Math.min(L.name, row * 0.6);
+  const width = right - left;
+  const mealsAt = left + width * 0.5, shareAt = left + width * 0.71;
+
+  let y = top + 54 + L.head * k;
+  fitText(context, [{ text: "মিলের হিসাব", color: MUTED, weight: 600 }], left, y, L.head * k, 400);
+  y += 26 + L.trip * 1.15 * k;
+  fitText(context, [{ text: mess.title || "মেসের মিল", color: INK, weight: 800, display: true }], left, y, L.trip * k, width - 250);
+  drawStamp(context, "হিসাব মিলেছে", right - 120, y - L.trip * k * 0.4);
+
+  y += 36 + L.label;
+  const half = left + width / 2 + 10;
+  fitText(context, [{ text: "মোট বাজার", color: MUTED, weight: 600 }], left, y, L.label, half - left - 24);
+  fitText(context, [{ text: `মিল রেট · মোট ${formatMeals(totalHalf)} মিল`, color: MUTED, weight: 600 }], half, y, L.label, right - half);
+  y += 12 + L.big * k;
+  fitText(context, [{ text: tk(mess.bazar), color: INK, weight: 800, display: true }], left, y, L.big * k, half - left - 24);
+  fitText(context, [{ text: formatTaka(rate), color: TEAL, weight: 800, display: true }], half, y, L.big * k, right - half);
+
+  y += 40;
+  drawRule(context, left, right, y - 16);
+  y += L.label + 10;
+  const head = { color: MUTED, weight: 600 };
+  fitText(context, [{ text: `নাম (${bn(members.length)} জন)`, ...head }], left, y, L.label - 2, mealsAt - left - 100);
+  fitText(context, [{ text: "মিল", ...head }], mealsAt, y, L.label - 2, 100, "right");
+  fitText(context, [{ text: "ভাগ", ...head }], shareAt, y, L.label - 2, 160, "right");
+  fitText(context, [{ text: "দেবে / পাবে", ...head }], right, y, L.label - 2, right - shareAt - 30, "right");
+
+  members.forEach((member, index) => {
+    const rowY = y + (index + 1) * row - row * 0.3;
+    fitText(context, [{ text: member.label, color: INK, weight: 700 }], left, rowY, size, mealsAt - left - 100);
+    fitText(context, [{ text: formatMeals(member.halfMeals), color: INK, weight: 600 }], mealsAt, rowY, size, 100, "right");
+    fitText(context, [{ text: tk(member.share), color: INK, weight: 600 }], shareAt, rowY, size, 170, "right");
+    const color = member.net < 0 ? STAMP : member.net > 0 ? TEAL : MUTED;
+    fitText(context, [{ text: balanceText(member.net), color, weight: 800, display: true }], right, rowY, size, right - shareAt - 30, "right");
+    if (index < members.length - 1) {
+      context.strokeStyle = "#e3e7e2";
+      context.lineWidth = 2;
+      context.beginPath(); context.moveTo(left, rowY + row * 0.32); context.lineTo(right, rowY + row * 0.32); context.stroke();
+    }
+  });
+  y += members.length * row + 38;
+  fitText(context, [{ text: `ভাগ পুরো টাকায় · যোগ করলে ঠিক ${tk(mess.bazar)} · পুরো হিসাব লিংকে`, color: MUTED, weight: 500 }], left, y, L.label - 2, width);
+  y += L.line * 2.2;
+  fitText(context, [{ text: messLine(result), color: TEAL, weight: 700, display: true }], (left + right) / 2, y, L.line, width, "center");
+}
+
+export const messCardBlob = (result: MessResult, format: CardFormat, site: string) => renderCard(canvas => drawMessCard(canvas, result, format, site));

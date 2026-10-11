@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useMemo, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react';
 import { cardSizes, loadCardFonts, type CardFormat } from '../../../shared/card-canvas';
 import { HistoryButtons } from '../../../shared/history-buttons';
 import { FormatToggle, ShareBar, StickyNext, useInView } from '../../../shared/share-kit';
@@ -78,7 +78,7 @@ function Balances({ result }: { result: Result }) {
   </li>)}</ul>;
 }
 
-export function LedgerEditor() {
+export function LedgerEditor({ tabs, onFriend }: { tabs: ReactNode; onFriend: () => void }) {
   const history = useHistory<Ledger>(() => structuredClone(exampleLedger));
   // The trip name lives outside undo history so typing it doesn't fill "এক ধাপ পেছাও" with single letters.
   const [trip, setTrip] = useState(exampleLedger.trip ?? '');
@@ -105,12 +105,12 @@ export function LedgerEditor() {
 
   useEffect(() => {
     // In-page anchors (#result) also change the hash, so only a real shared ledger replaces the friend's.
-    const readFriend = () => { const shared = parseLedgerHash(window.location.hash); if (shared) setFriend(shared); };
+    const readFriend = () => { const shared = parseLedgerHash(window.location.hash); if (shared) { setFriend(shared); onFriend(); } };
     readFriend();
     window.addEventListener('hashchange', readFriend);
     setSite(window.location.host);
     return () => window.removeEventListener('hashchange', readFriend);
-  }, []);
+  }, [onFriend]);
 
   useEffect(() => {
     let cancelled = false;
@@ -173,7 +173,7 @@ export function LedgerEditor() {
 
     <div className="split-khata" id="khata" onFocus={() => setTyping(true)} onBlur={() => setTyping(false)}>
       <div className="split-cover">
-        <div className="split-khata-top"><span>হিসাবের খাতা</span>{(history.canUndo || history.canRedo) && <HistoryButtons {...history} />}</div>
+        <div className="split-khata-top">{tabs}{(history.canUndo || history.canRedo) && <HistoryButtons {...history} />}</div>
         <div className="split-cover-label"><label htmlFor="split-trip">কিসের হিসাব?</label><input id="split-trip" className="split-trip" value={trip} maxLength={MAX_TRIP_LENGTH} onChange={event => setTrip(cleanTrip(event.target.value))} placeholder="যেমন: সাজেক ট্যুর" autoComplete="off" /></div>
         <div className="kit-chips split-ideas" role="group" aria-label="চেনা কয়েকটা নাম">{tripIdeas.map(idea => <button type="button" key={idea} aria-pressed={trip === idea} onClick={() => setTrip(idea)}>{idea}</button>)}</div>
       </div>
