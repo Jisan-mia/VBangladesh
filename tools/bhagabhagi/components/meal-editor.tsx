@@ -138,7 +138,7 @@ export function MealEditor({ tabs, onFriend }: { tabs: ReactNode; onFriend: () =
           </li>;
         })}</ol>
         {count < MAX_MEMBERS ? <button type="button" className="meal-add" onClick={() => update({ members: [...draft.members, { id: crypto.randomUUID(), name: '', meals: '', paid: '' }] })}>+ আরেকজন যোগ করো</button> : <p className="split-hint">১৫ জন হয়ে গেছে। নতুন কাউকে আনতে আগে একজনকে বাদ দাও।</p>}
-        <p className="split-field-hint">আধা মিল লিখতে পারো, যেমন ২৫.৫। বাজার করে বা জমা দিয়ে কে কত টাকা দিয়েছে, ‘দিয়েছে’ ঘরে লেখো; না দিলে খালি রাখো। বাংলা বা ইংরেজি অঙ্কে, পুরো টাকায়।</p>
+        <p className="split-field-hint">আধা মিল লিখতে পারো, যেমন ২৫.৫। বাজার করে বা জমা দিয়ে কে কত টাকা দিয়েছে, ‘দিয়েছে’ ঘরে লেখো। না দিলে খালি রাখো। বাংলা বা ইংরেজি অঙ্কে লেখো, পুরো টাকায়।</p>
         {parsed.error && <p className="split-error" aria-live="polite">{parsed.error}</p>}
         <button type="button" className="kit-link split-clear" onClick={clear}>খাতা খালি করে নিজেদের হিসাব লেখো</button>
       </div>

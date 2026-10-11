@@ -12,7 +12,7 @@ export default function ProthomAyPage() {
       <JsonLd site={site} />
       <div className="prothom">
         <section className="prothom-hero container" aria-labelledby="prothom-title">
-          <p className="prothom-kicker">বাদামি বেতনের খাম · তিন ছোঁয়ায়</p>
+          <p className="prothom-kicker">বাদামি বেতনের খাম · তিন ট্যাপে</p>
           <h1 id="prothom-title">প্রথম আয়ের টাকায় <span>কী করেছিলে?</span></h1>
           <p className="prothom-lead">{site.lead}</p>
         </section>

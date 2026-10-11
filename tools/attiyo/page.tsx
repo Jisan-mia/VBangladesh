@@ -32,12 +32,12 @@ export default function AttiyoPage() {
           <h2 id="guide-title">{site.guideTitle}</h2>
           <p>{site.guideIntro}</p>
           <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{bn(index + 1)}</span><p>{step}</p></li>)}</ol>
-          <p className="at-sources">সূত্র ও যাচাই: প্রতিটা নাম বাংলা একাডেমির অভিধানের সাথে মিলিয়ে লেখা (সরকারের <a href="https://accessibledictionary.gov.bd/" target="_blank" rel="noopener noreferrer">অ্যাক্সেসিবল ডিকশনারি</a>, যার ভিত্তি বাংলা একাডেমির অভিধান)। হিন্দু আর মুসলিম পরিবারের ডাকের ভাগ মেলানো হয়েছে মিশিগান স্টেট ইউনিভার্সিটির <a href="https://openbooks.lib.msu.edu/basicbangla/chapter/5-1-kinship-terms-in-bangla/" target="_blank" rel="noopener noreferrer">Basic Bangla</a> বইয়ের সাথে। পরিবার আর এলাকাভেদে ডাক বদলায়; এখানে কোনো ডাককে একমাত্র ঠিক বলা হয়নি। সৎ-সম্পর্ক বা দ্বিতীয় বিয়ের হিসাব এখানে নেই।</p>
+          <p className="at-sources">সূত্র ও যাচাই: প্রতিটা নাম বাংলা একাডেমির অভিধানের সাথে মিলিয়ে লেখা (সরকারের <a href="https://accessibledictionary.gov.bd/" target="_blank" rel="noopener noreferrer">অ্যাক্সেসিবল ডিকশনারি</a>, যার ভিত্তি বাংলা একাডেমির অভিধান)। হিন্দু আর মুসলিম পরিবারের ডাকের ভাগ মেলানো হয়েছে মিশিগান স্টেট ইউনিভার্সিটির <a href="https://openbooks.lib.msu.edu/basicbangla/chapter/5-1-kinship-terms-in-bangla/" target="_blank" rel="noopener noreferrer">Basic Bangla</a> বইয়ের সাথে। পরিবার আর এলাকাভেদে ডাক বদলায়, তাই কোনো ডাককে একমাত্র ঠিক বলা হয়নি। সৎ-সম্পর্ক বা দ্বিতীয় বিয়ের হিসাব এখানে নেই।</p>
         </section>
 
         <section className="container section at-list" aria-labelledby="list-title">
           <h2 id="list-title">সব সম্পর্কের নাম, এক জায়গায়</h2>
-          <p>এখানে যে {bn(total)}টা সম্পর্কের নাম আছে, সবগুলো হাতে মিলিয়ে দেখা। এর বাইরে যেকোনো সম্পর্কে টুলটা নাম বানায় না, মানুষ যেভাবে বলে সেভাবে লেখে।</p>
+          <p>এখানে {bn(total)}টা সম্পর্কের নাম আছে, সবগুলো হাতে মিলিয়ে দেখা। এর বাইরের সম্পর্কে নাম বানানো হয় না, মানুষ যেমন বলে তেমনই লেখা থাকে।</p>
           <details>
             <summary>পুরো তালিকা দেখো</summary>
             {groups.map(([kind, label]) => (

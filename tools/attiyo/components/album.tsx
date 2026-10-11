@@ -117,7 +117,7 @@ export function Album() {
             </p>
           </> : <p className="at-verdict">{friendAnswer.unnamed
             ? <>এর আলাদা কোনো নাম নেই! বলে <b>“{friendAnswer.said}”</b>। নিচে খুলে দিলাম, এবার নিজের একটা খোঁজো।</>
-            : <>{STYLES.find(item => item.id === friend.style)!.home} বলে <b>“{friendAnswer.said}”</b>; {STYLES.find(item => item.id !== friend.style)!.home} <b>{friendAnswer.other?.replace(/ \/ /g, " বা ")}</b>। নিচে খুলে দিলাম।</>}</p>}
+            : <>{STYLES.find(item => item.id === friend.style)!.home} বলে <b>“{friendAnswer.said}”</b>, {STYLES.find(item => item.id !== friend.style)!.home} <b>{friendAnswer.other?.replace(/ \/ /g, " বা ")}</b>। নিচে খুলে দিলাম।</>}</p>}
         </section>
       )}
 
@@ -154,7 +154,7 @@ export function Album() {
       </div>
 
       <div className="at-pad">
-        <p className="at-ask" id="at-ask">{!chain.length ? "কার? প্রথম ধাপটা ছোঁও" : chain.length < MAX_STEPS ? <>{kinPossessive(answer.said)} কে? <small>আরেক ধাপ ছোঁও</small></> : <>চার ধাপ পূর্ণ! <small>একটা মুছে আবার খোঁজো</small></>}</p>
+        <p className="at-ask" id="at-ask">{!chain.length ? "কার? প্রথম ধাপটা বেছে নাও" : chain.length < MAX_STEPS ? <>{kinPossessive(answer.said)} কে? <small>আরেক ধাপ বেছে নাও</small></> : <>চার ধাপ হয়ে গেছে! <small>একটা মুছে আবার খোঁজো</small></>}</p>
         <div className="at-chips" role="group" aria-labelledby="at-ask">
           {STEPS.map(step => (
             <button type="button" key={step} data-blocked={Boolean(stepProblem(chain, step, style))} onClick={() => add(step)}>
@@ -194,7 +194,7 @@ export function Album() {
             </label>
             <FormatToggle value={format} onChange={setFormat} />
             <ShareBar tool={TOOL} fileName="ke-ki-hoy.png" makeImage={() => cardBlob(own, format, site)} imageKey={`${state}|${format}`} caption={chain.length ? caption(chain, style) : ""} state={state} disabled={!chain.length}
-              hint={chain.length ? (answer.unnamed ? "লিংক পেলে বন্ধু দেখবে এই সম্পর্কের ডাক।" : "লিংক পেলে বন্ধু আগে আন্দাজ করবে, তারপর উত্তর দেখবে।") : "অন্তত এক ধাপ ছুঁলেই কার্ড হবে।"} />
+              hint={chain.length ? (answer.unnamed ? "লিংক পেলে বন্ধু দেখবে এই সম্পর্কের ডাক।" : "লিংক পেলে বন্ধু আগে আন্দাজ করবে, তারপর উত্তর দেখবে।") : "এক ধাপ বানালেই কার্ড হবে।"} />
           </div>
         </div>
 
@@ -203,10 +203,10 @@ export function Album() {
           {top.length > 0 && <ol className="at-top">{top.map(([key, count]) => <li key={key}><b>{topLabel(key)}</b><span>{chainText(key.split(".") as Step[], style)}</span><em>{bn(count)} জন</em></li>)}</ol>}
           {everyone && everyone.total < COMPARE_MIN && <p className="kit-status">এখনো {bn(everyone.total)} জন গুনেছে, তালিকা দেখাতে আরেকটু লাগবে।</p>}
           {terms[answer.key] ? <>
-            <p>তোমার এখনকার সম্পর্কটা ({answer.said}) গুনে নিতে পারো। নাম বা ছবি যায় না, শুধু কোন সম্পর্ক সেটা গোনা হয়; পরে অন্যটা গুনলে আগেরটা বদলে যায়।</p>
+            <p>তোমার এখনকার সম্পর্কটা ({answer.said}) গুনে নিতে পারো। নাম বা ছবি যায় না, শুধু কোন সম্পর্ক সেটা গোনা হয়। পরে অন্যটা গুনলে আগেরটা বদলে যায়।</p>
             <button type="button" className="kit-secondary" onClick={countMine} disabled={counted === "sending" || counted === "done"}>{counted === "sending" ? "গোনা হচ্ছে…" : counted === "done" ? "গোনা হয়েছে!" : "আমারটাও গুনে নাও"}</button>
             {counted === "failed" && <p className="kit-status" role="alert">এখন গোনা গেল না। একটু পরে আবার চেষ্টা করো।</p>}
-          </> : <p className="kit-status">নামওয়ালা সম্পর্কগুলোই গোনা হয়; এটার আলাদা নাম নেই।</p>}
+          </> : <p className="kit-status">নামওয়ালা সম্পর্কই গোনা হয়। এটার আলাদা নাম নেই।</p>}
         </div>
       </section>
     </div>

@@ -78,7 +78,7 @@ test("a word sourced only in one style is shown for that style, the other gets t
 });
 
 test("loops back and impossible spouses are refused with who it really is", () => {
-  assert.equal(stepProblem(c("f"), "w", "c"), "আব্বুর স্ত্রী মানে তো আম্মু। একটা মুছে “আম্মুর” ছোঁও।");
+  assert.equal(stepProblem(c("f"), "w", "c"), "আব্বুর স্ত্রী মানে তো আম্মু। একটা মুছে “আম্মুর” চাপো।");
   assert.match(stepProblem(c("f"), "s", "c")!, /ভাই, নয়তো তুমি নিজেই/);
   assert.match(stepProblem(c("f.f"), "s", "c")!, /দাদার ছেলে মানে তো চাচা, নয়তো আব্বু নিজেই/);
   assert.match(stepProblem(c("f.f"), "d", "c")!, /দাদার মেয়ে মানে তো ফুপু।/);

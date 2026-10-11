@@ -221,7 +221,7 @@ export function AgeBuilder() {
               <canvas ref={rituPreview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="ritu-summary" />
               <figcaption id="ritu-summary" className="by-sr">{card.rituKicker}: {card.rituHeadline}। {seasons.map((season, index) => `${season.label} ${bn(card.ritu.counts[index])}টা`).join(", ")}। এখন চলছে {seasons[card.ritu.now % 6].label}।</figcaption>
             </figure>
-            <p className="by-note">প্রতি সারি এক বাংলা বছর, বৈশাখ থেকে চৈত্র; প্রতি ঘর এক ঋতু, মানে দুই বাংলা মাস। জন্মের ঋতু আর আজকের ঋতু দুটোই গোনা। ফাঁকা ঘরগুলো এ বছরের বাকি ঋতু, সামনেই আসছে।</p>
+            <p className="by-note">প্রতি সারি এক বাংলা বছর, বৈশাখ থেকে চৈত্র। প্রতি ঘর এক ঋতু, মানে দুই বাংলা মাস। জন্মের ঋতু আর আজকের ঋতু দুটোই গোনা। ফাঁকা ঘরগুলো এ বছরের বাকি ঋতু, সামনেই আসছে।</p>
             <div className="by-controls">
               <FormatToggle value={format} onChange={setFormat} />
               <ShareBar tool={TOOL} fileName="boyos-ritu.png" makeImage={() => rituBlob(card, format, site)} imageKey={`${rituState}|${format}|${today}`} caption={rituCaption} state={rituState} hint="লিংক পেলে বন্ধু দেখবে তোমার ঋতুর গ্রিড, আর নিজের তারিখ দিয়ে বানাবে নিজেরটা।" />

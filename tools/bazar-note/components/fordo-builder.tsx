@@ -119,7 +119,7 @@ export function FordoBuilder() {
     setItems(next);
     setPreset(id);
     setEditingId(null);
-    setStatus(id ? `${presets[id].label}: ${bn(next.length)}টা জিনিস বসেছে। যা লাগবে না বাদ দাও, পরিমাণ বা দাম বদলাতে জিনিসটায় ছুঁয়ে দাও।` : 'খালি পাতা। নিচে একটা একটা করে লেখো।');
+    setStatus(id ? `${presets[id].label}: ${bn(next.length)}টা জিনিস বসেছে। পরিমাণ বা দাম বদলাতে, কিংবা বাদ দিতে জিনিসটায় চাপ দাও।` : 'খালি পাতা। নিচে একটা একটা করে লেখো।');
     if (!id) addInput.current?.focus();
   }
 
@@ -211,7 +211,7 @@ export function FordoBuilder() {
     <div className="fordo-editor" id="fordo">
       {shared && <h2 className="fordo-own">নিজের একটা ফর্দ বানাবে?</h2>}
       <fieldset className="fordo-presets">
-        <legend>কোন বাজারের ফর্দ? <small>ছুঁলেই চেনা লিস্ট বসবে</small></legend>
+        <legend>কোন বাজারের ফর্দ? <small>চাপলেই চেনা লিস্ট বসবে</small></legend>
         <div className="kit-chips">
           {presetIds.map(id => <button type="button" key={id} aria-pressed={preset === id} onClick={() => choosePreset(id)}>{presets[id].chip}</button>)}
           <button type="button" aria-pressed={!preset && !items.length} onClick={() => choosePreset('')}>খালি পাতা</button>
@@ -270,7 +270,7 @@ export function FordoBuilder() {
     <section className="fordo-result" id="result" ref={result} aria-labelledby="result-title">
       <div className="fordo-result-head">
         <h2 id="result-title">{items.length ? <>ফর্দ তৈরি!<br /><span>যে বাজারে যাবে, তাকে পাঠাও</span></> : 'ফর্দটা এখনো খালি'}</h2>
-        <p>{items.length ? 'লিংক খুলে সে কেনা জিনিসে টিক দিতে পারবে, কী বাকি থাকল সাথে সাথে দেখবে।' : 'ওপর থেকে একটা বাজার বেছে নাও বা জিনিস লেখো।'}</p>
+        <p>{items.length ? 'লিংক খুলে সে কেনা জিনিসে টিক দিতে পারবে, আর কী বাকি, সেটাও দেখবে।' : 'ওপর থেকে একটা বাজার বেছে নাও বা জিনিস লেখো।'}</p>
       </div>
       <div className="fordo-result-body">
         <figure className="kit-card" data-format={format}>
@@ -279,7 +279,7 @@ export function FordoBuilder() {
           {previewError && <p className="kit-status" role="alert">ফর্দের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
         </figure>
         <div className="fordo-controls">
-          <label className="fordo-label">কার ফর্দ? <small>যেমন: আম্মু, না দিলেও চলবে</small><input value={name} maxLength={MAX_NAME} autoComplete="nickname" placeholder="যেমন: আম্মু" onChange={event => setName(event.target.value)} /></label>
+          <label className="fordo-label">কার ফর্দ? <small>না দিলেও চলবে</small><input value={name} maxLength={MAX_NAME} autoComplete="nickname" placeholder="যেমন: আম্মু" onChange={event => setName(event.target.value)} /></label>
           {hasMoney && <label className="fordo-check"><input type="checkbox" checked={money} onChange={event => setMoney(event.target.checked)} /><span>দাম আর বাজেটও দেখাও<small>না বাছলে শুধু জিনিস আর পরিমাণ যাবে।</small></span></label>}
           <FormatToggle value={format} onChange={setFormat} />
           <ShareBar tool={TOOL} fileName="bazarer-fordo.png" makeImage={() => fordoBlob(fordo, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} disabled={!items.length} hint={items.length ? 'লিংকে ফর্দের জিনিসগুলো যায়, ছবি না।' : ''} />

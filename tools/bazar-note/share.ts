@@ -10,7 +10,7 @@ export const share: ToolShare = {
     const fordo = parseFordo(state);
     return {
       title: fordo ? `${fordoTitle(fordo)} — ${bn(fordo.items.length)}টা জিনিস` : "বাজারের ফর্দ",
-      description: "আসার সময় এগুলো এনো 🙂 লিংক খুলে কেনা জিনিসে টিক দাও, কী বাকি থাকল সাথে সাথে দেখবে।",
+      description: "আসার সময় এগুলো এনো 🙂 লিংক খুলে কেনা জিনিসে টিক দাও, কী বাকি থাকল দেখে নাও।",
     };
   },
 };

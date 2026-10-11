@@ -128,7 +128,7 @@ export function PassportBuilder() {
       <section className="pb-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="pb-result-head">
           <h2 id="result-title">{picked.length ? <>তোমার পাসপোর্টে <em>{bn(TOTAL)}-এ {bn(picked.length)}টা</em> সিল</> : "পাসপোর্টের পাতা এখনো ফাঁকা"}</h2>
-          <p>{picked.length ? line : "ওপরের পাতাগুলো থেকে যা যা তোমার জীবনে হয়েছে, ছুঁয়ে দাও।"}</p>
+          <p>{picked.length ? line : "ওপরের পাতাগুলো থেকে যা যা তোমার জীবনে হয়েছে, সেগুলোয় চাপ দাও।"}</p>
         </div>
 
         <div className="pb-result-body">
@@ -159,7 +159,7 @@ export function PassportBuilder() {
           <div className="pb-everyone">
             <h3>সবার পাসপোর্টের সাথে মেলাবে?</h3>
             {joined !== "done" ? <>
-              <p>দেখো কোন সিলটা প্রায় সবার আছে, আর কোনটা অল্প কয়েকজনের। শুধু সিলগুলো গোনা হবে; নাম, শহর বা ছবি যাবে না।</p>
+              <p>দেখো কোন সিলটা প্রায় সবার আছে, আর কোনটা অল্প কয়েকজনের। শুধু সিলগুলো গোনা হবে। নাম, শহর বা ছবি যাবে না।</p>
               <button type="button" className="kit-secondary" onClick={join} disabled={joined === "sending"}>{joined === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
               {joined === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
             </> : !ranked.length ? (

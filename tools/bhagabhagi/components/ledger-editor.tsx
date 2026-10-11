@@ -180,7 +180,7 @@ export function LedgerEditor({ tabs, onFriend }: { tabs: ReactNode; onFriend: ()
       <div className="split-page">
 
       <section className="split-people" aria-labelledby="split-people-heading">
-        <h3 id="split-people-heading">কে কে ছিল <small>{bnNumber(count)} / ৮ জন · নাম ছুঁয়ে বদলাও</small></h3>
+        <h3 id="split-people-heading">কে কে ছিল <small>{bnNumber(count)} / ৮ জন · নামে চেপে বদলাও</small></h3>
         <ul className="split-chips">{ledger.people.map(person => <PersonChip key={person.id} person={person} canRemove={count > 2} onRename={name => commit({ ...ledger, people: ledger.people.map(item => item.id === person.id ? { ...item, name } : item) })} onRemove={() => tryCommit(() => removePerson(ledger, person.id))} />)}</ul>
         {count < MAX_PEOPLE ? <NameForm onSave={name => commit({ ...ledger, people: [...ledger.people, { id: crypto.randomUUID(), name }] })} /> : <p className="split-hint">৮ জন হয়ে গেছে। নতুন কাউকে আনতে আগে একজনকে বাদ দাও।</p>}
       </section>

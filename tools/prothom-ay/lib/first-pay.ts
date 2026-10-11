@@ -124,7 +124,7 @@ export function payLine(pay: Pick<FirstPay, "gifts" | "style" | "source">) {
   const [mother, father] = ma ? ["মা", "বাবা"] : ["আম্মু", "আব্বু"];
   const [mothers, fathers, parents] = ma ? ["মায়ের", "বাবার", "মা-বাবার"] : ["আম্মুর", "আব্বুর", "আম্মু-আব্বুর"];
   if (has(WHOLE)) return `খামটা না খুলেই ${parents} হাতে। ওই হাসির দাম কোনো বেতনে হয় না।`;
-  if (pay.gifts.length === MAX_GIFTS) return "এক খামে এত জনের হাসি। প্রথম আয়টা সার্থক।";
+  if (pay.gifts.length === MAX_GIFTS) return "এক খামে এত জনের হাসি। টাকাটা কাজে লেগেছে।";
   if (has("shari") && has("panjabi")) return `${mothers} শাড়ি, ${fathers} পাঞ্জাবি। প্রথম আয়ের সবচেয়ে সুন্দর হিসাব।`;
   if (has("shari")) return `${mother} বলেছিল “কেন খরচ করলি?”, তারপর সবাইকে দেখিয়েছিল।`;
   if (has("panjabi")) return `${father} মুখে কিছু বলেনি, কিন্তু প্রতিটা অনুষ্ঠানে ওই পাঞ্জাবিটাই পরত।`;

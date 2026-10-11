@@ -60,7 +60,7 @@ test('equal leftovers go to the earlier names, and an exact split needs no round
   const exact = calculateMess(mess(900, [60, 30, 0]));
   assert.deepEqual([exact.members.map(member => member.share), exact.leftover, exact.rate], [[600, 300, 0], 0, 2000]);
   assert.match(roundingNote(exact), /সবার ভাগ পুরো টাকায় মিলে গেছে/);
-  assert.match(roundingNote(calculateMess(mess(1000, [21, 20, 0]))), /১ টাকা হলো, তা গেছে নাম 1-এর ভাগে; পয়সার ঘর তারই/);
+  assert.match(roundingNote(calculateMess(mess(1000, [21, 20, 0]))), /১ টাকা হলো, তা গেছে নাম 1-এর ভাগে। পয়সার ঘর তারই/);
 });
 
 test('a member with no meals pays nothing and gets back what they put in', () => {

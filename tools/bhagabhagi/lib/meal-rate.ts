@@ -121,8 +121,8 @@ const listNames = (names: string[]) => names.length > 1 ? `${names.slice(0, -1).
 export function roundingNote({ mess, members, leftover }: MessResult): string {
   if (!leftover) return `সবার ভাগ পুরো টাকায় মিলে গেছে। যোগ করলে ঠিক ${tk(mess.bazar)}।`;
   const names = members.filter(member => member.roundedUp).map(member => member.label);
-  if (names.length === 1) return `ভাগ পুরো টাকায় ধরা, যোগ করলে ঠিক ${tk(mess.bazar)}। পয়সাগুলো মিলে যে ১ টাকা হলো, তা গেছে ${owner(names[0])} ভাগে; পয়সার ঘর তারই সবচেয়ে বড় ছিল।`;
-  return `ভাগ পুরো টাকায় ধরা, যোগ করলে ঠিক ${tk(mess.bazar)}। পয়সাগুলো মিলে যে ${bn(leftover)} টাকা হলো, তা ১ টাকা করে গেছে ${owner(listNames(names))} ভাগে; পয়সার ঘর তাদেরই সবচেয়ে বড় ছিল।`;
+  if (names.length === 1) return `ভাগ পুরো টাকায় ধরা, যোগ করলে ঠিক ${tk(mess.bazar)}। পয়সাগুলো মিলে যে ১ টাকা হলো, তা গেছে ${owner(names[0])} ভাগে। পয়সার ঘর তারই সবচেয়ে বড় ছিল।`;
+  return `ভাগ পুরো টাকায় ধরা, যোগ করলে ঠিক ${tk(mess.bazar)}। পয়সাগুলো মিলে যে ${bn(leftover)} টাকা হলো, তা ১ টাকা করে গেছে ${owner(listNames(names))} ভাগে। পয়সার ঘর তাদেরই সবচেয়ে বড় ছিল।`;
 }
 
 /** Only when people wrote what they paid and it does not match the bazar: where the difference sits. */
@@ -130,7 +130,7 @@ export function cashNote({ mess, paid }: MessResult): string {
   if (!paid || paid === mess.bazar) return '';
   return paid > mess.bazar
     ? `সবাই মিলে দিয়েছে ${tk(paid)}, বাজার হয়েছে ${tk(mess.bazar)}। বাড়তি ${tk(paid - mess.bazar)} যার কাছে জমা, সে-ই ‘পাবে’-দের ফেরত দেবে।`
-    : `সবাই মিলে দিয়েছে ${tk(paid)}, বাজার হয়েছে ${tk(mess.bazar)}। বাকি ${tk(mess.bazar - paid)} কে দিয়েছে, লেখা নেই; ‘দেবে’-দের টাকা উঠলে সেটা মিটবে।`;
+    : `সবাই মিলে দিয়েছে ${tk(paid)}, বাজার হয়েছে ${tk(mess.bazar)}। বাকি ${tk(mess.bazar - paid)} কে দিয়েছে, লেখা নেই। ‘দেবে’-দের টাকা উঠলে সেটা মিটবে।`;
 }
 
 export function messLine({ members, paid }: MessResult): string {

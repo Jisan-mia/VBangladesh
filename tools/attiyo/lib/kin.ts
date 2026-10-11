@@ -160,12 +160,12 @@ export const termFor = (chain: readonly Step[], style: Style) => terms[keyOf(cha
 
 /** Why a step can't follow the chain (a loop back or an impossible spouse), as a friendly line naming who it really is; null if it's fine. */
 export function stepProblem(chain: readonly Step[], next: Step, style: Style): string | null {
-  if (chain.length >= MAX_STEPS) return "চার ধাপ পর্যন্তই খোঁজা যায়; এর বেশি হলে হাতে মিলিয়ে দেখা কঠিন।";
+  if (chain.length >= MAX_STEPS) return "চার ধাপের বেশি খোঁজা যায় না, এর পরে হাতে মিলিয়ে দেখা কঠিন।";
   const last = chain.at(-1);
   if (!last) return null;
   const was = kinPossessive(phrase(chain, style));
-  if (next === "h" && isMale(last)) return `${was} তো স্ত্রী থাকে, স্বামী না। “স্ত্রীর” ছোঁও।`;
-  if (next === "w" && !isMale(last)) return `${was} তো স্বামী থাকে, স্ত্রী না। “স্বামীর” ছোঁও।`;
+  if (next === "h" && isMale(last)) return `${was} তো স্ত্রী থাকে, স্বামী না। “স্ত্রীর” চাপো।`;
+  if (next === "w" && !isMale(last)) return `${was} তো স্বামী থাকে, স্ত্রী না। “স্বামীর” চাপো।`;
   const parent = (step: Step) => step === "f" || step === "m";
   const sibling = (step: Step) => step === "b" || step === "z";
   const child = (step: Step) => step === "s" || step === "d";
@@ -177,7 +177,7 @@ export function stepProblem(chain: readonly Step[], next: Step, style: Style): s
   // "নয়তো আব্বু নিজেই" only fits if base is the same sex as the step; my own sex is unknown, so "তুমি" always fits.
   const orSelf = !base.length || isMale(base.at(-1)!) === isMale(next) ? `, নয়তো ${self} নিজেই!` : "।";
   const asked = `${was} ${stepNoun(next, style)} মানে তো`;
-  const fix = (step: Step) => ` একটা মুছে “${stepLabel(step, style)}” ছোঁও।`;
+  const fix = (step: Step) => ` একটা মুছে “${stepLabel(step, style)}” চাপো।`;
   if (last === "f" && next === "w") return `${asked} ${one("m")}।${fix("m")}`;
   if (last === "m" && next === "h") return `${asked} ${one("f")}।${fix("f")}`;
   if (parent(last) && child(next)) { const sib: Step = next === "s" ? "b" : "z"; return `${asked} ${one(sib)}${orSelf}${fix(sib)}`; }
@@ -247,7 +247,7 @@ const lines: Record<Kind | "none", string> = {
 
 /** A warm line for the card, picked from what kind of relative the chain lands on. */
 export function humanLine(chain: readonly Step[], style: Style) {
-  if (!chain.length) return "তুমি তো তুমিই! ওপরের যেকোনো একটা ছোঁও।";
+  if (!chain.length) return "তুমি তো তুমিই! ওপর থেকে একটা বোতাম চাপো।";
   const entry = terms[keyOf(chain)];
   return entry && entry[style] ? lines[entry.kind] : lines.none;
 }
