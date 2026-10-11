@@ -99,7 +99,7 @@ export const catalog = [
   { slug: "kalbaishakhi-aam", name: "কালবৈশাখী আম", description: "ঝড়ে আমগাছ দুলছে, ডালা পেতে আম ধরো। শুকনো ডাল কিন্তু ধরো না!", category: "গেম", action: "আম কুড়াও" },
   { slug: "dudh-uthlano", name: "দুধ উথলানোর আগে", description: "দুধ উথলানোর আগে: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "jhalmuri-sap", name: "ঝালমুড়ি সাপ", description: "সাপ চালাও, মুড়ি-চানাচুর খাও, বন্ধুকে একই ঠোঙা পাঠাও", category: "গেম", action: "খেলা শুরু করো" },
-  { slug: "danguli", name: "ডাংগুলি", description: "ডাংগুলি: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "danguli", name: "ডাংগুলি", description: "কাঠি তোলো, মারো জোরে! তিন মারে কত ডাং যায় দেখো, বন্ধুকে একই মাঠে ডাকো।", category: "গেম", action: "ডাং মারো" },
   { slug: "antenna-thik-koro", name: "অ্যান্টেনা ঠিক করো", description: "ছাদের অ্যান্টেনা ঘুরিয়ে ঝিরঝির টিভিতে ছবি আনো, ৯০-এর মতো।", category: "গেম", action: "অ্যান্টেনা ঘোরাও" },
   { slug: "sir-ghurlei-thamo", name: "স্যার ঘুরলেই থামো", description: "স্যার ঘুরলেই থামো: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "deri-hoye-gelo", name: "দেরি হয়ে গেল!", description: "দেরি হয়ে গেল!: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
