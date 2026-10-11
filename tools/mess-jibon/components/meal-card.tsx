@@ -151,7 +151,7 @@ export function MealCard() {
             </div>
             <FormatToggle value={format} onChange={setFormat} />
             <ShareBar tool={TOOL} fileName="mess-jibon-mil-card.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} disabled={!picked.length} hint={picked.length ? "লিংক পেলে রুমমেট দেখবে তোমার কার্ড, আর নিজেরটা ফুটো করে মেলাতে পারবে।" : ""} />
-            <p className="mj-also">মাসের বাজার-খরচ ভাগ করবে? <a href="/bhagabhagi">ভাগাভাগি</a>-তে কে কত দিল লেখো, সমান ভাগে কে কাকে কত দেবে বের হয়ে যাবে।</p>
+            <p className="mj-also">মাসের মিল রেট বের করবে? <a href="/bhagabhagi#mil">ভাগাভাগি</a>-তে মোট বাজার আর সবার মিল লেখো, কে কত দেবে বের হয়ে যাবে।</p>
           </div>
         </div>
 
