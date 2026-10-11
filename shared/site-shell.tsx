@@ -8,7 +8,7 @@ import { serializeSchema, websiteSchema } from './seo';
 
 export function HubHeader() {
   return <header className="hub-header"><div className="container hub-header-inner">
-    <Link className="hub-brand" href="/" aria-label="একটুখানি — প্রথম পাতা"><BrandMark />{brand.name}</Link>
+    <Link className="hub-brand" href="/" aria-label="একটুখানি, প্রথম পাতা"><BrandMark />{brand.name}</Link>
     <nav aria-label="মূল মেনু"><Link className="hub-flagship" href={`/${flagship}`}>আমার ছোটবেলা</Link><Link href="/tools">সব টুল</Link></nav>
   </div></header>;
 }

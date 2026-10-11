@@ -24,7 +24,7 @@ export function HomePage() {
     <a className="home-skip" href="#main">মূল অংশে যাও</a>
     <header className="home-header">
       <div className="home-container home-header-inner">
-        <Link className="home-brand" href="/" aria-label={brand.name + " — প্রথম পাতা"}><BrandMark /><span>{brand.name}</span></Link>
+        <Link className="home-brand" href="/" aria-label={brand.name + ", প্রথম পাতা"}><BrandMark /><span>{brand.name}</span></Link>
         <nav className="home-nav" aria-label="মূল মেনু"><Link href="/tools">সব টুল</Link><Link className="home-nav-wide" href="/about">আমাদের কথা</Link></nav>
       </div>
     </header>
@@ -33,7 +33,7 @@ export function HomePage() {
         <div className="home-hero-copy">
           <p className="home-kicker">নতুন · আমার ছোটবেলা</p>
           <h1 id="home-title">আলিফ লায়লা, হারিকেনের আলো, ঈদের সালামি…<span> মনে আছে?</span></h1>
-          <p className="home-lead">৩৬টা চেনা স্মৃতির কয়টা তোমার ছোটবেলায় ছিল, এক মিনিটে মিলিয়ে দেখো। শেষে পাবে নিজের ছোটবেলার খাতা, বন্ধুদের সাথে মেলানোর জন্য।</p>
+          <p className="home-lead">৩৬টা চেনা স্মৃতির কয়টা তোমার ছোটবেলায় ছিল? এক মিনিটে মিলিয়ে দেখো। শেষে নিজের ছোটবেলার খাতাটা পাবে, বন্ধুদের সাথে মেলানোর জন্য।</p>
           <Link className="home-primary" href="/amar-chhotobela">আমার ছোটবেলা মেলাই<svg viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true"><path d="M3 10h13M10 4l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></Link>
           <p className="home-promise">ফ্রি · অ্যাকাউন্ট লাগে না · ছবি বানিয়ে শেয়ার করো</p>
         </div>
@@ -41,9 +41,9 @@ export function HomePage() {
       </section>
       <ToolDirectory />
       <section className="home-container home-trust" aria-labelledby="home-trust-title">
-        <h2 id="home-trust-title">সব কাজ তোমার ফোনেই হয়</h2>
-        <p>কোনো অ্যাকাউন্ট নেই, বিজ্ঞাপন নেই, কে কী বানাল তার খোঁজও আমরা রাখি না। যা বানাবে, সেটা তোমার। কাকে পাঠাবে, সেটাও তুমিই ঠিক করবে।</p>
-        <Link href="/privacy">তোমার তথ্য নিয়ে বিস্তারিত</Link>
+        <h2 id="home-trust-title">যা বানাও, তা তোমার ফোনেই থাকে</h2>
+        <p>কোনো অ্যাকাউন্ট নেই, বিজ্ঞাপন নেই। তুমি শেয়ার না করলে কিছুই আমাদের কাছে আসে না। কাকে পাঠাবে, সেটাও তুমিই ঠিক করবে।</p>
+        <Link href="/privacy">তোমার তথ্য কোথায় থাকে</Link>
       </section>
       <section className="home-container home-faq" aria-labelledby="home-faq-title">
         <h2 id="home-faq-title">যা জানতে চাইতে পারো</h2>

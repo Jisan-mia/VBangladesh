@@ -11,7 +11,7 @@ export function ToolDirectory() {
   return <section className="home-container home-directory" id="more" aria-labelledby="home-tools-title">
     <div className="home-directory-heading">
       <h2 id="home-tools-title">আরও আছে, একটুখানি সময় পেলেই</h2>
-      <p>খেলা, কুইজ, পুরোনো দিনের গল্প আর রোজকার হিসাব। যেটা ভালো লাগে, ছুঁয়ে দেখো।</p>
+      <p>খেলা, কুইজ, পুরোনো দিনের গল্প আর রোজকার হিসাব। যেটা ভালো লাগে, খুলে দেখো।</p>
       <Link className="home-all-link" href="/tools">সব টুল একসাথে দেখো ({new Intl.NumberFormat("bn-BD").format(catalog.length)}টা) →</Link>
     </div>
     {categories.map((category, index) => {

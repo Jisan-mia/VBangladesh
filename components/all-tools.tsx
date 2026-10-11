@@ -19,7 +19,7 @@ export function AllTools({ tools, categories, previews }: { tools: readonly Tool
   const needle = fold(query.trim());
   const shown = tools.filter(tool => (category === null || tool.category === categories[category]) && (!needle || fold(`${tool.name} ${tool.description} ${tool.category}`).includes(needle)));
   return <div className="all-tools">
-    <label className="all-tools-search"><span className="all-tools-label">টুল খোঁজো</span><input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="খোঁজো: যেমন ক্রিকেট, বয়স, ঈদ…" /></label>
+    <label className="all-tools-search"><span className="all-tools-label">টুল খোঁজো</span><input type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="যেমন: ক্রিকেট, বয়স, ঈদ…" /></label>
     <div className="kit-chips all-tools-chips" role="group" aria-label="ধরন বেছে নাও">
       <button type="button" aria-pressed={category === null} onClick={() => setCategory(null)}>সব</button>
       {categories.map((name, index) => <button type="button" key={name} aria-pressed={category === index} onClick={() => setCategory(current => current === index ? null : index)}>{name}</button>)}
