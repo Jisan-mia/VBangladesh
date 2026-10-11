@@ -26,6 +26,6 @@ Agents use Sonnet 5.5 with `research/copy-review-agent-prompt.md`; up to 5 run a
 | M3 strategy, funnel, calendar, measurement, runbook | README.md, calendar.md, runbook.md | done |
 | P1 posts স্মৃতি+আঁকো | posts/smriti-anko.md | done |
 | P2 posts খাবার+পরিবার | posts/khabar-poribar.md | done |
-| P3 posts হিসাব+উৎসব | posts/hisab-utsob.md | building |
+| P3 posts হিসাব+উৎসব | posts/hisab-utsob.md | done |
 | P4 posts খেলা+ভাষা | posts/khela-bhasha.md | done |
 | P5 posts মজা+নিজেকে জানো | posts/moja-nijeke.md | building |
