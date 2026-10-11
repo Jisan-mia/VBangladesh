@@ -135,5 +135,5 @@ export function caption(shared: Shared) {
 export function previewTitle(shared: Shared) {
   const who = shared.name || "এক বন্ধু";
   const what = shared.mode === "last5" ? "শেষ বলে ছক্কা মেরেছে" : "শেষ ওভারে ১২ তুলেছে";
-  return `${who} ${triesText(shared.tries)} ${what} — তুমি পারবে?`;
+  return `${who} ${triesText(shared.tries)} ${what}। তুমি পারবে?`;
 }

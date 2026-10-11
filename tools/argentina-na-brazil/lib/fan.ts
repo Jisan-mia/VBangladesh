@@ -147,15 +147,15 @@ export function fanLaneTitle({ own, neighbour, seed = 0 }: Shared) {
   return `${neighbour.name || "পাশের বাসা"} ${teamOf(neighbour.team).label} ${score(neighbour)}, ${own.name || "আমি"} ${teamOf(own.team).label} ${score(own)}`;
 }
 
-/** "রাফি ৮-এ ৭ — খাঁটি আর্জেন্টিনা ভক্ত" */
+/** "রাফি ৮-এ ৭, খাঁটি আর্জেন্টিনা ভক্ত" */
 export function fanTitle(roof: Roof, seed: number) {
-  return `${fanWho(roof, "আমি", seed)} — ${fanBadge(roof.team, fanScore(roof.team, seed, roof.quiz ?? []))}`;
+  return `${fanWho(roof, "আমি", seed)}, ${fanBadge(roof.team, fanScore(roof.team, seed, roof.quiz ?? []))}`;
 }
 
 export function fanPreviewTitle(shared: Shared) {
   const seed = shared.seed ?? 0;
-  if (fanPair(shared)) return `${fanLaneTitle(shared)} — তুমি কয়টা পারবে?`;
-  return `${fanWho(shared.own, "এক বন্ধু", seed)} — ${fanBadge(shared.own.team, fanScore(shared.own.team, seed, shared.own.quiz ?? []))}। তুমি নিজের দলকে কতটা চেনো?`;
+  if (fanPair(shared)) return `${fanLaneTitle(shared)}। তুমি কয়টা পারবে?`;
+  return `${fanWho(shared.own, "এক বন্ধু", seed)}, ${fanBadge(shared.own.team, fanScore(shared.own.team, seed, shared.own.quiz ?? []))}। তুমি নিজের দলকে কতটা চেনো?`;
 }
 
 export function fanCaption(shared: Shared) {

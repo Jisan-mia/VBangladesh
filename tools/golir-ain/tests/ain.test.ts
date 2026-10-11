@@ -51,7 +51,7 @@ test("a friend's wall overlays yours with a match count", () => {
 });
 
 test("the link preview is personal and the tally only counts fixed rule ids", () => {
-  assert.equal(previewTitle({ ticked: ["chhad", "trial"], para: "কলাবাগান" }), "কলাবাগানের গলির ক্রিকেটে ২টা আইন — তোমার গলিতে কী ছিল?");
+  assert.equal(previewTitle({ ticked: ["chhad", "trial"], para: "কলাবাগান" }), "কলাবাগানের গলির ক্রিকেটে ২টা আইন। তোমার গলিতে কী ছিল?");
   assert.match(share.preview("r=1").title, /^এক পাড়ার গলির ক্রিকেটে ১টা আইন/);
   assert.deepEqual(share.tally, rules.map(rule => rule.id));
 });

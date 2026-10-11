@@ -10,7 +10,7 @@ export const share: ToolShare = {
     const shared = parseShareHash(state);
     const score = shared ? bn(scoreOf(shared.set, shared.answers)) : "কয়টা";
     return {
-      title: shared?.name ? `${shared.name} ১০-এ ${score} পেয়েছে — দম আটকানো ম্যাচগুলো তোমার মনে আছে?` : `এক বন্ধু ১০-এ ${score} পেয়েছে — দম আটকানো ম্যাচগুলো তোমার মনে আছে?`,
+      title: shared?.name ? `${shared.name} ১০-এ ${score} পেয়েছে। দম আটকানো ম্যাচগুলো তোমার মনে আছে?` : `এক বন্ধু ১০-এ ${score} পেয়েছে। দম আটকানো ম্যাচগুলো তোমার মনে আছে?`,
       description: `${shared?.name ? possessive(shared.name) : "বন্ধুর"} সাথে একই ১০টা প্রশ্ন: ১৯৯৭-এর শেষ বল, কার্ডিফ, বেঙ্গালুরুর সেই ১ রান… বাংলাদেশ ক্রিকেটের সেরা আর কষ্টের মুহূর্তের কুইজ। ফ্রি।`,
     };
   },

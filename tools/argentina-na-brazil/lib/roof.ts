@@ -130,9 +130,9 @@ export function laneTitle(own: Roof, neighbour: Roof) {
 }
 
 export function previewTitle({ own, neighbour }: Shared) {
-  if (neighbour) return `${laneTitle(own, neighbour)}, একই গলিতে — তোমার ছাদে কোনটা?`;
+  if (neighbour) return `${laneTitle(own, neighbour)}, একই গলিতে। তোমার ছাদে কোনটা?`;
   const whose = own.name ? possessive(own.name) : "এক বন্ধুর";
-  return `${whose} ছাদে ${possessive(teamOf(own.team).label)} পতাকা — তোমার ছাদে কোনটা?`;
+  return `${whose} ছাদে ${possessive(teamOf(own.team).label)} পতাকা। তোমার ছাদে কোনটা?`;
 }
 
 export function caption({ own, neighbour }: Shared) {

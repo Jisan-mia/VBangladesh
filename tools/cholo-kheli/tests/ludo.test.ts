@@ -63,7 +63,7 @@ test("a link shared before ludo existed still opens the same invitation", () => 
   const old = "g=kanamachhi&p=6&s=field&w=aj&t=%E0%A6%AC%E0%A6%BF%E0%A6%95%E0%A7%87%E0%A6%B2+%E0%A7%AB%E0%A6%9F%E0%A6%BE%E0%A6%AF%E0%A6%BC&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF";
   assert.equal(parseLudo(old), null);
   assert.equal(share.normalize(old), old);
-  assert.equal(share.preview(old).title, "রাফি ডাকছে: আজ বিকেল ৫টায় কানামাছি, স্কুলের মাঠে — আসছ তো?");
+  assert.equal(share.preview(old).title, "রাফি ডাকছে: আজ বিকেল ৫টায় কানামাছি, স্কুলের মাঠে। আসছ তো?");
   const ludoInvite = parseInvite("#g=ludo&p=9&s=seated");
   assert.equal(ludoInvite?.players, 4);
   assert.equal(share.normalize(inviteHash(ludoInvite!).slice(1)), inviteHash(ludoInvite!).slice(1));

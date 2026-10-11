@@ -231,6 +231,6 @@ export function createGameInvitation(game: Game, players: number, appointment = 
     `চলো খেলি: ${game.title}`, `${number.format(players)} জনের খেলা। মোটামুটি সময়: ${game.duration}।`,
     appointment ? `কবে, কোথায়: ${appointment}।` : "কখন, কোথায় খেলব, সবাই মিলে ঠিক করে নেব।", `যা লাগবে: ${game.supplies}।`, `যেভাবে খেলব: ${game.variant}।`,
     ...game.rules.map((rule, index) => `${number.format(index + 1)}. ${rule}`), game.ending,
-    `খেয়াল রেখো: ${game.care}`, "কোনো আয়োজক নেই, নিজেরাই মিলে খেলব। চলে এসো!",
+    `খেয়াল রেখো: ${game.care}`, "নিজেরাই মিলেমিশে খেলব। চলে এসো!",
   ].join("\n\n");
 }

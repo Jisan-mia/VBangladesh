@@ -119,9 +119,9 @@ export function InviteBuilder() {
     if (!game || !invite) return;
     try {
       await navigator.clipboard.writeText(createGameInvitation(game, invite.players, `${headline(invite)}, ${placeOf(invite)}`));
-      setNotice("নিয়মসহ পুরো মেসেজ কপি হয়েছে। গ্রুপে পেস্ট করে দাও।");
+      setNotice("নিয়মসহ মেসেজ কপি হয়েছে। গ্রুপে পেস্ট করে দাও।");
     } catch {
-      setNotice("কপি হলো না। ওপরের নিয়মগুলো চেপে ধরে নিজে কপি করে নাও।");
+      setNotice("কপি হলো না। নিচের নিয়মগুলো চেপে ধরে নিজে কপি করে নাও।");
     }
   }
 
@@ -212,7 +212,7 @@ export function InviteBuilder() {
       </> : (
         <div className="kheli-empty" role="status">
           <h2>{players === null ? "আগে লেখো কয়জন খেলবে" : "এই বাছাইয়ে কোনো খেলা মিলল না"}</h2>
-          <p>{players === null ? "ওপরের ঘরে ২ থেকে ১৬-এর মধ্যে একটা সংখ্যা দাও।" : "জায়গা বদলে দেখো, বা হাতে থাকা জিনিসে টিক দাও। দল বড় হলে ছোট দলে ভাগ হয়ে, এক দলে কয়জন সেটা দিয়ে আবার খোঁজো।"}</p>
+          <p>{players === null ? "ওপরের ঘরে ২ থেকে ১৬-এর মধ্যে একটা সংখ্যা দাও।" : "জায়গা বদলে দেখো, বা হাতে থাকা জিনিসে টিক দাও। দল বড় হলে ভাগ হয়ে যাও, তারপর এক দলে কয়জন সেটা লিখে আবার খোঁজো।"}</p>
         </div>
       )}
 
@@ -234,7 +234,7 @@ export function InviteBuilder() {
             <label className="kheli-field"><span>তোমার নাম <small>না দিলেও চলবে</small></span><input value={name} maxLength={MAX_NAME} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" /></label>
             <FormatToggle value={format} onChange={setFormat} />
             <ShareBar tool={TOOL} fileName="cholo-kheli-dawat.png" makeImage={() => invite && game ? posterBlob(invite, game, format, site) : Promise.reject(new Error("no game"))} imageKey={`${state}|${format}`} caption={invite && game ? inviteCaption(invite, game) : ""} state={state} disabled={!invite} hint="লিংক খুললে বন্ধু এই দাওয়াতটাই দেখবে, সাথে খেলার নিয়ম।" />
-            <button type="button" className="kit-link kheli-copy" onClick={copyRules} disabled={!invite}>নিয়মসহ পুরো মেসেজ কপি করো</button>
+            <button type="button" className="kit-link kheli-copy" onClick={copyRules} disabled={!invite}>নিয়মসহ মেসেজ কপি করো</button>
             {notice && <p className="kit-status" role="status">{notice}</p>}
           </div>
         </div>

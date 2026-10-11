@@ -111,7 +111,7 @@ export function matchLine(own: readonly RuleId[], friend: Ain | null) {
 }
 
 export function previewTitle({ ticked, para }: Ain) {
-  return `${para ? possessive(para) : "এক পাড়ার"} গলির ক্রিকেটে ${bn(ticked.length)}টা আইন — তোমার গলিতে কী ছিল?`;
+  return `${para ? possessive(para) : "এক পাড়ার"} গলির ক্রিকেটে ${bn(ticked.length)}টা আইন। তোমার গলিতে কী ছিল?`;
 }
 
 export { possessive };

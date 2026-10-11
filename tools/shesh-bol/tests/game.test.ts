@@ -65,7 +65,7 @@ test("tries are capped and names are cleaned, NFC-normalised and capped", () => 
 test("share normalises links and writes a personal preview title", () => {
   assert.equal(share.normalize("t=3&n=রাফি&s=7&m=last5"), "m=last5&s=7&t=3&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF");
   assert.equal(share.normalize("m=nope"), null);
-  assert.equal(previewTitle({ mode: "last5", seed: 7, tries: 3, name: "রাফি", runs: [6] }), "রাফি ৩ বারের চেষ্টায় শেষ বলে ছক্কা মেরেছে — তুমি পারবে?");
+  assert.equal(previewTitle({ mode: "last5", seed: 7, tries: 3, name: "রাফি", runs: [6] }), "রাফি ৩ বারের চেষ্টায় শেষ বলে ছক্কা মেরেছে। তুমি পারবে?");
   assert.match(share.preview("m=over12&s=7&t=1&b=6411").title, /^এক বন্ধু প্রথম চেষ্টাতেই শেষ ওভারে ১২ তুলেছে/);
   assert.deepEqual(share.tally, tallyIds);
   assert.ok(tallyIds.every(id => /^(last5|over12):[0-9+-]+$/.test(id)));

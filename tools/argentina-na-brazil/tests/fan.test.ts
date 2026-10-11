@@ -40,7 +40,7 @@ test("the score is recomputed from the taps, never read from the link", () => {
   assert.equal(hash, `#t=arg&y=2002&n=${encodeURIComponent("রাফি")}&q=${picks.join("")}&s=42`);
   const opened = parseShareHash(hash + "&score=8")!;
   assert.equal(fanScore(opened.own.team, opened.seed!, opened.own.quiz!), 7);
-  assert.equal(fanTitle(opened.own, opened.seed!), "রাফি ৮-এ ৭ — খাঁটি আর্জেন্টিনা ভক্ত");
+  assert.equal(fanTitle(opened.own, opened.seed!), "রাফি ৮-এ ৭, খাঁটি আর্জেন্টিনা ভক্ত");
   assert.equal(fanLine("arg", 42, picks), "শুধু ২০২১ কোপার প্রশ্নটা ফসকেছে, বাকিটা মুখস্থ।");
   assert.equal(fanLine("arg", 42, allRight("arg", 42)), "আটে আট। দলের ইতিহাসটা আমার মুখস্থ।");
 });
@@ -52,7 +52,7 @@ test("pre-test links open exactly as before", () => {
     assert.equal("seed" in shared, false);
     assert.equal("quiz" in shared.own, false);
   }
-  assert.equal(share.preview("t=arg&n=রাফি").title, "রাফির ছাদে আর্জেন্টিনার পতাকা — তোমার ছাদে কোনটা?");
+  assert.equal(share.preview("t=arg&n=রাফি").title, "রাফির ছাদে আর্জেন্টিনার পতাকা। তোমার ছাদে কোনটা?");
 });
 
 test("the roof link never carries quiz keys; the fan link round-trips with both houses", () => {
@@ -64,7 +64,7 @@ test("the roof link never carries quiz keys; the fan link round-trips with both 
   assert.equal(fanLaneTitle(card), "রাফি আর্জেন্টিনা ৮-এ ৭, মিম ব্রাজিল ৮-এ ৮");
   assert.equal(fanLaneLine(own, neighbour, 42), "এই রাউন্ড ব্রাজিলের। আজকের চা রাফি খাওয়াবে।");
   assert.equal(fanLaneLine(neighbour, own, 42), "এই রাউন্ড ব্রাজিলের। আজকের চা আমার পক্ষ থেকে।");
-  assert.match(fanPreviewTitle(card), /^রাফি আর্জেন্টিনা ৮-এ ৭, মিম ব্রাজিল ৮-এ ৮ — /);
+  assert.match(fanPreviewTitle(card), /^রাফি আর্জেন্টিনা ৮-এ ৭, মিম ব্রাজিল ৮-এ ৮। /);
   assert.match(fanCaption({ own, neighbour: null, seed: 42 }), /৮-এ ৮, খাঁটি ব্রাজিল ভক্ত। আর্জেন্টিনা ভক্তরা/);
 });
 
@@ -77,7 +77,7 @@ test("hostile or partial quiz keys are dropped, never crash", () => {
   }
   assert.equal(parseShareHash(`#t=bra&ft=arg&fq=${good}&s=42`)?.neighbour?.quiz?.length, FAN_ROUNDS);
   assert.equal(share.normalize(`t=arg&q=${good}&s=0042&junk=1`), `t=arg&q=${good}&s=42`);
-  assert.match(share.preview(`t=arg&n=রাফি&q=${good}&s=42`).title, /^রাফি ৮-এ ৮ — খাঁটি আর্জেন্টিনা ভক্ত।/);
+  assert.match(share.preview(`t=arg&n=রাফি&q=${good}&s=42`).title, /^রাফি ৮-এ ৮, খাঁটি আর্জেন্টিনা ভক্ত।/);
 });
 
 test("badges stay kind at every score", () => {

@@ -64,9 +64,9 @@ test("the human line follows the number, never a player", () => {
 test("share previews are personal; gifts say who made it", () => {
   assert.equal(share.normalize("k=sky&no=10&n=রাফি&s=f&d=en"), shareHash(rafi).slice(1));
   assert.equal(share.normalize("hello"), null);
-  assert.equal(share.preview(shareHash(rafi).slice(1)).title, "রাফির জার্সি, 10 নম্বর — তোমারটা বানাও");
+  assert.equal(share.preview(shareHash(rafi).slice(1)).title, "রাফির জার্সি, 10 নম্বর। তোমারটা বানাও");
   assert.equal(share.preview(shareHash({ ...rafi, from: "তানিয়া" }).slice(1)).title, "তানিয়া তোমার জন্য একটা জার্সি বানিয়েছে");
-  assert.equal(previewTitle({ ...rafi, name: "" }), "এক বন্ধুর জার্সি, 10 নম্বর — তোমারটা বানাও");
+  assert.equal(previewTitle({ ...rafi, name: "" }), "এক বন্ধুর জার্সি, 10 নম্বর। তোমারটা বানাও");
   assert.match(caption({ ...rafi, from: "তানিয়া" }), /^রাফি, তোমার জন্য/);
 });
 

@@ -81,5 +81,5 @@ export function inviteCaption(invite: Invite, game: Game) {
 
 export function inviteTitle(invite: Invite, game: Game) {
   const who = cleanText(invite.name, MAX_NAME);
-  return `${who ? `${who} ডাকছে` : "খেলার দাওয়াত"}: ${headline(invite)} ${game.title}, ${placeOf(invite)} — আসছ তো?`;
+  return `${who ? `${who} ডাকছে` : "খেলার দাওয়াত"}: ${headline(invite)} ${game.title}, ${placeOf(invite)}। আসছ তো?`;
 }

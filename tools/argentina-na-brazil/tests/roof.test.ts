@@ -41,7 +41,7 @@ test("titles read like a person wrote them", () => {
   assert.equal(roofTitle({ team: "bra", year: null, name: "" }), "আমার ছাদে ব্রাজিলের পতাকা");
   assert.equal(laneTitle({ team: "bra", year: null, name: "মিম" }, { team: "arg", year: 2002, name: "রাফি" }), "রাফি আর্জেন্টিনা, মিম ব্রাজিল");
   assert.equal(laneTitle({ team: "arg", year: null, name: "" }, { team: "arg", year: null, name: "" }), "পাশের বাসা আর আমি, দুই ছাদেই আর্জেন্টিনা");
-  assert.equal(previewTitle({ own: { team: "arg", year: 2002, name: "রাফি" }, neighbour: null }), "রাফির ছাদে আর্জেন্টিনার পতাকা — তোমার ছাদে কোনটা?");
+  assert.equal(previewTitle({ own: { team: "arg", year: 2002, name: "রাফি" }, neighbour: null }), "রাফির ছাদে আর্জেন্টিনার পতাকা। তোমার ছাদে কোনটা?");
 });
 
 test("share normalizes and previews; tally holds only fixed ids", () => {

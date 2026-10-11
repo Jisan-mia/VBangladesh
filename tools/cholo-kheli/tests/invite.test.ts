@@ -32,7 +32,7 @@ test("hostile or impossible links are rejected or pulled back into a valid invit
 
 test("the preview and caption read as a personal invitation", () => {
   const game = gameById("kanamachhi")!;
-  assert.equal(inviteTitle(invite, game), "রাফি ডাকছে: আজ বিকেল ৫টায় কানামাছি, বটতলার মাঠে — আসছ তো?");
+  assert.equal(inviteTitle(invite, game), "রাফি ডাকছে: আজ বিকেল ৫টায় কানামাছি, বটতলার মাঠে। আসছ তো?");
   assert.equal(share.preview(inviteHash(invite).slice(1)).title, inviteTitle(invite, game));
   assert.match(share.preview(inviteHash({ ...invite, name: "" }).slice(1)).title, /^খেলার দাওয়াত: /);
   assert.equal(inviteCaption(invite, game), "আজ বিকেল ৫টায় কানামাছি খেলব, বটতলার মাঠে। ৬ জন হলেই জমবে। আসছ তো?");

@@ -101,7 +101,7 @@ export function AinWall() {
         <p className="ga-line" aria-live="polite">{line}</p>
       </div>
 
-      <p className="ga-hint">{friend ? <>তোমার গলিতে যেগুলো চলত, ছুঁয়ে দাও। <b>হলুদ দাগ</b> মানে ওদের গলিতেও ছিল।</> : "তোমার গলিতে যেগুলো চলত, ছুঁয়ে দাও। আবার ছুঁলে মুছে যাবে।"}</p>
+      <p className="ga-hint">{friend ? <>তোমার গলিতে যেগুলো চলত, টিক দাও। <b>হলুদ দাগ</b> মানে ওদের গলিতেও ছিল।</> : "তোমার গলিতে যেগুলো চলত, টিক দাও। আবার চাপলে মুছে যাবে।"}</p>
       {groups.map(group => (
         <fieldset className="ga-group" key={group.id}>
           <legend>{group.label}</legend>
@@ -121,7 +121,7 @@ export function AinWall() {
       <section className="ga-result" id="result" ref={result} aria-labelledby="ga-result-title">
         <div className="ga-result-head">
           <h2 id="ga-result-title">{ticked.length ? <>{ain.para ? possessive(ain.para) : "তোমার"} গলির <em>{bn(ticked.length)}টা</em> আইন, দেয়ালে লেখা</> : "দেয়ালে এখনো কোনো আইন নেই"}</h2>
-          <p>{ticked.length ? match || "ছবিটা পোস্ট করো, দেখো বন্ধুরা কোন আইন নিয়ে তর্ক শুরু করে।" : "ওপর থেকে তোমার গলির অন্তত একটা আইন ছুঁয়ে দাও।"}</p>
+          <p>{ticked.length ? match || "ছবিটা পোস্ট করো, দেখো বন্ধুরা কোন আইন নিয়ে তর্ক শুরু করে।" : "ওপর থেকে তোমার গলির অন্তত একটা আইনে টিক দাও।"}</p>
         </div>
         <div className="ga-result-body">
           <figure className="kit-card" data-format={format}>

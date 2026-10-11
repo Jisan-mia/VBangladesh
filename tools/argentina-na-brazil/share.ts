@@ -16,7 +16,7 @@ export const share: ToolShare = {
     };
     return {
       title: shared ? previewTitle(shared) : "আর্জেন্টিনা না ব্রাজিল? তোমার ছাদে কোন পতাকা?",
-      description: "এক চাপে দল বাছো, ছাদে পতাকা তোলো, পাশের বাসায় বন্ধুর পতাকা দেখো। দেশের মানুষ কোন দিকে, সেটাও দেখো।",
+      description: "এক চাপে দল বাছো, ছাদে পতাকা তোলো, পাশের বাসায় বন্ধুর পতাকা দেখো। দেশের মানুষ কোন দিকে, সেটাও জেনে নাও।",
     };
   },
   // Only fixed team and division ids are ever counted; never names.

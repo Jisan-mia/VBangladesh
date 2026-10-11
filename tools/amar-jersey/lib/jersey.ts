@@ -112,10 +112,10 @@ export function caption(jersey: Jersey) {
 }
 
 export function previewTitle(jersey: Jersey | null) {
-  if (!jersey) return "পিঠে নিজের নাম, পছন্দের নম্বর — তোমার জার্সিটা বানাও";
+  if (!jersey) return "পিঠে নিজের নাম, পছন্দের নম্বর। তোমার জার্সিটা বানাও";
   if (jersey.from) return `${jersey.from} তোমার জন্য একটা জার্সি বানিয়েছে`;
   const who = jersey.name ? possessive(jersey.name) : "এক বন্ধুর";
-  return `${who} জার্সি, ${numberText(jersey)} নম্বর — তোমারটা বানাও`;
+  return `${who} জার্সি, ${numberText(jersey)} নম্বর। তোমারটা বানাও`;
 }
 
 // Fixed ids only: the kit and the number. Never the name.
