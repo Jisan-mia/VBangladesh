@@ -19,7 +19,7 @@ export default function MishronPage() {
           <h2 id="guide-title">{site.guideTitle}</h2>
           <p>{site.guideIntro}</p>
           <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{bn(index + 1)}</span><p>{step}</p></li>)}</ol>
-          <p className="ms-note">সব জিনিস আর মেশানোর নিয়ম আমাদের হাতে লেখা। তাই কোনটা কী দিয়ে হয়, তা একটু খেয়ালি হতে পারে, যেমন লোহা + চাল = টিনের চাল! নির্বাচন কমিশনের প্রতীকের তালিকার কোনো জিনিস, ধর্মীয় কিছু বা খারাপ কিছু রাখিনি।</p>
+          <p className="ms-note">সব জিনিস আর মেশানোর নিয়ম আগে থেকেই ঠিক করে রাখা, খেলার সময় কেউ বানায় না। তাই কোনটা কী দিয়ে হয়, তা একটু খেয়ালি হতে পারে, যেমন লোহা + চাল = টিনের চাল! নির্বাচন কমিশনের প্রতীকের তালিকার কোনো জিনিস, ধর্মীয় কিছু বা খারাপ কিছু রাখিনি।</p>
         </section>
         <Faq items={site.faq} />
         <section className="container section ms-suggest" aria-label="নতুন জিনিসের পরামর্শ"><SuggestBox tool="mishron" question="কোন জিনিসটা হাঁড়িতে থাকা উচিত ছিল?" placeholder="যেমন: চানাচুর, পেঁয়াজু, কাগজের ফুল…" /></section>
