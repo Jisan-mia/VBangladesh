@@ -105,7 +105,7 @@ export const catalog = [
   { slug: "deri-hoye-gelo", name: "দেরি হয়ে গেল!", description: "দেরি হয়ে গেল!: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "chor-police", name: "চোর-ডাকাত-পুলিশ-বাবু", description: "থালায় চার চিরকুট, এক ফোনে চারজন। লুকিয়ে দেখো, পুলিশ চোর ধরবে।", category: "গেম", action: "চিরকুট তোলো" },
   { slug: "bostar-pahar", name: "বস্তার পাহাড়", description: "বস্তার পাহাড়: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
-  { slug: "tarer-fanke-belun", name: "তারের ফাঁকে বেলুন", description: "তারের ফাঁকে বেলুন: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "tarer-fanke-belun", name: "তারের ফাঁকে বেলুন", description: "ঢাকার তারের জটে বেলুন ওড়াও। এক চাপে ওঠে, কয়টা ফাঁক পার হবে?", category: "গেম", action: "বেলুন ওড়াও" },
   { slug: "paka-kancha", name: "পাকা-কাঁচা", description: "পাকা-কাঁচা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
