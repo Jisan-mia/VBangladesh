@@ -4,8 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat, type Photo } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, PhotoPicker, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
-import { age, ageText, banglaDate, banglaText, bn, bnPlain, compareLine, createCard, dateline, daysBetween, englishText, isDate, months, parseShareHash, ruleNote, seasonOf, seasons, shareHash, todayInDhaka, toDate, validBirth, weekday, weekdays, MAX_NAME_LENGTH, type Shared } from "../lib/boyos";
-import { cardBlob, drawCard } from "../lib/draw-card";
+import { age, ageLimit, ageText, banglaDate, banglaText, bn, bnPlain, compareLine, createCard, dateline, daysBetween, englishText, isDate, months, parseLimit, parseShareHash, ruleNote, seasonOf, seasons, shareHash, todayInDhaka, toDate, validBirth, weekday, weekdays, MAX_NAME_LENGTH, type Age, type Shared } from "../lib/boyos";
+import { cardBlob, drawCard, drawRituCard, rituBlob } from "../lib/draw-card";
 
 const TOOL = "boyos";
 // Percentages from a handful of people are noise ("১০০% মানুষ বর্ষায়" after one vote).
@@ -40,6 +40,7 @@ export function AgeBuilder() {
   const [today, setToday] = useState("");
   const [pick, setPick] = useState<Pick>(empty);
   const [on, setOn] = useState<Pick>(empty);
+  const [limitText, setLimitText] = useState("");
   const [name, setName] = useState("");
   const [format, setFormat] = useState<CardFormat>("feed");
   const [photo, setPhoto] = useState<Photo | null>(null);
@@ -50,6 +51,7 @@ export function AgeBuilder() {
   const [compared, setCompared] = useState<"idle" | "sending" | "done" | "failed">("idle");
   const preview = useRef<HTMLCanvasElement>(null);
   const friendPreview = useRef<HTMLCanvasElement>(null);
+  const rituPreview = useRef<HTMLCanvasElement>(null);
   const result = useRef<HTMLElement>(null);
   const resultVisible = useInView(result);
 
@@ -59,6 +61,7 @@ export function AgeBuilder() {
   const own = useMemo(() => ({ birth, name }), [birth, name]);
   const card = useMemo(() => valid ? createCard(own, today, friend) : null, [valid, own, today, friend]);
   const state = valid ? shareHash(own).slice(1) : "";
+  const rituState = valid ? shareHash({ ...own, view: "ritu" }).slice(1) : "";
   const todayBangla = today ? banglaDate(today) : null;
 
   useEffect(() => {
@@ -79,7 +82,8 @@ export function AgeBuilder() {
     loadCardFonts("দৈনিক একটুখানি").then(() => {
       if (cancelled) return;
       if (card && preview.current) drawCard(preview.current, card, format, site, photo);
-      if (friend && friendPreview.current) drawCard(friendPreview.current, createCard(friend, today), "feed", site);
+      if (card && rituPreview.current) drawRituCard(rituPreview.current, card, format, site);
+      if (friend && friendPreview.current) (friend.view === "ritu" ? drawRituCard : drawCard)(friendPreview.current, createCard(friend, today), "feed", site);
       setPreviewError(false);
     }).catch(() => { if (!cancelled) setPreviewError(true); });
     return () => { cancelled = true; };
@@ -106,8 +110,13 @@ export function AgeBuilder() {
 
   const target = pickDate(on);
   const targetOk = valid && isDate(target);
+  const limit = parseLimit(limitText);
+  const check = targetOk && limit && target >= birth ? ageLimit(birth, target, limit) : null;
+  const gapText = (gap: Age, days: number) => gap.years || gap.months ? `${ageText(gap)} (${bn(days)} দিন)` : ageText(gap);
   const friendDays = friend && today ? bn(daysBetween(friend.birth, today)) : "";
   const friendWho = friend?.name || "তোমার বন্ধু";
+  const friendRitu = friend?.view === "ritu" && today ? createCard(friend, today).ritu.total : 0;
+  const rituCaption = card ? `জন্ম থেকে আজ পর্যন্ত আমি ${bn(card.ritu.total)}টা ঋতু দেখেছি, তার মধ্যে ${bn(card.ritu.counts[card.ritu.first % 6])}টা ${card.season.label}! তুমি কয়টা দেখেছ, দেখো তো:` : "";
   const caption = card ? `${card.match ? card.match + "! " : ""}আমি আজ ${bn(card.alive)} দিনের! বাংলায় আমার জন্মতারিখ ${card.banglaText}, আমি ${card.season.people}। তুমি কত দিনের, দেখো তো:` : "";
   const topSeason = compared === "done" && everyone && everyone.total >= COMPARE_MIN ? [...seasons].sort((a, b) => (everyone.counts[b.id] ?? 0) - (everyone.counts[a.id] ?? 0))[0] : null;
 
@@ -115,10 +124,12 @@ export function AgeBuilder() {
     <div className="by">
       {friend && today && (
         <section className="by-friend" aria-labelledby="friend-title">
-          <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`${friendWho}-এর জন্মদিনের প্রথম পাতা`} />
+          <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={friendRitu ? `${friendWho}-এর জীবনের ঋতুর গ্রিড` : `${friendWho}-এর জন্মদিনের প্রথম পাতা`} />
           <div>
             <p className="by-kicker">তোমার জন্য একটা পত্রিকা এসেছে</p>
-            <h2 id="friend-title">{friendWho} আজ {friendDays} দিনের।<br /><span>তুমি কত দিনের?</span></h2>
+            {friendRitu
+              ? <h2 id="friend-title">{friendWho} এ পর্যন্ত {bn(friendRitu)}টা ঋতু দেখেছে।<br /><span>তুমি কয়টা?</span></h2>
+              : <h2 id="friend-title">{friendWho} আজ {friendDays} দিনের।<br /><span>তুমি কত দিনের?</span></h2>}
             {valid ? <p className="by-match">{compareLine(friend, birth)}</p> : <a className="kit-primary" href="#birth">আমার তারিখ দিই</a>}
           </div>
         </section>
@@ -183,12 +194,38 @@ export function AgeBuilder() {
             </div>
           </div>
 
-          <details className="by-on">
-            <summary>অমুক তারিখে বয়স কত হবে? <small>চাকরির আবেদনের বয়সসীমা মেলাতে</small></summary>
+          <details className="by-on" id="chakri">
+            <summary>অমুক তারিখে বয়স কত? <small>চাকরির বয়সসীমা মেলাও</small></summary>
             <DateSelect id="on-date" legend="কোন তারিখে?" value={on} onChange={setOn} fromYear={Number(birth.slice(0, 4))} toYear={Number(today.slice(0, 4)) + 5} />
             {target && !isDate(target) && <p className="by-problem" role="alert">{dateProblem(target, "9999-12-31")}</p>}
-            {targetOk && <p className="by-on-result" aria-live="polite">{target < birth ? "সেদিন তোমার জন্মই হয়নি!" : <>{englishText(target)} তারিখে তোমার বয়স {target < today ? "ছিল" : target === today ? "আজ" : "হবে"} <strong>{ageText(age(birth, target))}</strong></>}</p>}
-            <p className="by-note">বয়সসীমা কোন তারিখ ধরে গোনা হবে, সেটা চাকরির বিজ্ঞপ্তিতেই লেখা থাকে। সেই তারিখটাই এখানে দাও।</p>
+            <label className="by-field by-limit">
+              <span>বয়সসীমা <small>বিজ্ঞপ্তিতে যত বছর লেখা</small></span>
+              <span><input value={limitText} onChange={event => setLimitText(event.target.value)} inputMode="numeric" maxLength={3} placeholder="যেমন ৩০" autoComplete="off" /> বছর</span>
+            </label>
+            {limitText.trim() && !limit && <p className="by-problem" role="alert">বয়সসীমা শুধু পুরো বছরে লেখো, যেমন ৩০।</p>}
+            {targetOk && <div className="by-on-result" aria-live="polite">
+              <p>{target < birth ? "সেদিন তোমার জন্মই হয়নি!" : <>{englishText(target)} তারিখে তোমার বয়স {target < today ? "ছিল" : target === today ? "আজ" : "হবে"} <strong>{ageText(age(birth, target))}</strong></>}</p>
+              {check && limit && <p className="by-verdict" data-status={check.status}>{
+                check.status === "within" ? <><strong>হ্যাঁ, {bn(limit)} বছরের সীমার মধ্যে।</strong> সেদিন {bn(limit)} বছর পূর্ণ হতে বাকি {gapText(check.gap, check.days)}। সীমার শেষ দিন {englishText(check.lastDay)}।</>
+                : check.status === "edge" ? <><strong>ঠিক সেদিনই তোমার {bn(limit)} বছর পূর্ণ।</strong> এখানকার হিসাবে সেদিন আর সীমার মধ্যে নেই, শেষ দিন {englishText(check.lastDay)}। তবে পূর্ণ হওয়ার দিনটা ধরা হবে কি না, বিজ্ঞপ্তির ভাষা দেখে মিলিয়ে নাও।</>
+                : <><strong>না, সেদিন {bn(limit)} বছরের সীমা পার।</strong> {bn(limit)} বছর পূর্ণ {englishText(check.turns)}, সেদিনের {gapText(check.gap, check.days)} আগে। বিজ্ঞপ্তিতে বয়সে কোনো ছাড় থাকলে সেই সীমা লিখে আবার দেখো।</>
+              }</p>}
+            </div>}
+            <p className="by-note">হিসাবের নিয়ম: {limit ? bn(limit) : "৩০"} বছরের সীমা মানে {limit ? bn(limit) : "৩০"} বছর পূর্ণ হওয়ার আগের দিন পর্যন্ত। কোন তারিখে বয়স গোনা হবে, সীমা কত, ছাড় আছে কি না, সব বিজ্ঞপ্তিতে লেখা থাকে। বিজ্ঞপ্তির নিয়মই চূড়ান্ত।</p>
+          </details>
+
+          <details className="by-on by-ritu" open={friend?.view === "ritu" || undefined}>
+            <summary>জীবনের ঋতু <small>জন্ম থেকে আজ {bn(card.ritu.total)}টা ঋতু, গ্রিডে দেখো</small></summary>
+            <p className="by-ritu-line">{card.rituLine}</p>
+            <figure className="kit-card" data-format={format}>
+              <canvas ref={rituPreview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="ritu-summary" />
+              <figcaption id="ritu-summary" className="by-sr">{card.rituKicker}: {card.rituHeadline}। {seasons.map((season, index) => `${season.label} ${bn(card.ritu.counts[index])}টা`).join(", ")}। এখন চলছে {seasons[card.ritu.now % 6].label}।</figcaption>
+            </figure>
+            <p className="by-note">প্রতি সারি এক বাংলা বছর, বৈশাখ থেকে চৈত্র; প্রতি ঘর এক ঋতু, মানে দুই বাংলা মাস। জন্মের ঋতু আর আজকের ঋতু দুটোই গোনা। ফাঁকা ঘরগুলো এ বছরের বাকি ঋতু, সামনেই আসছে।</p>
+            <div className="by-controls">
+              <FormatToggle value={format} onChange={setFormat} />
+              <ShareBar tool={TOOL} fileName="boyos-ritu.png" makeImage={() => rituBlob(card, format, site)} imageKey={`${rituState}|${format}|${today}`} caption={rituCaption} state={rituState} hint="লিংক পেলে বন্ধু দেখবে তোমার ঋতুর গ্রিড, আর নিজের তারিখ দিয়ে বানাবে নিজেরটা।" />
+            </div>
           </details>
 
           <div className="by-everyone">

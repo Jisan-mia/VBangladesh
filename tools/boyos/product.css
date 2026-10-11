@@ -58,9 +58,25 @@
 .by-on summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;min-height:48px;padding:10px 0;font-family:var(--font-display);font-size:19px;font-weight:700;cursor:pointer}
 .by-on summary small{font-family:var(--font-bengali);font-size:13px;font-weight:400;color:var(--muted)}
 .by-on .by-date{margin-top:4px}
+.by-on+.by-on{margin-top:14px}
+.by-on summary{position:relative;padding-right:44px;list-style:none}
+.by-on summary::-webkit-details-marker{display:none}
+.by-on summary::after{content:"+";position:absolute;top:50%;right:0;transform:translateY(-50%);display:grid;place-items:center;width:32px;height:32px;border:1.5px solid var(--ink);border-radius:50%;font-family:var(--font-bengali);font-size:20px;line-height:1}
+.by-on[open] summary::after{content:"−"}
+.by-limit{margin-top:14px}
+.by-limit>span:last-child{display:flex;align-items:center;gap:10px;font-weight:600}
+.by-limit input{width:110px;border-color:var(--ink);background:#fff}
 .by-on-result{margin:14px 0 0;font-size:17px}
+.by-on-result p{margin:0}
 .by-on-result strong{font-family:var(--font-display);font-size:22px;color:var(--accent-deep)}
+.by-on-result .by-verdict{margin-top:10px;padding:10px 12px;border-left:4px solid var(--accent);border-radius:0 8px 8px 0;background:#fbeee4;font-size:16px;line-height:1.7}
+.by-verdict strong{display:block;font-size:20px;color:inherit}
+.by-verdict[data-status=within]{border-color:#2f6b3a;background:#e9f0e2}
+.by-verdict[data-status=edge]{border-color:#b07d00;background:#fff3cf}
 .by-note{margin:10px 0 12px;font-size:14px;color:var(--muted)}
+.by-ritu-line{margin:2px 0 12px;font-family:var(--font-display);font-size:18px;font-weight:600}
+.by-ritu .kit-card{margin-bottom:4px}
+.by-ritu .by-controls{margin:6px 0 12px}
 
 /* compare with everyone (opt-in) */
 .by-everyone{margin-top:26px;padding:18px;border-radius:12px;background:#f6f3ec}

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { age, ageText, bnPlain, banglaDate, banglaText, cleanName, compareLine, createCard, dateline, humanLine, nextBirthday, nextMilestone, parseShareHash, seasonOf, seasons, shareHash, todayInDhaka, MAX_NAME_LENGTH } from "../lib/boyos";
+import { age, ageLimit, ageText, bnPlain, lifeSeasons, parseLimit, banglaDate, banglaText, cleanName, compareLine, createCard, dateline, humanLine, nextBirthday, nextMilestone, parseShareHash, seasonOf, seasons, shareHash, todayInDhaka, MAX_NAME_LENGTH } from "../lib/boyos";
 import { share } from "../share";
 
 const TODAY = "2026-10-10";
@@ -124,4 +124,69 @@ test("share: normalize, personal preview, and a tally over the six seasons only"
   assert.equal(share.normalize("b=2026-02-30"), null);
   assert.match(share.preview("b=1999-06-26").title, /^আমি আজ [০-৯,]+ দিনের/);
   assert.deepEqual(share.tally, seasons.map(season => season.id));
+});
+
+test("the age limit is typed in whole years, Bangla or English digits", () => {
+  assert.equal(parseLimit("৩২"), 32);
+  assert.equal(parseLimit(" 30 "), 30);
+  assert.equal(parseLimit("১০০"), 100);
+  for (const text of ["", "০", "৩০.৫", "৩০ বছর", "abc", "১০১", "-5"]) assert.equal(parseLimit(text), null, text);
+});
+
+test("age limit: within until the day before the years are complete, the day itself flagged as edge", () => {
+  // Born 26 Jun 1999, 30-year limit: last day inside is 25 Jun 2029.
+  assert.deepEqual(ageLimit("1999-06-26", "2029-06-25", 30), { status: "within", turns: "2029-06-26", lastDay: "2029-06-25", days: 1, gap: { years: 0, months: 0, days: 1 } });
+  assert.equal(ageLimit("1999-06-26", "2029-06-26", 30).status, "edge");
+  assert.deepEqual(ageLimit("1999-06-26", "2029-06-27", 30), { status: "over", turns: "2029-06-26", lastDay: "2029-06-25", days: 1, gap: { years: 0, months: 0, days: 1 } });
+  const now = ageLimit("1999-06-26", TODAY, 32);
+  assert.equal(now.status, "within");
+  assert.equal(now.lastDay, "2031-06-25");
+  assert.deepEqual(now.gap, { years: 4, months: 8, days: 16 });
+  assert.equal(now.days, 1720);
+  assert.deepEqual(ageLimit("1990-01-15", "2025-03-20", 32), { status: "over", turns: "2022-01-15", lastDay: "2022-01-14", days: 1160, gap: { years: 3, months: 2, days: 5 } });
+});
+
+test("age limit: leap-day births, month ends and the year boundary", () => {
+  // 29 Feb births complete their years on 28 Feb in common years (the tool's birthday rule), on 29 Feb in leap years.
+  assert.equal(ageLimit("1996-02-29", "2026-01-01", 30).lastDay, "2026-02-27");
+  assert.equal(ageLimit("1996-02-29", "2026-02-28", 30).status, "edge");
+  assert.equal(ageLimit("1996-02-29", "2028-02-28", 32).status, "within");
+  assert.equal(ageLimit("1996-02-29", "2028-02-29", 32).status, "edge");
+  assert.equal(ageLimit("1995-12-31", "2025-12-30", 30).status, "within");
+  assert.equal(ageLimit("1995-12-31", "2025-12-31", 30).status, "edge");
+  assert.equal(ageLimit("1996-01-01", "2025-12-31", 30).status, "within");
+  assert.equal(ageLimit("1996-01-01", "2026-01-01", 30).status, "edge");
+  assert.equal(ageLimit("1996-03-01", "2026-02-28", 30).lastDay, "2026-02-28");
+  assert.deepEqual(ageLimit("1996-01-31", "2026-03-01", 30).gap, { years: 0, months: 1, days: 1 });
+});
+
+test("life seasons: every season from the birth one to today's, counted per season", () => {
+  // ১২ আষাঢ় ১৪০৬ (বর্ষা) to ২৫ আশ্বিন ১৪৩৩ (শরৎ): 5 seasons of ১৪০৬ + 26 years × 6 + 3 seasons of ১৪৩৩ = 164.
+  const ritu = lifeSeasons("1999-06-26", TODAY);
+  assert.equal(ritu.total, 164);
+  assert.deepEqual(ritu.counts, [27, 28, 28, 27, 27, 27]);
+  assert.equal(ritu.counts.reduce((sum, count) => sum + count), ritu.total);
+  assert.deepEqual(lifeSeasons(TODAY, TODAY), { first: ritu.now, now: ritu.now, total: 1, counts: [0, 0, 1, 0, 0, 0] });
+  // Born the last day of চৈত্র (বসন্ত), today the first of বৈশাখ (গ্রীষ্ম): two seasons, one day apart.
+  assert.equal(lifeSeasons("2026-04-13", "2026-04-14").total, 2);
+  // 1 Jan 1900 is ১৮ পৌষ ১৩০৬ (শীত): 2 seasons of ১৩০৬ + 126 years × 6 + 3 seasons of ১৪৩৩ = 761.
+  assert.equal(lifeSeasons("1900-01-01", TODAY).total, 761);
+  const card = createCard({ birth: "1999-06-26", name: "রাফি" }, TODAY);
+  assert.equal(card.rituKicker, "রাফির জীবনের ঋতু");
+  assert.equal(card.rituHeadline, "১৬৪টা ঋতু, ২৮টা বর্ষা");
+  assert.equal(card.rituLine, "বর্ষায় জন্ম — প্রতিটা প্রথম বৃষ্টি জন্মঋতুকে ফিরিয়ে আনে।");
+  assert.equal(card.todayText, "২৫ আশ্বিন ১৪৩৩");
+});
+
+test("links shared before the season grid still open the front page; v=ritu opens the grid", () => {
+  // A link made before Oct 2026 (no v key) parses exactly as it used to.
+  assert.deepEqual(parseShareHash("#b=1999-06-26&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF", TODAY), { birth: "1999-06-26", name: "রাফি" });
+  assert.equal(share.normalize("b=1999-06-26"), "b=1999-06-26");
+  const ritu = shareHash({ birth: "1999-06-26", name: "রাফি", view: "ritu" });
+  assert.match(ritu, /&v=ritu$/);
+  assert.deepEqual(parseShareHash(ritu, TODAY), { birth: "1999-06-26", name: "রাফি", view: "ritu" });
+  assert.deepEqual(parseShareHash("#b=1999-06-26&v=evil", TODAY), { birth: "1999-06-26", name: "" });
+  assert.match(share.normalize(ritu.slice(1))!, /&v=ritu$/);
+  assert.match(share.preview(ritu.slice(1)).title, /^রাফির জীবনে [০-৯]+টা ঋতু, [০-৯]+টা বর্ষা — তোমার কয়টা\?$/);
+  assert.match(share.preview("b=1999-06-26&v=ritu").title, /^আমার জীবনে /);
 });

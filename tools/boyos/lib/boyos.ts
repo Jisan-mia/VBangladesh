@@ -60,6 +60,25 @@ export function ageText({ years, months, days }: Age) {
   return text || "০ দিন";
 }
 
+/** "৩২" or "32" → 32. Anything else (decimals, words, 0, over 100) → null: the limit is whatever the circular says, in whole years. */
+export function parseLimit(text: string) {
+  const ascii = text.trim().replace(/[০-৯]/g, digit => String(digit.charCodeAt(0) - 0x09e6));
+  const limit = /^\d{1,3}$/.test(ascii) ? Number(ascii) : 0;
+  return limit >= 1 && limit <= 100 ? limit : null;
+}
+
+/**
+ * Is someone still under a `limit`-year age limit on `on`? Counted as "within until the day before `limit` years are
+ * complete": born 26 Jun 1999, a 30-year limit holds up to 25 Jun 2029. Circulars word this their own way, so the day
+ * the years are complete comes back as "edge" for the page to flag, not decide. `days` is the distance to that day.
+ */
+export function ageLimit(birth: string, on: string, limit: number) {
+  const turns = addMonths(birth, limit * 12);
+  const days = daysBetween(on, turns);
+  const status = days > 0 ? "within" : days === 0 ? "edge" : "over";
+  return { status, turns, lastDay: addDays(turns, -1), days: Math.abs(days), gap: days >= 0 ? age(on, turns) : age(turns, on) } as const;
+}
+
 export function nextBirthday(birth: string, on: string) {
   const { years } = age(birth, on);
   const thisYear = addMonths(birth, years * 12);
@@ -132,6 +151,27 @@ export type Season = (typeof seasons)[number];
 /** Two Bangla months per season: গ্রীষ্ম is বৈশাখ–জ্যৈষ্ঠ, বর্ষা আষাঢ়–শ্রাবণ, and so on. */
 export const seasonOf = (bangla: BanglaDate): Season => seasons[Math.floor(bangla.month / 2)];
 
+/** A season's place in time: six to a Bangla year, so consecutive numbers are consecutive seasons. */
+const seasonNumber = (date: string) => { const bangla = banglaDate(date); return bangla.year * 6 + Math.floor(bangla.month / 2); };
+
+export type LifeSeasons = { first: number; now: number; total: number; counts: number[] };
+/** Every season someone has lived in, from the one they were born in to the one running today (both counted). Never the future. */
+export function lifeSeasons(birth: string, today: string): LifeSeasons {
+  const first = seasonNumber(birth), now = seasonNumber(today);
+  const counts = seasons.map(() => 0);
+  for (let number = first; number <= now; number++) counts[number % 6]++;
+  return { first, now, total: now - first + 1, counts };
+}
+
+const rituLines: Record<Season["id"], string> = {
+  grishmo: "গ্রীষ্মে জন্ম — প্রতি বৈশাখে নতুন বছর আর জন্মঋতু একসাথে আসে।",
+  borsha: "বর্ষায় জন্ম — প্রতিটা প্রথম বৃষ্টি জন্মঋতুকে ফিরিয়ে আনে।",
+  shorot: "শরতে জন্ম — কাশফুল দেখলেই বোঝা যায়, জন্মঋতু এসেছে।",
+  hemonto: "হেমন্তে জন্ম — নতুন ধানের গন্ধে প্রতিবার জন্মঋতু ফেরে।",
+  sheet: "শীতে জন্ম — পিঠার মৌসুম মানেই জন্মঋতু।",
+  boshonto: "বসন্তে জন্ম — শিমুল-পলাশ ফুটলেই জন্মঋতু ফেরে।",
+};
+
 export const banglaText = (bangla: BanglaDate) => `${bnPlain(bangla.day)} ${banglaMonths[bangla.month]} ${bnPlain(bangla.year)}`;
 export function englishText(date: string) {
   const [y, m, d] = parts(date);
@@ -173,12 +213,14 @@ export function cleanName(name: string) {
 /** A birth date we accept: a real calendar date from 1900 up to today. */
 export const validBirth = (date: string, today: string) => isDate(date) && date >= MIN_DATE && date <= today;
 
-export type Shared = { birth: string; name: string };
+/** `view: "ritu"` (added Oct 2026) opens the season-grid card; links without it open the front page, as they always did. */
+export type Shared = { birth: string; name: string; view?: "ritu" };
 
-export function shareHash({ birth, name }: Shared) {
+export function shareHash({ birth, name, view }: Shared) {
   const params = new URLSearchParams({ b: birth });
   const shown = cleanName(name);
   if (shown) params.set("n", shown);
+  if (view) params.set("v", view);
   return "#" + params.toString();
 }
 
@@ -186,7 +228,10 @@ export function parseShareHash(hash: string, today = todayInDhaka()): Shared | n
   if (hash.length > 400) return null;
   const params = new URLSearchParams(hash.replace(/^#/, ""));
   const birth = params.get("b") ?? "";
-  return validBirth(birth, today) ? { birth, name: cleanName(params.get("n") ?? "") } : null;
+  if (!validBirth(birth, today)) return null;
+  const shared: Shared = { birth, name: cleanName(params.get("n") ?? "") };
+  if (params.get("v") === "ritu") shared.view = "ritu";
+  return shared;
 }
 
 /** "রাফি তোমার চেয়ে ১ বছর ২ মাস বড়" on the page; the card, which friends read, says "আমার". */
@@ -215,6 +260,11 @@ export type Card = {
   milestone: ReturnType<typeof nextMilestone>;
   line: string;
   match: string;
+  todayText: string;
+  ritu: LifeSeasons;
+  rituKicker: string;
+  rituHeadline: string;
+  rituLine: string;
 };
 
 export function createCard(own: Shared, today: string, friend?: Shared | null): Card {
@@ -222,6 +272,7 @@ export function createCard(own: Shared, today: string, friend?: Shared | null): 
   const ageNow = age(own.birth, today);
   const alive = daysBetween(own.birth, today);
   const bangla = banglaDate(own.birth);
+  const ritu = lifeSeasons(own.birth, today);
   return {
     name,
     birth: own.birth,
@@ -239,6 +290,11 @@ export function createCard(own: Shared, today: string, friend?: Shared | null): 
     milestone: nextMilestone(own.birth, today),
     line: humanLine(own.birth, today),
     match: friend ? compareLine(friend, own.birth, "me") : "",
+    todayText: banglaText(banglaDate(today)),
+    ritu,
+    rituKicker: name ? `${possessive(name)} জীবনের ঋতু` : "আমার জীবনের ঋতু",
+    rituHeadline: `${bn(ritu.total)}টা ঋতু, ${bn(ritu.counts[ritu.first % 6])}টা ${seasonOf(bangla).label}`,
+    rituLine: rituLines[seasonOf(bangla).id],
   };
 }
 

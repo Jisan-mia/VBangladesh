@@ -1,5 +1,5 @@
-import { cardSizes, drawFooterBand, fitText, renderCard, wrapText, DISPLAY_FONT, type CardFormat, type Photo } from "../../../shared/card-canvas";
-import { bn, englishText, type Card } from "./boyos";
+import { cardSizes, drawFooterBand, fitText, renderCard, roundedRect, wrapText, DISPLAY_FONT, type CardFormat, type Photo } from "../../../shared/card-canvas";
+import { bn, englishText, seasons, type Card, type LifeSeasons } from "./boyos";
 
 const PAPER = "#f2eee4";
 const INK = "#161412";
@@ -123,3 +123,98 @@ export function drawCard(canvas: HTMLCanvasElement, card: Card, format: CardForm
 }
 
 export const cardBlob = (card: Card, format: CardFormat, site: string, photo?: Photo | null) => renderCard(canvas => drawCard(canvas, card, format, site, photo));
+
+// The season grid ("জীবনের ঋতু"): an inside page of the same paper. Muted print inks, one per season, in `seasons` order.
+export const seasonInks = ["#d9622b", "#2e6e8e", "#8fbcd4", "#c99a2e", "#6b7785", "#5f9e4a"] as const;
+
+/** One row per Bangla year (বৈশাখ→চৈত্র, six cells), ten rows to a block so it reads in decades. Only lived seasons are filled. */
+function seasonGrid(context: CanvasRenderingContext2D, ritu: LifeSeasons, x: number, y: number, width: number, height: number) {
+  const firstYear = Math.floor(ritu.first / 6), years = Math.floor(ritu.now / 6) - firstYear + 1, blocks = Math.ceil(years / 10);
+  // Sizes in units of the cell pitch: a block is 6 wide plus a 1.2 gap; block rows are 10 tall plus a 1.2 gap; a cell is 0.8.
+  const fit = (lines: number) => {
+    const across = Math.ceil(blocks / lines), tall = lines === 1 ? Math.min(years, 10) : 10;
+    const w = (across - 1) * 7.2 + 5.8, h = (lines - 1) * 11.2 + tall - 0.2;
+    return { across, w, h, pitch: Math.min(64, width / w, height / h) };
+  };
+  let best = fit(1);
+  for (let lines = 2; lines <= blocks; lines++) { const next = fit(lines); if (next.pitch > best.pitch) best = next; }
+  const { across, pitch } = best, size = pitch * 0.8;
+  const left = x + (width - best.w * pitch) / 2, top = y + (height - best.h * pitch) / 2;
+  for (let year = 0; year < years; year++) {
+    const block = Math.floor(year / 10);
+    const cy = top + Math.floor(block / across) * 11.2 * pitch + (year % 10) * pitch;
+    for (let s = 0; s < 6; s++) {
+      const number = (firstYear + year) * 6 + s;
+      if (number < ritu.first) continue;
+      const cx = left + (block % across) * 7.2 * pitch + s * pitch;
+      roundedRect(context, cx, cy, size, size, size * 0.22);
+      if (number > ritu.now) { context.strokeStyle = GREY; context.lineWidth = Math.max(1.5, size * 0.07); context.stroke(); continue; }
+      context.fillStyle = seasonInks[s]; context.fill();
+      if (number === ritu.first) {
+        context.fillStyle = "#fff"; context.strokeStyle = INK; context.lineWidth = Math.max(1.5, size * 0.06);
+        context.beginPath(); context.arc(cx + size / 2, cy + size / 2, Math.max(3, size * 0.2), 0, Math.PI * 2); context.fill(); context.stroke();
+      }
+      if (number === ritu.now) {
+        const ring = Math.max(3, size * 0.14);
+        roundedRect(context, cx - ring, cy - ring, size + ring * 2, size + ring * 2, size * 0.3);
+        context.strokeStyle = INK; context.lineWidth = ring; context.stroke();
+      }
+    }
+  }
+}
+
+const rituLayouts = {
+  feed: { top: 0, kicker: 146, head: 258, sub: 328, gridTop: 384, gridBottom: 996, legend: 1058, key: 1110, line: 1190 },
+  story: { top: 250, kicker: 400, head: 516, sub: 588, gridTop: 650, gridBottom: 1356, legend: 1424, key: 1480, line: 1576 },
+} as const;
+
+export function drawRituCard(canvas: HTMLCanvasElement, card: Card, format: CardFormat, site: string) {
+  const { width, height } = cardSizes[format];
+  const layout = rituLayouts[format];
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("এই ব্রাউজারে ছবি বানানো যাচ্ছে না।");
+  context.fillStyle = PAPER;
+  context.fillRect(0, 0, width, height);
+  if (format === "story") { context.fillStyle = "#e7e1d3"; context.fillRect(0, 0, width, layout.top - 20); fitText(context, [{ text: "জীবনের ঋতু · একটুখানি", color: MUTED, weight: 600 }], width / 2, 170, 30, 900, "center"); }
+
+  const ear = layout.top + 62;
+  fitText(context, [{ text: "দৈনিক একটুখানি · ঋতুর পাতা", color: MUTED, weight: 600 }], LEFT, ear, 24, 520);
+  fitText(context, [{ text: "দাম: এক টুকরো কেক", color: MUTED, weight: 600 }], RIGHT, ear, 24, 400, "right");
+  rule(context, ear + 18, 7);
+  fitText(context, [{ text: card.rituKicker, color: RED, weight: 700 }], LEFT, layout.kicker, 36, WIDTH);
+  fitText(context, [{ text: card.rituHeadline, color: INK, weight: 800, display: true }], LEFT, layout.head, 96, WIDTH);
+  fitText(context, [{ text: `${card.banglaText} থেকে আজ ${card.todayText}`, color: INK, weight: 600 }], LEFT, layout.sub, 32, WIDTH);
+  rule(context, layout.sub + 22, 2);
+
+  seasonGrid(context, card.ritu, LEFT, layout.gridTop, WIDTH, layout.gridBottom - layout.gridTop);
+
+  // Legend: each season's ink with how many of it were lived.
+  rule(context, layout.legend - 44, 2);
+  const slot = WIDTH / 6;
+  seasons.forEach((season, index) => {
+    const x = LEFT + index * slot;
+    roundedRect(context, x, layout.legend - 26, 30, 30, 7);
+    context.fillStyle = seasonInks[index]; context.fill();
+    fitText(context, [{ text: `${season.label} `, color: INK, weight: 600 }, { text: bn(card.ritu.counts[index]), color: INK, weight: 800 }], x + 40, layout.legend, 28, slot - 48);
+  });
+  // Key for the two marked cells, drawn the way the grid draws them.
+  const key = layout.key;
+  roundedRect(context, LEFT, key - 22, 26, 26, 6); context.fillStyle = seasonInks[card.ritu.first % 6]; context.fill();
+  context.fillStyle = "#fff"; context.strokeStyle = INK; context.lineWidth = 1.5;
+  context.beginPath(); context.arc(LEFT + 13, key - 9, 5, 0, Math.PI * 2); context.fill(); context.stroke();
+  fitText(context, [{ text: "জন্মের ঋতু", color: MUTED, weight: 600 }], LEFT + 38, key, 24, 170);
+  roundedRect(context, LEFT + 234, key - 22, 26, 26, 6); context.fillStyle = seasonInks[card.ritu.now % 6]; context.fill();
+  context.strokeStyle = INK; context.lineWidth = 4; context.stroke();
+  fitText(context, [{ text: "এখন", color: MUTED, weight: 600 }], LEFT + 272, key, 24, 80);
+  fitText(context, [{ text: "প্রতি সারি এক বাংলা বছর, বৈশাখ থেকে চৈত্র", color: MUTED, weight: 500 }], RIGHT, key, 24, WIDTH - 380, "right");
+
+  rule(context, layout.line - 56, 2);
+  fitText(context, [{ text: "“", color: RED, weight: 800, display: true }], LEFT - 6, layout.line + 30, 96, 70);
+  fitText(context, [{ text: card.rituLine, color: INK, weight: 700, display: true }], LEFT + 60, layout.line, 40, WIDTH - 60);
+
+  drawFooterBand(context, format, "তুমি কয়টা ঋতু দেখেছ?", site, { band: INK, ask: "#ffd166", site: "#ffffff" });
+}
+
+export const rituBlob = (card: Card, format: CardFormat, site: string) => renderCard(canvas => drawRituCard(canvas, card, format, site));

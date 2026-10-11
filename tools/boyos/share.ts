@@ -1,5 +1,5 @@
 import type { ToolShare } from "../../shared/share-types";
-import { bn, daysBetween, parseShareHash, seasons, shareHash, todayInDhaka } from "./lib/boyos";
+import { bn, createCard, daysBetween, parseShareHash, possessive, seasons, shareHash, todayInDhaka } from "./lib/boyos";
 
 export const share: ToolShare = {
   normalize(state) {
@@ -8,6 +8,10 @@ export const share: ToolShare = {
   },
   preview(state) {
     const shared = parseShareHash(state);
+    if (shared?.view === "ritu") return {
+      title: `${shared.name ? possessive(shared.name) : "আমার"} জীবনে ${createCard(shared, todayInDhaka()).rituHeadline} — তোমার কয়টা?`,
+      description: "জন্মতারিখ দাও: জন্ম থেকে আজ পর্যন্ত কয়টা ঋতু দেখেছ, কয়টা বর্ষা, কয়টা বসন্ত, ছয় ঋতুর গ্রিডে। সাথে বয়স আর বাংলা জন্মতারিখ।",
+    };
     const days = shared ? bn(daysBetween(shared.birth, todayInDhaka())) : "";
     return {
       title: shared ? `${shared.name || "আমি"} আজ ${days} দিনের — তুমি কত দিনের?` : "বয়স কত? — তুমি আজ কত দিনের?",
