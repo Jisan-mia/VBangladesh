@@ -136,7 +136,7 @@ export function SlamBook() {
         {mode === "guess" && link && <>
           <p className="kc-kicker kc-turn">তোমার পালা! {owner || "এক বন্ধু"} তোমাকে একটা স্লাম বুক পাঠিয়েছে</p>
           <h1 id="kc-title">তুমি <span>{owner ? accusative(owner) : "তোমার বন্ধুকে"}</span> কতটা চেনো?</h1>
-          <p className="kc-lead">{owner || "তোমার বন্ধু"} নিজের ৮টা উত্তর লিখে লুকিয়ে রেখেছে। প্রতিটা প্রশ্নে আন্দাজ করো, টোকা দিলেই দেখবে মিলল কি না।</p>
+          <p className="kc-lead">{owner || "তোমার বন্ধু"} নিজের ৮টা উত্তর লিখে লুকিয়ে রেখেছে। প্রতিটা প্রশ্নে আন্দাজ করো, চাপলেই দেখবে মিলল কি না।</p>
           <p className="kc-tease"><span>{owner || "বন্ধু"} বলছে:</span> “{difficultyLine(link.answers)}”</p>
         </>}
         {mode === "result" && card.kind === "score" && <>
@@ -208,7 +208,7 @@ export function SlamBook() {
             title={link ? <><strong>{bn(score)}/{bn(guessDone ? TOTAL : guessed)}</strong> মিলেছে</> : writeDone ? <><strong>৮টাই</strong> লেখা শেষ</> : <><strong>{bn(answered)}/{bn(TOTAL)}</strong> লেখা হলো</>}
             sub={link ? (guessDone ? card.line : `আর ${bn(TOTAL - guessed)}টা আন্দাজ বাকি`) : writeDone ? "এবার লিংক পাঠাও, বন্ধুরা আন্দাজ করুক" : "উত্তর লুকানো থাকবে, বন্ধু আন্দাজ করবে"}
             href={(link ? guessDone : writeDone) ? "#result" : `#q-${firstOpen(link ? guesses : answers) + 1}`}
-            label={(link ? guessDone : writeDone) ? (link ? "স্কোর কার্ড দেখো" : "পাতাটা পাঠাও") : "পরের প্রশ্ন"} />
+            label={(link ? guessDone : writeDone) ? (link ? "স্কোর কার্ড দেখো" : "লিংক পাঠাও") : "পরের প্রশ্ন"} />
 
           <section className="kc-result" id="result" ref={result} aria-labelledby="result-title">
             <div className="kc-result-head">
@@ -230,7 +230,7 @@ export function SlamBook() {
                 </label>}
                 <FormatToggle value={format} onChange={setFormat} />
                 <ShareBar tool={TOOL} fileName="koto-cheno.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state || undefined} disabled={!state}
-                  hint={link ? (guessDone ? `লিংকটা ${whom} পাঠাও, দেখুক তুমি কতটা চেনো।` : `আর ${bn(TOTAL - guessed)}টা আন্দাজ বাকি।`) : writeDone ? "কার্ড বা লিংকে উত্তর দেখা যায় না। বন্ধু আন্দাজ করলে তবেই মিলবে।" : `আর ${bn(TOTAL - answered)}টা প্রশ্ন বাকি।`} />
+                  hint={link ? (guessDone ? `লিংকটা ${whom} পাঠাও, দেখুক তুমি কতটা চেনো।` : `আর ${bn(TOTAL - guessed)}টা আন্দাজ বাকি।`) : writeDone ? "কার্ড বা লিংকে উত্তর দেখা যায় না। বন্ধু আন্দাজ করলে তবেই সেই উত্তর খুলবে।" : `আর ${bn(TOTAL - answered)}টা প্রশ্ন বাকি।`} />
                 {link && guessDone && <div className="kc-yours">
                   <h3>এবার তোমার পালা</h3>
                   <p>নিজের ৮টা উত্তর লেখো, বন্ধুদের পাঠাও। দেখো কে তোমাকে সবচেয়ে বেশি চেনে।</p>

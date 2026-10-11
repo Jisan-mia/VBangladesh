@@ -160,7 +160,7 @@ export function PackBuilder() {
           <ol className="sp-items" aria-label="প্যাকেটে যা আছে">
             {own.items.map((id, index) => (
               <li key={id}>
-                <button type="button" className="sp-bubble sp-item" onClick={() => openSwap(index)} aria-haspopup="dialog" aria-label={`${label(id)}। বদলাতে ছোঁও`}>
+                <button type="button" className="sp-bubble sp-item" onClick={() => openSwap(index)} aria-haspopup="dialog" aria-label={`${label(id)}। বদলাতে চাপো`}>
                   <ItemArt id={id} />
                   <span>{label(id)}</span>
                   <svg className="sp-swap-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9a7 7 0 0 1 12-3l2 2M19 4v4h-4M19 15a7 7 0 0 1-12 3l-2-2M5 20v-4h4" /></svg>
@@ -173,7 +173,7 @@ export function PackBuilder() {
       </div>
 
       <div className="sp-under">
-        <p className="sp-hint">যেকোনো খোপ ছুঁয়ে জিনিসটা বদলাও</p>
+        <p className="sp-hint">যে খোপের জিনিস মেলে না, সেটা চেপে বদলাও</p>
         <fieldset className="sp-layout">
           <legend className="sp-sr">কয়টা খোপ?</legend>
           <button type="button" aria-pressed={!grid} onClick={() => { setGrid(false); changed(); }}>৬টা</button>
@@ -214,7 +214,7 @@ export function PackBuilder() {
               <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName={`starter-pack-${packId}.png`} makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} hint="লিংক পেলে বন্ধু দেখবে তোমার প্যাকেট, আর নিজেরটা বানাতে পারবে।" />
+            <ShareBar tool={TOOL} fileName={`starter-pack-${packId}.png`} makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} hint="বন্ধু লিংক খুললে তোমার প্যাকেট দেখবে, আর নিজেরটা বানাতে পারবে।" />
             {customised && <button type="button" className="kit-link sp-restart" onClick={reset}>প্যাকেট আগের মতো করো</button>}
           </div>
         </div>

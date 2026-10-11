@@ -156,7 +156,7 @@ export function Shilpata() {
               </label>
               <FormatToggle value={format} onChange={setFormat} />
               <ShareBar tool={TOOL} fileName={`bhorta-${format}.png`} makeImage={() => plateBlob(cardData, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption(plate)} state={state}
-                hint="লিংক পেলে বন্ধু তোমার থালা দেখবে, তারপর নিজের ভর্তা বাটবে।" />
+                hint="বন্ধু লিংক খুললে আগে তোমার থালা দেখবে, তারপর নিজের ভর্তা বাটবে।" />
               <div className="bh-everyone">
                 {top && <p>সবচেয়ে বেশি মানুষ: <strong>{top.name}</strong> <small>({bn(everyone!.total)} জনের গোনা, জরিপ না)</small></p>}
                 {counted === "done"

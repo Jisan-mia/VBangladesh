@@ -179,7 +179,7 @@ export function GhotokFile() {
               <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="biye-kobe.png" makeImage={() => cardBlob(report, format, site)} imageKey={`${state}|${format}`} caption={caption(report)} state={state || undefined} disabled={!report.complete} hint={report.complete ? "লিংক পেলে বন্ধু তোমার রিপোর্ট দেখবে, তারপর নিজেরটা বানাবে।" : "আগে ৬টা প্রশ্নের উত্তর দাও।"} />
+            <ShareBar tool={TOOL} fileName="biye-kobe.png" makeImage={() => cardBlob(report, format, site)} imageKey={`${state}|${format}`} caption={caption(report)} state={state || undefined} disabled={!report.complete} hint={report.complete ? "বন্ধু লিংক খুললে আগে তোমার ফাইল দেখবে, তারপর নিজেরটা বানাবে।" : "আগে ৬টা প্রশ্নের উত্তর দাও।"} />
             <p className="bk-promise">এটা শুধু মজা। কেউ ভবিষ্যৎ জানে না, ঘটকও না। বিয়ে করা, না করা, কবে করা, পুরোটাই তোমার সিদ্ধান্ত।</p>
             {report.complete && (
               <div className="bk-everyone">
@@ -191,7 +191,7 @@ export function GhotokFile() {
                 </> : everyone.total < TALLY_MIN || !top ? (
                   <p>এখনো মাত্র {bn(everyone.total)}টা রিপোর্ট জমেছে। আরও কয়েকজন খেললেই দেখাব কোনটা সবচেয়ে বেশি আসে। বন্ধুদের লিংক পাঠাও!</p>
                 ) : (
-                  <p>{bn(everyone.total)}টা রিপোর্টে সবচেয়ে বেশি এসেছে: <strong>{top.timing.short}</strong>। তোমারটা এসেছে {bn(mine)}% জনের।</p>
+                  <p>{bn(everyone.total)}টা রিপোর্টে সবচেয়ে বেশি এসেছে: <strong>{top.timing.short}</strong>। তোমারটা এসেছে {bn(mine)}% রিপোর্টে।</p>
                 )}
               </div>
             )}

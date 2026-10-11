@@ -132,7 +132,7 @@ export function ShelfBuilder() {
 
         <div className="cp-picker">
           <h2 className="cp-picker-title">তাকের <em>{bn(active + 1)} নম্বরে</em> কোন {category.label}?</h2>
-          <p className="cp-hint">যেটা বদলাবে, তাকে সেটা ছুঁয়ে দাও। তারপর এখান থেকে বেছে নাও।</p>
+          <p className="cp-hint">যেটা বদলাবে, তাকের সেই বইটা চাপো। তারপর এখান থেকে বেছে নাও।</p>
           <div className="cp-items">
             {category.items.map((item, index) => {
               const slot = picks.findIndex(pick => pick === index);
@@ -174,14 +174,14 @@ export function ShelfBuilder() {
               <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="char-priyo.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} hint="লিংক পেলে বন্ধু দেখবে তোমার তাক, আর পাশে নিজেরটা সাজাতে পারবে।" />
+            <ShareBar tool={TOOL} fileName="char-priyo.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} hint="বন্ধু লিংক খুললে তোমার তাক দেখবে, আর পাশে নিজেরটা সাজাতে পারবে।" />
           </div>
         </div>
 
         <div className="cp-everyone">
           <h3>সবার তাকে কোন {category.label} বেশি?</h3>
           {joined !== "done" ? <>
-            <p>তোমার তাকের তালিকার {category.label}গুলো সবার হিসাবে যোগ হবে। নিজে লেখা নাম আর তোমার নাম যাবে না, শুধু গোনা হবে।</p>
+            <p>তালিকা থেকে বাছা {category.label}গুলো সবার হিসাবে যোগ হবে। নিজে লেখা নাম আর তোমার নাম যাবে না, শুধু গোনা হবে।</p>
             <button type="button" className="kit-secondary" onClick={join} disabled={joined === "sending"}>{joined === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
             {joined === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
           </> : ranked.length ? <>

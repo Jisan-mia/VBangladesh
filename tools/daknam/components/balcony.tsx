@@ -144,7 +144,7 @@ export function Balcony() {
             <p className="daknam-picks">{summary(daknam)}</p>
             <FormatToggle value={format} onChange={setFormat} />
             <ShareBar tool={TOOL} fileName={`daknam-${format}.png`} makeImage={() => daknamBlob(daknam, format, site)} imageKey={`${state}|${format}`} caption={caption(daknam)} state={state}
-              hint="লিংক পেলে বন্ধু তোমার বারান্দা দেখবে, তারপর নিজের ডাকনামটা বের করবে।" />
+              hint="বন্ধু লিংক খুললে আগে তোমার ডাকনাম দেখবে, তারপর নিজেরটা বের করবে।" />
             <div className="daknam-everyone">
               {top && topName && <p>সবচেয়ে বেশি এসেছে: <strong>{topName}</strong> <small>({bn(everyone!.total)} জনের গোনা, জরিপ না)</small></p>}
               {counted === "done"

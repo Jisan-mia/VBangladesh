@@ -263,7 +263,7 @@ export function friendBanner(friend: Shared) {
   const dare = result.lean === "genz" ? `${who(friend)} জেন-জির শব্দে পাকা, আব্বু-আম্মুর কথায় তুমি পারবে তো?`
     : result.lean === "elder" ? `${who(friend)} আব্বু-আম্মুর কথায় পাকা, জেন-জির শব্দে তুমি পারবে তো?`
     : "দেখো তো তুমি কোন দিকে হেলে আছ।";
-  return { title: `${who(friend)} ${splitText(result)}। এবার তোমার পালা!`, sub: `${dare} একই ১০টা শব্দ; কে কী বেছেছে, তোমার শেষ হওয়ার আগে দেখাবে না।` };
+  return { title: `${who(friend)} ${splitText(result)}। এবার তোমার পালা!`, sub: `${dare} একই ১০টা শব্দ। কে কী বেছেছে, তোমার শেষ হওয়ার আগে দেখাবে না।` };
 }
 
 export function versusLine(own: Shared, friend: Shared) {

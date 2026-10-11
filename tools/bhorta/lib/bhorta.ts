@@ -91,9 +91,9 @@ export function pairLine(me: Plate, friend: Plate) {
   const mine = bhortaOf(me.answers), theirs = bhortaOf(friend.answers);
   const short = (bhorta: Bhorta) => bhorta.name.replace(/ ভর্তা$/, "");
   const myName = me.name || "আমি", friendName = friend.name || "বন্ধু";
-  if (mine.id === theirs.id) return `${myName} আর ${friendName}, দুজনেই ${short(mine)} — এক বাটি থেকেই দুই লোকমা`;
+  if (mine.id === theirs.id) return `${myName} আর ${friendName}, দুজনেই ${short(mine)}। এক বাটি থেকেই দুই লোকমা`;
   const endings = ["একসাথে মাখলে এক থালা ভাত শেষ", "এক থালায় পাশাপাশি, দুপুরটা জমে গেল", "দুজন মিলে পুরো ভর্তার আসর"];
-  return `${myName} ${short(mine)}, ${friendName} ${short(theirs)} — ${endings[(codeOf(me.answers) + codeOf(friend.answers)) % endings.length]}`;
+  return `${myName} ${short(mine)}, ${friendName} ${short(theirs)}। ${endings[(codeOf(me.answers) + codeOf(friend.answers)) % endings.length]}`;
 }
 
 // Copied from tools/moner-boyos/lib/moner-boyos.ts (tools don't import each other).

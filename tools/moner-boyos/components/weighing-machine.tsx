@@ -175,7 +175,7 @@ export function WeighingMachine() {
               </label>
               <FormatToggle value={format} onChange={setFormat} />
               <ShareBar tool={TOOL} fileName={`moner-boyos-${format}.png`} makeImage={() => ticketBlob({ answers, name: shownName, friend }, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption(reading)} state={state}
-                hint="লিংক পেলে বন্ধু তোমার টিকিট দেখবে, তারপর নিজের মন মাপবে।" />
+                hint="বন্ধু লিংক খুললে আগে তোমার টিকিট দেখবে, তারপর নিজের মন মাপবে।" />
               <div className="mb-everyone">
                 {top && <p>সবচেয়ে বেশি মানুষের মন: <strong>{top.label}</strong> <small>({bn(everyone!.total)} জনের গোনা, জরিপ না)</small></p>}
                 {counted === "done"

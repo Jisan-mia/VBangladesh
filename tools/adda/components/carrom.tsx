@@ -170,7 +170,7 @@ export function Carrom() {
             </fieldset>
           ) : undefined}
         </Board>
-        <p className="adda-status" aria-live="polite">{done && role ? <>তুমি <strong>{role.piece}</strong> · {role.tag}</> : answers.length ? `${bn(answers.length)}টা উত্তর দেওয়া হলো, আর ${bn(QUESTION_COUNT - answers.length)}টা` : "যেটা তোমার সাথে সবচেয়ে মেলে, ছুঁয়ে দাও"}</p>
+        <p className="adda-status" aria-live="polite">{done && role ? <>তুমি <strong>{role.piece}</strong> · {role.tag}</> : answers.length ? `${bn(answers.length)}টা উত্তর হলো, আর ${bn(QUESTION_COUNT - answers.length)}টা বাকি` : "যেটা তোমার সাথে সবচেয়ে মেলে, সেটা চাপো"}</p>
         {answers.length > 0 && <div className="adda-redo">
           {done ? <button type="button" className="kit-link" onClick={restart}>আবার খেলি</button> : <button type="button" className="kit-link" onClick={back}>আগেরটায় ফেরো</button>}
         </div>}

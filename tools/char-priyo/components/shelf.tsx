@@ -39,7 +39,7 @@ export function Shelf({ cat, picks, active, onPick, shared, small }: ShelfProps)
           </>;
           const key = `${slot}-${typeof pick === "number" ? pick : `t${pick}`}`;
           return onPick
-            ? <button type="button" key={key} className="cp-spine" data-style={look.style} data-typed={look.typed || undefined} style={style} aria-pressed={active === slot} aria-label={`${bn(slot + 1)} নম্বর: ${title}${by ? `, ${by}` : ""}। বদলাতে ছোঁও`} onClick={() => onPick(slot)}>{inner}</button>
+            ? <button type="button" key={key} className="cp-spine" data-style={look.style} data-typed={look.typed || undefined} style={style} aria-pressed={active === slot} aria-label={`${bn(slot + 1)} নম্বর: ${title}${by ? `, ${by}` : ""}। বদলাতে চাপো`} onClick={() => onPick(slot)}>{inner}</button>
             : <span key={key} className="cp-spine" data-style={look.style} data-typed={look.typed || undefined} style={style}>{inner}</span>;
         })}
         <span className="cp-stack" aria-hidden="true"><i /><i /><i /><i /></span>
