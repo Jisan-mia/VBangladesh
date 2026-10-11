@@ -117,7 +117,7 @@ export const catalog = [
   { slug: "baicher-nouka", name: "বাইচের নৌকা", description: "ঢোলের তালে চাপো, কচুরিপানা এড়াও, তিন নৌকার আগে ঘাটে পৌঁছাও", category: "গেম", action: "বাইচে নামো" },
   { slug: "vo-katta", name: "ভো-কাট্টা", description: "সাকরাইনের ছাদে ঘুড়ি ওড়াও, প্যাঁচ লাগাও, মাপমতো টানে বলো ভো-কাট্টা!", category: "গেম", action: "প্যাঁচ লাগাও" },
   { slug: "bhangti-nai", name: "ভাংতি নাই!", description: "দোকানে দশজন খদ্দের, সবার হাতে বড় নোট। ঝটপট হিসাব করে ঠিক ভাংতি ফেরত দাও।", category: "গেম", action: "দোকান খোলো" },
-  { slug: "jam-chharao", name: "জ্যাম ছাড়াও", description: "জ্যাম ছাড়াও: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "jam-chharao", name: "জ্যাম ছাড়াও", description: "জ্যামে আটকা সবুজ CNG। রিকশা, বাস, ট্রাক সরিয়ে পথ করে দাও, ৪০টা জ্যাম", category: "গেম", action: "খেলে দেখো" },
   { slug: "shobdo-khoja", name: "শব্দ খোঁজা", description: "অক্ষরের গ্রিডে লুকানো ছয়টা ফুল, মাছ বা নদীর নাম খুঁজে কলমের দাগে কাটো", category: "গেম", action: "শব্দ খোঁজো" },
   { slug: "carrom", name: "ক্যারম", description: "স্ট্রাইকার টেনে ছাড়ো, গুটি ঢোকাও। একা দশ চাল, নয়তো দুজনে এক ফোনে।", category: "গেম", action: "ক্যারম খেলো" },
   { slug: "pati-buni", name: "পাটি বুনি", description: "বেতের ফালি বসিয়ে সারি ভরাও, নিজের শীতলপাটি বোনো", category: "গেম", action: "পাটি বোনো" },
