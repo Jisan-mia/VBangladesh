@@ -1222,6 +1222,6 @@ One agent per target tool, so no two agents edit the same folder. Status: todo, 
 | banan | ED10 | an Ekushe "খাঁটি বাংলা" set, same two-choice mechanic | building |
 | cholo-kheli | FM03 | লুডু with a "কে জিতল" scoreboard | building |
 | salami-chek | FA04 | an "এবার কে কে দিল" list; amounts optional, never tallied | building |
-| iftar-plate | FA01 | only an "আজ রমজানের Nতম দিন" line; no fasting tracker | todo |
+| iftar-plate | FA01 | only an "আজ রমজানের Nতম দিন" line; no fasting tracker | building |
 | koto-din-baki | ED02 | SSC/HSC chips if the boards have announced 2027 dates (else skip) | skipped (duplicate of নিজের দিন; 2027 exam dates not announced) |
 | eta-na-ota | ID18 | friend match "দুজনের মিল" | done |
