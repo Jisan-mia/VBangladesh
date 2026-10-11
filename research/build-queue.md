@@ -256,7 +256,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 17 | chor-police | চোর-ডাকাত-পুলিশ-বাবু | গেম | G11 | done | games-2026-10.md §4.3 #11 |
 | 17 | bostar-pahar | বস্তার পাহাড় | গেম | G18 | done | games-2026-10.md §4.3 #18 |
 | 17 | tarer-fanke-belun | তারের ফাঁকে বেলুন | গেম | G17 | done | games-2026-10.md §4.3 #17 |
-| 18 | paka-kancha | পাকা-কাঁচা | গেম | G21 | building | games-2026-10.md §4.3 #21 |
+| 18 | paka-kancha | পাকা-কাঁচা | গেম | G21 | done | games-2026-10.md §4.3 #21 |
 | 18 | jora-melao | জোড়া মেলাও | গেম | G25 | building | games-2026-10.md §4.3 #25 |
 | 18 | chhok-jora | ছক-জোড়া | গেম | G12 | building | games-2026-10.md §4.3 #12 |
 | 18 | churui-tarao | চড়ুই তাড়াও | গেম | G05 | building | games-2026-10.md §4.3 #5 |

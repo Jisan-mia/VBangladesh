@@ -106,7 +106,7 @@ export const catalog = [
   { slug: "chor-police", name: "চোর-ডাকাত-পুলিশ-বাবু", description: "থালায় চার চিরকুট, এক ফোনে চারজন। লুকিয়ে দেখো, পুলিশ চোর ধরবে।", category: "গেম", action: "চিরকুট তোলো" },
   { slug: "bostar-pahar", name: "বস্তার পাহাড়", description: "ক্রেনের দোল বুঝে চাপো, ট্রাকে বস্তার পাহাড় বানাও", category: "গেম", action: "বস্তা সাজাও" },
   { slug: "tarer-fanke-belun", name: "তারের ফাঁকে বেলুন", description: "ঢাকার তারের জটে বেলুন ওড়াও। এক চাপে ওঠে, কয়টা ফাঁক পার হবে?", category: "গেম", action: "বেলুন ওড়াও" },
-  { slug: "paka-kancha", name: "পাকা-কাঁচা", description: "পাকা-কাঁচা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "paka-kancha", name: "পাকা-কাঁচা", description: "আম দেখে দেখে লুকানো ৪ অঙ্কের কোডটা ৭ বারে ধরো, রোজ নতুন কোড।", category: "গেম", action: "কোডটা ধরো" },
   { slug: "jora-melao", name: "জোড়া মেলাও", description: "জোড়া মেলাও: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "chhok-jora", name: "ছক-জোড়া", description: "ছক-জোড়া: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "churui-tarao", name: "চড়ুই তাড়াও", description: "চড়ুই তাড়াও: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },

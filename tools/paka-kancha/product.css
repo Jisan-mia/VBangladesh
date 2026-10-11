@@ -1,0 +1,114 @@
+.tool-paka-kancha{--accent:#2f7a3e;--accent-deep:#1d5229;--ink:#1f2a1c;--muted:#5b6553;--leaf:#1f4d30;--tile:#fff8e7;--gold:#f6c443;--line:#ddd3b8;--cream:#fff6dc}
+.tool-paka-kancha .pk-page{color:var(--ink)}
+.tool-paka-kancha .pk-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero: short, so the board and the number pad land on the first phone screen */
+.tool-paka-kancha .pk-hero{padding:8px 0 6px}
+.tool-paka-kancha .pk-hero-kicker{margin:0;font-size:13px;font-weight:600;color:var(--accent)}
+.tool-paka-kancha .pk-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(23px,6.2vw,44px);line-height:1.3;letter-spacing:0}
+.tool-paka-kancha .pk-lead{max-width:560px;margin:0;color:var(--muted);font-size:15px;line-height:1.5}
+.tool-paka-kancha .pk-page:has(.pk-friend) .pk-lead{display:none}
+
+.tool-paka-kancha .pk{display:grid;gap:8px;max-width:480px}
+
+/* a friend's link */
+.tool-paka-kancha .pk-friend{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;padding:8px 12px;border-radius:14px;background:var(--cream);border:1.5px solid #ecd9a4}
+.tool-paka-kancha .pk-friend[data-invite=true]{grid-template-columns:1fr}
+.tool-paka-kancha .pk-friend canvas{width:100%;height:auto;border-radius:6px;box-shadow:0 3px 10px #1f2a1c33;transform:rotate(-3deg)}
+.tool-paka-kancha .pk-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.4}
+.tool-paka-kancha .pk-friend p{margin:0;font-size:13px;line-height:1.45;color:var(--muted)}
+
+.tool-paka-kancha .pk-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0 12px;min-height:26px}
+.tool-paka-kancha .pk-top p{margin:0;font-size:14px;line-height:1.4;color:var(--muted)}
+.tool-paka-kancha .pk-top b{color:var(--ink);font-family:var(--font-display);font-size:16px}
+.tool-paka-kancha .pk-top .kit-link{min-height:40px;font-size:14px}
+
+/* the board: a leaf-green panel, an example row on top, then seven tries */
+.tool-paka-kancha .pk-board{display:grid;gap:8px;padding:9px 10px 11px;border-radius:18px;background:var(--leaf) radial-gradient(circle at 100% 0,#3b7a4f,transparent 45%);box-shadow:0 8px 18px #1f4d302e}
+.tool-paka-kancha .pk-example{display:grid;gap:4px;padding-bottom:8px;border-bottom:1.5px dashed #ffffff40}
+.tool-paka-kancha .pk-example-title{margin:0;font-size:12.5px;font-weight:700;line-height:1.3;color:var(--gold)}
+.tool-paka-kancha .pk-example-title span{font-weight:500;color:#cfe3c4}
+.tool-paka-kancha .pk-rows{display:grid;gap:5px;margin:0;padding:0;list-style:none}
+.tool-paka-kancha .pk-row{display:grid;grid-template-columns:14px repeat(4,minmax(0,1fr));gap:6px;align-items:center}
+.tool-paka-kancha .pk-n{font-size:12px;font-weight:700;line-height:1;color:#cfe3c4;text-align:center}
+.tool-paka-kancha .pk-row[data-current=true] .pk-n{color:var(--gold)}
+.tool-paka-kancha .pk-cell{display:flex;align-items:center;justify-content:space-between;gap:2px;height:36px;padding:0 clamp(3px,1.4vw,6px) 0 clamp(6px,2.4vw,11px);border-radius:10px;background:var(--tile);color:var(--ink);min-width:0}
+.tool-paka-kancha .pk-cell b{font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1}
+.tool-paka-kancha .pk-cell .pk-mango{flex:none;width:28px;height:28px}
+.tool-paka-kancha .pk-cell[data-mark=p]{background:#ffe6a0}
+.tool-paka-kancha .pk-cell[data-mark=a]{background:#fff3cf}
+.tool-paka-kancha .pk-cell[data-mark=k]{background:#e4e9db;color:#5c6855}
+.tool-paka-kancha .pk-row[data-empty=true] .pk-cell{background:#ffffff16}
+.tool-paka-kancha .pk-row[data-current=true] .pk-cell{justify-content:center;box-shadow:inset 0 0 0 2px #e6d9b0}
+.tool-paka-kancha .pk-row[data-current=true] .pk-cell b{font-size:24px}
+.tool-paka-kancha .pk-row[data-current=true] .pk-cell[data-next=true]{box-shadow:inset 0 0 0 3px var(--gold)}
+.tool-paka-kancha .pk-legend{display:flex;flex-wrap:wrap;gap:0 12px;margin:0;padding:0;list-style:none;font-size:12.5px;line-height:1.35;color:#e3eedb}
+.tool-paka-kancha .pk-legend li{display:flex;align-items:center;gap:3px}
+.tool-paka-kancha .pk-legend .pk-mango{flex:none;width:20px;height:20px}
+.tool-paka-kancha .pk-legend b{color:#fff}
+
+/* feedback: each new mango pops in, one by one; a solved row hops */
+@keyframes pk-pop{0%{transform:scale(.2);opacity:0}70%{transform:scale(1.18);opacity:1}100%{transform:none;opacity:1}}
+@keyframes pk-hop{0%,100%{transform:none}40%{transform:translateY(-6px)}}
+.tool-paka-kancha .pk-row[data-fresh=true] .pk-mango{animation:pk-pop .34s ease-out both;animation-delay:calc(var(--i) * 120ms)}
+.tool-paka-kancha .pk-row[data-win=true] .pk-mango{animation:pk-pop .34s ease-out both,pk-hop .5s ease-in-out .6s both;animation-delay:calc(var(--i) * 120ms),calc(var(--i) * 90ms + .6s)}
+
+.tool-paka-kancha .pk-howto{margin:0;min-height:22px;font-size:14px;line-height:1.5;color:var(--muted);text-align:center}
+.tool-paka-kancha .pk-howto b{color:var(--accent-deep)}
+
+/* the number pad: two rows of six, big keys */
+.tool-paka-kancha .pk-pad{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.tool-paka-kancha .pk-key{position:relative;min-height:54px;padding:0;border:1.5px solid var(--line);border-bottom-width:4px;border-radius:12px;background:#fffdf6;color:var(--ink);font-family:var(--font-display);font-size:25px;font-weight:700;line-height:1;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.tool-paka-kancha .pk-key:active:not(:disabled){transform:translateY(2px);border-bottom-width:2px}
+.tool-paka-kancha .pk-key .pk-mango{position:absolute;top:2px;right:2px;width:17px;height:17px}
+.tool-paka-kancha .pk-key[data-hint=k]{background:#eef0e8;border-color:#dde2d4;color:#7d8778}
+.tool-paka-kancha .pk-key:disabled{opacity:.35}
+.tool-paka-kancha .pk-erase{font-family:var(--font-bengali);font-size:16px;color:var(--muted)}
+.tool-paka-kancha .pk-check{font-family:var(--font-bengali);font-size:17px;background:var(--accent);border-color:var(--accent-deep);color:#fff}
+.tool-paka-kancha .pk-check[aria-disabled=true]{background:#d3dfcc;border-color:#bccbb4;color:#46543f}
+
+/* game over sits where the pad was */
+.tool-paka-kancha .pk-over{display:grid;justify-items:center;gap:6px;padding:14px 14px 12px;border-radius:16px;background:var(--cream);border:1.5px solid #ecd9a4;text-align:center}
+.tool-paka-kancha .pk-over h2{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,28px);line-height:1.3}
+.tool-paka-kancha .pk-over h2 b{color:var(--accent-deep);letter-spacing:.06em;white-space:nowrap}
+.tool-paka-kancha .pk-over p{margin:0;font-size:15px;line-height:1.5}
+.tool-paka-kancha .pk-over .pk-best,.tool-paka-kancha .pk-over .pk-again-note{font-size:13.5px;color:var(--muted)}
+.tool-paka-kancha .pk-again{width:100%;min-height:56px;font-size:20px}
+
+.tool-paka-kancha .pk-toggles{display:flex;flex-wrap:wrap;gap:8px}
+.tool-paka-kancha .pk-toggles button{min-height:44px;padding:6px 14px;border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font-size:14px;font-weight:600}
+.tool-paka-kancha .pk-toggles button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.tool-paka-kancha .pk-toggles button[aria-expanded=true]{border-color:var(--accent);color:var(--accent-deep)}
+
+/* make a code for a friend, and the result card */
+.tool-paka-kancha .pk-make,.tool-paka-kancha .pk-result{display:grid;gap:10px;padding:14px;border-radius:16px;border:1.5px solid var(--line);background:#fffdf6}
+.tool-paka-kancha .pk-make h2,.tool-paka-kancha .pk-result h2{margin:0;font-family:var(--font-display);font-size:22px;line-height:1.3}
+.tool-paka-kancha .pk-result h2 em{font-style:normal;color:var(--accent)}
+.tool-paka-kancha .pk-result>p,.tool-paka-kancha .pk-note{margin:0;font-size:14px;line-height:1.5;color:var(--muted)}
+.tool-paka-kancha .pk-make .kit-link{justify-self:start;min-height:44px}
+.tool-paka-kancha .pk-field{display:grid;gap:4px;font-size:15px;font-weight:600;line-height:1.4}
+.tool-paka-kancha .pk-field small{font-weight:400;color:var(--muted)}
+.tool-paka-kancha .pk-field input{width:100%}
+.tool-paka-kancha .pk-make input[inputmode=numeric]{font-family:var(--font-display);font-size:26px;letter-spacing:.3em}
+
+.tool-paka-kancha .pk-guide h2{font-family:var(--font-display);margin-bottom:8px}
+.tool-paka-kancha .pk-guide>p{margin:0 0 16px;color:var(--muted)}
+.tool-paka-kancha .pk-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.tool-paka-kancha .pk-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-paka-kancha .pk-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#ffe6a0;font-weight:700}
+.tool-paka-kancha .pk-guide li p{margin:4px 0 0}
+
+.tool-paka-kancha .pk[data-slow=true] *{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){.tool-paka-kancha .pk *{animation:none!important;transition:none!important}}
+
+@media(max-width:360px){
+  .tool-paka-kancha .pk-cell b{font-size:19px}
+  .tool-paka-kancha .pk-cell .pk-mango{width:24px;height:24px}
+  .tool-paka-kancha .pk-key{font-size:22px}
+  .tool-paka-kancha .pk-erase,.tool-paka-kancha .pk-check{font-size:14px}
+}
+@media(min-width:720px){
+  .tool-paka-kancha .pk-hero{padding:24px 0 14px}
+  .tool-paka-kancha .pk-friend{grid-template-columns:96px 1fr}
+  .tool-paka-kancha .pk-friend h2{font-size:20px}
+}
