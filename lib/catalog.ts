@@ -98,7 +98,7 @@ export const catalog = [
   { slug: "adda", name: "আড্ডায় তুমি কে?", description: "কুইন, স্ট্রাইকার, সাদা না কালো? ৭টা প্রশ্নে বের করো আড্ডায় তুমি কোন গুটি।", category: "নিজেকে জানো", action: "গুটি বের করো" },
   { slug: "kalbaishakhi-aam", name: "কালবৈশাখী আম", description: "ঝড়ে আমগাছ দুলছে, ডালা পেতে আম ধরো। শুকনো ডাল কিন্তু ধরো না!", category: "গেম", action: "আম কুড়াও" },
   { slug: "dudh-uthlano", name: "দুধ উথলানোর আগে", description: "দুধ উথলানোর আগে: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
-  { slug: "jhalmuri-sap", name: "ঝালমুড়ি সাপ", description: "ঝালমুড়ি সাপ: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "jhalmuri-sap", name: "ঝালমুড়ি সাপ", description: "সাপ চালাও, মুড়ি-চানাচুর খাও, বন্ধুকে একই ঠোঙা পাঠাও", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "danguli", name: "ডাংগুলি", description: "ডাংগুলি: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "antenna-thik-koro", name: "অ্যান্টেনা ঠিক করো", description: "অ্যান্টেনা ঠিক করো: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
