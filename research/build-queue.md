@@ -246,6 +246,31 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 15 | mondop | মণ্ডপ ঘুরি | উৎসব আর বিশ্বাস | FA10 | done | #b-mondop |
 | 15 | grade-dao | গ্রেড দাও | মজা আর কুইজ | ID20 | done | #b-grade-dao |
 | 15 | adda | আড্ডায় তুমি কে? | নিজেকে জানো | ID17 | done | #b-adda |
+| 16 | kalbaishakhi-aam | কালবৈশাখী আম | গেম | G15 | todo | games-2026-10.md §4.3 #15 |
+| 16 | dudh-uthlano | দুধ উথলানোর আগে | গেম | G19 | todo | games-2026-10.md §4.3 #19 |
+| 16 | jhalmuri-sap | ঝালমুড়ি সাপ | গেম | G01 | todo | games-2026-10.md §4.3 #1 |
+| 16 | danguli | ডাংগুলি | গেম | G13 | todo | games-2026-10.md §4.3 #13 |
+| 16 | antenna-thik-koro | অ্যান্টেনা ঠিক করো | গেম | G07 | todo | games-2026-10.md §4.3 #7 |
+| 17 | sir-ghurlei-thamo | স্যার ঘুরলেই থামো | গেম | G20 | todo | games-2026-10.md §4.3 #20 |
+| 17 | deri-hoye-gelo | দেরি হয়ে গেল! | গেম | G16 | todo | games-2026-10.md §4.3 #16 |
+| 17 | chor-police | চোর-ডাকাত-পুলিশ-বাবু | গেম | G11 | todo | games-2026-10.md §4.3 #11 |
+| 17 | bostar-pahar | বস্তার পাহাড় | গেম | G18 | todo | games-2026-10.md §4.3 #18 |
+| 17 | tarer-fanke-belun | তারের ফাঁকে বেলুন | গেম | G17 | todo | games-2026-10.md §4.3 #17 |
+| 18 | paka-kancha | পাকা-কাঁচা | গেম | G21 | todo | games-2026-10.md §4.3 #21 |
+| 18 | jora-melao | জোড়া মেলাও | গেম | G25 | todo | games-2026-10.md §4.3 #25 |
+| 18 | chhok-jora | ছক-জোড়া | গেম | G12 | todo | games-2026-10.md §4.3 #12 |
+| 18 | churui-tarao | চড়ুই তাড়াও | গেম | G05 | todo | games-2026-10.md §4.3 #5 |
+| 18 | handi-bhanga | হাঁড়িভাঙা | গেম | G02 | todo | games-2026-10.md §4.3 #2 |
+| 19 | peoner-cycle | পিয়নের সাইকেল | গেম | G04 | todo | games-2026-10.md §4.3 #4 |
+| 19 | sap-ludu | সাপলুডু | গেম | G08 | todo | games-2026-10.md §4.3 #8 |
+| 19 | baghbandi | বাঘবন্দি | গেম | G09 | todo | games-2026-10.md §4.3 #9 |
+| 19 | baicher-nouka | বাইচের নৌকা | গেম | G06 | todo | games-2026-10.md §4.3 #6 |
+| 19 | vo-katta | ভো-কাট্টা | গেম | G14 | todo | games-2026-10.md §4.3 #14 |
+| 20 | bhangti-nai | ভাংতি নাই! | গেম | G22 | todo | games-2026-10.md §4.3 #22 |
+| 20 | jam-chharao | জ্যাম ছাড়াও | গেম | G23 | todo | games-2026-10.md §4.3 #23 |
+| 20 | shobdo-khoja | শব্দ খোঁজা | গেম | G24 | todo | games-2026-10.md §4.3 #24 |
+| 20 | carrom | ক্যারম | গেম | G10 | todo | games-2026-10.md §4.3 #10 |
+| 20 | pati-buni | পাটি বুনি | গেম | G03 | todo | games-2026-10.md §4.3 #3 |
 
 ### Wave deadlines and why
 
