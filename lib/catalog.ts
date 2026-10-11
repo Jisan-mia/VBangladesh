@@ -119,7 +119,7 @@ export const catalog = [
   { slug: "bhangti-nai", name: "ভাংতি নাই!", description: "দোকানে দশজন খদ্দের, সবার হাতে বড় নোট। ঝটপট হিসাব করে ঠিক ভাংতি ফেরত দাও।", category: "গেম", action: "দোকান খোলো" },
   { slug: "jam-chharao", name: "জ্যাম ছাড়াও", description: "জ্যাম ছাড়াও: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "shobdo-khoja", name: "শব্দ খোঁজা", description: "অক্ষরের গ্রিডে লুকানো ছয়টা ফুল, মাছ বা নদীর নাম খুঁজে কলমের দাগে কাটো", category: "গেম", action: "শব্দ খোঁজো" },
-  { slug: "carrom", name: "ক্যারম", description: "ক্যারম: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "carrom", name: "ক্যারম", description: "স্ট্রাইকার টেনে ছাড়ো, গুটি ঢোকাও। একা দশ চাল, নয়তো দুজনে এক ফোনে।", category: "গেম", action: "ক্যারম খেলো" },
   { slug: "pati-buni", name: "পাটি বুনি", description: "বেতের ফালি বসিয়ে সারি ভরাও, নিজের শীতলপাটি বোনো", category: "গেম", action: "পাটি বোনো" },
 ] as const satisfies readonly ToolListing[];
 

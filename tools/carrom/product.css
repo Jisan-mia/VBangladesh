@@ -1,0 +1,130 @@
+.tool-carrom{--accent:#1f6b4a;--accent-deep:#12452f;--ink:#2a1a10;--muted:#6b5442;--paper:#f6ead6;--paper-edge:#e3cfae;--queen:#c8302f;--good:#2b7a4b;--bad:#b9382c}
+.tool-carrom .cr-page{color:var(--ink)}
+.tool-carrom .cr-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero: two short lines, so the board and its buttons land on the first phone screen */
+.cr-hero{padding:10px 0 6px}
+.cr-kicker{margin:0;font-size:13px;font-weight:600;line-height:1.5;color:var(--accent)}
+.cr-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(23px,6.4vw,46px);line-height:1.25;font-weight:700;letter-spacing:0}
+.cr-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+
+/* short screens: shrink the board so it and its controls fit the height too */
+.cr{display:grid;gap:8px;max-width:440px;max-width:min(440px,max(280px,calc(100vh - 430px)));max-width:min(440px,max(280px,calc(100svh - 430px)))}
+.cr:has(.cr-friend){max-width:min(440px,max(280px,calc(100vh - 500px)));max-width:min(440px,max(280px,calc(100svh - 500px)))}
+
+/* opened from a friend's link: their card, tilted, and the honest label */
+.cr-friend{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;padding:8px 12px;border-radius:14px;background:var(--paper)}
+.cr-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 14px #2a1a1033;transform:rotate(-4deg)}
+.cr-friend h2{margin:0;font-family:var(--font-display);font-size:15px;line-height:1.35}
+.cr-friend p{margin:0;font-size:13px;line-height:1.4;color:var(--muted)}
+
+.cr-top{display:flex;align-items:center;gap:8px;min-height:44px}
+.cr-modes{display:flex;padding:3px;border-radius:999px;background:var(--paper)}
+.cr-modes button{min-height:40px;padding:0 12px;border:0;border-radius:999px;background:transparent;color:var(--muted);font-size:14px;font-weight:700;white-space:nowrap}
+.cr-modes button[aria-pressed=true]{background:var(--ink);color:#fff}
+.cr-slow{min-height:44px;margin-left:auto;padding:0 12px;border:1.5px solid var(--paper-edge);border-radius:999px;background:#fff;color:var(--ink);font-size:14px;font-weight:600;white-space:nowrap}
+.cr-slow[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.cr-pause{display:grid;place-items:center;width:44px;height:44px;flex:none;padding:0;border:0;border-radius:12px;background:var(--paper);color:var(--ink)}
+.cr-pause:disabled{opacity:.45}
+.cr-top svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.cr-top .cr-fill{fill:currentColor;stroke:none}
+
+.cr-status{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;min-height:30px}
+.cr-status p{display:flex;align-items:baseline;gap:4px;margin:0;line-height:1}
+.cr-status span{font-size:13px;font-weight:600;color:var(--muted)}
+.cr-status b{font-family:var(--font-display);font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+.cr-status .cr-best b{font-size:18px;color:var(--muted)}
+.cr-side{align-items:center!important;padding:3px 10px 3px 6px;border:1.5px solid transparent;border-radius:999px}
+.cr-side[data-on=true]{border-color:var(--ink);background:var(--paper)}
+.cr-side b{font-size:20px!important}
+.tool-carrom i[data-side]{display:inline-block;width:16px;height:16px;flex:none;border-radius:50%;background:#f4ead5;border:2px solid #b9a47c;vertical-align:-2px}
+.tool-carrom i[data-side="1"]{background:#2e2622;border-color:#14100e}
+.cr-queen{padding:4px 10px;border-radius:999px;background:#fbe3e0;color:var(--queen);font-size:13px;font-weight:700}
+.cr-queen[data-pending=true]{background:var(--queen);color:#fff}
+
+/* the board: only here (and on the buttons) does a finger stop the page from scrolling */
+.cr-play{display:grid;gap:8px}
+.cr-board{container-type:inline-size;position:relative;width:100%;border-radius:12px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;filter:drop-shadow(0 8px 14px #2a1a1040)}
+.cr-board canvas{display:block;width:100%;aspect-ratio:1}
+.cr-pill{position:absolute;left:50%;top:63%;margin:0;padding:5px 14px;border-radius:999px;background:#2a1a10d9;color:#fff8e8;font-size:15px;font-weight:700;line-height:1.3;white-space:nowrap;transform:translateX(-50%);pointer-events:none}
+.cr-pill::after{content:"";position:absolute;left:50%;top:100%;border:7px solid transparent;border-top-color:#2a1a10d9;transform:translateX(-50%)}
+.cr-overlay{position:absolute;inset:0;display:grid;place-items:center;padding:16px;pointer-events:none}
+.cr-overlay button,.cr-block{pointer-events:auto}
+.cr-note{display:grid;justify-items:center;gap:6px;max-width:300px;padding:12px 18px;border-radius:16px;background:#fff8ecf2;box-shadow:0 8px 24px #1a0e0655;text-align:center}
+.cr-note p{margin:0;font-size:16px;font-weight:600;line-height:1.45}
+.cr-note .kit-primary{min-width:min(180px,60cqw);min-height:56px;font-size:19px}
+.cr-turn-note{display:flex;align-items:center;gap:8px;margin:0;padding:10px 18px;border-radius:999px;background:#fff8ecf2;box-shadow:0 8px 24px #1a0e0655;font-family:var(--font-display);font-size:22px;font-weight:700;animation:cr-in .25s ease-out}
+.cr-turn-note i{width:22px!important;height:22px!important}
+/* game over: a score slip, like the chalk tally beside a club board */
+.cr-slip{gap:2px;border:3px solid var(--ink);border-radius:8px;transform:rotate(-1.5deg);animation:cr-drop .3s ease-out}
+.cr-slip h2{margin:0;font-family:var(--font-display);font-size:28px;line-height:1.3;color:var(--accent)}
+.cr-final{font-size:18px!important}
+.cr-final b{font-family:var(--font-display);font-size:46px;line-height:1.15;color:var(--queen)}
+.cr-small{font-size:15px!important;font-weight:500!important;color:var(--muted)}
+.cr-versus{margin-top:4px!important;font-weight:700!important}
+.cr-see{min-height:44px;margin-top:4px;font-size:15px}
+@keyframes cr-drop{from{transform:translateY(-14px) rotate(-5deg);opacity:0}}
+@keyframes cr-in{from{opacity:0;transform:scale(.94)}}
+
+.cr-hint{display:flex;align-items:center;justify-content:center;min-height:30px;margin:0;padding:3px 12px;border-radius:999px;background:var(--paper);font-size:15px;font-weight:700;line-height:1.35;text-align:center}
+.cr-hint[data-tone=good]{background:#e1f1e6;color:var(--good)}
+.cr-hint[data-tone=bad]{background:#fbe3e0;color:var(--bad)}
+
+/* the striker slider: a strip of board wood with the striker as its knob */
+.cr-slide{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:10px}
+.cr-slide span{font-size:13px;font-weight:700;color:var(--muted);white-space:nowrap}
+.cr-slide input{width:100%;height:44px;min-height:44px;margin:0;padding:0;border:0;border-radius:0;background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer}
+.cr-slide input:disabled{opacity:.5}
+.cr-slide input::-webkit-slider-runnable-track{height:12px;border-radius:999px;background:linear-gradient(#d9a362,#b97b40);box-shadow:inset 0 1px 3px #4a2a1066}
+.cr-slide input::-moz-range-track{height:12px;border-radius:999px;background:linear-gradient(#d9a362,#b97b40);box-shadow:inset 0 1px 3px #4a2a1066}
+.cr-slide input::-webkit-slider-thumb{width:36px;height:36px;margin-top:-12px;border:2px solid #c3b89f;border-radius:50%;background:radial-gradient(circle,#1d5c41 0 15%,#fbf6ea 16% 36%,#1d5c41 37% 48%,#fbf6ea 49%);box-shadow:0 2px 5px #2a1a1066;-webkit-appearance:none;appearance:none}
+.cr-slide input::-moz-range-thumb{width:32px;height:32px;border:2px solid #c3b89f;border-radius:50%;background:radial-gradient(circle,#1d5c41 0 15%,#fbf6ea 16% 36%,#1d5c41 37% 48%,#fbf6ea 49%);box-shadow:0 2px 5px #2a1a1066}
+.cr-slide input:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:999px}
+
+.cr-controls{display:grid;grid-template-columns:64px 1fr 64px;gap:10px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.cr-turn{display:grid;place-items:center;min-height:64px;padding:0;border:1.5px solid var(--paper-edge);border-radius:18px;background:#fff;color:var(--ink);touch-action:none}
+.cr-turn svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.cr-turn:active{background:var(--paper)}
+.cr-shoot{display:grid;place-items:center;align-content:center;min-height:64px;padding:4px 10px;border:0;border-radius:18px;background:var(--accent);color:#fff;box-shadow:0 5px 0 var(--accent-deep);touch-action:none}
+.cr-shoot b{font-family:var(--font-display);font-size:25px;line-height:1.15}
+.cr-shoot span{font-size:13px;font-weight:600;opacity:.92}
+.cr-shoot[data-on=true]{transform:translateY(4px);box-shadow:0 1px 0 var(--accent-deep);background:var(--accent-deep)}
+.cr-controls button:disabled{opacity:.5}
+.tool-carrom .cr-again{grid-column:1/-1;min-height:64px;font-size:21px}
+
+.cr-options{display:flex;flex-wrap:wrap;gap:8px}
+.cr-options button{min-height:44px;padding:0 14px;border:1.5px solid var(--paper-edge);border-radius:999px;background:#fff;color:var(--ink);font-size:14px;font-weight:700}
+.cr-options button[aria-pressed=true]{border-color:var(--accent);background:var(--accent);color:#fff}
+
+.cr-rules{padding:4px 14px;border-radius:14px;background:var(--paper)}
+.cr-rules summary{min-height:44px;display:flex;align-items:center;font-family:var(--font-display);font-size:18px;font-weight:700;cursor:pointer}
+.cr-rules p{margin:4px 0 8px;font-size:15px;line-height:1.6}
+.cr-rules ol{margin:0 0 10px;padding-left:22px;font-size:15px;line-height:1.6}
+.cr-rules li+li{margin-top:4px}
+
+.cr-result{scroll-margin-top:12px;margin-top:22px;padding-top:20px;border-top:2px solid var(--ink)}
+.cr-result-head h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(23px,5vw,34px);line-height:1.4}
+.cr-result-head h2 em{font-style:normal;color:var(--accent)}
+.cr-result-head p{margin:0 0 16px;color:var(--muted)}
+.cr-result-body{display:grid;gap:22px}
+.cr-share{display:grid;gap:18px;align-content:start}
+.cr-names{display:grid;gap:12px}
+.cr-name{display:grid;gap:6px;font-weight:600}
+.cr-name small{font-weight:400;color:var(--muted);font-size:13px}
+.cr-name input{border:1.5px solid var(--paper-edge);border-radius:12px;font-size:17px}
+.cr-again-link{justify-self:start}
+
+.cr-guide h2{font-family:var(--font-display);margin-bottom:18px}
+.cr-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.cr-guide li{display:flex;gap:14px;align-items:flex-start}
+.cr-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--paper-edge);color:var(--ink);font-weight:700}
+.cr-guide li p{margin:4px 0 0}
+
+@media(max-width:360px){.cr-top{gap:6px}.cr-modes button{padding:0 9px;font-size:13px}.cr-slow{padding:0 9px;font-size:13px}.cr-controls{grid-template-columns:56px 1fr 56px}.cr-hint{font-size:14px}.cr-slide{grid-template-columns:1fr}.cr-slide span{display:none}.cr-status{gap:6px 10px}}
+@media(min-width:720px){
+  .cr-lead{display:block}
+  .cr-page:has(.cr-friend) .cr-lead{display:none}
+  .cr-friend{grid-template-columns:96px 1fr}
+  .cr-friend h2{font-size:20px}
+}
+@media(prefers-reduced-motion:reduce){.cr-slip,.cr-turn-note{animation:none}.cr-shoot[data-on=true]{transform:none}}
