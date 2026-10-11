@@ -1207,3 +1207,21 @@ Human checks and shared changes that agents asked for, kept here so they survive
 - mondop: Hindu community members should review all the copy, the moment chips and the lines. Bump the PUJA constant in lib/mondop.ts for 2027.
 - bidyut-bill: update lib/tariff.ts whenever BERC issues a new residential tariff. Current values are from the order of 3 June 2026 plus the 4 June amendment. The appliance wattages are typical values with no official source.
 - adda: a native speaker should confirm that the role name "কালো গুটি" reads only as the carrom piece, with no skin-colour meaning.
+
+## 6. Feature queue (from §4 "Features of an existing or queued tool")
+
+One agent per target tool, so no two agents edit the same folder. Status: todo, building or done. The brief for each feature is its row in §4.
+
+| tool | feature IDs | what to add | status |
+|---|---|---|---|
+| komon-porlo | SP12, CI02, CI03, CI05 | 4 new packs: খেলার দিন, রাস্তার পরীক্ষা (jam), বর্ষা, গরমের দিন (loadshedding, no blame) | building |
+| boyos | ED08, TI02 | "অমুক তারিখে বয়স কত" (user-typed age limit) + a "জীবনের ঋতু" grid section | building |
+| shubhechha | FM02, CR06 | birthday + anniversary occasions; a square profile-frame format (16 Dec, 21 Feb, match days) | building |
+| argentina-na-brazil | SP08 | 8-question "আসল ফ্যান" test after picking a team; same rival-link loop | building |
+| bhagabhagi | MO12 | a meal-rate mode (total bazar ÷ total meals, meals per member) | building |
+| banan | ED10 | an Ekushe "খাঁটি বাংলা" set, same two-choice mechanic | todo |
+| cholo-kheli | FM03 | লুডু with a "কে জিতল" scoreboard | todo |
+| salami-chek | FA04 | an "এবার কে কে দিল" list; amounts optional, never tallied | todo |
+| iftar-plate | FA01 | only an "আজ রমজানের Nতম দিন" line; no fasting tracker | todo |
+| koto-din-baki | ED02 | SSC/HSC chips if the boards have announced 2027 dates (else skip) | todo |
+| eta-na-ota | ID18 | friend match "দুজনের মিল" | done |
