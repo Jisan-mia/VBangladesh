@@ -1220,7 +1220,7 @@ One agent per target tool, so no two agents edit the same folder. Status: todo, 
 | argentina-na-brazil | SP08 | 8-question "আসল ফ্যান" test after picking a team; same rival-link loop | building |
 | bhagabhagi | MO12 | a meal-rate mode (total bazar ÷ total meals, meals per member) | building |
 | banan | ED10 | an Ekushe "খাঁটি বাংলা" set, same two-choice mechanic | building |
-| cholo-kheli | FM03 | লুডু with a "কে জিতল" scoreboard | todo |
+| cholo-kheli | FM03 | লুডু with a "কে জিতল" scoreboard | building |
 | salami-chek | FA04 | an "এবার কে কে দিল" list; amounts optional, never tallied | todo |
 | iftar-plate | FA01 | only an "আজ রমজানের Nতম দিন" line; no fasting tracker | todo |
 | koto-din-baki | ED02 | SSC/HSC chips if the boards have announced 2027 dates (else skip) | skipped (duplicate of নিজের দিন; 2027 exam dates not announced) |
