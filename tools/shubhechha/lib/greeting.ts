@@ -27,7 +27,43 @@ type Occasion = {
   caption: string;
   /** "রাফি তোমাকে ___ পাঠিয়েছে". */
   gift: string;
+  /** Days without a fixed date (জন্মদিন, বিবাহবার্ষিকী) ask who the card is for; the first is the neutral default. */
+  recipients?: readonly Recipient[];
 };
+
+type Recipient = {
+  /** Links store this id: only append, never rename or delete. */
+  id: string;
+  chip: string;
+  /** The line under the title when no name is typed; empty draws the plain divider. */
+  to: string;
+  /** Same rule as Occasion.presets: append only. */
+  presets: readonly string[];
+};
+
+// Wishes that fit anyone; no relation, gender or faith assumed. দোয়া is one choice, never the default.
+const anyoneBirthday = [
+  "শুভ জন্মদিন! নতুন বছরটা ভরে উঠুক হাসি, সুস্থতা আর ভালোবাসায়।",
+  "তুমি আছ বলে চারপাশটা একটু বেশি সুন্দর। শুভ জন্মদিন!",
+  "আজ কেক কাটো, মোমবাতি নেভাও, আর জেনে রাখো, তুমি অনেকের খুব প্রিয়।",
+  "অনেক দোয়া আর শুভকামনা রইল। ভালো থেকো, সুস্থ থেকো সবসময়।",
+];
+const siblingBirthday = [
+  "শুভ জন্মদিন! ঝগড়া যতই করি, তুমি ছাড়া বাসাটা ফাঁকা লাগে।",
+  "রিমোট নিয়ে কাড়াকাড়ি থেকে সব গোপন কথা, সবকিছুর সঙ্গী তুমি। শুভ জন্মদিন!",
+  "যত বড়ই হই, তুমি সবসময় আমার সবচেয়ে কাছের মানুষ। শুভ জন্মদিন!",
+];
+const anyoneAnniversary = [
+  "শুভ বিবাহবার্ষিকী! তোমাদের দুজনের পথচলা হোক আরও লম্বা, আরও সুন্দর।",
+  "একসাথে হাসি, একসাথে খুনসুটি, আবার একসাথে চা। এভাবেই থেকো সারাজীবন।",
+  "তোমাদের দেখলে ভালোবাসায় বিশ্বাস ফিরে আসে। শুভ বিবাহবার্ষিকী!",
+  "দুজনের জন্য অনেক দোয়া আর শুভকামনা। ভালো থেকো একসাথে।",
+];
+const elderCoupleAnniversary = [
+  "শুভ বিবাহবার্ষিকী! তোমাদের জুটিটা এমনই মিষ্টি থাকুক সারাজীবন।",
+  "তোমাদের দুজনের হাসি আর দাওয়াত, দুটোই চলুক বছরের পর বছর।",
+  "অনেক ভালোবাসা আর দোয়া রইল দুজনের জন্য। ভালো থেকো একসাথে।",
+];
 
 // Order = calendar order from October, so the server render already matches the picker a visitor sees this season.
 // shortcut: moving dates (Puja, Eid) are listed to 2028 and are moon-dependent projections; add the next years each autumn.
@@ -117,14 +153,88 @@ export const occasions = [
     caption: "সবাইকে শুভ নববর্ষ!",
     gift: "নববর্ষের শুভেচ্ছা",
   },
+  {
+    // No date: sorts after every festival, so it is never the default card.
+    id: "jonmodin", chip: "শুভ জন্মদিন", when: "প্রিয়জনের দিন", title: "শুভ জন্মদিন",
+    subtitle: () => "",
+    dates: [],
+    presets: anyoneBirthday,
+    line: "কেক কাটার আগেই কার্ডটা পৌঁছে যাক।",
+    caption: "শুভ জন্মদিন! অনেক ভালোবাসা রইল।",
+    gift: "জন্মদিনের শুভেচ্ছা",
+    recipients: [
+      { id: "priyo", chip: "প্রিয়জন", to: "", presets: anyoneBirthday },
+      { id: "ammu", chip: "আম্মু", to: "প্রিয় আম্মু", presets: [
+        "তোমার হাসিটা যেন সারাজীবন এমনই থাকে। শুভ জন্মদিন, অনেক ভালোবাসি।",
+        "সবার জন্মদিনে পায়েস রাঁধো তুমি, আজ তোমার দিন। অনেক ভালোবাসি, আম্মু।",
+        "তোমার দোয়াতেই আমরা ভালো আছি। অনেক বছর সুস্থ থাকো, আম্মু।",
+      ] },
+      { id: "abbu", chip: "আব্বু", to: "প্রিয় আব্বু", presets: [
+        "তুমি আমার প্রথম হিরো, আজও তাই। শুভ জন্মদিন!",
+        "সব আবদার হাসিমুখে মেনে নেওয়া মানুষটার আজ জন্মদিন। অনেক ভালোবাসি, আব্বু।",
+        "তোমার মতো করে কেউ আগলে রাখে না। অনেক বছর সুস্থ থাকো, আব্বু।",
+      ] },
+      { id: "bhai", chip: "ভাই", to: "প্রিয় ভাই", presets: siblingBirthday },
+      { id: "bon", chip: "বোন", to: "প্রিয় বোন", presets: siblingBirthday },
+      { id: "bondhu", chip: "বন্ধু", to: "প্রিয় বন্ধু", presets: [
+        "শুভ জন্মদিন, দোস্ত! ট্রিটটা কিন্তু পাওনা রইল।",
+        "বয়স বাড়ছে, কিন্তু আড্ডায় তুই চিরকাল সেই আগের মতোই। শুভ জন্মদিন!",
+        "এতগুলো বছর পাশে থাকার জন্য ধন্যবাদ। ভালো থাকিস, অনেক ভালো।",
+      ] },
+      { id: "songi", chip: "জীবনসঙ্গী", to: "প্রিয় জীবনসঙ্গী", presets: [
+        "শুভ জন্মদিন! সকালের প্রথম চা-টা সারাজীবন তোমার সাথেই খেতে চাই।",
+        "তুমি আছ বলেই ঘরটা ঘর লাগে। শুভ জন্মদিন, প্রিয় মানুষ।",
+        "আরও অনেক জন্মদিন একসাথে কাটাতে চাই। অনেক ভালোবাসি।",
+      ] },
+      { id: "sonamoni", chip: "সোনামণি", to: "আমাদের সোনামণি", presets: [
+        "হাসতে হাসতে বড় হও, আর সবাইকে এভাবেই হাসাও। শুভ জন্মদিন!",
+        "তুমি আসার পর থেকে আমাদের ঘরটা হাসিতে ভরা। শুভ জন্মদিন!",
+        "অনেক আদর আর দোয়া রইল। বড় হও, ভালো মানুষ হও।",
+      ] },
+    ],
+  },
+  {
+    id: "bibahobarshiki", chip: "বিবাহবার্ষিকী", when: "দুজনের দিন", title: "শুভ বিবাহবার্ষিকী",
+    subtitle: () => "",
+    dates: [],
+    presets: anyoneAnniversary,
+    line: "দিনটা যে মনে রেখেছ, এটুকুতেই খুশি হবে দুজন।",
+    caption: "শুভ বিবাহবার্ষিকী! অনেক ভালোবাসা রইল।",
+    gift: "বিবাহবার্ষিকীর শুভেচ্ছা",
+    recipients: [
+      { id: "priyo", chip: "প্রিয় দুজন", to: "", presets: anyoneAnniversary },
+      { id: "ammu-abbu", chip: "আম্মু-আব্বু", to: "প্রিয় আম্মু-আব্বু", presets: [
+        "তোমাদের দেখেই শিখেছি ভালোবাসা কাকে বলে। শুভ বিবাহবার্ষিকী!",
+        "তোমাদের খুনসুটি আর ভালোবাসা দিয়েই আমাদের ঘরটা গড়া। শুভ বিবাহবার্ষিকী!",
+        "এত বছর ধরে একে অপরের হাত ধরে আছ। এভাবেই থেকো, আমাদের মাথার ওপর।",
+      ] },
+      { id: "songi", chip: "জীবনসঙ্গী", to: "প্রিয় জীবনসঙ্গী", presets: [
+        "শুভ বিবাহবার্ষিকী! তোমার সাথে আরও অনেক বছর, অনেক কাপ চা।",
+        "সেদিন হাত ধরেছিলাম, আজও ছাড়িনি, ছাড়বও না। শুভ বিবাহবার্ষিকী।",
+        "মান-অভিমান সব পেরিয়ে তুমিই আমার সবচেয়ে কাছের মানুষ।",
+      ] },
+      { id: "bhaiya-bhabi", chip: "ভাইয়া-ভাবি", to: "প্রিয় ভাইয়া-ভাবি", presets: elderCoupleAnniversary },
+      { id: "apu-dulabhai", chip: "আপু-দুলাভাই", to: "প্রিয় আপু-দুলাভাই", presets: elderCoupleAnniversary },
+    ],
+  },
 ] as const satisfies readonly Occasion[];
 
 export type OccasionId = (typeof occasions)[number]["id"];
-/** The card state a link carries. text === null means "use the preset". The photo never goes in here. */
-export type Wish = { occasion: OccasionId; preset: number; text: string | null; name: string };
+/**
+ * The card state a link carries. text === null means "use the preset". The photo never goes in here.
+ * `to`/`toName` exist only on occasions with recipients, so a pre-change festival link parses to exactly the same object.
+ */
+export type Wish = { occasion: OccasionId; preset: number; text: string | null; name: string; to?: string; toName?: string };
 export type Card = { occasion: OccasionId; year: number; title: string; subtitle: string; message: string; name: string };
 
 export const occasionById = (id: OccasionId) => occasions.find(occasion => occasion.id === id)!;
+export const recipientsOf = (id: OccasionId): readonly Recipient[] => (occasionById(id) as Occasion).recipients ?? [];
+/** The chosen recipient, the default one for an unknown id, or undefined for festivals. */
+export function recipientOf(wish: Pick<Wish, "occasion" | "to">) {
+  const list = recipientsOf(wish.occasion);
+  return list.find(recipient => recipient.id === wish.to) ?? list[0];
+}
+export const presetsOf = (wish: Pick<Wish, "occasion" | "to">) => recipientOf(wish)?.presets ?? occasionById(wish.occasion).presets;
 
 function clean(text: string, max: number) {
   // Control and bidi-override characters could scramble the card; ZWJ/ZWNJ stay because Bangla shaping needs them.
@@ -135,7 +245,22 @@ export const cleanName = (name: string) => clean(name, MAX_NAME_LENGTH);
 export const cleanMessage = (text: string) => clean(text, MAX_MESSAGE_LENGTH);
 
 export function messageOf(wish: Wish) {
-  return wish.text === null ? occasionById(wish.occasion).presets[wish.preset] ?? "" : cleanMessage(wish.text);
+  return wish.text === null ? presetsOf(wish)[wish.preset] ?? "" : cleanMessage(wish.text);
+}
+
+/** "প্রিয় নাদিয়া" when a name is typed, else the recipient's own line ("প্রিয় আম্মু"), else "" (festivals and the neutral default). */
+export function toLine(wish: Wish) {
+  const recipient = recipientOf(wish);
+  if (!recipient) return "";
+  const name = cleanName(wish.toName ?? "");
+  return name ? `প্রিয় ${name}` : recipient.to;
+}
+
+/** What a real person writes above the card: "শুভ জন্মদিন, প্রিয় আম্মু! অনেক ভালোবাসা রইল।" */
+export function captionOf(wish: Wish) {
+  const occasion = occasionById(wish.occasion);
+  const to = toLine(wish);
+  return to ? `${occasion.title}, ${to}! অনেক ভালোবাসা রইল।` : occasion.caption;
 }
 
 /** The coming (or just-passed, within the grace days) date of an occasion, or null when the date table has run out. */
@@ -158,7 +283,8 @@ export function byNearest(today: Date) {
 export function createCard(wish: Wish, today: Date): Card {
   const occasion = occasionById(wish.occasion);
   const year = (nextDate(occasion, today) ?? today).getFullYear();
-  return { occasion: occasion.id, year, title: occasion.title, subtitle: occasion.subtitle(year), message: messageOf(wish), name: cleanName(wish.name) };
+  const subtitle = recipientOf(wish) ? toLine(wish) : occasion.subtitle(year);
+  return { occasion: occasion.id, year, title: occasion.title, subtitle, message: messageOf(wish), name: cleanName(wish.name) };
 }
 
 export function shareHash(wish: Wish) {
@@ -167,6 +293,12 @@ export function shareHash(wish: Wish) {
   else params.set("t", cleanMessage(wish.text));
   const name = cleanName(wish.name);
   if (name) params.set("n", name);
+  const recipient = recipientOf(wish);
+  if (recipient) {
+    params.set("r", recipient.id);
+    const toName = cleanName(wish.toName ?? "");
+    if (toName) params.set("rn", toName);
+  }
   return "#" + params.toString();
 }
 
@@ -174,13 +306,16 @@ export function parseShareHash(hash: string): Wish | null {
   const params = new URLSearchParams(hash.replace(/^#/, ""));
   const occasion = occasions.find(item => item.id === params.get("o"));
   if (!occasion) return null;
+  const recipient = recipientOf({ occasion: occasion.id, to: params.get("r") ?? undefined });
+  const presets = recipient?.presets ?? occasion.presets;
   const preset = Number(params.get("p"));
   const text = params.get("t");
   return {
     occasion: occasion.id,
-    preset: Number.isInteger(preset) && preset >= 0 && preset < occasion.presets.length ? preset : 0,
+    preset: Number.isInteger(preset) && preset >= 0 && preset < presets.length ? preset : 0,
     text: text === null ? null : cleanMessage(text),
     name: cleanName(params.get("n") ?? ""),
+    ...(recipient ? { to: recipient.id, toName: cleanName(params.get("rn") ?? "") } : {}),
   };
 }
 
@@ -188,5 +323,68 @@ export function parseShareHash(hash: string): Wish | null {
 export function previewTitle(wish: Wish) {
   const { gift } = occasionById(wish.occasion);
   const name = cleanName(wish.name);
-  return name ? `${name} তোমাকে ${gift} পাঠিয়েছে` : `তোমার জন্য ${gift} এসেছে`;
+  const toName = recipientOf(wish) ? cleanName(wish.toName ?? "") : "";
+  return (toName ? `${toName}, ` : "") + (name ? `${name} তোমাকে ${gift} পাঠিয়েছে` : `তোমার জন্য ${gift} এসেছে`);
 }
+
+// ---- প্রোফাইল ফ্রেম: a square photo frame for days people change their profile picture ----
+
+// Order is the built-in picker order; `frameOrder` sorts by the coming date. Links store the id: append only.
+export const frames = [
+  {
+    id: "bijoy", chip: "বিজয় দিবস", when: "১৬ ডিসেম্বর",
+    /** Ribbon text; links store the index, so append only. */
+    ribbons: ["মহান বিজয় দিবস", "লাল-সবুজ আমার গর্ব", "ভালোবাসি বাংলাদেশ"],
+    line: "১৬ ডিসেম্বর সকালে প্রোফাইলটাও থাকুক লাল-সবুজে।",
+    gift: "বিজয় দিবসের প্রোফাইল ফ্রেম",
+  },
+  {
+    // A day of mourning: nothing here may say "শুভ".
+    id: "ekushe", chip: "অমর একুশে", when: "২১ ফেব্রুয়ারি",
+    ribbons: ["অমর একুশে", "ভাষাশহিদদের স্মরণ করি", "বাংলা আমার অহংকার"],
+    line: "প্রভাতফেরির দিনে প্রোফাইলেও থাকুক শ্রদ্ধা।",
+    gift: "একুশের প্রোফাইল ফ্রেম",
+  },
+  {
+    // Generic red-green and a plain ball: no team crest, logo or sponsor.
+    id: "khela", chip: "খেলার দিন", when: "ক্রিকেট-ফুটবল",
+    ribbons: ["জিতবে বাংলাদেশ", "সাবাশ বাংলাদেশ", "খেলবে টাইগার, জিতবে বাংলাদেশ"],
+    line: "খেলার আগের রাতেই প্রোফাইল ছবিটা বদলে ফেলো।",
+    gift: "খেলার দিনের প্রোফাইল ফ্রেম",
+  },
+] as const;
+
+export type FrameId = (typeof frames)[number]["id"];
+/** What a frame link carries: never the photo. */
+export type FramePick = { frame: FrameId; ribbon: number };
+export type FrameCard = { frame: FrameId; ribbon: string; sub: string };
+
+export const frameById = (id: FrameId) => frames.find(frame => frame.id === id)!;
+const occasionOfFrame = (id: FrameId) => occasions.find(occasion => occasion.id === id);
+
+/** Dated frames by their coming day; খেলার দিন has no date and stays last. */
+export function frameOrder(today: Date) {
+  const when = (frame: (typeof frames)[number]) => { const occasion = occasionOfFrame(frame.id); return (occasion && nextDate(occasion, today)?.getTime()) || Infinity; };
+  return [...frames].sort((x, y) => when(x) - when(y));
+}
+
+/** The small line under the ribbon reuses the card subtitle, so the year count ("বিজয়ের ৫৫ বছর") has one source. */
+export function createFrame(pick: FramePick, today: Date): FrameCard {
+  const frame = frameById(pick.frame);
+  const occasion = occasionOfFrame(frame.id);
+  const sub = occasion ? occasion.subtitle((nextDate(occasion, today) ?? today).getFullYear()) : "";
+  return { frame: frame.id, ribbon: frame.ribbons[pick.ribbon] ?? frame.ribbons[0], sub };
+}
+
+export const frameHash = (pick: FramePick) => "#" + new URLSearchParams({ fr: pick.frame, l: String(pick.ribbon) }).toString();
+
+export function parseFrameHash(hash: string): FramePick | null {
+  const params = new URLSearchParams(hash.replace(/^#/, ""));
+  const frame = frames.find(item => item.id === params.get("fr"));
+  if (!frame) return null;
+  const ribbon = Number(params.get("l"));
+  return { frame: frame.id, ribbon: Number.isInteger(ribbon) && ribbon >= 0 && ribbon < frame.ribbons.length ? ribbon : 0 };
+}
+
+export const frameCaption = (pick: FramePick) => `প্রোফাইল ছবি বদলালাম। ${frameById(pick.frame).ribbons[pick.ribbon] ?? ""}। তুমিও বানাতে পারো:`;
+export const framePreviewTitle = (pick: FramePick) => `${frameById(pick.frame).gift}: নিজের ছবি বসিয়ে নাও`;

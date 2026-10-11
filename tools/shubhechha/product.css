@@ -10,8 +10,17 @@
 .wish-lead{max-width:560px;margin:0;color:var(--muted);font-size:16px;line-height:1.7}
 
 /* occasion picker: each button carries its card's colour on the left edge */
+.wish-pick{position:relative}
 .wish-occasions{border:0;margin:0 0 16px;padding:0;min-width:0;scroll-margin-top:12px}
-.wish-occasions legend{padding:0;margin:0 0 8px;font-family:var(--font-display);font-size:18px;font-weight:700}
+/* the right padding keeps the legend clear of the frame toggle beside it */
+.wish-occasions legend{padding:0 168px 0 0;margin:0 0 8px;font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.5}
+
+/* the profile-frame format sits on the legend's row, so the first screen keeps its height */
+.wish-frame-toggle{position:absolute;z-index:1;top:-9px;right:0;display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:6px 14px;border:1.5px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink);font-size:15px;font-weight:700;line-height:1.2}
+.wish-frame-toggle::before{content:"";flex:none;width:12px;height:12px;border:3px solid currentColor;border-radius:50%;box-shadow:0 0 0 2px #fff,0 0 0 4px currentColor}
+.wish-frame-toggle[aria-pressed=true]{background:var(--ink);color:#fff}
+.wish-frame-toggle[aria-pressed=true]::before{box-shadow:0 0 0 2px var(--ink),0 0 0 4px currentColor}
+.wish-frame-toggle[aria-pressed=true]::after{content:"✕"/"";font-size:13px;margin-left:2px}
 .wish-occasions>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .wish-occasions button{position:relative;display:grid;align-content:center;min-height:54px;padding:6px 8px 6px 15px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);text-align:left;line-height:1.35;overflow:hidden}
 .wish-occasions button::before{content:"";position:absolute;inset:0 auto 0 0;width:6px;background:var(--sw)}
@@ -25,6 +34,9 @@
 [data-occasion=ekushe]{--sw:#151515;--sw-bg:#f1eee8}
 [data-occasion=eid]{--sw:#0e3a3b;--sw-bg:#e5efed}
 [data-occasion=noboborsho]{--sw:#c4231b;--sw-bg:#fff2ec}
+[data-occasion=jonmodin]{--sw:#c8285a;--sw-bg:#fdeef3}
+[data-occasion=bibahobarshiki]{--sw:#6b1327;--sw-bg:#f8eaed}
+[data-occasion=khela]{--sw:#e5283f;--sw-bg:#fdeeee}
 
 .wish-body{display:grid;gap:20px}
 .wish-controls{display:grid;gap:22px;align-content:start}
@@ -32,6 +44,12 @@
 .wish-field small{font-weight:400;color:var(--muted);font-size:13px}
 .wish-field input,.wish-field textarea{width:100%;border:1.5px solid #c9c1b4;border-radius:12px;font-size:17px}
 .wish-field textarea{resize:vertical;line-height:1.7}
+.wish-to{display:grid;gap:14px}
+.wish-photo{scroll-margin-top:96px}
+
+/* the frame preview is round, the way friends will see it on Facebook */
+.wish-card[data-format=frame]{max-width:420px}
+.wish-card[data-format=frame] canvas{border-radius:50%}
 
 /* message presets read like radio choices */
 .wish-messages{display:grid;gap:8px;border:0;margin:0;padding:0;min-width:0}
@@ -64,10 +82,11 @@
 @media(max-width:359px){.wish-occasions>div{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(min-width:720px){
   .wish-hero{padding:40px 0 22px}
-  .wish-occasions>div{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .wish-occasions>div{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .wish-occasions[data-mode=frame]>div{grid-template-columns:repeat(3,minmax(0,1fr))}
   .wish-body{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:36px}
   .wish-card{position:sticky;top:16px}
   .wish-friend canvas{width:340px}
 }
-@media(hover:hover){.wish-occasions button:hover,.wish-messages button:hover{border-color:var(--ink)}}
+@media(hover:hover){.wish-occasions button:hover,.wish-messages button:hover{border-color:var(--ink)}.wish-frame-toggle[aria-pressed=false]:hover{background:var(--tint)}}
 @media(prefers-reduced-motion:reduce){.wish-friend canvas{transform:none}}

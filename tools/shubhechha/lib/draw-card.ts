@@ -17,30 +17,32 @@ const themes: Record<OccasionId, Theme> = {
   ekushe: { bg: "#f3efe7", title: "#151515", sub: "#c0182c", text: "#2a2a2a", name: "#151515", ring: "#151515", band: { band: "#151515", ask: "#ffffff", site: "#c9c9c9" } },
   eid: { bg: "#0e3a3b", title: "#f2c66d", sub: "#e8d6a8", text: "#f8efd9", name: "#f2c66d", ring: "#f2c66d", band: { band: "#072425", ask: "#f2c66d", site: "#ffffff" } },
   noboborsho: { bg: "#fffaf2", title: "#c4231b", sub: "#7a3a12", text: "#3b2316", name: "#c4231b", ring: "#c4231b", band: { band: "#8d1811", ask: "#ffd166", site: "#ffffff" } },
+  jonmodin: { bg: "#eaf6f1", title: "#c8285a", sub: "#1f6f66", text: "#24343a", name: "#c8285a", ring: "#c8285a", band: { band: "#16423d", ask: "#ffd166", site: "#ffffff" } },
+  bibahobarshiki: { bg: "#6b1327", title: "#f6c85f", sub: "#f3d6a4", text: "#fbeee2", name: "#f6c85f", ring: "#f6c85f", band: { band: "#3d0914", ask: "#f6c85f", site: "#ffffff" } },
 };
 
 /** Fractional part of a sine hash: steady "random" scatter, the same on every redraw. */
-const noise = (seed: number) => { const value = Math.sin(seed * 12.9898) * 43758.5453; return value - Math.floor(value); };
+export const noise = (seed: number) => { const value = Math.sin(seed * 12.9898) * 43758.5453; return value - Math.floor(value); };
 
-function circle(ctx: Ctx, x: number, y: number, r: number) { ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); }
-function paint(ctx: Ctx, fill?: string | CanvasGradient, stroke?: string, width = 4) {
+export function circle(ctx: Ctx, x: number, y: number, r: number) { ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); }
+export function paint(ctx: Ctx, fill?: string | CanvasGradient, stroke?: string, width = 4) {
   if (fill) { ctx.fillStyle = fill; ctx.fill(); }
   if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = width; ctx.stroke(); }
 }
 /** A pointed leaf, petal or feather from (x, y), pointing up when angle is 0. */
-function leaf(ctx: Ctx, x: number, y: number, length: number, width: number, angle: number) {
+export function leaf(ctx: Ctx, x: number, y: number, length: number, width: number, angle: number) {
   ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
   ctx.beginPath(); ctx.moveTo(0, 0);
   ctx.quadraticCurveTo(width, -length * 0.45, 0, -length);
   ctx.quadraticCurveTo(-width, -length * 0.45, 0, 0);
   ctx.closePath(); ctx.restore();
 }
-function line(ctx: Ctx, points: number[], stroke: string, width: number) {
+export function line(ctx: Ctx, points: number[], stroke: string, width: number) {
   ctx.beginPath(); ctx.moveTo(points[0], points[1]);
   for (let i = 2; i < points.length; i += 2) ctx.lineTo(points[i], points[i + 1]);
   ctx.strokeStyle = stroke; ctx.lineWidth = width; ctx.stroke();
 }
-function glow(ctx: Ctx, x: number, y: number, r: number, color: string) {
+export function glow(ctx: Ctx, x: number, y: number, r: number, color: string) {
   const gradient = ctx.createRadialGradient(x, y, 0, x, y, r);
   // fade to the same colour at zero alpha; fading to transparent black greys the edge
   gradient.addColorStop(0, color); gradient.addColorStop(1, color.replace(/[\d.]+\)$/, "0)"));
@@ -138,7 +140,7 @@ function bijoya(ctx: Ctx, width: number, frameBottom: number, sceneTop: number) 
 }
 
 // ---- বিজয় দিবস: সবুজের ওপর লাল সূর্য উঠছে, নদী, শাপলা ----
-function shapla(ctx: Ctx, x: number, y: number, s: number) {
+export function shapla(ctx: Ctx, x: number, y: number, s: number) {
   for (const a of [-1.15, 1.15]) { leaf(ctx, x, y + 4 * s, 42 * s, 13 * s, a); paint(ctx, "#2f9a63", "#0d5a3c", 2.5); }
   for (const a of [-1.0, -0.5, 0, 0.5, 1.0]) { leaf(ctx, x, y, 92 * s, 25 * s, a); paint(ctx, "#f1ebe2", "#b4868f", 2.5); }
   circle(ctx, x, y - 34 * s, 20 * s); paint(ctx, "#f6c443", "#c99412", 2);
@@ -383,6 +385,17 @@ function frame(ctx: Ctx, x: number, bottom: number, w: number, h: number, bars: 
   ctx.fillRect(x - w / 2, bottom - h, post, h); ctx.fillRect(x + w / 2 - post, bottom - h, post, h); ctx.fillRect(x - w / 2, bottom - h, w, post);
   for (let i = 1; i <= bars; i++) ctx.fillRect(x - w / 2 + post + (i * (w - 2 * post)) / (bars + 1) - 2.5, bottom - h + post, 5, h - post);
 }
+/** The শহীদ মিনার silhouette, centred on x 540 with its steps' top at y 566 (the profile frame scales it down). */
+export function shaheedMinar(ctx: Ctx, color: string) {
+  const ground = 566;
+  ctx.fillStyle = color;
+  frame(ctx, 300, ground, 78, 178, 2); frame(ctx, 780, ground, 78, 178, 2);
+  frame(ctx, 405, ground, 92, 246, 2); frame(ctx, 675, ground, 92, 246, 2);
+  frame(ctx, 540, ground, 132, 236, 3);
+  // the centre frame's head bows forward, like a mother over her sons
+  ctx.save(); ctx.translate(540 - 66, ground - 236); ctx.rotate(0.24); frame(ctx, 66, 0, 132, 104, 3); ctx.restore();
+  for (const [sx, sw, sy] of [[170, 740, 600], [220, 640, 583], [266, 548, 566]]) ctx.fillRect(sx, sy, sw, 18);
+}
 function ekushe(ctx: Ctx, width: number, frameBottom: number, sceneTop: number) {
   const black = "#151515";
   ctx.fillStyle = "#e3ddd0";
@@ -391,20 +404,184 @@ function ekushe(ctx: Ctx, width: number, frameBottom: number, sceneTop: number) 
     ctx.save(); ctx.translate(Number(lx), Number(ly)); ctx.rotate(Number(a)); ctx.font = `700 96px ${DISPLAY_FONT}`; ctx.fillText(String(letter), 0, 0); ctx.restore();
   });
   circle(ctx, 540, 330, 178); paint(ctx, "#c8102e");
-  ctx.fillStyle = black;
-  const ground = 566;
-  frame(ctx, 300, ground, 78, 178, 2); frame(ctx, 780, ground, 78, 178, 2);
-  frame(ctx, 405, ground, 92, 246, 2); frame(ctx, 675, ground, 92, 246, 2);
-  frame(ctx, 540, ground, 132, 236, 3);
-  // the centre frame's head bows forward, like a mother over her sons
-  ctx.save(); ctx.translate(540 - 66, ground - 236); ctx.rotate(0.24); frame(ctx, 66, 0, 132, 104, 3); ctx.restore();
-  for (const [sx, sw, sy] of [[170, 740, 600], [220, 640, 583], [266, 548, 566]]) ctx.fillRect(sx, sy, sw, 18);
+  shaheedMinar(ctx, black);
   // wreaths laid at the foot
   for (const fx of [400, 540, 680]) {
     for (let i = 0; i < 12; i++) { const a = (i / 12) * TAU; circle(ctx, fx + Math.cos(a) * 26, 632 + Math.sin(a) * 11, 7); paint(ctx, "#c8102e", "#7d0a1a", 1.5); }
   }
   ctx.beginPath(); ctx.moveTo(26, frameBottom); ctx.lineTo(26, sceneTop + 26); ctx.lineTo(width - 26, sceneTop + 26); ctx.lineTo(width - 26, frameBottom);
   paint(ctx, undefined, black, 3);
+}
+
+// ---- শুভ জন্মদিন: কাগজের শিকল, বেলুন, মোমবাতির কেক, মায়ের রাঁধা পায়েস ----
+const PARTY = ["#c8285a", "#f6b93b", "#1f8a80", "#ee7d3b", "#4fa3d9"];
+/** Interlocked paper loops along a hanging curve, the kind cut from coloured paper for a home birthday. */
+function paperChain(ctx: Ctx, x1: number, x2: number, y: number, sag: number, seed: number) {
+  const cx = (x1 + x2) / 2, cy = y + sag * 2;
+  const steps = Math.round((x2 - x1) / 30);
+  ctx.lineWidth = 7;
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    const px = (1 - t) ** 2 * x1 + 2 * (1 - t) * t * cx + t * t * x2, py = (1 - t) ** 2 * y + 2 * (1 - t) * t * cy + t * t * y;
+    const angle = Math.atan2(2 * (1 - t) * (cy - y) + 2 * t * (y - cy), 2 * (1 - t) * (cx - x1) + 2 * t * (x2 - cx));
+    ctx.beginPath(); ctx.ellipse(px, py, 22, i % 2 ? 5 : 13, angle, 0, TAU);
+    ctx.strokeStyle = PARTY[(i + seed) % PARTY.length]; ctx.stroke();
+  }
+}
+function balloon(ctx: Ctx, x: number, y: number, color: string, tilt: number) {
+  ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(x, y + 70); ctx.bezierCurveTo(x - 16, y + 104, x + 16, y + 134, x - 4, y + 176);
+  ctx.strokeStyle = "rgba(36,52,58,.45)"; ctx.lineWidth = 2.5; ctx.stroke();
+  ctx.save(); ctx.translate(x, y); ctx.rotate(tilt);
+  ctx.beginPath(); ctx.moveTo(0, 64); ctx.bezierCurveTo(-62, 40, -58, -68, 0, -68); ctx.bezierCurveTo(58, -68, 62, 40, 0, 64); ctx.closePath(); paint(ctx, color);
+  ctx.beginPath(); ctx.moveTo(-8, 74); ctx.lineTo(0, 62); ctx.lineTo(8, 74); ctx.closePath(); paint(ctx, color);
+  ctx.beginPath(); ctx.ellipse(-22, -30, 9, 19, 0.5, 0, TAU); paint(ctx, "rgba(255,255,255,.5)");
+  ctx.restore();
+}
+/** A round cake tier: side first, then the top, then cream dripping over the front edge. */
+function tier(ctx: Ctx, cx: number, top: number, bottom: number, rx: number, ry: number, side: string, cream: string, seed: number) {
+  ctx.beginPath(); ctx.moveTo(cx - rx, top); ctx.lineTo(cx - rx, bottom); ctx.ellipse(cx, bottom, rx, ry, 0, Math.PI, 0, true); ctx.lineTo(cx + rx, top); ctx.closePath();
+  paint(ctx, side, "#7a3b2a", 4);
+  ctx.fillStyle = cream;
+  ctx.beginPath(); ctx.ellipse(cx, top + 10, rx, ry, 0, 0, TAU); ctx.fill();
+  for (let i = 1; i < 12; i++) {
+    const x = cx - rx + (2 * rx * i) / 12, edge = top + 10 + ry * Math.sqrt(1 - ((x - cx) / rx) ** 2);
+    ctx.beginPath(); ctx.roundRect(x - 8, edge - 12, 16, 22 + noise(seed + i) * 26, 8); ctx.fill();
+  }
+  ctx.beginPath(); ctx.ellipse(cx, top, rx, ry, 0, 0, TAU); paint(ctx, cream, "#7a3b2a", 4);
+}
+function candle(ctx: Ctx, x: number, base: number) {
+  ctx.save(); ctx.beginPath(); ctx.roundRect(x - 8, base - 74, 16, 74, 3); ctx.clip();
+  ctx.fillStyle = "#ffffff"; ctx.fillRect(x - 8, base - 74, 16, 74);
+  ctx.strokeStyle = "#c8285a"; ctx.lineWidth = 5;
+  for (let sy = base - 84; sy < base + 10; sy += 16) { ctx.beginPath(); ctx.moveTo(x - 10, sy + 10); ctx.lineTo(x + 10, sy); ctx.stroke(); }
+  ctx.restore();
+  line(ctx, [x, base - 74, x, base - 84], "#3a2a20", 3);
+  flame(ctx, x, base - 82, 0.7);
+}
+function payesh(ctx: Ctx, x: number, y: number) {
+  ctx.lineCap = "round";
+  for (const dx of [-28, 0, 28]) { ctx.beginPath(); ctx.moveTo(x + dx, y - 32); ctx.bezierCurveTo(x + dx - 16, y - 62, x + dx + 16, y - 84, x + dx, y - 116); ctx.strokeStyle = "rgba(31,111,102,.25)"; ctx.lineWidth = 6; ctx.stroke(); }
+  ctx.beginPath(); ctx.ellipse(x, y + 74, 42, 9, 0, 0, TAU); paint(ctx, "#b9c4c7", "#6f7e82", 3);
+  ctx.beginPath(); ctx.ellipse(x, y, 96, 74, 0, 0, Math.PI); ctx.closePath(); paint(ctx, "#d9e1e3", "#6f7e82", 4);
+  line(ctx, [x - 70, y + 34, x + 70, y + 34], "rgba(255,255,255,.7)", 4);
+  ctx.beginPath(); ctx.ellipse(x, y, 96, 20, 0, 0, TAU); paint(ctx, "#f6e8c8", "#6f7e82", 4);
+  for (const [px, py] of [[-44, -4], [-8, 7], [30, -7], [56, 4], [-66, 6], [12, -10]]) { ctx.beginPath(); ctx.ellipse(x + px, y + py, 6, 4, 0.4, 0, TAU); paint(ctx, "#7a3b1d"); }
+  for (const [px, py] of [[-24, 2], [44, -2]]) { ctx.beginPath(); ctx.arc(x + px, y + py, 7, 0.3, Math.PI + 0.6); paint(ctx, undefined, "#d9a85b", 5); }
+  leaf(ctx, x + 6, y + 4, 48, 12, 1.25); paint(ctx, "#6f8f3a", "#4f6b26", 2);
+}
+function giftBox(ctx: Ctx, x: number, base: number) {
+  const w = 124, h = 94;
+  ctx.beginPath(); ctx.rect(x - w / 2, base - h, w, h); paint(ctx, "#1f8a80", "#145c55", 4);
+  ctx.beginPath(); ctx.rect(x - w / 2 - 8, base - h - 26, w + 16, 28); paint(ctx, "#27a396", "#145c55", 4);
+  ctx.fillStyle = "#f6b93b"; ctx.fillRect(x - 10, base - h - 26, 20, h + 26);
+  for (const side of [-1, 1]) { ctx.beginPath(); ctx.ellipse(x + side * 22, base - h - 38, 24, 13, side * 0.5, 0, TAU); paint(ctx, "#f6b93b", "#c98a12", 3); }
+  circle(ctx, x, base - h - 32, 9); paint(ctx, "#e0a12a", "#c98a12", 3);
+}
+function jonmodin(ctx: Ctx, width: number, frameBottom: number, sceneTop: number) {
+  // confetti first, so everything else sits on top of it
+  for (let i = 0; i < 30; i++) {
+    const cx = 60 + noise(i + 11) * (width - 120), cy = sceneTop + 150 + noise(i + 37) * (420 - sceneTop - 150);
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(noise(i) * TAU); ctx.fillStyle = PARTY[i % PARTY.length];
+    if (i % 3) ctx.fillRect(-7, -3, 14, 6); else { circle(ctx, 0, 0, 4.5); ctx.fill(); }
+    ctx.restore();
+  }
+  paperChain(ctx, -20, 560, sceneTop + 34, 70, 0);
+  paperChain(ctx, 520, width + 20, sceneTop + 34, 70, 2);
+  // a paper rosette where the chains meet
+  for (let i = 0; i < 16; i++) { ctx.beginPath(); ctx.moveTo(540, sceneTop + 40); ctx.arc(540, sceneTop + 40, 46, (i / 16) * TAU, ((i + 1) / 16) * TAU); ctx.closePath(); paint(ctx, i % 2 ? "#f6b93b" : "#ee7d3b"); }
+  circle(ctx, 540, sceneTop + 40, 16); paint(ctx, "#c8285a");
+  balloon(ctx, 130, 300, "#4fa3d9", -0.15); balloon(ctx, 236, 232, "#c8285a", -0.05);
+  balloon(ctx, 848, 232, "#f6b93b", 0.05); balloon(ctx, 954, 300, "#1f8a80", 0.15);
+  // the table: a yellow cloth with a কাঁথা running stitch and a scalloped edge
+  ctx.fillStyle = "#f9d77e"; ctx.fillRect(0, 566, width, SCENE_HEIGHT - 566);
+  for (let px = 0; px < width + 36; px += 36) { circle(ctx, px, SCENE_HEIGHT, 18); ctx.fill(); }
+  ctx.setLineDash([18, 12]); line(ctx, [0, 604, width, 604], "#c8285a", 4); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.ellipse(540, 570, 236, 30, 0, 0, TAU); paint(ctx, "#ffffff", "#9fb3b0", 3);
+  tier(ctx, 540, 444, 560, 176, 32, "#fff5ec", "#f48fb1", 3);
+  tier(ctx, 540, 354, 444, 112, 22, "#f7a8bf", "#fff5ec", 9);
+  for (let i = 0; i < 18; i++) { ctx.fillStyle = PARTY[i % PARTY.length]; ctx.fillRect(390 + noise(i + 5) * 300, 470 + noise(i + 70) * 70, 10, 4); }
+  for (const x of [496, 540, 584]) candle(ctx, x, 356);
+  giftBox(ctx, 236, 568);
+  payesh(ctx, 852, 498);
+  ctx.beginPath(); ctx.moveTo(26, frameBottom); ctx.lineTo(26, sceneTop + 26); ctx.lineTo(width - 26, sceneTop + 26); ctx.lineTo(width - 26, frameBottom);
+  paint(ctx, undefined, "#c8285a", 4);
+}
+
+// ---- শুভ বিবাহবার্ষিকী: গাঁদা ফুলের মালা, মরিচ বাতি, দুই কাপ চা, রজনীগন্ধা ----
+function marigolds(ctx: Ctx, x: number, top: number, bottom: number, seed: number) {
+  line(ctx, [x, top, x, bottom], "#2f5a22", 2);
+  let i = 0;
+  for (let y = top + 16; y < bottom; y += 27, i++) {
+    circle(ctx, x, y, 15); paint(ctx, (i + seed) % 3 === 2 ? "#f9c22e" : "#f28c1b");
+    ctx.strokeStyle = "rgba(140,50,0,.45)"; ctx.lineWidth = 2;
+    for (let k = 0; k < 6; k++) { const a = (k / 6) * TAU + noise(seed * 31 + i); ctx.beginPath(); ctx.arc(x + Math.cos(a) * 7, y + Math.sin(a) * 7, 6, a - 1, a + 1); ctx.stroke(); }
+  }
+  leaf(ctx, x, bottom, 30, 9, Math.PI); paint(ctx, "#3d8b3d");
+}
+function fairyLights(ctx: Ctx, x1: number, x2: number, y: number, sag: number, seed: number) {
+  const cx = (x1 + x2) / 2, cy = y + sag * 2;
+  ctx.beginPath(); ctx.moveTo(x1, y); ctx.quadraticCurveTo(cx, cy, x2, y);
+  ctx.strokeStyle = "rgba(20,4,8,.55)"; ctx.lineWidth = 2; ctx.stroke();
+  const steps = Math.round((x2 - x1) / 42);
+  for (let i = 1; i < steps; i++) {
+    const t = i / steps, px = (1 - t) ** 2 * x1 + 2 * (1 - t) * t * cx + t * t * x2, py = (1 - t) ** 2 * y + 2 * (1 - t) * t * cy + t * t * y + 7;
+    glow(ctx, px, py, 24, noise(seed + i) > 0.5 ? "rgba(255,214,120,.5)" : "rgba(255,160,110,.45)");
+    circle(ctx, px, py, 5); paint(ctx, "#fff1c2");
+  }
+}
+function teacup(ctx: Ctx, x: number, base: number, flip: number) {
+  const gold = "#c9a24a", china = "#fffaf3";
+  ctx.beginPath(); ctx.ellipse(x, base, 104, 21, 0, 0, TAU); paint(ctx, china, gold, 3);
+  ctx.beginPath(); ctx.ellipse(x, base - 3, 52, 9, 0, 0, TAU); paint(ctx, undefined, "rgba(201,162,74,.6)", 2);
+  ctx.beginPath(); ctx.ellipse(x + flip * 68, base - 58, 24, 22, 0, 0, TAU); paint(ctx, undefined, gold, 15); ctx.strokeStyle = china; ctx.lineWidth = 9; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x - 68, base - 98); ctx.bezierCurveTo(x - 68, base - 30, x - 44, base - 8, x, base - 8); ctx.bezierCurveTo(x + 44, base - 8, x + 68, base - 30, x + 68, base - 98); ctx.closePath();
+  paint(ctx, china, gold, 3);
+  ctx.fillStyle = "#b5162e";
+  for (let i = 0; i < 7; i++) { leaf(ctx, x - 42 + i * 14, base - 50, 12, 4, 0); ctx.fill(); }
+  ctx.beginPath(); ctx.ellipse(x, base - 98, 68, 14, 0, 0, TAU); paint(ctx, china, gold, 4);
+  ctx.beginPath(); ctx.ellipse(x, base - 96, 57, 10, 0, 0, TAU); paint(ctx, "#a8612a");
+}
+function heart(ctx: Ctx, cx: number, cy: number, s: number) {
+  ctx.beginPath(); ctx.moveTo(cx, cy + s * 0.9);
+  ctx.bezierCurveTo(cx - s * 1.5, cy - s * 0.1, cx - s * 0.7, cy - s * 1.3, cx, cy - s * 0.45);
+  ctx.bezierCurveTo(cx + s * 0.7, cy - s * 1.3, cx + s * 1.5, cy - s * 0.1, cx, cy + s * 0.9);
+  ctx.closePath();
+}
+function rajanigandha(ctx: Ctx, x: number, base: number, flip: number) {
+  ctx.lineCap = "round";
+  for (const [lean, h] of [[-26, 230], [4, 270], [30, 210]]) {
+    const tipX = x + lean * flip, tipY = base - h;
+    ctx.beginPath(); ctx.moveTo(x, base - 40); ctx.quadraticCurveTo(x + lean * flip * 0.2, base - h * 0.6, tipX, tipY);
+    ctx.strokeStyle = "#4f8a3a"; ctx.lineWidth = 4; ctx.stroke();
+    for (let i = 0; i < 9; i++) {
+      const t = 0.45 + (i / 9) * 0.55, px = (1 - t) ** 2 * x + 2 * (1 - t) * t * (x + lean * flip * 0.2) + t * t * tipX, py = (1 - t) ** 2 * (base - 40) + 2 * (1 - t) * t * (base - h * 0.6) + t * t * tipY;
+      leaf(ctx, px, py, 26 - i, 8, (i % 2 ? 0.7 : -0.7)); paint(ctx, "#fffaf0", "#d9cdb4", 1.5);
+    }
+  }
+  ctx.beginPath(); ctx.moveTo(x - 20, base - 60); ctx.quadraticCurveTo(x - 46, base - 10, x - 30, base); ctx.lineTo(x + 30, base); ctx.quadraticCurveTo(x + 46, base - 10, x + 20, base - 60); ctx.closePath();
+  paint(ctx, "rgba(190,230,235,.35)", "rgba(255,255,255,.7)", 3);
+}
+function bibahobarshiki(ctx: Ctx, width: number, frameBottom: number, sceneTop: number) {
+  const gold = "#f6c85f";
+  fairyLights(ctx, -20, width + 20, sceneTop + 30, 70, 1);
+  fairyLights(ctx, -20, width + 20, sceneTop + 70, 55, 7);
+  for (const [mx, end, seed] of [[64, 330, 0], [118, 250, 1], [172, 190, 2], [width - 64, 330, 1], [width - 118, 250, 2], [width - 172, 190, 0]]) marigolds(ctx, mx, sceneTop, end, seed);
+  // the rug: a deep red কাঁথা with gold running stitches
+  ctx.fillStyle = "#8f1d33"; ctx.fillRect(0, 584, width, SCENE_HEIGHT - 584);
+  ctx.setLineDash([16, 10]); line(ctx, [0, 600, width, 600], gold, 3); line(ctx, [0, 626, width, 626], gold, 3); ctx.setLineDash([]);
+  rajanigandha(ctx, 190, 590, -1);
+  rajanigandha(ctx, 890, 590, 1);
+  // steam from the two cups meets in a heart
+  const steam = "rgba(255,240,222,.6)";
+  ctx.lineCap = "round";
+  ctx.beginPath(); ctx.moveTo(452, 470); ctx.bezierCurveTo(424, 430, 486, 412, 470, 372); ctx.bezierCurveTo(462, 352, 500, 352, 522, 362); ctx.strokeStyle = steam; ctx.lineWidth = 6; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(628, 470); ctx.bezierCurveTo(656, 430, 594, 412, 610, 372); ctx.bezierCurveTo(618, 352, 580, 352, 558, 362); ctx.stroke();
+  heart(ctx, 540, 300, 62); paint(ctx, "#f6c85f", steam, 6);
+  teacup(ctx, 455, 578, -1);
+  teacup(ctx, 625, 578, 1);
+  ctx.beginPath(); ctx.moveTo(30, frameBottom); ctx.lineTo(30, sceneTop + 30); ctx.lineTo(width - 30, sceneTop + 30); ctx.lineTo(width - 30, frameBottom);
+  paint(ctx, undefined, "rgba(246,200,95,.7)", 2.5);
 }
 
 function divider(ctx: Ctx, y: number, color: string) {
@@ -472,6 +649,8 @@ export function drawCard(canvas: HTMLCanvasElement, card: Card, format: CardForm
   else if (card.occasion === "eid") eid(ctx, width, frameBottom, sceneTop);
   else if (card.occasion === "noboborsho") noboborsho(ctx, width, frameBottom, sceneTop, card.year);
   else if (card.occasion === "nobanno") nobanno(ctx, width, frameBottom, sceneTop);
+  else if (card.occasion === "jonmodin") jonmodin(ctx, width, frameBottom, sceneTop);
+  else if (card.occasion === "bibahobarshiki") bibahobarshiki(ctx, width, frameBottom, sceneTop);
   else ekushe(ctx, width, frameBottom, sceneTop);
   ctx.restore();
   ctx.textAlign = "left";

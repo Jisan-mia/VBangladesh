@@ -9,7 +9,7 @@ export default function ShubhechhaPage() {
       <JsonLd site={site} />
       <div className="wish">
         <section className="wish-hero container" aria-labelledby="wish-title">
-          <p className="wish-kicker">বিজয়া, নবান্ন, বিজয় দিবস, একুশে, ঈদ, নববর্ষ</p>
+          <p className="wish-kicker">উৎসব, জন্মদিন, বিবাহবার্ষিকী আর প্রোফাইল ফ্রেম</p>
           <h1 id="wish-title">এবারের শুভেচ্ছা যাক<br /><span>নিজের নামে</span></h1>
           <p className="wish-lead">{site.lead}</p>
         </section>
