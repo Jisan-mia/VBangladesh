@@ -1225,3 +1225,7 @@ One agent per target tool, so no two agents edit the same folder. Status: todo, 
 | iftar-plate | FA01 | only an "আজ রমজানের Nতম দিন" line; no fasting tracker | done |
 | koto-din-baki | ED02 | SSC/HSC chips if the boards have announced 2027 dates (else skip) | skipped (duplicate of নিজের দিন; 2027 exam dates not announced) |
 | eta-na-ota | ID18 | friend match "দুজনের মিল" | done |
+- Done in phase 2: a tally vote `group` (bagdhara and projonmo keep one vote per page), and a PhotoPicker `width` option (studior-chhobi and the shubhechha frame load 900px photos).
+- iftar-plate imports koto-din-baki/lib/countdown, which also pulls in shubhechha's greeting texts (about 28 KB of source). Moving the moon dates into a small shared module would trim it.
+- komon-porlo: three jam squares lean on drivers ("উল্টো দিকে রিকশা", "মামা, যাবেন? না", "মিটারে যাবে না"). They can't be edited without breaking old links, so a softer replacement would need a new pack version.
+- argentina-na-brazil: the আসল ফ্যান questions are pinned. Editing or reordering them would re-score every shared link.
