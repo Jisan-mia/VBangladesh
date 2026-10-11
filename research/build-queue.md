@@ -270,7 +270,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 20 | jam-chharao | জ্যাম ছাড়াও | গেম | G23 | building | games-2026-10.md §4.3 #23 |
 | 20 | shobdo-khoja | শব্দ খোঁজা | গেম | G24 | done | games-2026-10.md §4.3 #24 |
 | 20 | carrom | ক্যারম | গেম | G10 | building | games-2026-10.md §4.3 #10 |
-| 20 | pati-buni | পাটি বুনি | গেম | G03 | building | games-2026-10.md §4.3 #3 |
+| 20 | pati-buni | পাটি বুনি | গেম | G03 | done | games-2026-10.md §4.3 #3 |
 
 ### Wave deadlines and why
 
