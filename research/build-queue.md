@@ -251,7 +251,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 16 | jhalmuri-sap | ঝালমুড়ি সাপ | গেম | G01 | done | games-2026-10.md §4.3 #1 |
 | 16 | danguli | ডাংগুলি | গেম | G13 | building | games-2026-10.md §4.3 #13 |
 | 16 | antenna-thik-koro | অ্যান্টেনা ঠিক করো | গেম | G07 | building | games-2026-10.md §4.3 #7 |
-| 17 | sir-ghurlei-thamo | স্যার ঘুরলেই থামো | গেম | G20 | todo | games-2026-10.md §4.3 #20 |
+| 17 | sir-ghurlei-thamo | স্যার ঘুরলেই থামো | গেম | G20 | building | games-2026-10.md §4.3 #20 |
 | 17 | deri-hoye-gelo | দেরি হয়ে গেল! | গেম | G16 | todo | games-2026-10.md §4.3 #16 |
 | 17 | chor-police | চোর-ডাকাত-পুলিশ-বাবু | গেম | G11 | todo | games-2026-10.md §4.3 #11 |
 | 17 | bostar-pahar | বস্তার পাহাড় | গেম | G18 | todo | games-2026-10.md §4.3 #18 |

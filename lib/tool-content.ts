@@ -89,6 +89,7 @@ import { site as dudh_uthlano } from '../tools/dudh-uthlano/content';
 import { site as jhalmuri_sap } from '../tools/jhalmuri-sap/content';
 import { site as danguli } from '../tools/danguli/content';
 import { site as antenna_thik_koro } from '../tools/antenna-thik-koro/content';
+import { site as sir_ghurlei_thamo } from '../tools/sir-ghurlei-thamo/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -182,6 +183,7 @@ export const toolContent = {
   'jhalmuri-sap': jhalmuri_sap,
   'danguli': danguli,
   'antenna-thik-koro': antenna_thik_koro,
+  'sir-ghurlei-thamo': sir_ghurlei_thamo,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];

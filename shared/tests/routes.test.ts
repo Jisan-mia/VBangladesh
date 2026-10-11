@@ -83,6 +83,7 @@ const expectedSlugs = [
   'jhalmuri-sap',
   'danguli',
   'antenna-thik-koro',
+  'sir-ghurlei-thamo',
 ].sort();
 const origin = 'https://example.org';
 const expectedPaths = ['/', '/tools', '/about', '/privacy', ...expectedSlugs.flatMap(slug => [`/${slug}`, `/${slug}/guide`, `/${slug}/privacy`])];
