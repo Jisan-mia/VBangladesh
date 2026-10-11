@@ -12,7 +12,7 @@ Agents use Sonnet 5.5 with `research/copy-review-agent-prompt.md`; up to 5 run a
 | B5 হিসাব | matir-bank dhoyahin jomi rokto current-gelo betoner-bhag bidyut-bill | done |
 | B6 খেলা ১ | cholo-kheli argentina-na-brazil amar-jersey dom-atkano golir-ain shesh-bol | done |
 | B7 খেলা ২+উৎসব | ami-bolechhilam matcher-mon ekadosh raat-jaga shubhechha koto-din-baki iftar-plate salami-chek | done |
-| B8 উৎসব+ভাষা | sehri-iftar eider-din eidjatra gorur-ojon mondop shobdo-khela gpa taka-kothay | building |
+| B8 উৎসব+ভাষা | sehri-iftar eider-din eidjatra gorur-ojon mondop shobdo-khela gpa taka-kothay | done |
 | B9 ভাষা+মজা | banan desh-cheno bagdhara bangla-typing namta komon-porlo eta-na-ota cha-mudra | done |
 | B10 মজা | flames jam ganer-koli dhadha ek-koti mama-jaben mishron grade-dao | building |
 | B11 নিজেকে জানো | biye-kobe daknam moner-boyos bhorta koto-cheno char-priyo projonmo starter-pack adda | building |
@@ -27,5 +27,5 @@ Agents use Sonnet 5.5 with `research/copy-review-agent-prompt.md`; up to 5 run a
 | P1 posts স্মৃতি+আঁকো | posts/smriti-anko.md | done |
 | P2 posts খাবার+পরিবার | posts/khabar-poribar.md | building |
 | P3 posts হিসাব+উৎসব | posts/hisab-utsob.md | building |
-| P4 posts খেলা+ভাষা | posts/khela-bhasha.md | todo |
+| P4 posts খেলা+ভাষা | posts/khela-bhasha.md | building |
 | P5 posts মজা+নিজেকে জানো | posts/moja-nijeke.md | todo |
