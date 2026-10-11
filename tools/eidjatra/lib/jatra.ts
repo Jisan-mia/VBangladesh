@@ -105,7 +105,7 @@ export function caption(trip: Trip) {
   const how = `${mode(trip.mode).by} ${bn(trip.hours)} ঘণ্টা`;
   return trip.onTheWay
     ? `ঈদযাত্রা চলছে! ${routeWords(trip)}, ${how} ধরে পথে। তোমার বাড়ি যেতে কত ঘণ্টা লাগল?`
-    : `ঈদযাত্রা শেষ, অবশেষে বাড়ি! ${routeWords(trip)}, ${how}। ${humanLine(trip)} তোমার বাড়ি যেতে কত ঘণ্টা লাগল?`;
+    : `ঈদযাত্রা শেষ, শেষমেশ বাড়ি! ${routeWords(trip)}, ${how}। ${humanLine(trip)} তোমার বাড়ি যেতে কত ঘণ্টা লাগল?`;
 }
 
 export function previewTitle(trip: Trip) {

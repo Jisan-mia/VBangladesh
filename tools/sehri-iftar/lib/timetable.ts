@@ -138,11 +138,11 @@ export function humanLine(time: Season, next: NextEvent | null) {
   if (next?.kind === "sehri" && next.minutes <= 30) return "শেষ লোকমাটা সেরে নাও, এক গ্লাস পানি খেয়ে নিও।";
   if (time.phase === "unknown") return "পরের রমজানের তারিখ এলেই বসিয়ে দেব।";
   if (time.phase === "during") {
-    if (time.day === 1) return "প্রথম রোজা। সবার জন্য শুভকামনা।";
+    if (time.day === 1) return "প্রথম রোজা। রমজান মোবারক।";
     if (time.total - time.day < 3) return "ঈদ আর বেশি দূরে নেই।";
     return "ইফতারের আগে বাড়িটা আরেকটু ব্যস্ত হয়ে ওঠে।";
   }
-  if (time.days <= 3) return "চাঁদ দেখার অপেক্ষা। ছাদে ওঠার প্রস্তুতি নাও।";
+  if (time.days <= 3) return "চাঁদ দেখার অপেক্ষা। ছাদে উঠতে তৈরি থাকো।";
   if (time.days <= 30) return "রমজান প্রায় এসে গেল। বাজারের লিস্টটা শুরু করো।";
   return "রমজান আসছে। দিন গোনা শুরু।";
 }

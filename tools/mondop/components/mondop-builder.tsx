@@ -141,7 +141,7 @@ export function MondopBuilder() {
 
         <fieldset className="mp-moments">
           <legend>কোন মুহূর্তগুলো হলো?</legend>
-          <p>নিজে করেছ বা পাশে দাঁড়িয়ে দেখেছ, যেটা হয়েছে ছুঁয়ে দাও। না দিলেও চলবে।</p>
+          <p>নিজে করেছ বা পাশে দাঁড়িয়ে দেখেছ, যেগুলো হয়েছে টিক দাও। না দিলেও চলবে।</p>
           <div>
             {moments.map(moment => (
               <button type="button" key={moment.id} aria-pressed={picked.includes(moment.id)} onClick={() => toggle(moment.id)}>
@@ -178,7 +178,7 @@ export function MondopBuilder() {
               <input value={pandals} maxLength={MAX_PANDALS_LENGTH} onChange={event => setPandals(event.target.value)} placeholder="যেমন: ঢাকেশ্বরী, বনানী, শাঁখারীবাজার" autoComplete="off" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="mondop.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${card.signOff}|${card.friend}`} caption={caption} state={state} disabled={!count} hint={count ? `লিংক পেলে ${name ? possessive(name) : "তোমার"} চালচিত্র দেখবে বন্ধু, আর নিজেরটা গুনে পাশে বসাবে।` : ""} />
+            <ShareBar tool={TOOL} fileName="mondop.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${card.signOff}|${card.friend}`} caption={caption} state={state} disabled={!count} hint={count ? `বন্ধুকে লিংক পাঠালে সে ${name ? possessive(name) : "তোমার"} চালচিত্র দেখে নিজেরটা গুনতে পারবে।` : ""} />
             {count > 0 && <button type="button" className="kit-link mp-restart" onClick={restart}>শূন্য থেকে আবার গুনি</button>}
             <p className="mp-date">
               দুর্গাপূজা {yearLabel(PUJA.year)}: ষষ্ঠী <strong>সম্ভাব্য {dates.shashthi}</strong> (পঞ্জিকা অনুযায়ী, এলাকাভেদে এক দিন এদিক-ওদিক হতে পারে), বিজয়া দশমী <strong>{dates.dashami}</strong>। {PUJA.holidays}।{" "}
@@ -197,7 +197,7 @@ export function MondopBuilder() {
             </> : says ? <>
               <p>{bn(says.people)} জনের সাথে মেলানো হলো।{says.bucket && <> বেশিরভাগ মানুষ ঘুরেছে <strong>{says.bucket.label}</strong> মণ্ডপ।</>}</p>
               {says.moment && <p>সবচেয়ে বেশি মানুষের হয়েছে: <strong>{says.moment.label}</strong></p>}
-            </> : <p className="kit-status">যোগ হয়েছে! এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাবটা এখনই বলা যাবে না। বন্ধুদের লিংক পাঠাও।</p>}
+            </> : <p className="kit-status">যোগ হয়েছে! এখনো কম মানুষ মিলিয়েছে, তাই হিসাবটা এখনই বলা যাচ্ছে না। বন্ধুদের লিংক পাঠাও।</p>}
           </div>
         )}
       </section>

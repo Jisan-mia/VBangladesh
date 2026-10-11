@@ -105,7 +105,7 @@ export function PocketCard() {
             <div><span>ইফতার</span><strong>{day ? clock(day.iftar) : "আসছে"}</strong></div>
           </div>
           {day ? <p className="si-when">{card.times!.when} · {name}</p>
-            : live ? <p className="si-when">আজ রমজানের দিন না। সময়সূচির ভেতরের দিনগুলোতেই সময় দেখাবে।</p>
+            : live ? <p className="si-when">আজ রমজানের দিন না। রমজানের দিনগুলোতেই সময় দেখাবে।</p>
             : <p className="si-pending"><strong>ইসলামিক ফাউন্ডেশন সময়সূচি প্রকাশ করলেই এখানে যোগ হবে।</strong> আমরা নিজে হিসাব করে কোনো সময় বসাই না।</p>}
           <p className="si-source">
             {live
@@ -129,7 +129,7 @@ export function PocketCard() {
           </figure>
           <div className="si-controls">
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName={`sehri-iftar-${district}.png`} makeImage={() => cardBlob(card, format, site)} imageKey={key} caption={caption} state={state} hint="লিংকে শুধু জেলার নাম যায়। যে খুলবে, সে নিজের দিনের হিসাব দেখবে।" />
+            <ShareBar tool={TOOL} fileName={`sehri-iftar-${district}.png`} makeImage={() => cardBlob(card, format, site)} imageKey={key} caption={caption} state={state} hint="লিংকে শুধু জেলার নাম যায়। যে খুলবে, সে নিজের আজকের সময়টা দেখবে।" />
           </div>
         </div>
       </section>

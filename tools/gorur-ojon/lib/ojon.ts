@@ -185,7 +185,7 @@ export function bowlLine(cow: Cow) {
   const count = packetCount(cow.meat, cow.split, cow.packet);
   if (count === 1) return "একটা প্যাকেট, তবু কারও দরজায় ঈদের খুশি পৌঁছাবে।";
   if (count > 1) return `${bn(count)}টা প্যাকেট মানে ${bn(count)}বার কারও দরজায় কড়া নাড়া।`;
-  return "ভাগ কীভাবে হবে, সেটা তোমাদের পরিবারের ঠিক করা।";
+  return "ভাগ কীভাবে হবে, সেটা তোমাদের পরিবারই ঠিক করবে।";
 }
 
 export function previewTitle(cow: Cow) {

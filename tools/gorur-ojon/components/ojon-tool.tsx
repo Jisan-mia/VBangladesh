@@ -94,7 +94,7 @@ export function OjonTool() {
     <div className="ojon">
       {shared && sharedWeight && (
         <div className="ojon-shared" role="note">
-          <p><strong>তোমাকে একটা {shared.card === "bhag" ? "ভাগের হিসাব" : "গরুর মাপ"} পাঠানো হয়েছে।</strong> {shared.card === "bhag" ? shareEquation(shared) : `${shared.name ? possessive(shared.name) : "এই গরুর"} ওজন প্রায় ${monText(sharedWeight.mon)} মণ।`}</p>
+          <p><strong>কেউ তোমাকে একটা {shared.card === "bhag" ? "ভাগের হিসাব" : "গরুর মাপ"} পাঠিয়েছে।</strong> {shared.card === "bhag" ? shareEquation(shared) : `${shared.name ? possessive(shared.name) : "এই গরুর"} ওজন প্রায় ${monText(sharedWeight.mon)} মণ।`}</p>
           <button type="button" className="kit-secondary" onClick={yourTurn}>এবার আমাদের গরু মাপি</button>
         </div>
       )}

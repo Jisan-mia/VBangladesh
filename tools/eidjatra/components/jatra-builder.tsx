@@ -147,7 +147,7 @@ export function JatraBuilder() {
           </figure>
           <div className="jatra-share">
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="eidjatra.png" makeImage={() => cardBlob(trip, format, site, average)} imageKey={`${state}|${format}|${average?.people ?? 0}`} caption={caption(trip)} state={state} hint="লিংক পেলে বন্ধু তোমার পথের নকশা দেখবে, আর নিজেরটা আঁকবে।" />
+            <ShareBar tool={TOOL} fileName="eidjatra.png" makeImage={() => cardBlob(trip, format, site, average)} imageKey={`${state}|${format}|${average?.people ?? 0}`} caption={caption(trip)} state={state} hint="বন্ধুকে লিংক পাঠালে সে তোমার পথ দেখে নিজেরটাও আঁকতে পারবে।" />
           </div>
         </div>
 
@@ -155,7 +155,7 @@ export function JatraBuilder() {
           <h3>{added.status === "done" ? "তোমার ঘণ্টাটা যোগ হয়েছে" : "এবারের ঈদযাত্রায় তোমার ঘণ্টাটাও যোগ করবে?"}</h3>
           {trip.onTheWay ? <p>বাড়ি পৌঁছে ‘বাড়ি পৌঁছে গেছি’ বেছে নাও, তখন পুরো ঘণ্টাটা যোগ করতে পারবে। পথের মাঝের হিসাব যোগ করলে সবার গড় ভুল হয়ে যেত।</p>
             : added.status !== "done" ? <>
-              <p>যোগ করলে দেখাবে, {routeWords(trip)} {mode(trip.mode).by} যারা জানিয়েছে, তাদের গড়ে কত ঘণ্টা লেগেছে। শুধু পথ, বাহন আর ঘণ্টার ঘরটা গোনা হয়; নাম বা আর কিছু যায় না।</p>
+              <p>যোগ করলে দেখাবে, {routeWords(trip)} {mode(trip.mode).by} যারা জানিয়েছে, তাদের গড়ে কত ঘণ্টা লেগেছে। শুধু পথ, বাহন আর ঘণ্টার ঘরটা গোনা হয়। নাম বা আর কিছু যায় না।</p>
               <button type="button" className="kit-secondary" onClick={addMine} disabled={added.status === "sending"}>{added.status === "sending" ? "যোগ হচ্ছে…" : "আমার ঘণ্টাটা যোগ করো"}</button>
               {added.status === "failed" && <p className="kit-status" role="alert">এখন যোগ করা গেল না। নেট ঠিক আছে কি না দেখে আরেকবার চেষ্টা করো।</p>}
             </>

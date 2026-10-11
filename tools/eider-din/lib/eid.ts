@@ -137,9 +137,9 @@ export function currentEid(now: Date) {
 export function eidLine(picked: readonly ItemId[]) {
   const has = (id: ItemId) => picked.includes(id);
   const count = picked.length;
-  if (count === 0) return "এখনো কিছু টিক দেওয়া হয়নি।";
+  if (count === 0) return "এখনো একটাও টিক দাওনি।";
   if (count === TOTAL) return "পুরো ২৫! এমন ঈদ বছরে একবারই আসে।";
-  if (has("salami") && has("salami-dewa")) return "নিলেও, দিলেও — এটাই বড় হওয়া।";
+  if (has("salami") && has("salami-dewa")) return "নিলেও, দিলেও। এটাই বড় হওয়া।";
   if (has("salami-dewa")) return "এবার শুধু দিলাম। বড় হয়ে গেছি, মেনে নিলাম।";
   if (has("video") && !has("kolakuli")) return "দূরে আছি, তবু ভিডিও কলেই ঈদ মোবারক।";
   if (count >= 18) return "চাঁদরাত থেকে সন্ধ্যা, একটুও ফাঁক নেই।";
@@ -149,7 +149,7 @@ export function eidLine(picked: readonly ItemId[]) {
   if (has("semai") && has("polao") && has("jorda")) return "পেট ভরা, মন ভরা।";
   if (has("faka")) return "ফাঁকা শহর, ভরা মন।";
   if (count <= 3) return "অল্প কয়টা, কিন্তু ঈদ তো ঈদই।";
-  if (count <= 10) return "হাতে মেহেদি, মনে খুশি — ঈদ জমে গেছে।";
+  if (count <= 10) return "হাতে মেহেদি, মনে খুশি। ঈদ জমে গেছে।";
   return "সেমাইয়ের মতোই মিষ্টি একটা দিন।";
 }
 

@@ -35,7 +35,7 @@ export default function EidjatraPage() {
         <section className="container section jatra-guide" id="guide" aria-labelledby="guide-title">
           <h2 id="guide-title">{site.guideTitle}</h2>
           <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{bn(index + 1)}</span><p>{step}</p></li>)}</ol>
-          <p className="jatra-note">এখানে কোনো রাস্তার খবর, ম্যাপ বা সময়সূচি নেই; ঘণ্টাটা তোমার নিজের দেওয়া। ‘যারা জানিয়েছে’ গড় শুধু এখানে যোগ করা ঘণ্টা থেকে, একই পথে একই বাহনে অন্তত ৫০ জন হলে।</p>
+          <p className="jatra-note">এখানে কোনো রাস্তার খবর, ম্যাপ বা সময়সূচি নেই। ঘণ্টাটা তোমার নিজের দেওয়া। ‘যারা জানিয়েছে’ গড় আসে শুধু এখানে যোগ করা ঘণ্টা থেকে, তাও একই পথে একই বাহনে অন্তত ৫০ জন হলে।</p>
         </section>
         <Faq items={site.faq} />
       </div>

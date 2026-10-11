@@ -199,7 +199,7 @@ export function Shobdojot() {
             })}
           </div>
           {round.outcome === 'playing' ? <>
-            <p className="jot-help">{round.picked.length ? 'ভুল টুকরো বসালে সেটায় ছুঁয়ে ফেরত নাও।' : 'টুকরোগুলো ঠিক ক্রমে ছোঁও, শব্দটা ওপরে সাজবে।'}</p>
+            <p className="jot-help">{round.picked.length ? 'ভুল টুকরো বসালে সেটায় চাপলেই ফেরত আসবে।' : 'টুকরোগুলো একটার পর একটা চাপো, শব্দটা ওপরে সাজবে।'}</p>
             <div className="jot-pool" role="group" aria-label="টুকরোগুলো">
               {tileOrder(puzzle.id).map(tile => <button key={tile} type="button" className="jot-tile" disabled={round.picked.includes(tile)} aria-label={`${puzzle.parts[tile]} বসাও`} onClick={() => choose(tile)}>{puzzle.parts[tile]}</button>)}
             </div>

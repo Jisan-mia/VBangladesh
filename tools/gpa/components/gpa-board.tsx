@@ -98,7 +98,7 @@ export function GpaBoard() {
         </div>
 
         <div className="gpa-sheet">
-          <p className="gpa-sheet-head">প্রতিটা বিষয়ের গ্রেড ছোঁও</p>
+          <p className="gpa-sheet-head">প্রতিটা বিষয়ের গ্রেড বেছে নাও</p>
           {subjects.map((subject, index) => <GradeRow key={`${result.exam}-${result.group}-${index}`} id={`subject-${index}`} name={subject.name} hint={subject.hint} value={result.grades[index]} onPick={grade => pick(index, grade)} />)}
           <GradeRow id="subject-fourth" name="৪র্থ বিষয়" hint={`${fourthHint(result.exam, result.group)} · ২-এর ওপরের পয়েন্টটুকু যোগ হয়`} value={result.fourth} onPick={grade => setResult(current => ({ ...current, fourth: grade }))} />
         </div>
@@ -127,14 +127,14 @@ export function GpaBoard() {
               {thanks.map(item => <button type="button" key={item.id} aria-pressed={result.thanks === item.id} onClick={() => setResult(current => ({ ...current, thanks: current.thanks === item.id ? "" : item.id }))}>{item.label}</button>)}
             </fieldset>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="jipie-chirkut.png" makeImage={() => chitBlob(result, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} hint="লিংক পেলে বন্ধু তোমার চিরকুট দেখবে, আর নিজেরটা হিসাব করতে পারবে।" />
+            <ShareBar tool={TOOL} fileName="jipie-chirkut.png" makeImage={() => chitBlob(result, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} hint="বন্ধুকে লিংক পাঠালে সে তোমার চিরকুট দেখে নিজেরটা হিসাব করতে পারবে।" />
           </div>
         </div>
       </section>
 
       <aside className="gpa-source" aria-label="হিসাবের নিয়ম আর সূত্র">
         <h2>হিসাবটা যেভাবে হয়</h2>
-        <p>A+ ৫, A ৪, A- ৩.৫, B ৩, C ২, D ১, F ০। আবশ্যিক বিষয়গুলোর পয়েন্ট যোগ হয়, ৪র্থ বিষয়ের শুধু ২-এর ওপরের অংশটুকু যোগ হয়, তারপর ভাগ হয় আবশ্যিক বিষয়ের সংখ্যা দিয়ে (এসএসসিতে ৯, এইচএসসিতে ৬)। সর্বোচ্চ জিপিএ ৫.০০। আবশ্যিক কোনো বিষয়ে F থাকলে জিপিএ আসে না; ৪র্থ বিষয়ে F হলে আসে।</p>
+        <p>A+ ৫, A ৪, A- ৩.৫, B ৩, C ২, D ১, F ০। আবশ্যিক বিষয়গুলোর পয়েন্ট যোগ হয়, ৪র্থ বিষয়ের শুধু ২-এর ওপরের অংশটুকু যোগ হয়, তারপর ভাগ হয় আবশ্যিক বিষয়ের সংখ্যা দিয়ে (এসএসসিতে ৯, এইচএসসিতে ৬)। সর্বোচ্চ জিপিএ ৫.০০। আবশ্যিক কোনো বিষয়ে F থাকলে জিপিএ আসে না। ৪র্থ বিষয়ে F হলে আসে।</p>
         <p className="gpa-source-line"><strong>সূত্র:</strong> <a href="http://www.educationboard.gov.bd/dhaka/rules_business.php" rel="noopener" target="_blank">শিক্ষা বোর্ডের গ্রেডিং নিয়ম</a>, আর ঢাকা বোর্ডের প্রকাশিত <a href="https://dhakaeducationboard.gov.bd/data/20251116123034975415.pdf" rel="noopener" target="_blank">এইচএসসি ২০২৫</a> ও <a href="https://dhakaeducationboard.gov.bd/site/Sresc_result_final_ssc_2026.pdf" rel="noopener" target="_blank">এসএসসি ২০২৬</a>-এর ফল মিলিয়ে যাচাই করা (অক্টোবর ২০২৬)। এটা শুধু হিসাব, অফিসিয়াল রেজাল্ট না। আসল রেজাল্ট দেখো <a href="http://www.educationboardresults.gov.bd" rel="noopener" target="_blank">educationboardresults.gov.bd</a>-তে।</p>
       </aside>
     </div>

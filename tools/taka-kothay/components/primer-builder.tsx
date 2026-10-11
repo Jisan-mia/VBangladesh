@@ -154,7 +154,7 @@ export function PrimerBuilder() {
           </figure>
           <div className="tk-controls">
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="taka-kothay.png" makeImage={() => cardBlob(primer, format, site)} imageKey={`${state}|${format}`} caption={caption(primer)} state={state} disabled={!ready} hint="লিংক পেলে বন্ধু এই অঙ্কটাই কথায় দেখবে, তারপর নিজেরটা লিখবে।" />
+            <ShareBar tool={TOOL} fileName="taka-kothay.png" makeImage={() => cardBlob(primer, format, site)} imageKey={`${state}|${format}`} caption={caption(primer)} state={state} disabled={!ready} hint="বন্ধুকে লিংক পাঠালে সে এই অঙ্কটাই কথায় দেখবে, তারপর নিজেরটা লিখতে পারবে।" />
           </div>
         </div>
       </section>

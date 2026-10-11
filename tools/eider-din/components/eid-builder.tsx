@@ -123,7 +123,7 @@ export function EidBuilder() {
         )}
 
         <div className="ed-items" id="ed-items">
-          <p className="ed-hint">ঈদের দিন যা যা হলো, টিক দাও। প্রতিটা টিকে হাতে একটা নকশা বসবে।</p>
+          <p className="ed-hint">যেগুলো হয়েছে, সেগুলোয় চাপো। হাতে একটা একটা করে নকশা বসবে।</p>
           {chapters.map(chapter => (
             <fieldset className="ed-chapter" key={chapter.id}>
               <legend>{chapter.label} <small>· {chapter.region}</small></legend>
@@ -161,10 +161,10 @@ export function EidBuilder() {
               <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="eider-din.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${top?.id ?? ""}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} disabled={!picked.length} hint={picked.length ? "লিংক পেলে বন্ধু দেখবে তোমার হাত, আর নিজেরটা মেলাতে পারবে।" : ""} />
+            <ShareBar tool={TOOL} fileName="eider-din.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${top?.id ?? ""}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} disabled={!picked.length} hint={picked.length ? "লিংক পাঠালে বন্ধুও নিজের হাত বানিয়ে তোমার সাথে মিলিয়ে দেখতে পারবে।" : ""} />
             {info && (
               <p className="ed-date">
-                {eidTitle(info.eid)}: <strong>সম্ভাব্য {info.when}</strong>। চাঁদ দেখার ওপর নির্ভর করে; ঠিক দিন জানায় জাতীয় চাঁদ দেখা কমিটি। <a href={info.source.url} target="_blank" rel="noopener noreferrer">সূত্র</a> · <a href="/koto-din-baki#o=eid-fitr">আর কত দিন বাকি?</a>
+                {eidTitle(info.eid)}: <strong>সম্ভাব্য {info.when}</strong>। চাঁদ দেখার ওপর নির্ভর করে। ঠিক দিন জানায় জাতীয় চাঁদ দেখা কমিটি। <a href={info.source.url} target="_blank" rel="noopener noreferrer">সূত্র</a> · <a href="/koto-din-baki#o=eid-fitr">আর কত দিন বাকি?</a>
               </p>
             )}
           </div>
@@ -180,7 +180,7 @@ export function EidBuilder() {
             </> : everyone && everyone.total >= TALLY_MIN ? <>
               <p>{bn(everyone.total)} জনের সাথে মেলানো হলো। {top ? <>এবার ঈদে <strong>{top.label}</strong> এগিয়ে, কার্ডেও লেখা উঠেছে।</> : "কোনো রং এখনো একা এগিয়ে নেই।"}</p>
               {mostDone && <p>সবচেয়ে বেশি মানুষের হয়েছে: <strong>{mostDone.label}</strong></p>}
-            </> : <p className="kit-status">যোগ হয়েছে! এখনো খুব কম মানুষ মিলিয়েছে, তাই কোন রং এগিয়ে সেটা এখনই বলা যাবে না। বন্ধুদের লিংক পাঠাও।</p>}
+            </> : <p className="kit-status">যোগ হয়েছে! এখনো কম মানুষ মিলিয়েছে, তাই কোন রং এগিয়ে, এখনই বলা যাচ্ছে না। বন্ধুদের লিংক পাঠাও।</p>}
           </div>
         )}
       </section>

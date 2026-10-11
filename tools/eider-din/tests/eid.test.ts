@@ -44,11 +44,11 @@ test("names are NFC, lose control and direction-override characters, and are cap
 });
 
 test("the human line comes from what was ticked", () => {
-  assert.equal(eidLine(["salami", "salami-dewa"]), "নিলেও, দিলেও — এটাই বড় হওয়া।");
+  assert.equal(eidLine(["salami", "salami-dewa"]), "নিলেও, দিলেও। এটাই বড় হওয়া।");
   assert.equal(eidLine(items.map(item => item.id)), "পুরো ২৫! এমন ঈদ বছরে একবারই আসে।");
   assert.equal(eidLine(["ghum"]), "ঈদের আসল আনন্দ দুপুরের ঘুমে।");
   assert.equal(eidLine(["video", "semai"]), "দূরে আছি, তবু ভিডিও কলেই ঈদ মোবারক।");
-  assert.equal(eidLine([]), "এখনো কিছু টিক দেওয়া হয়নি।");
+  assert.equal(eidLine([]), "এখনো একটাও টিক দাওনি।");
   assert.deepEqual(toggleItem(toggleItem(["semai"], "ghum"), "semai"), ["ghum"]);
 });
 
