@@ -108,4 +108,5 @@ The owner's bar:
 - `title/H1:` …
 - `tests:` N passed · `tsc:` clean for my files
 - `shots:` paths
+- `keywords:` 8–12 lowercase search words for `lib/search-keywords.ts`: English, Banglish and Bangla words people would type to find this game (the orchestrator adds them)
 - `notes:` judgement calls, performance notes, IP "what we avoided", shared changes wanted

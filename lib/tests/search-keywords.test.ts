@@ -3,9 +3,13 @@ import test from 'node:test';
 import { catalog } from '../catalog';
 import { searchKeywords } from '../search-keywords';
 
-test('every tool has search keywords, and no unknown tool has any', () => {
-  const slugs = catalog.map((tool) => tool.slug).sort();
-  assert.deepEqual(Object.keys(searchKeywords).sort(), slugs);
+// A tool still being built carries the start-tool placeholder description; it gets keywords when it's finished.
+const building = (description: string) => description.endsWith('খুলে দেখো, খেলে দেখো।');
+
+test('every finished tool has search keywords, and no unknown tool has any', () => {
+  const slugs = new Set(catalog.map((tool) => tool.slug));
+  for (const slug of Object.keys(searchKeywords)) assert.ok(slugs.has(slug), `${slug} is not in the catalog`);
+  for (const tool of catalog) if (!building(tool.description)) assert.ok(searchKeywords[tool.slug], `${tool.slug} has no search keywords`);
 });
 
 test('each tool has 6 to 14 unique, non-empty keywords of at most 40 characters', () => {

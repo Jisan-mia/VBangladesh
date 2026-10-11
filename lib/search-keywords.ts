@@ -1,5 +1,13 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "kalbaishakhi-aam": ["mango game", "aam", "aam kurano", "storm", "jhor", "কালবৈশাখী", "আম কুড়ানো", "ঝড়", "catch game", "বাংলা গেম"],
+  "dudh-uthlano": ["milk game", "dudh", "boil", "timing game", "kitchen", "দুধ", "উথলানো", "রান্নাঘর", "টাইমিং গেম", "বাংলা গেম"],
+  "jhalmuri-sap": ["snake game", "snake", "sap", "shap", "jhalmuri", "সাপ খেলা", "সাপের গেম", "পুরোনো মোবাইলের গেম", "retro game", "বাংলা গেম"],
+  "danguli": ["tipcat", "dang guli", "dangguli", "village game", "desi game", "ডাংগুলি খেলা", "গ্রামের খেলা", "দেশি খেলা", "ছোটবেলার খেলা", "বাংলা গেম"],
+  "antenna-thik-koro": ["antenna", "tv", "90s", "television", "rooftop", "অ্যান্টেনা", "টিভি", "ঝিরঝির", "নব্বই দশক", "বাংলা গেম"],
+  "chor-police": ["chor police", "chor dakat", "chit game", "babu", "family game", "চোর পুলিশ", "চিরকুট", "পরিবারের খেলা", "এক ফোনে চারজন", "বাংলা গেম"],
+  "tarer-fanke-belun": ["balloon game", "belun", "balloon", "wire", "tar", "বেলুন", "তারের জট", "ঢাকার তার", "ওড়ানোর গেম", "বাংলা গেম"],
+  "sir-ghurlei-thamo": ["chit", "chirkut", "class game", "school game", "classroom", "teacher", "চিরকুট", "স্কুলের খেলা", "ক্লাস", "স্যার", "ম্যাডাম"],
   "chhotto-para": ["village", "village scene", "village drawing", "countryside", "gram", "gaon", "scenery", "গ্রাম", "গাঁ", "পল্লি", "গ্রামের দৃশ্য"],
   "alpana": ["alpona", "alpana design", "rangoli", "drawing", "finger drawing", "pohela boishakh", "boishakh", "ekushey", "puja", "আলপনা ডিজাইন", "বৈশাখ", "একুশে"],
   "bhashar-chhobi": ["dialect", "regional words", "anchalik bhasha", "anchalik", "jela", "district words", "upobhasha", "আঞ্চলিক ভাষা", "উপভাষা", "জেলার শব্দ"],
