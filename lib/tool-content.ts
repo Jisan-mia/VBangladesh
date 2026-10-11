@@ -108,6 +108,7 @@ import { site as bhangti_nai } from '../tools/bhangti-nai/content';
 import { site as jam_chharao } from '../tools/jam-chharao/content';
 import { site as shobdo_khoja } from '../tools/shobdo-khoja/content';
 import { site as carrom } from '../tools/carrom/content';
+import { site as pati_buni } from '../tools/pati-buni/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -220,6 +221,7 @@ export const toolContent = {
   'jam-chharao': jam_chharao,
   'shobdo-khoja': shobdo_khoja,
   'carrom': carrom,
+  'pati-buni': pati_buni,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
