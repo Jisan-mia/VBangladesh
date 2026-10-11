@@ -254,7 +254,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 17 | sir-ghurlei-thamo | স্যার ঘুরলেই থামো | গেম | G20 | building | games-2026-10.md §4.3 #20 |
 | 17 | deri-hoye-gelo | দেরি হয়ে গেল! | গেম | G16 | building | games-2026-10.md §4.3 #16 |
 | 17 | chor-police | চোর-ডাকাত-পুলিশ-বাবু | গেম | G11 | building | games-2026-10.md §4.3 #11 |
-| 17 | bostar-pahar | বস্তার পাহাড় | গেম | G18 | todo | games-2026-10.md §4.3 #18 |
+| 17 | bostar-pahar | বস্তার পাহাড় | গেম | G18 | building | games-2026-10.md §4.3 #18 |
 | 17 | tarer-fanke-belun | তারের ফাঁকে বেলুন | গেম | G17 | todo | games-2026-10.md §4.3 #17 |
 | 18 | paka-kancha | পাকা-কাঁচা | গেম | G21 | todo | games-2026-10.md §4.3 #21 |
 | 18 | jora-melao | জোড়া মেলাও | গেম | G25 | todo | games-2026-10.md §4.3 #25 |
