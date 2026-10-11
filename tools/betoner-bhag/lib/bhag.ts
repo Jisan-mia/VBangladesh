@@ -150,7 +150,7 @@ export function monthLine(month: Month) {
 
 export function previewTitle(month: Month) {
   const top = biggest(month);
-  return `${month.name ? possessive(month.name) : "এক বন্ধুর"} বেতনের সবচেয়ে বড় বাটি ${top.label}, ${bn(top.share)}% — তোমারটা কোনটা?`;
+  return `${month.name ? possessive(month.name) : "এক বন্ধুর"} বেতনের সবচেয়ে বড় বাটি ${top.label}, ${bn(top.share)}%। তোমারটা কোনটা?`;
 }
 
 export function caption(month: Month) {

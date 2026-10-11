@@ -37,10 +37,10 @@ test("starting on the break day itself saves for the next one", () => {
 
 test("the human line follows progress, and the brief's half-full line is exact", () => {
   const p = plan({ ...base, until: "2026-11-09" })!;
-  assert.equal(bankLine(base, p, 15), "অর্ধেক ভরা — বাকি অর্ধেক আরও সহজ।");
+  assert.equal(bankLine(base, p, 15), "অর্ধেক ভরা, বাকি অর্ধেক আরও সহজ।");
   assert.equal(bankLine(base, p, 30), "ব্যাংক ভরে গেছে, এবার ভাঙার পালা!");
   assert.equal(bankLine({ until: "2026-11-09" }, p, null), "দিন গুনে গুনে ব্যাংক ভরবে।");
-  assert.equal(bankLine(base, plan(base)!, null), "চাঁদরাতে ব্যাংক ভাঙার অপেক্ষা শুরু।");
+  assert.equal(bankLine(base, plan(base)!, null), "চাঁদরাত এলে তবেই ব্যাংক ভাঙা।");
 });
 
 test("the coin grid never draws more than 150 circles", () => {
@@ -97,7 +97,7 @@ test("progress is saved in the browser with coins, and a broken store is ignored
 test("captions and link previews are personal, with progress only when shown", () => {
   const p = plan(base)!;
   assert.equal(caption({ ...base, coins: null }, p), "মাটির ব্যাংকে রোজ ২০ টাকা জমাচ্ছি, ঈদুল ফিতরের আগে ভাঙলে হবে ৳৩,০২০! তুমিও আমার সাথে জমাবে?");
-  assert.equal(previewTitle({ ...base, name: "রাফি", coins: 18 }, p), "রাফির মাটির ব্যাংকে ১৫১-এ ১৮ · ৳৩৬০ জমল — তোমার ব্যাংকে কত?");
+  assert.equal(previewTitle({ ...base, name: "রাফি", coins: 18 }, p), "রাফির মাটির ব্যাংকে ১৫১-এ ১৮ · ৳৩৬০ জমল। তোমার ব্যাংকে কত?");
 });
 
 test("the server share normalizes and previews", () => {

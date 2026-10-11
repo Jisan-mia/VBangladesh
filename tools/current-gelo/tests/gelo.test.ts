@@ -26,7 +26,7 @@ test("share normalizes state and gives a personal preview", () => {
   assert.equal(share.normalize("dv=khulna&m=430&d=2027-05-02&n=3&junk=1"), "m=430&n=3&dv=khulna&d=2027-05-02");
   assert.equal(share.normalize("hello"), null);
   const { title } = share.preview("m=430&n=3&dv=khulna&d=2027-05-02");
-  assert.equal(title, "২ মে খুলনায় ৭ ঘণ্টা ১০ মিনিট কারেন্ট ছিল না — তোমার এলাকায় কত ঘণ্টা?");
+  assert.equal(title, "২ মে খুলনায় ৭ ঘণ্টা ১০ মিনিট কারেন্ট ছিল না। তোমার এলাকায় কত ঘণ্টা?");
   assert.equal(title, title.normalize("NFC"));
   assert.match(previewTitle({ minutes: 0, times: 0, division: "", date: "" }), /^আজ একবারও কারেন্ট যায়নি/);
 });

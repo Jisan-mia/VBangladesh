@@ -10,7 +10,7 @@ export const share: ToolShare = {
     const bank = parseShareHash(state, dhakaToday(new Date()));
     const p = bank && plan(bank);
     return {
-      title: bank && p ? previewTitle(bank, p) : "রোজ একটু, মাটির ব্যাংকে — তোমার ব্যাংকে কত?",
+      title: bank && p ? previewTitle(bank, p) : "রোজ একটু, মাটির ব্যাংকে। তোমার ব্যাংকে কত?",
       description: "রোজ বা প্রতি সপ্তাহে কত জমাবে আর কবে ভাঙবে বেছে নাও, দেখো ঈদে বা বৈশাখে কত হবে। পয়সা ফেলো, নিজের মাটির ব্যাংকের কার্ড বানাও।",
     };
   },

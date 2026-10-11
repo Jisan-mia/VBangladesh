@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
-import { biggest, bn, caption, categories, cleanName, crowdAverage, FLEX_INDEX, flexOptions, labels, MAX_NAME, monthHash, monthLine, monthTitle, parseMonth, possessive, sample, SAVE_INDEX, setShare, splitText, tallyItems, type FlexId, type Month } from "../lib/bhag";
+import { biggest, bn, caption, categories, cleanName, crowdAverage, FLEX_INDEX, flexOptions, labels, MAX_NAME, monthHash, monthLine, monthTitle, parseMonth, sample, SAVE_INDEX, setShare, splitText, tallyItems, type FlexId, type Month } from "../lib/bhag";
 import { cardBlob, drawCard, drawScene, LIVE_HEIGHT, SCENE_WIDTH } from "../lib/draw-carrier";
 
 const TOOL = "betoner-bhag";
@@ -117,7 +117,7 @@ export function TiffinTool() {
     <div className="bb">
       {shared && (
         <div className="bb-shared" role="note">
-          <p><strong>{shared.name ? possessive(shared.name) : "এক বন্ধুর"} মাস তোমার কাছে এসেছে।</strong> সবচেয়ে বড় বাটি {biggest(shared).label}, {bn(biggest(shared).share)}%। নিচে ওর টিফিন ক্যারিয়ার বসানো আছে।</p>
+          <p><strong>{shared.name || "এক বন্ধু"} নিজের মাসের ভাগ পাঠিয়েছে।</strong> সবচেয়ে বড় বাটি {biggest(shared).label}, {bn(biggest(shared).share)}%। নিচে ওর টিফিন ক্যারিয়ার বসানো আছে।</p>
           <button type="button" className="kit-secondary" onClick={yourTurn}>এবার আমারটা ভাগ করি</button>
         </div>
       )}
@@ -187,7 +187,7 @@ export function TiffinTool() {
             <button type="button" className="kit-secondary" onClick={compareWithEveryone} disabled={compared === "sending"}>{compared === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
             {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
           </> : everyone.total < CROWD_MIN ? (
-            <p className="kit-status">তুমিসহ এখন পর্যন্ত {bn(everyone.total)} জন ভাগ করেছে। {bn(CROWD_MIN)} জন হলে গড় দেখাব; বন্ধুদের লিংক পাঠাও!</p>
+            <p className="kit-status">তুমিসহ এখন পর্যন্ত {bn(everyone.total)} জন ভাগ করেছে। {bn(CROWD_MIN)} জন হলে গড় দেখাব। বন্ধুদের লিংক পাঠাও!</p>
           ) : <>
             <p>যারা ভাগ করেছে ({bn(everyone.total)} জন), তাদের গড়ের পাশে তোমার ভাগ। গড়টা মোটামুটি, কারণ ঘর ধরে গোনা।</p>
             <ul className="bb-bars">

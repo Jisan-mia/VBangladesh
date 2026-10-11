@@ -103,7 +103,7 @@ export function crowd(tally: Counts | null, day: string, division: DivisionId | 
   const country = reports(tally, day, "");
   return country.count >= MIN_SAMPLE ? { scope: "country", ...country, line: `সারা দেশে গড় ${roughHours(country.hours)}` } : null;
 }
-export const CROWD_NOTE = "যারা জানিয়েছে — অফিশিয়াল হিসাব নয়";
+export const CROWD_NOTE = "যারা জানিয়েছে, অফিশিয়াল হিসাব না";
 
 const numbers = new Intl.NumberFormat("bn-BD");
 export const bn = (value: number) => numbers.format(value);
@@ -187,5 +187,5 @@ export function previewTitle({ minutes, division, date }: Day) {
   const when = dateLabel(date) || "আজ";
   const where = area ? ` ${area.at}` : "";
   if (!minutes) return `${when}${where} একবারও কারেন্ট যায়নি! তোমার এলাকায় কেমন?`;
-  return `${when}${where} ${duration(minutes)} কারেন্ট ছিল না — তোমার এলাকায় কত ঘণ্টা?`;
+  return `${when}${where} ${duration(minutes)} কারেন্ট ছিল না। তোমার এলাকায় কত ঘণ্টা?`;
 }

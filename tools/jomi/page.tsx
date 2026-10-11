@@ -23,7 +23,7 @@ export default function JomiPage() {
           <caption>এক এককে কত বর্গফুট</caption>
           <tbody>{units.filter(unit => unit.id !== 'sqft').map(unit => <tr key={unit.id}><th scope="row">১ {unit.label}{'also' in unit ? <small> ({unit.also})</small> : null}</th><td>{unit.sqft.toLocaleString('bn-BD', { maximumFractionDigits: 4 })} বর্গফুট</td></tr>)}</tbody>
         </table>
-        <p>১ বিঘা = ২০ কাঠা, ১ কাঠা = ১৬ ছটাক, ১ একর = ১০০ শতাংশ। সরকারি তালিকায় ১ বিঘাকে “৩৩ শতাংশ” লেখা থাকে; ১৪,৪০০ ÷ ৪৩৫.৬ করলে আসে {amountText(convert(1, 'bigha', 'shotangsho'))}, তাই এখানে সেটাই দেখায়। বর্গমিটারের হিসাব ১ ফুট = ০.৩০৪৮ মিটার ধরে।</p>
+        <p>১ বিঘা = ২০ কাঠা, ১ কাঠা = ১৬ ছটাক, ১ একর = ১০০ শতাংশ। সরকারি তালিকায় ১ বিঘাকে “৩৩ শতাংশ” লেখা থাকে। ১৪,৪০০ ÷ ৪৩৫.৬ করলে আসে {amountText(convert(1, 'bigha', 'shotangsho'))}, তাই এখানে সেটাই দেখায়। বর্গমিটারের হিসাব ১ ফুট = ০.৩০৪৮ মিটার ধরে।</p>
         <p><strong>তোমার এলাকায় আলাদা হতে পারে।</strong> শতাংশ আর একর সারা দেশে এক, কিন্তু অনেক জায়গায় বিঘা-কাঠার মাপ অন্য রকম চলে। গণ্ডা, কানি এখানে রাখিনি, কারণ এলাকাভেদে এগুলোর মাপ এত আলাদা যে সরকারি তালিকাতেও একাধিক মান লেখা।</p>
         <p>এটা শুধু এককের হিসাব। জমি মাপা, দাগ-খতিয়ান বা দলিলের কাজ এটা না। কেনাবেচা বা ভাগাভাগির আগে আমিন, সার্ভেয়ার বা ভূমি অফিসে মিলিয়ে নিও।</p>
         <ul className="jomi-links">{sources.map(source => <li key={source.url}><a href={source.url} rel="external">{source.label} ↗</a></li>)}</ul>

@@ -97,11 +97,11 @@ export function bankLine(goal: Pick<Goal, "until">, p: Plan, coins: number | nul
     if (coins === 0) return "প্রথম পয়সাটাই সবচেয়ে কঠিন।";
     if (part < 0.25) return "ঠং! শুরুটা হয়ে গেছে।";
     if (part < 0.5) return "ঝাঁকালে এখন ঝনঝন শব্দ হয়।";
-    if (part < 0.75) return "অর্ধেক ভরা — বাকি অর্ধেক আরও সহজ।";
+    if (part < 0.75) return "অর্ধেক ভরা, বাকি অর্ধেক আরও সহজ।";
     return "আর অল্প, ব্যাংকটা ভারী হয়ে এসেছে।";
   }
   switch (goal.until) {
-    case "eid-fitr": case "eid-adha": return "চাঁদরাতে ব্যাংক ভাঙার অপেক্ষা শুরু।";
+    case "eid-fitr": case "eid-adha": return "চাঁদরাত এলে তবেই ব্যাংক ভাঙা।";
     case "boishakh": return "বৈশাখী মেলায় নিজের জমানো টাকায় কেনাকাটা।";
     case "durga": return "পূজার মেলায় নিজের জমানো টাকায় কেনাকাটা।";
     case "christmas": return "বড়দিনের আগে ব্যাংক ভাঙার অপেক্ষা।";
@@ -126,8 +126,8 @@ export function caption(bank: Bank, p: Plan) {
 
 export function previewTitle(bank: Bank, p: Plan) {
   const who = bank.name ? possessive(bank.name) : "এক বন্ধুর";
-  if (bank.coins !== null) return `${who} মাটির ব্যাংকে ${progressLine(bank.per, p, bank.coins)} — তোমার ব্যাংকে কত?`;
-  return `${who} মাটির ব্যাংক: ${everyWord(bank.every)} ${bn(bank.per)} টাকা, ${p.on} ৳${bn(p.total)} — তুমিও জমাবে?`;
+  if (bank.coins !== null) return `${who} মাটির ব্যাংকে ${progressLine(bank.per, p, bank.coins)}। তোমার ব্যাংকে কত?`;
+  return `${who} মাটির ব্যাংক: ${everyWord(bank.every)} ${bn(bank.per)} টাকা, ${p.on} ৳${bn(p.total)}। তুমিও জমাবে?`;
 }
 
 export function cleanText(text: string, max: number) {

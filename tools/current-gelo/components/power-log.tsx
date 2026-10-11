@@ -230,7 +230,7 @@ export function PowerLog() {
           </figure>
           <div className="cg-share">
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="current-gelo.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${crowdInfo?.line ?? ""}`} caption={caption(day)} state={state} disabled={!ready} hint="লিংক পেলে বন্ধু তোমার মোমবাতি দেখবে, আর নিজের এলাকার হিসাব দেবে।" />
+            <ShareBar tool={TOOL} fileName="current-gelo.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${crowdInfo?.line ?? ""}`} caption={caption(day)} state={state} disabled={!ready} hint="বন্ধুকে পাঠাও। সে তোমার মোমবাতি দেখবে, চাইলে নিজের এলাকার হিসাবও দেবে।" />
           </div>
         </div>
 

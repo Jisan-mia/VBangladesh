@@ -212,7 +212,7 @@ export function BankBuilder() {
         <h2 id="mb-result-title">তোমার মাটির ব্যাংকের কার্ড</h2>
         <div className="mb-result-body">
           <figure className="kit-card" data-format={format}>
-            {p ? <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-label={caption(shared, p)} /> : <p className="mb-problem">ওপরে ভাঙার দিন বাছলে কার্ড এখানে দেখাবে।</p>}
+            {p ? <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-label={caption(shared, p)} /> : <p className="mb-problem">ভাঙার দিন বেছে নিলে কার্ডটা এখানে দেখাবে।</p>}
             {previewError && <p className="kit-status" role="alert">কার্ডের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
           </figure>
           <div className="mb-controls">
@@ -229,7 +229,7 @@ export function BankBuilder() {
               <span>কত জমল, সেটাও দেখাও <small>না দিলে কার্ডে আর লিংকে শুধু লক্ষ্যটা থাকবে</small></span>
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="matir-bank.png" makeImage={() => cardBlob(shared, p!, format, site)} imageKey={`${state}|${format}`} caption={p ? caption(shared, p) : ""} state={state} disabled={!p} hint="লিংক পেলে বন্ধু তোমার লক্ষ্যটা দেখবে, চাইলে একই লক্ষ্যে নিজের ব্যাংক শুরু করবে।" />
+            <ShareBar tool={TOOL} fileName="matir-bank.png" makeImage={() => cardBlob(shared, p!, format, site)} imageKey={`${state}|${format}`} caption={p ? caption(shared, p) : ""} state={state} disabled={!p} hint="বন্ধুকে পাঠাও। সে চাইলে একই লক্ষ্যে নিজের ব্যাংক শুরু করতে পারবে।" />
           </div>
         </div>
       </section>

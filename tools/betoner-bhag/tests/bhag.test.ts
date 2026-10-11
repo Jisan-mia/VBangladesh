@@ -80,8 +80,8 @@ test("names are NFC, capped, and lose control and direction characters", () => {
 test("share.ts normalizes, previews personally and only tallies fixed ids", () => {
   assert.equal(share.normalize("p=35,25,10,5,15,10&n=রাফি&x=1"), "p=35%2C25%2C10%2C5%2C15%2C10&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF");
   assert.equal(share.normalize("p=1,2,3"), null);
-  assert.equal(share.preview("p=35,25,10,5,15,10&n=রাফি").title, "রাফির বেতনের সবচেয়ে বড় বাটি বাসা ভাড়া, ৩৫% — তোমারটা কোনটা?");
-  assert.equal(previewTitle(sample), "এক বন্ধুর বেতনের সবচেয়ে বড় বাটি বাসা ভাড়া, ৩৫% — তোমারটা কোনটা?");
+  assert.equal(share.preview("p=35,25,10,5,15,10&n=রাফি").title, "রাফির বেতনের সবচেয়ে বড় বাটি বাসা ভাড়া, ৩৫%। তোমারটা কোনটা?");
+  assert.equal(previewTitle(sample), "এক বন্ধুর বেতনের সবচেয়ে বড় বাটি বাসা ভাড়া, ৩৫%। তোমারটা কোনটা?");
   assert.ok(tallyItems({ ...sample, flex: "hobby" }).every(id => share.tally!.includes(id)));
   assert.equal(new Set(tallyIds).size, tallyIds.length);
 });

@@ -117,7 +117,7 @@ export function TobBuilder() {
             {relations.map(item => <button type="button" key={item.id} aria-pressed={reply.from === item.id} onClick={() => setReply(current => ({ ...current, from: item.id }))}>{item.label}</button>)}
           </fieldset>
           <figure className="kit-card">
-            <canvas ref={friendCanvas} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`${friendWho}-এর কার্ড, চিরকুটে লেখা: ${cheerLabel(reply)} — ${relationLabel(reply)}`} />
+            <canvas ref={friendCanvas} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`${friendWho}-এর কার্ড, ${relationLabel(reply)} লিখেছে: ${cheerLabel(reply)}`} />
             {friendError && <p className="kit-status" role="alert">কার্ডটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
           </figure>
           <ShareBar tool={TOOL} fileName="dhoyahin-chirkut.png" makeImage={() => cardBlob(replyQuit, day, "feed", site)} imageKey={`${stateOf(replyQuit)}|${day}`} caption={cheerCaption(friend, friendCount!, reply)} state={stateOf(replyQuit)} hint="লিংকটা ওকেই পাঠাও। খুললে ও তোমার চিরকুটটা দেখবে।" />
@@ -180,7 +180,7 @@ export function TobBuilder() {
               <input value={name} maxLength={MAX_NAME} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="dhoyahin.png" makeImage={() => cardBlob(quit, day, format, site)} imageKey={`${state}|${day}|${format}`} caption={caption(quit, count)} state={state} hint="লিংক খুললে আব্বু-আম্মু রোজকার হিসাব দেখবে, আর চাইলে টবে একটা চিরকুট বেঁধে পাঠাবে।" />
+            <ShareBar tool={TOOL} fileName="dhoyahin.png" makeImage={() => cardBlob(quit, day, format, site)} imageKey={`${state}|${day}|${format}`} caption={caption(quit, count)} state={state} hint="আব্বু-আম্মুকে পাঠাও। ওরা রোজকার হিসাব দেখবে, চিরকুটও বেঁধে দিতে পারবে।" />
             <div className="tob-restart">
               <button type="button" className="kit-link" onClick={restart}>আবার শুরু করো</button>
               <p className="kit-status" role="status">{note || "মাঝে একটা খেয়ে ফেললেও লজ্জার কিছু নেই। আবার আজ থেকে।"}</p>

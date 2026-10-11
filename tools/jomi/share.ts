@@ -11,7 +11,7 @@ export const share: ToolShare = {
     const plot = parsePlot(state);
     return {
       title: plot ? previewTitle(plot) : "শতাংশ, কাঠা, বিঘা — কোনটা কত?",
-      description: `${plot ? `${pitchLine(plot)}। ` : ""}যেকোনো জমির মাপ লেখো, শতাংশ, কাঠা, বিঘা, একর আর বর্গফুটে সাথে সাথে দেখো। তোমার বাড়ির উঠোন কত শতাংশ?`,
+      description: `${plot ? `${pitchLine(plot)}। ` : ""}জমির মাপ লেখো, শতাংশ, কাঠা, বিঘা, একর আর বর্গফুটে কত হয়, দেখে নাও। তোমার বাড়ির উঠোন কত শতাংশ?`,
     };
   },
 };

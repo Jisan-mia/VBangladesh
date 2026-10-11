@@ -126,7 +126,7 @@ export function MeterTool() {
     <div className="bb">
       {shared && (
         <div className="bb-shared" role="note">
-          <p><strong>তোমাকে একটা মিটার পাঠানো হয়েছে।</strong> {previewTitle(shared).replace(/ — তোমার বাসায়\?$/, "।")}</p>
+          <p><strong>কেউ তোমাকে একটা মিটারের হিসাব পাঠিয়েছে।</strong> {previewTitle(shared).replace(/। তোমার বাসায়\?$/, "।")}</p>
           <button type="button" className="kit-secondary" onClick={yourTurn}>এবার আমার বাসার হিসাব</button>
         </div>
       )}
@@ -137,7 +137,7 @@ export function MeterTool() {
           <span className="bb-slip-kicker">এ মাসের বিল</span>
           <strong>প্রায় {taka(reading.bill.total)} টাকা</strong>
           <span className="bb-slip-units"><span>{bn(reading.units)} ইউনিট</span>{top ? <> · <span>{topName} খেল {bn(top.percent)}%</span></> : null}</span>
-          <span className="bb-slip-note">আনুমানিক — তোমার মিটারের বিলই আসল</span>
+          <span className="bb-slip-note">আনুমানিক, তোমার মিটারের বিলই আসল</span>
         </figcaption>
       </figure>
 
@@ -201,7 +201,7 @@ export function MeterTool() {
               <input value={home.name} maxLength={MAX_NAME} onChange={event => { const name = event.target.value; setHome(current => ({ ...current, name })); }} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="bidyut-bill.png" makeImage={() => cardBlob(home, reading, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} disabled={!top} hint={top ? "লিংক খুললে বন্ধু এই যন্ত্র আর ঘণ্টাগুলোই দেখবে, তারপর নিজেরটা করতে পারবে।" : ""} />
+            <ShareBar tool={TOOL} fileName="bidyut-bill.png" makeImage={() => cardBlob(home, reading, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} disabled={!top} hint={top ? "বন্ধুকে পাঠাও। সে এই যন্ত্র আর ঘণ্টাগুলোই দেখবে, তারপর নিজেরটা করতে পারবে।" : ""} />
           </div>
         </div>
       </section>

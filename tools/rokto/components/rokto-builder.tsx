@@ -76,7 +76,7 @@ export function RoktoBuilder() {
     <div className="rk">
       {friend && today && (
         <section className="rk-friend" aria-labelledby="friend-title">
-          <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`${friend.name || "বন্ধুর"} রক্তদাতা কার্ড`} />
+          <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`রক্তদাতা কার্ড: ${friend.name || "বন্ধু"}`} />
           <div>
             <p className="rk-kicker">তোমার জন্য একটা রক্তদাতা কার্ড এসেছে</p>
             <h2 id="friend-title">{friendTitle(friend.name)}</h2>

@@ -31,7 +31,7 @@ test("an AC-heavy home gets its line", () => {
   const home: Home = { ...presetHome(), uses: [...presetHome().uses, defaultUse("ac")] };
   assert.equal(shares(home.uses)[0].use.id, "ac");
   assert.equal(homeLine(home.uses), "এসি ঠান্ডা, বিল গরম।");
-  assert.match(previewTitle(home), /^এক বাসায় এ মাসে প্রায় .+ ইউনিট, এসি খেল .+% — তোমার বাসায়\?$/);
+  assert.match(previewTitle(home), /^এক বাসায় এ মাসে প্রায় .+ ইউনিট, এসি খেল .+%। তোমার বাসায়\?$/);
   assert.equal(homeLine([defaultUse("router")]), "মিটার এত ধীরে ঘোরে, প্রায় শোনাই যায় না।");
 });
 

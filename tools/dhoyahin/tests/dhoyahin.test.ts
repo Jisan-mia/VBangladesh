@@ -61,7 +61,7 @@ test("server normalize only accepts real states and drops junk keys", () => {
   assert.equal(share.normalize("d=2026-09-01&k=10&p=15&x=1"), "d=2026-09-01&k=10&p=15");
   assert.equal(share.normalize("hello"), null);
   assert.equal(share.tally, undefined);
-  assert.match(share.preview("d=2026-09-01&k=10&p=15&n=রাফি&c=pashe&w=abbu").title, /^আব্বু লিখেছে: চালিয়ে যাও, পাশে আছি — রাফির /);
+  assert.match(share.preview("d=2026-09-01&k=10&p=15&n=রাফি&c=pashe&w=abbu").title, /^আব্বু লিখেছে: চালিয়ে যাও, পাশে আছি। রাফির /);
 });
 
 test("the plant grows a leaf a day to a month, then a flower a month, and keeps old leaves in place", () => {

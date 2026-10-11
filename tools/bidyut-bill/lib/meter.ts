@@ -185,7 +185,7 @@ export function previewTitle(home: Home) {
   const top = shares(home.uses)[0];
   const who = home.name ? `${possessive(home.name)} বাসায়` : "এক বাসায়";
   const units = bn(totalUnits(home.uses));
-  return top ? `${who} এ মাসে প্রায় ${units} ইউনিট, ${applianceOf(top.use.id).name} খেল ${bn(top.percent)}% — তোমার বাসায়?` : "কোন যন্ত্রে কত বিল আসে?";
+  return top ? `${who} এ মাসে প্রায় ${units} ইউনিট, ${applianceOf(top.use.id).name} খেল ${bn(top.percent)}%। তোমার বাসায়?` : "কোন যন্ত্রে কত বিল আসে?";
 }
 
 /** Everything the result and the card show, from one home. */

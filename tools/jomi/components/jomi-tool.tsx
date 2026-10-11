@@ -92,7 +92,7 @@ export function JomiTool() {
     <div className="jomi">
       {shared && (
         <div className="jomi-shared" role="note">
-          <p><strong>তোমাকে একটা জমির মাপ পাঠানো হয়েছে।</strong> {plot.label ? `${labelText(plot.label)}: ` : ""}{equation(plot)}।</p>
+          <p><strong>কেউ তোমাকে একটা জমির মাপ পাঠিয়েছে।</strong> {plot.label ? `${labelText(plot.label)}: ` : ""}{equation(plot)}।</p>
           <button type="button" className="kit-secondary" onClick={yourTurn}>এবার আমার জমির মাপ লিখি</button>
         </div>
       )}

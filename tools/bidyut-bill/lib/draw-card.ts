@@ -159,7 +159,7 @@ export function drawCard(canvas: HTMLCanvasElement, home: Home, reading: Reading
   }
   y += 62 + pad;
   fitText(context, [{ text: reading.line, color: INK, weight: 700, display: true }], left, y, 38, right - left);
-  fitText(context, [{ text: `আনুমানিক — তোমার মিটারের বিলই আসল · ${tariffInfo.short}`, color: MUTED, weight: 500 }], left, layout.slipEnd - 30, 22, right - left);
+  fitText(context, [{ text: `আনুমানিক, তোমার মিটারের বিলই আসল · ${tariffInfo.short}`, color: MUTED, weight: 500 }], left, layout.slipEnd - 30, 22, right - left);
   drawFooterBand(context, format, "তোমার বাসায় কোন যন্ত্র সবচেয়ে বেশি খায়?", site, { band: BAKELITE, ask: "#ffd166", site: "#ffffff" });
 }
 

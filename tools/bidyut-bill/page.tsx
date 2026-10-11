@@ -40,7 +40,7 @@ export default function BidyutBillPage() {
           <ul className="bb-links">{tariffInfo.sources.map(source => <li key={source.url}><a href={source.url} rel="external">{source.label} ↗</a></li>)}</ul>
 
           <h3>যন্ত্রগুলোর সাধারণ মান</h3>
-          <p>যন্ত্রভেদে ওয়াট কমবেশি হয়; আসল ওয়াট যন্ত্রের গায়ের লেবেলে লেখা থাকে, ওপরে ওয়াটে চাপ দিয়ে বসাতে পারো। ১ ইউনিট = ১,০০০ ওয়াট এক ঘণ্টা।</p>
+          <p>যন্ত্রভেদে ওয়াট কমবেশি হয়। আসল ওয়াট যন্ত্রের গায়ের লেবেলে লেখা থাকে, ওপরে ওয়াটে চাপ দিয়ে বসাতে পারো। ১ ইউনিট = ১,০০০ ওয়াট এক ঘণ্টা।</p>
           <table className="bb-watts">
             <caption className="bb-sr">কোন যন্ত্রে মাসে কত ইউনিট (সাধারণ মান)</caption>
             <thead><tr><th scope="col">যন্ত্র (একটা)</th><th scope="col">ওয়াট</th><th scope="col">দিনে</th><th scope="col">মাসে</th></tr></thead>
@@ -51,7 +51,7 @@ export default function BidyutBillPage() {
         <section className="container section bb-guide" id="guide" aria-labelledby="guide-title">
           <h2 id="guide-title">{site.guideTitle}</h2>
           <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{bn(index + 1)}</span><p>{step}</p></li>)}</ol>
-          <p className="bb-honest">এটা আনুমানিক হিসাব — তোমার মিটারের বিলই আসল। এখানে কোনো বিদ্যুৎ কোম্পানির অ্যাকাউন্ট, বিল বা মিটারের তথ্য দেখা যায় না।</p>
+          <p className="bb-honest">এটা আনুমানিক হিসাব, তোমার মিটারের বিলই আসল। এখানে কোনো বিদ্যুৎ কোম্পানির অ্যাকাউন্ট, বিল বা মিটারের তথ্য দেখা যায় না।</p>
         </section>
         <Faq items={site.faq} />
         <section className="container section bb-suggest" aria-label="যন্ত্রের পরামর্শ"><SuggestBox tool="bidyut-bill" question="কোন যন্ত্রটা এখানে থাকা উচিত ছিল?" placeholder="যেমন: গিজার, ওয়াশিং মেশিন" /></section>

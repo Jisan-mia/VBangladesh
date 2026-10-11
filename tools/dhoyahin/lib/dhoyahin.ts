@@ -189,7 +189,7 @@ export function previewTitle(quit: Quit, today: string) {
   const count = tally(quit, today);
   const who = quit.name || "এক বন্ধু";
   const base = count.days < 0 ? `${who} ${dateLine(quit.date)} থেকে সিগারেট ছাড়ছে` : count.days === 0 ? `${who} আজ থেকে সিগারেট ছেড়েছে` : `${quit.name ? possessive(quit.name) : "এক বন্ধুর"} ${bn(count.days)} দিন ধোঁয়াহীন, ${bn(count.saved)} টাকা বাঁচল`;
-  return quit.cheer ? `${relationLabel(quit.cheer)} লিখেছে: ${cheerLabel(quit.cheer)} — ${base}` : base;
+  return quit.cheer ? `${relationLabel(quit.cheer)} লিখেছে: ${cheerLabel(quit.cheer)}। ${base}` : base;
 }
 
 /* ---------- the plant: one geometry for the page's SVG and the card's canvas ---------- */
