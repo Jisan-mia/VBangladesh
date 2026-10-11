@@ -1,0 +1,121 @@
+/* শব্দ খোঁজা: a cheap printed puzzle booklet, one paper colour per pack, solved with ballpoint strokes. */
+.tool-shobdo-khoja{--accent:#2f4bb0;--accent-deep:#1d2f78;--ink:#2a211b;--muted:#6b5d52;--rule:rgba(42,33,27,.2);--edge:#d8cdbf;--soft:#f6f1e9}
+.tool-shobdo-khoja .sk-page{color:var(--ink)}
+.tool-shobdo-khoja .sk-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero: two short lines, so the grid and its buttons land on the first phone screen */
+.sk-hero{padding:10px 0 6px}
+.sk-hero-kicker{margin:0;font-size:13px;font-weight:600;line-height:1.5;color:var(--accent)}
+.sk-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,44px);line-height:1.25;font-weight:700;letter-spacing:0}
+.sk-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+
+.sk{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;max-width:460px}
+
+/* opened from a friend's link: their card and the honest note */
+.sk-friend{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:center;padding:6px 10px;border-radius:14px;background:var(--soft)}
+.sk-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 14px #2a211b33;transform:rotate(-4deg)}
+.sk-friend h2{margin:0;font-family:var(--font-display);font-size:15px;line-height:1.3}
+.sk-friend p{margin:0;font-size:12.5px;line-height:1.35;color:var(--muted)}
+
+/* packs: one row of paper swatches; it scrolls inside itself, never the page */
+.sk-packs{display:flex;gap:6px;margin:0;padding:2px 0 4px;border:0;min-width:0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.sk-packs::-webkit-scrollbar{display:none}
+.sk-packs button{flex:none;min-width:56px;min-height:44px;padding:4px 14px;border:1.5px solid var(--edge);border-radius:10px 10px 4px 4px;background:var(--paper);color:var(--ink);font-family:var(--font-display);font-size:17px;font-weight:700;line-height:1.2}
+.sk-packs button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff;box-shadow:inset 0 -5px 0 var(--paper)}
+
+.sk-hud{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px}
+.sk-count{margin:0;min-width:52px;font-family:var(--font-display);font-size:16px;color:var(--muted);font-variant-numeric:tabular-nums}
+.sk-count b{font-size:24px;color:var(--ink)}
+.sk-clock{display:flex;align-items:center;justify-content:center;gap:4px;margin:0;min-height:40px;color:var(--accent)}
+.sk-clock svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.sk-clock b{font-family:var(--font-display);font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;min-width:3.2em}
+.sk-clock small{font-size:14px;font-weight:600;color:var(--muted)}
+.sk-level{display:flex;margin:0;padding:2px;border:1.5px solid var(--edge);border-radius:999px;min-width:0;background:#fff}
+.sk-level button{min-height:40px;min-width:52px;padding:2px 12px;border:0;border-radius:999px;background:none;color:var(--ink);font-size:15px;font-weight:700}
+.sk-level button[aria-pressed=true]{background:var(--ink);color:#fff}
+
+/* the page: only here does a finger stop the page from scrolling */
+.sk-board{position:relative;border:1.5px solid var(--ink);border-radius:8px;background:var(--paper);box-shadow:3px 4px 0 #2a211b26;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer;outline:0}
+.sk-board:focus-visible{box-shadow:0 0 0 3px #fff,0 0 0 6px var(--accent)}
+.sk-board[data-phase=over]{cursor:default}
+.sk-marks,.sk-ink{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.sk-ink{z-index:2}
+.sk-cells{position:relative;z-index:1;display:grid;grid-template-columns:repeat(7,1fr)}
+.sk-cells span{display:grid;place-items:center;aspect-ratio:1;padding-top:.12em;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);font-family:var(--font-display);font-size:clamp(18px,6.4vw,28px);font-weight:600;line-height:1;color:var(--ink)}
+.sk-cells span:nth-child(7n){border-right:0}
+.sk-cells span:nth-last-child(-n+7){border-bottom:0}
+.sk-cells span[data-found=true]{font-weight:700}
+.sk-stroke{fill:none;stroke-width:11;stroke-linecap:round;opacity:.82;stroke-dasharray:1;animation:sk-draw .3s ease-out backwards}
+.sk-trail{stroke:var(--accent);stroke-width:78;stroke-linecap:round;opacity:.22}
+.sk-miss{stroke:#c4302b;stroke-width:78;stroke-linecap:round;opacity:0;animation:sk-miss .6s ease-out}
+.sk-first{fill:#2f4bb01f;stroke:var(--accent);stroke-width:6;stroke-dasharray:12 9}
+.sk-hint{fill:#ffd36b;stroke:#b5560f;stroke-width:4;stroke-dasharray:10 7;animation:sk-hint 1.6s ease-in-out infinite}
+.sk-cursor{fill:none;stroke:var(--accent-deep);stroke-width:5}
+@keyframes sk-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes sk-miss{0%{opacity:.3;transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{opacity:.25;transform:translateX(-4px)}100%{opacity:0;transform:translateX(0)}}
+@keyframes sk-hint{0%,100%{opacity:.55}50%{opacity:1}}
+.sk[data-calm=true] .sk-stroke,.sk[data-calm=true] .sk-hint{animation:none}
+.sk[data-calm=true] .sk-miss{animation:sk-fade .6s linear}
+@keyframes sk-fade{from{opacity:.3}to{opacity:0}}
+
+.sk-overlay{position:absolute;inset:0;z-index:3;display:grid;place-items:center;padding:16px;border-radius:8px;background:var(--paper)}
+.sk-note{display:grid;justify-items:center;gap:10px;max-width:300px;padding:14px 18px;border-radius:16px;background:#fff;box-shadow:0 8px 24px #2a211b33;text-align:center}
+.sk-note p{margin:0;font-weight:600}
+.sk-note .kit-primary{min-width:180px;min-height:56px;font-size:19px}
+
+/* the word list, struck through in the same ink as the grid */
+.sk-words{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px 8px;margin:0;padding:0;list-style:none}
+.sk-words li{position:relative;padding:3px 2px;text-align:center;font-family:var(--font-display);font-size:18px;font-weight:600;line-height:1.5;border-radius:6px;overflow-wrap:anywhere}
+.sk-words li[data-found=true]{color:var(--pen)}
+.sk-words li[data-found=true]::after{content:"";position:absolute;left:10%;right:10%;top:54%;height:3px;border-radius:2px;background:var(--pen);transform:rotate(-4deg)}
+.sk-words li[data-hint=true]{background:#ffd36b66}
+
+.sk-status{min-height:42px;margin:0;font-size:15px;font-weight:600;line-height:1.45;color:var(--muted);display:flex;align-items:center}
+.sk-over{display:grid;gap:2px;margin:0;padding:8px 12px;border:2px dashed var(--ink);border-radius:12px;background:var(--soft)}
+.sk-over p{margin:0}
+.sk-over-score{font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1.3}
+.sk-over-score span{color:var(--accent);white-space:nowrap}
+.sk-over-line{font-weight:600;line-height:1.45;color:var(--muted)}
+.sk-over-line span{color:var(--ink);font-weight:700}
+
+.sk-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.sk-controls[data-phase=over]{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);align-items:center}
+.sk-tool{display:grid;place-items:center;align-content:center;min-height:50px;padding:2px 4px;border:1.5px solid var(--edge);border-radius:12px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;line-height:1.15}
+.sk-tool small{font-size:11px;font-weight:600;color:var(--muted)}
+.sk-tool:disabled{opacity:.45}
+.sk-toggle[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.tool-shobdo-khoja .sk-big{min-height:56px;font-size:20px}
+.sk-see{justify-self:center}
+
+.sk-result{scroll-margin-top:12px;margin-top:22px;padding-top:20px;border-top:2px solid var(--ink)}
+.sk-result-head h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,32px);line-height:1.4}
+.sk-result-head h2 em{font-style:normal;color:var(--accent)}
+.sk-result-head p{margin:0 0 16px;color:var(--muted)}
+.sk-result-body{display:grid;gap:22px}
+.sk-share{display:grid;gap:18px;align-content:start}
+.sk-name{display:grid;gap:6px;font-weight:600}
+.sk-name small{font-weight:400;color:var(--muted);font-size:13px}
+.sk-name input{border:1.5px solid var(--edge);border-radius:12px;font-size:17px}
+.sk-again-link{justify-self:start}
+
+.sk-guide h2{font-family:var(--font-display);margin-bottom:12px}
+.sk-guide>p{color:var(--muted);max-width:640px}
+.sk-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none;max-width:680px}
+.sk-guide li{display:flex;gap:14px;align-items:flex-start}
+.sk-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#e8e2f6;color:var(--accent-deep);font-weight:700}
+.sk-guide li p{margin:4px 0 0}
+
+@media(max-width:360px){
+  .sk-tool{font-size:13px}
+  .sk-level button{min-width:44px;padding-inline:8px;font-size:14px}
+  .sk-words li{font-size:16px}
+}
+@media(min-width:720px){
+  .sk-lead{display:block}
+  .sk-page:has(.sk-friend) .sk-lead{display:none}
+  .sk-friend{grid-template-columns:88px 1fr}
+  .sk-friend h2{font-size:20px}
+}
+@media(prefers-reduced-motion:reduce){.sk-stroke,.sk-hint{animation:none}.sk-miss{animation:sk-fade .6s linear}}
+/* a friend's banner takes the kicker's place, so the grid and its buttons still fit one phone screen */
+.sk-page:has(.sk-friend) .sk-hero-kicker{display:none}
