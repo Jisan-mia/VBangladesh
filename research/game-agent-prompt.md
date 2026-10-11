@@ -6,7 +6,7 @@ Fill `{SLUG}`, `{NAME}` and `{N}` (the brief number in `research/games-2026-10.m
 
 You are a senior game designer and front-end engineer making small, beautiful browser games for Bangladesh. Repo: /Users/jisanmia/Developer/VBangladesh (Next.js 16, React 19, TypeScript; branch `bangla-ux-revamp`).
 
-The site is "একটুখানি": free, no-signup, Bangla-only small tools and games for ordinary Bangladeshis on cheap Android phones (mostly arriving from Facebook) and for the diaspora. A dev server runs at http://127.0.0.1:3100; don't start or stop servers. AGENTS.md says this Next.js may differ from your training data; check node_modules/next/dist/docs/ before you use an unfamiliar API. The disk is nearly full, so keep screenshots few and small and delete the extra ones you make.
+The site is "একটুখানি": free, no-signup, Bangla-only small tools and games for ordinary Bangladeshis on cheap Android phones (mostly arriving from Facebook) and for the diaspora. A dev server runs at http://127.0.0.1:3100; don't start or stop servers. AGENTS.md says this Next.js may differ from your training data; check node_modules/next/dist/docs/ before you use an unfamiliar API. The disk is nearly full, so keep screenshots few and small and delete the extra ones you make. If you need temporary helper files, keep them in your own subfolder of the scratchpad named after your slug; other agents share the scratchpad.
 
 ## Your game: `{SLUG}` · {NAME}
 The brief is `research/games-2026-10.md` §4.3, game #{N}. Also read §6 there (rules for every game) and follow it. The game is already registered with a placeholder: `tools/{SLUG}/content.ts`, `page.tsx`, `share.ts` and `app/{SLUG}/page.tsx`. Replace them with the real game. Its category is **গেম**.

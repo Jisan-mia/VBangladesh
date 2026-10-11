@@ -1,5 +1,6 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "bostar-pahar": ["bostar pahar", "bosta", "bosta sajano", "sack stacking game", "tower game", "crane game", "timing game", "বস্তা", "বস্তা সাজানো", "ক্রেন", "ট্রাক", "ঘাট"],
   "deri-hoye-gelo": ["late for school", "school game", "jump game", "runner game", "deri hoye gelo", "school e deri", "laf game", "bangla game", "দেরি", "স্কুলে দেরি", "লাফের গেম", "টিফিন"],
   "kalbaishakhi-aam": ["mango game", "aam", "aam kurano", "storm", "jhor", "কালবৈশাখী", "আম কুড়ানো", "ঝড়", "catch game", "বাংলা গেম"],
   "dudh-uthlano": ["milk game", "dudh", "boil", "timing game", "kitchen", "দুধ", "উথলানো", "রান্নাঘর", "টাইমিং গেম", "বাংলা গেম"],
