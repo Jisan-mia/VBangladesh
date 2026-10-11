@@ -95,6 +95,7 @@ import { site as chor_police } from '../tools/chor-police/content';
 import { site as bostar_pahar } from '../tools/bostar-pahar/content';
 import { site as tarer_fanke_belun } from '../tools/tarer-fanke-belun/content';
 import { site as paka_kancha } from '../tools/paka-kancha/content';
+import { site as jora_melao } from '../tools/jora-melao/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -194,6 +195,7 @@ export const toolContent = {
   'bostar-pahar': bostar_pahar,
   'tarer-fanke-belun': tarer_fanke_belun,
   'paka-kancha': paka_kancha,
+  'jora-melao': jora_melao,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
