@@ -104,7 +104,7 @@ export const catalog = [
   { slug: "sir-ghurlei-thamo", name: "স্যার ঘুরলেই থামো", description: "স্যার বোর্ডে লিখলে চিরকুট পেছনে চালাও, ঘুরলেই থামো। কত সেকেন্ডে শেষ বেঞ্চ?", category: "গেম", action: "চিরকুট চালাও" },
   { slug: "deri-hoye-gelo", name: "দেরি হয়ে গেল!", description: "স্কুলে দেরি! কাদাপানি, গরু, সাইকেল টপকে ঘণ্টা পড়ার আগে গেটে পৌঁছাও।", category: "গেম", action: "লাফ দাও" },
   { slug: "chor-police", name: "চোর-ডাকাত-পুলিশ-বাবু", description: "থালায় চার চিরকুট, এক ফোনে চারজন। লুকিয়ে দেখো, পুলিশ চোর ধরবে।", category: "গেম", action: "চিরকুট তোলো" },
-  { slug: "bostar-pahar", name: "বস্তার পাহাড়", description: "বস্তার পাহাড়: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "bostar-pahar", name: "বস্তার পাহাড়", description: "ক্রেনের দোল বুঝে চাপো, ট্রাকে বস্তার পাহাড় বানাও", category: "গেম", action: "বস্তা সাজাও" },
   { slug: "tarer-fanke-belun", name: "তারের ফাঁকে বেলুন", description: "ঢাকার তারের জটে বেলুন ওড়াও। এক চাপে ওঠে, কয়টা ফাঁক পার হবে?", category: "গেম", action: "বেলুন ওড়াও" },
   { slug: "paka-kancha", name: "পাকা-কাঁচা", description: "পাকা-কাঁচা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "jora-melao", name: "জোড়া মেলাও", description: "জোড়া মেলাও: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
