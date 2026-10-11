@@ -7,11 +7,11 @@ Agents use Sonnet 5.5 with `research/copy-review-agent-prompt.md`; up to 5 run a
 | B0 site-wide | lib/catalog.ts descriptions+actions, lib/brand.ts, components/, shared/ strings, app/ pages | done |
 | B1 স্মৃতি | bhashar-chhobi amar-chhotobela himu amar-bochhor tokhon-ekhon cassette mess-jibon ghuri | done |
 | B2 আঁকো+খাবার | chhotto-para alpana riksharong cinema-poster namer-design studior-chhobi rannakhata mishtir-baksho | done |
-| B3 খাবার+পরিবার | pitha tong mache-bhate jibh deshe-fera upohar dawat chithi | building |
+| B3 খাবার+পরিবার | pitha tong mache-bhate jibh deshe-fera upohar dawat chithi | done |
 | B4 পরিবার+হিসাব | attiyo probash prothom-ay bazar-note bhara bhagabhagi boyos bhori | done |
 | B5 হিসাব | matir-bank dhoyahin jomi rokto current-gelo betoner-bhag bidyut-bill | building |
 | B6 খেলা ১ | cholo-kheli argentina-na-brazil amar-jersey dom-atkano golir-ain shesh-bol | building |
-| B7 খেলা ২+উৎসব | ami-bolechhilam matcher-mon ekadosh raat-jaga shubhechha koto-din-baki iftar-plate salami-chek | todo |
+| B7 খেলা ২+উৎসব | ami-bolechhilam matcher-mon ekadosh raat-jaga shubhechha koto-din-baki iftar-plate salami-chek | building |
 | B8 উৎসব+ভাষা | sehri-iftar eider-din eidjatra gorur-ojon mondop shobdo-khela gpa taka-kothay | todo |
 | B9 ভাষা+মজা | banan desh-cheno bagdhara bangla-typing namta komon-porlo eta-na-ota cha-mudra | todo |
 | B10 মজা | flames jam ganer-koli dhadha ek-koti mama-jaben mishron grade-dao | todo |
