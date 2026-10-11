@@ -51,7 +51,7 @@ test("the server normalizes links and writes a personal preview", () => {
   const ok = all("A").join(",");
   assert.equal(share.normalize(`p=street&g=${ok}&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF&m=5&k=8&junk=1`), `p=street&g=${ok}&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF&m=5&k=8`);
   assert.equal(share.normalize("p=street"), null);
-  assert.equal(share.preview("p=street&g=B,AP,A,A,A,A,A,A&n=রাফি&m=5&k=8").title, "রাফির রেজাল্ট শিট: চটপটি A+, দেশের সাথে মিল ৫/৮ — তুমি কত দেবে?");
+  assert.equal(share.preview("p=street&g=B,AP,A,A,A,A,A,A&n=রাফি&m=5&k=8").title, "রাফির রেজাল্ট শিট: চটপটি A+, দেশের সাথে মিল ৫/৮। তুমি কত দেবে?");
   assert.equal(share.preview("p=ride&g=AP,C,B,A,A,A,A,A").title, "এক পরীক্ষকের রেজাল্ট শিট: রিকশা A+, লোকাল বাস C, সিএনজি B… তুমি কত দেবে?");
   assert.ok(share.tally?.every(id => /^[a-z]+\.[a-z]+\.[A-Z]+$/.test(id)));
 });

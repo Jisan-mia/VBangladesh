@@ -103,10 +103,10 @@ export function humanLine(game: Game) {
   const [a, b] = scores(game.rounds);
   const lead = leader(game);
   if (a + b === 0) return game.rounds.length ? "অক্ষর কঠিন পড়েছে, গলা এখনো গরম হচ্ছে।" : "প্রথম অক্ষরটা তোলো, গলা খোলো!";
-  if (lead === null) return "সমান সমান — শেষ গানটা কে গাইবে?";
+  if (lead === null) return "সমান সমান! শেষ গানটা কে গাইবে?";
   const winner = teamName(game.teams, lead), loser = teamName(game.teams, lead === 0 ? 1 : 0);
   const gap = Math.abs(a - b);
-  if (gap === 1) return "এক গানের ব্যবধান — আবার খেলা হবে!";
+  if (gap === 1) return "এক গানের ব্যবধান! আরেকবার হয়ে যাক।";
   if (gap <= 3) return `অল্পের জন্য। পরের বার ${loser} শোধ নেবে।`;
   return `আজ ${winner} যেন গানের ঝুলি নিয়েই এসেছিল।`;
 }
@@ -121,5 +121,5 @@ export function previewTitle(game: Game) {
   const tally = `${bn(Math.max(a, b))}—${bn(Math.min(a, b))}`;
   return lead === null
     ? `${gameTitle(game)}: ${scoreLine(game)}, সমান সমান! তোমাদের বাসায় কে জেতে?`
-    : `${gameTitle(game)}তে জিতল ${teamName(game.teams, lead)} (${tally}) — তোমাদের বাসায় কে জেতে?`;
+    : `${gameTitle(game)}তে জিতল ${teamName(game.teams, lead)} (${tally})। তোমাদের বাসায় কে জেতে?`;
 }

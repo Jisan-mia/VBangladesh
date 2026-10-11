@@ -154,7 +154,7 @@ export function MagicPot() {
     : hint && hintLevel === 2 ? `ইশারা: ${nameOf(hint.a)} + ${nameOf(hint.b)}`
     : hint && hintLevel === 1 ? `ইশারা: ${nameOf(hint.a)}-এর সাথে কিছু একটা মেশাও…`
     : picks.length === 1 ? "আরেকটা বেছে নাও। একই জিনিস দুবারও চলে।"
-    : "ঝুড়ি থেকে যেকোনো দুটো জিনিস ছুঁয়ে দাও।";
+    : "ঝুড়ি থেকে যেকোনো দুটো জিনিস বেছে নাও।";
   const query = filter.trim();
   const visible = query ? order.filter(id => nameOf(id).includes(query)) : order;
   const rare = compared === "done" && everyone && everyone.total >= COMPARE_MIN
@@ -240,7 +240,7 @@ export function MagicPot() {
             </label>
             <FormatToggle value={format} onChange={setFormat} />
             <ShareBar tool={TOOL} fileName="deshi-mishron.png" makeImage={() => cardBlob(own, format, site)} imageKey={`${state}|${format}`} caption={caption(made, own.latest)} state={state} disabled={!made}
-              hint={made ? "লিংক খুললে বন্ধু দেখবে তুমি কয়টা বানিয়েছ, তারপর নিজে খেলবে।" : "একটা কিছু বানালেই শেয়ার করা যাবে।"} />
+              hint={made ? "লিংক খুলে বন্ধু দেখবে তোমার হাঁড়ি থেকে কয়টা উঠল, তারপর নিজের হাঁড়ি চাপাবে।" : "একটা কিছু বানালেই শেয়ার করা যাবে।"} />
             <button type="button" className="kit-link ms-restart" onClick={restart}>নতুন করে শুরু করো</button>
           </div>
         </div>}

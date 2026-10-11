@@ -110,7 +110,7 @@ export function humanLine(count: number) {
   if (count <= 4) return "সবে চুলা ধরল, হাঁড়ি গরম হচ্ছে।";
   if (count <= 20) return "ভাত-পান্তা দিয়ে শুরু, এখন হাঁড়ি থামতেই চায় না।";
   if (count <= 55) return "নানি দেখলে বলত, ‘এই তো, হাত পেকেছে!’";
-  if (count <= 105) return "নদী, খেত, মেলা — হাঁড়ির ভেতর আস্ত একটা দেশ।";
+  if (count <= 105) return "নদী, খেত, মেলা। হাঁড়ির ভেতর আস্ত একটা দেশ।";
   return "আর অল্প কয়টা বাকি, হাঁড়ি এখনো টগবগ করছে।";
 }
 
@@ -132,5 +132,5 @@ export function caption(count: number, latest: string) {
 
 export function previewTitle(shared: Shared | null) {
   if (!shared) return "দেশি মিশ্রণ — দুটো মেশাও, নতুন বানাও";
-  return `${shared.name || "এক বন্ধু"} ${bn(madeCount(shared.found))}টা জিনিস বানিয়েছে · সর্বশেষ: ${nameOf(shared.latest)} — তুমি কয়টা পারবে?`;
+  return `${shared.name || "এক বন্ধু"} ${bn(madeCount(shared.found))}টা জিনিস বানিয়েছে · সর্বশেষ: ${nameOf(shared.latest)}। তুমি কয়টা পারবে?`;
 }

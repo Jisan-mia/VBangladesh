@@ -188,7 +188,7 @@ export function previewTitle(sheet: Sheet) {
   const pack = packOf(sheet.pack)!;
   const who = sheet.name ? possessive(sheet.name) : "এক পরীক্ষকের";
   const best = highlight(pack, sheet.grades);
-  if (sheet.score) return `${who} রেজাল্ট শিট: ${best.name} ${best.grade}, দেশের সাথে মিল ${bn(sheet.score.match)}/${bn(sheet.score.of)} — তুমি কত দেবে?`;
+  if (sheet.score) return `${who} রেজাল্ট শিট: ${best.name} ${best.grade}, দেশের সাথে মিল ${bn(sheet.score.match)}/${bn(sheet.score.of)}। তুমি কত দেবে?`;
   return `${who} রেজাল্ট শিট: ${pack.items.slice(0, 3).map((item, index) => `${item.name} ${gradeLabel[sheet.grades[index]]}`).join(", ")}… তুমি কত দেবে?`;
 }
 

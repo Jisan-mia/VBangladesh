@@ -60,7 +60,7 @@ test("names are cleaned, NFC-normalised, capped, and fall back to the default te
 
 test("the human line follows the score", () => {
   assert.equal(humanLine({ ...sample, rounds: [] }), "প্রথম অক্ষরটা তোলো, গলা খোলো!");
-  assert.equal(humanLine(sample), "এক গানের ব্যবধান — আবার খেলা হবে!");
+  assert.equal(humanLine(sample), "এক গানের ব্যবধান! আরেকবার হয়ে যাক।");
   assert.match(humanLine({ ...sample, rounds: [{ letter: "ক", team: 1 }, { letter: "ম", team: 0 }] }), /সমান সমান/);
   assert.match(humanLine({ ...sample, rounds: Array.from({ length: 6 }, () => ({ letter: "ক", team: 1 as const })) }), /দল ভাইয়া/);
 });

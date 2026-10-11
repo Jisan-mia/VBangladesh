@@ -171,7 +171,7 @@ export function KupiNight() {
             </p>
           </div>
         ) : (
-          <p className="dh-privacy">উত্তর দিলে শুধু “প্রথম চেষ্টায় পেরেছ কি না” নামহীনভাবে গোনা হয়, যাতে দেখাতে পারি কতজন পারল। নাম বা অন্য কিছু যায় না।</p>
+          <p className="dh-privacy">উত্তর দিলে শুধু “প্রথম চেষ্টায় পেরেছ কি না” নাম ছাড়া গোনা হয়, যাতে দেখাতে পারি কতজন পারল। নাম বা অন্য কিছু যায় না।</p>
         )}
       </section>
 
@@ -194,7 +194,7 @@ export function KupiNight() {
               </label>
             )}
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="ajker-dhadha.png" makeImage={() => cardBlob(own, format, site, today)} imageKey={`${state}|${format}`} caption={captionFor(own, today)} state={state} hint="লিংক খুললে বন্ধু এই ধাঁধাটাই পাবে, উত্তর না দেখে।" />
+            <ShareBar tool={TOOL} fileName="ajker-dhadha.png" makeImage={() => cardBlob(own, format, site, today)} imageKey={`${state}|${format}`} caption={captionFor(own, today)} state={state} hint="লিংকে ধাঁধাটাই যায়, উত্তর না। বন্ধু নিজে ভেবে বের করবে।" />
           </div>
         </div>
       </section>

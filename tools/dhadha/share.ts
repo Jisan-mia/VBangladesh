@@ -14,7 +14,7 @@ export const share: ToolShare = {
     const riddle = shared ? riddleById(shared.id) : undefined;
     const day = shared ? `${possessive(bnDate(shared.date))} ধাঁধা` : "আজকের ধাঁধা";
     const title = shared?.tries != null
-      ? `${shared.name || "এক বন্ধু"} ${day} ${RESULT[shared.tries]} — তুমি পারবে?`
+      ? `${shared.name || "এক বন্ধু"} ${day} ${RESULT[shared.tries]}। তুমি পারবে?`
       : `${day}: উত্তরটা জানো?`;
     return {
       title,

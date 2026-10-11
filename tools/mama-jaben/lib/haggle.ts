@@ -13,12 +13,12 @@ type Route = { id: string; from: string; to: string; ask: number; fair: number; 
  * Ids go into share links: never rename or delete one; add new routes at the end.
  */
 export const routes = [
-  { id: "farmgate-dhanmondi", from: "ফার্মগেট", to: "ধানমন্ডি", ask: 100, fair: 70, gripe: "জ্যাম আছে, ঘুরতে হইবো।" },
+  { id: "farmgate-dhanmondi", from: "ফার্মগেট", to: "ধানমন্ডি", ask: 100, fair: 70, gripe: "জ্যাম আছে, ঘুরে যেতে হবে।" },
   { id: "gulistan-sadarghat", from: "গুলিস্তান", to: "সদরঘাট", ask: 90, fair: 60, gripe: "গুলিস্তানের জ্যাম চিনেন না?" },
-  { id: "shahbag-lalbag", from: "শাহবাগ", to: "লালবাগ কেল্লা", ask: 120, fair: 80, gripe: "পুরান ঢাকার গলি, সময় লাগবো।" },
+  { id: "shahbag-lalbag", from: "শাহবাগ", to: "লালবাগ কেল্লা", ask: 120, fair: 80, gripe: "পুরান ঢাকার গলি, সময় লাগবে।" },
   { id: "kamalapur-motijheel", from: "কমলাপুর", to: "মতিঝিল", ask: 70, fair: 40, gripe: "সাথে ব্যাগ-বোঁচকা আছে না?" },
-  { id: "mirpur10-zoo", from: "মিরপুর ১০", to: "চিড়িয়াখানা", ask: 100, fair: 70, gripe: "রাস্তা লম্বা মামা, পা ধইরা আসে।" },
-  { id: "newmarket-azimpur", from: "নিউমার্কেট", to: "আজিমপুর", ask: 60, fair: 40, gripe: "নিউমার্কেটের ভিড় পার হওয়া লাগবো।" },
+  { id: "mirpur10-zoo", from: "মিরপুর ১০", to: "চিড়িয়াখানা", ask: 100, fair: 70, gripe: "রাস্তা লম্বা মামা, পা ধরে আসে।" },
+  { id: "newmarket-azimpur", from: "নিউমার্কেট", to: "আজিমপুর", ask: 60, fair: 40, gripe: "নিউমার্কেটের ভিড় পার হতে হবে।" },
 ] as const satisfies readonly Route[];
 
 export type RouteId = (typeof routes)[number]["id"];
@@ -83,16 +83,16 @@ const youLines = [
 ];
 const counterLines = [
   (x: number, route: Route) => `${bn(x)} দেন মামা। ${route.gripe}`,
-  (x: number) => `মামা, তেল-গ্যাসের দাম দেখছেন? ${bn(x)}-এর কমে হয় না।`,
+  (x: number) => `মামা, বাজারের দাম দেখছেন? ${bn(x)}-এর কমে হয় না।`,
   (x: number) => `এই গরমে প্যাডেল মারা কি সোজা? ${bn(x)} দেন।`,
   (x: number) => `আপনি ভালো মানুষ, তাই ${bn(x)}। আর কমামু না।`,
 ];
 const refuseLines = [
-  () => "হাসাইলেন মামা! এই ভাড়ায় চাকাও ঘুরবো না।",
+  () => "হাসালেন মামা! এই ভাড়ায় চাকাও ঘুরবে না।",
   () => "এইটা তো দুই কাপ চায়ের দাম মামা! আরেকটু বাড়ান।",
-  (ask: number) => `মামা, ঠাট্টা করেন? ${bn(ask)}-ই লাগবো।`,
+  (ask: number) => `মামা, ঠাট্টা করেন? ${bn(ask)}-ই লাগবে।`,
 ];
-const dealLines = ["আচ্ছা যান, উঠেন মামা!", "চলেন, শক্ত কইরা বসেন।", "ঠিক আছে, আপনার জন্যই। উঠেন!"];
+const dealLines = ["আচ্ছা যান, উঠেন মামা!", "চলেন, শক্ত করে বসেন।", "ঠিক আছে, আপনার জন্যই। উঠেন!"];
 
 /** What mama says when a deal closes or he leaves. Built from the result alone, so a shared card says the same. */
 export function mamaQuote({ route, fare, rounds }: Result) {
@@ -122,7 +122,7 @@ export function offer(game: Game, amount: number, said?: string): Game {
   if (o < floor) return { ...next, mama: pick(refuseLines, seed)(game.ask) };
   // Meet halfway, but never under the next round's bar, so taking his counter can't beat simply offering that bar.
   const counter = Math.min(game.ask, Math.max(threshold(route, round + 1), ceil5((game.ask + o) / 2)));
-  if (round === MAX_ROUNDS) return { ...next, status: "final", ask: counter, mama: `শেষ কথা, ${bn(counter)}। এর নিচে হইবো না।` };
+  if (round === MAX_ROUNDS) return { ...next, status: "final", ask: counter, mama: `শেষ কথা, ${bn(counter)}। এর নিচে হবে না।` };
   return { ...next, ask: counter, mama: counter === game.ask ? `এক টাকাও কমামু না মামা, ${bn(counter)}।` : pick(counterLines, seed)(counter, route) };
 }
 

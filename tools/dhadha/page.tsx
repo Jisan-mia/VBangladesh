@@ -18,7 +18,7 @@ export default function DhadhaPage() {
           <h2 id="guide-title">{site.guideTitle}</h2>
           <p>{site.guideIntro}</p>
           <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{new Intl.NumberFormat('bn-BD').format(index + 1)}</span><p>{step}</p></li>)}</ol>
-          <p className="dh-source"><strong>সূত্র:</strong> ধাঁধাগুলো মুখে মুখে চলে আসা লোকজ শোলক। শব্দ আর উত্তর মিলিয়ে দেখা হয়েছে বাংলাপিডিয়ার “ধাঁধা” ভুক্তি, প্রথম আলোর দুটি লেখা (এপ্রিল ২০২৩) আর কয়েকটি জনপ্রিয় সংকলনের সাথে; যেখানে উত্তর নিয়ে মতভেদ, সেই ধাঁধা বাদ। অঞ্চলভেদে শব্দ একটু আলাদা হতে পারে।</p>
+          <p className="dh-source"><strong>সূত্র:</strong> ধাঁধাগুলো মুখে মুখে চলে আসা লোকজ শোলক। শব্দ আর উত্তর মিলিয়ে দেখা হয়েছে বাংলাপিডিয়ার “ধাঁধা” ভুক্তি, প্রথম আলোর দুটো লেখা (এপ্রিল ২০২৩) আর কয়েকটা জনপ্রিয় সংকলনের সাথে। যেখানে উত্তর নিয়ে মতভেদ, সেই ধাঁধা বাদ দেওয়া হয়েছে। অঞ্চলভেদে শব্দ একটু আলাদা হতে পারে।</p>
         </section>
         <Faq items={site.faq} />
         <section className="container section dh-suggest" aria-label="ধাঁধার পরামর্শ"><SuggestBox tool="dhadha" question="তোমার নানি-দাদির কোন ধাঁধাটা থাকা উচিত?" placeholder="ধাঁধা আর উত্তর দুটোই লিখো" /></section>

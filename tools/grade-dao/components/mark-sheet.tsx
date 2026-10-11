@@ -201,7 +201,7 @@ export function MarkSheet() {
               <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="grade-dao.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${rival ? rival.grades.join("") : ""}|${card.national.join("")}`} caption={sheet ? caption(sheet, rival) : ""} state={state || undefined} disabled={!complete} hint={complete ? "লিংক পেলে বন্ধু একই ৮টা খাতা দেখবে, আর দেখবে তোমাদের কয়টা গ্রেড মেলে।" : "আগে ৮টা খাতায় গ্রেড দাও।"} />
+            <ShareBar tool={TOOL} fileName="grade-dao.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${rival ? rival.grades.join("") : ""}|${card.national.join("")}`} caption={sheet ? caption(sheet, rival) : ""} state={state || undefined} disabled={!complete} hint={complete ? "লিংকে একই ৮টা খাতা যায়। বন্ধু গ্রেড দিলে দেখবে কয়টা মিলল।" : "আগে ৮টা খাতায় গ্রেড দাও।"} />
             {complete && (
               <div className="gd-count">
                 <h3>দেশের গড়ে তোমার গ্রেডও যোগ করবে?</h3>

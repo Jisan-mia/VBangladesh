@@ -151,7 +151,7 @@ export function JamCalculator() {
           </figure>
           <div className="jam-share">
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="jame-jibon.png" makeImage={() => cardBlob(commute, format, site)} imageKey={`${state}|${format}`} caption={caption(commute)} state={state} hint="লিংক পেলে বন্ধু তোমার বাস দেখবে, আর নিজেরটা হিসাব করবে।" />
+            <ShareBar tool={TOOL} fileName="jame-jibon.png" makeImage={() => cardBlob(commute, format, site)} imageKey={`${state}|${format}`} caption={caption(commute)} state={state} hint="লিংকে তোমার বাসটাই যায়। বন্ধু খুলে নিজের হিসাবও করতে পারবে।" />
           </div>
         </div>
 

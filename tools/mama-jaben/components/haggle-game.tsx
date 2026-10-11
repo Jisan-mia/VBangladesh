@@ -130,7 +130,7 @@ export function HaggleGame() {
       </div>
 
       <fieldset className="mj-routes">
-        <legend>“কই যাইবেন?” <small>রাস্তা বদলাতে ছোঁও</small></legend>
+        <legend>“কই যাবেন?” <small>রাস্তা বদলাতে চাপো</small></legend>
         <div>
           {routes.map(item => (
             <button type="button" key={item.id} aria-pressed={item.id === game.route} onClick={() => begin(item.id)}>
@@ -147,7 +147,7 @@ export function HaggleGame() {
         </ol>
         <p className="mj-plate-fare">
           {game.status === "gone" ? <b className="mj-plate-gone">মামা গেলেন</b> : <>
-            <small>{game.status === "deal" ? "রাজি" : game.status === "final" ? "শেষ কথা" : "মামা চায়"}</small>
+            <small>{game.status === "deal" ? "রাজি" : game.status === "final" ? "শেষ কথা" : "মামা চান"}</small>
             <b>{bn(game.status === "deal" ? game.fare : game.ask)}</b>
             <small>টাকা</small>
           </>}
@@ -208,7 +208,7 @@ export function HaggleGame() {
                 <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
               </label>
               <FormatToggle value={format} onChange={setFormat} />
-              <ShareBar tool={TOOL} fileName="mama-jaben.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} hint="লিংক পেলে বন্ধু একই রাস্তায় একই মামার সাথে দরদাম করবে।" />
+              <ShareBar tool={TOOL} fileName="mama-jaben.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} hint="একই রাস্তা, একই মামা। বন্ধু কত টাকায় পারে, দেখো।" />
             </div>
           </div>
 

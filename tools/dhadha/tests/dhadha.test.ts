@@ -97,7 +97,7 @@ test("nothing shared ever carries the answer: preview, caption or link", () => {
 
 test("the preview is personal when a result is shared", () => {
   const state = shareHash({ date: "2026-10-09", id: "dheki", tries: 1, name: "রাফি" }).slice(1);
-  assert.equal(share.preview(state).title, "রাফি ৯ অক্টোবরের ধাঁধা প্রথম চেষ্টায় পেরেছে — তুমি পারবে?");
+  assert.equal(share.preview(state).title, "রাফি ৯ অক্টোবরের ধাঁধা প্রথম চেষ্টায় পেরেছে। তুমি পারবে?");
 });
 
 test("tally ids cover only fixed riddle ids, and every finished riddle is resent", () => {

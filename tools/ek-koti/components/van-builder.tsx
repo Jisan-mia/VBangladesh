@@ -103,7 +103,7 @@ export function VanBuilder() {
     const after = countOf(next, id);
     if (wanted > after) {
       const item = itemById(id);
-      setWarn(current => ({ key: current.key + 1, text: after >= (item.max ?? Infinity) ? "এটা একটাই যথেষ্ট!" : `টাকায় কুলোচ্ছে না! বাকি আছে ${taka(leftOf(next))}` }));
+      setWarn(current => ({ key: current.key + 1, text: after >= (item.max ?? Infinity) ? "এটা একটাই কেনা যায়!" : `টাকায় কুলোচ্ছে না! বাকি আছে ${taka(leftOf(next))}` }));
     }
     if (after === before) { setPop(current => ({ ...current, text: "" })); return; }
     const moved = (after - before) * itemById(id).price;
@@ -223,7 +223,7 @@ export function VanBuilder() {
               <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="ek-koti.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} disabled={!card.count} hint={card.count ? "লিংক পেলে বন্ধু দেখবে তোমার ভ্যান, তারপর নিজেরটা বোঝাই করবে।" : ""} />
+            <ShareBar tool={TOOL} fileName="ek-koti.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} disabled={!card.count} hint={card.count ? "বন্ধুকে লিংক দাও, ও তোমার ভ্যান দেখে নিজেরটা বোঝাই করুক।" : ""} />
             <button type="button" className="kit-link ek-restart" onClick={restart}>আবার এক কোটি থেকে শুরু করি</button>
           </div>
         </div>
@@ -232,7 +232,7 @@ export function VanBuilder() {
           <div className="ek-everyone">
             <h3>সবাই কী কিনছে, দেখবে?</h3>
             {compared !== "done" || !everyone ? <>
-              <p>নাম যাবে না, টাকার অঙ্কও না। শুধু কোন কোন জিনিস কিনলে, সেটা গোনা হবে।</p>
+              <p>নাম যাবে না, টাকার অঙ্কও না। শুধু কোন কোন জিনিস কিনেছ, সেটা গোনা হবে।</p>
               <button type="button" className="kit-secondary" onClick={compareWithEveryone} disabled={compared === "sending"}>{compared === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
               {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
             </> : !showCompare ? (
