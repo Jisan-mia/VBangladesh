@@ -11,10 +11,10 @@ Agents use Sonnet 5.5 with `research/copy-review-agent-prompt.md`; up to 5 run a
 | B4 পরিবার+হিসাব | attiyo probash prothom-ay bazar-note bhara bhagabhagi boyos bhori | done |
 | B5 হিসাব | matir-bank dhoyahin jomi rokto current-gelo betoner-bhag bidyut-bill | done |
 | B6 খেলা ১ | cholo-kheli argentina-na-brazil amar-jersey dom-atkano golir-ain shesh-bol | done |
-| B7 খেলা ২+উৎসব | ami-bolechhilam matcher-mon ekadosh raat-jaga shubhechha koto-din-baki iftar-plate salami-chek | building |
+| B7 খেলা ২+উৎসব | ami-bolechhilam matcher-mon ekadosh raat-jaga shubhechha koto-din-baki iftar-plate salami-chek | done |
 | B8 উৎসব+ভাষা | sehri-iftar eider-din eidjatra gorur-ojon mondop shobdo-khela gpa taka-kothay | building |
 | B9 ভাষা+মজা | banan desh-cheno bagdhara bangla-typing namta komon-porlo eta-na-ota cha-mudra | building |
-| B10 মজা | flames jam ganer-koli dhadha ek-koti mama-jaben mishron grade-dao | todo |
+| B10 মজা | flames jam ganer-koli dhadha ek-koti mama-jaben mishron grade-dao | building |
 | B11 নিজেকে জানো | biye-kobe daknam moner-boyos bhorta koto-cheno char-priyo projonmo starter-pack adda | todo |
 
 ## Marketing (research/marketing/)
