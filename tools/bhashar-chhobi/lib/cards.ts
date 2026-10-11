@@ -69,5 +69,5 @@ export function cardText(card: LanguageCard, friend?: LanguageCard | null): Card
 
 export function previewTitle(card: LanguageCard) {
   const { word, place } = cardText(card);
-  return `${place} ${objectOf(card.objectId).name}কে বলে “${word}” — তোমাদের ওখানে কী বলে?`;
+  return `${place} ${objectOf(card.objectId).name}কে বলে “${word}”। তোমাদের ওখানে কী বলে?`;
 }

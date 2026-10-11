@@ -72,8 +72,8 @@ test("every generated text is NFC, so canvas and link previews match the repo", 
 test("share: normalize, personal preview, and a tally over fixed year ids only", () => {
   assert.equal(share.normalize("a=100&y=1995&b=1&n=রাফি"), "y=1995&a=100&b=1");
   assert.equal(share.normalize("y=2025&a=100"), null);
-  assert.equal(share.preview("y=1995&a=100&b=1").title, "আমার জন্মসাল ১৯৯৫: তখনকার ১০০ টাকা এখন প্রায় ৬৭০ টাকা — তোমারটা কত?");
-  assert.equal(share.preview("y=1995&a=100").title, "১৯৯৫ সালের ১০০ টাকা এখন প্রায় ৬৭০ টাকা — তোমার জন্মসালেরটা কত?");
+  assert.equal(share.preview("y=1995&a=100&b=1").title, "আমার জন্মসাল ১৯৯৫: তখনকার ১০০ টাকা এখন প্রায় ৬৭০ টাকা। তোমারটা কত?");
+  assert.equal(share.preview("y=1995&a=100").title, "১৯৯৫ সালের ১০০ টাকা এখন প্রায় ৬৭০ টাকা। তোমার জন্মসালেরটা কত?");
   assert.deepEqual(share.tally, years.map(String));
   assert.ok(!share.tally!.includes(String(LATEST_YEAR)));
 });

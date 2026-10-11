@@ -142,14 +142,14 @@ export function CardBuilder() {
           </figure>
           <div className="bc-result-controls">
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="amader-bhasha.png" makeImage={() => cardBlob(card, text, format, site)} imageKey={`${state}|${format}|${text.match}`} caption={caption} state={state} hint="লিংক পেলে বন্ধু তোমার কার্ড দেখবে, তারপর নিজেদের শব্দটা লিখবে।" />
+            <ShareBar tool={TOOL} fileName="amader-bhasha.png" makeImage={() => cardBlob(card, text, format, site)} imageKey={`${state}|${format}|${text.match}`} caption={caption} state={state} hint="লিংক পাঠালে বন্ধু ওদের এলাকার নামটা লিখে জবাব দিতে পারবে।" />
             {card.district && (
               <div className="bc-count">
                 <h3>{districtName(card.district)} জেলাটাও গোনা হোক?</h3>
                 {counted === 'done' && everyone ? (
                   <p role="status">যোগ হয়েছে! {everyone.total >= SOCIAL_PROOF_MIN ? `এখন পর্যন্ত ${bn(districtCount(everyone))} জেলার মানুষ নিজের শব্দে কার্ড বানিয়েছে।` : 'আরও কয়েকজন যোগ হলে দেখাব কয় জেলা থেকে কার্ড এল।'}</p>
                 ) : <>
-                  <p>শুধু জেলার নামটা গোনা হবে, যাতে দেখা যায় কয় জেলার মানুষ কার্ড বানাল। তোমার লেখা শব্দ কোথাও যাবে না।</p>
+                  <p>শুধু জেলার নামটা গোনা হবে, যাতে দেখা যায় কয় জেলার মানুষ কার্ড বানাল। তোমার লেখা শব্দ এর সাথে যায় না।</p>
                   <button type="button" className="kit-secondary" onClick={countDistrict} disabled={counted === 'sending'}>{counted === 'sending' ? 'যোগ হচ্ছে…' : 'আমার জেলা যোগ করো'}</button>
                   {counted === 'failed' && <p className="kit-status" role="alert">এখন যোগ করা গেল না। একটু পরে আবার চেষ্টা করো।</p>}
                 </>}

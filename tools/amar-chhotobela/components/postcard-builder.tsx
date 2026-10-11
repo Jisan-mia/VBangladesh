@@ -115,7 +115,7 @@ export function PostcardBuilder() {
       <section className="khata-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="khata-result-head">
           <h2 id="result-title">{card.count ? <>তোমার খাতায় <em>{bn(card.count)}টা</em> স্মৃতি</> : "তোমার খাতাটা এখনো ফাঁকা"}</h2>
-          <p>{card.count ? card.line : "ওপরের তালিকা থেকে যেগুলো তোমার ছোটবেলায় ছিল, ছুঁয়ে দাও।"}</p>
+          <p>{card.count ? card.line : "ওপরের তালিকা থেকে যেগুলো তোমার ছোটবেলায় ছিল, সেগুলোয় ট্যাপ করো।"}</p>
         </div>
 
         <div className="khata-result-body">
@@ -136,7 +136,7 @@ export function PostcardBuilder() {
               {decades.map(item => <button type="button" key={item.id} aria-pressed={decade === item.id} onClick={() => setDecade(current => current === item.id ? "" : item.id)}>{item.label}</button>)}
             </fieldset>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="amar-chhotobela.png" makeImage={() => cardBlob(card, format, site, photo)} imageKey={`${state}|${format}|${photo?.width ?? 0}`} caption={caption} state={state} disabled={!card.count} hint={card.count ? "লিংক পেলে বন্ধু দেখবে তোমার খাতা, আর নিজেরটা মেলাতে পারবে।" : ""} />
+            <ShareBar tool={TOOL} fileName="amar-chhotobela.png" makeImage={() => cardBlob(card, format, site, photo)} imageKey={`${state}|${format}|${photo?.width ?? 0}`} caption={caption} state={state} disabled={!card.count} hint={card.count ? "বন্ধু লিংক খুললে তোমার খাতা দেখবে, নিজেরটাও মেলাতে পারবে।" : ""} />
             {card.count > 0 && <button type="button" className="kit-link khata-restart" onClick={restart}>আবার শুরু করি</button>}
           </div>
         </div>
@@ -150,9 +150,9 @@ export function PostcardBuilder() {
               {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
             </> : <>
               <p>{bn(everyone.total)} জনের সাথে মেলানো হলো।</p>
-              {everyone.total < COMPARE_MIN ? <p className="kit-status">এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন মেলালেই মজাটা শুরু!</p> : <>
+              {everyone.total < COMPARE_MIN ? <p className="kit-status">এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাব এখনই ঠিকমতো বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন মেলালেই জমে যাবে!</p> : <>
               {ranked.length > 0 && <div className="khata-rare">
-                <p><span>তোমার সবচেয়ে বিরল স্মৃতি</span><strong>{ranked[0].memory.label}</strong><em>{ranked[0].percent < 30 ? "মাত্র " : ""}{bn(ranked[0].percent)}% মানুষের ছিল</em></p>
+                <p><span>কম মানুষের যেটা ছিল</span><strong>{ranked[0].memory.label}</strong><em>{ranked[0].percent < 30 ? "মাত্র " : ""}{bn(ranked[0].percent)}% মানুষের ছিল</em></p>
                 {ranked.length > 1 && <p><span>প্রায় সবার যেটা ছিল</span><strong>{ranked.at(-1)!.memory.label}</strong><em>{bn(ranked.at(-1)!.percent)}% মানুষের ছিল</em></p>}
               </div>}
               <ul className="khata-bars">{ranked.slice().reverse().map(({ memory, percent }) => <li key={memory.id}><span>{memory.label}</span><i style={{ width: `${percent}%` }} /><b>{bn(percent)}%</b></li>)}</ul>

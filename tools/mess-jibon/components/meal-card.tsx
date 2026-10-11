@@ -128,7 +128,7 @@ export function MealCard() {
       <section className="mj-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="mj-result-head">
           <h2 id="result-title">{picked.length ? <>তোমার মিল কার্ডে <em>{bn(TOTAL)}-এ {bn(picked.length)}টা</em> ফুটো</> : "মিল কার্ড এখনো আস্ত"}</h2>
-          <p>{picked.length ? <>খেতাব: <strong>{tier}</strong>। {line}</> : "ওপরের কার্ড থেকে যা যা তোমার হল বা মেস জীবনে হয়েছে, ছুঁয়ে দাও।"}</p>
+          <p>{picked.length ? <>খেতাব: <strong>{tier}</strong>। {line}</> : "ওপরের কার্ড থেকে যা যা তোমার হল বা মেস জীবনে হয়েছে, সেগুলোয় ট্যাপ করো।"}</p>
         </div>
 
         <div className="mj-result-body">
@@ -150,7 +150,7 @@ export function MealCard() {
               </label>
             </div>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="mess-jibon-mil-card.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} disabled={!picked.length} hint={picked.length ? "লিংক পেলে রুমমেট দেখবে তোমার কার্ড, আর নিজেরটা ফুটো করে মেলাতে পারবে।" : ""} />
+            <ShareBar tool={TOOL} fileName="mess-jibon-mil-card.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} disabled={!picked.length} hint={picked.length ? "লিংক পাঠালে রুমমেট নিজেরটা ফুটো করে দেখতে পারবে, তোমাদের কী কী মিলল।" : ""} />
             <p className="mj-also">মাসের মিল রেট বের করবে? <a href="/bhagabhagi#mil">ভাগাভাগি</a>-তে মোট বাজার আর সবার মিল লেখো, কে কত দেবে বের হয়ে যাবে।</p>
           </div>
         </div>
@@ -159,16 +159,16 @@ export function MealCard() {
           <div className="mj-everyone">
             <h3>সবার মিল কার্ডের সাথে মেলাবে?</h3>
             {joined !== "done" ? <>
-              <p>দেখো কোন মুহূর্তটা প্রায় সবার আছে, আর কোনটা অল্প কয়েকজনের। শুধু ফুটোগুলো গোনা হবে; নাম বা হল-মেসের নাম যাবে না।</p>
+              <p>দেখো কোন মুহূর্তটা প্রায় সবার আছে, আর কোনটা অল্প কয়েকজনের। শুধু ফুটোগুলো গোনা হবে। নাম বা হল-মেসের নাম যাবে না।</p>
               <button type="button" className="kit-secondary" onClick={join} disabled={joined === "sending"}>{joined === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
               {joined === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
             </> : !ranked.length ? (
-              <p className="kit-status">যোগ হয়েছে! এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাবটা এখনই ঠিক বলা যাবে না। রুমমেটদের লিংক পাঠাও, কয়েকজন মেলালেই মজাটা শুরু।</p>
+              <p className="kit-status">যোগ হয়েছে! এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাব এখনই ঠিকমতো বলা যাবে না। রুমমেটদের লিংক পাঠাও, কয়েকজন মেলালেই জমে যাবে।</p>
             ) : <>
               <p>{bn(everyone!.total)} জনের মিল কার্ডের সাথে মেলানো হলো।</p>
               <div className="mj-rare">
                 <p><span>সবচেয়ে বেশি জনের সাথে মিলেছে</span><strong>{ranked[0].moment.card}</strong><em>{bn(ranked[0].percent)}% মানুষের</em></p>
-                {ranked.length > 1 && <p><span>তোমার সবচেয়ে বিরল ফুটো</span><strong>{ranked.at(-1)!.moment.card}</strong><em>{ranked.at(-1)!.percent < 30 ? "মাত্র " : ""}{bn(ranked.at(-1)!.percent)}% মানুষের</em></p>}
+                {ranked.length > 1 && <p><span>সবচেয়ে কম জনের সাথে মিলেছে</span><strong>{ranked.at(-1)!.moment.card}</strong><em>{ranked.at(-1)!.percent < 30 ? "মাত্র " : ""}{bn(ranked.at(-1)!.percent)}% মানুষের</em></p>}
               </div>
               <ul className="mj-bars">{ranked.map(({ moment, percent }) => <li key={moment.id}><span>{moment.card}</span><i style={{ width: `${percent}%` }} /><b>{bn(percent)}%</b></li>)}</ul>
             </>}

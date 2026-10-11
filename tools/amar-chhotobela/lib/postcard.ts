@@ -3,7 +3,7 @@ export const MAX_NAME_LENGTH = 30;
 
 export const chapters = [
   { id: "khela", label: "খেলাধুলা" },
-  { id: "porda", label: "টিভি-ক্যাসেটের যুগ" },
+  { id: "porda", label: "টিভি আর গেমের দিন" },
   { id: "khabar", label: "খাবারদাবার" },
   { id: "school", label: "স্কুলের দিন" },
   { id: "bari", label: "বাড়ির কথা" },
@@ -124,7 +124,7 @@ export function memoryLine(count: number) {
   if (count <= 6) return "অল্প কয়টা, কিন্তু প্রত্যেকটা একদম নিজের।";
   if (count <= 14) return "মেলাতে মেলাতেই মনটা কেমন যেন করে উঠল।";
   if (count <= 22) return "চোখ বন্ধ করলে এখনো সেই বিকেলগুলো দেখতে পাই।";
-  return "আমাদের ছোটবেলাটাই আসলে সবচেয়ে সুন্দর ছিল।";
+  return "এতগুলো মনে আছে মানে ছোটবেলাটা ভরাই ছিল।";
 }
 
 export function createCard(own: Shared, friend?: Shared | null): CardContent {

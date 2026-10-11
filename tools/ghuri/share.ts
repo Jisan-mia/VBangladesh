@@ -9,7 +9,7 @@ export const share: ToolShare = {
   preview(state) {
     const ghuri = parseShareHash(state);
     return {
-      title: ghuri ? previewTitle(ghuri) : "সাকরাইনের আকাশে একটা ঘুড়ি উড়ছে — তোমারটা কই?",
+      title: ghuri ? previewTitle(ghuri) : "সাকরাইনের আকাশে একটা ঘুড়ি উড়ছে। তোমারটা কই?",
       description: "নকশা আর রং বেছে নিজের ঘুড়ি বা ফানুস বানাও, নাম লেখো, পুরান ঢাকার সন্ধ্যার আকাশে ওড়াও। ফ্রি, অ্যাকাউন্ট লাগে না।",
     };
   },

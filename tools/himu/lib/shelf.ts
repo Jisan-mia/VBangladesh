@@ -165,7 +165,7 @@ export function createCard(own: Shared, friend?: Shared | null): CardContent {
 export const scoreText = (count: number) => `${bn(books.length)}-এ ${bn(count)}টা`;
 
 export function previewTitle({ read, name }: Shared) {
-  return `${name || "এক বন্ধু"} হুমায়ূন আহমেদের ${bn(books.length)}টা বইয়ের ${bn(read.length)}টা পড়েছে — তুমি কয়টা?`;
+  return `${name || "এক বন্ধু"} হুমায়ূন আহমেদের ${bn(books.length)}টা বইয়ের ${bn(read.length)}টা পড়েছে। তুমি কয়টা?`;
 }
 
 export { possessive };

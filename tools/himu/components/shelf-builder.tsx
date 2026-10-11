@@ -95,7 +95,7 @@ export function ShelfBuilder() {
   const rarest = ranked.find(item => read.includes(item.book.id));
   const caption = card.match
     ? `${card.match}! হুমায়ূন আহমেদের ${bn(books.length)}টা বইয়ের ${bn(card.count)}টা আমার পড়া। তুমি কয়টা পড়েছ?`
-    : `হুমায়ূন আহমেদের ${bn(books.length)}টা বইয়ের ${bn(card.count)}টা পড়েছি, আমি "${card.tier}"। তুমি কয়টা পড়েছ?`;
+    : `হুমায়ূন আহমেদের ${bn(books.length)}টা বইয়ের ${bn(card.count)}টা পড়েছি, আমি “${card.tier}”। তুমি কয়টা পড়েছ?`;
 
   return (
     <div className="hm">
@@ -120,9 +120,9 @@ export function ShelfBuilder() {
           </div>
           <NightRoad progress={read.length / books.length} />
         </div>
-        <p className="hm-hint">{!touched ? <>নমুনা হিসেবে <b>৩টা</b> ছোঁয়া আছে। যেগুলো পড়েছ ছুঁয়ে দাও, না পড়লে ছুঁয়ে সরাও।</>
-          : friend ? <><i className="hm-dot" aria-hidden="true" /> হলুদ ফোঁটা মানে {friendName} পড়েছে। তুমি যেগুলো পড়েছ, ছুঁয়ে দাও।</>
-          : "যেগুলো পড়েছ, ছুঁয়ে দাও। ভুল হলে আবার ছুঁলেই উঠে যাবে।"}</p>
+        <p className="hm-hint">{!touched ? <>নমুনা হিসেবে <b>৩টা</b> বই আগে থেকেই বাছা আছে। যেগুলো পড়েছ ট্যাপ করো, না পড়লে আবার ট্যাপ করে সরাও।</>
+          : friend ? <><i className="hm-dot" aria-hidden="true" /> হলুদ ফোঁটা মানে {friendName} পড়েছে। তুমি যেগুলো পড়েছ, সেগুলোয় ট্যাপ করো।</>
+          : "যেগুলো পড়েছ, ট্যাপ করো। ভুল হলে আবার ট্যাপ করলেই উঠে যাবে।"}</p>
 
         {shelves.map(shelf => {
           const onShelf = books.map((book, index) => ({ book, index })).filter(item => item.book.shelf === shelf.id);
@@ -147,7 +147,7 @@ export function ShelfBuilder() {
             </fieldset>
           );
         })}
-        <p className="hm-source">তাঁর বই ২০০-র বেশি; এখানে সবচেয়ে চেনা ৩০টা। নাম যাচাই: <a href="https://bn.banglapedia.org/index.php/আহমেদ,_হুমায়ূন" target="_blank" rel="noopener noreferrer">বাংলাপিডিয়া</a> ও <a href="https://bn.wikipedia.org/wiki/হুমায়ূন_আহমেদের_গ্রন্থতালিকা" target="_blank" rel="noopener noreferrer">উইকিপিডিয়ার গ্রন্থতালিকা</a>।</p>
+        <p className="hm-source">তাঁর বই ২০০-র বেশি, এখানে সবচেয়ে চেনা ৩০টা। নাম যাচাই: <a href="https://bn.banglapedia.org/index.php/আহমেদ,_হুমায়ূন" target="_blank" rel="noopener noreferrer">বাংলাপিডিয়া</a> ও <a href="https://bn.wikipedia.org/wiki/হুমায়ূন_আহমেদের_গ্রন্থতালিকা" target="_blank" rel="noopener noreferrer">উইকিপিডিয়ার গ্রন্থতালিকা</a>।</p>
       </div>
 
       <StickyNext show={read.length > 0 && !resultVisible} title={<><strong>{scoreText(read.length)}</strong> পড়া</>} sub={tierFor(read.length)} href="#result" label="কার্ডটা দেখো" />
@@ -169,7 +169,7 @@ export function ShelfBuilder() {
             {common && (
               <div className="hm-common">
                 <h3>{possessive(friendName)} সাথে দুজনেরই পড়া: {bn(common.count)}টা</h3>
-                <p>{common.count ? common.text : "এখনো একটাও মেলেনি। তুমি যেগুলো পড়েছ, ওপরে ছুঁয়ে দাও।"}</p>
+                <p>{common.count ? common.text : "এখনো একটাও মেলেনি। তুমি যেগুলো পড়েছ, ওপরে ট্যাপ করো।"}</p>
               </div>
             )}
             <label className="hm-field">
@@ -177,7 +177,7 @@ export function ShelfBuilder() {
               <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="humayun-boi.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${card.match}`} caption={caption} state={state} hint="লিংক পেলে বন্ধু দেখবে তোমার তাক, আর নিজেরটা মেলাতে পারবে।" />
+            <ShareBar tool={TOOL} fileName="humayun-boi.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${card.match}`} caption={caption} state={state} hint="লিংক পাঠালে বন্ধুও নিজের তাক মেলাতে পারবে।" />
             {read.length > 0 && <button type="button" className="kit-link hm-restart" onClick={restart}>সব নামিয়ে আবার শুরু করি</button>}
           </div>
         </div>
@@ -189,11 +189,11 @@ export function ShelfBuilder() {
             <button type="button" className="kit-secondary" onClick={compareWithEveryone} disabled={compared === "sending"}>{compared === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
             {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
           </> : everyone.total < COMPARE_MIN ? (
-            <p className="kit-status">{bn(everyone.total)} জনের সাথে মেলানো হলো। এখনো খুব কম মানুষ, তাই হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও!</p>
+            <p className="kit-status">{bn(everyone.total)} জনের সাথে মেলানো হলো। এখনো খুব কম মানুষ, তাই হিসাব এখনই ঠিকমতো বলা যাবে না। বন্ধুদের লিংক পাঠাও!</p>
           ) : (
             <div className="hm-tips">
               {tip && <p><span>পরের বই হিসেবে ধরো</span><strong>{tip.book.title}</strong><em>{tip.share < 30 ? "মাত্র " : ""}{bn(tip.share)}% মানুষ পড়েছে</em></p>}
-              {rarest && <p><span>তোমার সবচেয়ে বিরল পড়া</span><strong>{rarest.book.title}</strong><em>{bn(rarest.share)}% মানুষ পড়েছে</em></p>}
+              {rarest && <p><span>তুমি পড়েছ, কম মানুষ পড়েছে</span><strong>{rarest.book.title}</strong><em>{bn(rarest.share)}% মানুষ পড়েছে</em></p>}
               <p className="hm-tips-note">{bn(everyone.total)} জনের তাকের হিসাব।</p>
             </div>
           )}

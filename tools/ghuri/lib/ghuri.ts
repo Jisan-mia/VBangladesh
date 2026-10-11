@@ -85,5 +85,5 @@ export function caption(ghuri: Ghuri) {
 
 export function previewTitle(ghuri: Ghuri) {
   if (ghuri.mode === "fanush") return `${ghuri.text ? `‘${ghuri.text}’ লেখা` : "এক বন্ধুর"} ফানুসে একটা চাওয়া: ${wishOf(ghuri.wish)!.label}`;
-  return ghuri.text ? `‘${ghuri.text}’ উড়ছে সাকরাইনের আকাশে — তোমার ঘুড়ি কই?` : `এক বন্ধুর ${patternOf(ghuri.pattern)!.label} উড়ছে সাকরাইনের আকাশে — তোমার ঘুড়ি কই?`;
+  return ghuri.text ? `‘${ghuri.text}’ উড়ছে সাকরাইনের আকাশে। তোমার ঘুড়ি কই?` : `এক বন্ধুর ${patternOf(ghuri.pattern)!.label} উড়ছে সাকরাইনের আকাশে। তোমার ঘুড়ি কই?`;
 }

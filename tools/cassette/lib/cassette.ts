@@ -28,7 +28,7 @@ export const inlays = [
   { id: 4, label: "কমলা", paper: "#f7ab68", rule: "#de8a43" },
 ] as const;
 
-export const titleIdeas = ["আমার মিক্সটেপ", "বৃষ্টির দিনের গান", "রাত জাগার গান", "বাসে শোনার জন্য"] as const;
+export const titleIdeas = ["আমার মিক্সটেপ", "বৃষ্টির দিনের গান", "রাত জাগার গান", "বাসে শোনার গান"] as const;
 
 /** A spread of eras and kinds, so the first J-card already reads like someone's real tape. */
 export const defaultSlots: readonly number[] = [18, 42, 86, 36, 11, 15, 49, 64, 92, 108];

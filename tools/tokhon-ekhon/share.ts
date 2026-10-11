@@ -9,7 +9,7 @@ export const share: ToolShare = {
   preview(state) {
     const shared = parseShareHash(state);
     return {
-      title: shared ? previewTitle(shared) : "সেই ১০০ টাকা আজ কত টাকা? — তোমার জন্মসালেরটা দেখো",
+      title: shared ? previewTitle(shared) : "সেই ১০০ টাকা আজ কত টাকা? তোমার জন্মসালেরটা দেখো",
       description: "একটা সাল বেছে নাও, দেখো তখনকার ১০, ১০০ বা ১,০০০ টাকা এখন কত টাকার সমান। বিবিএসের ভোক্তা মূল্যসূচক ধরে আনুমানিক হিসাব।",
     };
   },

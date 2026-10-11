@@ -60,7 +60,7 @@ export function JCard({ tape, onPick, common, spin }: Props) {
               return (
                 <li key={`${slot}-${song}`} style={{ "--i": slot } as CSSProperties}>
                   {onPick
-                    ? <button type="button" aria-haspopup="dialog" aria-label={`${slotLabel(slot)}: ${item.title}, ${credit(item)}। বদলাতে ছুঁয়ে দাও`} onClick={() => onPick(slot)}>{body}</button>
+                    ? <button type="button" aria-haspopup="dialog" aria-label={`${slotLabel(slot)}: ${item.title}, ${credit(item)}। বদলাতে ট্যাপ করো`} onClick={() => onPick(slot)}>{body}</button>
                     : <div className="cs-row">{body}</div>}
                 </li>
               );

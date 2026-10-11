@@ -76,7 +76,7 @@ test("a friend's link gives both counts and the books both read", () => {
 });
 
 test("the link preview is personal and the tally only counts book ids", () => {
-  assert.equal(previewTitle({ read: ["debi", "himu"], name: "রাফি" }), "রাফি হুমায়ূন আহমেদের ৩০টা বইয়ের ২টা পড়েছে — তুমি কয়টা?");
+  assert.equal(previewTitle({ read: ["debi", "himu"], name: "রাফি" }), "রাফি হুমায়ূন আহমেদের ৩০টা বইয়ের ২টা পড়েছে। তুমি কয়টা?");
   assert.match(share.preview("b=0").title, /এক বন্ধু/);
   assert.deepEqual(share.tally, books.map(book => book.id));
 });

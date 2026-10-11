@@ -79,8 +79,8 @@ test("roommate overlay, preview title without the hall, and tally ids", () => {
   assert.equal(commonLine(["dimdal", "maggi", "achar", "bidai"], friend), "দুজনেরই: ডিম-ডাল সপ্তাহ, ম্যাগি রাত আর ২টা");
   assert.equal(commonLine(["light"], friend), "মিমের সাথে একটাও মেলেনি!");
   assert.equal(commonLine(["light"], null), "");
-  assert.equal(previewTitle({ ...friend, name: "রাফি" }), "রাফির মিল কার্ডে হল-মেস জীবনের ৪টা ফুটো — তোমার কয়টা?");
-  assert.equal(share.preview(shareHash({ ...friend, name: "" }).slice(1)).title, "এক বন্ধুর মিল কার্ডে হল-মেস জীবনের ৪টা ফুটো — তোমার কয়টা?");
+  assert.equal(previewTitle({ ...friend, name: "রাফি" }), "রাফির মিল কার্ডে হল-মেস জীবনের ৪টা ফুটো। তোমার কয়টা?");
+  assert.equal(share.preview(shareHash({ ...friend, name: "" }).slice(1)).title, "এক বন্ধুর মিল কার্ডে হল-মেস জীবনের ৪টা ফুটো। তোমার কয়টা?");
   assert.ok(!share.preview(shareHash(friend).slice(1)).title.includes("নীড়"));
   // Only fixed moment ids are countable: never names or hall names.
   assert.deepEqual(share.tally, moments.map(moment => moment.id));

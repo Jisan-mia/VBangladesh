@@ -71,7 +71,7 @@ test('the share API normalizes, previews personally and only counts district ids
   const card: LanguageCard = { objectId: 'guava', word: 'নিজের শব্দ', district: 'cumilla' };
   assert.equal(share.normalize('o=nope'), null);
   assert.equal(share.normalize(shareHash(card).slice(1)), shareHash(card).slice(1));
-  assert.equal(share.preview(shareHash(card).slice(1)).title, 'কুমিল্লা জেলায় পেয়ারাকে বলে “নিজের শব্দ” — তোমাদের ওখানে কী বলে?');
-  assert.equal(previewTitle({ objectId: 'lotus', word: '', district: '' }), 'আমাদের এলাকায় শাপলাকে বলে “শাপলা” — তোমাদের ওখানে কী বলে?');
+  assert.equal(share.preview(shareHash(card).slice(1)).title, 'কুমিল্লা জেলায় পেয়ারাকে বলে “নিজের শব্দ”। তোমাদের ওখানে কী বলে?');
+  assert.equal(previewTitle({ objectId: 'lotus', word: '', district: '' }), 'আমাদের এলাকায় শাপলাকে বলে “শাপলা”। তোমাদের ওখানে কী বলে?');
   assert.deepEqual(share.tally, districts.map(district => district.id));
 });

@@ -10,7 +10,7 @@ export const share: ToolShare = {
     const shelf = parseShareHash(state);
     return {
       title: shelf ? previewTitle(shelf) : "হুমায়ূন আহমেদের কয়টা বই পড়েছ?",
-      description: "হিমু, মিসির আলি, শুভ্র আর চেনা উপন্যাস: হুমায়ূন আহমেদের ৩০টা বইয়ের কয়টা তোমার পড়া? ছুঁয়ে মেলাও, নিজের বইয়ের তাক বানাও।",
+      description: "হিমু, মিসির আলি, শুভ্র আর চেনা সব উপন্যাস… হুমায়ূন আহমেদের ৩০টা বইয়ের কয়টা তোমার পড়া? মিলিয়ে দেখো, নিজের তাক বানাও।",
     };
   },
   // Book ids only; names never get counted.

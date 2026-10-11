@@ -101,6 +101,6 @@ export function createCard(shared: Shared): Card {
 export function previewTitle(shared: Shared) {
   const card = createCard(shared);
   return shared.birth
-    ? `আমার জন্মসাল ${bnYear(card.year)}: তখনকার ${bn(card.amount)} টাকা এখন প্রায় ${bn(card.now)} টাকা — তোমারটা কত?`
-    : `${card.headline} এখন প্রায় ${bn(card.now)} টাকা — তোমার জন্মসালেরটা কত?`;
+    ? `আমার জন্মসাল ${bnYear(card.year)}: তখনকার ${bn(card.amount)} টাকা এখন প্রায় ${bn(card.now)} টাকা। তোমারটা কত?`
+    : `${card.headline} এখন প্রায় ${bn(card.now)} টাকা। তোমার জন্মসালেরটা কত?`;
 }

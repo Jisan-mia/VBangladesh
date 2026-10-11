@@ -167,7 +167,7 @@ export const certificateTitle = (name: string) => `${cleanName(name) ? possessiv
 // The hall or mess name stays on the card and in the link only; it never goes into the public preview title.
 export function previewTitle(card: MealCard) {
   const who = card.name ? possessive(card.name) : "এক বন্ধুর";
-  return `${who} মিল কার্ডে হল-মেস জীবনের ${bn(card.picked.length)}টা ফুটো — তোমার কয়টা?`;
+  return `${who} মিল কার্ডে হল-মেস জীবনের ${bn(card.picked.length)}টা ফুটো। তোমার কয়টা?`;
 }
 
 /** Share of everyone who punched this moment, in whole percent. */

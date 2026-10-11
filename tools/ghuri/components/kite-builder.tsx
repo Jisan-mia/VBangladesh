@@ -156,7 +156,7 @@ export function KiteBuilder() {
           </figure>
           <div className="gh-controls">
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="sakrain-ghuri.png" makeImage={() => cardBlob(clean, format, site, friend)} imageKey={`${state}|${format}|${friend ? stateOf(friend) : ""}`} caption={caption(clean)} state={state} hint="লিংক খুললে বন্ধু তোমার ঘুড়ি দেখবে, তারপর নিজেরটা পাশে ওড়াবে।" />
+            <ShareBar tool={TOOL} fileName="sakrain-ghuri.png" makeImage={() => cardBlob(clean, format, site, friend)} imageKey={`${state}|${format}|${friend ? stateOf(friend) : ""}`} caption={caption(clean)} state={state} hint="বন্ধু নিজেরটা বানালে তার কার্ডে তোমার ঘুড়িও পাশে উড়বে।" />
           </div>
         </div>
 
@@ -168,7 +168,7 @@ export function KiteBuilder() {
               <button type="button" className="kit-secondary" onClick={countMine} disabled={counted === "sending"}>{counted === "sending" ? "গোনা হচ্ছে…" : "আমার ঘুড়িটাও গোনো"}</button>
               {counted === "failed" && <p className="kit-status" role="alert">এখন গোনা গেল না। একটু পরে আবার চেষ্টা করো।</p>}
             </> : everyone.total < COMPARE_MIN ? (
-              <p className="kit-status">গোনা হয়েছে! এখনো মাত্র {bn(everyone.total)} জন যোগ দিয়েছে, তাই হিসাবটা এখনই বলা যাবে না। বন্ধুদের লিংক পাঠাও।</p>
+              <p className="kit-status">গোনা হয়েছে! এখনো মাত্র {bn(everyone.total)} জন যোগ দিয়েছে, তাই হিসাব এখনই বলা যাবে না। বন্ধুদের লিংক পাঠাও।</p>
             ) : (
               <ul className="gh-bars">{ranked.map(({ pattern, percent }) => <li key={pattern.id} data-mine={pattern.id === clean.pattern}><span>{pattern.label}</span><i style={{ width: `${percent}%` }} /><b>{bn(percent)}%</b></li>)}</ul>
             )}

@@ -141,7 +141,7 @@ export function Wallet() {
           </figure>
           <div className="te-share">
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="tokhon-ekhon.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} hint="লিংক পেলে বন্ধু দেখবে তোমার মানিব্যাগ, তারপর নিজের সালটা দেখবে।" />
+            <ShareBar tool={TOOL} fileName="tokhon-ekhon.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} hint="লিংক পাঠালে বন্ধুও নিজের সালের টাকা দেখে নিতে পারবে।" />
             <a className="kit-link te-again" href="#wallet">অন্য একটা সাল দেখি</a>
             <p className="te-source">{card.basis}, সব জিনিসের গড় দাম ধরে; আলাদা কোনো জিনিসের দাম না। সূত্র: <a href={SOURCE_URL} target="_blank" rel="noopener">বিবিএসের ভোক্তা মূল্যসূচক, বিশ্বব্যাংকের তথ্যভান্ডার</a> · যাচাই করা: {CHECKED}</p>
           </div>

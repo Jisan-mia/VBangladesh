@@ -104,7 +104,7 @@ export function CoverBuilder() {
           </a>
         </div>
         <div className="by-sheet">
-          <p className="by-sheet-head"><span>সূচিপত্র</span><small>যেটা বদলাতে চাও, ছুঁয়ে দাও</small></p>
+          <p className="by-sheet-head"><span>সূচিপত্র</span><small>যেটা বদলাতে চাও, ট্যাপ করো</small></p>
           <ol className="by-lines">
             {prompts.map((prompt, index) => (
               <li key={prompt.id}>
@@ -144,7 +144,7 @@ export function CoverBuilder() {
           <div className="by-controls">
             <PhotoPicker value={photo} onChange={setPhoto} label="প্রচ্ছদে ছবি" />
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName={`barshiki-${year}.png`} makeImage={() => coverBlob(cover, format, site, photo)} imageKey={`${state}|${format}|${photo?.width ?? 0}`} caption={caption(cover)} state={state} hint="লিংক খুললে বন্ধু তোমার প্রচ্ছদ দেখবে, তারপর নিজেরটা বানাতে পারবে।" />
+            <ShareBar tool={TOOL} fileName={`barshiki-${year}.png`} makeImage={() => coverBlob(cover, format, site, photo)} imageKey={`${state}|${format}|${photo?.width ?? 0}`} caption={caption(cover)} state={state} hint="বন্ধুকে লিংক পাঠালে সে নিজেরটাও বানাতে পারবে।" />
           </div>
         </div>
 
@@ -155,7 +155,7 @@ export function CoverBuilder() {
             <button type="button" className="kit-secondary" onClick={countMine} disabled={counted === "sending"}>{counted === "sending" ? "গোনা হচ্ছে…" : "আমার শব্দটাও গোনো"}</button>
             {counted === "failed" && <p className="kit-status" role="alert">এখন গোনা গেল না। একটু পরে আবার চেষ্টা করো।</p>}
           </> : everyone.total < COMPARE_MIN ? (
-            <p className="kit-status">গোনা হয়েছে! এখনো মাত্র {bn(everyone.total)} জন যোগ দিয়েছে, তাই হিসাবটা এখনই বলা যাবে না। বন্ধুদের লিংক পাঠাও।</p>
+            <p className="kit-status">গোনা হয়েছে! এখনো মাত্র {bn(everyone.total)} জন যোগ দিয়েছে, তাই হিসাব এখনই বলা যাবে না। বন্ধুদের লিংক পাঠাও।</p>
           ) : (
             <ul className="by-bars">{ranked.map(({ word, percent }) => <li key={word.id} data-mine={word.id === wordId(cover)}><span>{word.label}</span><i style={{ width: `${percent}%` }} /><b>{bn(percent)}%</b></li>)}</ul>
           )}

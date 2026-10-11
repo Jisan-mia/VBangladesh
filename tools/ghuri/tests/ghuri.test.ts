@@ -49,9 +49,9 @@ test("the card year is the Bangla year Shakrain falls in", () => {
 
 test("caption and link preview speak for the person, tally only counts fixed ids", () => {
   assert.equal(caption(kite), "সাকরাইনের আকাশে আমার ঘুড়ি ‘রাফি’ উড়ছে! তোমার ঘুড়ির নাম কী?");
-  assert.equal(previewTitle({ ...kite, text: "" }), "এক বন্ধুর চোখদার উড়ছে সাকরাইনের আকাশে — তোমার ঘুড়ি কই?");
+  assert.equal(previewTitle({ ...kite, text: "" }), "এক বন্ধুর চোখদার উড়ছে সাকরাইনের আকাশে। তোমার ঘুড়ি কই?");
   const state = share.normalize("o=kite&p=chokhdar&c=blue&nm=রাফি")!;
-  assert.equal(share.preview(state).title, "‘রাফি’ উড়ছে সাকরাইনের আকাশে — তোমার ঘুড়ি কই?");
+  assert.equal(share.preview(state).title, "‘রাফি’ উড়ছে সাকরাইনের আকাশে। তোমার ঘুড়ি কই?");
   assert.equal(share.preview(share.normalize("o=fanush&w=bhalo&c=red")!).title, "এক বন্ধুর ফানুসে একটা চাওয়া: সবাই ভালো থাকুক");
   assert.equal(share.normalize("o=kite&p=x&c=red"), null);
   assert.deepEqual([...share.tally!], patterns.map(pattern => pattern.id));

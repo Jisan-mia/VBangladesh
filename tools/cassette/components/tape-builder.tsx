@@ -100,7 +100,7 @@ export function TapeBuilder() {
       )}
 
       <div className="cs-stage" id="cs-tape">
-        <p className="cs-hint">যে গানটা বদলাবে, সেই লাইনে ছুঁয়ে দাও।</p>
+        <p className="cs-hint">যে গানটা বদলাবে, তার লাইনে ট্যাপ করো।</p>
         <JCard tape={tape} onPick={open} spin={spin} />
         <div className="cs-dress">
           <label className="cs-field">
@@ -163,7 +163,7 @@ export function TapeBuilder() {
           </figure>
           <div className="cs-controls">
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="amar-cassette.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} hint="লিংক পেলে বন্ধু দেখবে তোমার ক্যাসেট, আর নিজেরটা বানালে দেখবে কোন গান দুজনেরই আছে।" />
+            <ShareBar tool={TOOL} fileName="amar-cassette.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} hint="লিংক পাঠালে বন্ধু নিজেরটা বানিয়ে দেখতে পাবে, কোন গান দুজনেরই আছে।" />
           </div>
         </div>
 
