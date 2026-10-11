@@ -10,7 +10,7 @@ export const share: ToolShare = {
     const today = dhakaToday(new Date());
     const pick = parseShareHash(state, today);
     return {
-      title: pick ? previewTitle(pick, today) : "পরের উৎসব আর কত দিন? — তুমি কোন দিনের অপেক্ষায়?",
+      title: pick ? previewTitle(pick, today) : "পরের উৎসব আর কত দিন? তুমি কোন দিনের অপেক্ষায়?",
       description: "ঈদ, পূজা, বড়দিন, বুদ্ধ পূর্ণিমা, বৈশাখ আর জাতীয় দিবস, কিংবা নিজের কোনো দিন। ক্যালেন্ডারের পাতায় দিন গোনো, ফ্রি, অ্যাকাউন্ট লাগে না।",
     };
   },

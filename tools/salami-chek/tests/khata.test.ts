@@ -33,7 +33,7 @@ test("links made before the খাতা still open the same cheque", () => {
   assert.equal(parseKhataHash(old), null);
   assert.deepEqual(parseShareHash(old), { giver: "mama", amount: 1000, name: "রাফি", ok: true });
   assert.equal(share.normalize(old), old);
-  assert.equal(share.preview("g=mama&a=1000&n=রাফি").title, "রাফি মামার কাছে সালামি চেয়েছে — সই করে দাও!");
+  assert.equal(share.preview("g=mama&a=1000&n=রাফি").title, "রাফি মামার কাছে সালামি চেয়েছে। সই করে দাও!");
 });
 
 test("the card and preview speak of people, never of money", () => {

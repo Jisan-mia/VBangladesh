@@ -66,10 +66,10 @@ test("the graph starts at kick-off in the middle and never overshoots its rows",
 
 test("cards, previews and captions read like a person wrote them", () => {
   assert.equal(createCard(solo).title, "রাফির ম্যাচ");
-  assert.match(previewTitle(solo), /^রাফির ম্যাচ: .+, শেষে উল্লাস — তোমার মন কেমন দুলল\?$/);
+  assert.match(previewTitle(solo), /^রাফির ম্যাচ: .+, শেষে উল্লাস। তোমার মন কেমন দুলল\?$/);
   assert.match(previewTitle({ ...solo, name: "" }), /^এক বন্ধুর ম্যাচ/);
   const pair: Match = { ...solo, name: "মিম", friend: { moods: [1, 2, 4, 4, 0], name: "রাফি" } };
-  assert.equal(previewTitle(pair), "মিম আর রাফির মন ৫ বারের ৫ বার একসাথে দুলল — তোমারটা মেলাবে?");
+  assert.equal(previewTitle(pair), "মিম আর রাফির মন ৫ বারের ৫ বার একসাথে দুলল। তোমারটা মেলাবে?");
   assert.equal(createCard(pair).pair, "দুজনের মন ৫ বারের ৫ বার একই দিকে দুলল");
   assert.match(caption(solo), /^আমার ম্যাচের মন: /);
   assert.match(createCard({ ...solo, moods: SAMPLE }).line, /চিৎকার/);

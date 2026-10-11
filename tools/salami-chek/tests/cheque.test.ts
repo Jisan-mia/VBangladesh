@@ -57,10 +57,10 @@ test("the human line follows the brief", () => {
 });
 
 test("the link preview is personal and the tally counts givers only", () => {
-  assert.equal(previewTitle({ ...defaultCheque, name: "রাফি" }), "রাফি মামার কাছে সালামি চেয়েছে — সই করে দাও!");
-  assert.equal(previewTitle({ ...defaultCheque, giver: "bhaiya", name: "" }), "বড় ভাইয়ার কাছে একটা সালামির চেক এসেছে — সই করে দাও!");
+  assert.equal(previewTitle({ ...defaultCheque, name: "রাফি" }), "রাফি মামার কাছে সালামি চেয়েছে। সই করে দাও!");
+  assert.equal(previewTitle({ ...defaultCheque, giver: "bhaiya", name: "" }), "বড় ভাইয়ার কাছে একটা সালামির চেক এসেছে। সই করে দাও!");
   assert.equal(previewTitle({ ...defaultCheque, name: "জাহিদ", ok: true }), "মামা জাহিদের সালামির চেকে সই করে দিয়েছে!");
-  assert.equal(share.preview("g=mama&a=1000&n=রাফি").title, "রাফি মামার কাছে সালামি চেয়েছে — সই করে দাও!");
+  assert.equal(share.preview("g=mama&a=1000&n=রাফি").title, "রাফি মামার কাছে সালামি চেয়েছে। সই করে দাও!");
   assert.deepEqual(share.tally, givers.map(giver => giver.id));
 });
 

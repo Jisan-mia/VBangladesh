@@ -89,7 +89,7 @@ export function chequeLine({ giver, amount, ok }: Cheque) {
 export function previewTitle({ giver, name, ok }: Cheque) {
   const elder = giverLabel(giver);
   if (ok) return name ? `${elder} ${possessive(name)} সালামির চেকে সই করে দিয়েছে!` : `${elder} সালামির চেকে সই করে দিয়েছে!`;
-  return name ? `${name} ${possessive(elder)} কাছে সালামি চেয়েছে — সই করে দাও!` : `${possessive(elder)} কাছে একটা সালামির চেক এসেছে — সই করে দাও!`;
+  return name ? `${name} ${possessive(elder)} কাছে সালামি চেয়েছে। সই করে দাও!` : `${possessive(elder)} কাছে একটা সালামির চেক এসেছে। সই করে দাও!`;
 }
 
 /** The giver most often signed for, once enough people have signed that "most" means something. */

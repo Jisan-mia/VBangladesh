@@ -109,7 +109,7 @@ export function NightRoom() {
                 <small>{nightTitle(screen)}</small>
                 <strong>{scoreLine(screen)}</strong>
                 <small>{bdKickoff(screen.kickoff).time}{scoreNote(screen) ? ` · ${scoreNote(screen)}` : ""}</small>
-              </> : <small>{friend ? `${possessive(friendName)} তারাগুলো জানালায়। এবার তোমার রাত দাগাও।` : "নিচের তালিকায় যে রাতগুলো জেগেছিলে, ছুঁয়ে দাও"}</small>}
+              </> : <small>{friend ? `${possessive(friendName)} তারাগুলো জানালায়। এবার তোমার রাত দাগাও।` : "নিচের তালিকায় যে রাতগুলো জেগেছিলে, সেগুলোয় চাপো"}</small>}
             </div>
             <span className="rj-knobs" aria-hidden="true"><i /><i /><b /></span>
           </div>
@@ -156,7 +156,7 @@ export function NightRoom() {
       <section className="rj-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="rj-result-head">
           <h2 id="result-title">{card.count ? <>তোমার আকাশে <em>{bn(card.count)}টা</em> তারা</> : "তোমার আকাশ এখনো ফাঁকা"}</h2>
-          <p>{card.count ? card.line : "ওপরের তালিকা থেকে যে রাতগুলো জেগেছিলে, ছুঁয়ে দাও।"}</p>
+          <p>{card.count ? card.line : "ওপরের তালিকা থেকে যে রাতগুলো জেগেছিলে, সেগুলোয় চাপো।"}</p>
         </div>
         <div className="rj-result-body">
           <figure className="kit-card" data-format={format}>
@@ -170,7 +170,7 @@ export function NightRoom() {
               <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="raat-jaga.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} disabled={!card.count} hint={card.count ? "লিংক পেলে বন্ধু তোমার আকাশ দেখবে, নিজের রাত দাগালে দেখবে কোন রাতগুলো দুজনেই জেগেছিলে।" : ""} />
+            <ShareBar tool={TOOL} fileName="raat-jaga.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} disabled={!card.count} hint={card.count ? "বন্ধু তোমার আকাশ দেখবে, নিজের রাত দাগালে দেখবে কোন রাতগুলো দুজনেই জেগেছিলে।" : ""} />
           </div>
         </div>
 

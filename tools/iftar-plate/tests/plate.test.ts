@@ -90,8 +90,8 @@ test("the tally ranking needs a minimum sample and only ranks food", () => {
 test("share preview is personal and the tally only lists fixed ids", () => {
   const state = share.normalize("i=khejur,beguni&n=রাফি")!;
   assert.equal(state, "i=khejur,beguni&n=" + encodeURIComponent("রাফি"));
-  assert.equal(share.preview(state).title, "রাফির ইফতারির প্লেট — তোমার প্লেটে কী?");
-  assert.equal(share.preview("i=khejur").title, "এক বন্ধুর ইফতারির প্লেট — তোমার প্লেটে কী?");
+  assert.equal(share.preview(state).title, "রাফির ইফতারির প্লেট। তোমার প্লেটে কী?");
+  assert.equal(share.preview("i=khejur").title, "এক বন্ধুর ইফতারির প্লেট। তোমার প্লেটে কী?");
   assert.deepEqual(share.tally, [...all, ...places.map(place => place.id)]);
 });
 

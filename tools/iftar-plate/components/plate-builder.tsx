@@ -127,13 +127,13 @@ export function PlateBuilder() {
               <g className="ip-drop" dangerouslySetInnerHTML={{ __html: art[spot.id] }} />
             </g>
           ))}
-          {!count && <text x={SCENE.cx} y={SCENE.cy + 8} textAnchor="middle" className="ip-empty">নিচ থেকে ছুঁয়ে তোলো</text>}
+          {!count && <text x={SCENE.cx} y={SCENE.cy + 8} textAnchor="middle" className="ip-empty">নিচ থেকে বেছে তোলো</text>}
         </svg>
-        <p className="ip-tally">{full ? `প্লেট ভরে গেছে! ${bn(MAX_ITEMS)} পদের বেশি ধরে না, একটা নামিয়ে আরেকটা তোলো।` : ranked ? <>সবার প্লেটে সবচেয়ে বেশি উঠেছে: <strong>{ranked[0].label}</strong></> : "ছুঁলে প্লেটে ওঠে, আবার ছুঁলে নেমে যায়।"}</p>
+        <p className="ip-tally">{full ? `প্লেট ভরে গেছে! ${bn(MAX_ITEMS)} পদের বেশি ধরে না, একটা নামিয়ে আরেকটা তোলো।` : ranked ? <>সবার প্লেটে সবচেয়ে বেশি উঠেছে: <strong>{ranked[0].label}</strong></> : "চাপলে প্লেটে ওঠে, আবার চাপলে নেমে যায়।"}</p>
       </div>
 
       <fieldset className="ip-items" id="plate-items">
-        <legend>ইফতার আইটেম <span>যা যা খাবে, ছুঁয়ে প্লেটে তোলো</span></legend>
+        <legend>ইফতার আইটেম <span>যা যা খাবে, চেপে প্লেটে তোলো</span></legend>
         <div className="ip-chips">
           {items.map(item => (
             <button type="button" key={item.id} className="ip-chip" aria-pressed={picks.includes(item.id)} onClick={() => toggle(item.id)}>
@@ -154,7 +154,7 @@ export function PlateBuilder() {
       <section className="ip-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="ip-result-head">
           <h2 id="result-title">{count ? <>তোমার প্লেটে <em>{bn(count)} পদ</em></> : "প্লেটটা এখনো ফাঁকা"}</h2>
-          <p>{count ? card.line : "ওপরের তালিকা থেকে যা খাবে, ছুঁয়ে প্লেটে তোলো।"}</p>
+          <p>{count ? card.line : "ওপরের তালিকা থেকে যা খাবে, চেপে প্লেটে তোলো।"}</p>
         </div>
 
         <div className="ip-result-body">
@@ -171,7 +171,7 @@ export function PlateBuilder() {
               <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="iftar-plate.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${popular}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} disabled={!count} hint={count ? "লিংক পেলে বন্ধু তোমার প্লেট দেখবে, তারপর নিজেরটা সাজাবে।" : ""} />
+            <ShareBar tool={TOOL} fileName="iftar-plate.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${popular}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} disabled={!count} hint={count ? "বন্ধু তোমার প্লেট দেখবে, তারপর নিজেরটা সাজাবে।" : ""} />
             <button type="button" className="kit-link ip-restart" onClick={restart}>আবার শুরুর প্লেটে ফিরি</button>
           </div>
         </div>

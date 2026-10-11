@@ -219,10 +219,10 @@ export function parseShareHash(hash: string, today: string): Pick | null {
   return inRange(date, today) ? { date, label: cleanLabel(params.get("l") ?? "") } : null;
 }
 
-/** "ঈদুল ফিতর আর ১৫১ দিন — তুমি কোন দিনের অপেক্ষায়?" for link previews. */
+/** "ঈদুল ফিতর আর ১৫১ দিন। তুমি কোন দিনের অপেক্ষায়?" for link previews. */
 export function previewTitle(pick: Pick, today: string) {
   const count = countdown(pick, today);
   const name = "date" in pick ? count.title : occasionById(pick.id).chip;
   const when = !count.date ? "আসছে" : count.days === 0 ? "আজই" : count.days > 0 ? `আর ${bn(count.days)} দিন` : `ছিল ${bn(-count.days)} দিন আগে`;
-  return `${name} ${when} — তুমি কোন দিনের অপেক্ষায়?`;
+  return `${name} ${when}। তুমি কোন দিনের অপেক্ষায়?`;
 }

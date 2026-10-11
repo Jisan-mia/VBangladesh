@@ -146,7 +146,7 @@ export function caption(team: Team, friend: Team | null) {
 }
 
 export function previewTitle(team: Team) {
-  return `${team.name ? possessive(team.name) : "এক বন্ধুর"} স্বপ্নের একাদশ · অধিনায়ক: ${captainOf(team).short} — তোমার একাদশে কে কে?`;
+  return `${team.name ? possessive(team.name) : "এক বন্ধুর"} স্বপ্নের একাদশ · অধিনায়ক: ${captainOf(team).short}। তোমার একাদশে কে কে?`;
 }
 
 export function previewDescription(team: Team) {

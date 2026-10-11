@@ -83,8 +83,8 @@ test("labels are NFC and capped", () => {
 });
 
 test("previews name the day and the count", () => {
-  assert.equal(previewTitle({ id: "durga" }, TODAY), "দুর্গাপূজা আর ১১ দিন — তুমি কোন দিনের অপেক্ষায়?");
-  assert.equal(previewTitle({ date: "2026-10-10", label: "রাফির বিয়ে" }, TODAY), "রাফির বিয়ে আজই — তুমি কোন দিনের অপেক্ষায়?");
+  assert.equal(previewTitle({ id: "durga" }, TODAY), "দুর্গাপূজা আর ১১ দিন। তুমি কোন দিনের অপেক্ষায়?");
+  assert.equal(previewTitle({ date: "2026-10-10", label: "রাফির বিয়ে" }, TODAY), "রাফির বিয়ে আজই। তুমি কোন দিনের অপেক্ষায়?");
 });
 
 test("the holiday table lists each date once, in order, with its certainty", async () => {

@@ -227,7 +227,7 @@ export function WishBuilder() {
               <>
                 <h2>{occasion.line}</h2>
                 <FormatToggle value={format} onChange={setFormat} />
-                <ShareBar tool={TOOL} fileName={`shubhechha-${occasion.id}.png`} makeImage={() => cardBlob(createCard(wish, new Date()), format, site, photo)} imageKey={`${state}|${format}|${photoCount}`} caption={captionOf(wish)} state={state} hint="লিংক খুললে কার্ডটা দেখা যাবে, তোমার ছবি ছাড়া।" />
+                <ShareBar tool={TOOL} fileName={`shubhechha-${occasion.id}.png`} makeImage={() => cardBlob(createCard(wish, new Date()), format, site, photo)} imageKey={`${state}|${format}|${photoCount}`} caption={captionOf(wish)} state={state} hint="লিংকে শুধু কার্ডটা যায়, তোমার ছবি না।" />
               </>
             )}
           </div>

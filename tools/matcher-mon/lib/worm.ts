@@ -190,9 +190,9 @@ export function previewTitle(match: Match) {
   const score = match.friend ? together(match.moods, match.friend.moods, match.sport) : null;
   if (score) {
     const names = match.name || match.friend?.name ? possessive(`${match.name || "এক বন্ধু"} আর ${match.friend?.name || "বন্ধু"}`) : "দুই বন্ধুর";
-    return `${names} মন ${bn(score.total)} বারের ${bn(score.same)} বার একসাথে দুলল — তোমারটা মেলাবে?`;
+    return `${names} মন ${bn(score.total)} বারের ${bn(score.same)} বার একসাথে দুলল। তোমারটা মেলাবে?`;
   }
-  return `${match.name ? possessive(match.name) : "এক বন্ধুর"} ম্যাচ: ${summaryText(match.moods)} — তোমার মন কেমন দুলল?`;
+  return `${match.name ? possessive(match.name) : "এক বন্ধুর"} ম্যাচ: ${summaryText(match.moods)}। তোমার মন কেমন দুলল?`;
 }
 
 export function caption(match: Match) {

@@ -101,7 +101,7 @@ export function KhataBuilder({ switcher }: { switcher: ReactNode }) {
       <div className="sc-desk">
         <div className="sc-khata">
           <p className="sc-khata-head"><strong>{title}</strong><Moon /></p>
-          {empty ? <p className="sc-khata-empty">খাতা এখনো খালি। ওপরের নামগুলো ছুঁয়ে লেখো।</p> : (
+          {empty ? <p className="sc-khata-empty">খাতা এখনো খালি। ওপরের নামগুলোয় চাপো।</p> : (
             <ol aria-label={`${title}: ${count}`}>
               {khata.rows.map(row => {
                 const label = khataLabel(row.giver);

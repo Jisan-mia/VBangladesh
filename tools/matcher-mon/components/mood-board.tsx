@@ -238,7 +238,7 @@ export function MoodBoard() {
               </label>
             </div>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="matcher-mon.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption(match)} state={state} disabled={!ready} hint={ready ? "লিংক পেলে বন্ধু তোমার ওয়ার্ম দেখবে, আর নিজের মন চাপলে দুটো একসাথে আঁকা হবে।" : `অন্তত ${bn(MIN_SHARE)} বার চাপলে শেয়ার করা যাবে।`} />
+            <ShareBar tool={TOOL} fileName="matcher-mon.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption(match)} state={state} disabled={!ready} hint={ready ? "বন্ধু লিংক খুলে নিজের মন চাপলে দুজনের ওয়ার্ম একসাথে আঁকা হবে।" : `অন্তত ${bn(MIN_SHARE)} বার চাপলে শেয়ার করা যাবে।`} />
 
             {ready && <div className="mm-count">
               <h3>খেলা শেষে সবার মন কেমন?</h3>

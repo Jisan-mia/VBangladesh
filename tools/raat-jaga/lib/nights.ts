@@ -220,7 +220,7 @@ export function createCard(own: Shared, friend?: Shared | null): CardContent {
 
 export function previewTitle(shared: Shared | null) {
   if (!shared) return "বিশ্বকাপের কয় রাত জেগেছ? ১৯৯০ থেকে ২০২৬, ২০টা রাত";
-  return `${shared.name || "এক বন্ধু"} বিশ্বকাপের ২০-এ ${bn(shared.selected.length)} রাত জেগেছে — তুমি কয় রাত?`;
+  return `${shared.name || "এক বন্ধু"} বিশ্বকাপের ২০-এ ${bn(shared.selected.length)} রাত জেগেছে। তুমি কয় রাত?`;
 }
 
 export { possessive };

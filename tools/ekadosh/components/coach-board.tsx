@@ -121,7 +121,7 @@ export function CoachBoard() {
           <div>
             <p className="ek-kicker">তোমার জন্য একটা দল এসেছে</p>
             <h2 id="ek-friend-title">{friendTitle}, অধিনায়ক {captainOf(friend).short}।<br /><span>তুমি একমত?</span></h2>
-            <p>ওর দলটাই নিচের বোর্ডে বসানো আছে। যার সাথে একমত না, তার নাম ছুঁয়ে বদলে দাও।</p>
+            <p>ওর দলটাই নিচের বোর্ডে বসানো আছে। যার সাথে একমত না, তার নামে চাপো আর বদলে দাও।</p>
             <a className="kit-primary" href="#ek-board">আমার দল সাজাই</a>
           </div>
         </section>
@@ -144,7 +144,7 @@ export function CoachBoard() {
               return (
                 <button type="button" key={id} className="ek-token" data-line={where.line} data-captain={isCaptain || undefined} data-common={common.includes(id) || undefined}
                   style={{ "--x": `${where.x}%`, "--y": `${where.y}%` } as CSSProperties} aria-haspopup="dialog" onClick={() => open(slot)}
-                  aria-label={`${bn(slot + 1)} নম্বর, ${lineLabels[where.line]}: ${player.name}${isCaptain ? ", অধিনায়ক" : ""}${common.includes(id) ? ", দুজনের দলেই" : ""}। বদলাতে ছুঁয়ে দাও`}>
+                  aria-label={`${bn(slot + 1)} নম্বর, ${lineLabels[where.line]}: ${player.name}${isCaptain ? ", অধিনায়ক" : ""}${common.includes(id) ? ", দুজনের দলেই" : ""}। বদলাতে চাপো`}>
                   <span className="ek-ring" aria-hidden="true">{bn(slot + 1)}{isCaptain && <b className="ek-band">C</b>}</span>
                   <span className="ek-name" aria-hidden="true">{player.short}</span>
                 </button>
@@ -155,7 +155,7 @@ export function CoachBoard() {
           <p className="ek-note"><b>কোচের নোট:</b> {line}</p>
         </div>
       </div>
-      <p className="ek-hint">যাকে বদলাবে বা অধিনায়ক বানাবে, তার নাম ছুঁয়ে দাও।</p>
+      <p className="ek-hint">যাকে বদলাবে বা অধিনায়ক বানাবে, তার নামে চাপো।</p>
 
       <dialog ref={picker} className="ek-sheet" aria-labelledby="ek-sheet-title" onClose={() => setActive(null)} onClick={event => { if (event.target === event.currentTarget) event.currentTarget.close(); }}>
         {spot && current && active !== null && (
@@ -187,7 +187,7 @@ export function CoachBoard() {
                 );
               })}
             </ul>
-            <p className="ek-source"><b>সূত্র ও যাচাই:</b> নামের বানান প্রথম আলোর খেলার পাতা ধরে, পজিশন প্রত্যেকের উইকিপিডিয়া পাতা দেখে মিলিয়ে নেওয়া। মাঠে আছেন এমন কাউকে বাছলে দুজন জায়গা বদল করবেন। শুধু নাম, কোনো ছবি, জার্সি বা লোগো নেই।</p>
+            <p className="ek-source"><b>সূত্র ও যাচাই:</b> নামের বানান প্রথম আলোর খেলার পাতা ধরে, পজিশন প্রত্যেকের উইকিপিডিয়া পাতা দেখে মিলিয়ে নেওয়া। মাঠে আছেন এমন কাউকে বাছলে দুজনের জায়গা বদলে যাবে। শুধু নাম, কোনো ছবি, জার্সি বা লোগো নেই।</p>
           </div>
         )}
       </dialog>
@@ -212,7 +212,7 @@ export function CoachBoard() {
             </label>
             <FormatToggle value={format} onChange={setFormat} />
             <ShareBar tool={TOOL} fileName="shopner-ekadosh.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption(team, friend)} state={state}
-              hint="লিংক পেলে বন্ধু তোমার একাদশ দেখবে, নিজেরটা সাজালে দেখবে দুজনের কয়জন মিলল।" />
+              hint="বন্ধু তোমার একাদশ দেখবে, নিজেরটা সাজালে দেখবে দুজনের কয়জন মিলল।" />
           </div>
         </div>
 

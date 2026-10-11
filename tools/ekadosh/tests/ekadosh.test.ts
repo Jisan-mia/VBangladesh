@@ -134,7 +134,7 @@ test("the share hook normalizes, previews by name and captain, and only counts p
   const state = shareHash(team).slice(1);
   assert.equal(share.normalize(state), state);
   assert.equal(share.normalize(`p=${team.players.join(",")}`), null);
-  assert.equal(share.preview(state).title, "রাফির স্বপ্নের একাদশ · অধিনায়ক: মেসি — তোমার একাদশে কে কে?");
+  assert.equal(share.preview(state).title, "রাফির স্বপ্নের একাদশ · অধিনায়ক: মেসি। তোমার একাদশে কে কে?");
   assert.match(share.preview(shareHash({ ...team, name: "" }).slice(1)).title, /^এক বন্ধুর স্বপ্নের একাদশ/);
   assert.deepEqual(share.tally, tallyIds);
   assert.ok(share.tally!.every(id => playerById(id)));

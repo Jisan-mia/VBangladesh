@@ -373,7 +373,7 @@ export function Envelope() {
           <div className="ab-share">
             <FormatToggle value={format} onChange={setFormat} />
             <ShareBar tool={TOOL} fileName="ami-bolechhilam.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${mode}`} caption={card.caption} state={state}
-              hint={mode === "opened" ? "লিংক খুললে সবাই খোলা খাম আর ফল দেখবে।" : `লিংক পেলে বন্ধু খামটা দেখবে, নিজের ভবিষ্যদ্বাণীও যোগ করতে পারবে (${bn(MAX_ENTRIES)} জন পর্যন্ত)।`} />
+              hint={mode === "opened" ? "লিংক খুললে সবাই খোলা খাম আর ফল দেখবে।" : `বন্ধুরাও এই খামে নিজেদের ভবিষ্যদ্বাণী ভরতে পারবে (${bn(MAX_ENTRIES)} জন পর্যন্ত)।`} />
             {(mode !== "compose" || fromLink) && <button type="button" className="kit-link ab-again" onClick={startFresh}>নতুন ম্যাচের খাম বানাও</button>}
           </div>
         </div>
@@ -385,7 +385,7 @@ export function Envelope() {
             {counted === "done"
               ? <p className="kit-status">তোমার কথাটা গোনা হয়েছে!{split?.text ? "" : " এখনো খুব কম মানুষ গুনিয়েছে, বন্ধুদের লিংক পাঠাও।"}</p>
               : <>
-                <p className="ab-muted">চাইলে তোমার কথাটা সবার হিসাবে যোগ করো। শুধু কে জিতবে সেটা গোনা হবে; নাম, ব্যবধান বা স্কোর না।</p>
+                <p className="ab-muted">চাইলে তোমার কথাটা সবার হিসাবে যোগ করো। শুধু কে জিতবে সেটা গোনা হবে। নাম, ব্যবধান বা স্কোর না।</p>
                 <button type="button" className="kit-secondary" onClick={countMine} disabled={counted === "sending"}>{counted === "sending" ? "যোগ হচ্ছে…" : "আমার কথাটাও গোনো"}</button>
                 {counted === "failed" && <p className="kit-status" role="alert">এখন যোগ করা গেল না। একটু পরে আবার চেষ্টা করো।</p>}
               </>}

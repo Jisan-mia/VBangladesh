@@ -20,7 +20,7 @@ export default function AmiBolechhilamPage() {
           <h2 id="guide-title">{site.guideTitle}</h2>
           <p>{site.guideIntro}</p>
           <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{new Intl.NumberFormat("bn-BD").format(index + 1)}</span><p>{step}</p></li>)}</ol>
-          <p className="bolechhi-note">দলের তালিকা আমাদের হাতে লেখা; কোনো সময়সূচি, লাইভ স্কোর, লোগো বা জার্সি নেই। ক্রিকেটের দেশগুলো আইসিসির সদস্য তালিকা ধরে, নামের বানান বাংলা সংবাদমাধ্যমে যেমন লেখা হয়।</p>
+          <p className="bolechhi-note">দলের তালিকা আমরা নিজেরা লিখেছি। সময়সূচি, লাইভ স্কোর, লোগো বা জার্সি, কিছুই নেই। ক্রিকেটের দেশগুলো আইসিসির সদস্য তালিকা ধরে, নামের বানান বাংলা সংবাদমাধ্যমের মতো।</p>
         </section>
         <Faq items={site.faq} />
         <section className="container section bolechhi-suggest" aria-label="দলের পরামর্শ"><SuggestBox tool="ami-bolechhilam" question="কোন দলটা থাকা উচিত ছিল?" placeholder="যেমন: ক্রিকেটে হংকং, ফুটবলে কোরিয়া" /></section>

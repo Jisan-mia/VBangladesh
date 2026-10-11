@@ -11,8 +11,8 @@ export const share: ToolShare = {
     const who = plate?.name ? possessive(plate.name) : "এক বন্ধুর";
     const names = plate?.picks.map(id => itemById(id).label) ?? [];
     return {
-      title: `${who} ইফতারির প্লেট — তোমার প্লেটে কী?`,
-      description: names.length ? `${names.join(", ")}। তুমিও ছুঁয়ে ছুঁয়ে নিজের ইফতারির প্লেট সাজাও, তারপর দুজনেরটা মিলিয়ে দেখো।` : "খেজুর, ছোলা, পেঁয়াজু, বেগুনি… ছুঁয়ে ছুঁয়ে নিজের ইফতারির প্লেট সাজাও।",
+      title: `${who} ইফতারির প্লেট। তোমার প্লেটে কী?`,
+      description: names.length ? `${names.join(", ")}। তুমিও নিজের ইফতারির প্লেট সাজাও, তারপর দুজনেরটা মিলিয়ে দেখো।` : "খেজুর, ছোলা, পেঁয়াজু, বেগুনি… নিজের ইফতারির প্লেট সাজাও।",
     };
   },
   // Fixed food and place ids only; names never reach the tally.

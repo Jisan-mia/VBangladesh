@@ -88,7 +88,7 @@ test("the human line follows the team mix", () => {
 });
 
 test("link previews are personal, and only fixed match ids can be tallied", () => {
-  assert.equal(previewTitle({ selected: ["2010-final", "2026-final"], name: "রাফি" }), "রাফি বিশ্বকাপের ২০-এ ২ রাত জেগেছে — তুমি কয় রাত?");
+  assert.equal(previewTitle({ selected: ["2010-final", "2026-final"], name: "রাফি" }), "রাফি বিশ্বকাপের ২০-এ ২ রাত জেগেছে। তুমি কয় রাত?");
   assert.match(share.preview("m=%%").title, /বিশ্বকাপের কয় রাত/);
   assert.deepEqual(share.tally, nights.map(night => night.id));
 });
