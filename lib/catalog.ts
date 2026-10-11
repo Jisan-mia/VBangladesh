@@ -108,7 +108,7 @@ export const catalog = [
   { slug: "tarer-fanke-belun", name: "তারের ফাঁকে বেলুন", description: "ঢাকার তারের জটে বেলুন ওড়াও। এক চাপে ওঠে, কয়টা ফাঁক পার হবে?", category: "গেম", action: "বেলুন ওড়াও" },
   { slug: "paka-kancha", name: "পাকা-কাঁচা", description: "আম দেখে দেখে লুকানো ৪ অঙ্কের কোডটা ৭ বারে ধরো, রোজ নতুন কোড।", category: "গেম", action: "কোডটা ধরো" },
   { slug: "jora-melao", name: "জোড়া মেলাও", description: "মেলার খেলনা উল্টে রাখা, দুটো করে খুলে জোড়া মেলাও। একা বা এক ফোনে দুজনে।", category: "গেম", action: "কার্ড খোলো" },
-  { slug: "chhok-jora", name: "ছক-জোড়া", description: "ছক-জোড়া: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "chhok-jora", name: "ছক-জোড়া", description: "কাঁথায় ফোঁড় দাও, ঘর জিতে ফুল ফোটাও। দুজনে বা বটের সাথে খেলো", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "churui-tarao", name: "চড়ুই তাড়াও", description: "চড়ুই তাড়াও: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "handi-bhanga", name: "হাঁড়িভাঙা", description: "হাঁড়িভাঙা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "peoner-cycle", name: "পিয়নের সাইকেল", description: "পিয়নের সাইকেল: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
