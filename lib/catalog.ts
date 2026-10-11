@@ -109,6 +109,7 @@ export const catalog = [
   { slug: "paka-kancha", name: "পাকা-কাঁচা", description: "পাকা-কাঁচা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "jora-melao", name: "জোড়া মেলাও", description: "জোড়া মেলাও: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "chhok-jora", name: "ছক-জোড়া", description: "ছক-জোড়া: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "churui-tarao", name: "চড়ুই তাড়াও", description: "চড়ুই তাড়াও: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.
