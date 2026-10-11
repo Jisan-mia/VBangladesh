@@ -171,7 +171,7 @@ export function PithaStall() {
       <section className="pt-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="pt-result-head">
           <h2 id="result-title">{done ? <>তুমি চিনেছ <em>১০-এ {bn(score)}</em></> : "তোমার ডালা এখনো ভরছে"}</h2>
-          <p>{done ? humanLine(setId, answers) : `ওপরের আরও ${bn(PER_SET - answers.length)}টা পিঠা চিনলেই কার্ড পুরো হবে, তারপর শেয়ার করতে পারবে।`}</p>
+          <p>{done ? humanLine(setId, answers) : `আরও ${bn(PER_SET - answers.length)}টা পিঠা বাকি। শেষ করলেই কার্ড পুরো হবে, তখন শেয়ার করতে পারবে।`}</p>
         </div>
 
         {done && rival && (

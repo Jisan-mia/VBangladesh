@@ -153,7 +153,7 @@ export function TicketCounter() {
               </label>
               <FormatToggle value={format} onChange={setFormat} />
               <ShareBar tool={TOOL} fileName={`jibh-${place.id}-${format}.png`} makeImage={() => ticketBlob({ answers, name: shownName, friend }, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption(ticket)} state={state}
-                hint="লিংক পেলে বন্ধু তোমার টিকিট দেখবে, তারপর নিজেরটা কাটলে দুটো টিকিট পাশাপাশি উঠবে।" />
+                hint="বন্ধু লিংক খুললে তোমার টিকিট দেখবে। নিজেরটা কাটলে দুটো টিকিট পাশাপাশি উঠবে।" />
               <div className="jb-everyone">
                 {counted === "done"
                   ? <p className="kit-status">গুনে নেওয়া হলো, ধন্যবাদ!{sameTrain !== null && <> এ পর্যন্ত গোনা {bn(everyone!.total)}টা টিকিটের {bn(sameTrain)}টা {place.name}-এর।</>}</p>

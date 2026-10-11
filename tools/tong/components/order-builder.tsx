@@ -154,7 +154,7 @@ export function OrderBuilder() {
               <input value={own.name} maxLength={MAX_NAME} onChange={event => change({ name: event.target.value })} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="tong-order.png" makeImage={() => chitBlob(lines, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} hint={lines.length < MAX_LINES ? `লিংক পেলে বন্ধুরা এই চিরকুটে নিজের অর্ডার যোগ করতে পারবে, ${bn(MAX_LINES)} জন পর্যন্ত।` : "চিরকুট ভরে গেছে! এবার শুধু শেয়ার।"} />
+            <ShareBar tool={TOOL} fileName="tong-order.png" makeImage={() => chitBlob(lines, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} hint={lines.length < MAX_LINES ? `চিরকুটটা পাঠাও, বন্ধুরাও নিজের অর্ডার যোগ করুক। ${bn(MAX_LINES)} জন পর্যন্ত।` : "চিরকুট ভরে গেছে! এবার শুধু শেয়ার।"} />
           </div>
         </div>
 

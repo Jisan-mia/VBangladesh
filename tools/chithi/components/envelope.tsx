@@ -57,7 +57,7 @@ export function Envelope({ view, onOpen }: { view: CardView; onOpen?: () => void
         {view.seal && <p className="ch-env-seal"><small>খুলবে</small>{view.seal.label}</p>}
       </div>
       {view.seal
-        ? <p className="ch-env-wait"><strong>{countdown(view.seal.days)}</strong> খামটা খোলার দিনের আগে খোলা যাবে না। {view.seal.written}</p>
+        ? <p className="ch-env-wait"><strong>{countdown(view.seal.days)}</strong> খোলার দিনের আগে খামটা খোলা যাবে না। {view.seal.written}</p>
         : <button type="button" className="kit-primary ch-open" onClick={open} disabled={stage !== "closed"}>{stage === "closed" ? "খামটা খোলো" : "খোলা হচ্ছে…"}</button>}
     </div>
   );

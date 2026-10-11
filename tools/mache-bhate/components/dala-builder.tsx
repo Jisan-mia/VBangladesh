@@ -103,7 +103,7 @@ export function DalaBuilder() {
         </div>
         <p className="mb-tag" aria-live="polite"><span>{bn(fishes.length)}-এ</span><strong>{bn(selected.length)}</strong><span className="mb-sr">টা মাছ ডালায়</span></p>
       </div>
-      <p className="mb-hint">নিচে যে মাছ খেয়েছ, ছুঁয়ে দাও। ভুল হলে আবার ছুঁলেই নেমে যাবে।</p>
+      <p className="mb-hint">নিচে যে মাছ খেয়েছ, সেটায় চাপ দাও। ভুল হলে আবার চাপলেই নেমে যাবে।</p>
 
       {everyone && everyone.total >= SOCIAL_PROOF_MIN && <p className="mb-proof">এখন পর্যন্ত <strong>{bn(everyone.total)} জন</strong> নিজের ডালা সাজিয়েছে</p>}
 
@@ -139,7 +139,7 @@ export function DalaBuilder() {
       <section className="mb-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="mb-result-head">
           <h2 id="result-title">{card.count ? <>তোমার ডালায় <em>{bn(card.count)}টা</em> মাছ</> : "তোমার ডালাটা এখনো ফাঁকা"}</h2>
-          <p>{card.count ? <><strong>{card.tier}।</strong> {card.line}</> : "ওপরের তালিকা থেকে যে মাছগুলো খেয়েছ, ছুঁয়ে দাও।"}</p>
+          <p>{card.count ? <><strong>{card.tier}।</strong> {card.line}</> : "ওপরের তালিকা থেকে যে মাছগুলো খেয়েছ, সেগুলোয় চাপ দাও।"}</p>
           {card.match && <p className="mb-match">{card.match}</p>}
         </div>
 
@@ -156,7 +156,7 @@ export function DalaBuilder() {
               <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="mache-bhate.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} disabled={!card.count} hint={card.count ? "লিংক পেলে বন্ধু তোমার ডালা দেখবে, তারপর নিজেরটা সাজাতে পারবে।" : ""} />
+            <ShareBar tool={TOOL} fileName="mache-bhate.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} disabled={!card.count} hint={card.count ? "লিংক খুলে বন্ধু আগে তোমার ডালা দেখবে, তারপর নিজেরটা সাজাবে।" : ""} />
             {card.count > 0 && <button type="button" className="kit-link mb-restart" onClick={restart}>ডালা খালি করে আবার সাজাই</button>}
           </div>
         </div>

@@ -10,7 +10,7 @@ export const share: ToolShare = {
     const shared = parseShareHash(state);
     return {
       title: shared ? previewTitle(shared) : "দেশি মাছ, কয়টা খেয়েছ?",
-      description: "ইলিশ, পাবদা, লইট্টা, কাচকি… ছবিসহ ৪০টা দেশি মাছের কয়টা তুমি খেয়েছ? ছুঁয়ে বাঁশের ডালায় তোলো, নিজের ডালার ছবি বানাও।",
+      description: "ইলিশ, পাবদা, লইট্টা, কাচকি… ছবিসহ ৪০টা দেশি মাছের কয়টা তুমি খেয়েছ? বাঁশের ডালায় তুলে নাও, নিজের ডালার ছবি বানাও।",
     };
   },
   // Only the fixed fish ids are counted, never names.

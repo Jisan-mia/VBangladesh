@@ -91,7 +91,7 @@ export function LetterBuilder() {
       <button type="button" className="ch-line" onClick={() => cycle(section)}>
         <span key={`${to}${index}`} className="ch-ink">{who.lines[section][index]}</span>
         <span className="ch-cycle" aria-hidden="true">{bn(index + 1)}/৩</span>
-        <span className="ch-sr">, {sections[section]}, ছুঁলে পরের লাইন</span>
+        <span className="ch-sr">, {sections[section]}, চাপলে পরের লাইন</span>
       </button>
     );
   };
@@ -156,7 +156,7 @@ export function LetterBuilder() {
               {who.sign} <input className="ch-blank ch-from" value={from} maxLength={MAX_NAME} onChange={event => setFrom(event.target.value)} placeholder={who.fallback === "আমি" ? "আমি (নাম)" : "তোমার নাম"} aria-label="তোমার নাম" autoComplete="nickname" />
             </p>
           </div>
-          <p className="ch-hint">{text.length > MAX_TEXT - 40 ? `আর ${bn(Math.max(0, MAX_TEXT - text.length))} অক্ষর লেখা যাবে` : "যেকোনো লাইন ছুঁলে বদলাবে, প্রতিটায় তিনটা করে।"}</p>
+          <p className="ch-hint">{text.length > MAX_TEXT - 40 ? `আর ${bn(Math.max(0, MAX_TEXT - text.length))} অক্ষর লেখা যাবে` : "লাইনে চাপ দিলে বদলাবে, প্রতিটায় তিনটা করে।"}</p>
         </div>
 
         {future && (
@@ -188,7 +188,7 @@ export function LetterBuilder() {
           <div className="ch-share">
             <FormatToggle value={format} onChange={setFormat} />
             <ShareBar tool={TOOL} fileName="chithi.png" makeImage={() => cardBlob(view, format, site)} imageKey={`${state}|${day}|${format}`} caption={letterCaption(letter, day)} state={state}
-              hint={sealed ? "লিংকটা নিজের কাছে রেখে দাও। খোলার দিনের আগে খাম বন্ধ থাকবে। মনে রেখো, লেখাটা লিংকেই আছে।" : "যাকে লিখলে, লিংকটা তাকে পাঠাও। খুললে সে খাম খুলে পুরো চিঠি পড়বে, চাইলে উত্তরও দেবে।"} />
+              hint={sealed ? "লিংকটা নিজের কাছে রেখে দাও। খোলার দিনের আগে খাম বন্ধ থাকবে। মনে রেখো, লেখাটা লিংকেই আছে।" : "যাকে লিখলে, লিংকটা তাকে পাঠাও। সে খামটা খুলে পুরো চিঠি পড়বে, চাইলে উত্তরও দেবে।"} />
             <p className="ch-note">লিংক যার কাছে যাবে, সে পুরো চিঠি পড়তে পারবে। ফেসবুকের প্রিভিউতে লেখাটা দেখায় না।</p>
           </div>
         </div>

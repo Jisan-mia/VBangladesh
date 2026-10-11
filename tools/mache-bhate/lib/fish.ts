@@ -154,7 +154,7 @@ export function fishLine(selected: readonly FishId[]) {
   if (picked.filter(fish => fish.group === "nodi").length >= 5) return "নদীর মাছে তোমার জিভ পাকা, ইলিশের কাঁটাও তোমাকে ভয় পায়।";
   if (count <= 3) return "শুরুটা চেনা মাছ দিয়ে। এবার মনে করে দেখো, আর কী কী খেয়েছ?";
   if (count <= 12) return "পাতে একটু মাছ না থাকলে ভাতটাই যেন জমে না।";
-  if (count <= 24) return "বাজারে কোন মাছ টাটকা, তোমাকে চোখ বুজে চেনানো যায় না।";
+  if (count <= 24) return "বাজারে কোন মাছ টাটকা, তুমি চোখ বুজেও ধরে ফেলবে।";
   return "দেশের নদী, বিল আর সাগর, সবখানের মাছ তোমার চেনা।";
 }
 
