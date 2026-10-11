@@ -46,7 +46,7 @@ Phase 0 is running, Phase 1 starts Mon 26 Oct.
 |---|---|---|---|---|---|---|
 | West Indies 2nd Test | 5–9 Nov, Sylhet [WI] | ami-bolechhilam, shesh-bol | Own Page | Tue 3 Nov | Wed 4 Nov | Optional |
 | Wave A starts | 5–18 Nov | amar-chhotobela, tokhon-ekhon, himu | Euphoria Whisper, নব্বই দশক (V pages, DM); Bangladesh Old Photos, বাংলাদেশের দুষ্প্রাপ্য ছবি সমগ্র (V pages) | DMs sent by Thu 5 Nov | as admins reply | Fan-style DMs, one tool per community |
-| Kali Puja / Diwali | Sun 8 Nov সম্ভাব্য [PJ] | shubhechha, koto-din-baki | Owner's Page: one greeting card. Puja pages by DM only if asked in advance | Sun 1 Nov | Fri 6–Sun 8 Nov | Low-key. Midnight worship may fall on 9 Nov by some panjikas |
+| Kali Puja / Diwali | Sun 8 Nov সম্ভাব্য [PJ] | koto-din-baki (shubhechha has no card for this day yet) | Owner's Page: one greeting card. Puja pages by DM only if asked in advance | Sun 1 Nov | Fri 6–Sun 8 Nov | Low-key. Midnight worship may fall on 9 Nov by some panjikas |
 | **Humayun Ahmed's birthday** | Fri 13 Nov ✓ (widely known; confirmed in the build queue) | himu, char-priyo | Humayun Ahmed (fans) (V, ~183K (s)); Himu Paribahan (V, ~36.5K (s)); হুমায়ূন আহমেদ page (V, ~937K (s); do not assume official); বুকলেট পাঠক ফোরাম (V group, ask); 99 - BOOK SHOP (V group, ask); Movie Lovers Polapain (V group, image only, no extra links, for char-priyo) | DMs by Thu 5 Nov; copy approved Mon 9 Nov | Thu 12 Nov evening, or Fri 13 Nov before 12:30 | Warm, not promotional. Use only our real result |
 | **Nabanna (১ অগ্রহায়ণ)** | Mon 16 Nov ✓ [BAC] | alpana, chhotto-para, shubhechha, rannakhata | Alpona আলপনা (V page); Old Dhaka (V page); recipe pages (সহজ রান্নার রেসিপি, রান্না ঘর: V pages) by DM | DMs by Sun 8 Nov; ready Mon 9 Nov | Sat 14–Mon 16 Nov | New-rice recipe card for rannakhata |
 | **HSC 2026 results** | **check.** Not announced as of 11 Oct. Sources conflict: the trends file said about 16 Oct; channels-facebook.md said 7–15 Nov; my search found only a tentative "mid-November" estimate, a Jagonews24 item (16 Sep) that boards were weighing speed against error-free results, and a 60-day rule that would run to about 7 Dec | gpa | Our Page; Hsc Students (V page, ~11.3K (s)); Md Bani Amin (V creator, DM); DU admission help pages (V) | Calculator tested on the real phone before 7 Nov | The result day itself, in the evening | A calculator, never a flex or ranking; results are a stressful day. Check educationboardresults.gov.bd each day from 7 Nov |
@@ -66,7 +66,7 @@ Phase 0 is running, Phase 1 starts Mon 26 Oct.
 | Martyred Intellectuals Day | Mon 14 Dec ✓ | none | none | none | none | Solemn. No fun posts on our Page or in groups |
 | **Bijoy Dibos (55th)** | Wed 16 Dec ✓ [G26] (= ১ পৌষ) | shubhechha (Bijoy card and frame), koto-din-baki, desh-cheno | Our Page; owner's timeline; diaspora associations only if asked in advance (Bengali Association Singapore, VBCF, ABCx) | Wed 9 Dec | **Sat 12–Tue 15 Dec** (frames circulate about two days around the day; publish early) | On the day itself one early, respectful post or none. No jokes |
 | Winter and pitha season | From 16 Dec (১ পৌষ) to about mid-Feb | pitha, tong, ghuri | FoodBank (V group, approval); বাংলাদেশী পিঠা (V page, a seller: ask); Foodlover (V page, Sylhet) | DMs by Thu 10 Dec | 17–31 Dec, then Jan | Wave D. Pitha names differ by region: celebrate, never rank regions |
-| Christmas | Fri 25 Dec ✓ [G26] | shubhechha | Our Page: one inclusive greeting image. No community pitch (no Christian-specific pages were found) | Tue 22 Dec | Thu 24 Dec | Short and warm |
+| Christmas | Fri 25 Dec ✓ [G26] | koto-din-baki (shubhechha has no card for this day yet) | Our Page: one inclusive greeting image. No community pitch (no Christian-specific pages were found) | Tue 22 Dec | Thu 24 Dec | Short and warm |
 | Year-end | 20–31 Dec | amar-bochhor | Our Page; owner's timeline; Humans of Bangladesh, Ten Square (V pages, DM) | Fri 18 Dec | Sat 26–Thu 31 Dec | No "party" framing for 31 Dec |
 
 ## January 2027
@@ -84,7 +84,7 @@ Phase 0 is running, Phase 1 starts Mon 26 Oct.
 | Moment | Date | Tools | Channels and communities | Prep by | Post | Notes |
 |---|---|---|---|---|---|---|
 | **Ramadan begins** | Tue 9 Feb সম্ভাব্য [MOON] (Saudi 8 Feb; Bangladesh follows the National Moon Sighting Committee) | sehri-iftar, iftar-plate, koto-din-baki | Islamic pages (V, DM); family and diaspora pages; owner's timeline | Mon 1 Feb | Countdown 25 Jan–8 Feb; iftar-plate from 10 Feb, after tarawih (Cloudflare measured traffic falling 40% after sunset in Ramadan 2022) | Never around the iftar hour. Restrained mood |
-| Saraswati Puja | Thu 11 Feb সম্ভাব্য [PJ] | shubhechha | Our Page: one card | Sun 7 Feb | Wed 10 Feb | During early Ramadan: low-key |
+| Saraswati Puja | Thu 11 Feb সম্ভাব্য [PJ] | koto-din-baki (shubhechha has no card for this day yet) | Our Page: one card | Sun 7 Feb | Wed 10 Feb | During early Ramadan: low-key |
 | Pohela Falgun, Valentine's Day | Sun 14 Feb ✓ (১ ফাল্গুন), during Ramadan | none | none | none | none | No push; flowers-and-spring cards only if the owner wants one |
 | Ekushey Book Fair | **check.** 2027 dates not announced; the 2026 fair moved several times (Bangla Academy, 20 then 26 Feb) | himu, char-priyo | Book groups once dates are out | on announcement | on announcement | A "বইমেলার লিস্ট" angle |
 | **Ekushe (75th)** | Sun 21 Feb ✓ [G26], inside Ramadan | banan, bagdhara, bhashar-chhobi, shobdo-khela, shubhechha (একুশে frame) | Our Page; শুদ্ধ বাংলা, M.C.Q সাধারণ জ্ঞান, Murad Takla (V/S, DM); diaspora associations (VBCF, ABCx) only if asked in advance | Thu 11 Feb | Wed 17–Fri 19 Feb, after tarawih | **No riddle, poll or fun post on 21 Feb.** One respectful post or none. A maker-note pitch to Bangla desks, if any, goes out by Sun 14 Feb with no promise of coverage |
@@ -98,7 +98,7 @@ Phase 0 is running, Phase 1 starts Mon 26 Oct.
 | **Eid-ul-Fitr** | Wed 10 Mar সম্ভাব্য (±1 day, moon) [MOON]; the 2027 holiday list is due Oct–Nov 2026 | eider-din, salami-chek, shubhechha, koto-din-baki, deshe-fera | Family, moms and diaspora pages (Saudi, Kuwait, Qatar, Malaysia, Singapore, Italy, UK, Toronto: DM); our Page | Sun 28 Feb | shubhechha Sun 7–Tue 9 Mar; Eid-day greeting on our Page; eider-din Thu 11–Sun 14 Mar | Never assume anyone's faith in non-Eid posts |
 | SSC 2027 written exams | Sun 14 Mar–15 Apr ✓ [SSC]; practicals by 22 Apr | none | none | none | none | Avoid noisy student posts. namta for parents is fine, quietly |
 | Product Hunt (optional) | A Tue–Thu in the second half of March, after Show HN | whole site | Product Hunt | Tue 9 Mar | 12:01 am Pacific = 13:01 Dhaka | Decide after Show HN. Personal accounts only |
-| **Independence Day (56th)** | Fri 26 Mar ✓ [G26] (= ১২ চৈত্র) | shubhechha, koto-din-baki, desh-cheno | Our Page; diaspora associations only if asked in advance | Wed 17 Mar | Mon 22–Thu 25 Mar | A Friday: no Jumu'ah-window posts |
+| **Independence Day (56th)** | Fri 26 Mar ✓ [G26] (= ১২ চৈত্র) | koto-din-baki, desh-cheno (shubhechha has no card for this day yet) | Our Page; diaspora associations only if asked in advance | Wed 17 Mar | Mon 22–Thu 25 Mar | A Friday: no Jumu'ah-window posts |
 
 ## April 2027
 
@@ -114,7 +114,7 @@ Phase 0 is running, Phase 1 starts Mon 26 Oct.
 | Moment | Date | Tools | Channels and communities | Prep by | Post | Notes |
 |---|---|---|---|---|---|---|
 | **Eid-ul-Adha** | Mon 17 May সম্ভাব্য (sources say 17 or 18; the expected holiday block is 17–19) [MOON] | gorur-ojon, eidjatra, shubhechha, deshe-fera, salami-chek | Gabtoli Gorur Hat Dhaka (V fan page, DM); BD Bus Update, Train update (V pages); family and diaspora pages | Sat 24 Apr | gorur-ojon Sat 1–Wed 12 May; eidjatra after Eid | A fun estimate, not for pricing or trade. Keep clear of animal-welfare arguments |
-| Buddha Purnima | Thu 20 May সম্ভাব্য [PJ] | shubhechha | Our Page: one respectful card | Sun 16 May | Wed 19 May | |
+| Buddha Purnima | Thu 20 May সম্ভাব্য [PJ] | koto-din-baki (shubhechha has no card for this day yet) | Our Page: one respectful card | Sun 16 May | Wed 19 May | |
 | Cricket: Bangladesh at Lord's | One-off Test Fri 28 May–Tue 1 Jun (per an ECB announcement reported in the press; **check fixtures**) | dom-atkano, ami-bolechhilam | Cricket pages | on confirmation | Before the match | One source found |
 
 ## June 2027
@@ -153,7 +153,7 @@ Phase 0 is running, Phase 1 starts Mon 26 Oct.
 |---|---|---|---|---|---|---|
 | Durga Puja 2027 | Shashthi about Tue 5 Oct সম্ভাব্য; **Dashami Sun 10 Oct** সম্ভাব্য [PJ], conflicting sources (7 Oct and 10 Oct appeared), so wait for the government list | mondop, alpana, shubhechha | as Oct 2026 | Sun 26 Sep | Tue 5–Sun 10 Oct | Inclusive. Ask first |
 | ODI World Cup | 2 Oct–21 Nov ✓ [ICC27]; group stage from 7 Oct | dom-atkano, matcher-mon, ami-bolechhilam | Cricket pages | on fixtures | match days | **check fixtures** for Bangladesh; never after a painful defeat |
-| Kali Puja / Diwali 2027 | Late Oct–early Nov, **check the panjika** | shubhechha, koto-din-baki | Our Page | on date | on date | Low-key |
+| Kali Puja / Diwali 2027 | Late Oct–early Nov, **check the panjika** | koto-din-baki (shubhechha has no card for this day yet) | Our Page | on date | on date | Low-key |
 
 ## November 2027
 
@@ -172,7 +172,7 @@ Phase 0 is running, Phase 1 starts Mon 26 Oct.
 | Martyred Intellectuals Day | Tue 14 Dec ✓ | none | none | none | none | Solemn |
 | **Bijoy Dibos (56th)** | Thu 16 Dec ✓ | shubhechha, koto-din-baki, desh-cheno | as Dec 2026 | Thu 9 Dec | Sat 11–Wed 15 Dec | |
 | Winter, pitha | From 16 Dec | pitha, tong, ghuri | as Dec 2026 | | | |
-| Christmas | Sat 25 Dec ✓ | shubhechha | Our Page | | Fri 24 Dec | |
+| Christmas | Sat 25 Dec ✓ | koto-din-baki (shubhechha has no card for this day yet) | Our Page | | Fri 24 Dec | |
 | Year-end, then the annual review | 20–31 Dec | amar-bochhor | Our Page | Fri 17 Dec | Sun 26–Fri 31 Dec | Write the year's lessons note and reset targets |
 
 ---
