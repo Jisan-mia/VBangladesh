@@ -98,6 +98,7 @@ import { site as paka_kancha } from '../tools/paka-kancha/content';
 import { site as jora_melao } from '../tools/jora-melao/content';
 import { site as chhok_jora } from '../tools/chhok-jora/content';
 import { site as churui_tarao } from '../tools/churui-tarao/content';
+import { site as handi_bhanga } from '../tools/handi-bhanga/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -200,6 +201,7 @@ export const toolContent = {
   'jora-melao': jora_melao,
   'chhok-jora': chhok_jora,
   'churui-tarao': churui_tarao,
+  'handi-bhanga': handi_bhanga,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
