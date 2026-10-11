@@ -263,7 +263,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 18 | handi-bhanga | হাঁড়িভাঙা | গেম | G02 | done | games-2026-10.md §4.3 #2 |
 | 19 | peoner-cycle | পিয়নের সাইকেল | গেম | G04 | done | games-2026-10.md §4.3 #4 |
 | 19 | sap-ludu | সাপলুডু | গেম | G08 | done | games-2026-10.md §4.3 #8 |
-| 19 | baghbandi | বাঘবন্দি | গেম | G09 | building | games-2026-10.md §4.3 #9 |
+| 19 | baghbandi | বাঘবন্দি | গেম | G09 | done | games-2026-10.md §4.3 #9 |
 | 19 | baicher-nouka | বাইচের নৌকা | গেম | G06 | building | games-2026-10.md §4.3 #6 |
 | 19 | vo-katta | ভো-কাট্টা | গেম | G14 | building | games-2026-10.md §4.3 #14 |
 | 20 | bhangti-nai | ভাংতি নাই! | গেম | G22 | building | games-2026-10.md §4.3 #22 |

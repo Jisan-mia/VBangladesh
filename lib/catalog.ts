@@ -113,7 +113,7 @@ export const catalog = [
   { slug: "handi-bhanga", name: "হাঁড়িভাঙা", description: "লাঠিতে বল ফিরিয়ে মেলার সব হাঁড়ি ভাঙো, বন্ধুকে একই সারি পাঠাও", category: "গেম", action: "হাঁড়ি ভাঙো" },
   { slug: "peoner-cycle", name: "পিয়নের সাইকেল", description: "ভোরের মেঠো পথে সাইকেলে চিঠি বিলি করো, গরু-ছাগল আর কাদা পাশ কাটিয়ে।", category: "গেম", action: "সাইকেল চালাও" },
   { slug: "sap-ludu", name: "সাপলুডু", description: "ছক্কা চাপো, সিঁড়িতে ওঠো, সাপ এড়াও। এক ফোনে ২–৪ জন, বা একা খেলে বন্ধুকে পাঠাও", category: "গেম", action: "ছক্কা ফেলো" },
-  { slug: "baghbandi", name: "বাঘবন্দি", description: "বাঘবন্দি: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "baghbandi", name: "বাঘবন্দি", description: "দুই বাঘ, বিশ ছাগল, উঠোনের ছক। ছাগল হয়ে বাঘ আটকাও, নয়তো বাঘ হয়ে ছাগল ধরো", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "baicher-nouka", name: "বাইচের নৌকা", description: "বাইচের নৌকা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "vo-katta", name: "ভো-কাট্টা", description: "ভো-কাট্টা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "bhangti-nai", name: "ভাংতি নাই!", description: "ভাংতি নাই!: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
