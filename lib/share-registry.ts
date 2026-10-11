@@ -104,6 +104,7 @@ import { share as handi_bhanga } from '../tools/handi-bhanga/share';
 import { share as peoner_cycle } from '../tools/peoner-cycle/share';
 import { share as sap_ludu } from '../tools/sap-ludu/share';
 import { share as baghbandi } from '../tools/baghbandi/share';
+import { share as baicher_nouka } from '../tools/baicher-nouka/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -211,6 +212,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'peoner-cycle': peoner_cycle,
   'sap-ludu': sap_ludu,
   'baghbandi': baghbandi,
+  'baicher-nouka': baicher_nouka,
 };
 
 export function toolShare(tool: string): ToolShare | null {
