@@ -1,0 +1,100 @@
+.tool-vo-katta{--accent:#c4501b;--accent-deep:#7f300c;--ink:#241a2e;--muted:#66586c;--paper:#fff3e3;--paper-edge:#ecd2b4;--dusk:#2a1f3d;--good:#2b8a52;--tight:#c23d31}
+.tool-vo-katta .vk-page{color:var(--ink)}
+.tool-vo-katta .vk-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero: two short lines, so the sky, the meter and টান all land on the first phone screen */
+.vk-hero{padding:10px 0 6px}
+.vk-hero-kicker{margin:0;font-size:13px;font-weight:600;line-height:1.5;color:var(--accent)}
+.vk-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(24px,6.6vw,48px);line-height:1.25;font-weight:700;letter-spacing:0}
+.vk-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+
+/* short screens: shrink the sky so it and its controls fit the height too */
+.vk{display:grid;gap:8px;max-width:440px;max-width:min(440px,max(260px,calc((100vh - 320px) * .72)));max-width:min(440px,max(260px,calc((100svh - 320px) * .72)))}
+.vk:has(.vk-friend){max-width:min(440px,max(260px,calc((100vh - 410px) * .72)));max-width:min(440px,max(260px,calc((100svh - 410px) * .72)))}
+
+/* opened from a friend's link: their card, tilted, and the honest label */
+.vk-friend{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:center;padding:8px 12px;border-radius:14px;background:var(--paper)}
+.vk-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 14px #241a2e33;transform:rotate(-4deg)}
+.vk-friend h2{margin:0;font-family:var(--font-display);font-size:15px;line-height:1.35}
+.vk-friend p{margin:0;font-size:13px;line-height:1.4;color:var(--muted)}
+
+.vk-hud{display:flex;align-items:center;gap:10px;min-height:44px}
+.vk-hud p{display:flex;align-items:baseline;gap:4px;margin:0;line-height:1}
+.vk-hud p span{font-size:13px;font-weight:600;color:var(--muted)}
+.vk-score b{font-family:var(--font-display);font-size:28px;font-weight:800;font-variant-numeric:tabular-nums}
+.vk-best b{font-family:var(--font-display);font-size:19px;font-weight:700;color:var(--muted)}
+.vk-slow{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-left:auto;padding:0 12px;border:1.5px solid var(--paper-edge);border-radius:999px;background:#fff;color:var(--ink);font-size:14px;font-weight:600;white-space:nowrap}
+.vk-slow[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.vk-hud svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.vk-hud .vk-fill{fill:currentColor;stroke:none}
+.vk-pause{display:grid;place-items:center;width:44px;height:44px;flex:none;padding:0;border:0;border-radius:12px;background:var(--paper);color:var(--ink)}
+
+/* the sky: drag anywhere here; only here and on the buttons does the page stop scrolling under a finger */
+.vk-play{display:grid;gap:8px}
+.vk-board{container-type:inline-size;position:relative;width:100%;border-radius:12px;overflow:hidden;background:var(--dusk);box-shadow:0 8px 22px #241a2e33;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.vk-board canvas{display:block;width:100%;aspect-ratio:360/500}
+.vk-overlay{position:absolute;inset:0;display:grid;place-items:center;padding:16px;pointer-events:none}
+.vk-overlay[data-at=low]{top:58%;bottom:16%;padding:0 16px}
+.vk-overlay button,.vk-block{pointer-events:auto}
+.vk-note{display:grid;justify-items:center;gap:6px;max-width:300px;padding:12px 18px;border-radius:16px;background:#fff6eaf2;box-shadow:0 8px 24px #120a1c55;text-align:center}
+.vk-note .kit-primary{min-width:min(180px,60cqw);min-height:56px;font-size:19px}
+.vk-look{min-height:44px;font-size:15px;color:var(--ink)}
+.vk-howto{margin:0;font-size:16px;font-weight:600;line-height:1.45}
+.vk-round{gap:2px;animation:vk-in .25s ease-out}
+.vk-round p{margin:0;font-size:15px;color:var(--muted)}
+.vk-round .vk-round-no{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--accent)}
+/* game over: a paper slip like the price tag on a kite-shop string */
+.vk-slip{gap:2px;border:3px solid var(--ink);border-radius:6px;transform:rotate(-2deg);animation:vk-drop .3s ease-out}
+.vk-slip h2{margin:0;font-family:var(--font-display);font-size:30px;line-height:1.3;color:var(--accent)}
+.vk-final{margin:0;font-size:17px;font-weight:600}
+.vk-final b{font-family:var(--font-display);font-size:46px;line-height:1.15}
+.vk-record{margin:0;font-size:15px;color:var(--muted)}
+.vk-versus{margin:4px 0 0;font-weight:700;font-size:16px}
+.vk-see{min-height:44px;margin-top:4px;font-size:15px}
+@keyframes vk-drop{from{transform:translateY(-14px) rotate(-6deg);opacity:0}}
+@keyframes vk-in{from{opacity:0;transform:scale(.94)}}
+
+/* one line of help under the sky; it never covers a kite */
+.vk-hint{display:flex;align-items:center;justify-content:center;min-height:28px;margin:0;padding:2px 10px;border-radius:999px;background:var(--paper);font-size:15px;font-weight:700;line-height:1.3;text-align:center}
+.vk-hint[data-tone=good]{background:#e2f3e8;color:var(--good)}
+.vk-hint[data-tone=pull]{background:#fff0d6;color:var(--accent-deep)}
+.vk-hint[data-tone=tight]{background:#fde4e1;color:var(--tight)}
+
+.vk-controls{display:grid;grid-template-columns:1fr 104px;gap:10px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.vk-pull{display:grid;place-items:center;align-content:center;gap:0;min-height:64px;padding:4px 10px;border:0;border-radius:18px;background:var(--accent);color:#fff;box-shadow:0 5px 0 var(--accent-deep);touch-action:none}
+.vk-pull b{font-family:var(--font-display);font-size:26px;line-height:1.15}
+.vk-pull span{font-size:13px;font-weight:600;opacity:.9}
+.vk-pull[data-on=true]{transform:translateY(4px);box-shadow:0 1px 0 var(--accent-deep);background:var(--accent-deep)}
+.vk-mode{min-height:64px;padding:4px 8px;border:1.5px solid var(--paper-edge);border-radius:16px;background:#fff;color:var(--ink);font-size:14px;font-weight:700;line-height:1.3}
+.vk-mode[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.tool-vo-katta .vk-again{grid-column:1/-1;min-height:64px;font-size:21px}
+.vk-safety{margin:0;font-size:13px;line-height:1.5;color:var(--muted);text-align:center}
+
+.vk-result{scroll-margin-top:12px;margin-top:22px;padding-top:20px;border-top:2px solid var(--ink)}
+.vk-result-head h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(23px,5vw,34px);line-height:1.4}
+.vk-result-head h2 em{font-style:normal;color:var(--accent)}
+.vk-result-head p{margin:0 0 16px;color:var(--muted)}
+.vk-result-body{display:grid;gap:22px}
+.vk-share{display:grid;gap:18px;align-content:start}
+.vk-name{display:grid;gap:6px;font-weight:600}
+.vk-name small{font-weight:400;color:var(--muted);font-size:13px}
+.vk-name input{border:1.5px solid var(--paper-edge);border-radius:12px;font-size:17px}
+.vk-again-link{justify-self:start}
+
+.vk-guide h2{font-family:var(--font-display);margin-bottom:18px}
+.vk-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.vk-guide li{display:flex;gap:14px;align-items:flex-start}
+.vk-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--paper-edge);color:var(--ink);font-weight:700}
+.vk-guide li p{margin:4px 0 0}
+.vk-maker{margin:20px 0 0;font-weight:600}
+.vk-maker a{color:var(--accent-deep)}
+
+@container (max-width:300px){.vk-look{display:none}.vk-note{padding:8px 12px}}
+@media(max-width:350px){.vk-hud{gap:6px}.vk-slow{padding:0 9px;font-size:13px}.vk-score b{font-size:24px}.vk-controls{grid-template-columns:1fr 88px}.vk-hint{font-size:14px}}
+@media(min-width:720px){
+  .vk-lead{display:block}
+  .vk-page:has(.vk-friend) .vk-lead{display:none}
+  .vk-friend{grid-template-columns:96px 1fr}
+  .vk-friend h2{font-size:20px}
+}
+@media(prefers-reduced-motion:reduce){.vk-slip,.vk-round{animation:none}.vk-pull[data-on=true]{transform:none}}
