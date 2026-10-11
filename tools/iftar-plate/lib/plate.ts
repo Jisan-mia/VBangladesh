@@ -1,4 +1,5 @@
 import { possessive } from "../../../shared/bangla";
+import { countdown, daysBetween, dhakaToday, occasionById, sources } from "../../koto-din-baki/lib/countdown";
 
 export const MAX_NAME_LENGTH = 30;
 /** A real থালা holds about this much before it spills; the link cap too. */
@@ -110,9 +111,31 @@ export function plateLine(picks: readonly ItemId[], place: PlaceId | "") {
   return "সবাই মিলে বসলেই প্লেটটা পূর্ণ।";
 }
 
+export type RamadanDay = { day: number; likely: boolean };
+
+// Start and Eid dates are the moon projections in koto-din-baki (sourced there; the committee's announcement replaces them).
+const moonDates = (id: "ramadan" | "eid-fitr") => (occasionById(id) as { dates: readonly string[] }).dates;
+
+/** Which day of Ramadan `today` ("YYYY-MM-DD" in Dhaka) is: 1 on the start date, ending the day before the projected Eid and never past 30; null otherwise. */
+export function ramadanDay(today: string): RamadanDay | null {
+  const eids = moonDates("eid-fitr");
+  for (const [index, start] of moonDates("ramadan").entries()) {
+    const day = daysBetween(start, today) + 1;
+    if (day >= 1 && day <= Math.min(30, daysBetween(start, eids[index]))) return { day, likely: countdown({ id: "ramadan" }, start).likely };
+  }
+  return null;
+}
+
+/** ১ম ২য় ৩য় ৪র্থ ৫ম ৬ষ্ঠ ৭ম ৮ম ৯ম ১০ম, then ১১তম… */
+const ordinal = (n: number) => bn(n) + (n > 10 ? "তম" : ["ম", "য়", "য়", "র্থ", "ম", "ষ্ঠ", "ম", "ম", "ম", "ম"][n - 1]);
+/** "আজ রমজানের সম্ভাব্য ১২তম দিন"; "সম্ভাব্য" drops once the start is announced. */
+export const ramadanLine = ({ day, likely }: RamadanDay) => `আজ রমজানের ${likely ? "সম্ভাব্য " : ""}${ordinal(day)} দিন`;
+
 export type CardContent = {
   title: string;
   sub: string;
+  /** The Ramadan day line, or "" outside Ramadan and on a friend's plate. */
+  day: string;
   line: string;
   names: string;
   match: string;
@@ -122,7 +145,7 @@ export type CardContent = {
 };
 
 /** Everything the card prints, decided here so it can be tested without a canvas. */
-export function createCard(own: Plate, friend?: Plate | null, popular = ""): CardContent {
+export function createCard(own: Plate, friend?: Plate | null, popular = "", ramadan: RamadanDay | null = null): CardContent {
   const picks = inOrder(own.picks);
   const name = cleanName(own.name);
   const where = placeLabel(own.place);
@@ -134,6 +157,7 @@ export function createCard(own: Plate, friend?: Plate | null, popular = ""): Car
   return {
     title: `${name ? possessive(name) : "আমার"} ইফতারির প্লেট`,
     sub: [where, `${bn(picks.length)} পদ`].filter(Boolean).join(" · "),
+    day: ramadan ? ramadanLine(ramadan) : "",
     line: plateLine(picks, own.place),
     names: picks.map(id => itemById(id).label).join(" · "),
     match,
@@ -180,4 +204,4 @@ export function layoutPlate(picks: readonly ItemId[]): Spot[] {
   return [...ringSpots, ...middle, ...spots];
 }
 
-export { possessive };
+export { dhakaToday, possessive, sources };

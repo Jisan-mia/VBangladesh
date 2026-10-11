@@ -6,7 +6,7 @@ import { addToTally, readTally, type Tally } from "../../../shared/share-client"
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { art, plateBase } from "../lib/art";
 import { cardBlob, drawCard, prepareCard } from "../lib/draw-plate";
-import { bn, createCard, items, layoutPlate, mostPicked, parseShareHash, placeLabel, places, possessive, SCENE, shareHash, starters, toggleItem, MAX_ITEMS, MAX_NAME_LENGTH, type ItemId, type Plate, type PlaceId } from "../lib/plate";
+import { bn, createCard, dhakaToday, items, layoutPlate, mostPicked, parseShareHash, placeLabel, places, possessive, ramadanDay, SCENE, shareHash, sources, starters, toggleItem, MAX_ITEMS, MAX_NAME_LENGTH, type ItemId, type Plate, type PlaceId, type RamadanDay } from "../lib/plate";
 
 const TOOL = "iftar-plate";
 // "১০০% প্লেটে বেগুনি" after two votes is noise, so the ranking stays hidden until this many plates are counted.
@@ -28,6 +28,8 @@ export function PlateBuilder() {
   const [compared, setCompared] = useState<"idle" | "sending" | "done" | "failed">("idle");
   const [bump, setBump] = useState<{ kind: "add" | "full"; n: number }>({ kind: "add", n: 0 });
   const [previewError, setPreviewError] = useState(false);
+  // Read on the phone after mount: the page is prerendered, so the server's date would be stale.
+  const [ramadan, setRamadan] = useState<RamadanDay | null>(null);
   // Two quick taps can land before React re-renders; the ref always holds the latest plate.
   const latest = useRef(picks);
   const preview = useRef<HTMLCanvasElement>(null);
@@ -38,7 +40,7 @@ export function PlateBuilder() {
   const ranked = everyone ? mostPicked(everyone.counts, everyone.total, TALLY_MIN) : null;
   const popular = ranked ? `সবার প্লেটে সবচেয়ে বেশি: ${ranked[0].label}` : "";
   const own = useMemo(() => ({ picks, place, name }), [picks, place, name]);
-  const card = useMemo(() => createCard(own, friend, popular), [own, friend, popular]);
+  const card = useMemo(() => createCard(own, friend, popular, ramadan), [own, friend, popular, ramadan]);
   const spots = useMemo(() => layoutPlate(picks), [picks]);
   const state = shareHash(own).slice(1);
   const count = picks.length;
@@ -49,6 +51,7 @@ export function PlateBuilder() {
     readFriend();
     window.addEventListener("hashchange", readFriend);
     setSite(window.location.host);
+    setRamadan(ramadanDay(dhakaToday(new Date())));
     readTally(TOOL).then(setEveryone);
     return () => window.removeEventListener("hashchange", readFriend);
   }, []);
@@ -109,6 +112,7 @@ export function PlateBuilder() {
       )}
 
       <div className="ip-mat" id="plate">
+        {card.day && <p className="ip-day">{card.day}</p>}
         <p className="ip-count" aria-live="polite"><span>প্লেটে</span> <strong key={count}>{bn(count)} পদ</strong>{where && <em>{where}</em>}</p>
         <svg
           className="ip-scene"
@@ -156,8 +160,9 @@ export function PlateBuilder() {
         <div className="ip-result-body">
           <figure className="kit-card" data-format={format}>
             <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="card-summary" />
-            <figcaption id="card-summary" className="ip-sr">{card.title}: {card.names}। {card.line}</figcaption>
+            <figcaption id="card-summary" className="ip-sr">{card.title}: {card.names}। {card.line}{card.day && ` ${card.day}।`}</figcaption>
             {previewError && <p className="kit-status" role="alert">প্লেটের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
+            {ramadan?.likely && <p className="ip-note">রমজানের দিনটা সম্ভাব্য: চাঁদ দেখার ওপর নির্ভর করে এক দিন আগে-পরে হতে পারে। <a href={sources.moon.url} target="_blank" rel="noopener">ঠিক দিন জানায় জাতীয় চাঁদ দেখা কমিটি</a></p>}
           </figure>
 
           <div className="ip-controls">

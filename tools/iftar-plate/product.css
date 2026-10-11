@@ -10,6 +10,7 @@
 
 /* the দস্তরখান: green cotton with a small cream print and a red printed edge */
 .ip-mat{position:relative;scroll-margin-top:12px;padding:12px 10px 10px;border-radius:16px;color:var(--cream);background:radial-gradient(circle,#fff3dc1c 2.5px,transparent 3px) 0 0/26px 26px,radial-gradient(circle,#fff3dc12 2px,transparent 2.5px) 13px 13px/26px 26px,var(--cloth);box-shadow:inset 0 0 0 6px var(--border),inset 0 0 0 9px var(--cloth),inset 0 0 0 10.5px var(--saffron)}
+.ip-day{margin:2px 10px -2px;font-size:14px;font-weight:600;line-height:1.5;color:#e7f1ea}
 .ip-count{display:flex;align-items:baseline;gap:8px;margin:2px 10px 0;font-size:15px}
 .ip-count strong{display:inline-block;font-family:var(--font-display);font-size:26px;line-height:1.2;color:var(--saffron);animation:ip-bump .35s ease}
 .ip-count em{margin-left:auto;padding:1px 12px;border:1.5px solid #fff3dc66;border-radius:999px;font-style:normal;font-size:14px;font-weight:600}
@@ -70,6 +71,7 @@
 .ip-rank b{font-family:var(--font-display);font-size:20px;color:var(--accent)}
 .ip-rank i{position:absolute;left:0;bottom:0;height:4px;background:var(--saffron)}
 .ip-note{margin:10px 0 0;font-size:13px;color:var(--muted)}
+.ip-note a{color:var(--accent-deep)}
 .ip-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* the searchable item list */

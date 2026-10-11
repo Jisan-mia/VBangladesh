@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { art, sceneSvg } from "../lib/art";
-import { cleanName, createCard, items, layoutPlate, mostPicked, parseShareHash, plateLine, places, shareHash, starters, toggleItem, MAX_ITEMS, MAX_NAME_LENGTH, SCENE, type ItemId } from "../lib/plate";
+import { cleanName, createCard, dhakaToday, items, layoutPlate, mostPicked, parseShareHash, plateLine, places, ramadanDay, ramadanLine, shareHash, starters, toggleItem, MAX_ITEMS, MAX_NAME_LENGTH, SCENE, type ItemId } from "../lib/plate";
 import { share } from "../share";
 
 const all = items.map(item => item.id);
@@ -93,4 +93,41 @@ test("share preview is personal and the tally only lists fixed ids", () => {
   assert.equal(share.preview(state).title, "রাফির ইফতারির প্লেট — তোমার প্লেটে কী?");
   assert.equal(share.preview("i=khejur").title, "এক বন্ধুর ইফতারির প্লেট — তোমার প্লেটে কী?");
   assert.deepEqual(share.tally, [...all, ...places.map(place => place.id)]);
+});
+
+test("the Ramadan day counts from the moon projection in Dhaka and is blank outside Ramadan", () => {
+  assert.equal(ramadanDay("2026-10-11"), null);
+  assert.equal(ramadanDay("2027-02-08"), null);
+  assert.deepEqual(ramadanDay("2027-02-09"), { day: 1, likely: true });
+  assert.equal(ramadanDay("2027-02-20")?.day, 12);
+  assert.equal(ramadanDay("2027-03-09")?.day, 29);
+  assert.equal(ramadanDay("2027-03-10"), null, "the projected Eid day is not a Ramadan day");
+  assert.equal(ramadanDay("2028-01-29")?.day, 1);
+  assert.equal(ramadanDay("2029-02-01"), null, "after the date table runs out");
+  // Dhaka is UTC+6: 18:00 UTC on the 8th is already midnight on the 9th there.
+  assert.equal(ramadanDay(dhakaToday(new Date("2027-02-08T17:59:59Z"))), null);
+  assert.equal(ramadanDay(dhakaToday(new Date("2027-02-08T18:00:00Z")))?.day, 1);
+  let previous = 0;
+  for (let time = Date.UTC(2026, 0, 1); time < Date.UTC(2029, 0, 1); time += 86_400_000) {
+    const day = ramadanDay(new Date(time).toISOString().slice(0, 10))?.day ?? 0;
+    assert.ok(day <= 30 && (day === 0 || day === previous + 1), `day ${day} after ${previous}`);
+    previous = day;
+  }
+});
+
+test("the day line uses Bangla ordinals, says সম্ভাব্য until announced, and only sits on one's own card", () => {
+  assert.equal(ramadanLine({ day: 12, likely: true }), "আজ রমজানের সম্ভাব্য ১২তম দিন");
+  assert.equal(ramadanLine({ day: 12, likely: false }), "আজ রমজানের ১২তম দিন");
+  assert.deepEqual([1, 2, 3, 4, 6, 10, 11].map(day => ramadanLine({ day, likely: false }).split(" ")[2]), ["১ম", "২য়", "৩য়", "৪র্থ", "৬ষ্ঠ", "১০ম", "১১তম"]);
+  const plate = { picks: starters, place: "" as const, name: "" };
+  assert.equal(createCard(plate, null, "", { day: 12, likely: true }).day, "আজ রমজানের সম্ভাব্য ১২তম দিন");
+  assert.equal(createCard(plate).day, "");
+});
+
+test("a link shared before the Ramadan line opens the same plate, with no day on the friend's card", () => {
+  const old = "i=khejur,chola,peyaju&w=probash&n=" + encodeURIComponent("রাফি");
+  assert.equal(share.normalize(old), old);
+  const friend = parseShareHash("#" + old)!;
+  assert.deepEqual(friend, { picks: ["khejur", "chola", "peyaju"], place: "probash", name: "রাফি" });
+  assert.equal(createCard(friend).day, "");
 });

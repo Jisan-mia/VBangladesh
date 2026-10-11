@@ -76,6 +76,8 @@ export function drawCard(canvas: HTMLCanvasElement, card: CardContent, format: C
   if (format === "story") fitText(context, [{ text: "ইফতারির প্লেট · একটুখানি", color: "rgba(255,243,220,.7)", weight: 600 }], left, 320, 30, titleWidth);
   fitText(context, [{ text: card.title, color: CREAM, weight: 800, display: true }], left, layout.titleY, format === "story" ? 76 : 70, titleWidth);
   fitText(context, [{ text: card.sub, color: SAFFRON, weight: 700, display: true }], left, layout.subY, 40, titleWidth);
+  // Sits in the bare cloth above the thala's rim.
+  if (card.day) fitText(context, [{ text: card.day, color: MINT, weight: 600 }], left, layout.subY + 50, 30, titleWidth);
   const plateY = card.friend ? layout.friendY : layout.plateY;
   const plateW = card.friend ? layout.friendW : layout.plateW;
   drawScene(context, card.picks, (width - plateW) / 2 - 10, plateY, plateW);
