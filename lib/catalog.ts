@@ -96,7 +96,7 @@ export const catalog = [
   { slug: "mondop", name: "মণ্ডপ ঘুরি", description: "পূজায় কয়টা মণ্ডপ ঘুরলে? প্রতিটায় + চাপো, চালচিত্রে একটা করে প্রদীপ জ্বলবে।", category: "উৎসব আর বিশ্বাস", action: "মণ্ডপ গুনি" },
   { slug: "grade-dao", name: "গ্রেড দাও", description: "ফুচকা, বর্ষা, লোকাল বাসকে A+ থেকে F দাও, দেখো দেশ কত দিল।", category: "মজা আর কুইজ", action: "গ্রেড দাও" },
   { slug: "adda", name: "আড্ডায় তুমি কে?", description: "কুইন, স্ট্রাইকার, সাদা না কালো? ৭টা প্রশ্নে বের করো আড্ডায় তুমি কোন গুটি।", category: "নিজেকে জানো", action: "গুটি বের করো" },
-  { slug: "kalbaishakhi-aam", name: "কালবৈশাখী আম", description: "কালবৈশাখী আম: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "kalbaishakhi-aam", name: "কালবৈশাখী আম", description: "ঝড়ে আমগাছ দুলছে, ডালা পেতে আম ধরো। শুকনো ডাল কিন্তু ধরো না!", category: "গেম", action: "আম কুড়াও" },
   { slug: "dudh-uthlano", name: "দুধ উথলানোর আগে", description: "দুধ উথলানোর আগে: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "jhalmuri-sap", name: "ঝালমুড়ি সাপ", description: "ঝালমুড়ি সাপ: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "danguli", name: "ডাংগুলি", description: "ডাংগুলি: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
