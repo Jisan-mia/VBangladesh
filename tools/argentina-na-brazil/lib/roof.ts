@@ -36,9 +36,11 @@ export type Team = (typeof teams)[number];
 export type TeamId = Team["id"];
 export type Year = (typeof years)[number];
 export type DivisionId = (typeof divisions)[number]["id"];
-export type Roof = { team: TeamId; year: Year | null; name: string };
-/** A card: your roof, and (when you came from a friend's link) the house next door. */
-export type Shared = { own: Roof; neighbour: Roof | null };
+/** The আসল ফ্যান test: which of the 3 shown options was tapped, per question (so the score is always recomputed). */
+export type Pick = 0 | 1 | 2;
+export type Roof = { team: TeamId; year: Year | null; name: string; quiz?: Pick[] };
+/** A card: your roof, and (when you came from a friend's link) the house next door. `seed` orders the fan test; quiz keys only travel with it. */
+export type Shared = { own: Roof; neighbour: Roof | null; seed?: number };
 export type Tally = { total: number; counts: Record<string, number> };
 export type Split = { arg: number; bra: number; other: number; total: number };
 
@@ -50,37 +52,52 @@ export const isDivisionId = (id: unknown): id is DivisionId => divisions.some(di
 const toYear = (value: string | null): Year | null => years.find(year => String(year) === value) ?? null;
 export const teamOf = (id: TeamId) => teams.find(team => team.id === id)!;
 
+/** Only the two big teams have a fan test. */
+export const FAN_ROUNDS = 8;
+export const isFanTeam = (id: TeamId): id is "arg" | "bra" => id === "arg" || id === "bra";
+const toSeed = (value: string | null) => value && /^\d{1,4}$/.test(value) ? Number(value) : null;
+
 export function cleanName(name: string) {
   // NFC so one name has one spelling; strip control and bidi-override characters so a link can't scramble the card.
   const flat = name.normalize("NFC").replace(/[\u0000-\u001f\u007f-\u009f‎‏‪-‮⁦-⁩]/g, " ").replace(/\s+/g, " ").trim();
   return Array.from(flat).slice(0, MAX_NAME_LENGTH).join("").trim();
 }
 
-function readRoof(params: URLSearchParams, prefix: "" | "f"): Roof | null {
+function readRoof(params: URLSearchParams, prefix: "" | "f", seeded: boolean): Roof | null {
   const team = params.get(prefix + "t");
   if (!isTeamId(team)) return null;
-  return { team, year: toYear(params.get(prefix + "y")), name: cleanName(params.get(prefix + "n") ?? "") };
+  const roof: Roof = { team, year: toYear(params.get(prefix + "y")), name: cleanName(params.get(prefix + "n") ?? "") };
+  const quiz = params.get(prefix + "q") ?? "";
+  if (seeded && isFanTeam(team) && new RegExp(`^[012]{${FAN_ROUNDS}}$`).test(quiz)) roof.quiz = [...quiz].map(Number) as Pick[];
+  return roof;
 }
 
-function writeRoof(params: URLSearchParams, roof: Roof, prefix: "" | "f") {
+function writeRoof(params: URLSearchParams, roof: Roof, prefix: "" | "f", seeded: boolean) {
   params.set(prefix + "t", roof.team);
   if (roof.year) params.set(prefix + "y", String(roof.year));
   const name = cleanName(roof.name);
   if (name) params.set(prefix + "n", name);
+  if (seeded && roof.quiz?.length === FAN_ROUNDS && isFanTeam(roof.team)) params.set(prefix + "q", roof.quiz.join(""));
 }
 
-export function shareHash({ own, neighbour }: Shared) {
+// Fan-test keys (q, fq, s) are optional and appended, so every pre-test link (t, y, n, ft, fy, fn) reads exactly as before.
+export function shareHash({ own, neighbour, seed }: Shared) {
   const params = new URLSearchParams();
-  writeRoof(params, own, "");
-  if (neighbour) writeRoof(params, neighbour, "f");
+  const seeded = seed !== undefined;
+  writeRoof(params, own, "", seeded);
+  if (neighbour) writeRoof(params, neighbour, "f", seeded);
+  if (seeded && (params.has("q") || params.has("fq"))) params.set("s", String(seed));
   return "#" + params.toString();
 }
 
 export function parseShareHash(hash: string): Shared | null {
   if (hash.length > 2000) return null;
   const params = new URLSearchParams(hash.replace(/^#/, ""));
-  const own = readRoof(params, "");
-  return own ? { own, neighbour: readRoof(params, "f") } : null;
+  const seed = toSeed(params.get("s"));
+  const own = readRoof(params, "", seed !== null);
+  if (!own) return null;
+  const neighbour = readRoof(params, "f", seed !== null);
+  return seed !== null && (own.quiz || neighbour?.quiz) ? { own, neighbour, seed } : { own, neighbour };
 }
 
 /** The warm line under the headline, from how long they've flown this flag. */

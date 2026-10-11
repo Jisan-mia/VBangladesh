@@ -5,8 +5,10 @@ import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard, loadScene } from "../lib/draw-card";
-import { bn, caption, divisions, divisionSplit, laneTitle, nationalSplit, parseShareHash, possessive, roofTitle, shareHash, splitText, supportLine, teamOf, teams, voteItems, years, MAX_NAME_LENGTH, type DivisionId, type Roof, type Split, type TeamId, type Year } from "../lib/roof";
+import { fanScore, scoreLine } from "../lib/fan";
+import { bn, caption, divisions, divisionSplit, isFanTeam, laneTitle, nationalSplit, parseShareHash, possessive, roofTitle, shareHash, splitText, supportLine, teamOf, teams, voteItems, years, MAX_NAME_LENGTH, type DivisionId, type Roof, type Split, type TeamId, type Year } from "../lib/roof";
 import { sceneSvg } from "../lib/scene";
+import { FanTest } from "./fan-test";
 
 const TOOL = "argentina-na-brazil";
 const others = teams.filter(team => team.id !== "arg" && team.id !== "bra");
@@ -26,6 +28,7 @@ export function RoofBuilder() {
   const [name, setName] = useState("");
   const [showOthers, setShowOthers] = useState(false);
   const [neighbour, setNeighbour] = useState<Roof | null>(null);
+  const [linkSeed, setLinkSeed] = useState<number | null>(null);
   const [format, setFormat] = useState<CardFormat>("feed");
   const [site, setSite] = useState("");
   const [tally, setTally] = useState<Tally | null>(null);
@@ -35,6 +38,9 @@ export function RoofBuilder() {
   const preview = useRef<HTMLCanvasElement>(null);
   const result = useRef<HTMLElement>(null);
   const resultVisible = useInView(result);
+  // Once the fan test is on screen the roof card is behind you; the pinned bar would cover the answer buttons.
+  const fanBox = useRef<HTMLDivElement>(null);
+  const fanVisible = useInView(fanBox, 0.01);
 
   const shared = useMemo(() => team ? { own: { team, year, name }, neighbour } : null, [team, year, name, neighbour]);
   const state = shared ? shareHash(shared).slice(1) : "";
@@ -43,7 +49,7 @@ export function RoofBuilder() {
 
   useEffect(() => {
     // In-page anchors (#result) also change the hash, so only a real shared card sets the house next door.
-    const readLink = () => { const link = parseShareHash(window.location.hash); if (link) setNeighbour(link.own); };
+    const readLink = () => { const link = parseShareHash(window.location.hash); if (link) { setNeighbour(link.own); setLinkSeed(link.seed ?? null); } };
     readLink();
     window.addEventListener("hashchange", readLink);
     setSite(window.location.host);
@@ -81,6 +87,7 @@ export function RoofBuilder() {
     <div className="abn">
       {neighbour && <p className="abn-friend" role="status">
         <span>{neighbourName} ছাদে {possessive(teamOf(neighbour.team).label)} পতাকা উড়ছে।</span>
+        {neighbour.quiz && linkSeed !== null && <span>আসল ফ্যান পরীক্ষায় {neighbour.name || "বন্ধু"} পেয়েছে {scoreLine(fanScore(neighbour.team, linkSeed, neighbour.quiz))}।</span>}
         <strong>পাশের বাসাটা তোমার। কোন পতাকা তুলবে?</strong>
       </p>}
 
@@ -116,7 +123,7 @@ export function RoofBuilder() {
           </label>
         </div>
 
-        <StickyNext show={!resultVisible} title={<><strong>{teamOf(shared.own.team).label}</strong> উড়ছে</>} sub={supportLine(year)} href="#result" label="কার্ডটা দেখো" />
+        <StickyNext show={!resultVisible && !fanVisible} title={<><strong>{teamOf(shared.own.team).label}</strong> উড়ছে</>} sub={supportLine(year)} href="#result" label="কার্ডটা দেখো" />
 
         <section className="abn-result" id="result" ref={result} aria-labelledby="result-title">
           <h2 id="result-title">{neighbour ? `${laneTitle(shared.own, neighbour)}, একই গলিতে` : roofTitle(shared.own)}</h2>
@@ -147,6 +154,8 @@ export function RoofBuilder() {
             </div>
           </div>
         </section>
+
+        {isFanTeam(shared.own.team) && <div ref={fanBox}><FanTest key={`${shared.own.team}-${linkSeed}`} own={shared.own} team={shared.own.team} neighbour={neighbour} linkSeed={linkSeed} site={site} /></div>}
       </>}
 
       <p className="abn-safety">পতাকা টাঙাতে ছাদে উঠলে বিদ্যুতের তার থেকে দূরে থেকো। খেলা খেলার জায়গায়, বন্ধুত্ব থাকুক সবার আগে।</p>

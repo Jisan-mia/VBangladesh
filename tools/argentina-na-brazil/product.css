@@ -86,6 +86,55 @@
 .abn-safety{margin:4px 0 0;padding:10px 12px;border-radius:10px;background:#fff6e0;font-size:14px;line-height:1.6;color:#6b4a00}
 .abn-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 
+/* আসল ফ্যান পরীক্ষা: an invitation under the card, then a dusk board; the score is a string of bunting, one pennant per question */
+.abn-fan{display:grid;gap:14px;scroll-margin-top:12px;padding-top:18px;border-top:2px dashed var(--line)}
+.abn-fan-invite,.abn-fan-board{display:grid;gap:10px;padding:14px 16px 18px;border-radius:14px;background:var(--dusk);color:#fff}
+.abn-fan-invite{justify-items:start}
+.abn-fan-invite .abn-fan-bunting{justify-self:stretch}
+.abn-fan-kicker{margin:0;font-size:14px;font-weight:600;color:#ffd3a1}
+.abn-fan h2{margin:0;font-family:var(--font-display);font-size:22px;line-height:1.45;font-weight:700}
+.abn-fan-invite p{margin:0;font-size:15px;line-height:1.6;color:#e3e8f3}
+.abn-fan-invite strong{color:#fff}
+.abn-fan-invite .kit-primary{margin-top:4px}
+.abn-fan-bunting{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px;margin:0 -4px 2px;padding:0;list-style:none;border-top:3px solid #f6ead2b3}
+.abn-fan-bunting li{height:28px;clip-path:polygon(6% 0,94% 0,50% 100%);background:#f6ead233;transform-origin:top}
+.abn-fan-bunting li[data-state=now]{background:#f6ead2b3}
+.abn-fan-bunting li[data-state=wrong]{background:#e8836b80}
+.abn-fan-bunting[data-team=arg] li[data-state=right]{background:var(--sky)}
+.abn-fan-bunting[data-team=bra] li[data-state=right]{background:var(--canary)}
+.abn-fan-bunting li[data-state=right]{animation:abn-pennant .5s cubic-bezier(.2,.8,.3,1.3) both}
+@keyframes abn-pennant{from{transform:scaleY(.2)}}
+.abn-fan-meta{display:flex;justify-content:space-between;gap:8px;font-size:14px;font-weight:600;color:#ffd3a1}
+.abn-fan-ask{font-size:21px}
+.abn-fan-options{display:grid;gap:8px}
+.abn-fan-options button{display:flex;align-items:center;gap:12px;min-height:52px;padding:8px 14px 8px 8px;border:2.5px solid #2e190e;border-radius:10px;background:#fbf6ea;color:#2e190e;font-size:17px;font-weight:600;line-height:1.4;text-align:left;box-shadow:0 3px 0 #000a}
+.abn-fan-options button:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #000a}
+.abn-fan-options button:disabled{cursor:default}
+.abn-fan-letter{flex:none;display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#2e190e;color:#fbf6ea;font-size:15px;font-weight:700}
+.abn-fan-options [data-status=right]{border-color:#1f9d55;background:#e6f8e7;box-shadow:0 0 0 3px #3ccf74}
+.abn-fan-options [data-status=right] .abn-fan-letter{background:#1f9d55}
+.abn-fan-options [data-status=wrong]{border-color:#a8321d;background:#f6dcd5}
+.abn-fan-options [data-status=wrong] .abn-fan-letter{background:#a8321d}
+.abn-fan-options [data-status=dim]{opacity:.55}
+.abn-fan-answer{display:grid;gap:4px;padding:10px 12px;border-radius:10px;background:#ffffff17;font-size:15px;line-height:1.6}
+.abn-fan-answer p{margin:0}
+.abn-fan-answer small{color:#c9d1dc}
+.abn-fan-verdict{font-weight:700}
+.abn-fan-verdict[data-right=true]{color:#9be7a8}
+.abn-fan-verdict[data-right=false]{color:#ffd3a1}
+.abn-fan-next{justify-self:stretch}
+.abn-fan-head{display:grid;gap:4px}
+.abn-fan-done .abn-fan-kicker{color:var(--accent-deep)}
+.abn-fan-head p{margin:0;color:var(--muted);font-size:15px;line-height:1.6}
+.abn-fan-review{padding:0 12px;border:1.5px solid var(--line);border-radius:12px}
+.abn-fan-review summary{display:flex;align-items:center;min-height:44px;font-weight:600;cursor:pointer}
+.abn-fan-review ol{display:grid;gap:12px;margin:0 0 10px;padding-left:20px}
+.abn-fan-review li p{margin:0;font-size:14px;line-height:1.6}
+.abn-fan-review li[data-right=false]::marker{color:#a8321d}
+.abn-fan-review s{margin-left:8px;color:#a8321d}
+.abn-fan-review small,.abn-fan-check{color:var(--muted);font-size:13px}
+.abn-fan-check{margin:0 0 12px;line-height:1.6}
+
 .roof-guide h2{font-family:var(--font-display);margin-bottom:10px}
 .roof-guide>p{color:var(--muted)}
 .roof-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
@@ -94,4 +143,4 @@
 .roof-guide li p{margin:4px 0 0}
 
 @media(min-width:900px){.abn-result-body{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}}
-@media(prefers-reduced-motion:reduce){.abn-rise,.abn-wave{animation:none}}
+@media(prefers-reduced-motion:reduce){.abn-rise,.abn-wave,.abn-fan-bunting li{animation:none}}

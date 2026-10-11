@@ -1,5 +1,6 @@
 import { canvasBlob, cardSizes, drawFooterBand, fitText, loadCardFonts, roundedRect, type CardFormat, type Segment } from "../../../shared/card-canvas";
-import { laneLine, roofParts, splitText, supportLine, teamOf, type Shared, type Split } from "./roof";
+import { fanBadge, fanLaneLine, fanLine, fanPair, fanScore, fanTest, scoreLine, type FanTeam } from "./fan";
+import { laneLine, roofParts, splitText, supportLine, teamOf, type Roof, type Shared, type Split } from "./roof";
 import { houseSpots, sceneSvg } from "./scene";
 
 const CREAM = "#f6ead2";
@@ -35,6 +36,12 @@ function plate(context: CanvasRenderingContext2D, text: string, cx: number, y: n
   context.lineWidth = 3;
   context.stroke();
   fitText(context, [{ text, color: "#2e190e", weight: 700 }], cx, y + 33, 28, width - 20, "center");
+}
+
+/** Name plates on the two walls: the neighbour (who sent the link) left, you right. */
+function plates(context: CanvasRenderingContext2D, width: number, ground: number, names: [string, string]) {
+  const spots = houseSpots(width, ground, 2);
+  names.forEach((name, index) => plate(context, name, spots[index].cx + spots[index].wallWidth * 0.18, spots[index].wallTop + 10, spots[index].wallWidth * 0.42));
 }
 
 function splitBar(context: CanvasRenderingContext2D, split: Split, top: number) {
@@ -80,8 +87,7 @@ export function drawCard(canvas: HTMLCanvasElement, scene: HTMLImageElement, sha
     fitText(context, [{ text: "পাশাপাশি দুই ছাদ", color: PEACH, weight: 600 }], 84, layout.kicker, 32, 900);
     fitText(context, first, 84, layout.line1 + 14, layout.size2 * 0.82, 912);
     fitText(context, second, 84, layout.line2, layout.size2 * 0.82, 912);
-    const spots = houseSpots(width, layout.ground, 2);
-    [them, me].forEach((name, index) => plate(context, name, spots[index].cx + spots[index].wallWidth * 0.18, spots[index].wallTop + 10, spots[index].wallWidth * 0.42));
+    plates(context, width, layout.ground, [them, me]);
   } else {
     const [whose, rest] = roofParts(own);
     fitText(context, [{ text: "ছাদের পতাকা", color: PEACH, weight: 600 }], 84, layout.kicker, 32, 900);
@@ -92,6 +98,80 @@ export function drawCard(canvas: HTMLCanvasElement, scene: HTMLImageElement, sha
   fitText(context, [{ text: human, color: CREAM, weight: 600 }], 84, layout.human, 40, 912);
   if (split) splitBar(context, split, layout.ground);
   drawFooterBand(context, format, "তোমার ছাদে কোন পতাকা?", site);
+}
+
+/** The score as bunting: one pennant per question, team colour when right, a dashed empty one when missed. */
+function bunting(context: CanvasRenderingContext2D, hits: boolean[], color: string, left: number, top: number, width: number, drop: number) {
+  const step = width / hits.length, sag = drop * 0.3;
+  context.strokeStyle = CREAM;
+  context.lineWidth = 3;
+  context.beginPath();
+  context.moveTo(left, top);
+  context.quadraticCurveTo(left + width / 2, top + sag * 2, left + width, top);
+  context.stroke();
+  hits.forEach((hit, index) => {
+    const cx = left + step * (index + 0.5), t = (cx - left) / width, y = top + sag * 4 * t * (1 - t), half = step * 0.36;
+    context.beginPath();
+    context.moveTo(cx - half, y);
+    context.lineTo(cx + half, y);
+    context.lineTo(cx, y + drop);
+    context.closePath();
+    if (hit) { context.fillStyle = color; context.fill(); }
+    context.strokeStyle = hit ? "#0b1530" : CREAM;
+    context.lineWidth = hit ? 2 : 2.5;
+    context.setLineDash(hit ? [] : [7, 6]);
+    context.stroke();
+    context.setLineDash([]);
+  });
+}
+
+const hitsOf = (roof: Roof, seed: number) => fanTest(roof.team as FanTeam, seed).map((round, index) => round.right === roof.quiz?.[index]);
+
+/** The আসল ফ্যান card: same rooftop, the score up top, the eight answers as bunting along the ground. */
+export function drawFanCard(canvas: HTMLCanvasElement, scene: HTMLImageElement, shared: Shared, format: CardFormat, site: string) {
+  const { width, height } = cardSizes[format];
+  const layout = layouts[format];
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("এই ব্রাউজারে ছবি বানানো যাচ্ছে না।");
+  context.drawImage(scene, 0, 0, width, height);
+  context.textBaseline = "alphabetic";
+
+  const { own, neighbour } = shared;
+  const seed = shared.seed ?? 0;
+  const me = own.name || "আমি", them = neighbour?.name || "পাশের বাসা";
+  const score = (roof: Roof) => scoreLine(fanScore(roof.team, seed, roof.quiz ?? []));
+  fitText(context, [{ text: "আসল ফ্যান পরীক্ষা", color: PEACH, weight: 600 }], 84, layout.kicker, 32, 900);
+  let human: string;
+  const rows: { roof: Roof; label: string }[] = [];
+  if (neighbour && fanPair(shared)) {
+    fitText(context, [{ text: `${them} `, color: "#ffffff", weight: 700, display: true }, { text: `${teamOf(neighbour.team).label} ${score(neighbour)},`, color: teamOf(neighbour.team).glow, weight: 800, display: true }], 84, layout.line1 + 14, layout.size2 * 0.74, 912);
+    fitText(context, [{ text: `${me} `, color: "#ffffff", weight: 700, display: true }, { text: `${teamOf(own.team).label} ${score(own)}`, color: teamOf(own.team).glow, weight: 800, display: true }], 84, layout.line2, layout.size2 * 0.74, 912);
+    human = fanLaneLine(own, neighbour, seed);
+    rows.push({ roof: neighbour, label: them }, { roof: own, label: me });
+  } else {
+    fitText(context, [{ text: `${me} ${score(own)}`, color: "#ffffff", weight: 700, display: true }], 84, layout.line1 + 8, layout.size1 * 1.3, 912);
+    fitText(context, [{ text: fanBadge(own.team, fanScore(own.team, seed, own.quiz ?? [])), color: teamOf(own.team).glow, weight: 800, display: true }], 84, layout.line2, layout.size2 * 0.84, 912);
+    human = fanLine(own.team as FanTeam, seed, own.quiz ?? []);
+    rows.push({ roof: own, label: "" });
+  }
+  fitText(context, [{ text: human, color: CREAM, weight: 600 }], 84, layout.human, 40, 912);
+  if (neighbour) plates(context, width, layout.ground, [them, me]);
+  if (rows.length === 1) bunting(context, hitsOf(own, seed), teamOf(own.team).chip, 84, layout.ground + 30, 912, 72);
+  else rows.forEach(({ roof, label }, index) => {
+    const top = layout.ground + 24 + index * 66;
+    fitText(context, [{ text: label, color: CREAM, weight: 700 }], 84, top + 34, 28, 190);
+    bunting(context, hitsOf(roof, seed), teamOf(roof.team).chip, 300, top, 696, 46);
+  });
+  drawFooterBand(context, format, "তুমি নিজের দলকে কতটা চেনো?", site);
+}
+
+export async function fanCardBlob(shared: Shared, format: CardFormat, site: string) {
+  const [scene] = await Promise.all([loadScene(shared, format), loadCardFonts("আসল ফ্যান পরীক্ষা ৮-এ ৭")]);
+  const canvas = document.createElement("canvas");
+  drawFanCard(canvas, scene, shared, format, site);
+  return canvasBlob(canvas);
 }
 
 export async function cardBlob(shared: Shared, format: CardFormat, site: string, split: Split | null) {
