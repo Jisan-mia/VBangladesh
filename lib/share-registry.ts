@@ -93,6 +93,7 @@ import { share as danguli } from '../tools/danguli/share';
 import { share as antenna_thik_koro } from '../tools/antenna-thik-koro/share';
 import { share as sir_ghurlei_thamo } from '../tools/sir-ghurlei-thamo/share';
 import { share as deri_hoye_gelo } from '../tools/deri-hoye-gelo/share';
+import { share as chor_police } from '../tools/chor-police/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -189,6 +190,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'antenna-thik-koro': antenna_thik_koro,
   'sir-ghurlei-thamo': sir_ghurlei_thamo,
   'deri-hoye-gelo': deri_hoye_gelo,
+  'chor-police': chor_police,
 };
 
 export function toolShare(tool: string): ToolShare | null {
