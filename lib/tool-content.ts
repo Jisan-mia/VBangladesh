@@ -104,6 +104,7 @@ import { site as sap_ludu } from '../tools/sap-ludu/content';
 import { site as baghbandi } from '../tools/baghbandi/content';
 import { site as baicher_nouka } from '../tools/baicher-nouka/content';
 import { site as vo_katta } from '../tools/vo-katta/content';
+import { site as bhangti_nai } from '../tools/bhangti-nai/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -212,6 +213,7 @@ export const toolContent = {
   'baghbandi': baghbandi,
   'baicher-nouka': baicher_nouka,
   'vo-katta': vo_katta,
+  'bhangti-nai': bhangti_nai,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
