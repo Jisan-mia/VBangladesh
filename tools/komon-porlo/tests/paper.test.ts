@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { bingoLines, caption, cleanName, countOf, createCard, decodeMask, defaultPack, encodeMask, humanLine, packById, packs, parseShareHash, shareHash, tallyIds, tallyItems, toggle, MAX_NAME_LENGTH, SIZE } from "../lib/paper";
+import { bingoLines, caption, chipOrder, cleanName, countOf, createCard, decodeMask, defaultPack, encodeMask, humanLine, packById, packs, parseShareHash, seasonPack, shareHash, tallyIds, tallyItems, toggle, MAX_NAME_LENGTH, SIZE } from "../lib/paper";
 import { share } from "../share";
 
 test("every pack has exactly 16 unique squares and a unique id", () => {
@@ -86,6 +86,34 @@ test("season picks the default pack", () => {
   assert.equal(defaultPack(new Date(2026, 11, 5)), "biyebari");
   assert.equal(defaultPack(new Date(2027, 1, 28)), "biyebari");
   assert.equal(defaultPack(new Date(2026, 9, 10)), "relatives");
+});
+
+test("the weather pack moves up in its season without touching the default or the pack order", () => {
+  assert.equal(seasonPack(new Date(2027, 6, 15)), "brishti");
+  assert.equal(seasonPack(new Date(2027, 3, 20)), "gorom");
+  assert.equal(seasonPack(new Date(2026, 9, 11)), null);
+  assert.equal(defaultPack(new Date(2027, 6, 15)), "relatives");
+  const rainy = chipOrder("brishti");
+  assert.deepEqual(rainy.slice(0, 3).map(pack => pack.id), ["relatives", "brishti", "biyebari"]);
+  assert.deepEqual([...rainy].map(pack => pack.id).sort(), packs.map(pack => pack.id).sort());
+  assert.equal(chipOrder(null), packs);
+  assert.deepEqual(packs.map(pack => pack.id), ["relatives", "biyebari", "eid", "ammu", "natok", "office", "khela", "jam", "brishti", "gorom"]);
+});
+
+test("links shared before this change open the same squares", () => {
+  const old: Array<[string, string, string]> = [
+    ["#p=khela&s=8001&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF", "রিভিউ নষ্ট", "ম্যাচ শেষে সবাই বিশেষজ্ঞ"],
+    ["#p=jam&s=8001", "তিনবার লাল বাতি", "মিটারে যাবে না"],
+    ["#p=brishti&s=8001", "রাস্তায় হাঁটুপানি", "বৃষ্টির গান"],
+    ["#p=gorom&s=8001", "হাতপাখা হাতে", "ফ্যান কখন ঘুরবে?"],
+  ];
+  for (const [hash, first, last] of old) {
+    const shared = parseShareHash(hash)!;
+    const card = createCard(shared);
+    assert.deepEqual(card.pack.squares.filter((_, index) => (shared.mask >> index & 1) === 1), [first, last], hash);
+  }
+  assert.equal(parseShareHash("#p=khela&s=8001&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF")?.name, "রাফি");
+  assert.equal(packById("gorom").title, "গরমের পরীক্ষা");
 });
 
 test("share normalizes state and previews with the sharer's name", () => {

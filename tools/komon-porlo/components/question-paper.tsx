@@ -5,7 +5,7 @@ import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-
 import { addToTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { drawPaper, paperBlob } from "../lib/draw-paper";
-import { bingoLines, bingoWord, bn, caption, countOf, createCard, defaultPack, has, headline, humanLine, packById, packs, parseShareHash, possessive, shareHash, squareId, tallyItems, toggle, MAX_NAME_LENGTH, SIZE, type PackId, type Shared } from "../lib/paper";
+import { bingoLines, bingoWord, bn, caption, chipOrder, countOf, createCard, defaultPack, has, headline, humanLine, packById, parseShareHash, possessive, seasonPack, shareHash, squareId, tallyItems, toggle, MAX_NAME_LENGTH, SIZE, type PackId, type Shared } from "../lib/paper";
 
 const TOOL = "komon-porlo";
 // Percentages from a handful of people are noise ("১০০% মানুষের কমন" after one vote).
@@ -26,6 +26,8 @@ export function QuestionPaper() {
   const [news, setNews] = useState("");
   const [everyone, setEveryone] = useState<Tally | null>(null);
   const [compared, setCompared] = useState<"idle" | "sending" | "done" | "failed">("idle");
+  const [season, setSeason] = useState<PackId | null>(null);
+  const chips = useRef<HTMLDivElement>(null);
   const preview = useRef<HTMLCanvasElement>(null);
   const friendPreview = useRef<HTMLCanvasElement>(null);
   const result = useRef<HTMLElement>(null);
@@ -49,10 +51,19 @@ export function QuestionPaper() {
     };
     // Picked after mount so a statically built page still follows today's season.
     if (!readFriend()) setPackId(defaultPack(new Date()));
+    setSeason(seasonPack(new Date()));
     window.addEventListener("hashchange", readFriend);
     setSite(window.location.host);
     return () => window.removeEventListener("hashchange", readFriend);
   }, []);
+
+  useEffect(() => {
+    // A friend's link can open a pack whose chip sits off-screen in the scrolling row; slide it into view.
+    const row = chips.current, chip = row?.querySelector<HTMLElement>("[aria-pressed=true]");
+    if (!row || !chip) return;
+    const box = row.getBoundingClientRect(), place = chip.getBoundingClientRect();
+    if (place.left < box.left || place.right > box.right) row.scrollLeft += place.left - box.left - 8;
+  }, [packId, season]);
 
   useEffect(() => {
     let cancelled = false;
@@ -119,8 +130,8 @@ export function QuestionPaper() {
 
       <fieldset className="komon-packs">
         <legend>বিষয় বেছে নাও</legend>
-        <div className="komon-packs-row">
-          {packs.map(item => <button type="button" key={item.id} aria-pressed={item.id === packId} onClick={() => choosePack(item.id)}>{item.chip}{(masks[item.id] ?? 0) > 0 && <small> · {bn(countOf(masks[item.id]!))}</small>}</button>)}
+        <div className="komon-packs-row" ref={chips}>
+          {chipOrder(season).map(item => <button type="button" key={item.id} aria-pressed={item.id === packId} onClick={() => choosePack(item.id)}>{item.chip}{(masks[item.id] ?? 0) > 0 && <small> · {bn(countOf(masks[item.id]!))}</small>}</button>)}
         </div>
       </fieldset>
 

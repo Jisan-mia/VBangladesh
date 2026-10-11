@@ -1214,7 +1214,7 @@ One agent per target tool, so no two agents edit the same folder. Status: todo, 
 
 | tool | feature IDs | what to add | status |
 |---|---|---|---|
-| komon-porlo | SP12, CI02, CI03, CI05 | 4 new packs: খেলার দিন, রাস্তার পরীক্ষা (jam), বর্ষা, গরমের দিন (loadshedding, no blame) | building |
+| komon-porlo | SP12, CI02, CI03, CI05 | 4 new packs: খেলার দিন, রাস্তার পরীক্ষা (jam), বর্ষা, গরমের দিন (loadshedding, no blame) | done |
 | boyos | ED08, TI02 | "অমুক তারিখে বয়স কত" (user-typed age limit) + a "জীবনের ঋতু" grid section | building |
 | shubhechha | FM02, CR06 | birthday + anniversary occasions; a square profile-frame format (16 Dec, 21 Feb, match days) | building |
 | argentina-na-brazil | SP08 | 8-question "আসল ফ্যান" test after picking a team; same rival-link loop | building |

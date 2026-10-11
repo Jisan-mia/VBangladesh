@@ -62,7 +62,7 @@ export const packs = [
     squares: ["রাস্তায় হাঁটুপানি", "রিকশাভাড়া ডবল", "জুতা হাতে হাঁটা", "ছাতা উল্টে গেল", "গাড়ির পানির ছিটা", "খিচুড়ি আর ডিমভাজি", "কাপড় শুকায় না", "“আজ কি ক্লাস হবে?”", "জানালায় বসে বৃষ্টি দেখা", "মোবাইল পলিথিনে", "ঝড়ে কারেন্ট গেল", "সারা রাত ব্যাঙের ডাক", "জুতায় চপচপ", "রিকশায় পলিথিনের পর্দা", "ছাদের কাপড় নিয়ে দৌড়", "বৃষ্টির গান"],
   },
   {
-    id: "gorom", chip: "লোডশেডিং", title: "গরমের পরীক্ষা", exam: "লোডশেডিং পরীক্ষা", code: "১১০", time: "যতক্ষণ কারেন্ট নেই",
+    id: "gorom", chip: "গরমের দিন", title: "গরমের পরীক্ষা", exam: "লোডশেডিং পরীক্ষা", code: "১১০", time: "যতক্ষণ কারেন্ট নেই",
     note: "হাতপাখা ব্যবহার করা যাবে।",
     calm: "কারেন্ট এবার বেশ ভদ্র ছিল।",
     squares: ["হাতপাখা হাতে", "মোমবাতি খোঁজা", "আইপিএস শেষ", "পাম্প বন্ধ, পানি নেই", "মোবাইলে ১০% চার্জ", "ফ্রিজের আইসক্রিম গলে গেল", "বারান্দায় ঘুম", "“কারেন্ট আসছে!” চিৎকার", "ওয়াইফাই বন্ধ", "পাশের বাসার জেনারেটর", "ঘামে ঘুম ভাঙা", "চার্জার লাইট", "অন্ধকারে আড্ডা", "পাওয়ার ব্যাংক ধার", "দিনে দুবার গোসল", "ফ্যান কখন ঘুরবে?"],
@@ -81,6 +81,15 @@ export const packById = (id: PackId): Pack => packs.find(pack => pack.id === id)
 
 /** Wedding season (Nov–Feb) opens on the বিয়েবাড়ি pack; the rest of the year on আত্মীয়দের প্রশ্ন. */
 export const defaultPack = (date: Date): PackId => [10, 11, 0, 1].includes(date.getMonth()) ? "biyebari" : "relatives";
+
+// Seasons as the Bangladesh Meteorological Department splits the year: pre-monsoon summer Mar–May, monsoon Jun–Sep.
+/** The weather pack for this month, or null; it gets a chip near the front but never replaces the default pack. */
+export const seasonPack = (date: Date): PackId | null => {
+  const month = date.getMonth();
+  return month >= 5 && month <= 8 ? "brishti" : month >= 2 && month <= 4 ? "gorom" : null;
+};
+/** Chips in display order: the in-season pack moves to second place so it shows without scrolling. Pack order and ids stay put. */
+export const chipOrder = (season: PackId | null): readonly Pack[] => season ? [packs[0], packById(season), ...packs.slice(1).filter(pack => pack.id !== season)] : packs;
 
 export const toggle = (mask: number, index: number) => {
   if (!Number.isInteger(index) || index < 0 || index >= SIZE) throw new RangeError("এই ঘরটা প্রশ্নপত্রে নেই।");
