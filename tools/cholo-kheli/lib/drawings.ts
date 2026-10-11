@@ -7,6 +7,8 @@ const ring = Array.from({ length: 7 }, (_, index) => {
   const angle = (index / 8) * Math.PI * 2 - Math.PI / 2;
   return dot(Math.round(44 + Math.cos(angle) * 26), Math.round(56 + Math.sin(angle) * 26), 5);
 }).join('');
+// A ludo board: four corner yards with four pieces each, the cross of tracks, and the home square in the middle.
+const yards = [26, 74].flatMap(x => [26, 74].flatMap(y => [-6, 6].flatMap(dx => [-6, 6].map(dy => dot(x + dx, y + dy, 3.5))))).join('');
 
 export const drawings: Record<string, Drawing> = {
   'word-relay': {
@@ -42,5 +44,8 @@ export const drawings: Record<string, Drawing> = {
   },
   dariabandha: {
     path: `M20 8h60v84H20ZM50 8v84M20 36h60M20 64h60${dot(35, 8, 4)}M29 8h12${dot(65, 36, 4)}M59 36h12${dot(35, 64, 4)}M29 64h12${dot(65, 92, 4)}M59 92h12M34 98c-2-14 12-16 10-28s-12-16-6-28M34 48l4-6 3 6`,
+  },
+  ludo: {
+    path: `M8 8h84v84H8ZM44 8v84M56 8v84M8 44h84M8 56h84M44 44l12 12M56 44 44 56M50 14v24M50 62v24M14 50h24M62 50h24${yards}`,
   },
 };

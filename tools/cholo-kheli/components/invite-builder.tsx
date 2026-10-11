@@ -3,10 +3,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
-import { drawPoster, posterBlob } from "../lib/draw-poster";
+import { drawChampion, drawPoster, posterBlob } from "../lib/draw-poster";
 import { drawings } from "../lib/drawings";
 import { createGameInvitation, EQUIPMENT, findGames, parsePlayerCount, suggestGames, type Game } from "../lib/games";
 import { bn, DEFAULT_TIME, gameById, headline, inviteCaption, inviteHash, MAX_NAME, MAX_PLACE, MAX_TIME, parseInvite, placeOf, SPACES, WHEN, type Invite, type Space, type WhenId } from "../lib/invite";
+import { championKicker, championNames, championStats, championTitle, parseLudo, PIECES, RESUME_FOR, type Ludo } from "../lib/ludo";
+import { LudoScore, savedSession } from "./ludo-score";
 
 const TOOL = "cholo-kheli";
 const placeIcons: Record<Space, string> = {
@@ -36,14 +38,18 @@ export function InviteBuilder() {
   const [format, setFormat] = useState<CardFormat>("feed");
   const [site, setSite] = useState("");
   const [friend, setFriend] = useState<Invite | null>(null);
+  const [champion, setChampion] = useState<Ludo | null>(null);
   const [notice, setNotice] = useState("");
   // The sticky "দাওয়াত বানাও" waits for a first tap, so it never covers the suggestion on the first screen.
   const [touched, setTouched] = useState(false);
   const [previewError, setPreviewError] = useState(false);
   const preview = useRef<HTMLCanvasElement>(null);
   const friendPreview = useRef<HTMLCanvasElement>(null);
+  const championPreview = useRef<HTMLCanvasElement>(null);
   const inviteRef = useRef<HTMLElement>(null);
   const inviteVisible = useInView(inviteRef);
+  const ludoRef = useRef<HTMLElement>(null);
+  const ludoVisible = useInView(ludoRef);
 
   const players = parsePlayerCount(people);
   const matches = useMemo(() => players === null ? [] : suggestGames(findGames({ players, space, equipment }), space), [players, space, equipment]);
@@ -54,6 +60,8 @@ export function InviteBuilder() {
   useEffect(() => {
     // A shared invitation reopens exactly: same game, count, place and time, ready to forward or change.
     const open = () => {
+      const ludo = parseLudo(window.location.hash);
+      if (ludo) { setChampion(ludo); playLudo(ludo.wins.length); return; }
       const shared = parseInvite(window.location.hash);
       const sharedGame = shared && gameById(shared.game);
       if (!shared || !sharedGame) return;
@@ -67,6 +75,9 @@ export function InviteBuilder() {
       setPlace(shared.place);
     };
     open();
+    // A family mid-way through its ludo games gets the scoreboard back after a reload.
+    const saved = !window.location.hash && savedSession();
+    if (saved && saved.history.length && Date.now() - saved.at < RESUME_FOR) playLudo(saved.players);
     setSite(window.location.host);
     window.addEventListener("hashchange", open);
     return () => window.removeEventListener("hashchange", open);
@@ -79,10 +90,17 @@ export function InviteBuilder() {
       if (invite && game && preview.current) drawPoster(preview.current, invite, game, format, site);
       const friendGame = friend && gameById(friend.game);
       if (friend && friendGame && friendPreview.current) drawPoster(friendPreview.current, friend, friendGame, "feed", site);
+      if (champion && championPreview.current) drawChampion(championPreview.current, champion, "feed", site);
       setPreviewError(false);
     }).catch(() => { if (!cancelled) setPreviewError(true); });
     return () => { cancelled = true; };
-  }, [invite, game, format, site, friend]);
+  }, [invite, game, format, site, friend, champion]);
+
+  function playLudo(count: number) {
+    setPeople(bn(count));
+    setEquipment(current => current.includes("ludo") ? current : [...current, "ludo"]);
+    setSelectedId("ludo");
+  }
 
   function step(by: number) {
     const next = Math.min(16, Math.max(2, (players ?? 6) + by));
@@ -91,7 +109,9 @@ export function InviteBuilder() {
   }
 
   function toggleItem(id: string) {
-    setEquipment(current => current.includes(id) ? current.filter(item => item !== id) : [...current, id]);
+    // The board is only good for ludo, so ticking it means "we're playing ludo": go straight there, at most four players.
+    if (id === "ludo" && !equipment.includes(id)) playLudo(Math.min(players ?? PIECES.length, PIECES.length));
+    else setEquipment(current => current.includes(id) ? current.filter(item => item !== id) : [...current, id]);
     setTouched(true);
   }
 
@@ -107,9 +127,23 @@ export function InviteBuilder() {
 
   const friendGame = friend && gameById(friend.game);
   const others = matches.filter(item => item.id !== game?.id);
+  const isLudo = game?.id === "ludo";
 
   return (
     <div className="kheli">
+      {champion && (
+        <section className="kheli-friend" aria-labelledby="champion-title">
+          <canvas ref={championPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`চ্যাম্পিয়নের কার্ড: ${championTitle(champion)}`} />
+          <div>
+            <p className="kheli-kicker">{championKicker(champion)}</p>
+            <h2 id="champion-title">{championNames(champion)}!<br /><span>{championStats(champion)}</span></h2>
+            <div className="kheli-friend-actions">
+              <a className="kit-primary" href="#ludo">তোমাদের হিসাব রাখো</a>
+              <a className="kit-link" href="#rules">লুডুর নিয়ম</a>
+            </div>
+          </div>
+        </section>
+      )}
       {friend && friendGame && (
         <section className="kheli-friend" aria-labelledby="friend-title">
           <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`দাওয়াতের পোস্টার: ${headline(friend)} ${friendGame.title}`} />
@@ -172,7 +206,9 @@ export function InviteBuilder() {
           )}
         </article>
 
-        <StickyNext show={touched && !inviteVisible} title={<><strong>{game.title}</strong> ঠিক হলো</>} sub={game.line} href="#invite" label="দাওয়াত বানাও" />
+        {isLudo && players !== null && <section className="kheli-ludo" id="ludo" ref={ludoRef} aria-labelledby="ludo-title"><LudoScore players={players} site={site} /></section>}
+
+        <StickyNext show={touched && !(isLudo ? ludoVisible : inviteVisible)} title={<><strong>{game.title}</strong> ঠিক হলো</>} sub={game.line} href={isLudo ? "#ludo" : "#invite"} label={isLudo ? "হিসাব রাখো" : "দাওয়াত বানাও"} />
       </> : (
         <div className="kheli-empty" role="status">
           <h2>{players === null ? "আগে লেখো কয়জন খেলবে" : "এই বাছাইয়ে কোনো খেলা মিলল না"}</h2>

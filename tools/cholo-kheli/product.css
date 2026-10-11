@@ -49,6 +49,27 @@
 .kheli-empty h2{margin:0 0 4px;font-family:var(--font-display);font-size:21px}
 .kheli-empty p{margin:0;color:var(--muted)}
 
+/* লুডুর আসর: the scoreboard, laid out like the board's four coloured yards */
+.kheli-ludo{display:grid;gap:12px;scroll-margin-top:12px;padding:16px 14px;border-radius:14px;background:var(--wash)}
+.kheli-ludo-kicker{margin:0;font-size:13px;font-weight:600;color:var(--accent)}
+.kheli-ludo h2{margin:-10px 0 0;font-family:var(--font-display);font-size:clamp(25px,5vw,34px);line-height:1.35}
+.kheli-ludo-lead{margin:-8px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+.kheli-ludo-board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0;padding:0;list-style:none}
+.kheli-ludo-board li{display:grid;gap:6px;min-width:0;padding:8px;border:1.5px solid var(--ink);border-top:8px solid var(--piece);border-radius:12px;background:#fff}
+.kheli-ludo-board li[data-lead=true]{box-shadow:0 0 0 4px var(--lime)}
+.kheli-ludo-board input{width:100%;min-width:0;min-height:44px;padding:6px 10px;border:1.5px solid var(--line);border-radius:10px;font-size:16px}
+.kheli-ludo-board button{display:grid;justify-items:center;gap:4px;min-height:118px;padding:6px 4px 10px;border:0;border-radius:10px;background:#f6f7fb;background:color-mix(in srgb,var(--piece) 12%,#fff);color:var(--ink);cursor:pointer;touch-action:manipulation}
+.kheli-ludo-board button:active{transform:scale(.97)}
+.kheli-ludo-board strong{font-family:var(--font-display);font-size:40px;line-height:1.1;animation:kheli-pop .25s ease-out}
+.kheli-ludo-board svg{width:auto;height:21px;overflow:visible;fill:none;stroke:var(--accent);stroke-width:2.6;stroke-linecap:round}
+.kheli-ludo-board button span{padding:4px 16px;border:1.5px solid var(--piece);border-radius:999px;background:#fff;font-weight:700}
+.kheli-ludo-status{margin:0;font-weight:600}
+.kheli-ludo-actions{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
+.kheli-ludo-actions .kheli-ludo-wipe{border-color:#b03a2e;color:#b03a2e}
+.kheli-ludo-card{margin-top:6px;padding-top:16px;border-top:1.5px dashed var(--line)}
+@keyframes kheli-pop{from{transform:scale(1.4)}}
+@media(prefers-reduced-motion:reduce){.kheli-ludo-board strong{animation:none}.kheli-ludo-board button:active{transform:none}}
+
 /* the invitation */
 .kheli-invite{scroll-margin-top:12px;margin-top:10px;padding-top:22px;border-top:2px solid var(--ink)}
 .kheli-invite h2{margin:0 0 4px;font-family:var(--font-display);font-size:clamp(25px,5vw,36px);line-height:1.35}
