@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { challengeHash, cleanName, makeRng, pick, readChallenge } from '../game-kit';
+import { challengeHash, cleanName, makeRng, pick, readChallenge } from '../game-core';
 
 test('the same seed gives the same sequence, different seeds differ', () => {
   const first = makeRng(48213), second = makeRng(48213), other = makeRng(48214);

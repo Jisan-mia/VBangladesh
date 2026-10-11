@@ -1,55 +1,7 @@
-// Shared building blocks for the গেম category: seeded randomness, challenge links, a pausing game loop,
-// a sharp canvas, the "ধীরে খেলো" toggle and a best score. Each game draws and plays in its own way on top of this.
+// Browser-side game helpers: a pausing game loop, a sharp canvas, the "ধীরে খেলো" toggle and a best score.
+// The pure helpers live in game-core.ts (import those from share.ts and lib/ code); they're re-exported here for components.
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-/** Same seed → same sequence on every phone (integer math only; mulberry32). Returns numbers in [0, 1). */
-export function makeRng(seed: number) {
-  let state = seed >>> 0;
-  return () => {
-    state = (state + 0x6d2b79f5) >>> 0;
-    let t = state;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-/** A whole number in [0, below) from a makeRng() generator. */
-export const pick = (rng: () => number, below: number) => Math.floor(rng() * below);
-
-export const MAX_SEED = 999_999_999;
-export const newSeed = () => 1 + (crypto.getRandomValues(new Uint32Array(1))[0] % MAX_SEED);
-
-export const MAX_NAME = 20;
-/** A first name for cards and links: NFC, no control or text-direction characters, single spaces, at most 20 characters. */
-export function cleanName(name: string) {
-  return [...name.normalize('NFC').replace(/[\u0000-\u001f\u007f‎‏‪-‮⁦-⁩]/g, '').replace(/\s+/g, ' ').trim()].slice(0, MAX_NAME).join('').trim();
-}
-
-export type Challenge = { seed: number; target: number; name: string; extra: Record<string, string> };
-
-/**
- * Reads `s` (seed), `t` (score, time or moves to beat), `n` (name) and any game-specific keys from a #hash.
- * Returns null unless the seed and target are sane whole numbers. A real-time score can't be verified: show it as the friend's claim.
- */
-export function readChallenge(hash: string, { maxTarget, extraKeys = [] }: { maxTarget: number; extraKeys?: readonly string[] }): Challenge | null {
-  if (hash.length > 600) return null;
-  const params = new URLSearchParams(hash.replace(/^#/, ''));
-  const seed = Number(params.get('s')), target = Number(params.get('t'));
-  if (!Number.isInteger(seed) || seed < 1 || seed > MAX_SEED || !Number.isInteger(target) || target < 0 || target > maxTarget) return null;
-  const extra: Record<string, string> = {};
-  for (const key of extraKeys) { const value = params.get(key); if (value !== null) extra[key] = value.slice(0, 120); }
-  return { seed, target, name: cleanName(params.get('n') ?? ''), extra };
-}
-
-/** The #hash for a challenge link (without the "#"), in a fixed key order so the same card gives the same short link. */
-export function challengeHash({ seed, target, name, extra = {} }: { seed: number; target: number; name?: string; extra?: Record<string, string | number> }) {
-  const params = new URLSearchParams({ s: String(seed), t: String(Math.max(0, Math.round(target))) });
-  for (const [key, value] of Object.entries(extra)) params.set(key, String(value));
-  const clean = cleanName(name ?? '');
-  if (clean) params.set('n', clean);
-  return params.toString();
-}
+export * from './game-core';
 
 /**
  * Runs `step(dtSeconds)` at a fixed 60 steps a second while `running` is true, and `draw()` once per animation frame.

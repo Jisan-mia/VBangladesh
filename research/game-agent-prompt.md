@@ -20,7 +20,7 @@ The owner's bar:
 - `research/games-2026-10.md`: §4.3 #{N} (your brief) and §6 (challenge links, gambling and ethics, accessibility, IP checklist, phones and offline).
 - `research/tool-design-brief.md`: the site standard (instant start, card, link, one next action, তুমি voice).
 - `research/bangla-voice-guide.md` and `research/bangla-copy-review.md`: natural spoken Bangla with no robotic or translated tone. Keep it short and warm.
-- **`shared/game-kit.ts`: use it.**
+- **`shared/game-core.ts` (pure, safe on the server: import it from `share.ts` and `lib/`) and `shared/game-kit.ts` (React hooks for components, also re-exports game-core): use them. Never copy them into your folder.**
   - `makeRng`, `pick` and `newSeed` give seeded randomness. Every random choice in gameplay must come from `makeRng(seed)` so a challenge link replays the same game.
   - `readChallenge` and `challengeHash` build the link.
   - `useGameLoop` is a fixed-step loop that pauses when the tab is hidden.
