@@ -9,11 +9,11 @@ export const share: ToolShare = {
   },
   preview(state) {
     const recipe = parseRecipeHash(state);
-    if (!recipe) return { title: `আমাদের রান্নাখাতা — ${RECIPE_ASK}`, description: "পরিবারের রান্না উপকরণ আর ধাপসহ লিখে রাখো, লিংকে পাঠাও।" };
+    if (!recipe) return { title: `আমাদের রান্নাখাতা। ${RECIPE_ASK}`, description: "পরিবারের রান্না উপকরণ আর ধাপসহ লিখে রাখো, লিংকে পাঠাও।" };
     const story = recipe.memory.replace(/\s+/g, " ");
     const quote = story ? `“${story.length > 90 ? story.slice(0, 90).trimEnd() + "…" : story}” ` : "";
     return {
-      title: `${dishHeadline(recipe)} — ${RECIPE_ASK}`,
+      title: `${dishHeadline(recipe)}। ${RECIPE_ASK}`,
       description: `${quote}উপকরণ আর ধাপসহ পুরো রেসিপিটা খুলে পড়ো, কপি বা প্রিন্ট করো।`,
     };
   },

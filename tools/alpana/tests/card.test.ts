@@ -83,8 +83,8 @@ test("share preview is personal, and normalize rejects junk and is stable", () =
   const { state } = shareState(motif);
   assert.equal(share.normalize(state), state);
   assert.equal(share.normalize("hello"), null);
-  assert.equal(share.preview(state).title, "রাফির আঁকা আলপনা — তুমিও একটা আঁকো");
-  assert.equal(share.preview(shareState({ ...motif, name: "" }).state).title, "এক বন্ধুর আঁকা আলপনা — তুমিও একটা আঁকো");
+  assert.equal(share.preview(state).title, "রাফির আঁকা আলপনা। তুমিও একটা আঁকো");
+  assert.equal(share.preview(shareState({ ...motif, name: "" }).state).title, "এক বন্ধুর আঁকা আলপনা। তুমিও একটা আঁকো");
   assert.equal(possessive("জাহিদ"), "জাহিদের");
   assert.equal(share.tally, undefined);
   const drawn = shareState({ ...motif, settings: defaultSettings, mode: "draw", strokes: [wiggle(2)] }).state;

@@ -23,7 +23,7 @@ export default function RiksharongPage() {
           <ul aria-label="রিকশা পেইন্টিংয়ের চেনা বিষয়">
             <li>ফুল আর লতাপাতা</li><li>ময়ূর, রাজহাঁস</li><li>নদী-নৌকার গ্রাম</li><li>সিনেমার নায়ক-নায়িকা</li><li>বাঘ-হরিণের মতো পশুপাখি</li>
           </ul>
-          <p className="rr-honest">এখানের বোর্ডটা সেই ঢঙ দেখে নতুন করে আঁকা, কোনো শিল্পীর কাজের কপি না। আসল রিকশাচিত্র দেখতে চাইলে পুরান ঢাকার রাস্তায় একবার ভালো করে তাকিয়ো।</p>
+          <p className="rr-honest">এখানকার বোর্ডটা সেই ঢঙ দেখে নতুন করে আঁকা, কোনো শিল্পীর কাজের কপি না। আসল রিকশাচিত্র দেখতে চাইলে পুরান ঢাকার রাস্তায় একবার ভালো করে তাকিয়ো।</p>
         </section>
         <section className="container section rr-guide" aria-labelledby="rr-guide-title">
           <h2 id="rr-guide-title">{site.guideTitle}</h2>

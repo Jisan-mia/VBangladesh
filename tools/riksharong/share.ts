@@ -10,7 +10,7 @@ export const share: ToolShare = {
     const board = parseShareHash(state);
     const who = board?.name ? possessive(board.name) : "এক বন্ধুর";
     return {
-      title: board?.line ? `${who} রিকশার বোর্ডে লেখা “${board.line}” — তোমারটায় কী লিখতে?` : `${who} রাঙানো রিকশার বোর্ড — তোমারটায় কী লিখতে?`,
+      title: board?.line ? `${who} রিকশার বোর্ডে লেখা “${board.line}”। তোমারটায় কী লিখতে?` : `${who} রাঙানো রিকশার বোর্ড। তোমারটায় কী লিখতে?`,
       description: "ঢাকার রিকশা পেইন্টিংয়ের ঢঙে নিজের বোর্ড রাঙাও: ময়ূর, রাজহাঁস, ফুল না নদী-নৌকা, আর পটিতে নিজের কথা। ফ্রি, অ্যাকাউন্ট লাগে না।",
     };
   },

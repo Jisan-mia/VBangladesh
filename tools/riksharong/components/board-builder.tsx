@@ -83,7 +83,7 @@ export function BoardBuilder() {
       <div className="rr-studio">
         <div className="rr-stage" id="board">
           <canvas ref={boardCanvas} className="rr-board" width={BOARD.width * 2} height={BOARD.height * 2} onClick={tapBoard} role="img" aria-label={`তোমার রিকশার বোর্ড: মাঝে ${motifs.find(motif => motif.id === board.motif)?.label}${board.line ? `, পটিতে লেখা ${board.line}` : ""}`} />
-          <p className="rr-tip">বোর্ডের যেকোনো জায়গা ছুঁয়ে দাও, রং বদলাবে</p>
+          <p className="rr-tip">বোর্ডের যেকোনো জায়গা চাপো, রং বদলে যাবে</p>
         </div>
 
         <div className="rr-controls">
@@ -156,7 +156,7 @@ export function BoardBuilder() {
               </label>
             </div>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="rikshar-board.png" makeImage={() => cardBlob(board, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} hint="লিংক পেলে বন্ধু তোমার রিকশাটা দেখবে, তারপর নিজের বোর্ড রাঙাবে।" />
+            <ShareBar tool={TOOL} fileName="rikshar-board.png" makeImage={() => cardBlob(board, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} hint="লিংক খুললে বন্ধু তোমার রিকশাটাই দেখবে। তারপর নিজেরটা রাঙাতে পারবে।" />
           </div>
         </div>
       </section>

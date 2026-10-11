@@ -9,7 +9,7 @@ export const share: ToolShare = {
   preview(state) {
     const poster = parseShareHash(state);
     return {
-      title: poster ? `${previewTitle(poster)} — তোমার পোস্টার বানাও` : "আসিতেছে! নতুন ছবির পোস্টার — তোমারটা বানাও",
+      title: poster ? `${previewTitle(poster)}। তোমার পোস্টার বানাও` : "আসিতেছে! নতুন ছবির পোস্টার। তোমারটা বানাও",
       description: "পুরোনো দিনের হাতে আঁকা সিনেমার পোস্টার, এবার তোমার নামে। প্রেম, অ্যাকশন, পারিবারিক না কমেডি? বেছে নাও, বন্ধুকে সহশিল্পী বানাও। ফ্রি।",
     };
   },

@@ -58,7 +58,7 @@ export function PosterBuilder() {
   const named = Boolean(poster.name);
   const caption = named
     ? `আসিতেছে! ${possessive(poster.name)} নতুন ছবি “${poster.title}”${poster.costar ? `, সাথে ${poster.costar}` : ""}। তোমার ছবির নাম কী হবে?`
-    : `আসিতেছে! “${poster.title}” — নিজের নামে সিনেমার পোস্টার বানাও:`;
+    : `আসিতেছে! “${poster.title}”। নিজের নামে সিনেমার পোস্টার বানাও:`;
 
   return (
     <div className="cp-builder">
@@ -118,7 +118,7 @@ export function PosterBuilder() {
           <div className="cp-send" id="send" ref={send}>
             <h2>“{poster.line}”</h2>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName={`cinema-poster-${state.genre}.png`} makeImage={() => posterBlob(poster, format, site, photo)} imageKey={`${hash}|${format}|${photo?.width ?? 0}`} caption={caption} state={hash} hint={poster.costar ? `লিংক পেলে ${poster.costar} দেখবে, তুমি তাকে সহশিল্পী বানিয়েছ। ছবি লিংকে যায় না।` : "লিংক খুললে পোস্টারটা দেখা যাবে, তোমার ছবি ছাড়া।"} />
+            <ShareBar tool={TOOL} fileName={`cinema-poster-${state.genre}.png`} makeImage={() => posterBlob(poster, format, site, photo)} imageKey={`${hash}|${format}|${photo?.width ?? 0}`} caption={caption} state={hash} hint={poster.costar ? `লিংক খুললে ${poster.costar} দেখবে যে তুমি ওকে সহশিল্পী বানিয়েছ। ছবি লিংকে যায় না।` : "লিংক খুললে পোস্টারটা দেখা যাবে, তোমার ছবি ছাড়া।"} />
           </div>
         </div>
       </div>

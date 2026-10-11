@@ -97,7 +97,7 @@ test("the server normalizes links and previews them personally", () => {
   const state = recipeHash(exampleRecipe).slice(1);
   assert.equal(share.normalize(state.replace("t=", "t=++")), state);
   assert.equal(share.normalize("t=&i=x"), null);
-  assert.equal(share.preview(state).title, "নানুর হাতের ভুনা খিচুড়ি — তোমাদের বাড়ির কোন রান্নাটা লিখে রাখা দরকার?");
+  assert.equal(share.preview(state).title, "নানুর হাতের ভুনা খিচুড়ি। তোমাদের বাড়ির কোন রান্নাটা লিখে রাখা দরকার?");
   assert.equal(cleanRecipe(exampleRecipe).title, exampleRecipe.title);
 });
 

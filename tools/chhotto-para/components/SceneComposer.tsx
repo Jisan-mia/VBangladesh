@@ -111,7 +111,7 @@ export function SceneComposer() {
     if (suppressClick.current) { suppressClick.current = false; return; }
     if (drag.current) return;
     if (!(event.target as Element).hasAttribute('data-ground')) return;
-    if (!selected) { setStatus('আগে একটা জিনিস ছুঁয়ে বেছে নাও, তারপর যেখানে বসাতে চাও সেখানে চাপো।'); return; }
+    if (!selected) { setStatus('আগে একটা জিনিস চেপে বেছে নাও, তারপর যেখানে বসাতে চাও সেখানে চাপো।'); return; }
     const point = scenePoint({ x: event.clientX, y: event.clientY });
     if (point) reposition(point);
   }
@@ -230,7 +230,7 @@ export function SceneComposer() {
         ground={<path data-ground="true" d="m72 426 408-218 408 212-408 221Z" fill="transparent" cursor={selected ? 'crosshair' : 'default'} />}
         overlay={selected && selectedKind && <g data-export-ignore="true" pointerEvents="none" transform={`translate(${selected.x} ${selected.y})`}><ellipse cy="4" rx={selectedKind.width / 2 + 9} ry="22" fill="none" stroke="#466b56" strokeWidth="3" strokeDasharray="6 5" /><rect x={-selectedKind.width / 2 - 10} y={-selectedKind.height - 10} width={selectedKind.width + 20} height={selectedKind.height + 34} rx="12" fill="none" stroke="#537860" strokeOpacity=".6" strokeWidth="2" strokeDasharray="4 6" /></g>} />
     </div>
-    <p className="para-status" role="status" aria-live="polite">{status || 'জিনিস ধরে টেনে সরাও, নিচের তাক থেকে ছুঁয়ে নতুন বসাও।'}</p>
+    <p className="para-status" role="status" aria-live="polite">{status || 'জিনিস ধরে টেনে সরাও, নিচের তাক থেকে নতুন জিনিস বসাও।'}</p>
 
     <div className="para-shelf" role="group" aria-label={`যা যা বসানো যায়, ${bn(items.length)} / ${bn(MAX_OBJECTS)}টা বসানো`}>
       {(Object.keys(objects) as ObjectKind[]).map(kind => { const object = objects[kind]; return <button key={kind} type="button" disabled={items.length >= MAX_OBJECTS} onClick={() => add(kind)} aria-label={`${object.label} বসাও`}>
@@ -243,14 +243,14 @@ export function SceneComposer() {
       <div className="para-arrows" role="group" aria-label="জায়গা বদলাও">{directions.map(direction => <button type="button" key={direction.label} disabled={!selected} aria-label={selectedKind ? `${selectedKind.label} ${direction.label} সরাও` : `${direction.label} সরাও`} onClick={() => selected && reposition({ x: selected.x + direction.x, y: selected.y + direction.y })}><span aria-hidden="true">{direction.symbol}</span></button>)}</div>
       <button type="button" className="para-remove" disabled={!selected} onClick={removeSelected}>বাদ দাও</button>
     </div>
-    <p className="para-hint" id="scene-keyboard-help">একবার ছুঁয়ে বেছে নিয়ে মাটিতে অন্য কোথাও চাপলেও সরে যাবে। কিবোর্ডে ছবিটায় থেকে Enter দিয়ে বাছো, তির দিয়ে সরাও, Delete দিয়ে বাদ দাও।</p>
+    <p className="para-hint" id="scene-keyboard-help">জিনিস একবার চেপে বেছে নিয়ে মাটির অন্য কোথাও চাপলেও সরে যাবে। কিবোর্ডে ছবির ওপর থেকে Enter দিয়ে বেছে নাও, তির দিয়ে সরাও, Delete দিয়ে বাদ দাও।</p>
 
     <div className="para-tools">
       <div className="para-toggle" role="group" aria-label="কোথায় সাজাবে">{settings.map(([value, label]) => <button type="button" key={value} aria-pressed={setting === value} onClick={() => { update({ setting: value }); setStatus(`এবার ${label}। জিনিসগুলো যেখানে ছিল সেখানেই আছে।`); }}>{label}</button>)}</div>
       <div className="para-history"><button type="button" disabled={!editor.canUndo || preview !== null} onClick={() => historyStep('undo')}>এক ধাপ পেছাও</button><button type="button" disabled={!editor.canRedo || preview !== null} onClick={() => historyStep('redo')}>এক ধাপ এগোও</button></div>
       <p className="para-presets"><span>নতুন করে:</span><button type="button" className="kit-link" disabled={preview !== null} onClick={() => usePreset('courtyard')}>উঠোনের বিকেল</button><button type="button" className="kit-link" disabled={preview !== null} onClick={() => usePreset('rooftop')}>ছাদের আড্ডা</button><button type="button" className="kit-link" disabled={preview !== null || !items.length} onClick={() => setResetOpen(true)}>সব সরাও</button></p>
     </div>
-    {resetOpen && <div className="para-confirm" role="alert"><p><strong>সব জিনিস সরিয়ে খালি জায়গা থেকে শুরু করবে?</strong> মন বদলালে “এক ধাপ পেছাও” চাপলেই ফেরত আসবে।</p><div><button type="button" className="kit-primary" onClick={() => { update({ items: [] }); setSelectedId(null); setResetOpen(false); setStatus('সব সরানো হলো। তাক থেকে জিনিস ছুঁয়ে আবার সাজাও।'); }}>হ্যাঁ, সব সরাও</button><button type="button" className="kit-secondary" onClick={() => setResetOpen(false)}>না, থাক</button></div></div>}
+    {resetOpen && <div className="para-confirm" role="alert"><p><strong>সব জিনিস সরিয়ে খালি জায়গা থেকে শুরু করবে?</strong> মন বদলালে “এক ধাপ পেছাও” চাপলেই ফেরত আসবে।</p><div><button type="button" className="kit-primary" onClick={() => { update({ items: [] }); setSelectedId(null); setResetOpen(false); setStatus('সব সরানো হলো। তাক থেকে জিনিস বসিয়ে আবার সাজাও।'); }}>হ্যাঁ, সব সরাও</button><button type="button" className="kit-secondary" onClick={() => setResetOpen(false)}>না, থাক</button></div></div>}
 
     <StickyNext show={editor.canUndo && !resultVisible && preview === null} title={<><strong>পাড়া</strong> সাজানো হলো</>} sub="নাম লিখে পোস্টকার্ড বানাও" href="#result" label="পোস্টকার্ড বানাও" />
 
@@ -270,7 +270,7 @@ export function SceneComposer() {
             <label className="para-field"><span>তোমার নাম <small>চাইলে</small></span><input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" /></label>
           </div>
           <FormatToggle value={format} onChange={setFormat} />
-          <ShareBar tool={TOOL} fileName="chhotto-para.png" makeImage={async () => cardBlob(await svgImage(sceneRef.current!, sceneViewport.width, sceneViewport.height), text, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} disabled={!editor.value.items.length || preview !== null} hint={editor.value.items.length ? 'লিংক পেলে বন্ধু তোমার পোস্টকার্ড দেখবে, তারপর নিজের পাড়াটা সাজাবে।' : 'আগে তাক থেকে কয়েকটা জিনিস বসাও।'} />
+          <ShareBar tool={TOOL} fileName="chhotto-para.png" makeImage={async () => cardBlob(await svgImage(sceneRef.current!, sceneViewport.width, sceneViewport.height), text, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} disabled={!editor.value.items.length || preview !== null} hint={editor.value.items.length ? 'লিংক পাঠালে বন্ধু তোমার পোস্টকার্ডটাই খুলবে। নিজের পাড়াটাও সাজাতে পারবে।' : 'আগে তাক থেকে কয়েকটা জিনিস বসাও।'} />
         </div>
       </div>
     </section>

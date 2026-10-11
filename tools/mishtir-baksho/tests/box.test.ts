@@ -59,7 +59,7 @@ test("title tiers follow the brief", () => {
 });
 
 test("the human line comes from the picks", () => {
-  assert.equal(boxLine(starters), "বাক্সে এখনো অনেক জায়গা — চলো, মিষ্টির দোকানে!");
+  assert.equal(boxLine(starters), "বাক্সে এখনো অনেক জায়গা। চলো, মিষ্টির দোকানে!");
   const tenWithChomchom = sweets.slice(0, 10).map(sweet => sweet.id);
   assert.equal(boxLine(tenWithChomchom), "টাঙ্গাইলের চমচম একবার খেলে ভোলা যায় না।");
   const allDoi = [...starters, "bogura-doi", "bhola-doi", "gournadi-doi", "tok-doi", "monda", "jilapi", "batasha"] as const;
@@ -68,13 +68,13 @@ test("the human line comes from the picks", () => {
 
 test("the card compares with a friend's box", () => {
   const card = createCard({ selected: ["roshogolla", "monda", "jilapi"], name: "" }, { selected: ["roshogolla", "monda", "kalojam", "batasha", "laddu"], name: "তানিয়া" });
-  assert.equal(card.match, "দুজনের মিল ২টা — তানিয়ার বাক্সে ২টা বেশি");
+  assert.equal(card.match, "দুজনের মিল ২টা, তানিয়ার বাক্সে ২টা বেশি");
   assert.equal(card.lid, "আমার মিষ্টির বাক্স");
   assert.ok(card.names.startsWith("মুক্তাগাছার মণ্ডা"));
 });
 
 test("share preview is personal and the tally only counts sweet ids", () => {
   const state = share.normalize("s=" + encodeSelection(["monda", "kalojam"]) + "&n=রাফি")!;
-  assert.equal(share.preview(state).title, "রাফির মিষ্টির বাক্সে ২টা — তোমার কয়টা?");
+  assert.equal(share.preview(state).title, "রাফির মিষ্টির বাক্সে ২টা। তোমার কয়টা?");
   assert.deepEqual(share.tally, sweets.map(sweet => sweet.id));
 });

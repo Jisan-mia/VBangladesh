@@ -159,7 +159,7 @@ export function caption(design: Design) {
 export function previewTitle(design: Design | null) {
   if (!design) return "নিজের নাম, নিজের মতো সাজাও — নামের ডিজাইন";
   if (design.from) return `${design.from} তোমার নামটা সাজিয়ে পাঠিয়েছে, ${design.name}!`;
-  return `${possessive(design.name)} নাম ${styleById(design.style)!.phrase} — তোমারটা সাজাও`;
+  return `${possessive(design.name)} নাম ${styleById(design.style)!.phrase}। তোমারটা সাজাও`;
 }
 
 // Fixed ids only: the style. Never the name.

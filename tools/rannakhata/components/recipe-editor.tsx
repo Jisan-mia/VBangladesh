@@ -117,7 +117,7 @@ export function RecipeEditor() {
     window.print();
   }
 
-  const caption = `${headline} — রেসিপিটা খাতায় লিখে রাখলাম, যাতে হারিয়ে না যায়। ${RECIPE_ASK}`;
+  const caption = `${headline}। রেসিপিটা খাতায় লিখে রাখলাম, যাতে হারিয়ে না যায়। ${RECIPE_ASK}`;
   const firstError = Object.values(errors)[0];
   const field = (name: keyof RecipeDraft) => ({ value: draft[name], maxLength: recipeLimits[name], onChange: (event: { target: { value: string } }) => update(name, event.target.value) });
 

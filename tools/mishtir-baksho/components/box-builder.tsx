@@ -83,7 +83,7 @@ export function BoxBuilder() {
   const showCompare = compared === "done" && everyone && everyone.total >= COMPARE_MIN;
   const rarestMine = showCompare ? [...selected].sort((a, b) => (everyone.counts[a] ?? 0) - (everyone.counts[b] ?? 0))[0] : undefined;
   const leastOverall = showCompare ? [...sweets].sort((a, b) => (everyone.counts[a.id] ?? 0) - (everyone.counts[b.id] ?? 0))[0] : undefined;
-  const caption = card.match ? `${card.match}! আমার মিষ্টির বাক্সে ${bn(total)}-এ ${bn(count)}টা। তোমার কয়টা?` : `আমার মিষ্টির বাক্সে ${bn(total)}-এ ${bn(count)}টা — ${card.tier}! তোমার বাক্সে কয়টা, দেখো তো:`;
+  const caption = card.match ? `${card.match}! আমার মিষ্টির বাক্সে ${bn(total)}-এ ${bn(count)}টা। তোমার কয়টা?` : `আমার মিষ্টির বাক্সে ${bn(total)}-এ ${bn(count)}টা, ${card.tier}! তোমার বাক্সে কয়টা, দেখো তো:`;
   const friendName = friend?.name ? possessive(friend.name) : "তোমার বন্ধুর";
 
   return (
@@ -113,7 +113,7 @@ export function BoxBuilder() {
       {everyone && everyone.total >= SOCIAL_PROOF_MIN && <p className="mb-proof">এখন পর্যন্ত <strong>{bn(everyone.total)} জন</strong> নিজের বাক্স সাজিয়েছে</p>}
 
       <div className="mb-grid" id="sweet-grid">
-        <h2 className="mb-grid-title">{bn(total)}টা মিষ্টির নাম ও ছবি <span>যেগুলো খেয়েছ, ছুঁয়ে বাক্সে তোলো</span></h2>
+        <h2 className="mb-grid-title">{bn(total)}টা মিষ্টির নাম ও ছবি <span>যেগুলো খেয়েছ, চেপে বাক্সে তোলো</span></h2>
         {groups.map(group => (
           <fieldset className="mb-group" key={group.id}>
             <legend>{group.label}</legend>
@@ -136,7 +136,7 @@ export function BoxBuilder() {
       <section className="mb-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="mb-result-head">
           <h2 id="result-title">{count ? <>তোমার বাক্সে <em>{bn(count)}টা</em> মিষ্টি</> : "বাক্সটা এখনো ফাঁকা"}</h2>
-          <p>{count ? card.line : "ওপরের তালিকা থেকে যেগুলো খেয়েছ, ছুঁয়ে বাক্সে তোলো।"}</p>
+          <p>{count ? card.line : "ওপরের তালিকা থেকে যেগুলো খেয়েছ, চেপে বাক্সে তোলো।"}</p>
         </div>
 
         <div className="mb-result-body">
@@ -152,7 +152,7 @@ export function BoxBuilder() {
               <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="mishtir-baksho.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} disabled={!count} hint={count ? "লিংক পেলে বন্ধু দেখবে তোমার বাক্স, আর নিজেরটা সাজিয়ে মিলিয়ে নেবে।" : ""} />
+            <ShareBar tool={TOOL} fileName="mishtir-baksho.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} disabled={!count} hint={count ? "বন্ধু লিংক খুলে নিজের বাক্স সাজালে, দুজনের কয়টা মিলল সেটা ওর ছবিতে লেখা উঠবে।" : ""} />
             <button type="button" className="kit-link mb-restart" onClick={restart}>আবার প্রথম থেকে সাজাই</button>
           </div>
         </div>

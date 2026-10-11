@@ -54,6 +54,6 @@ test("Bangla possessive follows the name's ending", () => {
 test("the share API normalizes states and writes a personal preview", () => {
   assert.equal(share.normalize("b=nope"), null);
   assert.equal(share.normalize(shareHash(board).slice(1)), shareHash(board).slice(1));
-  assert.equal(share.preview(shareHash(board).slice(1)).title, "রাফির রিকশার বোর্ডে লেখা “মায়ের দোয়া” — তোমারটায় কী লিখতে?");
+  assert.equal(share.preview(shareHash(board).slice(1)).title, "রাফির রিকশার বোর্ডে লেখা “মায়ের দোয়া”। তোমারটায় কী লিখতে?");
   assert.match(share.preview("b=boat").title, /^এক বন্ধুর রাঙানো রিকশার বোর্ড/);
 });

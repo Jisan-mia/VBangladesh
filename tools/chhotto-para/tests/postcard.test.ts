@@ -52,9 +52,9 @@ test('share previews are personal and normalize is stable', () => {
   const state = shareHash(card);
   assert.equal(share.normalize(state), state);
   assert.equal(share.normalize('hello'), null);
-  assert.equal(share.preview(state).title, 'কাশিমপুর থেকে রাফির পোস্টকার্ড — তোমার পাড়াটা কেমন ছিল?');
-  assert.equal(share.preview(shareHash({ ...card, place: '' })).title, 'রাফির পাড়ার পোস্টকার্ড — তোমার পাড়াটা কেমন ছিল?');
-  assert.equal(share.preview(shareHash({ ...card, place: '', name: '' })).title, 'এক বন্ধুর পাড়ার পোস্টকার্ড — তোমার পাড়াটা কেমন ছিল?');
-  assert.equal(share.preview(shareHash({ ...card, name: '' })).title, 'কাশিমপুর থেকে একটা পোস্টকার্ড — তোমার পাড়াটা কেমন ছিল?');
+  assert.equal(share.preview(state).title, 'কাশিমপুর থেকে রাফির পোস্টকার্ড। তোমার পাড়াটা কেমন ছিল?');
+  assert.equal(share.preview(shareHash({ ...card, place: '' })).title, 'রাফির পাড়ার পোস্টকার্ড। তোমার পাড়াটা কেমন ছিল?');
+  assert.equal(share.preview(shareHash({ ...card, place: '', name: '' })).title, 'এক বন্ধুর পাড়ার পোস্টকার্ড। তোমার পাড়াটা কেমন ছিল?');
+  assert.equal(share.preview(shareHash({ ...card, name: '' })).title, 'কাশিমপুর থেকে একটা পোস্টকার্ড। তোমার পাড়াটা কেমন ছিল?');
   assert.equal(share.tally, undefined);
 });

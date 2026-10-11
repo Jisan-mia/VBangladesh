@@ -169,7 +169,7 @@ export function NameStudio() {
             </div>
 
             <ShareBar tool={TOOL} fileName={`namer-design-${format}.png`} makeImage={() => designBlob(shown, format, site)} imageKey={`${state}|${format}`} caption={caption(shown)} state={state} disabled={!name}
-              hint={!name ? "আগে নামটা লেখো।" : gift ? "লিংক খুললে বন্ধু দেখবে, তুমি ওর নাম সাজিয়ে পাঠিয়েছ।" : "লিংক পেলে বন্ধু তোমার নামটা দেখবে, তারপর নিজেরটা সাজাবে।"} />
+              hint={!name ? "আগে নামটা লেখো।" : gift ? "লিংক খুললে বন্ধু দেখবে, তুমি ওর নাম সাজিয়ে পাঠিয়েছ।" : "লিংক খুললে বন্ধু তোমার নামটা এই ঢঙেই দেখবে, আর নিজেরটাও সাজাতে পারবে।"} />
           </div>
         </div>
 

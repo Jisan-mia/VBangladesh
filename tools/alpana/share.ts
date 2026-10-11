@@ -10,7 +10,7 @@ export const share: ToolShare = {
     const shared = parseShareHash(state);
     const who = shared?.name ? possessive(shared.name) : "এক বন্ধুর";
     return {
-      title: `${who} আঁকা আলপনা — তুমিও একটা আঁকো`,
+      title: `${who} আঁকা আলপনা। তুমিও একটা আঁকো`,
       description: "তৈরি ডিজাইন থেকে শুরু করো বা আঙুলে নিজেই আঁকো। বৈশাখ, একুশে, পূজা বা গায়ে হলুদের আলপনার ছবি বানাও, বন্ধুকে পাঠাও। ফ্রি।",
     };
   },

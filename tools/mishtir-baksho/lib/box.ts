@@ -139,8 +139,8 @@ export function boxLine(selected: readonly SweetId[]) {
   const has = (id: SweetId) => selected.includes(id);
   const count = selected.length;
   const gi = selected.filter(id => isGi(sweetById(id))).length;
-  if (count === total) return "দেশের সব নামকরা মিষ্টি এক বাক্সে — ময়রারা নাম ধরে ডাকে!";
-  if (count < 10) return "বাক্সে এখনো অনেক জায়গা — চলো, মিষ্টির দোকানে!";
+  if (count === total) return "দেশের সব নামকরা মিষ্টি এক বাক্সে, ময়রারা নাম ধরে ডাকে!";
+  if (count < 10) return "বাক্সে এখনো অনেক জায়গা। চলো, মিষ্টির দোকানে!";
   if (doiIds.every(has)) return "দই ছাড়া দাওয়াত অসম্পূর্ণ।";
   if (gi >= 10) return `জিআই পাওয়া ${bn(giCount)}টা মিষ্টির ${bn(gi)}টাই চেখে দেখা হয়ে গেছে!`;
   if (has("chomchom")) return "টাঙ্গাইলের চমচম একবার খেলে ভোলা যায় না।";
@@ -171,7 +171,7 @@ export function createCard(own: Shared, friend?: Shared | null): CardContent {
     const common = friend.selected.filter(id => picked.includes(id)).length;
     const who = friend.name ? possessive(friend.name) : "বন্ধুর";
     const diff = friend.selected.length - picked.length;
-    match = `দুজনের মিল ${bn(common)}টা — ` + (diff > 0 ? `${who} বাক্সে ${bn(diff)}টা বেশি` : diff < 0 ? `আমার বাক্সে ${bn(-diff)}টা বেশি` : "বাক্স সমান সমান");
+    match = `দুজনের মিল ${bn(common)}টা, ` + (diff > 0 ? `${who} বাক্সে ${bn(diff)}টা বেশি` : diff < 0 ? `আমার বাক্সে ${bn(-diff)}টা বেশি` : "বাক্স সমান সমান");
   }
   // Place-known sweets read best on a card ("নাটোরের কাঁচাগোল্লা"), so they lead the list.
   const ordered = [...picked].sort((a, b) => Number("known" in sweetById(b)) - Number("known" in sweetById(a)));

@@ -65,7 +65,7 @@ test("the human line follows the first letter; national styles stay sober", () =
 test("share previews are personal; gifts say who sent it", () => {
   assert.equal(share.normalize("st=alpana&n=রাফি"), shareHash(rafi).slice(1));
   assert.equal(share.normalize("hello"), null);
-  assert.equal(share.preview(shareHash(rafi).slice(1)).title, "রাফির নাম উঠোনের আলপনায় — তোমারটা সাজাও");
+  assert.equal(share.preview(shareHash(rafi).slice(1)).title, "রাফির নাম উঠোনের আলপনায়। তোমারটা সাজাও");
   assert.equal(share.preview(shareHash({ ...rafi, from: "তানিয়া" }).slice(1)).title, "তানিয়া তোমার নামটা সাজিয়ে পাঠিয়েছে, রাফি!");
   assert.equal(previewTitle(null), "নিজের নাম, নিজের মতো সাজাও — নামের ডিজাইন");
   assert.match(caption({ ...rafi, from: "তানিয়া" }), /^রাফি, তোমার নামটা/);

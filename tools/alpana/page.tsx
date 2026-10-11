@@ -16,7 +16,7 @@ export default function AlpanaPage() {
     <section className="container section alp-guide alp-screen" aria-labelledby="alpana-guide-title">
       <h2 id="alpana-guide-title">{site.guideTitle}</h2>
       <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{bn.format(index + 1)}</span><p>{step}</p></li>)}</ol>
-      <p className="alp-origin">মোটিফগুলো বাংলার আলপনার ফুল, পাতা আর জ্যামিতিক নকশা থেকে ধারণা নিয়ে নতুন করে আঁকা, কোনো নির্দিষ্ট আচার বা শিল্পীর নকশার কপি না। আলপনার ইতিহাস জানতে <a href="https://en.banglapedia.org/index.php?title=Alpana" rel="external">বাংলাপিডিয়া পড়ো ↗</a></p>
+      <p className="alp-origin">নকশাগুলো বাংলার আলপনার ফুল, পাতা আর জ্যামিতিক নকশা থেকে ধারণা নিয়ে নতুন করে আঁকা, কোনো নির্দিষ্ট আচার বা শিল্পীর নকশার কপি না। আলপনার ইতিহাস জানতে <a href="https://en.banglapedia.org/index.php?title=Alpana" rel="external">বাংলাপিডিয়া পড়ো ↗</a></p>
     </section>
     <div className="alp-screen"><Faq items={site.faq} /></div>
   </div></PageFrame>;
