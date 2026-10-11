@@ -7,7 +7,7 @@
     "build": "next build --webpack",
     "start": "next start --hostname 127.0.0.1 --port 3100",
     "typecheck": "tsc --noEmit",
-    "test": "node --import tsx --no-warnings --test shared/tests/*.test.ts tools/*/tests/*.test.ts",
+    "test": "node --import tsx --no-warnings --test shared/tests/*.test.ts lib/tests/*.test.ts tools/*/tests/*.test.ts",
     "check:pages": "node --import tsx scripts/check-pages.mjs",
     "suggestions": "node --no-warnings scripts/suggestions.mjs"
   },
