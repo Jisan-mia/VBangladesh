@@ -15,7 +15,7 @@ Agents use Sonnet 5.5 with `research/copy-review-agent-prompt.md`; up to 5 run a
 | B8 উৎসব+ভাষা | sehri-iftar eider-din eidjatra gorur-ojon mondop shobdo-khela gpa taka-kothay | done |
 | B9 ভাষা+মজা | banan desh-cheno bagdhara bangla-typing namta komon-porlo eta-na-ota cha-mudra | done |
 | B10 মজা | flames jam ganer-koli dhadha ek-koti mama-jaben mishron grade-dao | done |
-| B11 নিজেকে জানো | biye-kobe daknam moner-boyos bhorta koto-cheno char-priyo projonmo starter-pack adda | building |
+| B11 নিজেকে জানো | biye-kobe daknam moner-boyos bhorta koto-cheno char-priyo projonmo starter-pack adda | done |
 
 ## Marketing (research/marketing/)
 
