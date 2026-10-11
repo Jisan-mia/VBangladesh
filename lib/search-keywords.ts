@@ -1,5 +1,6 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "baghbandi": ["baghbandi", "bagh bandi", "baghbondi", "bagh chagol", "tiger goat game", "বাঘবন্দি", "বাঘবন্দী", "বাঘ ছাগল খেলা", "বাঘ বন্দি খেলা", "দেশি বোর্ড গেম", "পুরোনো দিনের খেলা"],
   "sap-ludu": ["snake ladder", "snakes and ladders", "sap ludu", "shap ludu", "sapludu", "ludu game", "dice game", "board game", "সাপ লুডু", "সাপ সিঁড়ি", "সাপলুডু খেলা", "লুডু গেম"],
   "peoner-cycle": ["cycle game", "bicycle game", "cycle khela", "postman game", "brick game", "racing game", "bangla game", "সাইকেল গেম", "সাইকেলের খেলা", "পিয়ন", "ব্রিক গেম", "রেসিং গেম"],
   "handi-bhanga": ["handi bhanga", "hari vanga", "হাঁড়ি ভাঙা", "হাড়ি ভাঙা খেলা", "brick breaker", "ইট ভাঙার গেম", "ball paddle game", "বল লাঠি গেম", "mela game", "মেলার খেলা", "বাংলা গেম", "পুরোনো দিনের গেম"],

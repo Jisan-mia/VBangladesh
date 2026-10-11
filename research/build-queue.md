@@ -1261,3 +1261,4 @@ One agent per target tool, so no two agents edit the same folder. Status: todo, 
   - test on real Android phones and in the Facebook in-app browser.
 - shubhechha: add greeting cards for Kali Puja, Christmas, Saraswati Puja, Buddha Purnima and Independence Day (26 Mar). The marketing calendar wants them, they would make the festival set inclusive, and koto-din-baki already has those dates.
 - og images (public/social, public/previews) were captured before the copy review, so some card wording in them is slightly old. Regenerate them before launch if card text matters.
+- baghbandi: someone who played it should check "আমাদের নিয়ম" (lib/game.ts). The goats win at the 120-move cap (instead of a draw) to balance the game; confirm that rule.
