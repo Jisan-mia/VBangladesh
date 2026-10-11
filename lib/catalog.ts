@@ -110,7 +110,7 @@ export const catalog = [
   { slug: "jora-melao", name: "জোড়া মেলাও", description: "মেলার খেলনা উল্টে রাখা, দুটো করে খুলে জোড়া মেলাও। একা বা এক ফোনে দুজনে।", category: "গেম", action: "কার্ড খোলো" },
   { slug: "chhok-jora", name: "ছক-জোড়া", description: "কাঁথায় ফোঁড় দাও, ঘর জিতে ফুল ফোটাও। দুজনে বা বটের সাথে খেলো", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "churui-tarao", name: "চড়ুই তাড়াও", description: "পাকা ধানে চড়ুই নামছে, চেপে হুশ করে তাড়াও। ৪৫ সেকেন্ডে কত ধান বাঁচাবে?", category: "গেম", action: "ধান বাঁচাও" },
-  { slug: "handi-bhanga", name: "হাঁড়িভাঙা", description: "হাঁড়িভাঙা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "handi-bhanga", name: "হাঁড়িভাঙা", description: "লাঠিতে বল ফিরিয়ে মেলার সব হাঁড়ি ভাঙো, বন্ধুকে একই সারি পাঠাও", category: "গেম", action: "হাঁড়ি ভাঙো" },
   { slug: "peoner-cycle", name: "পিয়নের সাইকেল", description: "পিয়নের সাইকেল: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "sap-ludu", name: "সাপলুডু", description: "সাপলুডু: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "baghbandi", name: "বাঘবন্দি", description: "বাঘবন্দি: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
