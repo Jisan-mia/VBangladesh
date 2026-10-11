@@ -41,6 +41,18 @@ test('a browser voting again replaces its picks instead of counting twice', asyn
   assert.deepEqual([other.total, other.counts.kite], [2, 2]);
 });
 
+test('a vote group keeps one vote per page, and prefix trims the reply', async () => {
+  const token = 'grouptokengrouptoken';
+  await tally.POST(post({ token, items: ['kite'], group: 'p1' }), context('amar-chhotobela'));
+  const both = await (await tally.POST(post({ token, items: ['pond'], group: 'p2' }), context('amar-chhotobela'))).json();
+  assert.ok(both.counts.kite >= 1 && both.counts.pond >= 1);
+  const again = await (await tally.POST(post({ token, items: ['salami'], group: 'p1' }), context('amar-chhotobela'))).json();
+  assert.equal(again.counts.kite, both.counts.kite - 1);
+  assert.equal((await tally.POST(post({ token, items: ['kite'], group: 'bad group!' }), context('amar-chhotobela'))).status, 400);
+  const trimmed = await (await tally.GET(new Request('http://localhost/api?prefix=po'), context('amar-chhotobela'))).json();
+  assert.deepEqual(Object.keys(trimmed.counts), ['pond']);
+});
+
 test('tally rejects items the tool does not have and bad tokens', async () => {
   assert.equal((await tally.POST(post({ token: 'tokentokentokentoken', items: ['made-up'] }), context('amar-chhotobela'))).status, 400);
   assert.equal((await tally.POST(post({ token: 'short', items: ['kite'] }), context('amar-chhotobela'))).status, 400);

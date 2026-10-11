@@ -48,9 +48,9 @@ export function readTally(tool: string, prefix = ''): Tally {
   return { total, counts };
 }
 
-/** One vote per browser token per tool; voting again replaces the earlier picks instead of adding to them. */
-export function recordTally(tool: string, token: string, items: readonly string[], prefix = ''): Tally {
-  const voter = createHash('sha256').update(`${tool}:${token}`).digest('base64url').slice(0, 24);
+/** One vote per browser token per tool (per `group`, e.g. a quiz page); voting again replaces the earlier picks instead of adding to them. */
+export function recordTally(tool: string, token: string, items: readonly string[], prefix = '', group = ''): Tally {
+  const voter = createHash('sha256').update(group ? `${tool}:${group}:${token}` : `${tool}:${token}`).digest('base64url').slice(0, 24);
   transaction(() => {
     const previous = db().prepare('SELECT items FROM tally_votes WHERE tool = ? AND voter = ?').get(tool, voter) as { items: string } | undefined;
     const before = new Set<string>(previous ? JSON.parse(previous.items) : []);

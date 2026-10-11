@@ -104,7 +104,7 @@ export function GrammarBook() {
 
   async function compareWithEveryone() {
     setCompared("sending");
-    const tally = await addToTally(TOOL, [`seen:${setId}`, ...questions.filter((_, index) => hits[index]).map(item => item.id)]);
+    const tally = await addToTally(TOOL, [`seen:${setId}`, ...questions.filter((_, index) => hits[index]).map(item => item.id)], "", setId);
     if (tally) { setEveryone(tally); setCompared("done"); }
     else setCompared("failed");
   }

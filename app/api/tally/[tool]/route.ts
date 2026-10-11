@@ -22,6 +22,7 @@ export async function POST(request: Request, { params }: Context) {
   const body = await readJson(request);
   const token = typeof body?.token === 'string' && /^[A-Za-z0-9_-]{16,64}$/.test(body.token) ? body.token : '';
   const items = Array.isArray(body?.items) ? body.items : null;
-  if (!token || !items || items.length > allowed.length || !items.every(item => typeof item === 'string' && allowed.includes(item))) return fail('invalid', 400);
-  return Response.json(recordTally(tool, token, [...new Set(items as string[])], prefixOf(request)), { headers: { 'Cache-Control': 'no-store' } });
+  const group = typeof body?.group === 'string' ? body.group : '';
+  if (!token || !items || items.length > allowed.length || !items.every(item => typeof item === 'string' && allowed.includes(item)) || !/^[A-Za-z0-9_.:-]{0,40}$/.test(group)) return fail('invalid', 400);
+  return Response.json(recordTally(tool, token, [...new Set(items as string[])], prefixOf(request), group), { headers: { 'Cache-Control': 'no-store' } });
 }

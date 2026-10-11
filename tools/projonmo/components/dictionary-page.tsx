@@ -112,14 +112,11 @@ export function GenerationDictionary() {
 
   async function compareWithEveryone() {
     setCompared("sending");
-    // The server keeps one entry per browser and replaces it, so send every page finished here, not just this one.
-    const items = sets.flatMap(item => {
-      const given = answersBy[item.id] ?? [];
-      if (given.length !== PER_SET) return [];
-      const right = marks(item.id, given);
-      return [`seen:${item.id}`, ...item.entries.filter((_, index) => right[index]).map(word => word.id)];
-    });
-    const tally = await addToTally(TOOL, items);
+    // One vote per page (group), so comparing page 2 never wipes page 1.
+    const given = answersBy[setId] ?? [];
+    const right = marks(setId, given);
+    const items = [`seen:${setId}`, ...setById(setId).entries.filter((_, index) => right[index]).map(word => word.id)];
+    const tally = await addToTally(TOOL, items, "", setId);
     if (tally) { setEveryone(tally); setCompared("done"); }
     else setCompared("failed");
   }

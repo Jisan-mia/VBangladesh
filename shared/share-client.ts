@@ -39,9 +39,10 @@ export async function readTally(tool: string, prefix = ""): Promise<Tally | null
   } catch { return null; }
 }
 
-export async function addToTally(tool: string, items: readonly string[], prefix = ""): Promise<Tally | null> {
+/** `group` keeps one vote per page or round (e.g. a quiz set) instead of one per tool. */
+export async function addToTally(tool: string, items: readonly string[], prefix = "", group = ""): Promise<Tally | null> {
   try {
-    const response = await fetch(`/api/tally/${tool}${prefix ? `?prefix=${encodeURIComponent(prefix)}` : ""}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: voterToken(), items }) });
+    const response = await fetch(`/api/tally/${tool}${prefix ? `?prefix=${encodeURIComponent(prefix)}` : ""}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: voterToken(), items, ...(group ? { group } : {}) }) });
     return response.ok ? await response.json() as Tally : null;
   } catch { return null; }
 }
