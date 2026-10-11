@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { badge, cleanName, compareLine, defaultSet, friendLine, humanLine, parseResult, previewTitle, resultHash, rightShare, scoreOf, tallyIds, tallyItems, MAX_NAME_LENGTH, ROUNDS, type Pick } from "../lib/game";
+import { badge, cleanName, compareLine, defaultSet, friendLine, humanLine, isLoan, parseResult, previewTitle, resultHash, rightShare, scoreOf, tallyIds, tallyItems, MAX_NAME_LENGTH, ROUNDS, type Pick } from "../lib/game";
 import { wordSets } from "../lib/words";
 import { share } from "../share";
 
@@ -94,4 +94,42 @@ test("tally only uses fixed word ids and counts right picks", () => {
 test("the Ekushe set leads in February only", () => {
   assert.equal(defaultSet(new Date(2027, 1, 21)), "e75");
   assert.equal(defaultSet(new Date(2026, 9, 10)), "dokan");
+});
+
+test("sets are append-only, and links shared before the খাঁটি বাংলা set still open the same card", () => {
+  assert.deepEqual(wordSets.map(set => set.id).slice(0, 5), ["dokan", "school", "deyal", "e75", "khanti"]);
+  const old = parseResult("#set=e75&a=1010101100&n=%E0%A6%B0%E0%A6%BF%E0%A6%AE%E0%A6%BE");
+  assert.deepEqual(old, { set: "e75", picks: [1, 0, 1, 0, 1, 0, 1, 1, 0, 0], name: "রিমা" });
+  assert.equal(previewTitle(old!), "একুশের ৭৫ বছর: রিমা ১০-এ ১০টা বানান ঠিক করেছে — তুমি পারবে?");
+  assert.equal(scoreOf("dokan", [...("1010101101")].map(Number) as Pick[]), 10);
+  assert.ok(!isLoan("e75") && !isLoan("dokan"));
+});
+
+test("the খাঁটি বাংলা set shows an English word and two different Bangla words", () => {
+  const set = wordSets[4];
+  assert.ok(set.sober && set.kind === "loan" && isLoan(set.id));
+  for (const word of set.words) {
+    assert.ok(word.loan && word.loan === word.loan.normalize("NFC"), word.id);
+    assert.ok(!(word.options as readonly string[]).includes(word.loan) && !word.where.includes(word.loan), word.id);
+    assert.ok(word.rule.includes(word.options[word.right]), word.id);
+  }
+  // Every other set is spelling, with no English word on the board.
+  for (const other of wordSets.slice(0, 4)) assert.ok(other.words.every(word => !("loan" in word)), other.id);
+});
+
+test("the খাঁটি বাংলা set has its own sober lines, preview and link round trip", () => {
+  const picks = allRight(wordSets[4]);
+  picks[9] = (1 - picks[9]) as Pick;
+  const result = parseResult(resultHash({ set: "khanti", picks, name: "রাফি" }))!;
+  assert.deepEqual(result, { set: "khanti", picks, name: "রাফি" });
+  assert.equal(scoreOf("khanti", picks), 9);
+  assert.equal(badge(9, "khanti"), "মায়ের ভাষায় বলি");
+  assert.equal(badge(10, "e75"), "একুশের ৭৫ বছর");
+  assert.equal(previewTitle(result), "একুশের ৭৫ বছর: রাফি ১০-এ ৯টা শব্দের খাঁটি বাংলা বলেছে — তুমি পারবে?");
+  for (const score of [10, 7, 2]) assert.ok(!/ভালোবাসা|বানান/.test(humanLine(score, "khanti")), String(score));
+  assert.equal(humanLine(2, "khanti"), "মুখে ইংরেজি আসা দোষের না। বাংলাটাও জানা থাকুক।");
+  assert.match(share.preview(resultHash(result)).description, /ইংরেজি শব্দ/);
+  assert.match(share.preview("set=dokan&a=0101010101").description, /বানান/);
+  for (const word of wordSets[4].words) assert.ok(!previewTitle(result).includes(word.options[word.right]));
+  assert.ok(tallyItems(result).every(item => tallyIds.includes(item)));
 });

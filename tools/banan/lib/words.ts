@@ -18,9 +18,12 @@ export type Word = {
   where: string;
   /** One line on why, shown after the pick. */
   rule: string;
+  /** Loan sets only: the everyday English word shown on the board; options are then two Bangla words. */
+  loan?: string;
 };
 
-export type WordSet = { id: string; label: string; short: string; sober?: boolean; words: readonly Word[] };
+/** kind "loan": pick the Bangla word for an English one, not the right spelling. */
+export type WordSet = { id: string; label: string; short: string; sober?: boolean; kind?: "loan"; words: readonly Word[] };
 
 export const wordSets = [
   {
@@ -81,6 +84,30 @@ export const wordSets = [
       { id: "shadhinota", options: ["স্বাধিনতা", "স্বাধীনতা"], right: 1, where: "ইতিহাসের বই", rule: "‘অধীন’-এ দীর্ঘ ঈ-কার, তাই স্বাধীন, স্বাধীনতা।" },
       { id: "smoroniyo", options: ["স্মরণীয়", "স্মরনীয়"], right: 0, where: "স্মৃতিফলক", rule: "‘স্মরণ’-এ র-এর পরে ণ, তাই স্মরণীয়।" },
       { id: "kritoggota", options: ["কৃতজ্ঞতা", "কৃতঙ্গতা"], right: 0, where: "শ্রদ্ধার ব্যানার", rule: "শুনতে ‘গ্গঁ’-এর মতো, কিন্তু লেখায় জ্ঞ (জ + ঞ)।" },
+    ],
+  },
+  // খাঁটি বাংলা কী? (ED10): an English word we say every day, and its natural Bangla. Checked October 2026 against the
+  // Bangla Academy-based dictionary, https://accessibledictionary.gov.bd/<bengali-to-bengali|english-to-bengali>.php?q=<word>:
+  //   ইউনিভার্সিটি → "বিশ্ববিদ্যালয়"; কলেজ → "মহাবিদ্যালয়" · লাইব্রেরি → "গ্রন্থাগার ও পাঠাগার"; স্কুল → "বিদ্যালয়; …পাঠশালা"
+  //   language → "ভাষা"; ব্যাকরণ → "কোনো ভাষার শব্দ ও পদবিন্যাসের… রীতি" · থ্যাংক → "ধন্যবাদ"; অভিনন্দন → "প্রশংসাবাদ দ্বারা আনন্দ প্রকাশ"
+  //   sorry → "দুঃখিত"; চিন্তিত → "উদ্বিগ্ন" · gift → "উপহার"; পুরস্কার → "বখশিশ; পারিতোষিক" · fan → "পাখা"; বাতি → "দীপ; …আলো"
+  //   problem → "সমস্যা"; সমাধান → "মীমাংসা; নিষ্পত্তি" · guest → "অতিথি"; আত্মীয় → "স্বজন" · মিটিং → "সভা"; মিছিল → "শোভাযাত্রা (একুশের মিছিল…)"
+  //   (the source note's example, kept outside the set so it spoils nothing: টিচার → "শিক্ষক")
+  // Every answer is Bangla's own word, never the English one respelled (হাসপাতাল) or a stiff coinage (দূরভাষ). Wrong options are
+  // real words that mean something else, never a near-synonym (so সভা's wrong option is মিছিল, not সমিতি, which the dictionary also gives as সভা).
+  {
+    id: "khanti", label: "খাঁটি বাংলা কী?", short: "খাঁটি বাংলা", sober: true, kind: "loan",
+    words: [
+      { id: "bhasha", loan: "ল্যাঙ্গুয়েজ", options: ["ভাষা", "ব্যাকরণ"], right: 0, where: "একুশের প্রভাতফেরি", rule: "ল্যাঙ্গুয়েজ মানে ভাষা। ব্যাকরণ হলো ভাষার নিয়মকানুন।" },
+      { id: "bishwobiddaloy", loan: "ইউনিভার্সিটি", options: ["মহাবিদ্যালয়", "বিশ্ববিদ্যালয়"], right: 1, where: "ভর্তি পরীক্ষার মৌসুম", rule: "ইউনিভার্সিটি মানে বিশ্ববিদ্যালয়। মহাবিদ্যালয় হলো কলেজ।" },
+      { id: "pathagar", loan: "লাইব্রেরি", options: ["পাঠশালা", "পাঠাগার"], right: 1, where: "বইমেলার মাস", rule: "লাইব্রেরি মানে পাঠাগার, গ্রন্থাগারও বলে। পাঠশালা মানে স্কুল।" },
+      { id: "dhonnobad", loan: "থ্যাংক ইউ", options: ["ধন্যবাদ", "অভিনন্দন"], right: 0, where: "চায়ের দোকান", rule: "থ্যাংক ইউ মানে ধন্যবাদ। অভিনন্দন জানাই কারও ভালো খবরে, যেমন পাশ করলে।" },
+      { id: "dukkhito", loan: "সরি", options: ["চিন্তিত", "দুঃখিত"], right: 1, where: "ভিড়ের বাসে ধাক্কা লাগলে", rule: "সরি মানে দুঃখিত। চিন্তিত মানে কিছু নিয়ে ভাবনায় আছে।" },
+      { id: "upohar", loan: "গিফট", options: ["উপহার", "পুরস্কার"], right: 0, where: "জন্মদিনের দাওয়াত", rule: "গিফট মানে উপহার, ভালোবেসে দেওয়া। পুরস্কার মেলে কিছু জিতলে বা ভালো কাজের জন্য।" },
+      { id: "pakha", loan: "ফ্যান", options: ["বাতি", "পাখা"], right: 1, where: "লোডশেডিংয়ের পর", rule: "ফ্যান মানে পাখা, হাতপাখাও পাখা। বাতি দেয় আলো।" },
+      { id: "somossa", loan: "প্রবলেম", options: ["সমস্যা", "সমাধান"], right: 0, where: "মোবাইল সারাইয়ের দোকান", rule: "প্রবলেম মানে সমস্যা। সমাধান তার উল্টো, সমস্যা মিটে যাওয়া।" },
+      { id: "otithi", loan: "গেস্ট", options: ["আত্মীয়", "অতিথি"], right: 1, where: "বাসায় দাওয়াতের দিন", rule: "গেস্ট মানে অতিথি। আত্মীয় মানে স্বজন, যে অতিথি হয়েও আসতে পারে।" },
+      { id: "sobha", loan: "মিটিং", options: ["সভা", "মিছিল"], right: 0, where: "অফিসের ক্যালেন্ডার", rule: "মিটিং মানে সভা। মিছিল মানে শোভাযাত্রা, যেমন একুশের মিছিল।" },
     ],
   },
 ] as const satisfies readonly WordSet[];

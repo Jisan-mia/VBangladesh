@@ -82,8 +82,10 @@ export function drawCard(canvas: HTMLCanvasElement, result: Result, format: Card
   board(context, head.x, head.y, head.w, head.h, p.board, p.border, 1.6);
   const cx = width / 2;
   const inner = head.w - 140;
-  fitText(context, [{ text: set.sober ? "একুশের ৭৫ বছর · শুদ্ধ বানান" : "শুদ্ধ বানান কোনটি?", color: p.border, weight: 700 }], cx, head.y + 96, 38, inner, "center");
-  painted(context, result.name || "আমার বানান", cx, head.y + (story ? 210 : 190), story ? 88 : 76, inner, p.border, p.shadow);
+  const loan = set.kind === "loan";
+  const heading = loan ? "একুশের ৭৫ বছর · খাঁটি বাংলা কী?" : set.sober ? "একুশের ৭৫ বছর · শুদ্ধ বানান" : "শুদ্ধ বানান কোনটি?";
+  fitText(context, [{ text: heading, color: p.border, weight: 700 }], cx, head.y + 96, 38, inner, "center");
+  painted(context, result.name || (loan ? "আমার বাংলা" : "আমার বানান"), cx, head.y + (story ? 210 : 190), story ? 88 : 76, inner, p.border, p.shadow);
   painted(context, scoreLine(score), cx, head.y + (story ? 390 : 340), story ? 160 : 140, inner, p.letter, p.shadow);
   // Title on a small plate hanging from the bottom edge.
   const title = badge(score, result.set);

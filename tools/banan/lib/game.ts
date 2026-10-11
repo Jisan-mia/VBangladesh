@@ -16,6 +16,8 @@ export const setById = (id: string): WordSet | undefined => (wordSets as readonl
 export const isSetId = (id: string): id is SetId => Boolean(setById(id));
 
 export const isRight = (word: Word, pick: Pick) => word.right === pick;
+/** The খাঁটি বাংলা set: Bangla words for English ones, not spellings. */
+export const isLoan = (set: SetId) => setById(set)?.kind === "loan";
 
 export function scoreOf(set: SetId, picks: readonly Pick[]) {
   const words = setById(set)!.words;
@@ -44,6 +46,7 @@ export function parseResult(hash: string): Result | null {
 }
 
 export function badge(score: number, set: SetId) {
+  if (isLoan(set)) return "মায়ের ভাষায় বলি";
   if (setById(set)?.sober) return "একুশের ৭৫ বছর";
   if (score === ROUNDS) return "সাইনবোর্ড-ওস্তাদ";
   if (score >= 8) return "বানান-বীর";
@@ -53,6 +56,12 @@ export function badge(score: number, set: SetId) {
 }
 
 export function humanLine(score: number, set: SetId) {
+  // Pride in Bangla, never shame for English: half of these English words are Bangla by now.
+  if (isLoan(set)) {
+    if (score === ROUNDS) return "দশটারই খাঁটি বাংলা তোমার মুখে আছে।";
+    if (score >= 6) return "বেশিরভাগই চেনা। বাকি কয়টা এবার মুখে আসবে।";
+    return "মুখে ইংরেজি আসা দোষের না। বাংলাটাও জানা থাকুক।";
+  }
   if (setById(set)?.sober) {
     if (score === ROUNDS) return "শুদ্ধ করে লেখাও একুশের প্রতি শ্রদ্ধা।";
     if (score >= 6) return "প্রায় সবটাই শুদ্ধ। বাকিটা এবার মনে থাকবে।";
@@ -69,7 +78,7 @@ export function previewTitle(result: Result) {
   const score = scoreOf(result.set, result.picks);
   const who = result.name || "এক বন্ধু";
   const lead = setById(result.set)?.sober ? "একুশের ৭৫ বছর: " : "";
-  return `${lead}${who} ${scoreLine(score)}টা বানান ঠিক করেছে — তুমি পারবে?`;
+  return `${lead}${who} ${scoreLine(score)}টা ${isLoan(result.set) ? "শব্দের খাঁটি বাংলা বলেছে" : "বানান ঠিক করেছে"} — তুমি পারবে?`;
 }
 
 /** What a friend's link says above the game. */

@@ -30,6 +30,7 @@ export function SignboardGame() {
   const resultVisible = useInView(resultBox);
 
   const set = setById(setId)!;
+  const loan = set.kind === "loan";
   const finished = at >= ROUNDS;
   const word = set.words[Math.min(at, ROUNDS - 1)];
   const picked = picks[at];
@@ -96,7 +97,9 @@ export function SignboardGame() {
   }
 
   const nextSet = wordSets[(wordSets.findIndex(item => item.id === setId) + 1) % wordSets.length];
-  const caption = set.sober
+  const caption = loan
+    ? `খাঁটি বাংলা কী? রোজ বলা ১০টা ইংরেজি শব্দের বাংলায় আমি ${scoreLine(score)}টা পেরেছি। তুমি বলো তো?`
+    : set.sober
     ? `একুশের ৭৫ বছর: ১০টা শব্দ শুদ্ধ করে লেখার চেষ্টা, আমি ${scoreLine(score)}টা পেরেছি। তুমিও লিখে দেখো।`
     : `শুদ্ধ বানান কোনটি? সাইনবোর্ডের ১০টা বানানে আমি ${scoreLine(score)}। তুমি কয়টা পারবে?`;
   const right = picked !== undefined && isRight(word, picked);
@@ -123,7 +126,7 @@ export function SignboardGame() {
         {finished ? (
           <div className="banan-board banan-done" data-tone="0">
             <span className="banan-bolts" aria-hidden="true" />
-            <p className="banan-where">সব সাইনবোর্ড ঠিক করা শেষ</p>
+            <p className="banan-where">{loan ? "১০টা সাইনবোর্ড পড়া শেষ" : "সব সাইনবোর্ড ঠিক করা শেষ"}</p>
             <p className="banan-painted">{scoreLine(score)}</p>
             <p className="banan-rule">{humanLine(score, setId)}</p>
             <a className="banan-plate banan-plate-link" href="#card">কার্ডটা দেখো</a>
@@ -132,20 +135,21 @@ export function SignboardGame() {
           <div className="banan-board" data-tone={at % 4} data-picked={picked !== undefined} key={`${setId}-${at}`}>
             <span className="banan-bolts" aria-hidden="true" />
             <p className="banan-where">{word.where}</p>
+            {word.loan && <p className="banan-loan"><span className="banan-sr">ইংরেজি শব্দ: </span>‘{word.loan}’</p>}
             {picked === undefined ? <>
-              <p className="banan-ask" id="banan-ask">কোন বানানটা শুদ্ধ? ছুঁয়ে দাও</p>
+              <p className="banan-ask" id="banan-ask">{loan ? "খাঁটি বাংলায় কোনটা? ছুঁয়ে দাও" : "কোন বানানটা শুদ্ধ? ছুঁয়ে দাও"}</p>
               <div className="banan-plates" role="group" aria-labelledby="banan-ask">
                 {word.options.map((option, index) => <button type="button" key={option} ref={index === 0 ? firstPlate : undefined} className="banan-plate" onClick={() => pick(index as Pick)}>{option}</button>)}
               </div>
             </> : <>
-              <p className="banan-verdict" data-right={right}>{right ? "একদম ঠিক!" : "প্রায়! শুদ্ধ বানানটা এই:"}</p>
+              <p className="banan-verdict" data-right={right}>{right ? "একদম ঠিক!" : loan ? "প্রায়! খাঁটি বাংলায়:" : "প্রায়! শুদ্ধ বানানটা এই:"}</p>
               <p className="banan-painted banan-repaint">{word.options[word.right]}</p>
               {!right && <p className="banan-struck"><span className="banan-sr">তুমি বেছেছিলে </span><s>{word.options[picked]}</s></p>}
               <p className="banan-rule">{word.rule}</p>
             </>}
           </div>
         )}
-        <p className="banan-sr" aria-live="polite">{picked !== undefined && !finished ? `${right ? "ঠিক" : "হয়নি"}। শুদ্ধ বানান ${word.options[word.right]}। ${word.rule}` : ""}</p>
+        <p className="banan-sr" aria-live="polite">{picked !== undefined && !finished ? `${right ? "ঠিক" : "হয়নি"}। ${loan ? `${word.loan}-এর বাংলা` : "শুদ্ধ বানান"} ${word.options[word.right]}। ${word.rule}` : ""}</p>
 
         {!finished && picked !== undefined && <button type="button" ref={nextButton} className="kit-primary banan-next" onClick={advance}>{at === ROUNDS - 1 ? "স্কোর দেখো" : "পরের সাইনবোর্ড"}</button>}
 
@@ -174,7 +178,7 @@ export function SignboardGame() {
           <div className="banan-result-body">
             <figure className="kit-card" data-format={format}>
               <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="card-summary" />
-              <figcaption id="card-summary" className="banan-sr">{name || "আমার বানান"}: {scoreLine(score)}, {badge(score, setId)}। {humanLine(score, setId)} কার্ডে কোনো শব্দ নেই, শুধু ঠিক-ভুলের ১০টা ছোট সাইনবোর্ড।</figcaption>
+              <figcaption id="card-summary" className="banan-sr">{name || (loan ? "আমার বাংলা" : "আমার বানান")}: {scoreLine(score)}, {badge(score, setId)}। {humanLine(score, setId)} কার্ডে কোনো শব্দ নেই, শুধু ঠিক-ভুলের ১০টা ছোট সাইনবোর্ড।</figcaption>
               {previewError && <p className="kit-status" role="alert">কার্ডের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
             </figure>
             <div className="banan-controls">
@@ -183,18 +187,18 @@ export function SignboardGame() {
                 <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
               </label>
               <FormatToggle value={format} onChange={setFormat} />
-              <ShareBar tool={TOOL} fileName="shuddho-banan.png" makeImage={() => cardBlob(result, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} hint="কার্ডে শব্দ থাকে না, তাই বন্ধু দেখে নকল করতে পারবে না। লিংক খুললে সে একই ১০টা পাবে।" />
+              <ShareBar tool={TOOL} fileName={loan ? "khanti-bangla.png" : "shuddho-banan.png"} makeImage={() => cardBlob(result, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} hint="কার্ডে শব্দ থাকে না, তাই বন্ধু দেখে নকল করতে পারবে না। লিংক খুললে সে একই ১০টা পাবে।" />
             </div>
           </div>
 
           <section className="banan-review" aria-labelledby="review-title">
-            <h3 id="review-title">১০টা বানান আরেকবার</h3>
+            <h3 id="review-title">{loan ? "১০টা শব্দ আরেকবার" : "১০টা বানান আরেকবার"}</h3>
             <ol>
               {set.words.map((item, index) => {
                 const ok = isRight(item, picks[index]);
                 const share = everyone ? rightShare(everyone.counts, item.id) : null;
                 return <li key={item.id} data-right={ok}>
-                  <p className="banan-review-word"><span aria-hidden="true">{ok ? "✓" : "✗"}</span><span className="banan-sr">{ok ? "ঠিক" : "ভুল"}: </span><strong>{item.options[item.right]}</strong>{!ok && <s>{item.options[picks[index]]}</s>}</p>
+                  <p className="banan-review-word"><span aria-hidden="true">{ok ? "✓" : "✗"}</span><span className="banan-sr">{ok ? "ঠিক" : "ভুল"}: </span>{item.loan && <span className="banan-review-loan">{item.loan} =</span>}<strong>{item.options[item.right]}</strong>{!ok && <s>{item.options[picks[index]]}</s>}</p>
                   <p>{item.rule}</p>
                   {share !== null && <p className="banan-review-share">সবার মধ্যে {bn(share)}% ঠিক বেছেছে</p>}
                 </li>;
@@ -215,11 +219,15 @@ export function SignboardGame() {
         </section>
       )}
 
-      <aside className="banan-source" aria-label="বানানের সূত্র">
+      {loan ? <aside className="banan-source" aria-label="শব্দের সূত্র">
+        <h2>বাংলা শব্দগুলো কোথা থেকে নেওয়া</h2>
+        <p>প্রতিটা বাংলা শব্দ আর তার মানে বাংলা একাডেমির অভিধানভিত্তিক <a href="https://accessibledictionary.gov.bd/bengali-to-bengali/" rel="noopener" target="_blank">অভিগম্য অভিধান</a> মিলিয়ে যাচাই করা (অক্টোবর ২০২৬)। যেমন সেখানে ‘টিচার’-এর মানে লেখা আছে ‘শিক্ষক’।</p>
+        <p className="banan-source-line">ইংরেজি শব্দেরই বাংলা রূপ (যেমন হাসপাতাল) বা কষ্ট করে বানানো শব্দ রাখিনি। ইংরেজি বলা ভুল না; এই সেটটা শুধু মনে করিয়ে দেয়, রোজকার শব্দগুলোর সুন্দর বাংলাও আছে।</p>
+      </aside> : <aside className="banan-source" aria-label="বানানের সূত্র">
         <h2>বানানগুলো কোথা থেকে নেওয়া</h2>
         <p>প্রতিটা শুদ্ধ বানান বাংলা একাডেমির <em>প্রমিত বাংলা বানানের নিয়ম</em> (পরিমার্জিত সংস্করণ ২০১২) আর একাডেমির অভিধানভিত্তিক <a href="https://accessibledictionary.gov.bd/bengali-to-bengali/" rel="noopener" target="_blank">অভিগম্য অভিধান</a> মিলিয়ে যাচাই করা (অক্টোবর ২০২৬)।</p>
         <p className="banan-source-line">যেসব শব্দের দুটো বানানই অভিধানে আছে (যেমন দারিদ্র্য/দারিদ্র), আর যেগুলোর প্রমিত বানান সম্প্রতি বদলেছে, সেগুলো ইচ্ছা করে রাখিনি। কোনো বানানে ভুল পেলে পাতার নিচের বক্সে জানিও।</p>
-      </aside>
+      </aside>}
     </div>
   );
 }
