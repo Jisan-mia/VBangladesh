@@ -127,11 +127,11 @@ export function FormatToggle({ value, onChange }: { value: CardFormat; onChange:
   </fieldset>;
 }
 
-export function PhotoPicker({ value, onChange, label = 'ছবি', note = 'চাইলে দাও, তোমার ফোনেই থাকবে' }: { value: Photo | null; onChange: (photo: Photo | null) => void; label?: string; note?: string }) {
+export function PhotoPicker({ value, onChange, label = 'ছবি', note = 'চাইলে দাও, তোমার ফোনেই থাকবে', width }: { value: Photo | null; onChange: (photo: Photo | null) => void; label?: string; note?: string; width?: number }) {
   const [error, setError] = useState('');
   async function pick(file: File | undefined) {
     if (!file) return;
-    try { onChange(await loadPhoto(file)); setError(''); }
+    try { onChange(await loadPhoto(file, width)); setError(''); }
     catch { setError('ছবিটা খোলা গেল না। অন্য একটা ছবি দিয়ে চেষ্টা করো।'); }
   }
   return <div className="kit-photo">

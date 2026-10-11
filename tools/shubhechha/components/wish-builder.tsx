@@ -167,7 +167,7 @@ export function WishBuilder() {
           {framing ? (
             <>
               <div id="wish-photo" className="wish-photo">
-                <PhotoPicker value={photo} onChange={pickPhoto} label="তোমার ছবি" note="ফ্রেমের মাঝখানে বসবে। ফোনেই থাকে, লিংকে যায় না" />
+                <PhotoPicker value={photo} onChange={pickPhoto} width={900} label="তোমার ছবি" note="ফ্রেমের মাঝখানে বসবে। ফোনেই থাকে, লিংকে যায় না" />
               </div>
               <fieldset className="wish-messages">
                 <legend>ফিতায় কী লেখা থাকবে?</legend>

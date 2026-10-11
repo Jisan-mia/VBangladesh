@@ -117,7 +117,7 @@ export function StudioBuilder() {
         </fieldset>
 
         <div className="sc-photo">
-          <PhotoPicker value={photo} onChange={pickPhoto} label="তোমার ছবি" note="মাঝের ফ্রেমে বসবে। ফোনেই থাকে, কোথাও যায় না" />
+          <PhotoPicker value={photo} onChange={pickPhoto} width={900} label="তোমার ছবি" note="মাঝের ফ্রেমে বসবে। ফোনেই থাকে, কোথাও যায় না" />
         </div>
 
         <figure className="kit-card sc-print" data-format={format}>

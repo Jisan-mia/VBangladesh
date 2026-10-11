@@ -95,6 +95,7 @@ export async function renderCard(draw: (canvas: HTMLCanvasElement) => void): Pro
 }
 
 /** Loads a picked photo shrunk to ~360px wide: cards only need a small circle, and cheap phones run out of memory on 12MP images. */
-export async function loadPhoto(file: File): Promise<Photo> {
-  return createImageBitmap(file, { resizeWidth: 360, resizeQuality: "high" }).catch(() => createImageBitmap(file));
+/** `width` is the decoded width: small by default to spare cheap phones' memory; large frames pass more. */
+export async function loadPhoto(file: File, width = 360): Promise<Photo> {
+  return createImageBitmap(file, { resizeWidth: width, resizeQuality: "high" }).catch(() => createImageBitmap(file));
 }
