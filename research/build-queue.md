@@ -262,7 +262,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 18 | churui-tarao | চড়ুই তাড়াও | গেম | G05 | building | games-2026-10.md §4.3 #5 |
 | 18 | handi-bhanga | হাঁড়িভাঙা | গেম | G02 | building | games-2026-10.md §4.3 #2 |
 | 19 | peoner-cycle | পিয়নের সাইকেল | গেম | G04 | building | games-2026-10.md §4.3 #4 |
-| 19 | sap-ludu | সাপলুডু | গেম | G08 | todo | games-2026-10.md §4.3 #8 |
+| 19 | sap-ludu | সাপলুডু | গেম | G08 | building | games-2026-10.md §4.3 #8 |
 | 19 | baghbandi | বাঘবন্দি | গেম | G09 | todo | games-2026-10.md §4.3 #9 |
 | 19 | baicher-nouka | বাইচের নৌকা | গেম | G06 | todo | games-2026-10.md §4.3 #6 |
 | 19 | vo-katta | ভো-কাট্টা | গেম | G14 | todo | games-2026-10.md §4.3 #14 |
