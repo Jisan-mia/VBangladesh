@@ -1,0 +1,101 @@
+.tool-deri-hoye-gelo{--accent:#2b4c8c;--accent-deep:#1b3263;--ink:#1f2a44;--muted:#5b6478;--red:#b23a2e;--sun:#ffd166;--paper:#fff7e6;--line:#d9dfe9;--night:#14213d}
+.tool-deri-hoye-gelo .dh-page{color:var(--ink)}
+.tool-deri-hoye-gelo .dh-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero: short, so the road and both buttons land on the first phone screen */
+.tool-deri-hoye-gelo .dh-hero{padding:8px 0 6px}
+.tool-deri-hoye-gelo .dh-hero-kicker{margin:0;font-size:13px;font-weight:600;color:var(--red)}
+.tool-deri-hoye-gelo .dh-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(24px,6.6vw,48px);line-height:1.25;font-weight:700;letter-spacing:0}
+.tool-deri-hoye-gelo .dh-hero h1 span{color:var(--accent)}
+.tool-deri-hoye-gelo .dh-lead{max-width:560px;margin:0;color:var(--muted);font-size:15px;line-height:1.5}
+.tool-deri-hoye-gelo .dh-page:has(.dh-friend) .dh-lead{display:none}
+
+.tool-deri-hoye-gelo .dh{display:grid;gap:8px;justify-items:center}
+.tool-deri-hoye-gelo .dh>*{width:min(100%,480px,max(300px,calc((100svh - 300px) * 1.24)))}
+
+/* opened from a friend's link: their card, tilted, with the distance to beat */
+.tool-deri-hoye-gelo .dh-friend{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;padding:8px 12px;border-radius:16px;background:var(--paper);border:1.5px solid #f0dfbd}
+.tool-deri-hoye-gelo .dh-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 6px 14px #1f2a4433;transform:rotate(-3deg)}
+.tool-deri-hoye-gelo .dh-friend-kicker{margin:0;font-size:12px;font-weight:600;color:var(--red)}
+.tool-deri-hoye-gelo .dh-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.35}
+.tool-deri-hoye-gelo .dh-friend h2 span{color:var(--accent)}
+.tool-deri-hoye-gelo .dh-friend p:last-child{margin:0;font-size:13px;color:var(--muted);line-height:1.4}
+
+/* the play area: only here do touches belong to the game, the rest of the page still scrolls */
+.tool-deri-hoye-gelo .dh-stage{position:relative;border-radius:18px;overflow:hidden;background:#cde8f0;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;box-shadow:0 10px 24px #1f2a4430}
+.tool-deri-hoye-gelo .dh-stage canvas{display:block;width:100%;height:auto;aspect-ratio:360/290}
+.tool-deri-hoye-gelo .dh-stage:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+.tool-deri-hoye-gelo .dh-overlay{position:absolute;left:50%;top:15%;transform:translateX(-50%);display:grid;justify-items:center;gap:6px;width:min(290px,calc(100% - 24px));padding:12px 14px;border-radius:18px;background:#14213dde;color:#fff4dc;text-align:center;pointer-events:none}
+.tool-deri-hoye-gelo .dh-overlay button{pointer-events:auto}
+.tool-deri-hoye-gelo .dh-how{margin:0;font-family:var(--font-display);font-size:26px;font-weight:700;line-height:1.25}
+.tool-deri-hoye-gelo .dh-sub{margin:0;font-size:14px;line-height:1.4;color:#e4e9f2}
+.tool-deri-hoye-gelo .dh-go{min-width:180px;min-height:56px;font-size:20px;font-family:var(--font-display)}
+.tool-deri-hoye-gelo .dh-dim{top:0;left:0;right:0;bottom:0;width:auto;transform:none;align-content:center;border-radius:0;background:#14213dad}
+.tool-deri-hoye-gelo .dh-bump{top:12%;gap:2px;padding:10px 14px}
+.tool-deri-hoye-gelo .dh-kicker{margin:0;font-size:15px;font-weight:600;line-height:1.4;color:#f3e3c6}
+.tool-deri-hoye-gelo .dh-headline{margin:0;font-family:var(--font-display);font-size:clamp(26px,8vw,34px);font-weight:700;line-height:1.25;color:var(--sun)}
+
+/* thumbs: duck on the left, a bigger jump on the right */
+.tool-deri-hoye-gelo .dh-pad{display:grid;grid-template-columns:2fr 3fr;gap:10px}
+.tool-deri-hoye-gelo .dh-pad button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:64px;border-radius:18px;font-family:var(--font-display);font-size:20px;font-weight:700;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.tool-deri-hoye-gelo .dh-pad span{font-size:22px;line-height:1}
+.tool-deri-hoye-gelo .dh-duck{border:2px solid var(--red);background:#fff;color:var(--red)}
+.tool-deri-hoye-gelo .dh-jump{border:2px solid var(--accent-deep);background:var(--accent);color:#fff}
+.tool-deri-hoye-gelo .dh-duck:active{background:#fbe9e6}
+.tool-deri-hoye-gelo .dh-jump:active{background:var(--accent-deep)}
+.tool-deri-hoye-gelo .dh-pad button:disabled{opacity:.45}
+
+/* after a bump: the distance, this phone's best and a big আরেকবার where the thumbs already are */
+.tool-deri-hoye-gelo .dh-over{display:grid;gap:8px;padding:10px 12px;border-radius:18px;background:var(--paper);border:1.5px solid #f0dfbd}
+.tool-deri-hoye-gelo .dh-score{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 12px;margin:0}
+.tool-deri-hoye-gelo .dh-score b{font-family:var(--font-display);font-size:30px;line-height:1.2;color:var(--accent)}
+.tool-deri-hoye-gelo .dh-score span{font-size:14px;font-weight:600;color:var(--muted)}
+.tool-deri-hoye-gelo .dh-versus{margin:0;padding:6px 10px;border-radius:12px;background:#fff;font-size:15px;font-weight:600;line-height:1.45}
+.tool-deri-hoye-gelo .dh-over-actions{display:grid;grid-template-columns:3fr 2fr;gap:10px}
+.tool-deri-hoye-gelo .dh-again{min-height:56px;font-size:20px;font-family:var(--font-display)}
+.tool-deri-hoye-gelo .dh-to-card{min-height:56px;padding:0 6px;white-space:nowrap;border:2px solid var(--accent);border-radius:14px;background:#fff;color:var(--accent);font-size:16px;font-weight:700}
+
+/* under the controls: the slow-mode toggle and pause */
+.tool-deri-hoye-gelo .dh-bar{container-type:inline-size;display:flex;gap:8px}
+.tool-deri-hoye-gelo .dh-toggle,.tool-deri-hoye-gelo .dh-pause{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:6px 14px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;line-height:1.2}
+.tool-deri-hoye-gelo .dh-toggle{flex:1;justify-content:flex-start;white-space:nowrap}
+.tool-deri-hoye-gelo .dh-toggle small{margin-left:auto;font-size:12px;font-weight:500;color:var(--muted)}
+@container (max-width:340px){.tool-deri-hoye-gelo .dh-toggle small{display:none}}
+.tool-deri-hoye-gelo .dh-toggle i{flex:none;position:relative;width:34px;height:20px;border-radius:99px;background:var(--line)}
+.tool-deri-hoye-gelo .dh-toggle i::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .15s}
+.tool-deri-hoye-gelo .dh-toggle[aria-pressed=true]{border-color:var(--accent)}
+.tool-deri-hoye-gelo .dh-toggle[aria-pressed=true] i{background:var(--accent)}
+.tool-deri-hoye-gelo .dh-toggle[aria-pressed=true] i::after{transform:translateX(14px)}
+.tool-deri-hoye-gelo .dh-pause{flex:none;min-width:96px}
+.tool-deri-hoye-gelo .dh-pause:disabled{opacity:.5}
+
+/* result */
+.tool-deri-hoye-gelo .dh-result{scroll-margin-top:12px;width:100%;max-width:none;margin-top:24px;padding-top:20px;border-top:2px solid var(--ink)}
+.tool-deri-hoye-gelo .dh-result-head h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(24px,5vw,36px);line-height:1.4}
+.tool-deri-hoye-gelo .dh-result-head h2 em{font-style:normal;color:var(--accent)}
+.tool-deri-hoye-gelo .dh-result-head p{margin:0 0 16px;color:var(--muted)}
+.tool-deri-hoye-gelo .dh-result-body{display:grid;gap:22px}
+.tool-deri-hoye-gelo .dh-controls{display:grid;gap:18px;align-content:start}
+.tool-deri-hoye-gelo .dh-name{display:grid;gap:6px;font-weight:600}
+.tool-deri-hoye-gelo .dh-name small{font-weight:400;color:var(--muted);font-size:13px}
+.tool-deri-hoye-gelo .dh-name input{border:1.5px solid var(--line);border-radius:12px;font-size:17px}
+
+.tool-deri-hoye-gelo .dh-guide h2{font-family:var(--font-display);margin-bottom:18px}
+.tool-deri-hoye-gelo .dh-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.tool-deri-hoye-gelo .dh-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-deri-hoye-gelo .dh-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--accent);color:#fff;font-weight:700}
+.tool-deri-hoye-gelo .dh-guide li p{margin:4px 0 0}
+
+@media(min-width:720px){
+  .tool-deri-hoye-gelo .dh-hero{padding:24px 0 14px}
+  .tool-deri-hoye-gelo .dh-result{max-width:960px}
+  .tool-deri-hoye-gelo .dh-result-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:36px}
+  .tool-deri-hoye-gelo .dh-friend{grid-template-columns:96px 1fr;padding:12px 16px}
+  .tool-deri-hoye-gelo .dh-friend h2{font-size:20px}
+}
+@media(max-width:360px){
+  .tool-deri-hoye-gelo .dh-how{font-size:22px}
+  .tool-deri-hoye-gelo .dh-pad button{font-size:18px}
+}
+@media(prefers-reduced-motion:reduce){.tool-deri-hoye-gelo .dh-toggle i::after{transition:none}}
