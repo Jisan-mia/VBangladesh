@@ -1,0 +1,173 @@
+.tool-bhangti-nai{--accent:#0f6e66;--accent-deep:#0a4a45;--ink:#2a1d12;--muted:#6b5a48;--wall:#1b6a63;--wood:#a7703f;--wood-dark:#6e4524;--sign:#f6c945;--red:#a32a1f;--paper:#fffaf0;--line:#e3d3b0}
+.tool-bhangti-nai .bt-page{color:var(--ink)}
+.tool-bhangti-nai .bt-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero: two short lines, so the counter, the cash box and "দাও" all land on the first phone screen */
+.tool-bhangti-nai .bt-hero{padding:8px 0 6px}
+.tool-bhangti-nai .bt-hero-kicker{margin:0;font-size:13px;font-weight:600;color:var(--accent)}
+.tool-bhangti-nai .bt-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6.2vw,44px);line-height:1.3;letter-spacing:0}
+.tool-bhangti-nai .bt-lead{display:none;max-width:560px;margin:2px 0 0;color:var(--muted);font-size:15px;line-height:1.5}
+
+.tool-bhangti-nai .bt{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;max-width:480px}
+
+/* a friend's link: their card, tilted, and the honest label */
+.tool-bhangti-nai .bt-friend{display:grid;grid-template-columns:46px 1fr;gap:12px;align-items:center;padding:8px 12px;border-radius:14px;background:#fff3cf;border:1.5px solid #ecd9a4}
+.tool-bhangti-nai .bt-friend canvas{width:100%;height:auto;border-radius:5px;box-shadow:0 4px 12px #2a1d1233;transform:rotate(-4deg)}
+.tool-bhangti-nai .bt-friend h2{margin:0;font-family:var(--font-display);font-size:15.5px;line-height:1.4}
+.tool-bhangti-nai .bt-friend p{margin:0;font-size:13px;line-height:1.4;color:var(--muted)}
+
+.tool-bhangti-nai .bt-hud{display:flex;align-items:center;gap:8px;min-height:44px}
+.tool-bhangti-nai .bt-howto{margin:0;font-size:15px;font-weight:600;line-height:1.45}
+.tool-bhangti-nai .bt-howto b{color:var(--accent-deep)}
+.tool-bhangti-nai .bt-count,.tool-bhangti-nai .bt-score{display:flex;align-items:baseline;gap:4px;margin:0;line-height:1;white-space:nowrap}
+.tool-bhangti-nai .bt-count span,.tool-bhangti-nai .bt-score span{font-size:13px;font-weight:600;color:var(--muted)}
+.tool-bhangti-nai .bt-count b{font-family:var(--font-display);font-size:19px}
+.tool-bhangti-nai .bt-score b{font-family:var(--font-display);font-size:25px;font-variant-numeric:tabular-nums}
+.tool-bhangti-nai .bt-dots{display:flex;flex:1 1 auto;justify-content:center;gap:2px;margin:0;padding:0;list-style:none;min-width:0}
+.tool-bhangti-nai .bt-dots li{flex:0 1 9px;width:9px;height:9px;border-radius:50%;border:2px solid #cbb98f}
+.tool-bhangti-nai .bt-dots li[data-mark=ok]{background:var(--accent);border-color:var(--accent)}
+.tool-bhangti-nai .bt-dots li[data-mark=miss]{border-color:#d9a58c;background:#f1cdbb}
+.tool-bhangti-nai .bt-dots li[data-mark=now]{border-color:var(--ink);background:var(--sign)}
+.tool-bhangti-nai .bt-pause{display:grid;place-items:center;flex:none;width:44px;height:44px;padding:0;border:0;border-radius:12px;background:#f3ead4;color:var(--ink)}
+.tool-bhangti-nai .bt-pause svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round}
+.tool-bhangti-nai .bt-pause .bt-fill{fill:currentColor;stroke:none}
+
+/* the counter: teal tin wall, the customer, and a wooden counter top that holds your change */
+.tool-bhangti-nai .bt-counter-block{position:relative;border-radius:18px;overflow:hidden;box-shadow:0 8px 20px #2a1d1229}
+.tool-bhangti-nai .bt-shop{position:relative;height:204px;overflow:hidden;background:repeating-linear-gradient(90deg,transparent 0 22px,#ffffff0c 22px 30px),linear-gradient(var(--wall),#165a54)}
+.tool-bhangti-nai .bt-shop::after{content:"";position:absolute;left:0;right:0;bottom:0;height:30px;background:linear-gradient(#c88d52,var(--wood));border-top:3px solid #dcae78}
+.tool-bhangti-nai .bt-shelf{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+.tool-bhangti-nai .bt-timer{position:absolute;left:10px;right:10px;top:8px;z-index:2;height:7px;border-radius:9px;background:#ffffff2e;overflow:hidden}
+.tool-bhangti-nai .bt-timer i{display:block;height:100%;border-radius:inherit;background:var(--sign);transform-origin:left center}
+.tool-bhangti-nai .bt-timer i[data-low=true]{background:#ff8a65}
+.tool-bhangti-nai .bt-timer[data-off=true]{visibility:hidden}
+.tool-bhangti-nai .bt-sold,.tool-bhangti-nai .bt-ribbon{position:absolute;left:10px;top:22px;z-index:3;margin:0;padding:2px 9px;border-radius:6px;font-size:13px;font-weight:700;line-height:1.5}
+.tool-bhangti-nai .bt-sold{max-width:104px;background:#fff;color:var(--red);border:2px dashed var(--red);line-height:1.3;text-align:center;transform:rotate(-3deg)}
+.tool-bhangti-nai .bt-ribbon{background:var(--sign);color:var(--ink)}
+
+.tool-bhangti-nai .bt-guest{position:absolute;left:4px;right:10px;top:20px;bottom:30px;display:grid;grid-template-columns:122px minmax(0,1fr);gap:4px;animation:bt-in .28s ease-out}
+.tool-bhangti-nai .bt-person{align-self:end;display:block;width:122px;height:122px;margin-bottom:-4px}
+.tool-bhangti-nai .bt-person[data-mood=happy]{animation:bt-hop .45s ease-out}
+.tool-bhangti-nai .bt-talk{display:grid;align-content:start;gap:6px;padding-top:6px}
+.tool-bhangti-nai .bt-bubble{position:relative;margin:0;padding:7px 12px 8px;border-radius:16px;background:#fffdf7;box-shadow:0 3px 0 #00000026;font-size:16px;font-weight:600;line-height:1.3;color:var(--ink)}
+.tool-bhangti-nai .bt-bubble::before{content:"";position:absolute;left:-9px;bottom:16px;border:9px solid transparent;border-right-color:#fffdf7;border-left:0}
+.tool-bhangti-nai .bt-line{display:block}
+.tool-bhangti-nai .bt-bubble b{font-family:var(--font-display);font-size:27px;font-weight:800;line-height:1.1;color:var(--red)}
+.tool-bhangti-nai .bt-reply{margin:0;padding:4px 10px;border-radius:12px;background:#fff3c4;font-size:14px;font-weight:700;line-height:1.4;animation:bt-pop .22s ease-out}
+.tool-bhangti-nai .bt-reply[data-kind=wrong]{background:#ffe2d6;color:#7d2418}
+.tool-bhangti-nai .bt-reply[data-kind=right]{background:#d7f1e2;color:var(--accent-deep)}
+.tool-bhangti-nai .bt-points{margin-left:6px;font-family:var(--font-display);font-size:17px;white-space:nowrap}
+.tool-bhangti-nai .bt-points small{font-family:var(--font-bengali);font-size:12px;font-weight:600}
+.tool-bhangti-nai .bt-paid{position:absolute;right:10px;bottom:3px;z-index:2;display:flex;gap:3px}
+.tool-bhangti-nai .bt-paid .bt-chit{--h:24px}
+
+/* your change, on the counter top: tap a chit here to take it back */
+.tool-bhangti-nai .bt-tray{display:flex;align-items:center;gap:8px;min-height:60px;padding:6px 10px;background:linear-gradient(var(--wood),#94612f);color:#fff8e6}
+.tool-bhangti-nai .bt-tray[data-shake=true]{animation:bt-shake1 .3s}
+.tool-bhangti-nai .bt-tray[data-shake=false][data-kind=wrong]{animation:bt-shake2 .3s}
+.tool-bhangti-nai .bt-given{display:flex;flex:1;flex-wrap:wrap;align-items:center;gap:0 3px;min-width:0}
+.tool-bhangti-nai .bt-taken{position:relative;display:grid;place-items:center;min-width:44px;min-height:44px;padding:0;border:0;background:none;touch-action:manipulation}
+.tool-bhangti-nai .bt-taken .bt-chit{--h:28px}
+.tool-bhangti-nai .bt-taken .bt-chit[data-coin=false]{width:46px}
+.tool-bhangti-nai .bt-taken i{position:absolute;top:0;right:-4px;padding:0 5px;border-radius:999px;background:var(--ink);color:#fff;font-size:12px;font-style:normal;font-weight:700;line-height:1.4}
+.tool-bhangti-nai .bt-empty{font-size:14px;line-height:1.4;color:#fdecc8}
+.tool-bhangti-nai .bt-total{display:grid;justify-items:end;flex:none;margin:0;font-size:13px;line-height:1.1;text-align:right}
+.tool-bhangti-nai .bt-total span{font-size:12px;opacity:.85}
+.tool-bhangti-nai .bt-total b{font-family:var(--font-display);font-size:28px;font-weight:800;white-space:nowrap}
+.tool-bhangti-nai .bt-total b small{font-family:var(--font-bengali);font-size:13px;font-weight:600}
+.tool-bhangti-nai .bt-answer{margin:0;font-size:15px;font-weight:600;line-height:1.4}
+.tool-bhangti-nai .bt-answer b{font-family:var(--font-display);font-size:22px}
+.tool-bhangti-nai .bt-answer-chits{display:inline-flex;flex-wrap:wrap;gap:3px;margin-left:6px;vertical-align:middle}
+.tool-bhangti-nai .bt-answer-chits .bt-chit{--h:24px}
+
+/* pause and game over cover the whole counter */
+.tool-bhangti-nai .bt-overlay{position:absolute;inset:0;z-index:5;display:grid;place-items:center;padding:10px;background:#0f3f3af2}
+.tool-bhangti-nai .bt-note{display:grid;justify-items:center;gap:6px;max-width:310px;padding:12px 18px;border-radius:16px;background:var(--paper);box-shadow:0 8px 24px #0004;text-align:center}
+.tool-bhangti-nai .bt-note p{margin:0;font-size:15px;font-weight:600;line-height:1.45}
+.tool-bhangti-nai .bt-note .kit-primary{min-width:180px;min-height:54px;font-size:19px}
+.tool-bhangti-nai .bt-slip{gap:2px;border:3px solid var(--ink);border-radius:8px;transform:rotate(-1.5deg);animation:bt-drop .3s ease-out}
+.tool-bhangti-nai .bt-slip h2{margin:0;font-family:var(--font-display);font-size:27px;line-height:1.25;color:var(--red)}
+.tool-bhangti-nai .bt-note .bt-tally{font-family:var(--font-display);font-size:18px;font-weight:700}
+.tool-bhangti-nai .bt-note .bt-final{font-size:16px}
+.tool-bhangti-nai .bt-final b{font-family:var(--font-display);font-size:40px;line-height:1.1}
+.tool-bhangti-nai .bt-note .bt-record{font-size:14px;font-weight:500;color:var(--muted)}
+.tool-bhangti-nai .bt-see{font-size:15px}
+
+/* the cash box: a wooden drawer with a slot for each chit */
+.tool-bhangti-nai .bt-box{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:7px;border-radius:16px;background:var(--wood-dark);box-shadow:inset 0 2px 0 #ffffff1f,0 4px 0 #4a2d16}
+.tool-bhangti-nai .bt-slot{position:relative;display:grid;place-items:center;min-height:60px;padding:0;border:0;border-radius:11px;background:#88582f;box-shadow:inset 0 3px 6px #00000045;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.tool-bhangti-nai .bt-slot .bt-chit{--h:42px;transition:transform .08s}
+.tool-bhangti-nai .bt-slot .bt-chit[data-coin=false]{width:min(74px,calc(100% - 8px))}
+.tool-bhangti-nai .bt-slot:active:not(:disabled) .bt-chit{transform:translateY(2px) scale(.94)}
+.tool-bhangti-nai .bt-slot:disabled,.tool-bhangti-nai .bt-taken:disabled{opacity:1;cursor:default}
+.tool-bhangti-nai .bt-box[data-off=true] .bt-chit{opacity:.55}
+.tool-bhangti-nai .bt-slot[data-gone=true] .bt-chit{opacity:.28;filter:grayscale(1)}
+.tool-bhangti-nai .bt-slot em{position:absolute;padding:1px 9px;border-radius:5px;background:var(--red);color:#fff;font-size:15px;font-style:normal;font-weight:800;transform:rotate(-14deg)}
+.tool-bhangti-nai .bt-undo{gap:0;align-content:center;color:#fdecc8;font-size:15px;font-weight:700;line-height:1.2}
+.tool-bhangti-nai .bt-undo svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.tool-bhangti-nai .bt-undo:disabled{opacity:.5}
+
+/* play money: coins round, notes as slips; colour plus a big numeral, never colour alone */
+.tool-bhangti-nai .bt-chit{--h:44px;position:relative;display:inline-grid;place-items:center;flex:none;width:calc(var(--h) * 1.75);height:var(--h);border:1.5px solid #2a1d1240;border-radius:8px;background:var(--c);box-shadow:0 2px 0 #2a1d1230;color:var(--ink);font-family:var(--font-display);font-size:calc(var(--h) * .5);font-weight:800;line-height:1}
+.tool-bhangti-nai .bt-chit::before{content:"";position:absolute;inset:3px;border:1.5px solid #2a1d1224;border-radius:5px}
+.tool-bhangti-nai .bt-chit[data-coin=true],.tool-bhangti-nai .bt-chit[data-coin=true]::before{width:var(--h);border-radius:50%}
+.tool-bhangti-nai .bt-chit[data-coin=true]::before{width:auto}
+.tool-bhangti-nai .bt-chit b{position:relative;font-weight:800;margin-top:.08em}
+.tool-bhangti-nai .bt-chit[data-small=true]{--h:30px}
+
+.tool-bhangti-nai .bt-go{width:100%;min-height:58px;font-size:22px}
+.tool-bhangti-nai .bt-go small{padding:2px 10px;border-radius:999px;background:#ffffff26;font-size:17px;font-weight:700}
+
+.tool-bhangti-nai .bt-toggles{display:flex;flex-wrap:wrap;gap:8px}
+.tool-bhangti-nai .bt-toggles button{min-height:44px;padding:6px 14px;border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font-size:14px;font-weight:600}
+.tool-bhangti-nai .bt-toggles button small{font-weight:500;color:var(--muted)}
+.tool-bhangti-nai .bt-toggles button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.tool-bhangti-nai .bt-toggles button[aria-pressed=true] small{color:#d5efe9}
+.tool-bhangti-nai .bt-keys{display:none;flex-basis:100%;margin:0;font-size:13px;color:var(--muted)}
+@media(hover:hover) and (pointer:fine){.tool-bhangti-nai .bt-keys{display:block}}
+
+/* the result card */
+.tool-bhangti-nai .bt-result{display:grid;gap:14px;scroll-margin-top:12px;margin-top:14px;padding-top:18px;border-top:2px solid var(--ink)}
+.tool-bhangti-nai .bt-result h2{margin:0;font-family:var(--font-display);font-size:clamp(22px,5vw,32px);line-height:1.35}
+.tool-bhangti-nai .bt-result h2 em{font-style:normal;color:var(--accent)}
+.tool-bhangti-nai .bt-result>p{margin:0;color:var(--muted)}
+.tool-bhangti-nai .bt-name{display:grid;gap:6px;font-weight:600}
+.tool-bhangti-nai .bt-name small{font-weight:400;font-size:13px;color:var(--muted)}
+.tool-bhangti-nai .bt-name input{width:100%;border:1.5px solid var(--line);border-radius:12px;font-size:17px}
+.tool-bhangti-nai .bt-again-link{justify-self:start}
+
+.tool-bhangti-nai .bt-guide h2{font-family:var(--font-display);margin-bottom:8px}
+.tool-bhangti-nai .bt-guide>p{margin:0 0 16px;color:var(--muted)}
+.tool-bhangti-nai .bt-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.tool-bhangti-nai .bt-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-bhangti-nai .bt-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--sign);font-weight:700}
+.tool-bhangti-nai .bt-guide li p{margin:4px 0 0}
+
+@keyframes bt-in{from{transform:translateX(-26px);opacity:0}}
+@keyframes bt-pop{from{transform:scale(.85);opacity:0}}
+@keyframes bt-hop{40%{transform:translateY(-7px)}}
+@keyframes bt-drop{from{transform:translateY(-14px) rotate(-5deg);opacity:0}}
+@keyframes bt-shake1{25%{transform:translateX(-6px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+@keyframes bt-shake2{25%{transform:translateX(-6px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+.tool-bhangti-nai .bt[data-slow=true] *{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){.tool-bhangti-nai .bt *{animation:none!important;transition:none!important}}
+
+@media(max-width:360px){
+  .tool-bhangti-nai .bt-hud{gap:5px}
+  .tool-bhangti-nai .bt-dots{gap:1px}
+  .tool-bhangti-nai .bt-dots li{width:7px;height:7px;border-width:1.5px}
+  .tool-bhangti-nai .bt-count span{display:none}
+  .tool-bhangti-nai .bt-score b{font-size:22px}
+  .tool-bhangti-nai .bt-guest{grid-template-columns:92px minmax(0,1fr)}
+  .tool-bhangti-nai .bt-person{width:92px;height:92px}
+  .tool-bhangti-nai .bt-bubble{font-size:14.5px;padding:6px 10px}
+  .tool-bhangti-nai .bt-bubble b{font-size:23px}
+  .tool-bhangti-nai .bt-slot .bt-chit{--h:38px}
+}
+@media(min-width:720px){
+  .tool-bhangti-nai .bt-hero{padding:24px 0 14px}
+  .tool-bhangti-nai .bt-lead{display:block}
+  .tool-bhangti-nai .bt-page:has(.bt-friend) .bt-lead{display:none}
+  .tool-bhangti-nai .bt-friend{grid-template-columns:96px 1fr}
+  .tool-bhangti-nai .bt-friend h2{font-size:20px}
+}
