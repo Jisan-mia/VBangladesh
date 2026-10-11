@@ -101,6 +101,7 @@ import { site as churui_tarao } from '../tools/churui-tarao/content';
 import { site as handi_bhanga } from '../tools/handi-bhanga/content';
 import { site as peoner_cycle } from '../tools/peoner-cycle/content';
 import { site as sap_ludu } from '../tools/sap-ludu/content';
+import { site as baghbandi } from '../tools/baghbandi/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -206,6 +207,7 @@ export const toolContent = {
   'handi-bhanga': handi_bhanga,
   'peoner-cycle': peoner_cycle,
   'sap-ludu': sap_ludu,
+  'baghbandi': baghbandi,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
