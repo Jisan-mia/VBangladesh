@@ -101,7 +101,7 @@ export const catalog = [
   { slug: "jhalmuri-sap", name: "ঝালমুড়ি সাপ", description: "সাপ চালাও, মুড়ি-চানাচুর খাও, বন্ধুকে একই ঠোঙা পাঠাও", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "danguli", name: "ডাংগুলি", description: "কাঠি তোলো, মারো জোরে! তিন মারে কত ডাং যায় দেখো, বন্ধুকে একই মাঠে ডাকো।", category: "গেম", action: "ডাং মারো" },
   { slug: "antenna-thik-koro", name: "অ্যান্টেনা ঠিক করো", description: "ছাদের অ্যান্টেনা ঘুরিয়ে ঝিরঝির টিভিতে ছবি আনো, ৯০-এর মতো।", category: "গেম", action: "অ্যান্টেনা ঘোরাও" },
-  { slug: "sir-ghurlei-thamo", name: "স্যার ঘুরলেই থামো", description: "স্যার ঘুরলেই থামো: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "sir-ghurlei-thamo", name: "স্যার ঘুরলেই থামো", description: "স্যার বোর্ডে লিখলে চিরকুট পেছনে চালাও, ঘুরলেই থামো। কত সেকেন্ডে শেষ বেঞ্চ?", category: "গেম", action: "চিরকুট চালাও" },
   { slug: "deri-hoye-gelo", name: "দেরি হয়ে গেল!", description: "দেরি হয়ে গেল!: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "chor-police", name: "চোর-ডাকাত-পুলিশ-বাবু", description: "থালায় চার চিরকুট, এক ফোনে চারজন। লুকিয়ে দেখো, পুলিশ চোর ধরবে।", category: "গেম", action: "চিরকুট তোলো" },
   { slug: "bostar-pahar", name: "বস্তার পাহাড়", description: "বস্তার পাহাড়: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },

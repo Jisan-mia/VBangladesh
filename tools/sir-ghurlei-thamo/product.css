@@ -1,0 +1,95 @@
+.tool-sir-ghurlei-thamo{--accent:#2b4fa0;--accent-deep:#1c3570;--ink:#1f2a24;--muted:#56605a;--wall:#ebe4cf;--board:#2f4a3e;--wood:#8a5a34;--paper:#fffdf4;--band:#24382f}
+.tool-sir-ghurlei-thamo .sg-page{color:var(--ink)}
+.tool-sir-ghurlei-thamo .sg-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero: short, so the classroom and the big button land on the first phone screen */
+.tool-sir-ghurlei-thamo .sg-hero{padding:10px 0 6px}
+.tool-sir-ghurlei-thamo .sg-hero-kicker{margin:0;font-size:13px;font-weight:600;color:var(--accent)}
+.tool-sir-ghurlei-thamo .sg-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,46px);line-height:1.3;font-weight:700;letter-spacing:0}
+.tool-sir-ghurlei-thamo .sg-lead{max-width:560px;margin:0;color:var(--muted);font-size:15px;line-height:1.55}
+.tool-sir-ghurlei-thamo .sg-page:has(.sg-friend) :is(.sg-lead,.sg-hero-kicker){display:none}
+
+.tool-sir-ghurlei-thamo .sg{display:grid;gap:8px;max-width:480px}
+
+/* opened from a friend's link: their card, tilted, and an honest label */
+.tool-sir-ghurlei-thamo .sg-friend{display:grid;grid-template-columns:62px 1fr;gap:12px;align-items:center;padding:10px 12px;border-radius:16px;background:#e3e9f6}
+.tool-sir-ghurlei-thamo .sg-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 6px 16px #1f2a2433;transform:rotate(-3deg)}
+.tool-sir-ghurlei-thamo .sg-kicker{margin:0;font-size:13px;font-weight:600;color:var(--accent)}
+.tool-sir-ghurlei-thamo .sg-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.4}
+.tool-sir-ghurlei-thamo .sg-claim{margin:2px 0 0;font-size:13px;color:var(--muted)}
+
+/* bench progress and the clock */
+.tool-sir-ghurlei-thamo .sg-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:28px}
+.tool-sir-ghurlei-thamo .sg-benches{display:flex;gap:5px;margin:0;padding:0;list-style:none}
+.tool-sir-ghurlei-thamo .sg-benches li{width:22px;height:10px;border:2px solid var(--wood);border-radius:3px;background:#f3ecd9}
+.tool-sir-ghurlei-thamo .sg-benches li[data-done=true]{background:var(--accent);border-color:var(--accent-deep)}
+.tool-sir-ghurlei-thamo .sg-benches li[data-now=true]{box-shadow:0 0 0 3px #2b4fa040}
+.tool-sir-ghurlei-thamo .sg-clock{margin:0;font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+
+/* the classroom; the status strip under it says what is happening in words, never only in colour */
+.tool-sir-ghurlei-thamo .sg-stage{position:relative;overflow:hidden;border-radius:16px;background:var(--wall);box-shadow:0 2px 0 #1f2a2414,0 10px 24px #1f2a241f;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.tool-sir-ghurlei-thamo .sg-stage[data-play=true]{touch-action:none;cursor:pointer}
+.tool-sir-ghurlei-thamo .sg-canvas{display:block;width:100%;height:auto;aspect-ratio:360/380}
+.tool-sir-ghurlei-thamo .sg-status{margin:0;min-height:36px;display:flex;align-items:center;background:var(--band)}
+.tool-sir-ghurlei-thamo .sg-status span{display:block;width:100%;padding:7px 12px;color:#fff;font-family:var(--font-display);font-size:15px;font-weight:700;line-height:1.35;animation:sg-pop .2s ease-out}
+.tool-sir-ghurlei-thamo .sg-status [data-status=tell]{background:#b26a00}
+.tool-sir-ghurlei-thamo .sg-status [data-status=look],.tool-sir-ghurlei-thamo .sg-status [data-status=scold],.tool-sir-ghurlei-thamo .sg-status [data-status=lift]{background:#9c2f2f}
+.tool-sir-ghurlei-thamo .sg-status [data-status=write],.tool-sir-ghurlei-thamo .sg-status [data-status=cough],.tool-sir-ghurlei-thamo .sg-status [data-status=drop],.tool-sir-ghurlei-thamo .sg-status [data-status=done]{background:#2d6a4f}
+.tool-sir-ghurlei-thamo .sg-pause{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;background:#24382fd9;color:#fff;text-align:center}
+.tool-sir-ghurlei-thamo .sg-pause .kit-primary{background:#ffd166;color:var(--band);box-shadow:0 4px 0 #d9a93a}
+.tool-sir-ghurlei-thamo .sg-pause p{margin:0;font-family:var(--font-display);font-size:22px;font-weight:700}
+@keyframes sg-pop{from{transform:translateY(4px);opacity:.5}}
+
+/* the one big control: hold to pass */
+.tool-sir-ghurlei-thamo .sg-pass{display:flex;align-items:center;justify-content:center;gap:14px;width:100%;min-height:80px;margin-top:2px;padding:10px 16px;border:0;border-radius:20px;background:var(--accent);color:#fff;box-shadow:0 5px 0 var(--accent-deep);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
+.tool-sir-ghurlei-thamo .sg-pass svg{flex:none;width:40px;height:30px;fill:var(--paper);stroke:#9a8f78;stroke-width:2;stroke-linejoin:round;transform:rotate(-8deg)}
+.tool-sir-ghurlei-thamo .sg-pass span{display:grid;text-align:left}
+.tool-sir-ghurlei-thamo .sg-pass b{font-family:var(--font-display);font-size:24px;line-height:1.2}
+.tool-sir-ghurlei-thamo .sg-pass small{font-size:14px;opacity:.92}
+.tool-sir-ghurlei-thamo .sg-pass[data-held=true]{background:var(--accent-deep);box-shadow:0 1px 0 #10204a;transform:translateY(4px)}
+.tool-sir-ghurlei-thamo .sg-pass[data-held=true] svg{transform:rotate(8deg) translateX(4px)}
+.tool-sir-ghurlei-thamo .sg-pass:focus-visible{outline:3px solid #ffd166;outline-offset:3px}
+.tool-sir-ghurlei-thamo .sg-options{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.tool-sir-ghurlei-thamo .sg-options p{margin:0 0 0 auto;font-size:14px;color:var(--muted)}
+.tool-sir-ghurlei-thamo .sg-toggle{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:6px 12px;border:1.5px solid #cdd3e3;border-radius:999px;background:#fff;color:var(--ink);font-size:14px}
+.tool-sir-ghurlei-thamo .sg-toggle svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tool-sir-ghurlei-thamo .sg-toggle[aria-pressed=true]{border-color:var(--accent-deep);background:var(--accent-deep);color:#fff}
+
+/* game over: the time, the best, one big আরেকবার */
+.tool-sir-ghurlei-thamo .sg-over{display:grid;justify-items:center;gap:2px;padding:12px 14px 6px;border-radius:18px;background:var(--paper);box-shadow:inset 0 0 0 1.5px #e3dcc6;text-align:center}
+.tool-sir-ghurlei-thamo .sg-over p{margin:0}
+.tool-sir-ghurlei-thamo .sg-over-kicker{font-weight:700;color:var(--accent-deep)}
+.tool-sir-ghurlei-thamo .sg-over-time{font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1.2}
+.tool-sir-ghurlei-thamo .sg-over-time b{font-size:clamp(46px,13vw,60px)}
+.tool-sir-ghurlei-thamo .sg-over-line{font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.4}
+.tool-sir-ghurlei-thamo .sg-over-best{font-size:14px;color:var(--muted)}
+.tool-sir-ghurlei-thamo .sg-again{width:100%;min-height:56px;margin-top:8px;font-size:20px}
+
+/* result card */
+.tool-sir-ghurlei-thamo .sg-result{scroll-margin-top:12px;margin-top:26px;padding-top:22px;border-top:2px solid var(--ink)}
+.tool-sir-ghurlei-thamo .sg-result h2{margin:0 0 14px;font-family:var(--font-display);font-size:clamp(24px,5vw,34px);line-height:1.4}
+.tool-sir-ghurlei-thamo .sg-result h2 em{font-style:normal;color:var(--accent)}
+.tool-sir-ghurlei-thamo .sg-result-body{display:grid;gap:20px}
+.tool-sir-ghurlei-thamo .sg-share{display:grid;gap:16px;align-content:start}
+.tool-sir-ghurlei-thamo .sg-name{display:grid;gap:6px;font-weight:600}
+.tool-sir-ghurlei-thamo .sg-name small{font-weight:400;color:var(--muted);font-size:13px}
+.tool-sir-ghurlei-thamo .sg-name input{border:1.5px solid #cdd3e3;border-radius:12px;font-size:17px}
+.tool-sir-ghurlei-thamo .kit-chips button[aria-pressed=true]{border-color:var(--accent-deep);background:var(--accent-deep)}
+
+.tool-sir-ghurlei-thamo .sg-guide h2{font-family:var(--font-display);margin-bottom:18px}
+.tool-sir-ghurlei-thamo .sg-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.tool-sir-ghurlei-thamo .sg-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-sir-ghurlei-thamo .sg-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--accent-deep);color:#fff;font-weight:700}
+.tool-sir-ghurlei-thamo .sg-guide li p{margin:4px 0 0}
+
+@media(min-width:720px){
+  .tool-sir-ghurlei-thamo .sg-hero{padding:28px 0 16px}
+  .tool-sir-ghurlei-thamo .sg-friend{grid-template-columns:120px 1fr;padding:14px 18px}
+  .tool-sir-ghurlei-thamo .sg-friend h2{font-size:21px}
+}
+/* narrow phones: room for two lines, so the big button never jumps under the thumb */
+@media(max-width:400px){.tool-sir-ghurlei-thamo .sg-status{min-height:56px}}
+@media(max-width:350px){.tool-sir-ghurlei-thamo .sg-benches{gap:3px}.tool-sir-ghurlei-thamo .sg-benches li{width:18px}.tool-sir-ghurlei-thamo .sg-pass b{font-size:21px}.tool-sir-ghurlei-thamo .sg-status span{font-size:14px}}
+.tool-sir-ghurlei-thamo .sg[data-slow=true] .sg-status span{animation:none}
+.tool-sir-ghurlei-thamo .sg[data-slow=true] .sg-pass[data-held=true]{transform:none}
+@media(prefers-reduced-motion:reduce){.tool-sir-ghurlei-thamo .sg-status span{animation:none}.tool-sir-ghurlei-thamo .sg-pass[data-held=true],.tool-sir-ghurlei-thamo .sg-pass[data-held=true] svg{transform:none}}
