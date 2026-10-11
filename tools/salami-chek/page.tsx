@@ -1,7 +1,7 @@
 import "./product.css";
 import { Faq, JsonLd, PageFrame } from "../../shared/site-shell";
 import { site } from "./content";
-import { ChequeBuilder } from "./components/cheque-builder";
+import { SalamiTool } from "./components/salami-tool";
 import { Messages } from "./components/messages";
 import { bn } from "./lib/cheque";
 
@@ -15,7 +15,7 @@ export default function SalamiChekPage() {
           <h1 id="salami-title">সালামি চাও? <span>চেকটা কেটে পাঠাও</span></h1>
           <p className="salami-lead">{site.lead}</p>
         </section>
-        <section className="container" id="tool" aria-label="সালামির চেক বানাও"><ChequeBuilder /></section>
+        <section className="container" id="tool" aria-label="সালামির চেক আর খাতা"><SalamiTool /></section>
 
         <section className="container section salami-messages" aria-labelledby="messages-title">
           <h2 id="messages-title">ঈদ সালামি চাওয়ার মেসেজ</h2>

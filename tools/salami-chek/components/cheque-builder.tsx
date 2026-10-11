@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
@@ -17,7 +17,8 @@ const toWhom = (name: string) => /[ঀ-৿]$/.test(name) ? `${name}কে` : `${
 
 type Mode = "make" | "sign" | "done";
 
-export function ChequeBuilder() {
+/** `switcher` is the চেক/খাতা switch, shown only while writing your own cheque. */
+export function ChequeBuilder({ switcher }: { switcher?: ReactNode }) {
   const [cheque, setCheque] = useState<Cheque>(defaultCheque);
   // make: a child writes the cheque · sign: an elder opened it · done: signed (here, or the link came back signed).
   const [mode, setMode] = useState<Mode>("make");
@@ -97,6 +98,7 @@ export function ChequeBuilder() {
 
   return (
     <div className="sc">
+      {mode === "make" && switcher}
       {mode === "sign" && (
         <header className="sc-banner">
           <p className="sc-kicker">তোমার কাছে একটা চেক এসেছে</p>

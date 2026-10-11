@@ -1,5 +1,6 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, roundedRect, type CardFormat } from "../../../shared/card-canvas";
-import { amountFigures, amountWords, chequeLine, giverLabel, possessive, type Cheque } from "./cheque";
+import { amountFigures, amountWords, bn, chequeLine, giverLabel, possessive, type Cheque } from "./cheque";
+import { khataCount, khataLabel, khataLine, khataTitle, khataTotal, type Khata } from "./khata";
 
 const NIGHT = "#0c3a2b";
 const ENVELOPE = "#16864c";
@@ -145,3 +146,71 @@ export function drawCard(canvas: HTMLCanvasElement, cheque: Cheque, format: Card
 }
 
 export const cardBlob = (cheque: Cheque, format: CardFormat, site: string) => renderCard(canvas => drawCard(canvas, cheque, format, site));
+
+/** The সালামি খাতা leaf, drawn in its own w×h space: a green cloth spine, ruled lines, a red margin. Past nine rows it splits into two columns so all eighteen relations fit. */
+function drawLeaf(context: CanvasRenderingContext2D, khata: Khata, x: number, y: number, w: number, h: number, tilt: number) {
+  const { rows } = khata, total = khataTotal(rows);
+  const cols = rows.length > 9 ? 2 : 1, perCol = Math.ceil(rows.length / cols), colW = w / cols;
+  const top = 104, bottom = h - 100 - (total ? 76 : 0);
+  const slots = Math.max(perCol, 7), rowH = Math.min(84, (bottom - top) / slots), size = Math.min(44, rowH * .56);
+  context.save();
+  context.translate(x + w / 2, y + h / 2); context.rotate(tilt); context.translate(-w / 2, -h / 2);
+  context.shadowColor = "rgba(0,0,0,.35)"; context.shadowBlur = 36; context.shadowOffsetY = 14;
+  roundedRect(context, 0, 0, w, h, 28); context.fillStyle = PAPER; context.fill();
+  context.shadowColor = "transparent";
+  context.save();
+  roundedRect(context, 0, 0, w, h, 28); context.clip();
+  context.fillStyle = ENVELOPE; context.fillRect(0, 0, w, 88);
+  context.strokeStyle = "#cfe0d3"; context.lineWidth = 2;
+  for (let i = 1; i <= slots; i++) { context.beginPath(); context.moveTo(0, top + i * rowH); context.lineTo(w, top + i * rowH); context.stroke(); }
+  context.strokeStyle = "#e59aa3"; context.lineWidth = 3;
+  for (let c = 0; c < cols; c++) { context.beginPath(); context.moveTo(c * colW + 84, 88); context.lineTo(c * colW + 84, h); context.stroke(); }
+  context.restore();
+  fitText(context, [{ text: "এবার কে কে দিল", color: GOLD, weight: 800, display: true }], 40, 60, 44, w - 160);
+  crescent(context, w - 64, 44, 24, GOLD, ENVELOPE); star(context, w - 46, 32, 8, GOLD);
+  rows.forEach((row, i) => {
+    const left = Math.floor(i / perCol) * colW, baseline = top + (i % perCol + 1) * rowH - rowH * .26;
+    fitText(context, [{ text: `${bn(i + 1)}.`, color: MUTED, weight: 600 }], left + 66, baseline, size * .8, 56, "right");
+    fitText(context, [{ text: khataLabel(row.giver), color: PEN, weight: 700 }], left + 104, baseline, size, colW - 140 - (row.amount ? colW * .4 : 40));
+    if (row.amount) fitText(context, [{ text: `৳${amountFigures(row.amount)}`, color: PEN, weight: 800 }], left + colW - 30, baseline, size, colW * .4, "right");
+    else crescent(context, left + colW - 46, baseline - size * .36, size * .34, ENVELOPE, PAPER);
+  });
+  if (total) {
+    // A খাতা's যোগ line: small, under the rows, with the bookkeeper's double rule.
+    const line = bottom + 54, text = `৳${amountFigures(total)}`;
+    fitText(context, [{ text: "যোগ", color: MUTED, weight: 700 }], 104, line, 34, 120);
+    fitText(context, [{ text, color: PEN, weight: 800 }], w - 30, line, 36, 360, "right");
+    const width = context.measureText(text).width;
+    context.strokeStyle = PEN; context.lineWidth = 2.5;
+    for (const offset of [14, 21]) { context.beginPath(); context.moveTo(w - 30 - width, line + offset); context.lineTo(w - 30, line + offset); context.stroke(); }
+  }
+  fitText(context, [{ text: khataLine(khata), color: MUTED, weight: 600 }], w / 2, h - 42, 32, w - 80, "center");
+  context.restore();
+}
+
+export function drawKhataCard(canvas: HTMLCanvasElement, khata: Khata, format: CardFormat, site: string) {
+  const { width, height } = cardSizes[format];
+  const story = format === "story";
+  canvas.width = width; canvas.height = height;
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("এই ব্রাউজারে ছবি বানানো যাচ্ছে না।");
+  context.fillStyle = NIGHT; context.fillRect(0, 0, width, height);
+  for (const [x, y, r] of stars) star(context, x * width, y * height, r * 4, "#f2c14e99");
+  const title = khataTitle(khata.name), count = khataCount(khata.rows);
+  if (story) {
+    crescent(context, 540, 360, 74, GOLD, NIGHT); star(context, 594, 316, 20, GOLD);
+    fitText(context, [{ text: "ঈদ মোবারক", color: GOLD, weight: 700 }], 540, 500, 38, 900, "center");
+    fitText(context, [{ text: title, color: "#ffffff", weight: 800, display: true }], 540, 594, 82, 920, "center");
+    fitText(context, [{ text: count, color: "#cfe8d8", weight: 600 }], 540, 664, 40, 920, "center");
+    drawLeaf(context, khata, 100, 730, 880, 880, -.02);
+  } else {
+    crescent(context, 948, 128, 54, GOLD, NIGHT); star(context, 990, 96, 16, GOLD);
+    fitText(context, [{ text: "ঈদ মোবারক", color: GOLD, weight: 700 }], 84, 116, 34, 700);
+    fitText(context, [{ text: title, color: "#ffffff", weight: 800, display: true }], 84, 206, 74, 780);
+    fitText(context, [{ text: count, color: "#cfe8d8", weight: 600 }], 84, 270, 36, 912);
+    drawLeaf(context, khata, 100, 326, 880, 890, -.018);
+  }
+  drawFooterBand(context, format, "এবার তোমাকে কে কে দিল?", site, { band: "#082a1f", ask: GOLD, site: "#ffffff" });
+}
+
+export const khataBlob = (khata: Khata, format: CardFormat, site: string) => renderCard(canvas => drawKhataCard(canvas, khata, format, site));
