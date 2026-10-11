@@ -93,6 +93,7 @@ import { site as sir_ghurlei_thamo } from '../tools/sir-ghurlei-thamo/content';
 import { site as deri_hoye_gelo } from '../tools/deri-hoye-gelo/content';
 import { site as chor_police } from '../tools/chor-police/content';
 import { site as bostar_pahar } from '../tools/bostar-pahar/content';
+import { site as tarer_fanke_belun } from '../tools/tarer-fanke-belun/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -190,6 +191,7 @@ export const toolContent = {
   'deri-hoye-gelo': deri_hoye_gelo,
   'chor-police': chor_police,
   'bostar-pahar': bostar_pahar,
+  'tarer-fanke-belun': tarer_fanke_belun,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
