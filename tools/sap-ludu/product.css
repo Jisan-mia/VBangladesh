@@ -1,0 +1,143 @@
+.tool-sap-ludu{--accent:#1f6f5c;--accent-deep:#124a3d;--ink:#3a2412;--muted:#6f5640;--paper:#fff4dc;--line:#ead7b5;--frame:#7a1f2b;--up:#2b8a3e;--down:#c92a2a;--stuck:#b35c00}
+.tool-sap-ludu .sl-page{color:var(--ink)}
+.tool-sap-ludu .sl-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero: two short lines, so the board and the dice land on the first phone screen */
+.tool-sap-ludu .sl-hero{padding:8px 0 4px}
+.tool-sap-ludu .sl-hero-kicker{margin:0;font-size:13px;font-weight:600;color:var(--accent)}
+.tool-sap-ludu .sl-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,5.8vw,44px);line-height:1.3;font-weight:700;letter-spacing:0}
+.tool-sap-ludu .sl-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
+@media (min-width:760px){.tool-sap-ludu .sl-lead{display:block}}
+
+.tool-sap-ludu .sl{--seat:var(--accent);display:grid;gap:8px;max-width:440px;min-width:0}
+
+/* opened from a friend's link: their card, tilted, and what they did */
+.tool-sap-ludu .sl-friend{display:grid;grid-template-columns:50px 1fr;gap:10px;align-items:center;padding:8px 10px;border-radius:14px;background:var(--paper);border:1.5px solid var(--line)}
+.tool-sap-ludu .sl-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 4px 10px #3a241233;transform:rotate(-3deg)}
+.tool-sap-ludu .sl-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.35}
+.tool-sap-ludu .sl-friend p{margin:0;font-size:12px;color:var(--muted)}
+
+/* who is where: one chip a seat, the one whose turn it is lit in their colour */
+.tool-sap-ludu .sl-seats{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.tool-sap-ludu .sl-seats li{flex:1 1 0;display:flex;align-items:center;gap:5px;min-width:0;min-height:34px;padding:3px 8px;border:2px solid var(--line);border-radius:12px;background:#fff;font-size:14px;transition:border-color .2s,background .2s}
+.tool-sap-ludu .sl-seats li[data-on=true]{border-color:var(--seat);background:color-mix(in srgb,var(--seat) 12%,#fff)}
+.tool-sap-ludu .sl-seats .sl-shape{flex:none}
+.tool-sap-ludu .sl-seat-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.tool-sap-ludu .sl-seats b{flex:none;font-weight:700}
+.tool-sap-ludu .sl-seats small{flex:none;margin-left:6px;color:var(--muted);font-size:13px}
+@media (max-width:479px){.tool-sap-ludu .sl-seats:is([data-count="3"],[data-count="4"]) li{flex-basis:calc(50% - 3px)}}
+
+/* the board: the printed back of a ludo board, in a maroon frame that takes the colour of whoever's turn it is at the rim */
+.tool-sap-ludu .sl-board{position:relative;padding:5px;border-radius:14px;background:var(--frame);box-shadow:0 0 0 3px color-mix(in srgb,var(--seat) 55%,#fff),0 10px 24px #3a24122b;transition:box-shadow .25s}
+.tool-sap-ludu .sl-canvas-wrap{position:relative;width:100%;line-height:0;border-radius:9px;overflow:hidden}
+/* the caption of a ladder or snake, said on the square where the piece landed */
+.tool-sap-ludu .sl-bubble{position:absolute;z-index:1;margin:0;padding:3px 10px 4px;border:2.5px solid var(--up);border-radius:12px;background:#fff;color:var(--up);font-family:var(--font-display);font-size:16px;font-weight:800;line-height:1.3;white-space:nowrap;pointer-events:none;transform:translate(-50%,-120%) rotate(-3deg);animation:sl-say 2.4s ease-out forwards}
+.tool-sap-ludu .sl-bubble[data-tone=down]{border-color:var(--down);color:var(--down)}
+.tool-sap-ludu .sl-canvas-wrap canvas{display:block;width:100%;touch-action:manipulation;cursor:pointer;-webkit-tap-highlight-color:transparent}
+
+.tool-sap-ludu .sl-cover{position:absolute;inset:0;z-index:2;display:grid;place-content:center;justify-items:center;gap:6px;padding:16px;border-radius:14px;background:#fff4dcde;text-align:center;animation:sl-in .25s ease-out}
+.tool-sap-ludu .sl-cover p{margin:0;font-size:15px;font-weight:600;color:var(--muted)}
+.tool-sap-ludu .sl-over .sl-kicker{color:var(--accent-deep);font-family:var(--font-display);font-size:21px;font-weight:700}
+.tool-sap-ludu .sl-over strong{font-family:var(--font-display);font-size:clamp(60px,20vw,88px);font-weight:800;line-height:1.05;color:var(--accent)}
+.tool-sap-ludu .sl-over strong small{font-size:.36em;color:var(--ink)}
+.tool-sap-ludu .sl-over .sl-winner{font-size:clamp(34px,10vw,48px);line-height:1.25}
+.tool-sap-ludu .sl-over .sl-vs{padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);font-weight:700}
+.tool-sap-ludu .sl-big{min-height:58px;min-width:190px;margin-top:6px;padding:0 30px;border:0;border-radius:999px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:24px;font-weight:700;box-shadow:0 5px 0 var(--accent-deep);cursor:pointer;touch-action:manipulation}
+.tool-sap-ludu .sl-big:active{transform:translateY(4px);box-shadow:0 1px 0 var(--accent-deep)}
+.tool-sap-ludu .sl-link{min-height:44px;padding:0 10px;border:0;background:none;color:var(--accent-deep);font:inherit;font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+
+/* the dice and what just happened */
+.tool-sap-ludu .sl-play{display:grid;grid-template-columns:112px minmax(0,1fr);gap:10px;align-items:stretch}
+.tool-sap-ludu .sl-dice{display:grid;justify-items:center;align-content:center;gap:3px;min-height:96px;padding:8px 6px 6px;border:0;border-radius:20px;background:var(--seat);color:#fff;box-shadow:0 5px 0 color-mix(in srgb,var(--seat) 60%,#000);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background .2s}
+.tool-sap-ludu .sl-dice:active{transform:translateY(4px);box-shadow:0 1px 0 color-mix(in srgb,var(--seat) 60%,#000)}
+.tool-sap-ludu .sl-dice:disabled{opacity:.55;cursor:default}
+.tool-sap-ludu .sl-die{display:block;width:56px;height:56px}
+.tool-sap-ludu .sl-die[data-rolled=true]{animation:sl-roll .42s ease-out}
+.tool-sap-ludu .sl-face{display:block;width:100%;height:100%}
+.tool-sap-ludu .sl-cowries{border-radius:12px;background:#e9cf9f;box-shadow:inset 0 0 0 2.5px #6b4a1f}
+.tool-sap-ludu .sl-dice-label{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.3}
+.tool-sap-ludu .sl-news{display:grid;align-content:center;gap:1px;min-width:0;padding:8px 12px;border:2px solid var(--line);border-radius:16px;background:#fff;animation:sl-in .25s ease-out}
+.tool-sap-ludu .sl-news p{margin:0}
+.tool-sap-ludu .sl-news-title{font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.3}
+.tool-sap-ludu .sl-news-sub{font-size:14px;line-height:1.45;color:var(--muted)}
+.tool-sap-ludu .sl-news[data-tone=up]{border-color:var(--up);background:#ebfbee}
+.tool-sap-ludu .sl-news[data-tone=up] .sl-news-title{color:var(--up)}
+.tool-sap-ludu .sl-news[data-tone=down]{border-color:var(--down);background:#fff0f0}
+.tool-sap-ludu .sl-news[data-tone=down] .sl-news-title{color:var(--down)}
+.tool-sap-ludu .sl-news[data-tone=stuck]{border-color:var(--stuck);background:#fff6e5}
+.tool-sap-ludu .sl-news[data-tone=up],.tool-sap-ludu .sl-news[data-tone=down]{animation:sl-pop .35s ease-out}
+
+/* two pieces: which one moves */
+.tool-sap-ludu .sl-choose{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.tool-sap-ludu .sl-choose > p{grid-column:1/-1;margin:0;font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.3}
+.tool-sap-ludu .sl-pick{display:grid;align-content:center;gap:2px;min-height:72px;padding:6px 12px;border:3px solid var(--seat);border-radius:18px;background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer;touch-action:manipulation;animation:sl-glow 1.4s ease-in-out infinite}
+.tool-sap-ludu .sl-pick-top{display:flex;align-items:center;gap:6px}
+.tool-sap-ludu .sl-pick b{font-family:var(--font-display);font-size:17px;font-weight:700}
+.tool-sap-ludu .sl-pick span:not(.sl-pick-top){font-size:20px;font-weight:700}
+.tool-sap-ludu .sl-pick em{font-style:normal;font-size:14px;font-weight:700}
+.tool-sap-ludu .sl-pick[data-tone=up] em{color:var(--up)}
+.tool-sap-ludu .sl-pick[data-tone=down] em{color:var(--down)}
+
+/* players, options, motion */
+.tool-sap-ludu .sl-controls{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.tool-sap-ludu .sl-seg{display:inline-flex;padding:3px;border:1.5px solid var(--line);border-radius:999px;background:#fff}
+.tool-sap-ludu .sl-seg button{min-height:40px;padding:0 10px;border:0;border-radius:999px;background:none;color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.tool-sap-ludu .sl-seg button[aria-pressed=true]{background:var(--accent);color:#fff}
+.tool-sap-ludu .sl-seg button:disabled{opacity:.45;cursor:default}
+.tool-sap-ludu .sl-toggle{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:0 10px;border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.tool-sap-ludu .sl-toggle:disabled{opacity:.6;cursor:default}
+.tool-sap-ludu .sl-toggle i{position:relative;flex:none;width:30px;height:18px;border-radius:9px;background:#d9cbbb}
+.tool-sap-ludu .sl-toggle i::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
+.tool-sap-ludu .sl-toggle[aria-pressed=true]{border-color:var(--accent)}
+.tool-sap-ludu .sl-toggle[aria-pressed=true] i{background:var(--accent)}
+.tool-sap-ludu .sl-toggle[aria-pressed=true] i::after{transform:translateX(12px)}
+.tool-sap-ludu :is(.sl-seg button,.sl-toggle,.sl-dice,.sl-pick,.sl-big,.sl-link):focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.tool-sap-ludu .sl-rule{margin:0;font-size:13px;line-height:1.5;color:var(--muted)}
+
+.tool-sap-ludu .sl-names{border:1.5px solid var(--line);border-radius:14px;background:#fff}
+.tool-sap-ludu .sl-names summary{min-height:44px;display:flex;align-items:center;gap:6px;padding:0 12px;font-weight:600;cursor:pointer}
+.tool-sap-ludu .sl-names summary small{font-weight:400;color:var(--muted);font-size:13px}
+.tool-sap-ludu .sl-names > div{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 10px 10px}
+.tool-sap-ludu .sl-names label{position:relative;display:block;min-width:0}
+.tool-sap-ludu .sl-names .sl-shape{position:absolute;left:10px;top:50%;margin-top:-9px}
+.tool-sap-ludu .sl-names input{width:100%;min-height:46px;padding:8px 10px 8px 34px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:16px}
+
+/* result: the card, a name, and sharing right under the game */
+.tool-sap-ludu .sl-result{display:grid;gap:14px;margin-top:8px;padding-top:16px;border-top:2px solid var(--ink)}
+.tool-sap-ludu .sl-result h2{margin:0;font-family:var(--font-display);font-size:clamp(20px,5.4vw,28px);line-height:1.4}
+.tool-sap-ludu .sl-share{display:grid;gap:14px}
+.tool-sap-ludu .sl-name{display:grid;gap:6px;font-weight:600}
+.tool-sap-ludu .sl-name small{font-weight:400;color:var(--muted);font-size:13px}
+.tool-sap-ludu .sl-name input{min-height:48px;padding:8px 12px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:17px}
+
+.tool-sap-ludu .sl-board-note{display:grid;gap:4px;margin-top:18px;padding:12px 14px;border-radius:14px;background:var(--paper);border:1.5px solid var(--line);max-width:440px}
+.tool-sap-ludu .sl-board-note p{margin:0;font-size:15px;line-height:1.55}
+.tool-sap-ludu .sl-board-note a{font-weight:700;color:var(--accent-deep)}
+.tool-sap-ludu .sl-guide h2{font-family:var(--font-display);margin-bottom:8px}
+.tool-sap-ludu .sl-guide > p{margin:0 0 16px;color:var(--muted)}
+.tool-sap-ludu .sl-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.tool-sap-ludu .sl-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-sap-ludu .sl-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--paper);border:2px solid var(--accent);color:var(--accent-deep);font-weight:700}
+.tool-sap-ludu .sl-guide li p{margin:4px 0 0}
+
+@media (max-width:360px){
+  .tool-sap-ludu .sl-play{grid-template-columns:96px minmax(0,1fr)}
+  .tool-sap-ludu .sl-news-title{font-size:17px}
+  .tool-sap-ludu .sl-seats li{font-size:13px;padding:3px 6px}
+}
+
+@keyframes sl-in{from{opacity:0;transform:translateY(6px)}}
+@keyframes sl-pop{0%{transform:scale(.92)}60%{transform:scale(1.03)}}
+@keyframes sl-roll{0%{transform:rotate(-30deg) scale(.7)}55%{transform:rotate(14deg) scale(1.08)}100%{transform:none}}
+@keyframes sl-say{0%{opacity:0;transform:translate(-50%,-90%) rotate(-3deg) scale(.7)}12%{opacity:1;transform:translate(-50%,-120%) rotate(-3deg) scale(1.05)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-135%) rotate(-3deg)}}
+@keyframes sl-fade{0%,75%{opacity:1}100%{opacity:0}}
+@keyframes sl-glow{50%{box-shadow:0 0 0 5px color-mix(in srgb,var(--seat) 25%,transparent)}}
+/* ধীরে খেলো and reduced motion: nothing rolls, pops or glows */
+.tool-sap-ludu .sl[data-slow=true] :is(.sl-die,.sl-news,.sl-pick,.sl-cover){animation:none}
+.tool-sap-ludu .sl[data-slow=true] :is(.sl-board,.sl-seats li,.sl-dice){transition:none}
+.tool-sap-ludu .sl[data-slow=true] .sl-bubble{animation:sl-fade 3.2s linear forwards}
+@media (prefers-reduced-motion:reduce){
+  .tool-sap-ludu :is(.sl-die,.sl-news,.sl-pick,.sl-cover){animation:none}
+  .tool-sap-ludu .sl-bubble{animation:sl-fade 3.2s linear forwards}
+  .tool-sap-ludu :is(.sl-board,.sl-seats li,.sl-dice),.tool-sap-ludu .sl-toggle i::after{transition:none}
+}
