@@ -258,7 +258,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 17 | tarer-fanke-belun | তারের ফাঁকে বেলুন | গেম | G17 | done | games-2026-10.md §4.3 #17 |
 | 18 | paka-kancha | পাকা-কাঁচা | গেম | G21 | building | games-2026-10.md §4.3 #21 |
 | 18 | jora-melao | জোড়া মেলাও | গেম | G25 | building | games-2026-10.md §4.3 #25 |
-| 18 | chhok-jora | ছক-জোড়া | গেম | G12 | todo | games-2026-10.md §4.3 #12 |
+| 18 | chhok-jora | ছক-জোড়া | গেম | G12 | building | games-2026-10.md §4.3 #12 |
 | 18 | churui-tarao | চড়ুই তাড়াও | গেম | G05 | todo | games-2026-10.md §4.3 #5 |
 | 18 | handi-bhanga | হাঁড়িভাঙা | গেম | G02 | todo | games-2026-10.md §4.3 #2 |
 | 19 | peoner-cycle | পিয়নের সাইকেল | গেম | G04 | todo | games-2026-10.md §4.3 #4 |

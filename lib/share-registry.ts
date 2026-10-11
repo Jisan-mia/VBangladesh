@@ -98,6 +98,7 @@ import { share as bostar_pahar } from '../tools/bostar-pahar/share';
 import { share as tarer_fanke_belun } from '../tools/tarer-fanke-belun/share';
 import { share as paka_kancha } from '../tools/paka-kancha/share';
 import { share as jora_melao } from '../tools/jora-melao/share';
+import { share as chhok_jora } from '../tools/chhok-jora/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -199,6 +200,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'tarer-fanke-belun': tarer_fanke_belun,
   'paka-kancha': paka_kancha,
   'jora-melao': jora_melao,
+  'chhok-jora': chhok_jora,
 };
 
 export function toolShare(tool: string): ToolShare | null {
