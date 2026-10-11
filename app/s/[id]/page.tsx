@@ -5,7 +5,6 @@ import { toolShare } from '../../../lib/share-registry';
 import { getToolContent } from '../../../lib/tool-content';
 import { siteMetadata } from '../../../shared/seo';
 import { HubFrame } from '../../../shared/site-shell';
-import { OpenShared } from './open-shared';
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -27,7 +26,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 export default async function SharedCard(props: Props) {
   const { site, href, preview } = await load(props);
   return <HubFrame><section className="container prose hub-prose">
-    <OpenShared href={href} />
+    {/* Runs as soon as the HTML arrives, before any JS bundle; crawlers still read the preview tags. */}
+    <script dangerouslySetInnerHTML={{ __html: `location.replace(${JSON.stringify(href).replace(/</g, '\\u003c')})` }} />
     <p className="eyebrow">{site.name}</p>
     <h1>{preview.title}</h1>
     <p>{preview.description}</p>

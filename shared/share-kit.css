@@ -14,7 +14,7 @@
 .kit-chips button{min-height:44px;padding:8px 14px;border:1.5px solid #c5cfe2;border-radius:999px;background:#fff;color:#1d2b53;font-size:15px}
 .kit-chips button[aria-pressed=true]{border-color:#1d2b53;background:#1d2b53;color:#fff}
 .kit-photo{display:grid;gap:6px;font-weight:600}
-.kit-photo small{font-weight:400;color:#5d6886;font-size:13px}
+.kit-photo small{font-weight:400;color:#5d6886;font-size:14px}
 .kit-photo>div{display:flex;align-items:center;gap:14px}
 .kit-photo label{position:relative;overflow:hidden}
 .kit-photo input{position:absolute;inset:0;opacity:0;cursor:pointer}

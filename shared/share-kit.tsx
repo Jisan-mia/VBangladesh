@@ -47,12 +47,14 @@ export function ShareBar({ tool, fileName, makeImage, imageKey, caption, state, 
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState('');
   const [canShareFiles, setCanShareFiles] = useState(false);
+  const [canShare, setCanShare] = useState(true);
   const [saveView, setSaveView] = useState('');
   const [manualLink, setManualLink] = useState('');
   const ready = useRef<{ key: string; file: File; link: string } | null>(null);
 
   useEffect(() => {
     setCanShareFiles(Boolean(navigator.canShare?.({ files: [new File([''], fileName, { type: 'image/png' })] })));
+    setCanShare(typeof navigator.share === 'function');
   }, [fileName]);
   useEffect(() => { setManualLink(''); }, [imageKey]);
 
@@ -108,10 +110,11 @@ export function ShareBar({ tool, fileName, makeImage, imageKey, caption, state, 
   }
 
   return <div className="kit-share">
-    <button type="button" className="kit-primary kit-share-main" onClick={share} disabled={disabled || busy}>{busy ? 'একটু দাঁড়াও…' : 'শেয়ার করো'}</button>
+    {/* Facebook's in-app browser often can't share; then the main button honestly copies the link instead. */}
+    <button type="button" className="kit-primary kit-share-main" onClick={share} disabled={disabled || busy}>{busy ? 'একটু দাঁড়াও…' : canShare ? 'শেয়ার করো' : 'লিংক কপি করো'}</button>
     <div className="kit-share-row">
       <button type="button" className="kit-secondary" onClick={download} disabled={disabled || busy}>ছবি ডাউনলোড করো</button>
-      <button type="button" className="kit-secondary" onClick={() => copy()} disabled={disabled}>লিংক কপি করো</button>
+      {canShare && <button type="button" className="kit-secondary" onClick={() => copy()} disabled={disabled}>লিংক কপি করো</button>}
     </div>
     {manualLink && <input className="kit-manual-link" readOnly value={manualLink} onFocus={event => event.currentTarget.select()} aria-label="শেয়ারের লিংক" />}
     <p className="kit-status" role="status" aria-live="polite">{status || hint || ''}</p>
@@ -146,9 +149,23 @@ export function PhotoPicker({ value, onChange, label = 'ছবি', note = 'চ�
 
 /** The single next step, pinned to the bottom of the screen until its target scrolls into view. */
 export function StickyNext({ show, title, sub, href, label }: { show: boolean; title: ReactNode; sub?: string; href: string; label: string }) {
-  return <div className="kit-sticky" data-show={show} aria-hidden={!show}>
+  // Wait for the first tap, key or scroll, so the bar never covers the tool before the visitor has started.
+  const [started, setStarted] = useState(false);
+  useEffect(() => {
+    if (started) return;
+    const start = () => setStarted(true);
+    const scrolled = () => { if (window.scrollY > 200) start(); };
+    window.addEventListener('pointerdown', start, { once: true });
+    window.addEventListener('keydown', start, { once: true });
+    window.addEventListener('scroll', scrolled, { passive: true });
+    return () => { window.removeEventListener('pointerdown', start); window.removeEventListener('keydown', start); window.removeEventListener('scroll', scrolled); };
+  }, [started]);
+  const visible = show && started;
+  // A button, not an #anchor link: jumping down must not add a Back-button step.
+  const jump = () => document.querySelector(href)?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+  return <div className="kit-sticky" data-show={visible} aria-hidden={!visible}>
     <p>{title}{sub && <span>{sub}</span>}</p>
-    <a className="kit-primary kit-sticky-cta" href={href} tabIndex={show ? 0 : -1}>{label}</a>
+    <button type="button" className="kit-primary kit-sticky-cta" onClick={jump} tabIndex={visible ? 0 : -1}>{label}</button>
   </div>;
 }
 

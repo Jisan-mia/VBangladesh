@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { brand, homeFaq } from "../lib/brand";
+import { catalog } from "../lib/catalog";
 import { memories } from "../tools/amar-chhotobela/lib/postcard";
 import { MemorySketch } from "../tools/amar-chhotobela/components/memory-sketch";
 import { ToolDirectory } from "./tool-directory";
@@ -36,8 +37,12 @@ export function HomePage() {
           <p className="home-lead">৩৬টা চেনা স্মৃতির কয়টা তোমার ছোটবেলায় ছিল? এক মিনিটে মিলিয়ে দেখো। শেষে নিজের ছোটবেলার খাতাটা পাবে, বন্ধুদের সাথে মেলানোর জন্য।</p>
           <Link className="home-primary" href="/amar-chhotobela">আমার ছোটবেলা মেলাই<svg viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true"><path d="M3 10h13M10 4l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></Link>
           <p className="home-promise">ফ্রি · অ্যাকাউন্ট লাগে না · ছবি বানিয়ে শেয়ার করো</p>
+          <form className="home-search" action="/tools" role="search">
+            <label htmlFor="home-q">আরও {new Intl.NumberFormat("bn-BD").format(catalog.length)}টা ছোট টুল আছে: খেলা, কুইজ, হিসাব, কার্ড। কী খুঁজছ?</label>
+            <div><input id="home-q" name="q" type="search" placeholder="ঈদ, cricket, jomi…" /><button type="submit" className="kit-secondary">খোঁজো</button></div>
+          </form>
         </div>
-        <MiniKhata />
+        <Link href="/amar-chhotobela" className="home-khata-link" aria-label="আমার ছোটবেলা খোলো" tabIndex={-1}><MiniKhata /></Link>
       </section>
       <ToolDirectory />
       <section className="home-container home-trust" aria-labelledby="home-trust-title">
