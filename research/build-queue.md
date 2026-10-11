@@ -247,7 +247,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 15 | grade-dao | গ্রেড দাও | মজা আর কুইজ | ID20 | done | #b-grade-dao |
 | 15 | adda | আড্ডায় তুমি কে? | নিজেকে জানো | ID17 | done | #b-adda |
 | 16 | kalbaishakhi-aam | কালবৈশাখী আম | গেম | G15 | done | games-2026-10.md §4.3 #15 |
-| 16 | dudh-uthlano | দুধ উথলানোর আগে | গেম | G19 | building | games-2026-10.md §4.3 #19 |
+| 16 | dudh-uthlano | দুধ উথলানোর আগে | গেম | G19 | done | games-2026-10.md §4.3 #19 |
 | 16 | jhalmuri-sap | ঝালমুড়ি সাপ | গেম | G01 | done | games-2026-10.md §4.3 #1 |
 | 16 | danguli | ডাংগুলি | গেম | G13 | done | games-2026-10.md §4.3 #13 |
 | 16 | antenna-thik-koro | অ্যান্টেনা ঠিক করো | গেম | G07 | done | games-2026-10.md §4.3 #7 |

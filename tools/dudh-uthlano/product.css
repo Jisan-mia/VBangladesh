@@ -1,0 +1,87 @@
+.tool-dudh-uthlano{--accent:#b6462b;--accent-deep:#7d2c19;--ink:#2a211c;--muted:#6b5b4e;--cream:#f7f0e3;--line:#e3d6c3;--spill:#fde3d9}
+.tool-dudh-uthlano .du-page{color:var(--ink)}
+.tool-dudh-uthlano .du-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero: two short lines, so the stove and the big button both land on the first phone screen */
+.du-hero{padding:10px 0 8px}
+.du-kicker{margin:0;font-size:13px;font-weight:600;color:var(--accent)}
+.du-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(25px,7vw,48px);line-height:1.25;font-weight:700;letter-spacing:0}
+.du-hero h1 span{color:var(--accent)}
+.du-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
+@media (min-width:760px){.du-lead{display:block}}
+
+.du{display:grid;gap:10px;max-width:480px;min-width:0}
+.du-play{display:grid;gap:8px;min-width:0}
+
+/* opened from a friend's link: their card, tilted, and whose score it is */
+.du-friend{display:grid;grid-template-columns:50px 1fr;gap:10px;align-items:center;padding:8px 10px;border-radius:14px;background:var(--cream)}
+.du-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 4px 10px #2a211c33;transform:rotate(-3deg)}
+.du-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.35}
+.du-friend p{margin:0;font-size:12px;color:var(--muted)}
+
+/* the kitchen: the canvas plus a few words laid over it */
+.du-stage{position:relative;overflow:hidden;border-radius:18px;box-shadow:0 0 0 1.5px #2a211c1f,0 10px 24px #2a211c1f;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
+.du-stage canvas{display:block;width:100%;height:auto;aspect-ratio:360/300}
+.du-stage p{pointer-events:none}
+.du-tip{position:absolute;top:8px;left:8px;max-width:72%;margin:0;padding:5px 12px;border-radius:14px;background:#2a211cdb;color:#fff;font-size:14px;font-weight:600;line-height:1.4}
+.du-ammu{position:absolute;left:8px;bottom:8px;max-width:52%;margin:0;padding:6px 11px 8px;border-radius:14px 14px 14px 4px;background:#fff;box-shadow:0 2px 0 #2a211c26;font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.3;animation:du-in .3s ease-out}
+.du-ammu small{display:block;font-family:Bangla,sans-serif;font-size:11px;font-weight:600;color:var(--muted)}
+.du-pop{position:absolute;left:0;right:0;top:4%;display:grid;justify-items:center;margin:0;animation:du-pop .35s ease-out}
+.du-pop b{font-family:var(--font-display);font-size:clamp(40px,13vw,56px);line-height:1.1;color:var(--accent-deep);text-shadow:0 2px 0 #fff,0 0 10px #fff}
+.du-pop span{padding:3px 12px;border-radius:999px;background:#fffffff2;font-size:15px;font-weight:700}
+.du-pop[data-spill=true] b{padding:4px 18px 8px;border:3px solid var(--accent);border-radius:16px;background:#fff;color:var(--accent);font-size:clamp(30px,9vw,40px);text-shadow:none;transform:rotate(-4deg)}
+.du-pause{position:absolute;inset:0;display:grid;place-items:center;margin:0;padding:24px;background:#2a211cb8;color:#fff;font-size:17px;font-weight:600;text-align:center}
+.du-over{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:2px;padding:16px;background:#f7f0e3eb;text-align:center;animation:du-in .3s ease-out}
+.du-over p{margin:0;font-size:15px;font-weight:600;color:var(--muted)}
+.du-over strong{font-family:var(--font-display);font-size:clamp(56px,19vw,84px);line-height:1.05;color:var(--accent)}
+.du-over .du-vs{margin-top:6px;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);font-weight:700}
+
+/* controls: everything you press sits under the stove */
+.du-controls{display:grid;gap:8px}
+.du-row{display:flex;align-items:center;justify-content:space-between;gap:4px 8px;flex-wrap:wrap}
+.du-now{margin:0;font-size:14px;font-weight:600;color:var(--muted)}
+.du-slow{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font-size:14px;font-weight:600;cursor:pointer}
+.du-slow i{position:relative;width:30px;height:18px;border-radius:9px;background:#d5c9b8}
+.du-slow i::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
+.du-slow[aria-pressed=true]{border-color:var(--accent)}
+.du-slow[aria-pressed=true] i{background:var(--accent)}
+.du-slow[aria-pressed=true] i::after{transform:translateX(12px)}
+.du-pots{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0;padding:0;list-style:none}
+.du-pots li{display:grid;justify-items:center;padding:3px 2px 4px;border:1.5px dashed var(--line);border-radius:12px;background:#fff;font-size:12px;line-height:1.3;color:var(--muted)}
+.du-pots li b{font-family:var(--font-display);font-size:16px;line-height:1.25;color:var(--ink);white-space:nowrap}
+.du-pots li[data-now=true]{border-style:solid;border-color:var(--accent)}
+.du-pots li[data-state=ok]{border-style:solid;background:var(--cream)}
+.du-pots li[data-state=spill]{border-style:solid;border-color:#f0b9a5;background:var(--spill)}
+.du-pots li[data-state=spill] b{font-size:13px;color:var(--accent-deep)}
+.du-press{display:grid;place-items:center;gap:0;width:100%;min-height:76px;padding:8px 16px;border:0;border-radius:20px;background:var(--accent);color:#fff;box-shadow:0 5px 0 var(--accent-deep);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
+.du-press b{font-family:var(--font-display);font-size:26px;line-height:1.2}
+.du-press small{font-size:14px;font-weight:600;opacity:.92}
+.du-press:active,.du-press[data-holding=true]{transform:translateY(4px);box-shadow:0 1px 0 var(--accent-deep)}
+.du-press[data-phase=rising][data-holding=false]{background:#c93a1f;animation:du-nudge 1.2s ease-in-out infinite}
+.du-press:disabled{background:#cbbdab;box-shadow:0 5px 0 #a8998a;cursor:default}
+.du-press:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.du-hint{margin:0;font-size:13px;line-height:1.5;color:var(--muted);text-align:center}
+.du-hint span{display:none}
+@media (hover:hover) and (pointer:fine){.du-hint span{display:inline}}
+.du-fresh{justify-self:center}
+
+/* result: the card, a name, and sharing right under the game */
+.du-result{display:grid;gap:14px;margin-top:14px;padding-top:16px;border-top:2px solid var(--ink)}
+.du-result h2{margin:0;font-family:var(--font-display);font-size:clamp(20px,5.4vw,28px);line-height:1.4}
+.du-share{display:grid;gap:14px}
+.du-name{display:grid;gap:6px;font-weight:600}
+.du-name small{font-weight:400;color:var(--muted);font-size:13px}
+.du-name input{min-height:48px;padding:8px 12px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:17px}
+
+.du-guide h2{font-family:var(--font-display);margin-bottom:8px}
+.du-guide > p{margin:0 0 16px;color:var(--muted)}
+.du-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.du-guide li{display:flex;gap:14px;align-items:flex-start}
+.du-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--cream);border:2px solid var(--accent);color:var(--accent-deep);font-weight:700}
+.du-guide li p{margin:4px 0 0}
+
+@keyframes du-in{from{opacity:0;transform:translateY(6px)}}
+@keyframes du-pop{from{opacity:0;transform:scale(.7)}}
+@keyframes du-nudge{50%{box-shadow:0 5px 0 var(--accent-deep),0 0 0 6px #c93a1f33}}
+.du[data-slow=true] .du-ammu,.du[data-slow=true] .du-pop,.du[data-slow=true] .du-over,.du[data-slow=true] .du-press{animation:none}
+@media (prefers-reduced-motion:reduce){.du-ammu,.du-pop,.du-over,.du-press{animation:none}.du-slow i::after{transition:none}}
