@@ -86,6 +86,7 @@ import { share as bidyut_bill } from '../tools/bidyut-bill/share';
 import { share as mondop } from '../tools/mondop/share';
 import { share as grade_dao } from '../tools/grade-dao/share';
 import { share as adda } from '../tools/adda/share';
+import { share as kalbaishakhi_aam } from '../tools/kalbaishakhi-aam/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -175,6 +176,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'mondop': mondop,
   'grade-dao': grade_dao,
   'adda': adda,
+  'kalbaishakhi-aam': kalbaishakhi_aam,
 };
 
 export function toolShare(tool: string): ToolShare | null {
