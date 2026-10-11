@@ -86,6 +86,7 @@ import { site as grade_dao } from '../tools/grade-dao/content';
 import { site as adda } from '../tools/adda/content';
 import { site as kalbaishakhi_aam } from '../tools/kalbaishakhi-aam/content';
 import { site as dudh_uthlano } from '../tools/dudh-uthlano/content';
+import { site as jhalmuri_sap } from '../tools/jhalmuri-sap/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -176,6 +177,7 @@ export const toolContent = {
   'adda': adda,
   'kalbaishakhi-aam': kalbaishakhi_aam,
   'dudh-uthlano': dudh_uthlano,
+  'jhalmuri-sap': jhalmuri_sap,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];

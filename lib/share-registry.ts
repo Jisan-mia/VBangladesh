@@ -88,6 +88,7 @@ import { share as grade_dao } from '../tools/grade-dao/share';
 import { share as adda } from '../tools/adda/share';
 import { share as kalbaishakhi_aam } from '../tools/kalbaishakhi-aam/share';
 import { share as dudh_uthlano } from '../tools/dudh-uthlano/share';
+import { share as jhalmuri_sap } from '../tools/jhalmuri-sap/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -179,6 +180,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'adda': adda,
   'kalbaishakhi-aam': kalbaishakhi_aam,
   'dudh-uthlano': dudh_uthlano,
+  'jhalmuri-sap': jhalmuri_sap,
 };
 
 export function toolShare(tool: string): ToolShare | null {
