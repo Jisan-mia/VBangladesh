@@ -183,7 +183,7 @@ export function QuestionPaper() {
               <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName={`komon-porlo-${packId}.png`} makeImage={() => paperBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption(card)} state={state} hint="লিংক পেলে বন্ধু তোমার ছাপগুলো দেখবে, তারপর নিজেরটা দাগাবে।" />
+            <ShareBar tool={TOOL} fileName={`komon-porlo-${packId}.png`} makeImage={() => paperBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption(card)} state={state} hint="বন্ধু তোমার ছাপগুলো হালকা করে দেখবে, তারপর নিজেরটা দাগাবে।" />
             {card.count > 0 && <button type="button" className="kit-link komon-restart" onClick={restart}>ছাপ মুছে আবার দাগাও</button>}
           </div>
         </div>

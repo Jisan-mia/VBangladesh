@@ -149,13 +149,13 @@ export type CardContent = {
   match: string;
 };
 
-/** "রাফি ১১, আমি ৯ — দুজনেরই কমন: বিয়ে কবে?" — only when both cards are the same pack, so the squares mean the same thing. */
+/** "রাফি ১১, আমি ৯। দুজনেরই কমন: বিয়ে কবে?" — only when both cards are the same pack, so the squares mean the same thing. */
 export function matchLine(own: Shared, friend: Shared) {
   if (friend.pack !== own.pack) return "";
   const pack = packById(own.pack);
   const common = pack.squares.findIndex((_, index) => has(own.mask, index) && has(friend.mask, index));
   const scores = `${friend.name || "বন্ধু"} ${bn(countOf(friend.mask))}, ${cleanName(own.name) || "আমি"} ${bn(countOf(own.mask))}`;
-  return common >= 0 ? `${scores} — দুজনেরই কমন: ${pack.squares[common]}` : scores;
+  return common >= 0 ? `${scores}। দুজনেরই কমন: ${pack.squares[common]}` : scores;
 }
 
 export function createCard(own: Shared, friend?: Shared | null): CardContent {

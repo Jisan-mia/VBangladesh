@@ -152,7 +152,7 @@ export function ChartQuiz() {
                 })}
               </div>
               {picked !== undefined && <div className="desh-answer">
-                <p className="desh-verdict" data-right={right}>{right ? "একদম ঠিক! একটা তারা পেলে।" : "হয়নি। ঠিক উত্তরটায় তারা লাগানো।"}</p>
+                <p className="desh-verdict" data-right={right}>{right ? "একদম ঠিক! একটা তারা পেলে।" : "হয়নি। ঠিক উত্তরে তারাটা লাগিয়ে দিলাম।"}</p>
                 <p className="desh-fact">{question.fact} <small>সূত্র: {question.source}</small></p>
               </div>}
             </div>

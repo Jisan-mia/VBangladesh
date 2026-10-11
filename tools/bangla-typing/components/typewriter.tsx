@@ -229,7 +229,7 @@ export function Typewriter() {
                 <input value={name} maxLength={MAX_NAME} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
               </label>
               <FormatToggle value={format} onChange={setFormat} />
-              <ShareBar tool={TOOL} fileName="bangla-typing.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption(card)} state={state} hint={`লিংক পেলে বন্ধু একই লেখা (“${opening(card.p)}”) টাইপ করবে।`} />
+              <ShareBar tool={TOOL} fileName="bangla-typing.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption(card)} state={state} hint={`বন্ধুও একই লেখা টাইপ করবে: “${opening(card.p)}”`} />
               <button type="button" className="kit-link bt-again" onClick={() => { restart(p); document.getElementById("tool")?.scrollIntoView({ behavior: "smooth" }); }}>আবার টাইপ করো</button>
               <p className="bt-method"><b>যেভাবে মাপা:</b> শুধু হুবহু ঠিক শব্দগুলো গোনা হয়, তারপর মিনিটের হিসাবে। নির্ভুল মানে শেষ লেখায় কত ভাগ অক্ষর ঠিক। কিবোর্ডভেদে য়, ৎ বা অদৃশ্য চিহ্নের ফারাক ভুল ধরা হয় না। এটা নিজের ফোনে মাপা মজার পরীক্ষা, কোনো চাকরির পরীক্ষা বা আসল সার্টিফিকেট না।</p>
             </div>

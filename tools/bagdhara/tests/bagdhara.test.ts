@@ -82,7 +82,7 @@ test("human line follows the score and how often the picture fooled you", () => 
 test("share preview is personal and spoiler-free; tally lists only fixed ids", () => {
   const state = share.normalize(shareHash({ set: "s1", answers: key("s1"), name: "রাফি" }).slice(1))!;
   const preview = share.preview(state);
-  assert.equal(preview.title, "রাফি ১০টা বাগধারার ১০টা পেরেছে — তুমি কয়টা পারবে?");
+  assert.equal(preview.title, "রাফি ১০টা বাগধারার ১০টা পেরেছে। তুমি কয়টা পারবে?");
   assert.match(preview.description, /^রাফির সাথে/);
   for (const question of sets[0].questions) assert.ok(!preview.description.includes(question.options[question.answer]), question.id);
   assert.match(share.preview("garbage").title, /^এক বন্ধু/);

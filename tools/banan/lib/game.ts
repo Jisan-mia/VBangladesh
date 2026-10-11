@@ -78,7 +78,7 @@ export function previewTitle(result: Result) {
   const score = scoreOf(result.set, result.picks);
   const who = result.name || "এক বন্ধু";
   const lead = setById(result.set)?.sober ? "একুশের ৭৫ বছর: " : "";
-  return `${lead}${who} ${scoreLine(score)}টা ${isLoan(result.set) ? "শব্দের খাঁটি বাংলা বলেছে" : "বানান ঠিক করেছে"} — তুমি পারবে?`;
+  return `${lead}${who} ${scoreLine(score)}টা ${isLoan(result.set) ? "শব্দের খাঁটি বাংলা বলেছে" : "বানান ঠিক করেছে"}। তুমি পারবে?`;
 }
 
 /** What a friend's link says above the game. */

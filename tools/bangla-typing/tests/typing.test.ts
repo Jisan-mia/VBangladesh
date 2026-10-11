@@ -79,7 +79,7 @@ test("names are NFC-normalized, cleaned and capped", () => {
 });
 
 test("link previews are personal, and only fixed speed buckets are counted", () => {
-  assert.equal(previewTitle({ p: 0, w: 28, a: 96, n: "রাফি" }), "রাফি মিনিটে ২৮টা বাংলা শব্দ টাইপ করেছে, ৯৬% নির্ভুল — তুমি কত?");
+  assert.equal(previewTitle({ p: 0, w: 28, a: 96, n: "রাফি" }), "রাফি মিনিটে ২৮টা বাংলা শব্দ টাইপ করেছে, ৯৬% নির্ভুল। তুমি কত?");
   assert.match(share.preview("p=0&w=12&a=90").title, /^এক বন্ধু/);
   assert.deepEqual(share.tally, tallyIds);
   assert.equal(gradeOf(0).id, "shikkhanobish");

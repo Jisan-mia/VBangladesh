@@ -267,7 +267,7 @@ export function TeaStallBoard() {
               <input value={name} maxLength={MAX_NAME_LENGTH} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="eta-na-ota.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${rival ? rival.answers.join("") : ""}`} caption={shared ? caption(shared, rival) : ""} state={state || undefined} disabled={!complete} hint={complete ? "লিংক পেলে বন্ধু একই ১২টা তর্ক খেলবে, আর দেখবে তোমাদের কয়টা মেলে।" : "আগে ১২টা তর্ক শেষ করো।"} />
+            <ShareBar tool={TOOL} fileName="eta-na-ota.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${rival ? rival.answers.join("") : ""}`} caption={shared ? caption(shared, rival) : ""} state={state || undefined} disabled={!complete} hint={complete ? "বন্ধুও একই ১২টা তর্ক খেলবে, তারপর দেখবে তোমাদের কয়টা মেলে।" : "আগে ১২টা তর্ক শেষ করো।"} />
             {complete && (
               <div className="ena-count">
                 <h3>দেশের হিসাবে তোমার ভোটও যোগ করবে?</h3>

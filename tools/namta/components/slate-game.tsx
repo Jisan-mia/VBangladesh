@@ -259,7 +259,7 @@ export function SlateGame() {
                 {whos.map(item => <button type="button" key={item.id} aria-pressed={who === item.id} onClick={() => setWho(item.id)}>{item.chip}</button>)}
               </fieldset>
               <FormatToggle value={format} onChange={setFormat} />
-              <ShareBar tool={TOOL} fileName="namta.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption(card)} state={state} hint="লিংক পেলে ভাইবোন বা বন্ধুরা একই ১০টা অঙ্ক, একই ক্রমে পাবে।" />
+              <ShareBar tool={TOOL} fileName="namta.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption(card)} state={state} hint="ভাইবোন বা বন্ধুরাও একই ১০টা অঙ্ক একই ক্রমে খেলতে পারবে।" />
               <button type="button" className="kit-link nm-again" onClick={() => again(t)}>আরেকবার খেলো</button>
             </div>
           </div>

@@ -100,8 +100,8 @@ export function SignboardGame() {
   const caption = loan
     ? `খাঁটি বাংলা কী? রোজ বলা ১০টা ইংরেজি শব্দের বাংলায় আমি ${scoreLine(score)}টা পেরেছি। তুমি বলো তো?`
     : set.sober
-    ? `একুশের ৭৫ বছর: ১০টা শব্দ শুদ্ধ করে লেখার চেষ্টা, আমি ${scoreLine(score)}টা পেরেছি। তুমিও লিখে দেখো।`
-    : `শুদ্ধ বানান কোনটি? সাইনবোর্ডের ১০টা বানানে আমি ${scoreLine(score)}। তুমি কয়টা পারবে?`;
+    ? `একুশের ৭৫ বছর: ১০টা শব্দের শুদ্ধ বানান, আমি ${scoreLine(score)}টা পেরেছি। তুমিও খেলে দেখো।`
+    : `শুদ্ধ বানান কোনটি? সাইনবোর্ডের বানানে আমি ${scoreLine(score)} পেয়েছি। তুমি কয়টা পারবে?`;
   const right = picked !== undefined && isRight(word, picked);
 
   return (
@@ -137,7 +137,7 @@ export function SignboardGame() {
             <p className="banan-where">{word.where}</p>
             {word.loan && <p className="banan-loan"><span className="banan-sr">ইংরেজি শব্দ: </span>‘{word.loan}’</p>}
             {picked === undefined ? <>
-              <p className="banan-ask" id="banan-ask">{loan ? "খাঁটি বাংলায় কোনটা? ছুঁয়ে দাও" : "কোন বানানটা শুদ্ধ? ছুঁয়ে দাও"}</p>
+              <p className="banan-ask" id="banan-ask">{loan ? "খাঁটি বাংলায় কোনটা? ট্যাপ করো" : "কোন বানানটা শুদ্ধ? ট্যাপ করো"}</p>
               <div className="banan-plates" role="group" aria-labelledby="banan-ask">
                 {word.options.map((option, index) => <button type="button" key={option} ref={index === 0 ? firstPlate : undefined} className="banan-plate" onClick={() => pick(index as Pick)}>{option}</button>)}
               </div>

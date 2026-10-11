@@ -145,5 +145,5 @@ export function caption(shared: Shared) {
 export function previewTitle(shared: Shared) {
   const score = scoreOf(shared), me = shared.w === "ami";
   const who = shared.n || (me ? "একজন" : "এক খুদে বন্ধু");
-  return `${who} ${tableName(shared.t)}য় ${outOf(score)} পেয়েছে — ${me ? "তুমি" : "তোমার বাচ্চা"} কয়টা পারবে?`;
+  return `${who} ${tableName(shared.t)}য় ${outOf(score)} পেয়েছে। ${me ? "তুমি" : "তোমার বাচ্চা"} কয়টা পারবে?`;
 }

@@ -66,7 +66,7 @@ test("lines and badges follow the score, and the Ekushe set stays sober", () => 
 test("previews and friend lines are personal and spoiler-free", () => {
   const picks = allRight(wordSets[0]).map((pick, index) => (index < 2 ? 1 - pick : pick)) as Pick[];
   const result = { set: "dokan" as const, picks, name: "রাফি" };
-  assert.equal(previewTitle(result), "রাফি ১০-এ ৮টা বানান ঠিক করেছে — তুমি পারবে?");
+  assert.equal(previewTitle(result), "রাফি ১০-এ ৮টা বানান ঠিক করেছে। তুমি পারবে?");
   assert.equal(friendLine(result), "রাফি পেয়েছে ১০-এ ৮, তুমি?");
   assert.equal(compareLine(9, result), "রাফির চেয়ে ১টা বেশি!");
   assert.equal(compareLine(8, result), "রাফির সাথে সমান সমান, দুজনেই ৮।");
@@ -100,7 +100,7 @@ test("sets are append-only, and links shared before the খাঁটি বা�
   assert.deepEqual(wordSets.map(set => set.id).slice(0, 5), ["dokan", "school", "deyal", "e75", "khanti"]);
   const old = parseResult("#set=e75&a=1010101100&n=%E0%A6%B0%E0%A6%BF%E0%A6%AE%E0%A6%BE");
   assert.deepEqual(old, { set: "e75", picks: [1, 0, 1, 0, 1, 0, 1, 1, 0, 0], name: "রিমা" });
-  assert.equal(previewTitle(old!), "একুশের ৭৫ বছর: রিমা ১০-এ ১০টা বানান ঠিক করেছে — তুমি পারবে?");
+  assert.equal(previewTitle(old!), "একুশের ৭৫ বছর: রিমা ১০-এ ১০টা বানান ঠিক করেছে। তুমি পারবে?");
   assert.equal(scoreOf("dokan", [...("1010101101")].map(Number) as Pick[]), 10);
   assert.ok(!isLoan("e75") && !isLoan("dokan"));
 });
@@ -125,7 +125,7 @@ test("the খাঁটি বাংলা set has its own sober lines, preview a
   assert.equal(scoreOf("khanti", picks), 9);
   assert.equal(badge(9, "khanti"), "মায়ের ভাষায় বলি");
   assert.equal(badge(10, "e75"), "একুশের ৭৫ বছর");
-  assert.equal(previewTitle(result), "একুশের ৭৫ বছর: রাফি ১০-এ ৯টা শব্দের খাঁটি বাংলা বলেছে — তুমি পারবে?");
+  assert.equal(previewTitle(result), "একুশের ৭৫ বছর: রাফি ১০-এ ৯টা শব্দের খাঁটি বাংলা বলেছে। তুমি পারবে?");
   for (const score of [10, 7, 2]) assert.ok(!/ভালোবাসা|বানান/.test(humanLine(score, "khanti")), String(score));
   assert.equal(humanLine(2, "khanti"), "মুখে ইংরেজি আসা দোষের না। বাংলাটাও জানা থাকুক।");
   assert.match(share.preview(resultHash(result)).description, /ইংরেজি শব্দ/);

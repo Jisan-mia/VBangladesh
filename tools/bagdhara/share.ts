@@ -12,7 +12,7 @@ export const share: ToolShare = {
     const score = shared ? `${bn(scoreOf(shared.set, shared.answers))}টা` : "কয়টা";
     const [first, second] = questionsOf(shared?.set ?? "s1");
     return {
-      title: `${shared?.name || "এক বন্ধু"} ১০টা বাগধারার ${score} পেরেছে — তুমি কয়টা পারবে?`,
+      title: `${shared?.name || "এক বন্ধু"} ১০টা বাগধারার ${score} পেরেছে। তুমি কয়টা পারবে?`,
       description: `${shared?.name ? possessive(shared.name) : "বন্ধুর"} সাথে একই ১০টা বাগধারা: ${first.idiom}, ${second.idiom}… মজার ছবি দেখে আসল মানে বলো। ফ্রি।`,
     };
   },

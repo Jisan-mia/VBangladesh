@@ -137,5 +137,5 @@ export function caption({ w, a }: Shared) {
 }
 
 export function previewTitle({ w, a, n }: Shared) {
-  return `${n || "এক বন্ধু"} মিনিটে ${bn(w)}টা বাংলা শব্দ টাইপ করেছে, ${bn(a)}% নির্ভুল — তুমি কত?`;
+  return `${n || "এক বন্ধু"} মিনিটে ${bn(w)}টা বাংলা শব্দ টাইপ করেছে, ${bn(a)}% নির্ভুল। তুমি কত?`;
 }

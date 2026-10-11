@@ -69,7 +69,7 @@ test("the human line follows the count and each pack's quiet line", () => {
 test("a friend's card on the same pack gives scores and the first square you share", () => {
   const card = createCard({ pack: "relatives", mask: 0b111, name: "মিম" }, { pack: "relatives", mask: 0b110, name: "রাফি" });
   assert.equal(card.count, 3);
-  assert.equal(card.match, "রাফি ২, মিম ৩ — দুজনেরই কমন: রেজাল্ট কত?");
+  assert.equal(card.match, "রাফি ২, মিম ৩। দুজনেরই কমন: রেজাল্ট কত?");
   assert.equal(createCard({ pack: "relatives", mask: 1, name: "" }, { pack: "relatives", mask: 2, name: "" }).match, "বন্ধু ১, আমি ১");
   assert.equal(createCard({ pack: "office", mask: 1, name: "" }, { pack: "relatives", mask: 1, name: "রাফি" }).match, "");
   assert.match(caption(card), /^রাফি ২, মিম ৩/);
@@ -120,7 +120,7 @@ test("share normalizes state and previews with the sharer's name", () => {
   assert.equal(share.normalize("p=relatives&s=A4F1&n=%20রাফি%20&x=1"), "p=relatives&s=a4f1&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF");
   assert.equal(share.normalize("p=evil&s=0001"), null);
   const preview = share.preview("p=relatives&s=a4f1&n=রাফি");
-  assert.equal(preview.title, "আত্মীয়দের প্রশ্ন: রাফির ৮টা কমন পড়েছে — তোমার কয়টা?");
-  assert.equal(share.preview("p=office&s=0000").title, "অফিসের কথা: এক বন্ধুর ০টা কমন পড়েছে — তোমার কয়টা?");
+  assert.equal(preview.title, "আত্মীয়দের প্রশ্ন: রাফির ৮টা কমন পড়েছে। তোমার কয়টা?");
+  assert.equal(share.preview("p=office&s=0000").title, "অফিসের কথা: এক বন্ধুর ০টা কমন পড়েছে। তোমার কয়টা?");
   assert.ok(share.tally?.includes("seen:biyebari"));
 });

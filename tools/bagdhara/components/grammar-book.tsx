@@ -201,7 +201,7 @@ export function GrammarBook() {
             </label>
             <FormatToggle value={format} onChange={setFormat} />
             <ShareBar tool={TOOL} fileName={`bagdhara-${setId}.png`} makeImage={() => cardBlob({ ...own, friend }, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption(own, friend)} state={state} disabled={!done}
-              hint={done ? "লিংক পেলে বন্ধু একই ১০টা বাগধারা পাবে। তোমার উত্তর দেখবে শুধু নিজে খেলা শেষ করলে।" : "১০টা শেষ হলেই শেয়ার করা যাবে।"} />
+              hint={done ? "একই ১০টা বাগধারা বন্ধুও খেলতে পারবে। তোমার উত্তরগুলো ও দেখবে নিজের খেলা শেষ করার পর।" : "১০টা শেষ হলেই শেয়ার করা যাবে।"} />
             {done && <div className="bg-again">
               <button type="button" className="kit-secondary" onClick={() => chooseSet(otherSet.id)}>{otherSet.label} খেলো</button>
               <button type="button" className="kit-link" onClick={restart}>এই পাতা আবার খেলো</button>

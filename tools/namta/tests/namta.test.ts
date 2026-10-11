@@ -96,7 +96,7 @@ test("the words are kind and gender-neutral unless a parent picks ছেলে o
 test("captions and link previews are personal; only fixed table ids are counted", () => {
   assert.equal(caption(sample), "আমার মেয়ে রাফি ৫-এর নামতায় ১০-এ ১০ পেয়েছে! একই ১০টা অঙ্ক, তোমার বাচ্চা কয়টা পারে?");
   assert.equal(caption({ ...sample, w: "ami" }), "আমি ৫-এর নামতায় ১০-এ ১০ পেয়েছি! একই ১০টা অঙ্ক, তুমি কয়টা পারো?");
-  assert.equal(previewTitle(sample), "রাফি ৫-এর নামতায় ১০-এ ১০ পেয়েছে — তোমার বাচ্চা কয়টা পারবে?");
+  assert.equal(previewTitle(sample), "রাফি ৫-এর নামতায় ১০-এ ১০ পেয়েছে। তোমার বাচ্চা কয়টা পারবে?");
   assert.match(share.preview(shareHash({ ...sample, n: "" }).slice(1)).title, /^এক খুদে বন্ধু ৫-এর নামতায়/);
   assert.equal(share.preview("junk").title, "নামতা পারো? স্লেটে দেখাও");
   assert.deepEqual(share.tally, tallyIds);

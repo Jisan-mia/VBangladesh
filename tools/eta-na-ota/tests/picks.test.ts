@@ -42,7 +42,7 @@ test("names are NFC, stripped of control and direction characters, and capped", 
 test("the server normalizes links and writes a personal preview", () => {
   assert.equal(share.normalize("p=food&a=LLLLLLLLLLLL&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF&m=7&k=12&junk=1"), "p=food&a=LLLLLLLLLLLL&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF&m=7&k=12");
   assert.equal(share.normalize("p=food"), null);
-  assert.equal(share.preview("p=food&a=LLLLLLLLLLLL&n=রাফি&m=7&k=12").title, "রাফির পছন্দ দেশের সাথে ৭/১২ মেলে — তোমার?");
+  assert.equal(share.preview("p=food&a=LLLLLLLLLLLL&n=রাফি&m=7&k=12").title, "রাফির পছন্দ দেশের সাথে ৭/১২ মেলে। তোমার কয়টা মেলে?");
   assert.equal(share.preview("p=food&a=RLLLLLLLLLLL").title, "এক বন্ধুর বাছাই: চটপটি, কাচ্চি, ভাত… তুমি কোন দিকে?");
 });
 

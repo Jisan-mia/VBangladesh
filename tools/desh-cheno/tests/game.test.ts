@@ -87,7 +87,7 @@ test("lines follow the score and name the one question that was missed", () => {
 test("previews and compare lines are personal and spoiler-free", () => {
   const picks = allRight(quizSets[0]).map((pick, index) => (index < 2 ? (pick + 1) % 3 : pick)) as Pick[];
   const result = { set: "protik" as const, picks, name: "রাফি" };
-  assert.equal(previewTitle(result), "রাফি দেশ চেনো কুইজে ১০-এ ৮ — তুমি কয়টা পারবে?");
+  assert.equal(previewTitle(result), "রাফি দেশ চেনো কুইজে ১০-এ ৮। তুমি কয়টা পারবে?");
   assert.equal(compareLine(9, result), "রাফির চেয়ে ১টা বেশি!");
   assert.equal(compareLine(8, result), "রাফির সাথে সমান সমান, দুজনেই ৮।");
   assert.ok(previewTitle({ ...result, set: "v55", name: "" }).startsWith("বিজয়ের ৫৫ বছর: এক বন্ধু"));

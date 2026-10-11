@@ -76,7 +76,7 @@ export const cardTitle = (set: SetId) => setById(set)?.victory ? "বিজয�
 export function previewTitle(result: Result) {
   const score = scoreOf(result.set, result.picks);
   const lead = setById(result.set)?.victory ? "বিজয়ের ৫৫ বছর: " : "";
-  return `${lead}${result.name || "এক বন্ধু"} দেশ চেনো কুইজে ${scoreLine(score)} — তুমি কয়টা পারবে?`;
+  return `${lead}${result.name || "এক বন্ধু"} দেশ চেনো কুইজে ${scoreLine(score)}। তুমি কয়টা পারবে?`;
 }
 
 export function compareLine(mine: number, friend: Result) {

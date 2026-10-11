@@ -198,7 +198,7 @@ export function caption(shared: Shared, friend: Shared | null) {
 export function previewTitle(shared: Shared) {
   const pack = packOf(shared.pack)!;
   const who = shared.name ? possessive(shared.name) : "এক বন্ধুর";
-  if (shared.score) return `${who} পছন্দ দেশের সাথে ${bn(shared.score.match)}/${bn(shared.score.of)} মেলে — তোমার?`;
+  if (shared.score) return `${who} পছন্দ দেশের সাথে ${bn(shared.score.match)}/${bn(shared.score.of)} মেলে। তোমার কয়টা মেলে?`;
   const picks = pack.pairs.slice(0, 3).map((pair, index) => label(pair, shared.answers[index]));
   return `${who} বাছাই: ${picks.join(", ")}… তুমি কোন দিকে?`;
 }

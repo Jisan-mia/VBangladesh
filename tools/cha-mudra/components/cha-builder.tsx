@@ -190,7 +190,7 @@ export function ChaBuilder() {
               <input value={label} maxLength={LIMITS.label} onChange={event => setLabel(event.target.value)} placeholder="যেমন: নতুন ফোন" autoComplete="off" />
             </label>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="cha-mudra.png" makeImage={() => cardBlob(hisab, result!, format, site)} imageKey={`${state}|${format}`} caption={result ? caption(hisab, result) : ""} state={state} disabled={!ready} hint="লিংক পেলে বন্ধু তোমার হিসাবটা দেখবে, তারপর নিজের শখের জিনিস বসাবে।" />
+            <ShareBar tool={TOOL} fileName="cha-mudra.png" makeImage={() => cardBlob(hisab, result!, format, site)} imageKey={`${state}|${format}`} caption={result ? caption(hisab, result) : ""} state={state} disabled={!ready} hint="বন্ধু তোমার হিসাবটা দেখবে, তারপর নিজের শখের জিনিসের দাম বসাবে।" />
           </div>
         </div>
       </section>
