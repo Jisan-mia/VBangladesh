@@ -284,7 +284,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 23 | churir-bazar | চুড়ির বাজার | গেম | GW11 | done | games-wave-2.md #11 |
 | 23 | mukhe-mukhe-hisab | মুখে মুখে হিসাব | গেম | GW12 | done | games-wave-2.md #12 |
 | 23 | chhobir-tukro | ছবির টুকরো | গেম | GW13 | done | games-wave-2.md #13 |
-| 23 | sat-chara | সাত চাড়া | গেম | GW14 | building | games-wave-2.md #14 |
+| 23 | sat-chara | সাত চাড়া | গেম | GW14 | done | games-wave-2.md #14 |
 | 23 | chhip-felo | ছিপ ফেলো | গেম | GW15 | done | games-wave-2.md #15 |
 | 24 | golir-badminton | গলির ব্যাডমিন্টন | গেম | GW16 | todo | games-wave-2.md #16 |
 | 24 | latim | লাটিম | গেম | GW17 | done | games-wave-2.md #17 |
