@@ -2,6 +2,8 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { chitBlob, drawChit } from "../lib/draw-chit";
@@ -11,6 +13,8 @@ const TOOL = "tong";
 // Below this, "দেশের প্রিয়" would be one or two people's taste.
 const PROOF_MIN = 30;
 const COMPARE_MIN = 20;
+// Two glass cups touching: a bright ting with a higher partial.
+const clink = () => { tone(2349, 0.2, 0.07, "sine"); tone(3520, 0.14, 0.04, "sine", 0.015); };
 const percent = (count: number, total: number) => Math.round((count / Math.max(total, 1)) * 100);
 
 function Vessel({ line, className }: { line: Pick<Line, "tea" | "cup">; className?: string }) {
@@ -81,7 +85,7 @@ export function OrderBuilder() {
   async function vote() {
     setVoted("sending");
     const tally = await addToTally(TOOL, lineTally(own));
-    if (tally) { setEveryone(tally); setVoted("done"); } else setVoted("failed");
+    if (tally) { setEveryone(tally); setVoted("done"); clink(); } else setVoted("failed");
   }
 
   const who = friends.map(line => line.name).filter(Boolean);
@@ -159,7 +163,7 @@ export function OrderBuilder() {
         </div>
 
         <div className="tong-everyone">
-          <h3>দেশের টং-এ তোমার অর্ডারটা দেবে?</h3>
+          <div className="tong-everyone-head"><h3>দেশের টং-এ তোমার অর্ডারটা দেবে?</h3><SoundToggle compact /></div>
           {voted !== "done" || !everyone ? <>
             <p>শুধু তোমার চা, চিনি, কাপ আর সাথের খাবারগুলো গোনা হবে। নাম যাবে না।</p>
             <button type="button" className="kit-secondary" onClick={vote} disabled={voted === "sending"}>{voted === "sending" ? "দিচ্ছি…" : "অর্ডারটা দাও"}</button>

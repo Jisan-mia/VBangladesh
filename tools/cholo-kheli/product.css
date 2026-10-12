@@ -51,7 +51,7 @@
 
 /* লুডুর আসর: the scoreboard, laid out like the board's four coloured yards */
 .kheli-ludo{display:grid;gap:12px;scroll-margin-top:12px;padding:16px 14px;border-radius:14px;background:var(--wash)}
-.kheli-ludo-kicker{margin:0;font-size:13px;font-weight:600;color:var(--accent)}
+.kheli-ludo-kicker{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0;font-size:13px;font-weight:600;color:var(--accent)}
 .kheli-ludo h2{margin:-10px 0 0;font-family:var(--font-display);font-size:clamp(25px,5vw,34px);line-height:1.35}
 .kheli-ludo-lead{margin:-8px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
 .kheli-ludo-board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0;padding:0;list-style:none}

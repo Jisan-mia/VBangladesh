@@ -22,7 +22,8 @@
   background:repeating-linear-gradient(90deg,#ffffff08 0 38px,transparent 38px 97px),linear-gradient(var(--wall),var(--wall-deep));
   box-shadow:0 12px 30px #163f5033}
 .cm-ask{display:grid;gap:10px}
-.cm-ask>label{font-family:var(--font-display);font-size:18px;font-weight:700}
+.cm-askhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cm-askhead label{font-family:var(--font-display);font-size:18px;font-weight:700}
 .cm-input{display:flex;align-items:center;gap:8px;padding:2px 14px;border-radius:14px;background:var(--cream);color:var(--ink)}
 .cm-input:focus-within{outline:3px solid var(--yellow);outline-offset:2px}
 .cm-input input{flex:1;width:0;min-height:56px;padding:0;border:0;background:none;color:var(--ink);font-family:var(--font-display);font-size:clamp(28px,8vw,38px);font-weight:700}

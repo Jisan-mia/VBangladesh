@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, type Tally } from "../../../shared/share-client";
+import { tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import {
@@ -13,6 +15,8 @@ import {
 const TOOL = "raat-jaga";
 // Percentages from a handful of people are noise ("১০০% জেগেছে" after one vote).
 const COMPARE_MIN = 20;
+// A soft clock tick-tock, for a night added to the sky.
+const tickTock = () => { tone(1800, 0.03, 0.05, "square"); tone(1250, 0.04, 0.04, "square", 0.09); };
 const percent = (count: number, total: number) => Math.round((count / Math.max(total, 1)) * 100);
 
 function StarIcon() {
@@ -65,6 +69,7 @@ export function NightRoom() {
   }, [card, format, site, friend]);
 
   function toggle(id: NightId) {
+    if (!selected.includes(id)) tickTock();
     // Functional update: two quick taps before a re-render must both count.
     setSelected(current => toggleNight(current, id));
     setLastTapped(id);
@@ -127,7 +132,10 @@ export function NightRoom() {
       </div>
 
       <div className="rj-sheet" id="nights">
-        <p className="rj-rule">এখানে রাত মানে <strong>বাংলাদেশ সময় রাত ১১টা থেকে ভোর ৫টার মধ্যে</strong> শুরু হওয়া ম্যাচ।</p>
+        <div className="rj-rulerow">
+          <p className="rj-rule">এখানে রাত মানে <strong>বাংলাদেশ সময় রাত ১১টা থেকে ভোর ৫টার মধ্যে</strong> শুরু হওয়া ম্যাচ।</p>
+          <SoundToggle compact />
+        </div>
         {years.map(year => (
           <fieldset className="rj-year" key={year}>
             <legend>{bnYear(year)} <span>{hosts[year]}</span></legend>

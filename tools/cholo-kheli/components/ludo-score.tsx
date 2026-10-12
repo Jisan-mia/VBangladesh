@@ -2,12 +2,20 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { hiss, sfx, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar } from "../../../shared/share-kit";
 import { championBlob, drawChampion } from "../lib/draw-poster";
 import { bn } from "../lib/invite";
 import { champions, championTitle, emptySession, ludoCaption, ludoHash, ludoLine, MAX_HISTORY, MAX_PLAYER_NAME, OCCASIONS, parseSession, PIECES, playerName, tally, tallyPath, tallyWidth, type Ludo, type Session } from "../lib/ludo";
 
 const STORAGE_KEY = "cholo-kheli:ludo";
+
+/** A short dice rattle: a few quick knocks and a scrape. */
+export function diceRattle() {
+  [0, 0.055, 0.1, 0.16, 0.21].forEach((delay, index) => { tone(700 + index * 90, 0.03, 0.06, "square", delay); hiss(0.05, 0.07, 3200, "bandpass", delay); });
+  tone(420, 0.08, 0.09, "triangle", 0.28);
+}
 
 export function savedSession() {
   try { return parseSession(localStorage.getItem(STORAGE_KEY)); } catch { return null; }
@@ -51,6 +59,7 @@ export function LudoScore({ players, site }: { players: number; site: string }) 
   }, [ludo, total, format, site]);
 
   function win(player: number) {
+    sfx.pick();
     setSession(current => ({ ...current, history: [...current.history, player].slice(-MAX_HISTORY), at: Date.now() }));
     setConfirmReset(false);
   }
@@ -69,7 +78,7 @@ export function LudoScore({ players, site }: { players: number; site: string }) 
     : `${bn(total)} দান হলো · ${leaders.length > 1 ? `${leaders.map(index => playerName(ludo.names, index)).join(" আর ")} সমান সমান` : `এগিয়ে ${playerName(ludo.names, leaders[0])}`}`;
 
   return <>
-    <p className="kheli-ludo-kicker">লুডুর আসর</p>
+    <p className="kheli-ludo-kicker">লুডুর আসর <SoundToggle compact /></p>
     <h2 id="ludo-title">কে জিতল?</h2>
     <p className="kheli-ludo-lead">প্রতি দান শেষে যে জিতল, তার ঘরে চাপো। নাম না দিলে গুটির রং দিয়েই চলবে। হিসাবটা এই ফোনেই থাকে।</p>
     <ol className="kheli-ludo-board">

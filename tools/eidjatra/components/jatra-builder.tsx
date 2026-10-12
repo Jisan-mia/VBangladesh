@@ -3,11 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally } from "../../../shared/share-client";
+import { tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard, drawStage } from "../lib/draw-card";
 import { EVENT, averageLine, bn, caption, clampHours, compareLine, defaults, divisions, HOURS, humanLine, MAX_NAME, modes, parseShareHash, possessive, readDigits, routeAverage, routeLabel, routeWords, shareHash, tallyId, tripLine, MIN_SAMPLE, mode, type Average, type DivisionId, type ModeId, type Trip } from "../lib/jatra";
 
 const TOOL = "eidjatra";
+// One soft two-note chime when the hour is counted.
+const chime = () => { tone(1319, 0.22, 0.06, "sine"); tone(1760, 0.34, 0.045, "sine", 0.12); };
 type Added = { status: "idle" | "sending" | "failed" } | { status: "done"; average: Average | null };
 
 function ModeIcon({ id }: { id: ModeId }) {
@@ -91,6 +95,7 @@ export function JatraBuilder() {
     setAdded({ status: "sending" });
     const tally = await addToTally(TOOL, [tallyId(trip)], `${EVENT}:`);
     setAdded(tally ? { status: "done", average: routeAverage(tally.counts, trip) } : { status: "failed" });
+    if (tally) chime();
   }
 
   return (
@@ -152,7 +157,10 @@ export function JatraBuilder() {
         </div>
 
         <div className="jatra-tally">
-          <h3>{added.status === "done" ? "তোমার ঘণ্টাটা যোগ হয়েছে" : "এবারের ঈদযাত্রায় তোমার ঘণ্টাটাও যোগ করবে?"}</h3>
+          <div className="jatra-tally-head">
+            <h3>{added.status === "done" ? "তোমার ঘণ্টাটা যোগ হয়েছে" : "এবারের ঈদযাত্রায় তোমার ঘণ্টাটাও যোগ করবে?"}</h3>
+            <SoundToggle compact />
+          </div>
           {trip.onTheWay ? <p>বাড়ি পৌঁছে ‘বাড়ি পৌঁছে গেছি’ বেছে নাও, তখন পুরো ঘণ্টাটা যোগ করতে পারবে। পথের মাঝের হিসাব যোগ করলে সবার গড় ভুল হয়ে যেত।</p>
             : added.status !== "done" ? <>
               <p>যোগ করলে দেখাবে, {routeWords(trip)} {mode(trip.mode).by} যারা জানিয়েছে, তাদের গড়ে কত ঘণ্টা লেগেছে। শুধু পথ, বাহন আর ঘণ্টার ঘরটা গোনা হয়। নাম বা আর কিছু যায় না।</p>

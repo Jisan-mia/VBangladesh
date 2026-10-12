@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { hiss, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard, type CardContent } from "../lib/draw-card";
 import {
@@ -13,6 +15,8 @@ import {
 const TOOL = "ekadosh";
 // "সবার ভোটে" from three people is noise; wait for a real crowd.
 const TALLY_MIN = 20;
+// The referee's whistle, then the stand swelling behind it.
+const whistle = () => { tone(2900, 0.16, 0.05, "triangle", 0, 3300); tone(3100, 0.24, 0.05, "triangle", 0.18, 2700); hiss(0.8, 0.09, 1400, "bandpass", 0.3); };
 
 /** The pitch, drawn in green marker. The viewBox matches the CSS aspect ratio, so circles stay round. */
 function PitchLines() {
@@ -105,7 +109,7 @@ export function CoachBoard() {
     setJoined("sending");
     // Only the eleven listed player ids are counted; the name never leaves the link.
     const tally = await addToTally(TOOL, team.players);
-    if (tally) { setEveryone(tally); setJoined("done"); } else setJoined("failed");
+    if (tally) { setEveryone(tally); setJoined("done"); whistle(); } else setJoined("failed");
   }
 
   const spot = active === null ? null : spotOf(team, active);
@@ -217,7 +221,7 @@ export function CoachBoard() {
         </div>
 
         <div className="ek-everyone">
-          <h3>সবার ভোটে একাদশটা কেমন?</h3>
+          <div className="ek-everyone-head"><h3>সবার ভোটে একাদশটা কেমন?</h3><SoundToggle compact /></div>
           {joined !== "done" ? <>
             <p>চাইলে তোমার এগারো জনকে সবার হিসাবে যোগ করো। নাম যাবে না, শুধু কোন খেলোয়াড় বেছেছ সেটা গোনা হবে।</p>
             <button type="button" className="kit-secondary" onClick={join} disabled={joined === "sending"}>{joined === "sending" ? "যোগ হচ্ছে…" : "আমার দলটাও গুনে নাও"}</button>
