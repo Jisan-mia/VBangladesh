@@ -181,7 +181,7 @@ export function NightRoom() {
               <p>দেখো কোন রাতে প্রায় সবাই জেগেছিল, আর কোনটা শুধু তোমার মতো অল্প কয়েকজনের। নাম যাবে না, শুধু কোন কোন ম্যাচ দাগিয়েছ সেটা গোনা হবে।</p>
               <button type="button" className="kit-secondary" onClick={compareWithEveryone} disabled={compared === "sending"}>{compared === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
               {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
-            </> : everyone.total < COMPARE_MIN ? <p className="kit-status">{bn(everyone.total)} জনের সাথে মেলানো হলো। এখনো খুব কম মানুষ, তাই হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও!</p> : <>
+            </> : everyone.total < COMPARE_MIN ? <p className="kit-status">{bn(everyone.total)} জনের সাথে মেলানো হলো। এখনো খুব কম মানুষ, তাই হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও।</p> : <>
               <p>{bn(everyone.total)} জনের সাথে মেলানো হলো।</p>
               <div className="rj-rare">
                 <p><span>তোমার সবচেয়ে বিরল রাত</span><strong>{nightTitle(ranked[0].night)}: {scoreLine(ranked[0].night)}</strong><em>{ranked[0].share < 30 ? "মাত্র " : ""}{bn(ranked[0].share)}% জেগেছিল</em></p>
