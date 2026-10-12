@@ -125,6 +125,7 @@ import { site as chhobir_tukro } from '../tools/chhobir-tukro/content';
 import { site as sat_chara } from '../tools/sat-chara/content';
 import { site as chhip_felo } from '../tools/chhip-felo/content';
 import { site as latim } from '../tools/latim/content';
+import { site as nodi_par } from '../tools/nodi-par/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -254,6 +255,7 @@ export const toolContent = {
   'sat-chara': sat_chara,
   'chhip-felo': chhip_felo,
   'latim': latim,
+  'nodi-par': nodi_par,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
