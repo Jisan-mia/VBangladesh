@@ -129,6 +129,7 @@ const expectedSlugs = [
   'marble-sinri',
   'roshi-tana',
   'moshar-raat',
+  'al-dhore-hati',
 ].sort();
 const origin = 'https://example.org';
 // Guide and per-tool privacy pages stay reachable but noindex, so only tool pages and category hubs are in the sitemap.

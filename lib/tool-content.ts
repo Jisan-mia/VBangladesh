@@ -132,6 +132,7 @@ import { site as kagojer_urojahaj } from '../tools/kagojer-urojahaj/content';
 import { site as marble_sinri } from '../tools/marble-sinri/content';
 import { site as roshi_tana } from '../tools/roshi-tana/content';
 import { site as moshar_raat } from '../tools/moshar-raat/content';
+import { site as al_dhore_hati } from '../tools/al-dhore-hati/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -268,6 +269,7 @@ export const toolContent = {
   'marble-sinri': marble_sinri,
   'roshi-tana': roshi_tana,
   'moshar-raat': moshar_raat,
+  'al-dhore-hati': al_dhore_hati,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
