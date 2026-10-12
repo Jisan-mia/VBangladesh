@@ -121,7 +121,7 @@ export const catalog = [
   { slug: "shobdo-khoja", name: "শব্দ খোঁজা", description: "অক্ষরের গ্রিডে লুকানো ছয়টা ফুল, মাছ বা নদীর নাম খুঁজে কলমের দাগে কাটো।", category: "গেম", action: "শব্দ খোঁজো" },
   { slug: "carrom", name: "ক্যারম", description: "স্ট্রাইকার টেনে ছাড়ো, গুটি ঢোকাও। একা দশ চাল, নয়তো দুজনে এক ফোনে।", category: "গেম", action: "ক্যারম খেলো" },
   { slug: "pati-buni", name: "পাটি বুনি", description: "বেতের ফালি বসিয়ে সারি ভরাও, নিজের শীতলপাটি বোনো।", category: "গেম", action: "পাটি বোনো" },
-  { slug: "sudoku", name: "সুডোকু বাংলায়", description: "সুডোকু বাংলায়: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "sudoku", name: "সুডোকু বাংলায়", description: "ঘর চাপো, বাংলা অঙ্ক বসাও। ৪×৪ থেকে ৯×৯, ৪০ লেভেল আর রোজ নতুন ধাঁধা।", category: "গেম", action: "সুডোকু খেলো" },
   { slug: "switchboard", name: "সুইচবোর্ড", description: "সুইচবোর্ড: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "golokdhadha", name: "গোলকধাঁধা", description: "গোলকধাঁধা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
