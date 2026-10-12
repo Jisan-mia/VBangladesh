@@ -133,6 +133,7 @@ import { share as golir_badminton } from '../tools/golir-badminton/share';
 import { share as kagojer_urojahaj } from '../tools/kagojer-urojahaj/share';
 import { share as marble_sinri } from '../tools/marble-sinri/share';
 import { share as roshi_tana } from '../tools/roshi-tana/share';
+import { share as moshar_raat } from '../tools/moshar-raat/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -269,6 +270,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'kagojer-urojahaj': kagojer_urojahaj,
   'marble-sinri': marble_sinri,
   'roshi-tana': roshi_tana,
+  'moshar-raat': moshar_raat,
 };
 
 export function toolShare(tool: string): ToolShare | null {
