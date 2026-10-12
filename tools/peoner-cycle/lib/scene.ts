@@ -121,6 +121,9 @@ function pop(scene: Scene, kind: number, x: number, y: number) {
   scene.popT[slot] = scene.clock; scene.popX[slot] = x; scene.popY[slot] = y; scene.popKind[slot] = kind;
 }
 
+/** Shows `text` in the milestone banner (a route's goal or a star on the way). */
+export function announce(scene: Scene, text: string) { scene.mileText = text; pop(scene, 2, W / 2, 96); }
+
 export const LETTER_TAKEN = 1, BELL_RANG = 2, CRASHED = 4;
 
 /** Turns the ride's new events into pops, rings and flying letters. Returns what happened (for sound and buzz). */
@@ -170,10 +173,11 @@ function outlined(c: CanvasRenderingContext2D, text: string, x: number, y: numbe
 }
 
 /**
- * One frame. `run` is null on the ready screen (an empty road rolling by). `friendMeters` puts a flag where a friend stopped.
+ * One frame. `run` is null on the ready screen (an empty road rolling by). `friendMeters` puts a flag where a friend stopped,
+ * and `goal` draws a rope across the road with its name where the route's letters are due.
  * The two halves glow on the ready screen and fade out over a ride's first two seconds.
  */
-export function drawScene(scene: Scene, run: Run | null, slow: boolean, friendMeters: number) {
+export function drawScene(scene: Scene, run: Run | null, slow: boolean, friendMeters: number, goal?: { meters: number; name: string }) {
   const c = scene.context, d = run ? run.d : scene.roll, clock = scene.clock;
   c.setTransform(scene.k, 0, 0, scene.k, 0, 0);
   c.globalAlpha = 1;
@@ -206,6 +210,14 @@ export function drawScene(scene: Scene, run: Run | null, slow: boolean, friendMe
     if (flagY > -10 && flagY < H + 50) {
       stamp(c, scene.flag, ROAD_L - 18, flagY);
       if (scene.friendText) { c.font = FONT_FLAG; c.textAlign = "right"; outlined(c, scene.friendText, ROAD_L - 22, flagY - 44, "#b23a2e"); }
+    }
+  }
+
+  if (run && goal) {
+    const goalY = FRONT_Y - (goal.meters * UNIT - d);
+    if (goalY > -10 && goalY < H + 20) {
+      c.fillStyle = C.ink; c.fillRect(ROAD_L - 6, goalY - 2, LANES * LANE_W + 12, 4);
+      c.font = FONT_FLAG; c.textAlign = "center"; outlined(c, goal.name, W / 2, goalY - 8, "#b23a2e");
     }
   }
 

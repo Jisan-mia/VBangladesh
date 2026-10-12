@@ -1,6 +1,6 @@
 // The rules: a sack swings on the crane's rope, a tap drops it straight down, and it must sit on the sack below.
 // Pure and seeded: the same seed gives the same swings on every phone. Units are one sack width and seconds.
-import { makeRng, pick } from "../../../shared/game-core";
+import { makeRng, pick, starsFor, type LevelStars } from "../../../shared/game-core";
 
 /** Landing this close to the middle of the sack below is "ঠিক মাঝে". */
 export const PERFECT = 0.12;
@@ -59,11 +59,50 @@ export function placePivot(top: number, swing: Swing) {
   return Math.max(-limit, Math.min(limit, top + swing.amp * swing.shift));
 }
 
+/**
+ * The ghats (levels). Each one starts the swings `offset` sacks further along (faster, wider, off-centre sooner) and asks
+ * for a taller load: `goal` sacks fill the truck (1 star, the next ghat opens), `stars` are the heights for 2 and 3.
+ * The run goes on after the goal, as before. Ghat 1 is the original game, so old links replay unchanged.
+ */
+export const GHATS = [
+  { name: "সদরঘাট", offset: 0, goal: 5, stars: [12, 20] },
+  { name: "বাদামতলী", offset: 1, goal: 7, stars: [13, 22] },
+  { name: "নারায়ণগঞ্জ", offset: 2, goal: 8, stars: [14, 24] },
+  { name: "চাঁদপুর", offset: 4, goal: 9, stars: [16, 26] },
+  { name: "মাওয়া", offset: 5, goal: 10, stars: [16, 26] },
+  { name: "আরিচা", offset: 6, goal: 10, stars: [17, 26] },
+  { name: "ভৈরব", offset: 8, goal: 10, stars: [16, 25] },
+  { name: "বরিশাল", offset: 9, goal: 10, stars: [16, 24] },
+  { name: "খুলনা", offset: 10, goal: 10, stars: [16, 23] },
+  { name: "চিলমারী", offset: 12, goal: 10, stars: [15, 22] },
+] as const satisfies ReadonlyArray<{ name: string; offset: number; goal: number; stars: readonly [number, number] }>;
+export const LEVEL_COUNT = GHATS.length;
+export const isLevel = (level: number) => Number.isInteger(level) && level >= 1 && level <= LEVEL_COUNT;
+/** Stars for a load: none below the goal, then by height. */
+export const starsOf = (sacks: number, level: number) => {
+  const ghat = GHATS[level - 1];
+  return sacks < ghat.goal ? 0 : starsFor(sacks, ghat.stars[1], ghat.stars[0]);
+};
+/** The next height that earns something (the goal, then 2 and 3 stars), or 0 at three stars. */
+export const nextMark = (sacks: number, level: number) => {
+  const ghat = GHATS[level - 1];
+  return [ghat.goal, ghat.stars[0], ghat.stars[1]].find(mark => sacks < mark) ?? 0;
+};
+/** Before ghats, this phone kept only a best count for the one game there was (now ghat 1). Its stars, or 0 when there is nothing to move. */
+export function migrateBest(stars: LevelStars, oldBest: string | null) {
+  const sacks = Number(oldBest);
+  if (Object.keys(stars).length || oldBest === null || !Number.isInteger(sacks) || sacks < 0) return 0;
+  return starsOf(sacks, 1);
+}
+
 export type Phase = "ready" | "swing" | "drop" | "settle" | "fall" | "over";
 export type Verdict = "perfect" | "good" | "wide" | "slip" | "lean";
 
 export type Game = {
   seed: number;
+  level: number;
+  /** Swings are taken from this far along the seed's list (the ghat's offset). */
+  from: number;
   phase: Phase;
   /** Seconds the current sack has swung (slower in "ধীরে খেলো"). */
   t: number;
@@ -84,9 +123,9 @@ export type Game = {
   offset: number;
 };
 
-export function newGame(seed: number): Game {
-  const swing = swingOf(seed, 0);
-  return { seed, phase: "ready", t: 0, timer: 0, xs: [0], kinds: [0], swing, pivot: placePivot(0, swing), dropX: 0, perfect: 0, combo: 0, bestCombo: 0, verdict: null, offset: 0 };
+export function newGame(seed: number, level = 1): Game {
+  const from = GHATS[level - 1].offset, swing = swingOf(seed, from);
+  return { seed, level, from, phase: "ready", t: 0, timer: 0, xs: [0], kinds: [0], swing, pivot: placePivot(0, swing), dropX: 0, perfect: 0, combo: 0, bestCombo: 0, verdict: null, offset: 0 };
 }
 
 export const scoreOf = (game: Game) => game.xs.length - 1;
@@ -128,7 +167,7 @@ function land(game: Game) {
   game.xs.push(x);
   game.kinds.push(game.swing.kind);
   // The next swing is known now, so the trolley can roll to it while this sack settles.
-  game.swing = swingOf(game.seed, game.xs.length - 1);
+  game.swing = swingOf(game.seed, game.xs.length - 1 + game.from);
   game.pivot = placePivot(x, game.swing);
   game.phase = "settle";
 }

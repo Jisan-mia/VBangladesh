@@ -18,6 +18,12 @@
 .tool-peoner-cycle .pc-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.35}
 .tool-peoner-cycle .pc-friend p{margin:0;font-size:13px;color:var(--muted);line-height:1.4}
 
+/* the route and every star so far */
+.tool-peoner-cycle .pc-level{display:flex;justify-content:space-between;gap:8px;margin:0;font-size:14px;line-height:1.3;color:var(--muted)}
+.tool-peoner-cycle .pc-level b{font-family:var(--font-display);font-size:16px;color:var(--ink)}
+.tool-peoner-cycle .pc-level span{white-space:nowrap}
+.tool-peoner-cycle .pc-level span::first-letter{color:#e39b00}
+
 /* the play area, in a warm handheld-style bezel; only here do touches belong to the game */
 .tool-peoner-cycle .pc-stage{position:relative;border:6px solid #3a2f26;border-radius:22px;overflow:hidden;background:#ebc9a0;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;box-shadow:0 0 0 2px #c9a77a,0 10px 24px #2b211833}
 .tool-peoner-cycle .pc-stage canvas{display:block;width:100%;height:auto;aspect-ratio:360/470}
@@ -30,6 +36,7 @@
 .tool-peoner-cycle .pc-dim{inset:0;width:auto;transform:none;align-content:center;border-radius:0;background:#2b2118a8}
 .tool-peoner-cycle .pc-bump{top:15%;gap:2px;padding:10px 14px}
 .tool-peoner-cycle .pc-kicker{margin:0;font-size:15px;font-weight:600;line-height:1.4;color:#f3e3c6}
+.tool-peoner-cycle .pc-streak{position:absolute;right:10px;top:46px;margin:0;padding:3px 10px;border-radius:999px;background:var(--accent);color:#fff;font-size:14px;font-weight:700;pointer-events:none;animation:gx-pop .45s cubic-bezier(.3,1.6,.5,1) both}
 .tool-peoner-cycle .pc-headline{margin:0;font-family:var(--font-display);font-size:clamp(26px,8vw,34px);font-weight:700;line-height:1.25;color:var(--sun)}
 
 /* two big lane buttons under the thumbs */
@@ -44,13 +51,17 @@
 .tool-peoner-cycle .pc-score{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 12px;margin:0}
 .tool-peoner-cycle .pc-score b{font-family:var(--font-display);font-size:32px;line-height:1.15;color:var(--accent)}
 .tool-peoner-cycle .pc-score span{font-size:14px;font-weight:600;color:var(--muted)}
+.tool-peoner-cycle .pc-over-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 10px}
+.tool-peoner-cycle .pc-over-kicker{margin:0;font-family:var(--font-display);font-size:17px;font-weight:700;line-height:1.4}
+.tool-peoner-cycle .pc-over-stars{margin:0;font-size:32px}
+.tool-peoner-cycle .pc-near{margin:0;font-size:15px;font-weight:700;color:var(--accent-deep)}
 .tool-peoner-cycle .pc-detail{margin:0;font-size:15px;font-weight:600;color:var(--rust)}
 .tool-peoner-cycle .pc-versus{margin:0;padding:6px 10px;border-radius:12px;background:#fff;font-size:15px;font-weight:600;line-height:1.45}
 .tool-peoner-cycle .pc-over-actions{display:grid;grid-template-columns:3fr 2fr;gap:10px;margin-top:2px}
 .tool-peoner-cycle .pc-again{min-height:56px;font-size:20px;font-family:var(--font-display)}
 .tool-peoner-cycle .pc-to-card{min-height:56px;padding:0 6px;white-space:nowrap;border:2px solid var(--accent);border-radius:14px;background:#fff;color:var(--accent);font-size:16px;font-weight:700}
 
-/* under the controls: slow mode, sound (off unless turned on) and pause */
+/* under the controls: slow mode, sound and pause */
 .tool-peoner-cycle .pc-bar{display:flex;gap:8px}
 .tool-peoner-cycle .pc-toggle,.tool-peoner-cycle .pc-pause{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:6px 12px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;line-height:1.2;white-space:nowrap}
 .tool-peoner-cycle .pc-toggle{flex:1 1 auto}
@@ -60,6 +71,14 @@
 .tool-peoner-cycle .pc-toggle[aria-pressed=true] i{background:var(--accent)}
 .tool-peoner-cycle .pc-toggle[aria-pressed=true] i::after{transform:translateX(14px)}
 .tool-peoner-cycle .pc-pause{flex:none;min-width:84px}
+.tool-peoner-cycle .pc-sound{flex:none;min-width:48px;min-height:48px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink)}
+
+/* every route, folded away below the game */
+.tool-peoner-cycle .pc-levels{border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff}
+.tool-peoner-cycle .pc-levels summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-peoner-cycle .pc-levels summary span{font-weight:500;font-size:14px;color:var(--muted)}
+.tool-peoner-cycle .pc-levels p{margin:0 14px 10px;font-size:14px;color:var(--muted)}
+.tool-peoner-cycle .pc-levels .gx-levels{padding:0 12px 12px}
 .tool-peoner-cycle .pc-pause:disabled{opacity:.5}
 
 /* result */
@@ -96,5 +115,5 @@
   .tool-peoner-cycle .pc-toggle i{width:28px}
   .tool-peoner-cycle .pc-toggle[aria-pressed=true] i::after{transform:translateX(8px)}
 }
-@media(prefers-reduced-motion:reduce){.tool-peoner-cycle .pc-toggle i::after{transition:none}.tool-peoner-cycle .pc-lane:active{transform:none}}
+@media(prefers-reduced-motion:reduce){.tool-peoner-cycle .pc-streak{animation:none}.tool-peoner-cycle .pc-toggle i::after{transition:none}.tool-peoner-cycle .pc-lane:active{transform:none}}
 .tool-peoner-cycle .pc-hero h1 .pc-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;color:var(--rust)}

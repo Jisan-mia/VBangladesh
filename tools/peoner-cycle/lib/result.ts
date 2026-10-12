@@ -2,13 +2,13 @@
 // so it uses game-core and plain strings only.
 import { possessive } from "../../../shared/bangla";
 import { challengeHash, readChallenge } from "../../../shared/game-core";
-import { scoreOf, BELL_POINTS, CART, COW, GOAT, LETTER_POINTS, PUDDLE } from "./ride";
+import { scoreOf, BELL_POINTS, CART, COW, GOAT, LEVEL_COUNT, LETTER_POINTS, PUDDLE, ROUTES } from "./ride";
 
 const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
 export const bn = (value: number) => digits.format(value);
 
-/** What a challenge link carries: the road's seed, the মিটার, the letters, an optional first name. The score follows from them plus the bells. */
-export type Shared = { seed: number; score: number; meters: number; letters: number; name: string };
+/** What a challenge link carries: the road's seed, the route, the মিটার, the letters, an optional first name. The score follows from them plus the bells. */
+export type Shared = { seed: number; score: number; meters: number; letters: number; name: string; level: number };
 /** About 20 minutes at top speed. A real-time score can't be re-checked, so the caps only keep links sane. */
 export const MAX_METERS = 20000;
 /** The first puddle stands 26 m out: nobody stops sooner. */
@@ -21,18 +21,25 @@ export const MAX_SCORE = scoreOf(MAX_METERS, maxLetters(MAX_METERS), maxBells(MA
 const whole = (value: string | undefined) => value !== undefined && /^\d{1,6}$/.test(value) ? Number(value) : -1;
 
 export function parseShareHash(hash: string): Shared | null {
-  const challenge = readChallenge(hash, { maxTarget: MAX_SCORE, extraKeys: ["m", "c"] });
+  // Links from before routes have no `l` and open route 1, the same road they were played on.
+  const challenge = readChallenge(hash, { maxTarget: MAX_SCORE, extraKeys: ["m", "c", "l"] });
   if (!challenge) return null;
   const meters = whole(challenge.extra.m), letters = whole(challenge.extra.c);
   if (meters < MIN_METERS || meters > MAX_METERS || letters < 0 || letters > maxLetters(meters)) return null;
   const rest = challenge.target - meters - LETTER_POINTS * letters;
   if (rest < 0 || rest % BELL_POINTS !== 0 || rest / BELL_POINTS > maxBells(meters)) return null;
-  return { seed: challenge.seed, score: challenge.target, meters, letters, name: challenge.name };
+  const rawLevel = challenge.extra.l ?? "1", level = Number(rawLevel);
+  if (!/^[1-9]\d?$/.test(rawLevel) || level > LEVEL_COUNT) return null;
+  return { seed: challenge.seed, score: challenge.target, meters, letters, name: challenge.name, level };
 }
 
 export const bellsOf = (shared: Pick<Shared, "score" | "meters" | "letters">) => (shared.score - shared.meters - LETTER_POINTS * shared.letters) / BELL_POINTS;
 
-export const shareHash = (shared: Shared) => challengeHash({ seed: shared.seed, target: shared.score, name: shared.name, extra: { m: shared.meters, c: shared.letters } });
+// Route 1 leaves `l` out, so its links stay exactly the old format.
+export const shareHash = (shared: Shared) => challengeHash({ seed: shared.seed, target: shared.score, name: shared.name, extra: { m: shared.meters, c: shared.letters, ...(shared.level > 1 && { l: shared.level }) } });
+
+/** "রুট ৩ · স্কুলপাড়া" */
+export const routeLabel = (level: number) => `রুট ${bn(level)} · ${ROUTES[level - 1].name}`;
 
 export const bands = [
   { min: 0, line: "সবে প্যাডেলে পা দিলে। চিঠি গুছিয়ে আবার চলো!" },

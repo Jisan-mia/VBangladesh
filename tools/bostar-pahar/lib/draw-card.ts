@@ -2,8 +2,8 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, roundedRect, wrapText, type CardFormat } from "../../../shared/card-canvas";
 import { makeRng } from "../../../shared/game-core";
 import { LOAD_TOP, PAL, SACK_H, WORKERS, drawBank, drawCloud, drawLaunch, drawLoad, drawSack, drawTruckBack, drawTruckFront, drawWorker, type Pose } from "./art";
-import { swingOf } from "./game";
-import { bn, humanLine, type Card } from "./result";
+import { GHATS, starsOf, swingOf } from "./game";
+import { bn, ghatLabel, humanLine, type Card } from "./result";
 
 const BAND = { band: PAL.accentDeep, ask: "#ffd166", site: "#ffffff" };
 const layouts = {
@@ -62,11 +62,11 @@ export function drawCard(canvas: HTMLCanvasElement, card: Card, format: CardForm
   // The pile: the run's own sack kinds (they come from the seed), stacked with a gentle hand-made lean.
   const drawn = Math.min(MAX_DRAWN, card.sacks + 1), roomTop = L.jib + 50 + (drawn <= 16 ? 220 : 60);
   const sh = Math.min(u * SACK_H * 0.95, (bedTop - roomTop) / drawn), sw = sh / SACK_H;
-  const rng = makeRng((card.seed ^ 0x5bd1e995) >>> 0);
+  const rng = makeRng((card.seed ^ 0x5bd1e995) >>> 0), offset = GHATS[card.level - 1].offset;
   let lean = 0;
   for (let index = 0; index < drawn; index++) {
     if (index > 0) lean = Math.max(-0.45, Math.min(0.45, lean + (rng() - 0.5) * 0.3));
-    drawSack(c, TRUCK_X + lean * sw, bedTop - (index + 0.5) * sh, sw, sh, index === 0 ? 0 : swingOf(card.seed, index - 1).kind);
+    drawSack(c, TRUCK_X + lean * sw, bedTop - (index + 0.5) * sh, sw, sh, index === 0 ? 0 : swingOf(card.seed, index - 1 + offset).kind);
   }
   drawTruckFront(c, TRUCK_X, floor, u, "আবার দেখা হবে");
 
@@ -83,7 +83,7 @@ export function drawCard(canvas: HTMLCanvasElement, card: Card, format: CardForm
   if (room > hangH * 3) {
     c.lineWidth = 3;
     c.beginPath(); c.moveTo(hookX - hang * 0.34, hookY + 26 + hangH * 0.08); c.lineTo(hookX, hookY); c.lineTo(hookX + hang * 0.34, hookY + 26 + hangH * 0.08); c.stroke();
-    drawSack(c, hookX, hookY + 26 + hangH * 0.6, hang, hangH, swingOf(card.seed, card.sacks).kind);
+    drawSack(c, hookX, hookY + 26 + hangH * 0.6, hang, hangH, swingOf(card.seed, card.sacks + offset).kind);
   }
   c.fillStyle = PAL.steel; c.fillRect(hookX - 9, hookY - 12, 18, 14);
   c.strokeStyle = PAL.steel; c.lineWidth = 5; c.beginPath(); c.arc(hookX, hookY + 8, 9, -Math.PI / 2, Math.PI * 0.9); c.stroke();
@@ -101,7 +101,12 @@ export function drawCard(canvas: HTMLCanvasElement, card: Card, format: CardForm
   for (const [fx, fy] of [[BOARD_X + 34, boardTop + 34], [BOARD_X + BOARD_W - 34, boardTop + 34], [BOARD_X + 34, boardBottom - 34], [BOARD_X + BOARD_W - 34, boardBottom - 34]]) flower(c, fx, fy, 11);
   const mid = BOARD_X + BOARD_W / 2, inner = BOARD_W - 96;
   fitText(c, [{ text: "বস্তার পাহাড়", color: PAL.accent, weight: 800, display: true }], mid, L.title, 62, inner, "center");
-  if (card.name) fitText(c, [{ text: card.name, color: PAL.ink, weight: 700, display: true }], mid, L.name, 46, inner, "center");
+  // The name (if any), the ghat and its stars share one line under the title.
+  const earned = starsOf(card.sacks, card.level);
+  fitText(c, [
+    { text: `${card.name ? `${card.name} · ` : ""}${ghatLabel(card.level)}`, color: PAL.ink, weight: 700, display: true },
+    ...(earned ? [{ text: "  ", color: PAL.ink, weight: 700 }, ...[0, 1, 2].map(star => ({ text: "★", color: star < earned ? "#e39b00" : "#c9b98f", weight: 700 }))] : []),
+  ], mid, L.name, 40, inner, "center");
   fitText(c, [{ text: bn(card.sacks), color: PAL.ink, weight: 800, display: true }, { text: "টা", color: PAL.red, weight: 800, display: true }], mid, L.count, 210, inner, "center");
   fitText(c, [{ text: "বস্তা", color: PAL.red, weight: 800, display: true }], mid, L.unit, 84, inner, "center");
   c.font = `600 40px "Bangla"`;

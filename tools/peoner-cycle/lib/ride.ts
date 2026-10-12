@@ -1,6 +1,6 @@
 // The ride as plain functions: the seeded road (what stands in which lane), lane changes, collisions, letters,
 // near misses and the score. No DOM and no React, so the same road replays on every phone and the tests can ride it headless.
-import { makeRng, pick } from "../../../shared/game-core";
+import { makeRng, pick, starsFor, type LevelStars } from "../../../shared/game-core";
 
 /** The play field in logical units; the canvas scales it to the phone. The road runs up the screen in three lanes. */
 export const W = 360, H = 470;
@@ -66,14 +66,54 @@ export function fair(from: number, to: number, reach: number) {
   return true;
 }
 
+/**
+ * Routes (levels). Each one lays out the road as if the ride had already gone `boost` মিটার: faster, tighter and with
+ * cows and carts sooner. Reach `goal` মিটার to deliver the route's letters (1 star, the next route opens); `stars` are
+ * the মিটার for 2 and 3. The ride goes on after the goal, as before. Route 1 is the original road, so old links replay unchanged.
+ */
+export const ROUTES = [
+  { name: "বটতলা", boost: 0, goal: 100, stars: [200, 320] },
+  { name: "হাটখোলা", boost: 50, goal: 120, stars: [230, 360] },
+  { name: "স্কুলপাড়া", boost: 100, goal: 140, stars: [260, 400] },
+  { name: "খেয়াঘাট", boost: 150, goal: 160, stars: [290, 440] },
+  { name: "মিয়াবাড়ি", boost: 200, goal: 180, stars: [320, 480] },
+  { name: "কলেজ রোড", boost: 260, goal: 200, stars: [350, 520] },
+  { name: "বড় বাজার", boost: 320, goal: 220, stars: [380, 560] },
+  { name: "রেলস্টেশন", boost: 400, goal: 240, stars: [410, 600] },
+  { name: "থানা সদর", boost: 500, goal: 260, stars: [440, 650] },
+  { name: "উপজেলা সদর", boost: 600, goal: 300, stars: [500, 700] },
+] as const satisfies ReadonlyArray<{ name: string; boost: number; goal: number; stars: readonly [number, number] }>;
+export const LEVEL_COUNT = ROUTES.length;
+/** Stars for a ride: none short of the goal, then by মিটার. */
+export const starsOf = (meters: number, level: number) => {
+  const route = ROUTES[level - 1];
+  return meters < route.goal ? 0 : starsFor(meters, route.stars[1], route.stars[0]);
+};
+/** The next মিটার mark that earns something (the goal, then 2 and 3 stars), or 0 at three stars. */
+export const nextMark = (meters: number, level: number) => {
+  const route = ROUTES[level - 1];
+  return [route.goal, route.stars[0], route.stars[1]].find(mark => meters < mark) ?? 0;
+};
+/**
+ * Before routes, this phone kept only a best score for the one road there was (now route 1). A score also counts letters
+ * and bells (at most 3 × মিটার + 40 in all), so it is turned into the fewest মিটার that could have made it: no unearned stars.
+ */
+export function migrateBest(stars: LevelStars, oldBest: string | null) {
+  const score = Number(oldBest);
+  if (Object.keys(stars).length || oldBest === null || !Number.isInteger(score) || score < 0) return 0;
+  return starsOf(Math.floor((score - 40) / 3), 1);
+}
+
 export type Road = {
   rng: () => number; end: number; rows: number; open: number; letterHinted: boolean;
+  /** মিটার added to the distance wherever the road's difficulty is decided (the route's head start). */
+  boost: number;
   /** The row just laid out: up to two obstacles and maybe a letter, nearest first. */
   out: Piece[]; outCount: number;
 };
 
-export const makeRoad = (seed: number): Road => ({
-  rng: makeRng(seed), end: 0, rows: 0, open: 0b010, letterHinted: false, out: [blank(), blank(), blank()], outCount: 0,
+export const makeRoad = (seed: number, level = 1): Road => ({
+  rng: makeRng(seed), end: 0, rows: 0, open: 0b010, letterHinted: false, boost: ROUTES[level - 1].boost, out: [blank(), blank(), blank()], outCount: 0,
 });
 
 function chooseKind(rng: () => number, meters: number) {
@@ -94,7 +134,7 @@ function put(piece: Piece, kind: number, lane: number, y: number, row: number, l
  */
 export function nextRow(road: Road) {
   const rng = road.rng, row = road.rows;
-  const meters = road.end / UNIT;
+  const meters = road.end / UNIT + road.boost;
   let y = FIRST_Y;
   if (row > 0) {
     // Seconds between the last row's far end and this one: roomy at first, tighter far down the road.
@@ -103,7 +143,7 @@ export function nextRow(road: Road) {
     // A gap is never longer than 60 m, so the speed 60 m on is the fastest anyone meets inside it.
     y = road.end + BIKE_LEN + gap * speedAt(meters + 60);
   }
-  const at = y / UNIT;
+  const at = y / UNIT + road.boost;
   const reach = row === 0 ? 2 : reachIn((y - road.end - BIKE_LEN) / speedAt(at));
 
   // Which lanes this row blocks: one early on, sometimes two later (never all three).
@@ -140,8 +180,8 @@ export function nextRow(road: Road) {
 }
 
 /** The road as a list up to `meters` (for tests and checks; the game itself fills a small ring). */
-export function planRoad(seed: number, meters: number) {
-  const road = makeRoad(seed), pieces: Piece[] = [];
+export function planRoad(seed: number, meters: number, level = 1) {
+  const road = makeRoad(seed, level), pieces: Piece[] = [];
   while (road.end < meters * UNIT) {
     nextRow(road);
     for (let index = 0; index < road.outCount; index++) pieces.push({ ...road.out[index] });
@@ -161,15 +201,17 @@ export type Run = {
   /** The bike's x on screen and the lane it is heading for. */
   x: number; lane: number;
   letters: number; bells: number; meters: number; score: number;
+  /** Letters taken in a row without riding past one. */
+  streak: number;
   over: boolean; hitKind: number; hitAt: number;
   events: RunEvent[]; eventCount: number;
 };
 
-export function createRun(seed: number, cap = TOP): Run {
+export function createRun(seed: number, cap = TOP, level = 1): Run {
   return {
-    seed, road: makeRoad(seed), ring: Array.from({ length: RING }, blank), first: 0, count: 0,
+    seed, road: makeRoad(seed, level), ring: Array.from({ length: RING }, blank), first: 0, count: 0,
     d: 0, t: 0, speed: START, cap, x: laneX(1), lane: 1,
-    letters: 0, bells: 0, meters: 0, score: 0, over: false, hitKind: -1, hitAt: -1,
+    letters: 0, bells: 0, meters: 0, score: 0, streak: 0, over: false, hitKind: -1, hitAt: -1,
     events: Array.from({ length: 8 }, () => ({ type: 0, t: 0, x: 0, y: 0 })), eventCount: 0,
   };
 }
@@ -197,7 +239,7 @@ export const inPath = (run: Run, piece: Piece) => Math.abs(run.x - piece.x) < (B
 export function stepRun(run: Run, dt: number) {
   if (run.over) return;
   run.t += dt;
-  run.speed = Math.min(run.cap, speedAt(run.d / UNIT));
+  run.speed = Math.min(run.cap, speedAt(run.d / UNIT + run.road.boost));
   run.d += run.speed * dt;
 
   // Keep the road laid out past the top edge (a cow is long, so a little more).
@@ -217,12 +259,13 @@ export function stepRun(run: Run, dt: number) {
     const side = inPath(run, piece);
     if (piece.y + piece.len < back) {
       piece.state = PASSED;
+      if (piece.kind === LETTER) run.streak = 0;
       if (piece.close) { run.bells++; emit(run, BELL, run.x, piece.y + piece.len); }
       continue;
     }
     if (piece.y > front) { if (side && piece.kind !== LETTER) piece.close = 1; continue; }
     if (!side) continue;
-    if (piece.kind === LETTER) { piece.state = TAKEN; run.letters++; emit(run, GOT_LETTER, piece.x, piece.y); continue; }
+    if (piece.kind === LETTER) { piece.state = TAKEN; run.letters++; run.streak++; emit(run, GOT_LETTER, piece.x, piece.y); continue; }
     piece.state = HIT; piece.close = 0; run.over = true; run.hitKind = piece.kind; run.hitAt = index;
     emit(run, CRASH, piece.x, piece.y);
     break;
