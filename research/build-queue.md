@@ -279,7 +279,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 22 | ghontar-sur | ঘণ্টার সুর | গেম | GW06 | done | games-wave-2.md #6 |
 | 22 | konta-nei | কোনটা নেই? | গেম | GW07 | building | games-wave-2.md #7 |
 | 22 | bhul-kothay | ভুল কোথায়? | গেম | GW08 | building | games-wave-2.md #8 |
-| 22 | atir-aam | আঁটি থেকে আম | গেম | GW09 | todo | games-wave-2.md #9 |
+| 22 | atir-aam | আঁটি থেকে আম | গেম | GW09 | building | games-wave-2.md #9 |
 | 22 | bhimruler-chak | ভিমরুলের চাক | গেম | GW10 | todo | games-wave-2.md #10 |
 | 23 | churir-bazar | চুড়ির বাজার | গেম | GW11 | todo | games-wave-2.md #11 |
 | 23 | mukhe-mukhe-hisab | মুখে মুখে হিসাব | গেম | GW12 | todo | games-wave-2.md #12 |

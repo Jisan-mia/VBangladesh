@@ -119,6 +119,7 @@ import { share as chhobi_photao } from '../tools/chhobi-photao/share';
 import { share as ghontar_sur } from '../tools/ghontar-sur/share';
 import { share as konta_nei } from '../tools/konta-nei/share';
 import { share as bhul_kothay } from '../tools/bhul-kothay/share';
+import { share as atir_aam } from '../tools/atir-aam/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -241,6 +242,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'ghontar-sur': ghontar_sur,
   'konta-nei': konta_nei,
   'bhul-kothay': bhul_kothay,
+  'atir-aam': atir_aam,
 };
 
 export function toolShare(tool: string): ToolShare | null {
