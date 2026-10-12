@@ -1,5 +1,6 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "moshar-raat": ["mosha marar game", "মশা মারার গেম", "mosquito game", "mosquito bat", "electric bat game", "মশার রাত", "moshar raat", "mosha game", "মশারি", "bangla game"],
   "golir-badminton": ["badminton", "badminton game", "shuttlecock game", "golir badminton", "badminton khela", "winter badminton", "ব্যাডমিন্টন", "ব্যাডমিন্টন গেম", "ব্যাডমিন্টন খেলা", "শাটলকক", "শীতের খেলা", "গলির খেলা"],
   "penalty": ["penalty", "penalty kick game", "penalty shootout", "tiebreaker", "football game", "goalkeeper game", "football khela", "পেনাল্টি", "পেনাল্টি কিক", "টাইব্রেকার", "ফুটবল গেম", "গোলকিপার"],
   "nodi-par": ["nodi par", "nodi par game", "river crossing game", "boat jumping game", "hop game", "নদী পার", "নদী পার গেম", "নৌকা গেম", "লাফের গেম", "কচুরিপানা", "ভেলা", "bangla game"],
