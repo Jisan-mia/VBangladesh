@@ -130,6 +130,7 @@ import { site as penalty } from '../tools/penalty/content';
 import { site as golir_badminton } from '../tools/golir-badminton/content';
 import { site as kagojer_urojahaj } from '../tools/kagojer-urojahaj/content';
 import { site as marble_sinri } from '../tools/marble-sinri/content';
+import { site as roshi_tana } from '../tools/roshi-tana/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -264,6 +265,7 @@ export const toolContent = {
   'golir-badminton': golir_badminton,
   'kagojer-urojahaj': kagojer_urojahaj,
   'marble-sinri': marble_sinri,
+  'roshi-tana': roshi_tana,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
