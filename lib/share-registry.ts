@@ -111,6 +111,7 @@ import { share as jam_chharao } from '../tools/jam-chharao/share';
 import { share as shobdo_khoja } from '../tools/shobdo-khoja/share';
 import { share as carrom } from '../tools/carrom/share';
 import { share as pati_buni } from '../tools/pati-buni/share';
+import { share as sudoku } from '../tools/sudoku/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -225,6 +226,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'shobdo-khoja': shobdo_khoja,
   'carrom': carrom,
   'pati-buni': pati_buni,
+  'sudoku': sudoku,
 };
 
 export function toolShare(tool: string): ToolShare | null {

@@ -121,6 +121,7 @@ export const catalog = [
   { slug: "shobdo-khoja", name: "শব্দ খোঁজা", description: "অক্ষরের গ্রিডে লুকানো ছয়টা ফুল, মাছ বা নদীর নাম খুঁজে কলমের দাগে কাটো।", category: "গেম", action: "শব্দ খোঁজো" },
   { slug: "carrom", name: "ক্যারম", description: "স্ট্রাইকার টেনে ছাড়ো, গুটি ঢোকাও। একা দশ চাল, নয়তো দুজনে এক ফোনে।", category: "গেম", action: "ক্যারম খেলো" },
   { slug: "pati-buni", name: "পাটি বুনি", description: "বেতের ফালি বসিয়ে সারি ভরাও, নিজের শীতলপাটি বোনো।", category: "গেম", action: "পাটি বোনো" },
+  { slug: "sudoku", name: "সুডোকু বাংলায়", description: "সুডোকু বাংলায়: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.
