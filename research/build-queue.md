@@ -275,7 +275,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 21 | ponero-ghor | ১৫ ঘরের ধাঁধা | গেম | GW02 | building | games-wave-2.md #2 |
 | 21 | switchboard | সুইচবোর্ড | গেম | GW03 | done | games-wave-2.md #3 |
 | 21 | sudoku | সুডোকু বাংলায় | গেম | GW04 | done | games-wave-2.md #4 |
-| 21 | chhobi-photao | ছবি ফোটাও | গেম | GW05 | todo | games-wave-2.md #5 |
+| 21 | chhobi-photao | ছবি ফোটাও | গেম | GW05 | building | games-wave-2.md #5 |
 | 22 | ghontar-sur | ঘণ্টার সুর | গেম | GW06 | todo | games-wave-2.md #6 |
 | 22 | konta-nei | কোনটা নেই? | গেম | GW07 | todo | games-wave-2.md #7 |
 | 22 | bhul-kothay | ভুল কোথায়? | গেম | GW08 | todo | games-wave-2.md #8 |

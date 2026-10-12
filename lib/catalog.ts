@@ -125,6 +125,7 @@ export const catalog = [
   { slug: "switchboard", name: "সুইচবোর্ড", description: "কাঠের বোর্ডে সুইচ চাপো, সব বাতি জ্বালাও কারেন্ট থাকতে থাকতে। ৩০টা লেভেল।", category: "গেম", action: "বাতি জ্বালাও" },
   { slug: "golokdhadha", name: "গোলকধাঁধা", description: "গোলকধাঁধা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "ponero-ghor", name: "১৫ ঘরের ধাঁধা", description: "১৫ ঘরের ধাঁধা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "chhobi-photao", name: "ছবি ফোটাও", description: "ছবি ফোটাও: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.
