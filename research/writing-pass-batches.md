@@ -16,6 +16,6 @@ Each batch uses Sonnet with `research/writing-pass-prompt.md` (it reads `researc
 | W9 | banan desh-cheno bagdhara bangla-typing namta komon-porlo eta-na-ota cha-mudra | building |
 | W10 | flames jam ganer-koli dhadha ek-koti mama-jaben mishron grade-dao | done |
 | W11 | biye-kobe daknam moner-boyos bhorta koto-cheno char-priyo projonmo starter-pack adda | done |
-| W12 games | kalbaishakhi-aam dudh-uthlano jhalmuri-sap danguli antenna-thik-koro chor-police tarer-fanke-belun sir-ghurlei-thamo | building |
+| W12 games | kalbaishakhi-aam dudh-uthlano jhalmuri-sap danguli antenna-thik-koro chor-police tarer-fanke-belun sir-ghurlei-thamo | done |
 | W13 games | deri-hoye-gelo bostar-pahar paka-kancha jora-melao chhok-jora churui-tarao handi-bhanga peoner-cycle | building |
 | W14 games | sap-ludu baghbandi baicher-nouka vo-katta bhangti-nai jam-chharao shobdo-khoja carrom pati-buni | building |
