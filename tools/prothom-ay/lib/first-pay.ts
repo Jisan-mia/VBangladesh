@@ -123,9 +123,9 @@ export function payLine(pay: Pick<FirstPay, "gifts" | "style" | "source">) {
   const ma = pay.style === "ma";
   const [mother, father] = ma ? ["মা", "বাবা"] : ["আম্মু", "আব্বু"];
   const [mothers, fathers, parents] = ma ? ["মায়ের", "বাবার", "মা-বাবার"] : ["আম্মুর", "আব্বুর", "আম্মু-আব্বুর"];
-  if (has(WHOLE)) return `খামটা না খুলেই ${parents} হাতে। ওই হাসির দাম কোনো বেতনে হয় না।`;
+  if (has(WHOLE)) return `খামটা না খুলেই ${parents} হাতে।`;
   if (pay.gifts.length === MAX_GIFTS) return "এক খামে এত জনের হাসি। টাকাটা কাজে লেগেছে।";
-  if (has("shari") && has("panjabi")) return `${mothers} শাড়ি, ${fathers} পাঞ্জাবি। প্রথম আয়ের সবচেয়ে সুন্দর হিসাব।`;
+  if (has("shari") && has("panjabi")) return `${mothers} শাড়ি, ${fathers} পাঞ্জাবি। হিসাব একদম মিলে গেছে।`;
   if (has("shari")) return `${mother} বলেছিল “কেন খরচ করলি?”, তারপর সবাইকে দেখিয়েছিল।`;
   if (has("panjabi")) return `${father} মুখে কিছু বলেনি, কিন্তু প্রতিটা অনুষ্ঠানে ওই পাঞ্জাবিটাই পরত।`;
   if (has("nanu")) return `নতুন চাদর গায়ে, মাথায় হাত। ${ma ? "আশীর্বাদটা" : "দোয়াটা"} এখনো সাথে আছে।`;
@@ -140,7 +140,7 @@ export function cardTitle(name: string) {
 }
 
 export function previewTitle(pay: FirstPay) {
-  return `${pay.name ? possessive(pay.name) : "এক বন্ধুর"} প্রথম আয়: ${pay.gifts.map(id => giftLabel(id, pay.style)).join(", ")} — তোমারটা দিয়ে কী করেছিলে?`;
+  return `${pay.name ? possessive(pay.name) : "এক বন্ধুর"} প্রথম আয়: ${pay.gifts.map(id => giftLabel(id, pay.style)).join(", ")}। তোমারটা দিয়ে কী করেছিলে?`;
 }
 
 export { possessive };

@@ -88,7 +88,7 @@ test('the starter Cox\'s Bazar trip settles in four transfers with the friendly 
   const result = calculateLedger(exampleLedger);
   assert.equal(result.total, 2_045_000);
   assert.deepEqual(settle(exampleLedger), ['মিম → রাফি 289000', 'জয় → রাফি 202000', 'জয় → তানিয়া 191000', 'জয় → সাকিব 16000']);
-  assert.equal(ledgerLine(result), 'হিসাব পরিষ্কার, বন্ধুত্ব অটুট!');
+  assert.equal(ledgerLine(result), 'হিসাব পরিষ্কার, এবার শুধু টাকা মেটানো বাকি।');
 });
 
 test('a shared link rebuilds the same ledger: trip, names, payers, amounts and Bangla labels', () => {

@@ -194,7 +194,7 @@ export function Album() {
             </label>
             <FormatToggle value={format} onChange={setFormat} />
             <ShareBar tool={TOOL} fileName="ke-ki-hoy.png" makeImage={() => cardBlob(own, format, site)} imageKey={`${state}|${format}`} caption={chain.length ? caption(chain, style) : ""} state={state} disabled={!chain.length}
-              hint={chain.length ? (answer.unnamed ? "লিংক পেলে বন্ধু দেখবে এই সম্পর্কের ডাক।" : "লিংক পেলে বন্ধু আগে আন্দাজ করবে, তারপর উত্তর দেখবে।") : "এক ধাপ বানালেই কার্ড হবে।"} />
+              hint={chain.length ? (answer.unnamed ? "বন্ধু লিংক খুলে এই সম্পর্কের ডাক দেখবে।" : "বন্ধু আগে আন্দাজ করবে, তারপর উত্তর দেখবে।") : "এক ধাপ বানালেই কার্ড হবে।"} />
           </div>
         </div>
 

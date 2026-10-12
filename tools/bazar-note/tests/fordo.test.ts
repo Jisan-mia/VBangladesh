@@ -74,8 +74,8 @@ test('long lists are capped so the link always fits what the server accepts', ()
 test('titles, previews and the human line come from the list', () => {
   assert.equal(possessive('আম্মু'), 'আম্মুর');
   assert.equal(possessive('রহিম'), 'রহিমের');
-  assert.equal(share.preview(fordoHash({ ...fordo, items: presetItems('week') })).title, 'আম্মুর বাজারের ফর্দ — ১২টা জিনিস');
-  assert.equal(share.preview(fordoHash({ ...fordo, name: '', preset: 'roza' })).title, 'রোজার বাজারের ফর্দ — ৩টা জিনিস');
+  assert.equal(share.preview(fordoHash({ ...fordo, items: presetItems('week') })).title, 'আম্মুর বাজারের ফর্দ, ১২টা জিনিস');
+  assert.equal(share.preview(fordoHash({ ...fordo, name: '', preset: 'roza' })).title, 'রোজার বাজারের ফর্দ, ৩টা জিনিস');
   assert.equal(share.preview('junk').title, 'বাজারের ফর্দ');
   assert.equal(fordoTitle({ name: '', preset: '' }), 'বাজারের ফর্দ');
   assert.equal(fordoLine({ ...fordo, budget: 100 }), 'বাজেট একটু ছাড়িয়ে যাচ্ছে, দরদাম করে কিনো কিন্তু!');

@@ -68,8 +68,8 @@ test("friend overlay, preview title and tally ids", () => {
   assert.equal(commonLine(["airport", "shutki", "iftar", "nam"], friend), "দুজনেরই: এয়ারপোর্টে কান্না, লাগেজে শুঁটকি আর ২টা");
   assert.equal(commonLine(["plane"], friend), "মিমের সাথে একটাও মেলেনি!");
   assert.equal(commonLine(["plane"], null), "");
-  assert.equal(previewTitle({ ...friend, name: "রাফি" }), "রাফির পাসপোর্টে প্রবাস জীবনের ৪টা সিল — তোমার কয়টা?");
-  assert.equal(share.preview(shareHash({ ...friend, name: "" }).slice(1)).title, "এক বন্ধুর পাসপোর্টে প্রবাস জীবনের ৪টা সিল — তোমার কয়টা?");
+  assert.equal(previewTitle({ ...friend, name: "রাফি" }), "রাফির পাসপোর্টে প্রবাস জীবনের ৪টা সিল। তোমার কয়টা?");
+  assert.equal(share.preview(shareHash({ ...friend, name: "" }).slice(1)).title, "এক বন্ধুর পাসপোর্টে প্রবাস জীবনের ৪টা সিল। তোমার কয়টা?");
   assert.ok(!share.preview(shareHash(friend).slice(1)).title.includes("লন্ডন"));
   // Only fixed moment ids are countable: never packs, cities or names.
   assert.deepEqual(share.tally, moments.map(moment => moment.id));

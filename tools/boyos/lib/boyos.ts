@@ -164,12 +164,12 @@ export function lifeSeasons(birth: string, today: string): LifeSeasons {
 }
 
 const rituLines: Record<Season["id"], string> = {
-  grishmo: "গ্রীষ্মে জন্ম — প্রতি বৈশাখে নতুন বছর আর জন্মঋতু একসাথে আসে।",
-  borsha: "বর্ষায় জন্ম — প্রতিটা প্রথম বৃষ্টি জন্মঋতুকে ফিরিয়ে আনে।",
-  shorot: "শরতে জন্ম — কাশফুল দেখলেই বোঝা যায়, জন্মঋতু এসেছে।",
-  hemonto: "হেমন্তে জন্ম — নতুন ধানের গন্ধে প্রতিবার জন্মঋতু ফেরে।",
-  sheet: "শীতে জন্ম — পিঠার মৌসুম মানেই জন্মঋতু।",
-  boshonto: "বসন্তে জন্ম — শিমুল-পলাশ ফুটলেই জন্মঋতু ফেরে।",
+  grishmo: "গ্রীষ্মে জন্ম। প্রতি বৈশাখে নতুন বছর আর জন্মঋতু একসাথে আসে।",
+  borsha: "বর্ষায় জন্ম। প্রথম বৃষ্টি নামলেই জন্মঋতু ফিরে আসে।",
+  shorot: "শরতে জন্ম। কাশফুল দেখলেই বোঝা যায়, জন্মঋতু এসেছে।",
+  hemonto: "হেমন্তে জন্ম। নতুন ধানের গন্ধ এলেই জন্মঋতু ফেরে।",
+  sheet: "শীতে জন্ম। পিঠার মৌসুম মানেই জন্মঋতু।",
+  boshonto: "বসন্তে জন্ম। শিমুল-পলাশ ফুটলেই জন্মঋতু ফেরে।",
 };
 
 export const banglaText = (bangla: BanglaDate) => `${bnPlain(bangla.day)} ${banglaMonths[bangla.month]} ${bnPlain(bangla.year)}`;
@@ -181,26 +181,26 @@ export function englishText(date: string) {
 export const dateline = (date: string) => `${weekdays[weekday(date)]}, ${banglaText(banglaDate(date))} · ${englishText(date)}`;
 
 const monthLines = [
-  "বৈশাখে জন্ম — নতুন বছরের সাথে সাথেই হাজির।",
+  "বৈশাখে জন্ম। নতুন বছরের সাথে সাথেই হাজির।",
   "জ্যৈষ্ঠে জন্ম, আম-কাঁঠালের মাসে। মিষ্টি তো হবেই।",
-  "আষাঢ়ে জন্ম — কদম ফোটার দিনে, প্রথম বৃষ্টির গন্ধে।",
+  "আষাঢ়ে জন্ম, কদম ফোটার দিনে, প্রথম বৃষ্টির গন্ধে।",
   "শ্রাবণের বৃষ্টিতে জন্ম, তাই বুঝি মনটা এত নরম।",
   "ভাদ্রে জন্ম, তাল পাকার মাসে। তালের পিঠার মতোই মিষ্টি।",
   "আশ্বিনে জন্ম, যখন আকাশে সাদা মেঘ আর মাঠে কাশফুল।",
-  "কার্তিকে জন্ম — হেমন্তের হালকা কুয়াশার ভোরে।",
+  "কার্তিকে জন্ম, হেমন্তের হালকা কুয়াশার ভোরে।",
   "অগ্রহায়ণে জন্ম, নতুন ধান আর নবান্নের মাসে।",
   "পৌষের শীতে জন্ম, তাই বুঝি পিঠার প্রতি এত টান।",
-  "মাঘের শীতে জন্ম — লেপের ওম আর খেজুর রসের মাসে।",
+  "মাঘের শীতে জন্ম, লেপের ওম আর খেজুর রসের মাসে।",
   "ফাল্গুনে জন্ম, শিমুল-পলাশ ফোটার দিনে।",
-  "চৈত্রে জন্ম — বছর শেষের মেলার মাসে।",
+  "চৈত্রে জন্ম, বছর শেষের মেলার মাসে।",
 ] as const;
 
 /** One warm line from the birth date: a birthday or a round day count today beats the weekday, which beats the month. */
 export function humanLine(birth: string, today: string) {
   const alive = daysBetween(birth, today);
   if (alive > 0 && nextBirthday(birth, today).days === 0) return "আজ জন্মদিন! কেক না থাকুক, পায়েস যেন থাকে।";
-  if (alive > 0 && alive % 1000 === 0) return `আজ জীবনের ${bn(alive)}তম দিন — এমন গোল দিন রোজ আসে না!`;
-  if (weekday(birth) === 5) return "শুক্রবারে জন্ম — ছুটির দিনের মানুষ।";
+  if (alive > 0 && alive % 1000 === 0) return `আজ জীবনের ${bn(alive)}তম দিন। এমন গোল দিন রোজ আসে না!`;
+  if (weekday(birth) === 5) return "শুক্রবারে জন্ম। ছুটির দিনের মানুষ।";
   return monthLines[banglaDate(birth).month];
 }
 
@@ -278,7 +278,7 @@ export function createCard(own: Shared, today: string, friend?: Shared | null): 
     birth: own.birth,
     dateline: dateline(own.birth),
     headline: name ? `জন্ম নিল ${name}` : "এই দিনে জন্ম নিলাম আমি",
-    subhead: `আজ ${name ? "তার" : "আমার"} বয়স ${ageText(ageNow)} — ${bn(alive)} দিন`,
+    subhead: `আজ ${name ? "তার" : "আমার"} বয়স ${ageText(ageNow)}, ${bn(alive)} দিন`,
     age: ageNow,
     ageText: ageText(ageNow),
     alive,

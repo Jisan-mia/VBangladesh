@@ -77,7 +77,7 @@ test("labels follow how the family is addressed; the human line follows the pick
 
 test("the link preview is personal and never mentions the amount", () => {
   const pay: FirstPay = { ...sample, name: "রাফি", amount: 3000 };
-  assert.equal(previewTitle(pay), "রাফির প্রথম আয়: আম্মুর জন্য শাড়ি — তোমারটা দিয়ে কী করেছিলে?");
+  assert.equal(previewTitle(pay), "রাফির প্রথম আয়: আম্মুর জন্য শাড়ি। তোমারটা দিয়ে কী করেছিলে?");
   const preview = share.preview(shareHash(pay).slice(1));
   assert.doesNotMatch(preview.title + preview.description, /৩,০০০|3000/);
   assert.match(share.preview("junk").title, /প্রথম আয়/);
