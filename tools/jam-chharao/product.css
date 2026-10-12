@@ -22,7 +22,8 @@
 .jc-step svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .jc-level{display:grid;justify-items:center;margin:0;line-height:1.2}
 .jc-level b{font-family:var(--font-display);font-size:20px;font-weight:800}
-.jc-level span{font-size:13px;color:var(--muted)}
+.jc-level span{font-size:13px;color:var(--muted);white-space:nowrap}
+.jc-level i{font-style:normal}
 .jc-moves{display:flex;align-items:baseline;gap:6px;min-width:84px;justify-content:flex-end;margin:0;padding:4px 12px;border-radius:12px;background:var(--road);color:#fff}
 .jc-moves span{font-size:13px;opacity:.8}
 .jc-moves b{font-family:var(--font-display);font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--sun)}
@@ -59,6 +60,9 @@
 .jc-over-score{font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.25}
 .jc-over-score em{font-style:normal;color:var(--accent)}
 .jc-over-line{font-weight:600;line-height:1.45;color:var(--muted)}
+.jc-over-stars{font-size:38px;line-height:1.1}
+.jc-over-near{font-weight:700;color:var(--accent-deep)}
+.jc-sound{justify-self:start}
 .jc-over-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;margin-top:4px}
 .tool-jam-chharao .jc-over-actions button{min-height:56px;font-size:19px}
 .jc-all{align-self:center;font-weight:700;color:var(--accent-deep)}
@@ -68,12 +72,8 @@
 .jc-levels{border:1.5px solid var(--line);border-radius:14px;background:#fff}
 .jc-levels summary{min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;font-weight:700;cursor:pointer}
 .jc-levels summary span{font-weight:500;color:var(--muted);font-size:14px}
-.jc-levels ol{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:6px;margin:0;padding:4px 10px 12px;list-style:none}
-.jc-levels button{position:relative;width:100%;min-height:48px;padding:2px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font-family:var(--font-display);font-size:17px;font-weight:700;line-height:1}
-.jc-levels button small{position:absolute;right:3px;bottom:2px;font-size:10px;font-weight:600;color:var(--accent-deep)}
-.jc-levels button[aria-current=true]{border-color:var(--accent);background:var(--accent);color:#fff}
-.jc-levels button[aria-current=true] small{color:#fff}
-.jc-levels button:disabled{opacity:.35}
+.jc-levels>p{margin:0 14px 10px;font-size:14px;color:var(--muted)}
+.jc-levels .gx-levels{padding:0 10px 12px}
 
 .jc-result{scroll-margin-top:12px;margin-top:16px;padding-top:18px;border-top:2px solid var(--ink)}
 .jc-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,32px);line-height:1.4}
@@ -94,6 +94,8 @@
 .jc-guide li p{margin:4px 0 0}
 
 @media(max-width:360px){
+  .jc-level i{display:none}
+  .jc-level span span{display:block;text-align:center}
   .jc-arrow,.jc-help{font-size:14px}
   .jc-tool{font-size:13px}
   .jc-moves{min-width:70px;padding-inline:8px}

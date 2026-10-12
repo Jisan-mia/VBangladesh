@@ -24,6 +24,9 @@
 .tool-antenna-thik-koro .at-dots li{width:20px;height:15px;border:2px solid var(--wood);border-radius:5px;background:var(--cream)}
 .tool-antenna-thik-koro .at-dots li[data-done=true]{background:var(--accent);border-color:var(--accent-deep)}
 .tool-antenna-thik-koro .at-dots li[data-now=true]{box-shadow:0 0 0 3px #2f7a3e40}
+.tool-antenna-thik-koro .at-level{display:grid;justify-items:center;margin:0;line-height:1.2;text-align:center}
+.tool-antenna-thik-koro .at-level b{font-family:var(--font-display);font-size:16px;font-weight:700}
+.tool-antenna-thik-koro .at-level span{font-size:13px;color:var(--muted)}
 .tool-antenna-thik-koro .at-clock{margin:0;font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink)}
 
 /* the roof and the room */
@@ -37,7 +40,9 @@
 .tool-antenna-thik-koro .at-pause{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;background:#173d22d9;color:#fff;text-align:center}
 .tool-antenna-thik-koro .at-pause .kit-primary{background:#ffd166;color:var(--band);box-shadow:0 4px 0 #d9a93a}
 .tool-antenna-thik-koro .at-pause p{margin:0;font-family:var(--font-display);font-size:22px;font-weight:700}
+.tool-antenna-thik-koro .at-shout [data-hint^=slip]{animation:at-shake .2s ease-out}
 @keyframes at-pop{from{transform:scale(.85);opacity:.4}}
+@keyframes at-shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
 /* the controls: ◀ dial ▶, a slider, and the slow toggle */
 .tool-antenna-thik-koro .at-controls{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;margin-top:4px}
@@ -74,7 +79,18 @@
 .tool-antenna-thik-koro .at-over-time b{font-size:clamp(46px,13vw,60px);color:var(--ink)}
 .tool-antenna-thik-koro .at-over-line{font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.4}
 .tool-antenna-thik-koro .at-over-best{font-size:14px;color:var(--muted)}
-.tool-antenna-thik-koro .at-again{width:100%;min-height:56px;margin-top:8px;font-size:20px}
+.tool-antenna-thik-koro .at-over-stars{margin:2px 0;font-size:42px}
+.tool-antenna-thik-koro .at-over-near{font-weight:700;color:var(--accent-deep)}
+.tool-antenna-thik-koro .at-over-actions{display:flex;gap:8px;width:100%;margin-top:8px}
+.tool-antenna-thik-koro .at-over-actions button{flex:1;min-height:56px;padding-inline:10px;font-size:18px;white-space:nowrap}
+.tool-antenna-thik-koro .at-over-actions .kit-primary{flex:1.4}
+
+/* every level, folded away below the game */
+.tool-antenna-thik-koro .at-levels{border:1.5px solid #c9d6c6;border-radius:14px;background:#fff}
+.tool-antenna-thik-koro .at-levels summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-antenna-thik-koro .at-levels summary span{font-weight:500;font-size:14px;color:var(--muted)}
+.tool-antenna-thik-koro .at-levels p{margin:0 14px 10px;font-size:14px;color:var(--muted)}
+.tool-antenna-thik-koro .at-levels .gx-levels{padding:0 12px 12px}
 
 /* result card */
 .tool-antenna-thik-koro .at-result{scroll-margin-top:12px;margin-top:26px;padding-top:22px;border-top:2px solid var(--ink)}
@@ -100,4 +116,4 @@
 }
 @media(max-width:350px){.tool-antenna-thik-koro .at-controls{gap:6px}.tool-antenna-thik-koro .at-turn{min-height:84px;font-size:15px}.tool-antenna-thik-koro .at-shout span{font-size:14px}}
 .tool-antenna-thik-koro .at[data-slow=true] .at-shout span,.tool-antenna-thik-koro .at[data-slow=true] .at-dial-hint{animation:none}
-@media(prefers-reduced-motion:reduce){.tool-antenna-thik-koro .at-shout span,.tool-antenna-thik-koro .at-dial-hint{animation:none}.tool-antenna-thik-koro .at-turn:active{transform:none}}
+@media(prefers-reduced-motion:reduce){.tool-antenna-thik-koro .at-shout span,.tool-antenna-thik-koro .at-shout [data-hint^=slip],.tool-antenna-thik-koro .at-dial-hint{animation:none}.tool-antenna-thik-koro .at-turn:active{transform:none}}

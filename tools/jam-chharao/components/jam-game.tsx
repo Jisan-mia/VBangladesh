@@ -3,12 +3,15 @@
 
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { fitCanvas, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { confetti, fitCanvas, sfx, tone, totalStars, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
 import { boardHeight, boardWidth, cellX, cellY, drawPicked, drawStreet, drawVehicle, SIDE, TOP } from "../lib/art";
 import { COLS, ROWS, occupancy, type Car, type Kind } from "../lib/board";
 import { cardBlob, drawCard, type CardData } from "../lib/draw-card";
-import { fewest, hint, readProgress, recordWin, reachOf, slide, startGame, undo, unlocked, LEVEL_COUNT, MAX_LINK_MOVES, type Game, type Progress } from "../lib/game";
+import {
+  fewest, hint, readProgress, recordWin, reachOf, slide, startGame, starsFromProgress, starsOf, twoStarMoves, undo, unlocked, LEVEL_COUNT, MAX_LINK_MOVES, type Game, type Progress,
+} from "../lib/game";
 import { bn, caption, compareLine, feat, fromGame, humanLine, parseShared, sharedHash, type Shared } from "../lib/link";
 
 const TOOL = "jam-chharao";
@@ -21,7 +24,14 @@ const SPRITES: Array<Pick<Car, "kind" | "len" | "down">> = [
 ];
 const SPEED = 16; // cells a second when a vehicle glides into place
 const smooth = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" as const : "smooth" as const;
-const readSaved = () => { try { return localStorage.getItem(SAVE_KEY); } catch { return null; } };
+const stored = (key: string) => { try { return localStorage.getItem(key); } catch { return null; } };
+const readSaved = () => stored(SAVE_KEY);
+/** The CNG's two-stroke ভটভট, `beats` pulses long. */
+const putt = (beats = 2) => { for (let beat = 0; beat < beats; beat++) tone(beat % 2 ? 82 : 70, 0.06, 0.13, "square", beat * 0.085); };
+/** Its squeaky horn on the way out: পিপ পিপ. */
+const horn = () => { tone(640, 0.1, 0.06, "square"); tone(640, 0.15, 0.06, "square", 0.16); };
+/** When each won star pops in, in seconds (the CSS delay and the sound share it). */
+const starAt = (index: number) => 0.55 + index * 0.28;
 const save = (progress: Progress) => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(progress)); } catch { /* private mode: fine */ } };
 
 type Drag = { car: number; id: number; x: number; y: number; from: number; low: number; high: number; moved: boolean };
@@ -53,11 +63,15 @@ export function JamGame() {
   const drag = useRef<Drag | null>(null);
   const frame = useRef(0), last = useRef(0);
   const finished = useRef<Game | null>(null);
+  const timers = useRef<number[]>([]);
+  const levels = useLevels(TOOL, LEVEL_COUNT);
   const boardInView = useInView(wrap);
 
   const { level, won } = game;
   const best = fewest(level);
-  const open = Math.max(unlocked(progress), friend?.level ?? 1);
+  const open = Math.max(unlocked(progress), levels.unlocked, friend?.level ?? 1);
+  const total = totalStars(levels.stars);
+  const earned = won ? starsOf(game.moves.length, level, game.helped) : 0;
   const phase = won ? "over" : paused ? "paused" : game.moves.length ? "playing" : "ready";
   const rival = friend && friend.level === level ? friend : null;
   const pickedCar = picked >= 0 ? game.cars[picked] : null;
@@ -153,6 +167,8 @@ export function JamGame() {
   // ---- moves ----
   function play(next: Game | null, help = false) {
     if (!next) return false;
+    const moved = next.pos.findIndex((at, car) => at !== gameRef.current.pos[car]);
+    if (!next.won) { if (moved === 0) putt(); else sfx.drop(); }
     setGame(next);
     if (!help) setNote("");
     if (next.won && !slowRef.current && typeof navigator.vibrate === "function") navigator.vibrate(20);
@@ -161,7 +177,13 @@ export function JamGame() {
 
   function nudge(step: -1 | 1) {
     if (picked < 0 || phase === "paused" || won) return;
-    if (!play(slide(game, picked, game.pos[picked] + step))) setNote("ওদিকে রাস্তা বন্ধ। অন্য গাড়ি সরাও।");
+    if (!play(slide(game, picked, game.pos[picked] + step))) { setNote("ওদিকে রাস্তা বন্ধ। অন্য গাড়ি সরাও।"); bump(); }
+  }
+
+  /** A gentle shake for a blocked move (none in slow mode). */
+  function bump() {
+    sfx.wrong();
+    if (!slowRef.current) wrap.current?.animate([{ transform: "translateX(0)" }, { transform: "translateX(-6px)" }, { transform: "translateX(6px)" }, { transform: "translateX(0)" }], { duration: 200, easing: "ease-out" });
   }
 
   function showHint() {
@@ -169,18 +191,21 @@ export function JamGame() {
     const move = hint(game);
     if (!move) return;
     setPicked(move.car);
+    sfx.pop();
     play(slide(game, move.car, move.to, true), true);
     setNote(`${NAMES[game.cars[move.car].kind]} সরিয়ে দিলাম। আবার চাপলে পরের চাল।`);
   }
 
   function takeBack() {
     if (!game.moves.length || won) return;
+    sfx.whoosh();
     setGame(undo(game));
     setNote("");
   }
 
   function goTo(next: number) {
     if (next < 1 || next > LEVEL_COUNT) return;
+    timers.current.forEach(clearTimeout); timers.current = [];
     setGame(startGame(next));
     setPicked(-1);
     setPaused(false);
@@ -199,15 +224,25 @@ export function JamGame() {
     finished.current = game;
     const before = progress[level];
     const next = recordWin(progress, game);
-    setRecord(!game.helped && before !== undefined && before > 0 && game.moves.length < before ? before : null);
+    const beaten = !game.helped && before !== undefined && before > 0 && game.moves.length < before;
+    setRecord(beaten ? before : null);
     setProgress(next);
     save(next);
+    levels.record(level, earned);
     setPicked(-1);
+    // Out through the gap: horn, the engine pulling away, then each star; confetti only for three stars or a new record.
+    horn();
+    putt(slowRef.current ? 2 : 8);
+    const later = (seconds: number, sound: () => void) => timers.current.push(window.setTimeout(sound, seconds * 1000));
+    for (let star = 0; star < earned; star++) later(starAt(star), () => sfx.star(star));
+    later(starAt(earned), earned === 3 || beaten ? () => { sfx.win(); confetti(); } : sfx.good);
   }, [game]);
 
   useEffect(() => {
     const saved = readProgress(readSaved());
     setProgress(saved);
+    // Once: stars for the jams this phone solved before levels had stars.
+    if (stored(`ektukhani-levels-${TOOL}`) === null) for (const [n, stars] of Object.entries(starsFromProgress(saved))) levels.record(Number(n), stars);
     setSite(window.location.host);
     const readFriend = () => {
       const shared = parseShared(window.location.hash);
@@ -221,7 +256,7 @@ export function JamGame() {
     const hide = () => { const current = gameRef.current; if (document.hidden && current.moves.length && !current.won) setPaused(true); };
     window.addEventListener("hashchange", onHash);
     document.addEventListener("visibilitychange", hide);
-    return () => { window.removeEventListener("hashchange", onHash); document.removeEventListener("visibilitychange", hide); };
+    return () => { window.removeEventListener("hashchange", onHash); document.removeEventListener("visibilitychange", hide); timers.current.forEach(clearTimeout); };
   }, []);
 
   useEffect(() => {
@@ -278,6 +313,7 @@ export function JamGame() {
     if (!event.isPrimary || won || paused) return;
     const car = carAt(event);
     if (car < 0) { setPicked(-1); return; }
+    sfx.tap();
     try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* a pointer that already ended */ }
     const [from, to] = reachOf(game, car);
     drag.current = { car, id: event.pointerId, x: event.clientX, y: event.clientY, from: game.pos[car], low: from, high: to, moved: false };
@@ -338,7 +374,7 @@ export function JamGame() {
         <button type="button" className="jc-step" onClick={() => goTo(level - 1)} disabled={level <= 1} aria-label="আগের জ্যাম">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
         </button>
-        <p className="jc-level"><b>জ্যাম {bn(level)}</b><span>সেরা {bn(best)} চাল</span></p>
+        <p className="jc-level"><b>জ্যাম {bn(level)}</b><span><span aria-label={`মোট ${bn(total)}টা তারা`}>★ {bn(total)}/{bn(LEVEL_COUNT * 3)}</span><i aria-hidden="true"> · </i><span>সেরা {bn(best)} চাল</span></span></p>
         <button type="button" className="jc-step" onClick={() => goTo(level + 1)} disabled={level >= open || level >= LEVEL_COUNT} aria-label="পরের জ্যাম">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
         </button>
@@ -364,6 +400,9 @@ export function JamGame() {
       {won ? (
         <div className="jc-over" role="status">
           <p className="jc-over-score">জ্যাম ছাড়ল! <em>{bn(game.moves.length)} চালে</em></p>
+          <p className="gx-stars jc-over-stars" role="img" aria-label={`৩টার মধ্যে ${bn(earned)}টা তারা`}>
+            {[0, 1, 2].map(star => <span key={star} className={star < earned ? "on gx-pop" : ""} style={{ animationDelay: `${starAt(star)}s` }}>★</span>)}
+          </p>
           <p className="jc-over-line">
             {rival ? compareLine(game.moves.length, rival.count, rival.name)
               : record ? `নতুন রেকর্ড! আগে লেগেছিল ${bn(record)} চাল।`
@@ -371,6 +410,8 @@ export function JamGame() {
               : game.moves.length <= best ? "একদম সেরা সমাধান!"
               : `সেরা সমাধান ${bn(best)} চাল${mine ? ` · এই ফোনে তোমার সেরা ${bn(mine)}` : ""}`}
           </p>
+          {earned < 3 && <p className="jc-over-near">{game.helped ? "নিজে নিজে ছাড়ালে ৩ তারা পর্যন্ত পাবে।"
+            : `আর ${bn(game.moves.length - (earned === 2 ? best : twoStarMoves(level)))} চাল কম হলে ${bn(earned + 1)} তারা।`}</p>}
           <div className="jc-over-actions">
             <button type="button" className="kit-secondary jc-again" onClick={() => goTo(level)}>আরেকবার</button>
             {level < LEVEL_COUNT
@@ -402,24 +443,14 @@ export function JamGame() {
             <button type="button" className="jc-tool" onClick={() => goTo(level)} disabled={!game.moves.length}>আবার শুরু</button>
             <button type="button" className="jc-tool jc-slow" aria-pressed={slow} onClick={() => setSlow(!slow)}>ধীরে খেলো</button>
           </div>
+          <SoundToggle className="jc-sound" />
         </>
       )}
 
       <details className="jc-levels">
-        <summary>সব জ্যাম <span>{bn(Object.keys(progress).length)}/{bn(LEVEL_COUNT)} ছাড়ানো</span></summary>
-        <ol>
-          {Array.from({ length: LEVEL_COUNT }, (_, i) => i + 1).map(n => {
-            const done = progress[n];
-            return (
-              <li key={n}>
-                <button type="button" onClick={() => playFromCard(n)} disabled={n > open} aria-current={n === level ? "true" : undefined}
-                  aria-label={`জ্যাম ${bn(n)}${done ? `, ${bn(done)} চালে ছাড়িয়েছ` : done === 0 ? ", সাহায্য নিয়ে ছাড়িয়েছ" : n > open ? ", এখনো বন্ধ" : ""}`}>
-                  {bn(n)}{done !== undefined && <small aria-hidden="true">{done ? bn(done) : "✓"}</small>}
-                </button>
-              </li>
-            );
-          })}
-        </ol>
+        <summary>সব জ্যাম <span>★ {bn(total)}/{bn(LEVEL_COUNT * 3)}</span></summary>
+        <p>সবচেয়ে কম চালে ছাড়ালে ৩ তারা, কাছাকাছি হলে ২, সাহায্য নিলে ১।</p>
+        <LevelGrid count={LEVEL_COUNT} stars={levels.stars} unlocked={open} current={level} onPick={playFromCard} noun="জ্যাম" />
       </details>
 
       {result && (

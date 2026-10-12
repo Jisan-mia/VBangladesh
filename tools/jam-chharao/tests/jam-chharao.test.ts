@@ -4,7 +4,10 @@ import { makeRng, pick } from "../../../shared/game-core";
 import { site } from "../content";
 import { share } from "../share";
 import { COLS, EXIT_COL, MAX_CARS, ROWS, levelCode, occupancy, parseLevel, solve } from "../lib/board";
-import { encodeMoves, fewest, hint, readProgress, recordWin, reachOf, replay, slide, startGame, undo, unlocked, LEVEL_COUNT, MAX_LINK_MOVES, type Game } from "../lib/game";
+import {
+  encodeMoves, fewest, hint, readProgress, recordWin, reachOf, replay, slide, startGame, starsFromProgress, starsOf, twoStarMoves, undo, unlocked, LEVEL_COUNT, MAX_LINK_MOVES, type Game,
+} from "../lib/game";
+import { readLevels, unlockedLevel } from "../../../shared/game-core";
 import { LEVELS } from "../lib/levels";
 import { band, caption, compareLine, feat, fromGame, humanLine, parseShared, previewTitle, sharedHash } from "../lib/link";
 
@@ -201,4 +204,34 @@ test("content meets the SEO limits and speaks তুমি", () => {
   const everything = JSON.stringify(site) + share.preview("").description;
   assert.doesNotMatch(everything, /আপনি|করুন|দেখুন/);
   assert.doesNotMatch(everything, /বাজি|টাকা জিত|লটারি|অ্যাম্বুলেন্স|rush hour/i);
+});
+
+test("stars from par moves: three at the fewest, two within a little slack, one otherwise or with help", () => {
+  for (let level = 1; level <= LEVEL_COUNT; level++) {
+    const par = fewest(level), two = twoStarMoves(level);
+    assert.ok(two >= par + 2 && two <= par + Math.ceil(par / 4) + 2, `level ${level}: ${two}`);
+    assert.equal(starsOf(par, level), 3);
+    assert.equal(starsOf(par + 1, level), 2);
+    assert.equal(starsOf(two, level), 2);
+    assert.equal(starsOf(two + 1, level), 1);
+    assert.equal(starsOf(par, level, 1), 1, "help caps it at one star");
+  }
+  // Every level can reach three stars: the solver's way out is exactly par.
+  for (const level of [1, 13, 27, 40]) assert.equal(starsOf(solvedLevel(level).moves.length, level), 3);
+  assert.equal(twoStarMoves(1), 5);
+  assert.equal(twoStarMoves(40), 50);
+});
+
+test("old progress becomes stars once, keeping every solved jam open", () => {
+  const old = readProgress('{"1":3,"2":5,"3":0,"4":9,"7":11}');
+  const stars = readLevels(JSON.stringify(starsFromProgress(old)), LEVEL_COUNT);
+  assert.deepEqual(stars, { 1: 3, 2: 2, 3: 1, 4: 1, 7: starsOf(11, 7) });
+  assert.equal(unlockedLevel(stars, LEVEL_COUNT), unlocked(old), "the same jam is open next");
+  assert.deepEqual(starsFromProgress({}), {});
+});
+
+test("a link made before stars still opens, with the same count", () => {
+  // Level 1 solved as the bus-and-truck shuffle: truck down to 2 (k), bus right to 3 (9), CNG out (0).
+  assert.deepEqual(parseShared("#l=1&m=k90&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF"), { level: 1, moves: "k90", count: 3, helped: 0, name: "রাফি" });
+  assert.equal(parseShared("l=1&m=k90&h=2")?.helped, 2);
 });
