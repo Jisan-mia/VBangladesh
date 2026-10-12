@@ -110,6 +110,7 @@ import { site as shobdo_khoja } from '../tools/shobdo-khoja/content';
 import { site as carrom } from '../tools/carrom/content';
 import { site as pati_buni } from '../tools/pati-buni/content';
 import { site as sudoku } from '../tools/sudoku/content';
+import { site as switchboard } from '../tools/switchboard/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -224,6 +225,7 @@ export const toolContent = {
   'carrom': carrom,
   'pati-buni': pati_buni,
   'sudoku': sudoku,
+  'switchboard': switchboard,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
