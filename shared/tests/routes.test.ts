@@ -117,6 +117,7 @@ const expectedSlugs = [
   'atir-aam',
   'bhimruler-chak',
   'churir-bazar',
+  'mukhe-mukhe-hisab',
 ].sort();
 const origin = 'https://example.org';
 // Guide and per-tool privacy pages stay reachable but noindex, so only tool pages and category hubs are in the sitemap.
