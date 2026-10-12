@@ -1,5 +1,6 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "mukhe-mukhe-hisab": ["math game", "mental math", "ongker khela", "mukhe mukhe hisab", "hisab game", "অঙ্কের খেলা", "গণিত খেলা", "যোগ বিয়োগ গুণ", "বাজারের হিসাব", "মুখে মুখে অঙ্ক"],
   "bhimruler-chak": ["bhimruler chak", "vimruler chak", "hidden nest game", "number puzzle", "bangla puzzle game", "ভিমরুল", "চাক খোঁজা", "গামছা গেম", "সংখ্যার ধাঁধা", "আমবাগান গেম"],
   "bhul-kothay": ["spot the difference", "find the difference", "অমিল খোঁজা", "অমিল খুঁজে বের করো", "পার্থক্য খোঁজা", "দুই ছবির পার্থক্য", "ছবির ধাঁধা", "bhul kothay", "vul kothay", "omil khoja"],
   "konta-nei": ["memory game", "brain game", "whats missing game", "kims game", "konta nei", "mudi dokan game", "কোনটা নেই", "ব্রেন গেম", "মনে রাখার খেলা", "মুদি দোকান", "বাচ্চাদের গেম"],
