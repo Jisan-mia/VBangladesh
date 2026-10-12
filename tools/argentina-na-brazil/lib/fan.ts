@@ -122,9 +122,9 @@ export function fanLine(team: FanTeam, seed: number, picks: readonly Pick[]) {
   const score = FAN_ROUNDS - missed.length;
   if (score === FAN_ROUNDS) return "আটে আট। দলের ইতিহাসটা আমার মুখস্থ।";
   if (missed.length === 1) return `শুধু ${missed[0].question.topic} প্রশ্নটা ফসকেছে, বাকিটা মুখস্থ।`;
-  if (score >= 5) return "ইতিহাস প্রায় পুরোটা জানা, ভালোবাসা পুরোটাই।";
+  if (score >= 5) return "ইতিহাস মোটামুটি জানা, দু-তিনটা প্রশ্নে আটকেছি।";
   if (score >= 3) return "খেলা দেখি মন দিয়ে, ইতিহাসটা এবার পড়ে নেব।";
-  return "ভালোবাসা দিয়ে শুরু, ইতিহাস শিখে নেব।";
+  return "সবে শুরু, ইতিহাসটা এবার শিখে নেব।";
 }
 
 /** Two houses, two scores. Banter stays on the tea, never on the team. */

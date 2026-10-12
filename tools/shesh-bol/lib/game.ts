@@ -113,7 +113,7 @@ export function humanLine(tries: number) {
   if (tries === 1) return "এক চেষ্টায়! গ্যালারি পাগল।";
   if (tries <= 3) return "একটু সময় নিল, কিন্তু বল গেল সোজা গ্যালারিতে।";
   if (tries <= 9) return "হাল ছাড়েনি। শেষমেশ বল মাঠের বাইরে!";
-  return "যত বারই লাগুক, ম্যাচ জেতানো তো জেতানোই।";
+  return "দশ বা তার বেশি চেষ্টা লেগেছে। স্কোরবোর্ডে ওটা লেখা থাকে না।";
 }
 
 export function bucket(tries: number) {

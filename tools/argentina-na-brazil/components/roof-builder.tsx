@@ -158,7 +158,7 @@ export function RoofBuilder() {
         {isFanTeam(shared.own.team) && <div ref={fanBox}><FanTest key={`${shared.own.team}-${linkSeed}`} own={shared.own} team={shared.own.team} neighbour={neighbour} linkSeed={linkSeed} site={site} /></div>}
       </>}
 
-      <p className="abn-safety">পতাকা টাঙাতে ছাদে উঠলে বিদ্যুতের তার থেকে দূরে থেকো। খেলা খেলার জায়গায়, বন্ধুত্ব আগে।</p>
+      <p className="abn-safety">পতাকা টাঙাতে ছাদে উঠলে বিদ্যুতের তার থেকে দূরে থেকো।</p>
     </div>
   );
 }
