@@ -9,5 +9,6 @@ import '../components/home.css';
 
 export const viewport: Viewport = { themeColor: '#1d2b53', width: 'device-width', initialScale: 1 };
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return <html lang="bn-BD" data-scroll-behavior="smooth"><head><link rel="preload" href="/fonts/bangla.woff2" as="font" type="font/woff2" crossOrigin="anonymous" /></head><body>{children}</body></html>;
+  // Browser extensions (e.g. ColorZilla's cz-shortcut-listen) add attributes to <body> before hydration; this ignores only <body>'s own attributes.
+  return <html lang="bn-BD" data-scroll-behavior="smooth"><head><link rel="preload" href="/fonts/bangla.woff2" as="font" type="font/woff2" crossOrigin="anonymous" /></head><body suppressHydrationWarning>{children}</body></html>;
 }
