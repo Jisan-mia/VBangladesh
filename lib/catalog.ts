@@ -124,6 +124,7 @@ export const catalog = [
   { slug: "sudoku", name: "সুডোকু বাংলায়", description: "ঘর চাপো, বাংলা অঙ্ক বসাও। ৪×৪ থেকে ৯×৯, ৪০ লেভেল আর রোজ নতুন ধাঁধা।", category: "গেম", action: "সুডোকু খেলো" },
   { slug: "switchboard", name: "সুইচবোর্ড", description: "সুইচবোর্ড: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "golokdhadha", name: "গোলকধাঁধা", description: "গোলকধাঁধা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "ponero-ghor", name: "১৫ ঘরের ধাঁধা", description: "১৫ ঘরের ধাঁধা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.

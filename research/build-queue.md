@@ -272,7 +272,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 20 | carrom | ক্যারম | গেম | G10 | done | games-2026-10.md §4.3 #10 |
 | 20 | pati-buni | পাটি বুনি | গেম | G03 | done | games-2026-10.md §4.3 #3 |
 | 21 | golokdhadha | গোলকধাঁধা | গেম | GW01 | building | games-wave-2.md #1 |
-| 21 | ponero-ghor | ১৫ ঘরের ধাঁধা | গেম | GW02 | todo | games-wave-2.md #2 |
+| 21 | ponero-ghor | ১৫ ঘরের ধাঁধা | গেম | GW02 | building | games-wave-2.md #2 |
 | 21 | switchboard | সুইচবোর্ড | গেম | GW03 | building | games-wave-2.md #3 |
 | 21 | sudoku | সুডোকু বাংলায় | গেম | GW04 | done | games-wave-2.md #4 |
 | 21 | chhobi-photao | ছবি ফোটাও | গেম | GW05 | todo | games-wave-2.md #5 |

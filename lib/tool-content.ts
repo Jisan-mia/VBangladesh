@@ -112,6 +112,7 @@ import { site as pati_buni } from '../tools/pati-buni/content';
 import { site as sudoku } from '../tools/sudoku/content';
 import { site as switchboard } from '../tools/switchboard/content';
 import { site as golokdhadha } from '../tools/golokdhadha/content';
+import { site as ponero_ghor } from '../tools/ponero-ghor/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -228,6 +229,7 @@ export const toolContent = {
   'sudoku': sudoku,
   'switchboard': switchboard,
   'golokdhadha': golokdhadha,
+  'ponero-ghor': ponero_ghor,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
