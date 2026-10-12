@@ -142,7 +142,7 @@ export const sfx = {
   /** Pad n of a melodic set (Simon-style games, combo counters). */
   note: (n: number, length = 0.28) => tone(SCALE[((n % SCALE.length) + SCALE.length) % SCALE.length], length, 0.13, 'triangle'),
   /** Rising pitch for streaks and combos: call with 0, 1, 2… */
-  combo: (step: number) => tone(SCALE[Math.min(step, SCALE.length - 1)], 0.1, 0.09, 'triangle'),
+  combo: (step: number) => tone(SCALE[Math.max(0, Math.min(Math.floor(step), SCALE.length - 1))], 0.1, 0.09, 'triangle'),
   win: () => { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.22, 0.11, 'triangle', i * 0.09)); buzz([20, 40, 20]); },
   levelUp: () => { [784, 988, 1175, 1568].forEach((f, i) => tone(f, 0.16, 0.1, 'triangle', i * 0.06)); tone(2093, 0.3, 0.05, 'sine', 0.26); buzz([15, 30, 15]); },
   lose: () => { [392, 330, 262].forEach((f, i) => tone(f, 0.24, 0.1, 'triangle', i * 0.14)); buzz(60); },
