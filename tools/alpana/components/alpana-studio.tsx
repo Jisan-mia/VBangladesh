@@ -5,6 +5,7 @@ import { SaveView } from "../../../shared/art-downloads";
 import { isInAppBrowser, saveBlob, svgPngBlob } from "../../../shared/art-export";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
+import { SoundToggle } from "../../../shared/game-ui";
 import { useHistory } from "../../../shared/use-history";
 import { BRUSH_DARK, BRUSH_WHITE, bn, cardText, MAX_NAME_LENGTH, occasions, parseShareHash, possessive, shareState, type AlpanaDoc, type OccasionId, type Shared } from "../lib/card";
 import { cardBlob, drawCard, svgImage } from "../lib/draw-card";
@@ -160,6 +161,7 @@ export function AlpanaStudio() {
         <div role="group" aria-label="কীভাবে বানাবে">
           <button type="button" disabled={drawing} aria-pressed={mode === "motif"} onClick={() => history.commit(current => ({ ...current, mode: "motif" }))}>তৈরি ডিজাইন</button>
           <button type="button" disabled={drawing} aria-pressed={mode === "draw"} onClick={() => history.commit(current => ({ ...current, mode: "draw" }))}>নিজে আঁকো</button>
+          {mode === "draw" && <SoundToggle compact />}
         </div>
         <div role="group" aria-label="আগের অবস্থায় ফেরা">
           <button type="button" onClick={history.undo} disabled={drawing || !history.canUndo}>এক ধাপ পেছাও</button>

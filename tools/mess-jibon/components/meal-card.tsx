@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { buzz, confetti, hiss, sfx, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard, type CardContent } from "../lib/draw-card";
@@ -61,7 +63,13 @@ export function MealCard() {
   }, [card, format, site, friend]);
 
   function toggle(id: MomentId) {
-    setPicked(current => toggleMoment(current, id));
+    const next = toggleMoment(picked, id);
+    setPicked(next);
+    // Punching a hole clicks like a ticket puncher; taking it back is silent. A fully punched card is a real finish.
+    if (next.length > picked.length) {
+      if (next.length === TOTAL) { confetti(); sfx.win(); }
+      else { tone(1300, 0.035, 0.1, "square", 0, 500); hiss(0.03, 0.08, 3500, "highpass"); buzz(8); }
+    }
     // Changed holes make the old comparison stale; let them compare again.
     setJoined(current => current === "done" ? "idle" : current);
   }
@@ -70,7 +78,7 @@ export function MealCard() {
     setJoined("sending");
     // Only fixed moment ids are counted; the name and the hall or mess name never leave the link.
     const tally = await addToTally(TOOL, picked);
-    if (tally) { setEveryone(tally); setJoined("done"); } else setJoined("failed");
+    if (tally) { setEveryone(tally); setJoined("done"); sfx.good(); } else setJoined("failed");
   }
 
   const friendName = friend?.name ? possessive(friend.name) : "তোমার বন্ধুর";
@@ -100,7 +108,7 @@ export function MealCard() {
             <p className="mj-card-title">মিল কার্ড<small>হল · হোস্টেল · মেস</small></p>
             <p className="mj-count" aria-live="polite"><span>{bn(TOTAL)}-এ</span><strong>{bn(picked.length)}</strong><span>টা ফুটো</span></p>
           </div>
-          <p className="mj-tier">খেতাব: <strong>{tier}</strong>{friend && <span><i aria-hidden="true" /> মানে {friendName}ও আছে</span>}</p>
+          <p className="mj-tier"><SoundToggle compact />খেতাব: <strong>{tier}</strong>{friend && <span><i aria-hidden="true" /> মানে {friendName}ও আছে</span>}</p>
           {everyone && everyone.total >= SOCIAL_PROOF_MIN && <p className="mj-proof">এখন পর্যন্ত <strong>{bn(everyone.total)} জন</strong> নিজের মিল কার্ড মিলিয়েছে</p>}
 
           {sections.map((section, index) => (

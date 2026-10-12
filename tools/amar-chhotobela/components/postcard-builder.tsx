@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat, type Photo } from "../../../shared/card-canvas";
+import { confetti, sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, PhotoPicker, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-postcard";
@@ -56,7 +58,12 @@ export function PostcardBuilder() {
   }, [card, format, site, friend, photo]);
 
   function toggle(id: MemoryId) {
-    setSelected(current => toggleMemory(current, id));
+    const next = toggleMemory(selected, id);
+    setSelected(next);
+    // Single picks stay silent. A chime when a whole chapter is filled, a cheer when every memory is.
+    const chapter = memories.find(memory => memory.id === id)!.chapter, inChapter = memories.filter(memory => memory.chapter === chapter);
+    if (next.length === memories.length) { confetti(); sfx.win(); }
+    else if (next.length > selected.length && inChapter.every(memory => next.includes(memory.id))) sfx.good();
     // Changed picks make the old comparison stale; let them compare again.
     setCompared(current => current === "done" ? "idle" : current);
   }
@@ -64,7 +71,7 @@ export function PostcardBuilder() {
   async function compareWithEveryone() {
     setCompared("sending");
     const tally = await addToTally(TOOL, selected);
-    if (tally) { setEveryone(tally); setCompared("done"); }
+    if (tally) { setEveryone(tally); setCompared("done"); sfx.good(); }
     else setCompared("failed");
   }
 
@@ -94,6 +101,7 @@ export function PostcardBuilder() {
       {everyone && everyone.total >= SOCIAL_PROOF_MIN && <p className="khata-proof">এখন পর্যন্ত <strong>{bn(everyone.total)} জন</strong> নিজের ছোটবেলা মিলিয়েছে</p>}
 
       <div className="khata-grid-wrap" id="memory-grid">
+        <SoundToggle compact />
         {chapters.map(chapter => (
           <fieldset className="khata-chapter" key={chapter.id}>
             <legend>{chapter.label}</legend>

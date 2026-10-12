@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type PointerEvent, type RefObject } from "react";
+import { hiss, sfx } from "../../../shared/game-sound";
 import { appendDrawingPoint, drawingPoint, MAX_STROKES, type DrawingStroke } from "../lib/drawing";
 import { type PatternSettings } from "../lib/pattern";
 import { AlpanaDrawing } from "./alpana-drawing";
@@ -19,6 +20,7 @@ export function DrawingCanvas({ settings, strokes, brush, svgRef, onStroke, onBu
   const [activeStroke, setActiveStroke] = useState<DrawingStroke | null>(null);
   const active = useRef<{ pointerId: number; stroke: DrawingStroke } | null>(null);
   const frame = useRef<number | null>(null);
+  const lastScratch = useRef(0);
 
   useEffect(() => () => {
     if (frame.current !== null) cancelAnimationFrame(frame.current);
@@ -36,6 +38,7 @@ export function DrawingCanvas({ settings, strokes, brush, svgRef, onStroke, onBu
     active.current = { pointerId: event.pointerId, stroke };
     event.currentTarget.setPointerCapture(event.pointerId);
     setActiveStroke(stroke);
+    hiss(0.08, 0.03, 2600, "bandpass");
     onBusyChange(true);
     onNotice("");
   }
@@ -48,6 +51,9 @@ export function DrawingCanvas({ settings, strokes, brush, svgRef, onStroke, onBu
     const points = appendDrawingPoint(previous.points, point);
     if (points === previous.points) return;
     active.current.stroke = { ...previous, points };
+    // A soft chalk scratch, at most about 9 times a second.
+    const now = performance.now();
+    if (now - lastScratch.current > 110) { lastScratch.current = now; hiss(0.07, 0.025, 2200 + Math.random() * 900, "bandpass"); }
     if (frame.current === null) frame.current = requestAnimationFrame(() => {
       frame.current = null;
       setActiveStroke(active.current?.stroke ?? null);
@@ -64,6 +70,7 @@ export function DrawingCanvas({ settings, strokes, brush, svgRef, onStroke, onBu
     setActiveStroke(null);
     onBusyChange(false);
     onStroke(stroke);
+    sfx.drop();
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
   }
 
