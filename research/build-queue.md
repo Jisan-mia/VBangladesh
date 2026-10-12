@@ -293,7 +293,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 24 | marble-sinri | মার্বেল-সিঁড়ি | গেম | GW20 | building | games-wave-2.md #20 |
 | 25 | penalty | পেনাল্টি কিক | গেম | GW21 | done | games-wave-2.md #21 |
 | 25 | roshi-tana | রশি টানাটানি | গেম | GW22 | building | games-wave-2.md #22 |
-| 25 | moshar-raat | মশার রাত | গেম | GW23 | building | games-wave-2.md #23 |
+| 25 | moshar-raat | মশার রাত | গেম | GW23 | done | games-wave-2.md #23 |
 | 25 | al-dhore-hati | আল ধরে হাঁটি | গেম | GW24 | building | games-wave-2.md #24 |
 | 25 | o-te-ojogor | অ-তে অজগর | গেম | GW25 | todo | games-wave-2.md #25 |
 

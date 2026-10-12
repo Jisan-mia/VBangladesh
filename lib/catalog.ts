@@ -143,7 +143,7 @@ export const catalog = [
   { slug: "kagojer-urojahaj", name: "কাগজের উড়োজাহাজ", description: "কাগজের উড়োজাহাজ: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "marble-sinri", name: "মার্বেল-সিঁড়ি", description: "মার্বেল-সিঁড়ি: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "roshi-tana", name: "রশি টানাটানি", description: "রশি টানাটানি: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
-  { slug: "moshar-raat", name: "মশার রাত", description: "মশার রাত: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "moshar-raat", name: "মশার রাত", description: "বাতি নেভানো ঘরে পিন-পিন। ব্যাটে মশা মারো, ভোর পর্যন্ত বালিশ বাঁচাও।", category: "গেম", action: "মশা মারো" },
   { slug: "al-dhore-hati", name: "আল ধরে হাঁটি", description: "আল ধরে হাঁটি: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
