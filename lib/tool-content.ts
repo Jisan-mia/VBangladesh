@@ -128,6 +128,7 @@ import { site as latim } from '../tools/latim/content';
 import { site as nodi_par } from '../tools/nodi-par/content';
 import { site as penalty } from '../tools/penalty/content';
 import { site as golir_badminton } from '../tools/golir-badminton/content';
+import { site as kagojer_urojahaj } from '../tools/kagojer-urojahaj/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -260,6 +261,7 @@ export const toolContent = {
   'nodi-par': nodi_par,
   'penalty': penalty,
   'golir-badminton': golir_badminton,
+  'kagojer-urojahaj': kagojer_urojahaj,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
