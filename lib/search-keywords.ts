@@ -1,5 +1,6 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "al-dhore-hati": ["al dhore hati", "ail walking game", "paddy field game", "dhan khet game", "village game", "gramer game", "balance walking game", "গ্রামের গেম", "আল ধরে হাঁটা", "ধানখেতের গেম", "আলপথ"],
   "kagojer-urojahaj": ["paper plane game", "plane game", "kagojer plane", "kagojer urojahaj", "plane khela", "megh fatano", "kalboishakhi game", "প্লেন গেম", "কাগজের প্লেন", "উড়োজাহাজ গেম", "বিমান খেলা"],
   "roshi-tana": ["tug of war", "tug of war game", "roshi tana", "roshi tanatani", "dori tana", "two player game", "2 player phone game", "rhythm game", "রশি টানাটানি", "দড়ি টানাটানি", "দুজনের খেলা", "বার্ষিক ক্রীড়া"],
   "marble-sinri": ["marble game", "rapid roll", "ball falling game", "marble sinri", "মার্বেল গেম", "বল গড়ানো গেম", "সিঁড়ি গেম", "পুরোনো মোবাইলের গেম", "mobile ball game", "মার্বেল খেলা"],
