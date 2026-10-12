@@ -251,7 +251,7 @@ export function SlateGame() {
             </figure>
             <div className="nm-controls">
               <label className="nm-name">
-                <span>নাম <small>ডাকনামই যথেষ্ট, না দিলেও চলবে</small></span>
+                <span>নাম <small>ডাকনাম দাও, না দিলেও চলবে</small></span>
                 <input value={name} maxLength={MAX_NAME} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="off" />
               </label>
               <fieldset className="kit-chips">
