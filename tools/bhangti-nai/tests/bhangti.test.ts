@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import test from 'node:test';
 import { makeRng, pick } from '../../../shared/game-core';
 import { site } from '../content';
 import {
-  CHITS, CUSTOMERS, MAX_SCORE, MAX_TRAY, changeOf, fair, fastBonus, fewest, give, humanLine, isOver, makeCustomers, paidOf, rightCount,
+  CHITS, CUSTOMERS, DAYS, MAX_SCORE, MAX_TRAY, bestLine, changeOf, dayPace, dayRows, dayStars, fair, fastBonus, fewest, give, humanLine, isOver, makeCustomers, nearLine, paidOf, rightCount,
   saying, secondsFor, startRun, takeBack, tap, timeUp, trayTotal, undo, wrongLine, type Chit, type Run,
 } from '../lib/game';
 import { compareLine, parseShared, previewTitle, sharedHash, validResult } from '../lib/link';
@@ -184,4 +185,87 @@ test('content meets the SEO limits and says what a link carries', () => {
   assert.ok(site.privacy.some(line => line.includes('লিংকে') && line.includes('পয়েন্ট') && line.includes('নাম')));
   assert.ok(!/আপনি|করুন|টাকা জিতো|বাজি ধরো|লটারি/.test(JSON.stringify(site)), 'তুমি voice, no gambling words');
   assert.ok(CHITS.every(chit => [1, 2, 5, 10, 20, 50, 100].includes(chit)));
+});
+
+test('old links rebuild the classic queue exactly as before shop days existed', () => {
+  const all = Array.from({ length: 500 }, (_, index) => makeCustomers(index + 1));
+  assert.equal(createHash('sha256').update(JSON.stringify(all)).digest('hex').slice(0, 16), 'c3b615320789e0bc');
+  assert.deepEqual(makeCustomers(4821, 0), makeCustomers(4821));
+  assert.deepEqual(dayRows(0), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  assert.equal(dayPace(0), 1);
+});
+
+test('shop days: each a small step harder, every customer fair and servable in time', () => {
+  assert.deepEqual(dayRows(1), [0, 0, 0, 1, 1, 1, 2, 2, 2, 3], 'day 1: round sums and single notes only');
+  assert.ok(dayRows(DAYS).filter(row => row === 9).length >= 3, 'the last day ends on run-out chits');
+  for (let day = 1; day <= DAYS; day++) {
+    const rows = dayRows(day);
+    assert.ok(rows.every((row, index) => index === 0 || row >= rows[index - 1]), `day ${day}: the queue never gets easier`);
+    if (day > 1) {
+      assert.ok(rows.every((row, index) => row >= dayRows(day - 1)[index]), `day ${day} is no easier than the day before`);
+      assert.ok(dayPace(day) < dayPace(day - 1), 'and the clock a little quicker');
+    }
+    for (let seed = 1; seed <= 300; seed++) {
+      const customers = makeCustomers(seed, day);
+      assert.equal(customers.length, CUSTOMERS);
+      customers.forEach((customer, index) => {
+        assert.ok(fair(customer), `day ${day} seed ${seed} customer ${index} is fair`);
+        // Three seconds to think and under a second per chit, on the quickest clock.
+        const chits = fewest(changeOf(customer), customer.out)!.length;
+        assert.ok(3 + chits * 0.8 <= secondsFor(customer, false, day) + 1e-9, `day ${day} seed ${seed} customer ${index}: ${chits} chits in ${secondsFor(customer, false, day)} s`);
+      });
+    }
+  }
+  assert.deepEqual(makeCustomers(77, 5), makeCustomers(77, 5));
+  assert.notDeepEqual(makeCustomers(77, 5), makeCustomers(77, 15));
+  assert.equal(secondsFor(makeCustomers(1, 1)[0], false, 1), 13);
+  assert.equal(secondsFor(makeCustomers(1, 1)[0], false, DAYS), 8);
+});
+
+test('stars come from first-try right answers, with exact near-miss lines', () => {
+  assert.deepEqual([0, 5, 6, 7, 8, 9, 10].map(dayStars), [0, 0, 1, 1, 2, 2, 3]);
+  assert.equal(nearLine(4), 'আর ২ জনকে একবারে ঠিক দিলেই দিন পার।');
+  assert.equal(nearLine(7), 'আর ১ জনকে একবারে ঠিক দিলে ২ তারা।');
+  assert.equal(nearLine(9), 'আর ১ জনকে একবারে ঠিক দিলে ৩ তারা।');
+  assert.equal(nearLine(10), '');
+  assert.equal(bestLine(1200, 1240, 3), 'এই দিনে সেরা ১২৪০। আর ৪৫ পয়েন্ট হলেই নতুন সেরা।');
+  assert.equal(bestLine(600, 1240, 0), 'এই ফোনে সেরা ১২৪০');
+  let run = startRun(77, 1);
+  const first = changeOf(run.customers[0]);
+  run = give(serve(run, fewest(first)!), 0.5).run;
+  assert.equal(run.clean, 1, 'right first time counts');
+  const second = changeOf(run.customers[1]);
+  const slip = give(serve(run, [...fewest(second)!, 1]), 0.5).run;
+  run = give(takeBack(slip, 1), 0.5).run;
+  assert.equal(run.clean, 1, 'right after a slip does not');
+  assert.equal(rightCount(run.results), 2);
+  assert.equal(timeUp(run).clean, 1, 'nor does a customer who walked off');
+});
+
+test('a perfect shopkeeper three-stars every day, inside every clock', () => {
+  for (let day = 1; day <= DAYS; day++) {
+    let run = startRun(day * 31, day);
+    while (!isOver(run)) {
+      const customer = run.customers[run.index], chits = fewest(changeOf(customer), customer.out)!;
+      const left = 1 - (2 + chits.length * 0.6) / secondsFor(customer, false, day);
+      assert.ok(left > 0);
+      run = give(serve(run, chits), left).run;
+    }
+    assert.equal(dayStars(run.clean), 3, `day ${day}`);
+    assert.ok(validResult(run.score, rightCount(run.results)));
+  }
+});
+
+test('shop-day links carry the day and first tries; old links still parse as the classic queue', () => {
+  const mine = { seed: 4821, score: 1240, right: 9, name: 'রাফি', day: 7, clean: 8 };
+  const hash = sharedHash(mine);
+  assert.equal(hash, `s=4821&t=1240&r=9&d=7&c=8&n=${encodeURIComponent('রাফি')}`);
+  assert.deepEqual(parseShared(`#${hash}`), mine);
+  assert.equal(share.normalize(hash), hash);
+  assert.match(share.preview(hash).title, /^দিন ৭ · রাফি ১২৪০ করেছে/);
+  assert.deepEqual(parseShared('s=5&t=1500&r=10'), { seed: 5, score: 1500, right: 10, name: '' }, 'no day: the classic queue');
+  const hostile = ['s=5&t=100&r=1&d=0&c=1', 's=5&t=100&r=1&d=21&c=1', 's=5&t=100&r=1&d=3&c=2', 's=5&t=100&r=1&d=3', 's=5&t=100&r=1&c=1',
+    's=5&t=150&r=1&d=3&c=0', 's=5&t=100&r=1&d=x&c=1', 's=5&t=100&r=1&d=3&c=-1'];
+  for (const state of hostile) assert.equal(share.normalize(state), null, state);
+  assert.equal(share.normalize('s=5&t=150&r=1&d=3&c=1'), 's=5&t=150&r=1&d=3&c=1');
 });

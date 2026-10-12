@@ -62,6 +62,15 @@ export function roundNews(game: Game, roles: readonly Role[], caught: boolean) {
     : { title: `ফসকে গেল! ${dakat} তো ডাকাত, চোর ছিল ${chor}।`, sub: `ভুলের দাম: পুলিশের ${bn(game.points[POLICE])} এবার চোরের ঘরে।` };
 }
 
+/** Under the final scores when no record fell: the record, and the exact gap when one more round could have beaten it. */
+export function recordLine(game: Game, best: number) {
+  const gap = best - standings(game)[0].total + 1;
+  // gap 1 is a tie with the record, which on a first evening is this evening itself.
+  return gap > 1 && gap <= Math.max(...game.points)
+    ? `এই ফোনের রেকর্ড ${bn(best)}। আর ${bn(gap)} পয়েন্ট হলেই নতুন রেকর্ড হতো।`
+    : `এই ফোনে এক খেলায় সবচেয়ে বেশি: ${bn(best)}`;
+}
+
 export function caption(game: Game) {
   return `${gameTitle(game)}: ${scoreLine(game, ", ")}। তোমাদের বাসায় কে চোর হয়? চিরকুট তোলো, খেলো:`;
 }

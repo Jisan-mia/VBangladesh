@@ -1,10 +1,13 @@
 // Challenge links, banners and preview text. Server-safe: share.ts loads this, so it imports only pure code.
 import { possessive } from '../../../shared/bangla';
 import { challengeHash, readChallenge } from '../../../shared/game-core';
-import { CUSTOMERS, FAST_POINTS, MAX_SCORE, RIGHT_POINTS, bn } from './game';
+import { CUSTOMERS, DAYS, FAST_POINTS, MAX_SCORE, RIGHT_POINTS, bn } from './game';
 
-/** `s` the seed (which ten customers) · `t` the score to beat · `r` how many got the right change · `n` an optional first name. */
-export type Shared = { seed: number; score: number; right: number; name: string };
+/**
+ * `s` the seed (which ten customers) · `t` the score to beat · `r` how many got the right change · `n` an optional first name.
+ * Shop-day links add `d` the day and `c` how many were right on the first try (the stars); links without `d` are the classic queue.
+ */
+export type Shared = { seed: number; score: number; right: number; name: string; day?: number; clean?: number };
 
 /** Every right customer earns 100 plus a bonus of 0–50 in steps of 5; anything else is a forged link. */
 export function validResult(score: number, right: number) {
@@ -13,26 +16,37 @@ export function validResult(score: number, right: number) {
 }
 
 export function parseShared(hash: string): Shared | null {
-  const challenge = readChallenge(hash, { maxTarget: MAX_SCORE, extraKeys: ['r'] });
+  const challenge = readChallenge(hash, { maxTarget: MAX_SCORE, extraKeys: ['r', 'd', 'c'] });
   const raw = challenge?.extra.r;
   if (!challenge || raw === undefined || !/^\d{1,2}$/.test(raw)) return null;
   const right = Number(raw);
   if (!validResult(challenge.target, right)) return null;
-  return { seed: challenge.seed, score: challenge.target, right, name: challenge.name };
+  const shared: Shared = { seed: challenge.seed, score: challenge.target, right, name: challenge.name };
+  const { d, c } = challenge.extra;
+  if (d === undefined && c === undefined) return shared;
+  if (!/^\d{1,2}$/.test(d ?? '') || !/^\d{1,2}$/.test(c ?? '')) return null;
+  const day = Number(d), clean = Number(c);
+  // A first-try answer is a right answer, and only first tries can carry a fast bonus.
+  if (day < 1 || day > DAYS || clean > right || challenge.target > right * RIGHT_POINTS + clean * FAST_POINTS) return null;
+  return { ...shared, day, clean };
 }
 
-export const sharedHash = ({ seed, score, right, name }: Shared) => challengeHash({ seed, target: score, name, extra: { r: right } });
+export const sharedHash = ({ seed, score, right, name, day, clean }: Shared) =>
+  challengeHash({ seed, target: score, name, extra: day ? { r: right, d: day, c: clean ?? 0 } : { r: right } });
 
 /** "১০ জনের ৯ জনকে" */
 export const outOf = (right: number) => `${bn(CUSTOMERS)} জনের ${bn(right)} জনকে`;
 
-export const banner = ({ score, name }: Shared) => `${name || 'বন্ধু'} ${bn(score)} করেছে। একই দশজন খদ্দের, এবার তোমার পালা।`;
+/** "দিন ৭ · " for a shop-day link, nothing for the classic queue. */
+export const dayTag = (day?: number) => day ? `দিন ${bn(day)} · ` : '';
 
-export const previewTitle = ({ score, right, name }: Shared) =>
-  `${name || 'এক বন্ধু'} ${bn(score)} করেছে, ${outOf(right)} ঠিক ভাংতি। তুমি পারবে?`;
+export const banner = ({ score, name, day }: Shared) => `${dayTag(day)}${name || 'বন্ধু'} ${bn(score)} করেছে। একই দশজন খদ্দের, এবার তোমার পালা।`;
 
-export function caption({ score, right }: Pick<Shared, 'score' | 'right'>) {
-  return `ভাংতি নাই! আজ দোকানে ${outOf(right)} ঠিক ভাংতি দিলাম, ${bn(score)} পয়েন্ট। একই দশজন খদ্দের তোমার জন্য রাখলাম, দেখি কয়জনকে পারো!`;
+export const previewTitle = ({ score, right, name, day }: Shared) =>
+  `${dayTag(day)}${name || 'এক বন্ধু'} ${bn(score)} করেছে, ${outOf(right)} ঠিক ভাংতি। তুমি পারবে?`;
+
+export function caption({ score, right, day }: Pick<Shared, 'score' | 'right' | 'day'>) {
+  return `ভাংতি নাই! ${day ? `দোকানের ${bn(day)} নম্বর দিনে` : 'আজ দোকানে'} ${outOf(right)} ঠিক ভাংতি দিলাম, ${bn(score)} পয়েন্ট। একই দশজন খদ্দের তোমার জন্য রাখলাম, দেখি কয়জনকে পারো!`;
 }
 
 /** A kind comparison after playing the same ten customers a friend sent. */

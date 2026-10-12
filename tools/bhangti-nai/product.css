@@ -16,6 +16,9 @@
 .tool-bhangti-nai .bt-friend h2{margin:0;font-family:var(--font-display);font-size:15.5px;line-height:1.4}
 .tool-bhangti-nai .bt-friend p{margin:0;font-size:13px;line-height:1.4;color:var(--muted)}
 
+.tool-bhangti-nai .bt-level{display:flex;justify-content:space-between;gap:8px;margin:0;font-size:13px;color:var(--muted)}
+.tool-bhangti-nai .bt-level b{color:var(--ink);font-size:15px}
+.tool-bhangti-nai .bt-level span:last-child{white-space:nowrap;font-weight:700;color:#9a6a00}
 .tool-bhangti-nai .bt-hud{display:flex;align-items:center;gap:8px;min-height:44px}
 .tool-bhangti-nai .bt-howto{margin:0;font-size:15px;font-weight:600;line-height:1.45}
 .tool-bhangti-nai .bt-howto b{color:var(--accent-deep)}
@@ -63,8 +66,6 @@
 
 /* your change, on the counter top: tap a chit here to take it back */
 .tool-bhangti-nai .bt-tray{display:flex;align-items:center;gap:8px;min-height:60px;padding:6px 10px;background:linear-gradient(var(--wood),#94612f);color:#fff8e6}
-.tool-bhangti-nai .bt-tray[data-shake=true]{animation:bt-shake1 .3s}
-.tool-bhangti-nai .bt-tray[data-shake=false][data-kind=wrong]{animation:bt-shake2 .3s}
 .tool-bhangti-nai .bt-given{display:flex;flex:1;flex-wrap:wrap;align-items:center;gap:0 3px;min-width:0}
 .tool-bhangti-nai .bt-taken{position:relative;display:grid;place-items:center;min-width:44px;min-height:44px;padding:0;border:0;background:none;touch-action:manipulation}
 .tool-bhangti-nai .bt-taken .bt-chit{--h:28px}
@@ -90,6 +91,12 @@
 .tool-bhangti-nai .bt-note .bt-tally{font-family:var(--font-display);font-size:18px;font-weight:700}
 .tool-bhangti-nai .bt-note .bt-final{font-size:16px}
 .tool-bhangti-nai .bt-final b{font-family:var(--font-display);font-size:40px;line-height:1.1}
+.tool-bhangti-nai .bt-note .bt-tally small{display:block;font-family:var(--font-bengali);font-size:13px;font-weight:600;color:var(--muted)}
+.tool-bhangti-nai .bt-note .bt-near{font-size:14px;font-weight:700;color:var(--accent-deep)}
+.tool-bhangti-nai .bt-days{padding:10px 12px;border:1.5px dashed var(--line);border-radius:14px;background:#fff}
+.tool-bhangti-nai .bt-days summary{display:flex;justify-content:space-between;min-height:32px;align-items:center;font-weight:700;cursor:pointer}
+.tool-bhangti-nai .bt-days summary span{color:#9a6a00}
+.tool-bhangti-nai .bt-days p{margin:6px 0 10px;font-size:14px;line-height:1.5;color:var(--muted)}
 .tool-bhangti-nai .bt-note .bt-record{font-size:14px;font-weight:500;color:var(--muted)}
 .tool-bhangti-nai .bt-see{font-size:15px}
 
@@ -147,8 +154,6 @@
 @keyframes bt-pop{from{transform:scale(.85);opacity:0}}
 @keyframes bt-hop{40%{transform:translateY(-7px)}}
 @keyframes bt-drop{from{transform:translateY(-14px) rotate(-5deg);opacity:0}}
-@keyframes bt-shake1{25%{transform:translateX(-6px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
-@keyframes bt-shake2{25%{transform:translateX(-6px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
 .tool-bhangti-nai .bt[data-slow=true] *{animation:none!important;transition:none!important}
 @media(prefers-reduced-motion:reduce){.tool-bhangti-nai .bt *{animation:none!important;transition:none!important}}
 
@@ -171,3 +176,4 @@
   .tool-bhangti-nai .bt-friend{grid-template-columns:96px 1fr}
   .tool-bhangti-nai .bt-friend h2{font-size:20px}
 }
+.tool-bhangti-nai .bt-actions{display:grid;gap:8px}
