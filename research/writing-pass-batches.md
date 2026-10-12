@@ -12,7 +12,7 @@ Each batch uses Sonnet with `research/writing-pass-prompt.md` (it reads `researc
 | W5 | matir-bank dhoyahin jomi rokto current-gelo betoner-bhag bidyut-bill | done |
 | W6 | cholo-kheli argentina-na-brazil amar-jersey dom-atkano golir-ain shesh-bol | done |
 | W7 | ami-bolechhilam matcher-mon ekadosh raat-jaga shubhechha koto-din-baki iftar-plate salami-chek | done |
-| W8 | sehri-iftar eider-din eidjatra gorur-ojon mondop shobdo-khela gpa taka-kothay | building |
+| W8 | sehri-iftar eider-din eidjatra gorur-ojon mondop shobdo-khela gpa taka-kothay | done |
 | W9 | banan desh-cheno bagdhara bangla-typing namta komon-porlo eta-na-ota cha-mudra | building |
 | W10 | flames jam ganer-koli dhadha ek-koti mama-jaben mishron grade-dao | done |
 | W11 | biye-kobe daknam moner-boyos bhorta koto-cheno char-priyo projonmo starter-pack adda | done |
