@@ -295,7 +295,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 25 | roshi-tana | রশি টানাটানি | গেম | GW22 | done | games-wave-2.md #22 |
 | 25 | moshar-raat | মশার রাত | গেম | GW23 | done | games-wave-2.md #23 |
 | 25 | al-dhore-hati | আল ধরে হাঁটি | গেম | GW24 | done | games-wave-2.md #24 |
-| 25 | o-te-ojogor | অ-তে অজগর | গেম | GW25 | building | games-wave-2.md #25 |
+| 25 | o-te-ojogor | অ-তে অজগর | গেম | GW25 | done | games-wave-2.md #25 |
 
 ### Wave deadlines and why
 
