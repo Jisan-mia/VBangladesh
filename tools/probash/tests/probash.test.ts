@@ -55,7 +55,7 @@ test("names and cities are NFC, lose control and direction-override characters, 
 test("the human line comes from what was stamped", () => {
   assert.equal(passportLine(["iftar", "ranna"]), "একা ইফতার, তবু প্লেটে দেশের পেঁয়াজু।");
   assert.equal(passportLine(defaultPicks), "মায়ের রান্নার স্বাদ কোনো দোকানে মেলে না।");
-  assert.equal(passportLine(["airport", "bidai"]), "যতবার বিদায়, ততবার চোখ ভেজে।");
+  assert.equal(passportLine(["airport", "bidai"]), "এয়ারপোর্টে একবার, ছুটি ফুরালে আবার। দুবারই চোখ ভেজে।");
   assert.equal(passportLine(moments.map(moment => moment.id)), "পুরো ৪০! এই পাসপোর্টে আর সিলের জায়গা নেই।");
   assert.equal(passportLine(["sim"]), "অল্প কয়টা সিল, প্রত্যেকটায় একটা গল্প।");
   assert.equal(passportLine([]), "পাসপোর্টের পাতা এখনো ফাঁকা।");
@@ -68,8 +68,8 @@ test("friend overlay, preview title and tally ids", () => {
   assert.equal(commonLine(["airport", "shutki", "iftar", "nam"], friend), "দুজনেরই: এয়ারপোর্টে কান্না, লাগেজে শুঁটকি আর ২টা");
   assert.equal(commonLine(["plane"], friend), "মিমের সাথে একটাও মেলেনি!");
   assert.equal(commonLine(["plane"], null), "");
-  assert.equal(previewTitle({ ...friend, name: "রাফি" }), "রাফির পাসপোর্টে প্রবাস জীবনের ৪টা সিল — তোমার কয়টা?");
-  assert.equal(share.preview(shareHash({ ...friend, name: "" }).slice(1)).title, "এক বন্ধুর পাসপোর্টে প্রবাস জীবনের ৪টা সিল — তোমার কয়টা?");
+  assert.equal(previewTitle({ ...friend, name: "রাফি" }), "রাফির পাসপোর্টে প্রবাস জীবনের ৪টা সিল। তোমার কয়টা?");
+  assert.equal(share.preview(shareHash({ ...friend, name: "" }).slice(1)).title, "এক বন্ধুর পাসপোর্টে প্রবাস জীবনের ৪টা সিল। তোমার কয়টা?");
   assert.ok(!share.preview(shareHash(friend).slice(1)).title.includes("লন্ডন"));
   // Only fixed moment ids are countable: never packs, cities or names.
   assert.deepEqual(share.tally, moments.map(moment => moment.id));

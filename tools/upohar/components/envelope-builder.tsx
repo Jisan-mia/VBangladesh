@@ -96,7 +96,7 @@ export function EnvelopeBuilder() {
     ? `${card.occasion}তে খামে যাবে সামর্থ্য অনুযায়ী, সাথে অনেক ভালোবাসা। ${card.note} তুমি খামে কত দাও?`
     : card.mode === "gift"
       ? `${card.occasion}তে উপহার: ${card.headline}। ${card.line} তুমি কী দাও?`
-      : `${card.occasion}তে খামের আন্দাজ: ${card.range} (নিয়ম না, শুধু মজা)। ${card.note} তুমি খামে কত দাও?`;
+      : `${card.occasion}তে খামের আন্দাজ: ${card.range} (নিয়ম না, আন্দাজ)। ${card.note} তুমি খামে কত দাও?`;
 
   return (
     <div className="up">

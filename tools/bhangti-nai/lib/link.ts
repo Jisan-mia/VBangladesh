@@ -32,7 +32,7 @@ export const previewTitle = ({ score, right, name }: Shared) =>
   `${name || 'এক বন্ধু'} ${bn(score)} করেছে, ${outOf(right)} ঠিক ভাংতি। তুমি পারবে?`;
 
 export function caption({ score, right }: Pick<Shared, 'score' | 'right'>) {
-  return `ভাংতি নাই!: আজ দোকানে ${outOf(right)} ঠিক ভাংতি দিলাম, ${bn(score)} পয়েন্ট। একই দশজন খদ্দের তোমার জন্য রাখলাম, দেখি কয়জনকে পারো!`;
+  return `ভাংতি নাই! আজ দোকানে ${outOf(right)} ঠিক ভাংতি দিলাম, ${bn(score)} পয়েন্ট। একই দশজন খদ্দের তোমার জন্য রাখলাম, দেখি কয়জনকে পারো!`;
 }
 
 /** A kind comparison after playing the same ten customers a friend sent. */

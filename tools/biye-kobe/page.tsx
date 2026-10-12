@@ -10,7 +10,7 @@ export default function BiyeKobePage() {
       <JsonLd site={site} />
       <div className="bk-page">
         <section className="bk-hero container" aria-labelledby="bk-title">
-          <p className="bk-kicker"><span>শুধু মজা</span> ৬টা প্রশ্ন · এক মিনিট</p>
+          <p className="bk-kicker"><span>বিয়ে কবে হবে</span> ৬টা প্রশ্ন · এক মিনিট</p>
           <h1 id="bk-title">ঘটক কী বলে, <span>বিয়ে কবে?</span></h1>
           <p className="bk-lead">{site.lead}</p>
         </section>

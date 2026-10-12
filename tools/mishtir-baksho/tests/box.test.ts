@@ -59,11 +59,11 @@ test("title tiers follow the brief", () => {
 });
 
 test("the human line comes from the picks", () => {
-  assert.equal(boxLine(starters), "বাক্সে এখনো অনেক জায়গা। চলো, মিষ্টির দোকানে!");
+  assert.equal(boxLine(starters), "বাক্সে এখনো অনেক জায়গা ফাঁকা।");
   const tenWithChomchom = sweets.slice(0, 10).map(sweet => sweet.id);
   assert.equal(boxLine(tenWithChomchom), "টাঙ্গাইলের চমচম একবার খেলে ভোলা যায় না।");
   const allDoi = [...starters, "bogura-doi", "bhola-doi", "gournadi-doi", "tok-doi", "monda", "jilapi", "batasha"] as const;
-  assert.equal(boxLine([...allDoi]), "দই ছাড়া দাওয়াত অসম্পূর্ণ।");
+  assert.equal(boxLine([...allDoi]), "দই ছাড়া দাওয়াত জমে না।");
 });
 
 test("the card compares with a friend's box", () => {

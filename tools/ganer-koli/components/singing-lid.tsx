@@ -224,7 +224,7 @@ export function SingingLid() {
           <figure className="kit-card" data-format={format}>
             <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="card-summary" />
             <figcaption id="card-summary" className="koli-sr">স্কোরকার্ড: {gameTitle(game)}, {scoreLine(game)}। {humanLine(game)}</figcaption>
-            {previewError && <p className="kit-status" role="alert">স্কোরকার্ডের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
+            {previewError && <p className="kit-status" role="alert">স্কোরকার্ডের ছবিটা দেখানো যাচ্ছে না। পাতাটা রিলোড করে দেখো।</p>}
           </figure>
           <div className="koli-controls">
             <fieldset className="kit-chips">

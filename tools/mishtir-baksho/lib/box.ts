@@ -140,8 +140,8 @@ export function boxLine(selected: readonly SweetId[]) {
   const count = selected.length;
   const gi = selected.filter(id => isGi(sweetById(id))).length;
   if (count === total) return "দেশের সব নামকরা মিষ্টি এক বাক্সে, ময়রারা নাম ধরে ডাকে!";
-  if (count < 10) return "বাক্সে এখনো অনেক জায়গা। চলো, মিষ্টির দোকানে!";
-  if (doiIds.every(has)) return "দই ছাড়া দাওয়াত অসম্পূর্ণ।";
+  if (count < 10) return "বাক্সে এখনো অনেক জায়গা ফাঁকা।";
+  if (doiIds.every(has)) return "দই ছাড়া দাওয়াত জমে না।";
   if (gi >= 10) return `জিআই পাওয়া ${bn(giCount)}টা মিষ্টির ${bn(gi)}টাই চেখে দেখা হয়ে গেছে!`;
   if (has("chomchom")) return "টাঙ্গাইলের চমচম একবার খেলে ভোলা যায় না।";
   if (has("kachagolla")) return "নাটোরের কাঁচাগোল্লা: গোল না, তবু নাম গোল্লা!";

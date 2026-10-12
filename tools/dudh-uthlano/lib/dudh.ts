@@ -134,7 +134,7 @@ export const ordinal = (index: number) => `${bn(index + 1)} নম্বর`;
 export function potWord(score: number, spilled: boolean) {
   if (spilled) return "উথলে গেল!";
   if (score >= 97) return "একদম কিনারায়!";
-  if (score >= 90) return "দারুণ সময়!";
+  if (score >= 90) return "প্রায় কিনারায়!";
   if (score >= 75) return "আরেকটু রাখা যেত";
   if (score >= 40) return "একটু আগেই নামালে";
   return "দুধ তো ফুটলই না!";
@@ -155,7 +155,7 @@ export function humanLine(scores: readonly number[], spills: readonly boolean[])
   if (spilled === 0 && total >= 95) return "কিনারা ছুঁইছুঁই, তবু একটা ফোঁটাও পড়েনি। এই চুলা তোমার হাতে নিরাপদ।";
   if (spilled === 0 && total >= 85) return "একটা পাতিলও উথলায়নি! আম্মু এবার নিশ্চিন্তে অন্য কাজ ধরতে পারে।";
   if (spilled === 0) return "একটাও উথলায়নি। সাবধানী হাত, শুধু আরেকটু সাহস লাগবে।";
-  if (spilled === 1) return "একটা উথলেছে, বাকিগুলো দারুণ সামলেছ। চুলাটা একটু মুছে নিয়ো।";
+  if (spilled === 1) return "একটা উথলেছে, বাকিগুলো ঠিকঠাক সামলেছ। চুলাটা একটু মুছে নিয়ো।";
   if (spilled <= 3) return "আম্মুর “দুধটা দেখিস!” এবার কানে বাজছে তো?";
   return "চুলাটা আজ দুধে গোসল করেছে! পরের বার পাতিলে চোখ রেখো।";
 }

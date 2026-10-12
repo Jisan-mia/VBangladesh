@@ -24,9 +24,9 @@ export function parseTrip(hash: string): Trip | null {
 /** One human line per ticket, chosen from the route and the group. Says nothing about travel time. */
 export function ticketLine({ from, to, people, journeys }: Trip) {
   const stops = Math.abs(to - from);
-  if (stops === stations.length - 1) return 'এ মাথা থেকে ও মাথা, পুরো লাইনটাই পাড়ি!';
+  if (stops === stations.length - 1) return 'এ মাথা থেকে ও মাথা, পুরো লাইনটাই পাড়ি।';
   if (stops === 1) return 'মাত্র এক স্টেশন, উঠতে না উঠতেই নামার পালা।';
-  if (people >= 4) return 'দলবেঁধে মেট্রোয়! সবার টিকিটের টাকা আগেই গুছিয়ে নিও।';
+  if (people >= 4) return 'দল বেঁধে যাচ্ছ। সবার টিকিটের টাকা আগেই গুছিয়ে নিও।';
   if (journeys === 2) return 'যাওয়া-আসা দুটোই, ফেরার টিকিটের টাকাও আলাদা রেখো।';
   return 'ভাড়া জেনে বের হলে কাউন্টারে আর হিসাব কষতে হয় না।';
 }

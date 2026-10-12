@@ -9,7 +9,7 @@ export const share: ToolShare = {
   preview(state) {
     return {
       title: previewTitle(parseShareHash(state)),
-      description: "লাল চা না কোল্ড কফি, রেডিও না রিল, হাঁটা না রিকশা? ৮টা চেনা পছন্দে মেলার মেশিন মেপে দেবে তোমার মনের বয়স। শুধু মজার জন্য, ফ্রি।",
+      description: "লাল চা না কোল্ড কফি, রেডিও না রিল, হাঁটা না রিকশা? ৮টা চেনা পছন্দে মেলার মেশিন মেপে দেবে তোমার মনের বয়স। ফ্রি, অ্যাকাউন্ট লাগে না।",
     };
   },
   tally: tallyIds,

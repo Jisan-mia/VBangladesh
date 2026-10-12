@@ -102,7 +102,7 @@ export const packs = [
     badge: ["সেমিস্টার", "১ থেকে ৮"], warning: "ধার দেওয়া খাতা ফেরত আসার নিশ্চয়তা নেই।",
     items: ["khata", "canteen-cha", "photocopy", "alarm-3am", "one-strap-bag", "singara", "calculator", "tuition-taka", "pendrive", "varsity-bus", "clear-file", "charger"],
     lines: [
-      { when: ["khata", "canteen-cha"], text: "খাতা বন্ধুর, চা বাকিতে — ভার্সিটি এভাবেই চলে।" },
+      { when: ["khata", "canteen-cha"], text: "খাতা বন্ধুর, চা বাকিতে। ভার্সিটি এভাবেই চলে।" },
       { when: ["alarm-3am"], text: "পুরো সেমিস্টারের পড়া এক রাতেই শেষ হয়।" },
       { when: ["tuition-taka"], text: "টিউশনির টাকায় মাসের শেষ সপ্তাহটা পার।" },
       { when: ["varsity-bus"], text: "বাস মিস মানে প্রথম ক্লাসটাও মিস।" },
@@ -143,14 +143,14 @@ export const packs = [
       { when: ["sorshe-balish"], text: "সরিষার বালিশ নিয়ে বাড়ির সবার পরামর্শ চলছেই।" },
       { when: ["jhunjhuni"], text: "ঝুনঝুনির শব্দে এখন সারা বাসা জেগে থাকে।" },
     ],
-    fallback: "ঘুম কম, কিন্তু ঘরভরা নতুন হাসি।",
+    fallback: "রাতে ঘুম কম, গ্যালারিতে ছবি বেশি।",
   },
   {
     id: "eid", label: "ঈদের ছুটিতে বাড়ি", chip: "ঈদের ছুটি", color: "#21915a", deep: "#0f5c36", on: "#ffffff", mood: "grin",
     badge: ["বছরে", "দুবার"], warning: "রাস্তায় সময় লাগবে, ধৈর্য সাথে রাখো।",
     items: ["bus-ticket", "salami-khaam", "power-bank", "gift-bag", "neck-pillow", "ludu", "train-ticket", "new-clothes", "water-biscuit", "house-lock", "semai", "ghuri"],
     lines: [
-      { when: ["bus-ticket", "power-bank"], text: "টিকিট হাতে, চার্জ ফুল — এবার শুধু বাড়ির পথ।" },
+      { when: ["bus-ticket", "power-bank"], text: "টিকিট হাতে, চার্জ ফুল। এবার শুধু বাড়ির পথ।" },
       { when: ["salami-khaam"], text: "খামগুলো রেডি, ছোটরা লাইনে দাঁড়াও!" },
       { when: ["ludu"], text: "ঈদের দুপুরে লুডুতে কেউ কাউকে ছাড় দেয় না।" },
       { when: ["house-lock"], text: "শহরের বাসায় তালা, মন আগেই বাড়ি পৌঁছে গেছে।" },

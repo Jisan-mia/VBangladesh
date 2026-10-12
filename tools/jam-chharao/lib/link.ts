@@ -54,7 +54,7 @@ const LINES: Record<Band, string> = {
   perfect: "এর চেয়ে কম চালে হয় না। একদম মাপা হিসাব!",
   close: "প্রায় নিখুঁত! আর এক-দুই চাল কমালেই সেরা।",
   good: "জ্যাম ছাড়ল, এবার সোজা বাসায়!",
-  long: "ঘুরে-ফিরে হলেও বের হয়েছে। ধৈর্য আছে বলতে হবে!",
+  long: "ঘুরে-ফিরে হলেও বের হয়েছে। ধৈর্য আছে বলতে হবে।",
   helped: "একটু সাহায্য নিলে দোষ নেই, জ্যাম তো ছাড়ল!",
 };
 export const humanLine = (count: number, best: number, helped: number) => LINES[band(count, best, helped)];

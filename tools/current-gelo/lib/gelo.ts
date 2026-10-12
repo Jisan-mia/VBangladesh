@@ -139,7 +139,7 @@ export function humanLine(minutes: number, times: number) {
   if (minutes >= 600) return "আজকের দিনটা হারিকেনের নামে লিখে দেওয়া যায়।";
   if (minutes >= 360) return "হাতপাখার ব্যায়ামে আজ তুমি চ্যাম্পিয়ন।";
   if (times >= 5) return "কারেন্টের আজ লুকোচুরির মুড: এই আছে, এই নেই।";
-  if (minutes >= 180) return "মোমবাতি গলল, সাথে একটু ধৈর্যও। গরমটা তো আছেই।";
+  if (minutes >= 180) return "মোমবাতি গলল, ঘামও ঝরল।";
   if (minutes >= 60) return "হাতপাখাটা আজ খাটের নিচ থেকে বের করতেই হলো।";
   return "মোমবাতি খুঁজে পাওয়ার আগেই কারেন্ট চলে এল।";
 }

@@ -90,7 +90,7 @@ export function KiteBuilder() {
         <section className="gh-friend" aria-labelledby="gh-friend-title">
           <canvas ref={friendCanvas} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={summary(friend)} />
           <div>
-            <p className="gh-friend-kicker">তোমার আকাশে একটা {friend.mode === "kite" ? "ঘুড়ি" : "ফানুস"} এসেছে</p>
+            <p className="gh-friend-kicker">বন্ধু তার {friend.mode === "kite" ? "ঘুড়ি" : "ফানুস"} পাঠিয়েছে</p>
             <h2 id="gh-friend-title">{friend.mode === "kite" ? `‘${headline(friend)}’ উড়ছে।` : `ফানুসে লেখা: ‘${headline(friend)}’।`}<br /><span>তোমারটা পাশে ওড়াও।</span></h2>
             <a className="kit-primary" href="#make">আমারটা বানাই</a>
           </div>
@@ -168,7 +168,7 @@ export function KiteBuilder() {
               <button type="button" className="kit-secondary" onClick={countMine} disabled={counted === "sending"}>{counted === "sending" ? "গোনা হচ্ছে…" : "আমার ঘুড়িটাও গোনো"}</button>
               {counted === "failed" && <p className="kit-status" role="alert">এখন গোনা গেল না। একটু পরে আবার চেষ্টা করো।</p>}
             </> : everyone.total < COMPARE_MIN ? (
-              <p className="kit-status">গোনা হয়েছে! এখনো মাত্র {bn(everyone.total)} জন যোগ দিয়েছে, তাই হিসাব এখনই বলা যাবে না। বন্ধুদের লিংক পাঠাও।</p>
+              <p className="kit-status">গোনা হয়েছে। এখনো মাত্র {bn(everyone.total)} জন যোগ দিয়েছে, তাই হিসাব দেখানো যাচ্ছে না। বন্ধুদের লিংক পাঠাও।</p>
             ) : (
               <ul className="gh-bars">{ranked.map(({ pattern, percent }) => <li key={pattern.id} data-mine={pattern.id === clean.pattern}><span>{pattern.label}</span><i style={{ width: `${percent}%` }} /><b>{bn(percent)}%</b></li>)}</ul>
             )}

@@ -108,13 +108,13 @@ export function PowerLog() {
   }
 
   const wentOff = () => act((current, at) => goOff(current, at), `কারেন্ট গেল ${clock(Date.now())}-এ। ফিরলে ‘কারেন্ট এল’ চাপো।`);
-  const cameOn = () => act((current, at) => comeOn(current, at), open ? `কারেন্ট এল! এবারে গেছিল ${duration(Math.round(Math.min(Date.now() - open.off, 12 * HOUR) / MINUTE))}।` : "");
+  const cameOn = () => act((current, at) => comeOn(current, at), open ? `কারেন্ট এল! এবার ${duration(Math.round(Math.min(Date.now() - open.off, 12 * HOUR) / MINUTE))} ছিল না।` : "");
 
   function fixEnd() {
     if (!asking) return;
     const at = endAt(asking.off, fixTime, Date.now());
     if (at === null) { setFixError("এই সময়টা এখনো আসেনি। কারেন্ট যাওয়ার পরের একটা সময় দাও।"); return; }
-    act((current, moment) => comeOn(current, moment, at), `ঠিক করা হলো: কারেন্ট এসেছিল ${clock(at)}-এ।`);
+    act((current, moment) => comeOn(current, moment, at), `ঠিক করে দিলাম: কারেন্ট এসেছিল ${clock(at)}-এ।`);
   }
 
   async function vote() {
@@ -181,7 +181,7 @@ export function PowerLog() {
       ) : (
         <p className="cg-note" role="status" aria-live="polite">
           {storageFailed ? "এই ব্রাউজারে হিসাব জমানো যাচ্ছে না, পাতা বন্ধ করলে মুছে যাবে।" : note}
-          {undo && <button type="button" className="kit-link" onClick={() => { setSaved(undo.before); setUndo(null); setNote("আগের অবস্থায় ফিরিয়ে আনা হলো।"); setNow(Date.now()); }}>ভুল করে চাপলে? ফিরিয়ে আনো</button>}
+          {undo && <button type="button" className="kit-link" onClick={() => { setSaved(undo.before); setUndo(null); setNote("আগের হিসাবে ফিরে গেল।"); setNow(Date.now()); }}>ভুল করে চাপলে? ফিরিয়ে আনো</button>}
         </p>
       )}
 
@@ -208,7 +208,7 @@ export function PowerLog() {
               <li key={outage.off}>
                 <span>{clock(outage.off)} → {outage.on === null ? "এখনো নেই" : clock(outage.on)}</span>
                 <small>{duration(Math.floor((endOf(outage, now) - outage.off) / MINUTE))}</small>
-                <button type="button" className="kit-link" aria-label={`${clock(outage.off)}-এর হিসাবটা মুছে দাও`} onClick={() => act(current => removeOutage(current, index), "একটা হিসাব মুছে দেওয়া হলো।")}>মুছে দাও</button>
+                <button type="button" className="kit-link" aria-label={`${clock(outage.off)}-এর হিসাবটা মুছে দাও`} onClick={() => act(current => removeOutage(current, index), "একটা হিসাব মুছে গেল।")}>মুছে দাও</button>
               </li>
             ))}
           </ol>

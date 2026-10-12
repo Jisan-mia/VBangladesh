@@ -207,14 +207,14 @@ export function Typewriter() {
         <button type="button" className="kit-secondary" onClick={() => restart(p)} disabled={startedAt === null}>আবার শুরু করো</button>
         <button type="button" className="kit-secondary" onClick={() => restart((p + 1) % passages.length)}>অন্য লেখা দাও</button>
       </div>
-      <p className="bt-hint">প্রথম অক্ষর চাপলেই ঘড়ি চলবে। Avro, Ridmik, Gboard, যেকোনো বাংলা কিবোর্ডে চলবে। দাঁড়ি-কমা না দিলেও চলে।</p>
+      <p className="bt-hint">Avro, Ridmik, Gboard, যেকোনো বাংলা কিবোর্ডে চলবে। দাঁড়ি-কমা না দিলেও চলে।</p>
 
       <StickyNext show={Boolean(card) && !resultVisible} title={<strong>মিনিটে {card ? bn(card.w) : ""}টা শব্দ</strong>} sub={card ? `${bn(card.a)}% নির্ভুল` : ""} href="#result" label="সার্টিফিকেট দেখো" />
 
       <section className="bt-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="bt-result-head">
           <h2 id="result-title">{card ? <>মিনিটে <em>{bn(card.w)}টা শব্দ</em>, {bn(card.a)}% নির্ভুল</> : "৬০ সেকেন্ড টাইপ করলেই সার্টিফিকেট"}</h2>
-          <p>{card ? versus || humanLine(card.w, card.a) : "ঘড়ি থামলে তোমার নামসহ একটা মজার টাইপিং সার্টিফিকেট তৈরি হবে। তারপর বন্ধুকে একই লেখা টাইপ করতে দাও।"}</p>
+          <p>{card ? versus || humanLine(card.w, card.a) : "ঘড়ি থামলে নামসহ সার্টিফিকেট তৈরি হবে। বন্ধুকে একই লেখাটা টাইপ করতে দাও।"}</p>
         </div>
         {card && (
           <div className="bt-result-body">

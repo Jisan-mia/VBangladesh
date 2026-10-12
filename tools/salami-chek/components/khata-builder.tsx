@@ -81,7 +81,7 @@ export function KhataBuilder({ switcher }: { switcher: ReactNode }) {
 
   const caption = linked
     ? `${title} দেখলাম, ${count}! এবার আমার খাতাটাও লিখব। তোমাকে কে কে দিল?`
-    : `ঈদ মোবারক! এবারের সালামি খাতায় ${khataNames(khata.rows)}। সবার দোয়া আর আদরের জন্য অনেক ভালোবাসা। তোমাকে এবার কে কে দিল?`;
+    : `ঈদ মোবারক! এবারের সালামি খাতায় ${khataNames(khata.rows)}। সবার দোয়া আর আদরের জন্য ধন্যবাদ। তোমাকে এবার কে কে দিল?`;
 
   return (
     <div className="sc">

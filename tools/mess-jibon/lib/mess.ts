@@ -136,7 +136,7 @@ export function messLine(picked: readonly MomentId[]) {
   const has = (id: MomentId) => picked.includes(id);
   const count = picked.length;
   if (count === 0) return "মিল কার্ড এখনো আস্ত, একটাও ফুটো পড়েনি।";
-  if (count === TOTAL) return "পুরো ৪০! এই কার্ডে আর ফুটো করার জায়গা নেই।";
+  if (count === TOTAL) return "পুরো ৪০টাই। কার্ডে আর ফুটো করার জায়গা নেই।";
   if (has("prothom") && has("bidai")) return "যে রুম প্রথম দিন অচেনা ছিল, ছাড়ার দিন সেখানেই চোখ ভিজল।";
   if (has("achar")) return "বাড়ির আচারের বয়াম খুলতেই পুরো ফ্লোর হাজির।";
   if (has("bhorta")) return "খালার হাতের আলুভর্তা, বাড়ির পরে সবচেয়ে কাছের স্বাদ।";
@@ -148,16 +148,16 @@ export function messLine(picked: readonly MomentId[]) {
   if (has("manager")) return "বাজার ম্যানেজার হলে বোঝা যায়, এক হালি ডিমেরও হিসাব আছে।";
   if (has("buya")) return "বুয়া আসেনি যেদিন, সেদিন সবাই রাঁধুনি।";
   if (has("dimdal")) return "ডিম-ডাল সপ্তাহেও প্লেট খালি হতো হাসিমুখে।";
-  if (count >= 30) return "কার্ডভরা ফুটো, মনভরা মেসের গল্প।";
-  if (count <= 3) return "অল্প কয়টা ফুটো, প্রত্যেকটায় একটা গল্প।";
-  return "হল-মেসের দিনগুলো ফেরে না, গল্পগুলো থেকে যায়।";
+  if (count >= 30) return "কার্ডে ফুটো করার জায়গা প্রায় বাকি নেই।";
+  if (count <= 3) return "অল্প কয়টা ফুটো, বাকি ঘরগুলো এখনো আস্ত।";
+  return "মেসের অনেক চেনা দিন মিলেছে।";
 }
 
 /** "দুজনেরই: ম্যাগি রাত, বুয়া আসেনি আর ৩টা" — what two cards share, for a roommate's overlay. */
 export function commonLine(picked: readonly MomentId[], friend: MealCard | null) {
   if (!friend || !picked.length) return "";
   const common = moments.filter(moment => picked.includes(moment.id) && friend.picked.includes(moment.id)).map(moment => moment.card);
-  if (!common.length) return `${friend.name ? possessive(friend.name) : "বন্ধুর"} সাথে একটাও মেলেনি!`;
+  if (!common.length) return `${friend.name ? possessive(friend.name) : "বন্ধুর"} সাথে একটাও মেলেনি`;
   return `দুজনেরই: ${common.slice(0, 2).join(", ")}${common.length > 2 ? ` আর ${bn(common.length - 2)}টা` : ""}`;
 }
 

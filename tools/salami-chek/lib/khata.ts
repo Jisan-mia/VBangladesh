@@ -56,11 +56,11 @@ export function khataTotal(rows: readonly KhataRow[]) {
 /** The human line: about who was there, never about how much. */
 export function khataLine({ rows }: Khata) {
   const has = (id: KhataGiverId) => rows.some(row => row.giver === id);
-  if (rows.length >= 8) return "এত জনের আদর এক পাতায়, এবারের ঈদটা ভরা ভরা।";
+  if (rows.length >= 8) return `${bn(rows.length)} জনের নাম এক পাতায়। খাতার পাতা প্রায় ভরে গেল।`;
   if (has("dulabhai")) return "দুলাভাই এবারও কথা রেখেছে!";
   if (has("nanu") || has("dadu")) return `${has("nanu") ? "নানুর" : "দাদুর"} দোয়া আর নতুন নোট, দুটোই খাতায় উঠল।`;
-  if (rows.length === 1) return "একজনের আদরেই ঈদের সকালটা মিষ্টি।";
-  return "নোট খরচ হয়ে যাবে, আদরটুকু খাতায় থেকে যাক।";
+  if (rows.length === 1) return "একজনের নাম, তবু খাতাটা খালি নেই।";
+  return "নোট খরচ হবে, নামগুলো খাতায় থেকে যাবে।";
 }
 
 export function khataPreviewTitle({ name, rows }: Khata) {

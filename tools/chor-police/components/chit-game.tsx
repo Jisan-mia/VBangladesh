@@ -51,7 +51,7 @@ function NameFields({ names, onChange, legend }: { names: string[]; onChange: (s
     {names.map((name, seat) => (
       <label key={seat}>
         <span aria-hidden="true">{bn(seat + 1)}</span>
-        <input value={name} maxLength={MAX_NAME} onChange={event => onChange(seat, event.target.value)} placeholder={["যেমন: আম্মু", "যেমন: ভাইয়া", "যেমন: আপু", "যেমন: আমি"][seat]} aria-label={`${bn(seat + 1)} নম্বর খেলোয়াড়ের নাম`} autoComplete="off" />
+        <input value={name} maxLength={MAX_NAME} onChange={event => onChange(seat, event.target.value)} placeholder={["আম্মু", "ভাইয়া", "আপু", "আমি"][seat]} aria-label={`${bn(seat + 1)} নম্বর খেলোয়াড়ের নাম`} autoComplete="off" />
       </label>
     ))}
   </fieldset>;

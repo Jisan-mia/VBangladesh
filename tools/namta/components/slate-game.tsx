@@ -13,7 +13,7 @@ import {
 const TOOL = "namta";
 // Percentages from a handful of people are noise.
 const COMPARE_MIN = 20;
-const PRAISE = ["ঠিক!", "শাবাশ!", "একদম ঠিক!", "দারুণ!"];
+const PRAISE = ["ঠিক!", "শাবাশ!", "একদম ঠিক!", "ঠিক ধরেছ!"];
 // A right answer stays on the slate just long enough to feel good, then the cloth wipes it.
 const RIGHT_PAUSE = 700;
 const KEYS = [1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -251,7 +251,7 @@ export function SlateGame() {
             </figure>
             <div className="nm-controls">
               <label className="nm-name">
-                <span>নাম <small>ডাকনামই যথেষ্ট, না দিলেও চলবে</small></span>
+                <span>নাম <small>ডাকনাম দাও, না দিলেও চলবে</small></span>
                 <input value={name} maxLength={MAX_NAME} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="off" />
               </label>
               <fieldset className="kit-chips">

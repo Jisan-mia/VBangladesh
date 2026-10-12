@@ -12,7 +12,7 @@ export const share: ToolShare = {
     const score = shared ? `${bn(shared.rows.length)}টার মধ্যে ${bn(solvedCount(shared.rows))}টা` : "কয়টা";
     const day = shared ? possessive(bnDate(shared.date)) : "আজকের";
     return {
-      title: `${shared?.name || "এক বন্ধু"} ${day} শব্দজটে ${score} পেরেছে — তুমি কয়টা পারো?`,
+      title: `${shared?.name || "এক বন্ধু"} ${day} শব্দজটে ${score} পেরেছে। তুমি কয়টা পারো?`,
       description: "রোজ পাঁচটা নতুন বাংলা শব্দের ধাঁধা। সূত্র পড়ে টুকরো জুড়ে শব্দ বানাও, তারপর বন্ধুর সাথে মিলিয়ে দেখো। ফ্রি, অ্যাকাউন্ট লাগে না।",
     };
   },

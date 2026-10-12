@@ -15,12 +15,12 @@ export const share: ToolShare = {
     // The preview names who gave, never how much.
     if (khata) return { title: khataPreviewTitle(khata), description: `${khataNames(khata.rows)}: সবার দোয়া আর সালামি এক পাতায়। এবার তোমাকে কে কে দিল? নিজের সালামি খাতা লেখো।` };
     const cheque = parseShareHash(state);
-    if (!cheque) return { title: "ঈদ সালামির চেক — নিজের নামে চেক বানাও", description: "কার কাছে, কত টাকা, বেছে নাও। খেলনা চেক, টাকা যায় না, শুধু ঈদের মজা।" };
+    if (!cheque) return { title: "ঈদ সালামির চেক — নিজের নামে চেক বানাও", description: "কার কাছে, কত টাকা, বেছে নাও। নিজের নামে ঈদ সালামির চেক কেটে পাঠিয়ে দাও।" };
     return {
       title: previewTitle(cheque),
       description: cheque.ok
-        ? `${amountFigures(cheque.amount)} টাকার খেলনা চেকে ${possessive(giverLabel(cheque.giver))} সই পড়েছে। তুমিও কারও কাছে সালামি চাও, নিজের চেক বানাও।`
-        : `${amountFigures(cheque.amount)} টাকার খেলনা চেক, শুধু সইটা বাকি। এক চাপে সই করে ফেরত পাঠাও। টাকা যায় না, শুধু ঈদের মজা।`,
+        ? `${amountFigures(cheque.amount)} টাকার সালামির চেকে ${possessive(giverLabel(cheque.giver))} সই পড়েছে। তুমিও কারও কাছে সালামি চাও, নিজের চেক বানাও।`
+        : `${amountFigures(cheque.amount)} টাকার সালামির চেক, শুধু সইটা বাকি। এক চাপে সই করে ফেরত পাঠাও।`,
     };
   },
   // Cheque giver ids only, counted when an elder signs; names, amounts and খাতা entries are never counted.

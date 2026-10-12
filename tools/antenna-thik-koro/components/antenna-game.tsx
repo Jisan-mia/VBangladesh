@@ -317,7 +317,7 @@ export function AntennaGame() {
             </figure>
             <div className="at-share">
               <label className="at-name">
-                <span>নাম <small>ডাকনামই যথেষ্ট, না দিলেও চলবে</small></span>
+                <span>নাম <small>ডাকনাম দিতে পারো, না দিলেও চলবে</small></span>
                 <input value={name} maxLength={MAX_NAME} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="off" />
               </label>
               <FormatToggle value={format} onChange={setFormat} />

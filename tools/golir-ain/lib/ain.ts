@@ -13,7 +13,7 @@ export const groups = [
 
 // Share links store ticks as bit positions (24 bits): once links are public, never reorder, rename or delete; only replace the cap.
 export const rules = [
-  { id: "chhad", group: "out", label: "ছাদে মারলে আউট", line: "ছাদের বল আনতে যাওয়াটাই ছিল আসল সাহসের খেলা।" },
+  { id: "chhad", group: "out", label: "ছাদে মারলে আউট", line: "ছাদের বল আনতে ওঠাটাই ছিল সাহসের পরীক্ষা।" },
   { id: "one-tip", group: "out", label: "ওয়ান টিপ ওয়ান হ্যান্ড আউট", line: "এক ড্রপে এক হাতে ক্যাচ, এটাই গলির ফিল্ডিং।" },
   { id: "pechhone", group: "out", label: "পেছনে মারলে আউট", line: "গলি সরু, তাই শট শুধু সোজা।" },
   { id: "kach", group: "out", label: "জানালার কাচে লাগলে আউট", line: "কাচের শব্দ শুনলেই সবাই হঠাৎ খুব ভদ্র।" },
@@ -30,7 +30,7 @@ export const rules = [
   { id: "no-throw", group: "run", label: "হাত ঘুরিয়ে বল, থ্রো চলবে না", line: "হাত একটু বাঁকলেই সবাই একসাথে: ‘থ্রো!’" },
   { id: "last-man", group: "run", label: "শেষজন একাই ব্যাট করবে", line: "শেষজন একাই দৌড়ায়, পুরো গলি তার পেছনে।" },
   { id: "bat-jar", group: "para", label: "ব্যাট যার, প্রথম ব্যাটিং তার", line: "ব্যাটের মালিকই পাড়ার আসল ক্যাপ্টেন।" },
-  { id: "bol-malik", group: "para", label: "বলের মালিক গেলে খেলা শেষ", line: "বলের মালিকের মন ভালো রাখাই ছিল আসল খেলা।" },
+  { id: "bol-malik", group: "para", label: "বলের মালিক গেলে খেলা শেষ", line: "বলের মালিকের মুখ ভার হলেই ম্যাচ শেষ।" },
   { id: "bol-harale", group: "para", label: "বল হারালে যে মেরেছে, সে কিনবে", line: "যে হারাবে সে কিনবে, গলির সবচেয়ে কড়া আইন।" },
   { id: "riksha", group: "para", label: "রিকশা এলে খেলা থামবে", line: "রিকশার বেল মানেই টাইম আউট।" },
   { id: "ammu", group: "para", label: "আম্মু ডাকলে খেলা শেষ", line: "আম্মুর এক ডাকে সব ম্যাচ ড্র।" },

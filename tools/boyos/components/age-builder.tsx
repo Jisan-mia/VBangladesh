@@ -189,7 +189,7 @@ export function AgeBuilder() {
               </label>
               <PhotoPicker value={photo} onChange={setPhoto} />
               <FormatToggle value={format} onChange={setFormat} />
-              <ShareBar tool={TOOL} fileName="boyos.png" makeImage={() => cardBlob(card, format, site, photo)} imageKey={`${state}|${format}|${photo?.width ?? 0}|${today}`} caption={caption} state={state} hint="লিংক পেলে বন্ধু দেখবে তোমার প্রথম পাতা, আর নিজের তারিখ দিয়ে দেখবে কে কত বড়।" />
+              <ShareBar tool={TOOL} fileName="boyos.png" makeImage={() => cardBlob(card, format, site, photo)} imageKey={`${state}|${format}|${photo?.width ?? 0}|${today}`} caption={caption} state={state} hint="বন্ধু লিংক খুলে তোমার প্রথম পাতা দেখবে, নিজের তারিখ দিলে দেখবে কে কত বড়।" />
               <button type="button" className="kit-link by-restart" onClick={restart}>অন্য একটা তারিখ দেখি</button>
             </div>
           </div>
@@ -224,7 +224,7 @@ export function AgeBuilder() {
             <p className="by-note">প্রতি সারি এক বাংলা বছর, বৈশাখ থেকে চৈত্র। প্রতি ঘর এক ঋতু, মানে দুই বাংলা মাস। জন্মের ঋতু আর আজকের ঋতু দুটোই গোনা। ফাঁকা ঘরগুলো এ বছরের বাকি ঋতু, সামনেই আসছে।</p>
             <div className="by-controls">
               <FormatToggle value={format} onChange={setFormat} />
-              <ShareBar tool={TOOL} fileName="boyos-ritu.png" makeImage={() => rituBlob(card, format, site)} imageKey={`${rituState}|${format}|${today}`} caption={rituCaption} state={rituState} hint="লিংক পেলে বন্ধু দেখবে তোমার ঋতুর গ্রিড, আর নিজের তারিখ দিয়ে বানাবে নিজেরটা।" />
+              <ShareBar tool={TOOL} fileName="boyos-ritu.png" makeImage={() => rituBlob(card, format, site)} imageKey={`${rituState}|${format}|${today}`} caption={rituCaption} state={rituState} hint="বন্ধু লিংক খুলে তোমার ঋতুর গ্রিড দেখবে, তারপর নিজেরটা বানাবে।" />
             </div>
           </details>
 

@@ -138,19 +138,19 @@ export function eidLine(picked: readonly ItemId[]) {
   const has = (id: ItemId) => picked.includes(id);
   const count = picked.length;
   if (count === 0) return "এখনো একটাও টিক দাওনি।";
-  if (count === TOTAL) return "পুরো ২৫! এমন ঈদ বছরে একবারই আসে।";
+  if (count === TOTAL) return "পুরো ২৫টাই হলো। একটাও বাদ যায়নি।";
   if (has("salami") && has("salami-dewa")) return "নিলেও, দিলেও। এটাই বড় হওয়া।";
   if (has("salami-dewa")) return "এবার শুধু দিলাম। বড় হয়ে গেছি, মেনে নিলাম।";
   if (has("video") && !has("kolakuli")) return "দূরে আছি, তবু ভিডিও কলেই ঈদ মোবারক।";
   if (count >= 18) return "চাঁদরাত থেকে সন্ধ্যা, একটুও ফাঁক নেই।";
   if (has("ghum") && count <= 8) return "ঈদের আসল আনন্দ দুপুরের ঘুমে।";
-  if (has("nanabari")) return "নানু-দাদুর বাড়ির ঈদ, সবচেয়ে মিষ্টি ঈদ।";
-  if (has("lukano")) return "জামাটা লুকিয়ে রাখার মজাই আলাদা।";
+  if (has("nanabari")) return "নানু-দাদুর বাড়িতে সেমাইয়ের বাটি কখনো খালি থাকে না।";
+  if (has("lukano")) return "জামাটা লুকিয়ে রাখা, আর রাতে দুবার খুলে দেখা।";
   if (has("semai") && has("polao") && has("jorda")) return "পেট ভরা, মন ভরা।";
   if (has("faka")) return "ফাঁকা শহর, ভরা মন।";
   if (count <= 3) return "অল্প কয়টা, কিন্তু ঈদ তো ঈদই।";
   if (count <= 10) return "হাতে মেহেদি, মনে খুশি। ঈদ জমে গেছে।";
-  return "সেমাইয়ের মতোই মিষ্টি একটা দিন।";
+  return "ঈদের দিনটা ভালোই জমেছে।";
 }
 
 /** "দুজনেরই: সেমাই, দুপুরের ঘুম আর ৩টা" — what two people's Eids share, for the friend overlay. */
@@ -177,7 +177,7 @@ export function colorShares(counts: Record<string, number>) {
 
 export function previewTitle(eid: Eid) {
   const who = eid.name ? `${possessive(eid.name)} ঈদে` : "এক বন্ধুর ঈদে";
-  return `${who} ২৫-এ ${bn(eid.picked.length)}টা হলো — তোমার কয়টা?`;
+  return `${who} ২৫-এ ${bn(eid.picked.length)}টা হলো। তোমার কয়টা?`;
 }
 
 export { possessive };

@@ -4,14 +4,14 @@ import { amountFigures, amountWords, giverLabel, possessive, type Cheque } from 
 export function ChequeView({ cheque, nameFor }: { cheque: Cheque; nameFor?: string }) {
   const giver = giverLabel(cheque.giver);
   const words = amountWords(cheque.amount);
-  const summary = `খেলনা সালামির চেক: প্রিয় ${giver}, সালামি পাবে ${cheque.name || "(নাম নেই)"}, ${amountFigures(cheque.amount)} টাকা, ${words}।${cheque.ok ? ` ${giver} সই করে দিয়েছে।` : ` ${possessive(giver)} সই বাকি।`}`;
+  const summary = `সালামির চেক: প্রিয় ${giver}, সালামি পাবে ${cheque.name || "(নাম নেই)"}, ${amountFigures(cheque.amount)} টাকা, ${words}।${cheque.ok ? ` ${giver} সই করে দিয়েছে।` : ` ${possessive(giver)} সই বাকি।`}`;
   const name = cheque.name || "তোমার নাম";
   return (
     <div className="sc-cheque" data-ok={cheque.ok} role="img" aria-label={summary}>
       <div className="sc-stub" aria-hidden="true">
         <svg viewBox="0 0 40 40"><path d="M24 4a16 16 0 1 0 12 26A13 13 0 0 1 24 4Z" /><path d="m31 9 1.4 3 3.2.4-2.4 2.2.6 3.2-2.8-1.6-2.8 1.6.6-3.2-2.4-2.2 3.2-.4Z" /></svg>
         <b>ঈদ</b>
-        <span>খেলনা</span>
+        <span>সালামি</span>
       </div>
       <div className="sc-body" aria-hidden="true">
         <div className="sc-top"><strong>ঈদ সালামির চেক</strong><small>তারিখ: ঈদের সকাল</small></div>
@@ -22,7 +22,7 @@ export function ChequeView({ cheque, nameFor }: { cheque: Cheque; nameFor?: stri
         <p className="sc-line"><span>সালামি পাবে:</span>{nameFor ? <label htmlFor={nameFor} className="sc-pen" data-empty={!cheque.name}>{name}</label> : <b className="sc-pen" data-empty={!cheque.name}>{name}</b>}</p>
         <p className="sc-line"><span>কথায়:</span><b className="sc-pen sc-words">{words}</b></p>
         <div className="sc-foot">
-          <span className="sc-toy">খেলনা চেক · শুধু মজার জন্য</span>
+          <span className="sc-toy">ঈদ মোবারক</span>
           <span className="sc-sign">
             {cheque.ok && <svg viewBox="0 0 140 40"><path d="M4 30C14 4 22 38 34 16s16 18 28 4 18 16 30 2 22-6 44 10" /></svg>}
             <i>{possessive(giver)} সই</i>

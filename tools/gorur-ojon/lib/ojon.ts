@@ -163,9 +163,9 @@ const withKe = (name: string) => /[ঀ-৿]$/.test(name) ? `${name}কে` : `${
 export function weightLine(mon: number, name: string) {
   if (mon < 2) return `${name ? `${name} ` : ""}ছোট্টখাট্টো, কিন্তু আদরে কারও চেয়ে কম না।`;
   if (mon < 4) return name ? `${withKe(name)} দেখে হাটে সবাই একবার ফিরে তাকাবে।` : "মাঝারি গড়ন, হাটে সবাই একবার ফিরে তাকাবে।";
-  if (mon < 7) return name ? `${withKe(name)} ঘিরে পাড়ার বাচ্চাদের ভিড় লেগেই থাকবে।` : "বেশ নাদুসনুদুস! পাড়ার বাচ্চারা সারাদিন ঘিরে থাকবে।";
-  if (mon < 12) return `${name || "এ"} তো রীতিমতো পালোয়ান! গলার মালাটাও ছোট পড়ে যাচ্ছে।`;
-  return `${name ? `${name} ` : ""}হাটের রাজা! দেখতে আশপাশের গ্রাম থেকে লোক আসবে।`;
+  if (mon < 7) return name ? `${withKe(name)} ঘিরে পাড়ার বাচ্চাদের ভিড় লেগেই থাকবে।` : "বেশ নাদুসনুদুস। পাড়ার বাচ্চারা সারাদিন ঘিরে থাকবে।";
+  if (mon < 12) return `${name || "এ"} তো রীতিমতো পালোয়ান। গলার মালাটাও ছোট পড়ে যাচ্ছে।`;
+  return `${name ? `${name} ` : ""}হাটের রাজা। দেখতে আশপাশের গ্রাম থেকে লোক আসবে।`;
 }
 
 export const cowTitle = (name: string) => `আমাদের ${name || "গরু"}`;
@@ -183,7 +183,7 @@ export function packetText(cow: Cow) {
 
 export function bowlLine(cow: Cow) {
   const count = packetCount(cow.meat, cow.split, cow.packet);
-  if (count === 1) return "একটা প্যাকেট, তবু কারও দরজায় ঈদের খুশি পৌঁছাবে।";
+  if (count === 1) return "একটা প্যাকেট হলেও একজনের দরজায় পৌঁছাবে।";
   if (count > 1) return `${bn(count)}টা প্যাকেট মানে ${bn(count)}বার কারও দরজায় কড়া নাড়া।`;
   return "ভাগ কীভাবে হবে, সেটা তোমাদের পরিবারই ঠিক করবে।";
 }
@@ -191,5 +191,5 @@ export function bowlLine(cow: Cow) {
 export function previewTitle(cow: Cow) {
   if (cow.card === "bhag") return `${cow.name ? `${possessive(cow.name)} ভাগ: ` : ""}${shareEquation(cow)}${packetText(cow) ? ` · ${packetText(cow)}` : ""}`;
   const weight = weightOf(cow);
-  return `${cow.name ? possessive(cow.name) : "এই গরুর"} ওজন প্রায় ${monText(weight.mon)} মণ (${kgText(weight.kg)} কেজি) — তোমাদেরটা কত?`;
+  return `${cow.name ? possessive(cow.name) : "এই গরুর"} ওজন প্রায় ${monText(weight.mon)} মণ (${kgText(weight.kg)} কেজি)। তোমাদেরটা কত?`;
 }

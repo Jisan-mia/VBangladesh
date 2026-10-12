@@ -27,7 +27,7 @@ export const sets = [
       // India won by 1 run; BAN 145/9 chasing 147, needed 2 off the last 3 balls and lost 3 wickets in 3 balls (Dhaka Tribune, Wisden).
       // https://www.espncricinfo.com/series/world-t20-2015-16-901359/india-vs-bangladesh-25th-match-super-10-group-2-951353/full-scorecard
       // https://www.dhakatribune.com/sport/cricket/123832/india-beat-bangladesh-by-1-run
-      { id: "q2016blr", kind: "heart", year: "২০১৬", where: "বেঙ্গালুরু", prompt: "টি-টোয়েন্টি বিশ্বকাপে ভারতের বিপক্ষে শেষ ৩ বলে দরকার ২ রান। তারপর?", options: ["শেষ বলে চার, বাংলাদেশের জয়", "পরপর ৩ বলে ৩ উইকেট, ১ রানে হার", "১ রান নিয়ে টাই, সুপার ওভার"], answer: 1, memory: "দরকার ছিল মাত্র ২ রান, তবু ১ রানে হার। এই রাতটা ভোলার নয়।", source: "https://www.espncricinfo.com/series/world-t20-2015-16-901359/india-vs-bangladesh-25th-match-super-10-group-2-951353/full-scorecard" },
+      { id: "q2016blr", kind: "heart", year: "২০১৬", where: "বেঙ্গালুরু", prompt: "টি-টোয়েন্টি বিশ্বকাপে ভারতের বিপক্ষে শেষ ৩ বলে দরকার ২ রান। তারপর?", options: ["শেষ বলে চার, বাংলাদেশের জয়", "পরপর ৩ বলে ৩ উইকেট, ১ রানে হার", "১ রান নিয়ে টাই, সুপার ওভার"], answer: 1, memory: "দরকার ছিল মাত্র ২ রান, তবু ১ রানে হার।", source: "https://www.espncricinfo.com/series/world-t20-2015-16-901359/india-vs-bangladesh-25th-match-super-10-group-2-951353/full-scorecard" },
       // ICC Trophy final, Kuala Lumpur, 12–13 Apr 1997. Rain: 166 in 25 overs (D/L). 11 off the last over, 1 off the last ball, scampered off the pads; won by 2 wickets, 0 balls left. Qualified for the 1999 World Cup.
       // https://espncricinfo.com/ci/engine/match/66792.html
       // https://www.dhakatribune.com/amp/sport/cricket/3520/1997-icc-trophy-the-one-where-it-all-started · https://www.tbsnews.net/node/68416
@@ -47,11 +47,11 @@ export const sets = [
       // Women's T20 Asia Cup final, Kuala Lumpur, 10 Jun 2018. IND 112/9, BAN 113/7; 2 off the last ball, ran 2; won by 3 wickets. First title.
       // https://www.espncricinfo.com/series/8659/scorecard/1148063/bangladesh-women-vs-india-women-final-women's-twenty20-asia-cup-2018
       // https://www.dhakatribune.com/sport/cricket/147677/bangladesh-women-become-champions
-      { id: "q2018wkl", kind: "joy", year: "২০১৮", where: "কুয়ালালামপুর", prompt: "নারী এশিয়া কাপের ফাইনালে ভারতের বিপক্ষে শেষ বলে দরকার ২ রান। তারপর?", options: ["রান আউট, ভারত চ্যাম্পিয়ন", "১ রান, ম্যাচ টাই", "দৌড়ে ২ রান, বাংলাদেশ চ্যাম্পিয়ন"], answer: 2, memory: "মেয়েদের হাতে প্রথম এশিয়া কাপ। শেষ বলের সেই দৌড় এখনো চোখে ভাসে।", source: "https://www.espncricinfo.com/series/8659/scorecard/1148063/bangladesh-women-vs-india-women-final-women's-twenty20-asia-cup-2018" },
+      { id: "q2018wkl", kind: "joy", year: "২০১৮", where: "কুয়ালালামপুর", prompt: "নারী এশিয়া কাপের ফাইনালে ভারতের বিপক্ষে শেষ বলে দরকার ২ রান। তারপর?", options: ["রান আউট, ভারত চ্যাম্পিয়ন", "১ রান, ম্যাচ টাই", "দৌড়ে ২ রান, বাংলাদেশ চ্যাম্পিয়ন"], answer: 2, memory: "মেয়েদের হাতে প্রথম এশিয়া কাপ। জেতার রানটা এল শেষ বলের দৌড়ে।", source: "https://www.espncricinfo.com/series/8659/scorecard/1148063/bangladesh-women-vs-india-women-final-women's-twenty20-asia-cup-2018" },
       // Asia Cup final, Dubai, 28 Sep 2018. BAN 222, IND 223/7; India won by 3 wickets with 0 balls remaining.
       // https://www.espncricinfo.com/series/asia-cup-2018-1153237/bangladesh-vs-india-final-1153255/ball-by-ball-commentary
       // https://www.dhakatribune.com/sport/cricket/156804/another-heartbreak-as-tigers-lose-asia-cup-final
-      { id: "q2018dxb", kind: "heart", year: "২০১৮", where: "দুবাই", prompt: "এশিয়া কাপ ফাইনালে বাংলাদেশের ২২২ রান তাড়ায় নামল ভারত। ফল?", options: ["বাংলাদেশ জিতল ৩ রানে", "ম্যাচ টাই", "ভারত জিতল একেবারে শেষ বলে"], answer: 2, memory: "৩ উইকেটে হার, বাকি ছিল না একটা বলও। ফাইনালে আবারও এত কাছে এসে…", source: "https://www.espncricinfo.com/series/asia-cup-2018-1153237/bangladesh-vs-india-final-1153255/ball-by-ball-commentary" },
+      { id: "q2018dxb", kind: "heart", year: "২০১৮", where: "দুবাই", prompt: "এশিয়া কাপ ফাইনালে বাংলাদেশের ২২২ রান তাড়ায় নামল ভারত। ফল?", options: ["বাংলাদেশ জিতল ৩ রানে", "ম্যাচ টাই", "ভারত জিতল একেবারে শেষ বলে"], answer: 2, memory: "৩ উইকেটে হার, বাকি ছিল না একটা বলও।", source: "https://www.espncricinfo.com/series/asia-cup-2018-1153237/bangladesh-vs-india-final-1153255/ball-by-ball-commentary" },
       // World Cup, Port of Spain, 17 Mar 2007. IND 191 all out, BAN 192/5; won by 5 wickets. India out in the first round, Bangladesh to the Super Eight.
       // https://www.espncricinfo.com/series/8039/game/247464
       // https://www.thedailystar.net/sports/bangladesh%E2%80%99s-top-ten-moments-against-india-4-92587
@@ -150,10 +150,10 @@ export function humanLine(set: SetId, answers: readonly Answer[]) {
   const score = right.filter(Boolean).length;
   const all = (kind: Kind) => questionsOf(set).every((question, index) => question.kind !== kind || right[index]);
   if (score === PER_SET) return "১০-এ ১০! প্রতিটা দম আটকানো মুহূর্ত তোমার মুখস্থ।";
-  if (score <= 3) return "ভুলে গেছ মানে কষ্টও কম। ভাগ্যবান!";
-  if (all("heart")) return "সব কষ্টের ম্যাচ মনে আছে, তবু ভক্ত। এটাই টাইগার।";
-  if (all("joy")) return "জেতার দিনগুলো তুমি বুকে রেখেছ।";
-  return "কিছু মনে আছে, কিছু মনে রাখতে চাওনি। এটাও ভক্তের লক্ষণ।";
+  if (score <= 3) return "ভুলে গেছ মানে কষ্টও কম। ভাগ্যবান।";
+  if (all("heart")) return "কষ্টের ম্যাচগুলো সবই মনে আছে, তবু খেলা দেখা ছাড়োনি।";
+  if (all("joy")) return "জেতার দিনগুলো সবই মনে আছে।";
+  return "কিছু মনে আছে, কিছু মনে রাখতে চাওনি।";
 }
 
 export function shareHash({ set, answers, name }: Shared) {

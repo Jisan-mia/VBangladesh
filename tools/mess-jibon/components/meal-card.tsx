@@ -78,8 +78,8 @@ export function MealCard() {
     ? moments.filter(moment => picked.includes(moment.id)).map(moment => ({ moment, percent: percentOf(everyone.counts[moment.id] ?? 0, everyone.total) })).sort((a, b) => b.percent - a.percent)
     : [];
   const caption = card.match
-    ? `${card.match}! আমার হল-মেস জীবনের মিল কার্ডে ${bn(TOTAL)}-এ ${bn(picked.length)}টা ফুটো, খেতাব ${tier}। তোমার কয়টা?`
-    : `আমার হল-মেস জীবনের মিল কার্ডে ${bn(TOTAL)}-এ ${bn(picked.length)}টা ফুটো, খেতাব ${tier}! ${line} তোমার কয়টা?`;
+    ? `${card.match}। আমার হল-মেস জীবনের মিল কার্ডে ${bn(TOTAL)}-এ ${bn(picked.length)}টা ফুটো, খেতাব ${tier}। তোমার কয়টা?`
+    : `আমার হল-মেস জীবনের মিল কার্ডে ${bn(TOTAL)}-এ ${bn(picked.length)}টা ফুটো, খেতাব ${tier}। ${line} তোমার কয়টা?`;
 
   return (
     <div className="mj">
@@ -87,7 +87,7 @@ export function MealCard() {
         <section className="mj-friend" aria-labelledby="friend-title">
           <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`${friendName} মিল কার্ড`} />
           <div>
-            <p className="mj-kicker">তোমার জন্য একটা মিল কার্ড এসেছে</p>
+            <p className="mj-kicker">বন্ধু তার মিল কার্ড পাঠিয়েছে</p>
             <h2 id="friend-title">{friendName} কার্ডে {bn(TOTAL)}-এ <em>{bn(friend.picked.length)}টা</em> ফুটো।<br />তোমার কয়টা?</h2>
             <a className="kit-primary" href="#mj-card">আমারটা ফুটো করি</a>
           </div>
@@ -163,7 +163,7 @@ export function MealCard() {
               <button type="button" className="kit-secondary" onClick={join} disabled={joined === "sending"}>{joined === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
               {joined === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
             </> : !ranked.length ? (
-              <p className="kit-status">যোগ হয়েছে! এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাব এখনই ঠিকমতো বলা যাবে না। রুমমেটদের লিংক পাঠাও, কয়েকজন মেলালেই জমে যাবে।</p>
+              <p className="kit-status">যোগ হয়েছে। এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাব দেখানো যাচ্ছে না। রুমমেটদের লিংক পাঠাও।</p>
             ) : <>
               <p>{bn(everyone!.total)} জনের মিল কার্ডের সাথে মেলানো হলো।</p>
               <div className="mj-rare">

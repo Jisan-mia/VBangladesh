@@ -83,7 +83,7 @@ test("next birthday countdown, including today and 29 February", () => {
 test("the card: headline, subhead and season from the brief's example", () => {
   const card = createCard({ birth: "1999-06-26", name: "রাফি" }, TODAY);
   assert.equal(card.headline, "জন্ম নিল রাফি");
-  assert.equal(card.subhead, "আজ তার বয়স ২৭ বছর ৩ মাস ১৪ দিন — ৯,৯৬৮ দিন");
+  assert.equal(card.subhead, "আজ তার বয়স ২৭ বছর ৩ মাস ১৪ দিন, ৯,৯৬৮ দিন");
   assert.equal(card.dateline, "শনিবার, ১২ আষাঢ় ১৪০৬ · ২৬ জুন ১৯৯৯");
   assert.equal(card.season.people, "বর্ষার মানুষ");
   assert.equal(createCard({ birth: "1999-06-26", name: "" }, TODAY).headline, "এই দিনে জন্ম নিলাম আমি");
@@ -92,7 +92,7 @@ test("the card: headline, subhead and season from the brief's example", () => {
 test("the human line: birthday, round day count, Friday, then the month", () => {
   assert.match(humanLine("1999-10-10", TODAY), /আজ জন্মদিন/);
   assert.match(humanLine("1999-06-26", "2026-11-11"), /১০,০০০তম দিন/);
-  assert.equal(humanLine("1999-06-25", TODAY), "শুক্রবারে জন্ম — ছুটির দিনের মানুষ।");
+  assert.equal(humanLine("1999-06-25", TODAY), "শুক্রবারে জন্ম। ছুটির দিনের মানুষ।");
   assert.equal(humanLine("1999-08-01", TODAY), "শ্রাবণের বৃষ্টিতে জন্ম, তাই বুঝি মনটা এত নরম।");
 });
 
@@ -120,7 +120,7 @@ test("names are NFC, lose control and direction-override characters, and are cap
 test("share: normalize, personal preview, and a tally over the six seasons only", () => {
   const state = share.normalize("b=1999-06-26&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF");
   assert.ok(state?.startsWith("b=1999-06-26&n="));
-  assert.match(share.preview(state!).title, /^রাফি আজ [০-৯,]+ দিনের — তুমি কত দিনের\?$/);
+  assert.match(share.preview(state!).title, /^রাফি আজ [০-৯,]+ দিনের। তুমি কত দিনের\?$/);
   assert.equal(share.normalize("b=2026-02-30"), null);
   assert.match(share.preview("b=1999-06-26").title, /^আমি আজ [০-৯,]+ দিনের/);
   assert.deepEqual(share.tally, seasons.map(season => season.id));
@@ -174,7 +174,7 @@ test("life seasons: every season from the birth one to today's, counted per seas
   const card = createCard({ birth: "1999-06-26", name: "রাফি" }, TODAY);
   assert.equal(card.rituKicker, "রাফির জীবনের ঋতু");
   assert.equal(card.rituHeadline, "১৬৪টা ঋতু, ২৮টা বর্ষা");
-  assert.equal(card.rituLine, "বর্ষায় জন্ম — প্রতিটা প্রথম বৃষ্টি জন্মঋতুকে ফিরিয়ে আনে।");
+  assert.equal(card.rituLine, "বর্ষায় জন্ম। প্রথম বৃষ্টি নামলেই জন্মঋতু ফিরে আসে।");
   assert.equal(card.todayText, "২৫ আশ্বিন ১৪৩৩");
 });
 
@@ -187,6 +187,6 @@ test("links shared before the season grid still open the front page; v=ritu open
   assert.deepEqual(parseShareHash(ritu, TODAY), { birth: "1999-06-26", name: "রাফি", view: "ritu" });
   assert.deepEqual(parseShareHash("#b=1999-06-26&v=evil", TODAY), { birth: "1999-06-26", name: "" });
   assert.match(share.normalize(ritu.slice(1))!, /&v=ritu$/);
-  assert.match(share.preview(ritu.slice(1)).title, /^রাফির জীবনে [০-৯]+টা ঋতু, [০-৯]+টা বর্ষা — তোমার কয়টা\?$/);
+  assert.match(share.preview(ritu.slice(1)).title, /^রাফির জীবনে [০-৯]+টা ঋতু, [০-৯]+টা বর্ষা। তোমার কয়টা\?$/);
   assert.match(share.preview("b=1999-06-26&v=ritu").title, /^আমার জীবনে /);
 });

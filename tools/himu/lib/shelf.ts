@@ -117,16 +117,16 @@ export function readerLine(ids: readonly BookId[]) {
   const read = new Set(ids);
   const count = read.size;
   const full = (shelf: ShelfId) => { const { read: done, total } = onShelf(read, shelf); return done === total; };
-  if (count === 0) return "তাকটা এখনো খালি। ময়ূরাক্ষী দিয়ে শুরু করো, এক বিকেলেই শেষ।";
-  if (count === books.length) return "পুরো তাকটাই পড়া! এবার একটা ধার দাও, ফেরত না-ও আসতে পারে।";
-  if (full("misir")) return "যুক্তি আর রহস্য, দুটোই তোমার।";
-  if (full("himu")) return "জোছনা দেখলে তোমারও খালি পায়ে হাঁটতে ইচ্ছে করে, তাই না?";
-  if (full("shubhro")) return "চশমার আড়ালের শুভ্রকে তুমি পুরোটাই চেনো।";
+  if (count === 0) return "তাকটা এখনো খালি। ময়ূরাক্ষী দিয়ে শুরু করতে পারো।";
+  if (count === books.length) return "পুরো তাকটাই পড়া। এবার একটা ধার দাও, ফেরত না-ও আসতে পারে।";
+  if (full("misir")) return "মিসির আলির সবগুলো বই তোমার পড়া।";
+  if (full("himu")) return "হিমুর সবগুলো বই তোমার পড়া। এবার হলুদ পাঞ্জাবি কেনার পালা।";
+  if (full("shubhro")) return "শুভ্রর সবগুলো বই তোমার পড়া।";
   const novels = onShelf(read, "uponnash").read;
   if (novels >= 6 && novels > count - novels) return "হিমু-মিসির আলির বাইরের হুমায়ূনকেও তুমি চেনো।";
   if (count <= 5) return "শুরুটা হয়ে গেছে। পরেরটা বইমেলা থেকেই হোক।";
-  if (count <= 15) return "এক বসায় শেষ করা রাতগুলোর কথা তোমার মনে আছে।";
-  if (count <= 25) return "লোডশেডিংয়ের রাতে মোমের আলোয় পড়া, তোমারও ছিল।";
+  if (count <= 15) return "অনেক বই এখনো বাকি, এটাই ভালো খবর।";
+  if (count <= 25) return "বেশিরভাগ বই তোমার পড়া হয়ে গেছে।";
   return "আর মাত্র কয়েকটা, তারপর পুরো তাকটাই তোমার।";
 }
 
@@ -156,7 +156,7 @@ export function createCard(own: Shared, friend?: Shared | null): CardContent {
   if (friend) {
     const who = friend.name ? possessive(friend.name) : "বন্ধুর";
     const common = commonLine([...read], friend.read);
-    match = common.count ? `${who} সাথে দুজনেরই পড়া ${bn(common.count)}টা` : `${who} সাথে একটাও মেলেনি, বই অদলবদল করো!`;
+    match = common.count ? `${who} সাথে দুজনেরই পড়া ${bn(common.count)}টা` : `${who} সাথে একটাও মেলেনি, বই অদলবদল করে দেখো`;
   }
   return { name, count: read.size, total: books.length, tier: tierFor(read.size), line: readerLine([...read]), match, read };
 }

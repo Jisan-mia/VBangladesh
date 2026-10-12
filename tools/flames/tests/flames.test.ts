@@ -86,12 +86,11 @@ test("abusive names never reach the card, ordinary names do", () => {
 test("share previews name only the first person and say it's just for fun", () => {
   assert.equal(share.normalize("b=রাইসা&a=রাফি"), shareHash(samplePair).slice(1));
   assert.equal(share.normalize("hello"), null);
-  assert.equal(share.preview(shareHash(samplePair).slice(1)).title, "রাফি ফ্লেমস খেলেছে — তুমিও খেলো");
+  assert.equal(share.preview(shareHash(samplePair).slice(1)).title, "রাফি ফ্লেমস খেলেছে, তুমিও খেলো");
   assert.doesNotMatch(share.preview(shareHash(samplePair).slice(1)).title, /রাইসা/);
-  assert.equal(previewTitle(null), "দুই নাম, এক খেলা — ফ্লেমসে কী আসে?");
+  assert.equal(previewTitle(null), "দুই নাম, এক খেলা: ফ্লেমসে কী আসে?");
   assert.equal(share.tally, undefined);
   assert.match(caption(samplePair), /রাফি \+ রাইসা = বন্ধু!/);
-  assert.match(caption(samplePair), /শুধু মজা/);
 });
 
 test("SEO copy fits its limits", () => {

@@ -23,7 +23,7 @@ test("the champion line reads like the brief", () => {
   assert.equal(ludoCaption(rafi), "ঈদের লুডু চ্যাম্পিয়ন: রাফি! ৫ দানে ৩ জয়। তোমাদের বাড়িতে লুডুতে কে জেতে?");
   assert.match(ludoLine([1, 0]), /এক দান/);
   assert.match(ludoLine([2, 2]), /সমানে সমান/);
-  assert.match(ludoLine([4, 0, 0]), /ছাড়েনি/);
+  assert.match(ludoLine([4, 0, 0]), /একজনের/);
   assert.notEqual(ludoLine([3, 2]), ludoLine([5, 1]));
 });
 

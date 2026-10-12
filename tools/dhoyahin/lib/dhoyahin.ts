@@ -127,15 +127,15 @@ export const dateLine = (date: string) => dateFormat.format(new Date(date + "T00
 /** The human line, by days smoke-free. Never a health claim, never a scolding. */
 export function humanLine(days: number) {
   if (days < 0) return "দিন ঠিক হয়ে গেছে। সেদিন থেকে নতুন শুরু।";
-  if (days === 0) return "প্রথম দিনটাই সবচেয়ে কঠিন, আর তুমি সেটা পার করছ।";
+  if (days === 0) return "আজ প্রথম দিন। দুটো বীজপাতা নিয়ে চারাটা শুরু করল।";
   if (days < 7) return "প্রতিটা দিন একটা নতুন পাতা। চারাটা বাড়ছে।";
   if (days < 14) return "এক সপ্তাহ পার! পাতাগুলো একবার গুনে দেখো।";
-  if (days < 30) return "দুই সপ্তাহ পেরিয়ে গেল। শেকড় এখন শক্ত হচ্ছে।";
-  if (days < 60) return "এক মাস! চারাটা এখন গাছ।";
-  if (days < 90) return "দুই মাস! টবটা এখন ছোট ছোট লাগছে।";
-  if (days < 180) return "তিন মাস পেরিয়ে গেছে, গাছে ফুল এসেছে।";
+  if (days < 30) return "দুই সপ্তাহ পেরিয়ে গেল। ৩০ দিন হলে প্রথম ফুল।";
+  if (days < 60) return "এক মাস! ৩০টা পাতা পুরো, প্রথম ফুলও এসেছে।";
+  if (days < 90) return "দুই মাস! দুটো ফুল, টবটা এখন ছোট ছোট লাগছে।";
+  if (days < 180) return "তিন মাস পেরিয়েছে। গাছে এখন কটা ফুল, গুনে দেখো।";
   if (days < 365) return "ছয় মাস! এই গাছটা তোমার জেদের সাক্ষী।";
-  return "এক বছরেরও বেশি! বারান্দার সবচেয়ে সুন্দর গাছটা তোমার।";
+  return "এক বছরেরও বেশি। টবে বারোটা ফুল ফুটেছে।";
 }
 
 export type Tally = {

@@ -177,11 +177,11 @@ export function humanLine(pack: Pack, answers: readonly (Side | null)[], score: 
     const ratio = score.match / score.of;
     if (ratio >= 11 / 12) return "তুমি পুরো দেশের মনের কথা বলো।";
     if (ratio >= 5 / 12) return "অর্ধেক দেশ তোমার দলে।";
-    return "তুমি নিজের পথের মানুষ।";
+    return "দেশ যেদিকে, তুমি প্রায় উল্টোদিকে।";
   }
   const picks = pack.pairs.flatMap((pair, index) => answers[index] ? [label(pair, answers[index])] : []);
   if (picks.length < 2) return "এক তর্কেই বোঝা যায় না, পুরোটা খেলো!";
-  return `${picks[0]} আর ${picks[1]}, তোমাকে চিনতে এটুকুই যথেষ্ট।`;
+  return `${picks[0]} আর ${picks[1]}। তোমাকে চেনা হয়ে গেল।`;
 }
 
 export function caption(shared: Shared, friend: Shared | null) {

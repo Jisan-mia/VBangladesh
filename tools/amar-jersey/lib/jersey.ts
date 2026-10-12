@@ -95,14 +95,14 @@ export function parseShareHash(hash: string): Jersey | null {
 /** The human line, picked by the number (never by a player). */
 export function humanLine(number: number) {
   if (number === 10) return "দশ নম্বর মানে দায়িত্ব।";
-  if (number === 1) return "সবার আগে আমি, সবার শেষেও আমি।";
-  if (number === 0) return "শূন্য থেকেই তো সব শুরু।";
+  if (number === 1) return "এক নম্বর, অনেক দলে এটা গোলকিপারের।";
+  if (number === 0) return "শূন্য নম্বর, এমন জার্সি চোখে পড়ে কম।";
   if (number === 7) return "সাত নম্বরটা পরলে হাঁটাই বদলে যায়।";
   if (number === 9) return "নয় নম্বর মানেই গোলের খিদে।";
   if (number === 11) return "এগারো জনের দল, এগারো নম্বরে আমি।";
-  if (number > 9 && number % 11 === 0) return "জোড়া অঙ্ক, জোড়া কপাল।";
-  if (number > 9) return "নম্বরটা আমার, গল্পটাও আমার।";
-  return "ছোট্ট নম্বর, বড় দাপট।";
+  if (number > 9 && number % 11 === 0) return "দুটো অঙ্কই এক, নম্বরটা মনে থাকবে।";
+  if (number > 9) return "নম্বরটা পিঠে মানিয়েছে ভালো।";
+  return "এক অঙ্কের নম্বর, মনে রাখা সহজ।";
 }
 
 export function caption(jersey: Jersey) {

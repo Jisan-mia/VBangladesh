@@ -9,7 +9,7 @@ export const share: ToolShare = {
   preview(state) {
     const tour = parseShareHash(state);
     return {
-      title: tour ? previewTitle(tour) : "এবার পূজায় কয়টা মণ্ডপ ঘুরলে? — চালচিত্রে প্রদীপ জ্বালাও",
+      title: tour ? previewTitle(tour) : "এবার পূজায় কয়টা মণ্ডপ ঘুরলে? চালচিত্রে প্রদীপ জ্বালাও",
       description: "প্রতিটা মণ্ডপ ঘুরে + চাপো, চালচিত্রে একটা করে প্রদীপ জ্বলবে। অঞ্জলি, ধুনুচি নাচ, প্রসাদ, মেলা টিক দাও, বন্ধুর সাথে মেলাও।",
     };
   },

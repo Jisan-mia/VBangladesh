@@ -3,7 +3,7 @@ import { possessive } from "../../../shared/bangla";
 export const BUDGET = 1_00_00_000;
 export const MAX_NAME_LENGTH = 30;
 /** Shown next to every price, on the page and on the card. */
-export const PRICE_NOTE = "আনুমানিক, মজার জন্য · অক্টোবর ২০২৬";
+export const PRICE_NOTE = "আনুমানিক, অক্টোবর ২০২৬";
 
 export const groups = [
   { id: "khawa", label: "খাওয়াদাওয়া", short: "খাওয়া" },
@@ -196,10 +196,10 @@ export function vanLine(cart: Cart) {
   if (spent < BUDGET / 100) return "কোটি টাকা হাতে, তবু খরচ করতে হাত কাঁপে!";
   if (countOf(cart, "cha") >= 100) return "কোটি টাকা হোক আর যা-ই হোক, চা চলবেই।";
   const top = groups[spend.indexOf(Math.max(...spend))].id;
-  if (top === "khawa") return "টাকা যাক, পেট আর মন দুটোই ভরুক।";
+  if (top === "khawa") return "সবচেয়ে বেশি টাকা গেছে পেটে।";
   if (top === "shokh") return "শখের দাম লাখ টাকা, এবার সত্যি সত্যি!";
   if (top === "ghora") return "টাকা থাকলে দেশটা আগে ঘুরে দেখা চাই।";
-  return "সবার মুখে হাসি, এর চেয়ে বড় কেনাকাটা নেই।";
+  return "সবচেয়ে বেশি টাকা গেছে অন্যের জন্য।";
 }
 
 export type CardContent = {

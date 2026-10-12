@@ -70,7 +70,7 @@ test("placing a pick swaps instead of duplicating", () => {
 test("the human line comes from the category and the picks", () => {
   assert.equal(shelfLine("natok", [0, 1, 2, 11]), "বাকের ভাইয়ের জন্য মনটা এখনো কেমন করে।");
   assert.equal(shelfLine("natok", [1, 2, 3, 4]), "পুরো তাকটাই হুমায়ূন আহমেদের।");
-  assert.equal(shelfLine("natok", [12, 8, 9, 10]), "ঈদের রাতে সবাই মিলে টিভির সামনে, এটাই তো ঈদ।");
+  assert.equal(shelfLine("natok", [12, 8, 9, 10]), "ঈদের রাতে সবাই মিলে টিভির সামনে, হাতে সেমাইয়ের বাটি।");
   assert.equal(shelfLine("cinema", [0, 6, 14, 18]), "ছুটির ঘণ্টা দেখে কে কাঁদেনি, বলো তো?");
   assert.equal(shelfLine("cinema", [0, 1, 18, 19]), "সাদাকালো দিন থেকে আজকের হল, সব যুগের চারটা।");
   assert.equal(shelfLine("boi", [0, 13, 15, 23]), "পাঠ্যবইয়ের ভাঁজে লুকিয়ে পড়া সেই রহস্য।");

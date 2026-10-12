@@ -57,8 +57,8 @@ test("the human line and the title come from what was punched", () => {
   assert.equal(messLine(defaultPicks), "রাত দুটোর ম্যাগির চেয়ে দামি ডিনার আর হয় না।");
   assert.equal(messLine(["achar", "maggi"]), "বাড়ির আচারের বয়াম খুলতেই পুরো ফ্লোর হাজির।");
   assert.equal(messLine(["prothom", "bidai", "achar"]), "যে রুম প্রথম দিন অচেনা ছিল, ছাড়ার দিন সেখানেই চোখ ভিজল।");
-  assert.equal(messLine(moments.map(moment => moment.id)), "পুরো ৪০! এই কার্ডে আর ফুটো করার জায়গা নেই।");
-  assert.equal(messLine(["charger"]), "অল্প কয়টা ফুটো, প্রত্যেকটায় একটা গল্প।");
+  assert.equal(messLine(moments.map(moment => moment.id)), "পুরো ৪০টাই। কার্ডে আর ফুটো করার জায়গা নেই।");
+  assert.equal(messLine(["charger"]), "অল্প কয়টা ফুটো, বাকি ঘরগুলো এখনো আস্ত।");
   assert.equal(messLine([]), "মিল কার্ড এখনো আস্ত, একটাও ফুটো পড়েনি।");
   assert.deepEqual(toggleMoment(toggleMoment(["light"], "ketli"), "light"), ["ketli"]);
   assert.equal(tierFor(0), "নতুন বোর্ডার");
@@ -77,7 +77,7 @@ test("roommate overlay, preview title without the hall, and tally ids", () => {
   const friend: MealCard = { picked: ["dimdal", "maggi", "achar", "bidai"], name: "মিম", hall: "সবুজ নীড়" };
   assert.equal(commonLine(["maggi"], friend), "দুজনেরই: ম্যাগি রাত");
   assert.equal(commonLine(["dimdal", "maggi", "achar", "bidai"], friend), "দুজনেরই: ডিম-ডাল সপ্তাহ, ম্যাগি রাত আর ২টা");
-  assert.equal(commonLine(["light"], friend), "মিমের সাথে একটাও মেলেনি!");
+  assert.equal(commonLine(["light"], friend), "মিমের সাথে একটাও মেলেনি");
   assert.equal(commonLine(["light"], null), "");
   assert.equal(previewTitle({ ...friend, name: "রাফি" }), "রাফির মিল কার্ডে হল-মেস জীবনের ৪টা ফুটো। তোমার কয়টা?");
   assert.equal(share.preview(shareHash({ ...friend, name: "" }).slice(1)).title, "এক বন্ধুর মিল কার্ডে হল-মেস জীবনের ৪টা ফুটো। তোমার কয়টা?");

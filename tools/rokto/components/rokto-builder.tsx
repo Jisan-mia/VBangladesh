@@ -132,7 +132,7 @@ export function RoktoBuilder() {
       {card && (
         <section className="rk-result" id="result" ref={result} aria-labelledby="result-title">
           <h2 id="result-title">ধন্যবাদ, <em>রক্তদাতা!</em></h2>
-          <p className="rk-line">{card.pageLine} যে তোমার রক্ত পাবে, সে হয়তো কোনোদিন তোমার নাম জানবে না। তাই আমরাই বলে রাখি।</p>
+          <p className="rk-line">{card.pageLine} যে তোমার রক্ত পাবে, সে হয়তো কোনোদিন তোমার নাম জানবে না।</p>
           <div className="rk-result-body">
             <figure className="kit-card" data-format={format}>
               <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="card-summary" />

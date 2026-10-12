@@ -19,7 +19,7 @@ export const CHANT = [
   ["পানা", "কাটিয়ে", "এগিয়ে", "যাই,"],
   ["সবার", "আগে", "ঘাটে", "পৌঁছাই!"],
 ] as const;
-const POP_TEXT = ["তালে!", "দারুণ!", "একটু আগে", "একটু পরে", "পানায় আটকালে!", "পাশে নৌকা!"] as const;
+const POP_TEXT = ["তালে!", "একদম!", "একটু আগে", "একটু পরে", "পানায় আটকালে!", "পাশে নৌকা!"] as const;
 const POP_COLOR = ["#ffe08a", "#ffd166", "#fff6e4", "#fff6e4", "#ffe2c4", "#fff6e4"] as const;
 const FONT_TIME = `800 19px ${DISPLAY_FONT}`, FONT_PILL = `700 14px ${DISPLAY_FONT}`, FONT_CHANT = `700 14px ${BODY_FONT}`;
 const FONT_POP = `800 16px ${DISPLAY_FONT}`, FONT_HINT = `700 13px ${BODY_FONT}`, FONT_FINISH = `800 12px ${DISPLAY_FONT}`;

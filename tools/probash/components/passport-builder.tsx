@@ -150,7 +150,7 @@ export function PassportBuilder() {
               </label>
             </div>
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="probash-jibon.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} disabled={!picked.length} hint={picked.length ? "লিংক পেলে বন্ধু দেখবে তোমার পাসপোর্ট, আর নিজেরটা মেলাতে পারবে।" : ""} />
+            <ShareBar tool={TOOL} fileName="probash-jibon.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption} state={state} disabled={!picked.length} hint={picked.length ? "বন্ধু লিংক খুলে তোমার পাসপোর্ট দেখবে, নিজেরটাও মেলাতে পারবে।" : ""} />
             <p className="pb-also">দেশে ফেরার দিন গুনছ? <a href="/deshe-fera">দেশে ফেরা</a>-তে লাগেজ ট্যাগ বানাও, বাড়ির সবাই রোজ দিন গুনবে।</p>
           </div>
         </div>
@@ -163,7 +163,7 @@ export function PassportBuilder() {
               <button type="button" className="kit-secondary" onClick={join} disabled={joined === "sending"}>{joined === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
               {joined === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
             </> : !ranked.length ? (
-              <p className="kit-status">যোগ হয়েছে! এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন মেলালেই মজাটা শুরু।</p>
+              <p className="kit-status">যোগ হয়েছে! মিলিয়েছে এখনো খুব কম মানুষ, তাই হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও।</p>
             ) : <>
               <p>{bn(everyone!.total)} জনের পাসপোর্টের সাথে মেলানো হলো।</p>
               <div className="pb-rare">

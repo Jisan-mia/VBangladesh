@@ -2,14 +2,13 @@ import { cardSizes, DISPLAY_FONT, drawFooterBand, fitText, renderCard, roundedRe
 import { bn, cleanName, humanLine, outcome, outcomes, play, type Pair } from "./flames";
 
 // খাতার শেষ পাতা: the cheap newsprint khata's back page, stitched at the spine, where two names were written in blue ballpoint,
-// the shared letters slashed in red, F-L-A-M-E-S struck one by one and the last one ringed. A violet "শুধু মজা" stamp on top.
+// the shared letters slashed in red, F-L-A-M-E-S struck one by one and the last one ringed.
 const PAPER = "#f3ead0";
 const RULE = "rgba(70,120,150,0.28)";
 const MARGIN = "rgba(214,90,80,0.55)";
 const INK = "#2848a8";
 const RED = "#cc2f2f";
 const PENCIL = "#6f6a5c";
-const STAMP = "#6b3fa0";
 
 type Layout = { header: number; a: number; plus: number; b: number; left: number; flames: number; equation: number; result: number; line: number; rulesFrom: number };
 const layouts: Record<CardFormat, Layout> = {
@@ -74,20 +73,6 @@ function drawName(context: CanvasRenderingContext2D, units: string[], struck: Se
   });
 }
 
-function drawStamp(context: CanvasRenderingContext2D, x: number, y: number) {
-  context.save();
-  context.translate(x, y);
-  context.rotate(-0.16);
-  context.globalAlpha = 0.85;
-  context.strokeStyle = STAMP;
-  context.lineWidth = 6;
-  roundedRect(context, -150, -54, 300, 108, 18); context.stroke();
-  context.lineWidth = 2;
-  roundedRect(context, -138, -42, 276, 84, 12); context.stroke();
-  fitText(context, [{ text: "শুধু মজা", color: STAMP, weight: 800, display: true }], 0, 22, 46, 230, "center");
-  context.restore();
-}
-
 export function drawFlames(canvas: HTMLCanvasElement, pair: Pair, format: CardFormat, site: string) {
   const { width, height } = cardSizes[format];
   canvas.width = width;
@@ -100,7 +85,6 @@ export function drawFlames(canvas: HTMLCanvasElement, pair: Pair, format: CardFo
 
   drawPaper(context, width, height, layout);
   fitText(context, [{ text: "খাতার শেষ পাতা · ফ্লেমস", color: PENCIL, weight: 600 }], 150, layout.header, 34, 520);
-  drawStamp(context, 860, layout.header - 6);
 
   drawName(context, game.a, new Set(game.pairs.map(([i]) => i)), layout.a, 104);
   fitText(context, [{ text: "+", color: PENCIL, weight: 700, display: true }], 600, layout.plus, 64, 100, "center");

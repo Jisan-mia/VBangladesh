@@ -195,7 +195,7 @@ export function QuestionPaper() {
               <p>দেখো কোন প্রশ্নটা প্রায় সবার কমন পড়ে। নাম যাবে না, শুধু কোন ঘরে ছাপ দিয়েছ সেটা গোনা হবে।</p>
               <button type="button" className="kit-secondary" onClick={compareWithEveryone} disabled={compared === "sending"}>{compared === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
               {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
-            </> : seen < COMPARE_MIN ? <p className="kit-status">এই প্রশ্নপত্রে এখনো {bn(seen)} জন মিলিয়েছে, হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন দাগালেই মজাটা শুরু!</p> : <>
+            </> : seen < COMPARE_MIN ? <p className="kit-status">এই প্রশ্নপত্রে এখনো {bn(seen)} জন মিলিয়েছে, হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও।</p> : <>
               {ranked[0] && <p className="komon-top"><strong>“{ranked[0].text}”</strong> {bn(ranked[0].percent)}% মানুষের কমন পড়েছে</p>}
               <ul className="komon-bars">{ranked.map(item => <li key={item.text}><span>{item.text}</span><i style={{ width: `${item.percent}%` }} /><b>{bn(item.percent)}%</b></li>)}</ul>
               <p className="kit-status">{bn(seen)} জনের প্রশ্নপত্রের সাথে মেলানো।</p>

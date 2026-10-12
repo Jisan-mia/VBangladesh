@@ -144,7 +144,7 @@ export function GhotokFile() {
                 <p className="bk-done-label">সম্ভাব্য সময়</p>
                 <p className="bk-done-big">{report.timing?.text}</p>
                 <p className="bk-done-reason"><b>কারণ:</b> {report.reason}</p>
-                <span className="bk-stamp" aria-hidden="true">শুধু মজা</span>
+                <span className="bk-stamp" aria-hidden="true">ঘটকের সিল</span>
                 <a className="kit-primary" href="#result">রিপোর্টটা দেখো</a>
               </div>
             )}
@@ -170,7 +170,7 @@ export function GhotokFile() {
         <div className="bk-result-body">
           <figure className="kit-card" data-format={format}>
             <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="card-summary" />
-            <figcaption id="card-summary" className="bk-sr">{report.timing ? `সম্ভাব্য সময়: ${report.timing.text}। কারণ: ${report.reason}। ${report.line} শুধু মজা।` : "ঘটকের রিপোর্ট এখনো অর্ধেক লেখা।"}</figcaption>
+            <figcaption id="card-summary" className="bk-sr">{report.timing ? `সম্ভাব্য সময়: ${report.timing.text}। কারণ: ${report.reason}। ${report.line}` : "ঘটকের রিপোর্ট এখনো অর্ধেক লেখা।"}</figcaption>
             {previewError && <p className="kit-status" role="alert">রিপোর্টের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
           </figure>
           <div className="bk-controls">
@@ -180,7 +180,6 @@ export function GhotokFile() {
             </label>
             <FormatToggle value={format} onChange={setFormat} />
             <ShareBar tool={TOOL} fileName="biye-kobe.png" makeImage={() => cardBlob(report, format, site)} imageKey={`${state}|${format}`} caption={caption(report)} state={state || undefined} disabled={!report.complete} hint={report.complete ? "বন্ধু লিংক খুললে আগে তোমার ফাইল দেখবে, তারপর নিজেরটা বানাবে।" : "আগে ৬টা প্রশ্নের উত্তর দাও।"} />
-            <p className="bk-promise">এটা শুধু মজা। কেউ ভবিষ্যৎ জানে না, ঘটকও না। বিয়ে করা, না করা, কবে করা, পুরোটাই তোমার সিদ্ধান্ত।</p>
             {report.complete && (
               <div className="bk-everyone">
                 <h3>সবার রিপোর্টের সাথে মেলাবে?</h3>

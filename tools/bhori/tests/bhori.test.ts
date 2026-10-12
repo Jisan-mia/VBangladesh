@@ -75,15 +75,15 @@ test("titles and human lines follow the picks", () => {
   assert.equal(pieceTitle({ item: "har", owner: "nanu", name: "রাফি" }), "রাফির নানুর হার");
   assert.equal(pieceTitle({ item: "angti", owner: "amar", name: "" }), "আমার আংটি");
   assert.equal(pieceTitle({ item: "angti", owner: "amar", name: "জাহিদ" }), "জাহিদের আংটি");
-  assert.equal(createCard(piece({ owner: "nanu", item: "har" })).line, "ওজন গ্রামে মাপা যায়, স্মৃতি না।");
+  assert.equal(createCard(piece({ owner: "nanu", item: "har" })).line, "নানুর বাক্স খুললেই আগে গল্প বেরোত, তারপর গয়না।");
   assert.equal(createCard(piece({ owner: "nanu", item: "nakful" })).line, "নানুর মুখটা মনে পড়লে আগে ছোট্ট নাকফুলটাই চোখে ভাসে।");
 });
 
 test("share: normalize, personal previews, and a tally over item ids only", () => {
   assert.equal(share.normalize("g=15.309&it=bala&w=ma"), null);
   assert.equal(share.normalize("w=ma&it=bala&g=15.3&junk=1"), "g=15.30&it=bala&w=ma");
-  assert.equal(share.preview("g=15.31&it=har&w=nanu&n=রাফি").title, "রাফির নানুর হার: ১ ভরি ৫ আনা — ১৫.৩১ গ্রাম");
-  assert.equal(share.preview("g=26.24&it=bala&w=ma").title, "মায়ের বালা: ২ ভরি ৪ আনা — ২৬.২৪ গ্রাম");
+  assert.equal(share.preview("g=15.31&it=har&w=nanu&n=রাফি").title, "রাফির নানুর হার: ১ ভরি ৫ আনা, ১৫.৩১ গ্রাম");
+  assert.equal(share.preview("g=26.24&it=bala&w=ma").title, "মায়ের বালা: ২ ভরি ৪ আনা, ২৬.২৪ গ্রাম");
   assert.equal(share.preview("bad").title, "ভরির হিসাব — ভরি, আনা, রতি গ্রামে কত?");
   assert.deepEqual(share.tally, ["bala", "churi", "dul", "angti", "har", "nakful"]);
 });

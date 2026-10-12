@@ -49,7 +49,7 @@ test("the amount reads in words and figures from the taka-kothay library", () =>
 });
 
 test("the human line follows the brief", () => {
-  assert.equal(chequeLine({ ...defaultCheque, giver: "nanu" }), "নানুর সালামি সবসময় সবচেয়ে মিষ্টি।");
+  assert.equal(chequeLine({ ...defaultCheque, giver: "nanu" }), "নানুর সালামি আসে আঁচলের গিঁট খুলে।");
   assert.equal(chequeLine({ ...defaultCheque, giver: "bhaiya" }), "ভাইয়া, এবার না বলো না!");
   assert.equal(chequeLine({ ...defaultCheque, amount: 5000 }), "স্বপ্ন দেখতে টাকা লাগে না।");
   assert.match(chequeLine({ ...defaultCheque, ok: true }), /সই হয়ে গেছে/);

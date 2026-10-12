@@ -263,7 +263,7 @@ export function shelfLine(cat: CatId, picks: readonly Choice[]) {
   if (cat === "natok") {
     if (has("কোথাও কেউ নেই")) return "বাকের ভাইয়ের জন্য মনটা এখনো কেমন করে।";
     if (humayun === SLOTS) return "পুরো তাকটাই হুমায়ূন আহমেদের।";
-    if (count(item => item.tag === "eid")) return "ঈদের রাতে সবাই মিলে টিভির সামনে, এটাই তো ঈদ।";
+    if (count(item => item.tag === "eid")) return "ঈদের রাতে সবাই মিলে টিভির সামনে, হাতে সেমাইয়ের বাটি।";
     if (humayun >= 2) return "বিটিভির সেই রাতগুলো, নাটকের সময় রাস্তা ফাঁকা।";
     return "রিমোট নিয়ে কাড়াকাড়ি, নাটক শুরু হলেই সবাই চুপ।";
   }
@@ -272,21 +272,21 @@ export function shelfLine(cat: CatId, picks: readonly Choice[]) {
     if (has("ছুটির ঘণ্টা")) return "ছুটির ঘণ্টা দেখে কে কাঁদেনি, বলো তো?";
     if (old && fresh) return "সাদাকালো দিন থেকে আজকের হল, সব যুগের চারটা।";
     if (old >= 3) return "শুক্রবার বিকেল, বিটিভির সিনেমা, পুরো পাড়া এক ঘরে।";
-    if (fresh >= 3) return "হলে বসে বড় পর্দায় দেখার মজাই আলাদা।";
+    if (fresh >= 3) return "টিকিটের লাইনে দাঁড়িয়ে, হলের অন্ধকারে বসে দেখা।";
     return "টিভিতে যতবার দেয়, ততবার বসে যাই।";
   }
   if (cat === "boi") {
     if (count(item => item.tag === "series")) return "পাঠ্যবইয়ের ভাঁজে লুকিয়ে পড়া সেই রহস্য।";
     if (has("ময়ূরাক্ষী")) return "হলুদ পাঞ্জাবি, খালি পা, হিমু হতে কে না চেয়েছে?";
     if (humayun === SLOTS) return "পুরো তাকটাই হুমায়ূন আহমেদের।";
-    if (count(item => item.by === ZAFAR)) return "কিশোর বয়সের সাহসটা এই বইগুলো থেকেই।";
+    if (count(item => item.by === ZAFAR)) return "কিশোর বয়সে এক বসায় শেষ করা সেই বইগুলো।";
     return "নীলক্ষেতের পুরোনো বইয়ের গন্ধ, পাতায় পাতায় দাগ।";
   }
   const folk = count(item => item.tag === "folk"), band = count(item => item.tag === "band");
   if (count(item => item.tag === "eid")) return "চাঁদরাতে এই গান না বাজলে ঈদ আসে না।";
   if (folk && band) return "মাটির গান থেকে ব্যান্ড, দুটোই আমার।";
   if (band >= 3) return "ক্যাসেট উল্টে উল্টে শোনা সেই ব্যান্ডের দিন।";
-  if (folk >= 3) return "একতারার সুরে মনটা উদাস হয়ে যায়।";
+  if (folk >= 3) return "একতারার সুর শুরু হলে হাতের কাজ থেমে যায়।";
   return "এই চারটা বাজলে ভলিউম নিজে থেকেই বাড়ে।";
 }
 

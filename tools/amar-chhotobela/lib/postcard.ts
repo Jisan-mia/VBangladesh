@@ -121,10 +121,10 @@ export function parseShareHash(hash: string): Shared | null {
 
 export function memoryLine(count: number) {
   if (count === 0) return "এখনো কিছু মেলানো হয়নি।";
-  if (count <= 6) return "অল্প কয়টা, কিন্তু প্রত্যেকটা একদম নিজের।";
-  if (count <= 14) return "মেলাতে মেলাতেই মনটা কেমন যেন করে উঠল।";
-  if (count <= 22) return "চোখ বন্ধ করলে এখনো সেই বিকেলগুলো দেখতে পাই।";
-  return "এতগুলো মনে আছে মানে ছোটবেলাটা ভরাই ছিল।";
+  if (count <= 6) return "আরও মনে পড়তে পারে।";
+  if (count <= 14) return "ভালোই মনে আছে তো।";
+  if (count <= 22) return "অর্ধেকের মতো তোমার ছিল।";
+  return "বেশিরভাগই তোমার ছিল।";
 }
 
 export function createCard(own: Shared, friend?: Shared | null): CardContent {

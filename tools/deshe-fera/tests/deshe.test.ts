@@ -54,7 +54,7 @@ test("the card: countdown, stamp and the human line", () => {
   assert.equal(card.line, "১৫টা ঈদ ভিডিও কলে। এবার দেখা হবে সামনাসামনি।");
   assert.equal(countdownLine(card), "রাফি দেশে ফিরছে আর ৪৭ দিন");
   assert.equal(createCard(trip({ back: "2027-02-25" }), TODAY).line, "১৫টা ঈদ ভিডিও কলে। এবারের ঈদ বাড়ির উঠোনে।");
-  assert.equal(createCard(trip(), TODAY).line, "দূরে আছি, মন পড়ে আছে বাড়ির উঠোনে।");
+  assert.equal(createCard(trip(), TODAY).line, "ফোনে আম্মুর গলা পাই, ভাতের গন্ধটা পাই না।");
   assert.equal(createCard(trip({ left: "2026-02" }), TODAY).line, "প্রথম বছরটাই সবচেয়ে লম্বা।");
   assert.equal(createCard(trip({ left: "2010-01" }), TODAY).line, "এত বছরেও উঠোনের মাটির গন্ধটা ভুলিনি।");
   const home = createCard(trip({ back: "2026-10-01" }), TODAY);

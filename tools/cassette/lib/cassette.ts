@@ -129,7 +129,7 @@ export function tapeLine(slots: readonly number[]) {
   if (count(song => song.kind === "lok") >= 5) return "এই ক্যাসেট বাজলে উঠোনে শীতলপাটি পড়ে।";
   if (count(song => song.kind === "kobi") >= 5) return "ভোরবেলার রেডিওর মতো একটা ক্যাসেট।";
   if (count(song => song.era === "old") >= 5) return "রেডিওর অনুরোধের আসর থেকে তুলে রাখা গান।";
-  if (count(song => song.era === "00") >= 5) return "ব্লুটুথে গান পাঠানোর দিনগুলো এই ফিতায় আটকে আছে।";
+  if (count(song => song.era === "00") >= 5) return "ব্লুটুথে গান পাঠানোর দিনের ক্যাসেট।";
   if (count(song => song.era === "new") >= 5) return "নতুন গান, পুরোনো ফিতা, দিব্যি মিলে গেছে।";
   return "সব যুগের গান এক ফিতায়, এটাই আসল মিক্সটেপ।";
 }
@@ -142,8 +142,8 @@ export function commonLine(own: readonly number[], friend: Tape | null) {
   if (!friend) return "";
   const who = friend.title ? `“${cleanTitle(friend.title)}”-এর` : "বন্ধুর ক্যাসেটের";
   const both = commonSongs(own, friend).map(song => songs[song].title);
-  if (!both.length) return `${who} সাথে একটা গানও মেলেনি!`;
-  if (both.length === SLOTS) return `${who} সাথে দশটাই মিলে গেছে!`;
+  if (!both.length) return `${who} সাথে একটা গানও মেলেনি`;
+  if (both.length === SLOTS) return `${who} সাথে দশটাই মিলে গেছে`;
   return `দুজনেরই আছে: ${both.slice(0, 2).join(", ")}${both.length > 2 ? ` আর ${bn(both.length - 2)}টা` : ""}`;
 }
 

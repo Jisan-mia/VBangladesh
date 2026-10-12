@@ -98,7 +98,7 @@ export function plateLine(picks: readonly ItemId[], place: PlaceId | "") {
   const has = (id: ItemId) => picks.includes(id);
   if (!picks.length) return "প্লেটটা এখনো ফাঁকা।";
   if (place === "probash") return "দেশের প্লেট, দূরের টেবিল।";
-  if (picks.length <= 3) return has("khejur") && has("pani") ? "খেজুর আর পানি, সহজ আর শান্ত।" : "অল্প হলেও আপন।";
+  if (picks.length <= 3) return has("khejur") && has("pani") ? "খেজুর আর পানি, সহজ আর শান্ত।" : "প্লেট ছোট, ইফতার ঠিকই আছে।";
   if (picks.length >= 10) return "আজ দস্তরখান ভরা, সবাইকে ডাকো!";
   if (has("haleem")) return "হালিম থাকলে ইফতার পুরো।";
   if (has("jilapi") && has("beguni")) return "মিষ্টি আর ঝাল, দুটোই চাই।";
@@ -108,7 +108,7 @@ export function plateLine(picks: readonly ItemId[], place: PlaceId | "") {
   if (has("muri")) return "মুড়ি মাখার গামলায় সবার হাত।";
   if (has("doi-chira")) return "দই-চিড়ায় পেট ঠান্ডা, মন ঠান্ডা।";
   if (has("sharbat")) return "এক গ্লাস লাল শরবতে গলাটা জুড়িয়ে যায়।";
-  return "সবাই মিলে বসলেই প্লেটটা পূর্ণ।";
+  return "প্লেট তৈরি, এবার বন্ধুদের পাঠাও।";
 }
 
 export type RamadanDay = { day: number; likely: boolean };

@@ -59,7 +59,7 @@ function drawCheque(context: CanvasRenderingContext2D, cheque: Cheque, cx: numbe
   crescent(context, 98, 128, 50, GOLD, STUB); star(context, 128, 104, 14, GOLD);
   fitText(context, [{ text: "ঈদ", color: ENVELOPE_DEEP, weight: 800, display: true }], 98, 290, 72, 150, "center");
   roundedRect(context, 34, 360, 128, 50, 25); context.fillStyle = TOY; context.fill();
-  fitText(context, [{ text: "খেলনা", color: "#6b4300", weight: 700 }], 98, 395, 26, 110, "center");
+  fitText(context, [{ text: "সালামি", color: "#6b4300", weight: 700 }], 98, 395, 26, 110, "center");
 
   fitText(context, [{ text: "ঈদ সালামির চেক", color: ENVELOPE_DEEP, weight: 800, display: true }], 232, 96, 48, 470);
   fitText(context, [{ text: "তারিখ: ঈদের সকাল", color: MUTED, weight: 600 }], 958, 90, 24, 230, "right");
@@ -75,7 +75,7 @@ function drawCheque(context: CanvasRenderingContext2D, cheque: Cheque, cx: numbe
   dotted(context, 630, 960, 450);
   fitText(context, [{ text: `${possessive(giver)} সই`, color: MUTED, weight: 600 }], 795, 488, 24, 320, "center");
   roundedRect(context, 232, 418, 350, 56, 28); context.fillStyle = TOY; context.fill();
-  fitText(context, [{ text: "খেলনা চেক · শুধু মজার জন্য", color: "#6b4300", weight: 700 }], 407, 455, 25, 318, "center");
+  fitText(context, [{ text: "ঈদ মোবারক", color: "#6b4300", weight: 700 }], 407, 455, 25, 318, "center");
   if (cheque.ok) {
     context.strokeStyle = PEN; context.lineWidth = 4.5; context.lineCap = "round";
     context.beginPath(); context.moveTo(660, 438);
@@ -107,7 +107,7 @@ function envelope(context: CanvasRenderingContext2D, top: number, mouth: number,
   context.lineTo(right - 22, bottom - 22); context.lineTo(left + 22, bottom - 22); context.closePath(); context.stroke();
   const textTop = mouth + (bottom - mouth) * .55;
   fitText(context, [{ text: "ঈদ সালামি", color: GOLD, weight: 800, display: true }], mid, textTop, 92, 700, "center");
-  fitText(context, [{ text: "খেলনা চেক · শুধু মজার জন্য · টাকা যায় না", color: "#d8f0e0", weight: 600 }], mid, textTop + 66, 28, 760, "center");
+  fitText(context, [{ text: "ঈদ মোবারক", color: "#d8f0e0", weight: 600 }], mid, textTop + 66, 28, 760, "center");
   crescent(context, left + 70, bottom - 70, 20, GOLD, ENVELOPE); crescent(context, right - 70, bottom - 70, 20, GOLD, ENVELOPE);
 }
 
