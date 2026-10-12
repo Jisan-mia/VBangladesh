@@ -1,5 +1,6 @@
 'use client';
 // Shared game controls: the site-wide sound switch, star rows and a level picker. Styles live in game-ui.css.
+import { useEffect, useState } from 'react';
 import { useSound, type LevelStars } from './game-kit';
 import { sfx } from './game-sound';
 
@@ -35,4 +36,20 @@ export function LevelGrid({ count, stars, unlocked, current, onPick, noun = 'ল
       </li>;
     })}
   </ol>;
+}
+
+/** Stars that pop in one at a time with a rising chime, for a level-clear screen. Shows all at once in slow or reduced motion. */
+export function StarReveal({ count, of = 3, delay = 260 }: { count: number; of?: number; delay?: number }) {
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    let still = false;
+    try { still = matchMedia('(prefers-reduced-motion: reduce)').matches || localStorage.getItem('ektukhani-slow') === '1'; } catch { /* storage blocked */ }
+    if (still) { setShown(count); return; }
+    setShown(0);
+    const timers = Array.from({ length: count }, (_, index) => setTimeout(() => { setShown(index + 1); sfx.star(index); }, delay * (index + 1)));
+    return () => timers.forEach(clearTimeout);
+  }, [count, delay]);
+  return <span className="gx-stars gx-reveal" role="img" aria-label={`${bn.format(of)}টার মধ্যে ${bn.format(count)}টা তারা`}>
+    {Array.from({ length: of }, (_, index) => <span key={index} className={index < shown ? 'on gx-pop' : ''}>★</span>)}
+  </span>;
 }
