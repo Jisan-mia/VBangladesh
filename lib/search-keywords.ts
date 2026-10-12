@@ -1,5 +1,6 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "chhip-felo": ["মাছ ধরার গেম", "fishing game", "mach dhora game", "chip felo", "ছিপ", "বড়শি", "ফাতনা", "borshi", "pond fishing", "মাছ ধরা", "pukur", "bangla fishing game"],
   "chhobir-tukro": ["jigsaw puzzle", "jigsaw", "puzzle game", "picture puzzle", "chhobir tukro", "chobi jora", "jigsaw bangla", "জিগস পাজল", "পাজল গেম", "ছবি জোড়া লাগানো", "ছবির টুকরো", "টুকরো জোড়া"],
   "churir-bazar": ["match 3 game", "match three", "bangle game", "churir bazar", "chudi game", "kacher churi", "রং মেলানোর গেম", "চুড়ি গেম", "চুড়ির বাজার", "ম্যাচ থ্রি গেম", "তিনটা মেলানো"],
   "mukhe-mukhe-hisab": ["math game", "mental math", "ongker khela", "mukhe mukhe hisab", "hisab game", "অঙ্কের খেলা", "গণিত খেলা", "যোগ বিয়োগ গুণ", "বাজারের হিসাব", "মুখে মুখে অঙ্ক"],
