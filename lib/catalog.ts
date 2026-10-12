@@ -142,7 +142,7 @@ export const catalog = [
   { slug: "golir-badminton", name: "গলির ব্যাডমিন্টন", description: "বাল্বের নিচে গলির ব্যাডমিন্টন। রিং সোনালি হলেই মারো, ভাইয়া থেকে পাড়ার চ্যাম্পিয়ন।", category: "গেম", action: "শাটল মারো" },
   { slug: "kagojer-urojahaj", name: "কাগজের উড়োজাহাজ", description: "কাগজের উড়োজাহাজ: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "marble-sinri", name: "মার্বেল-সিঁড়ি", description: "ছাদ থেকে গলি পর্যন্ত মার্বেল গড়িয়ে নামাও, ক্যাকটাস বাঁচিয়ে।", category: "গেম", action: "খেলা শুরু করো" },
-  { slug: "roshi-tana", name: "রশি টানাটানি", description: "রশি টানাটানি: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "roshi-tana", name: "রশি টানাটানি", description: "ঢোলের তালে চাপো, রশি টানো। একা ১০টা দল, নয়তো দুজনে এক ফোনে।", category: "গেম", action: "রশি টানো" },
   { slug: "moshar-raat", name: "মশার রাত", description: "বাতি নেভানো ঘরে পিন-পিন। ব্যাটে মশা মারো, ভোর পর্যন্ত বালিশ বাঁচাও।", category: "গেম", action: "মশা মারো" },
   { slug: "al-dhore-hati", name: "আল ধরে হাঁটি", description: "আল ধরে হাঁটি: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "o-te-ojogor", name: "অ-তে অজগর", description: "অ-তে অজগর: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
