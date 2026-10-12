@@ -49,3 +49,36 @@ export function challengeHash({ seed, target, name, extra = {} }: { seed: number
   return params.toString();
 }
 
+
+/** Stars earned per level on this phone: { level: 1..3 }. A level counts as cleared with at least one star. */
+export type LevelStars = Record<number, number>;
+
+export function readLevels(raw: string | null, count: number): LevelStars {
+  const stars: LevelStars = {};
+  try {
+    const parsed = JSON.parse(raw ?? '{}');
+    for (const [key, value] of Object.entries(parsed ?? {})) {
+      const level = Number(key), earned = Number(value);
+      if (Number.isInteger(level) && level >= 1 && level <= count && Number.isInteger(earned) && earned >= 1 && earned <= 3) stars[level] = earned;
+    }
+  } catch { /* broken JSON: start fresh */ }
+  return stars;
+}
+
+/** Keeps the better result for a level. */
+export const recordLevel = (stars: LevelStars, level: number, earned: number): LevelStars =>
+  ({ ...stars, [level]: Math.max(stars[level] ?? 0, Math.max(1, Math.min(3, Math.round(earned)))) });
+
+/** The highest level you may play: one past the highest cleared, never above `count`. */
+export const unlockedLevel = (stars: LevelStars, count: number) => Math.min(count, 1 + Math.max(0, ...Object.keys(stars).map(Number)));
+
+export const totalStars = (stars: LevelStars) => Object.values(stars).reduce((sum, earned) => sum + earned, 0);
+
+/**
+ * Stars from a result against two thresholds. `lowerIsBetter` for moves or seconds (3 stars at or under `three`).
+ * e.g. starsFor(moves, 12, 18, true) → 3 for ≤12 moves, 2 for ≤18, else 1.
+ */
+export function starsFor(value: number, three: number, two: number, lowerIsBetter = false) {
+  if (lowerIsBetter) return value <= three ? 3 : value <= two ? 2 : 1;
+  return value >= three ? 3 : value >= two ? 2 : 1;
+}

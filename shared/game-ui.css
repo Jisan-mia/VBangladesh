@@ -1,0 +1,16 @@
+.gx-sound{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:6px 12px;border:1.5px solid currentColor;border-radius:999px;background:transparent;color:inherit;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.gx-sound[aria-pressed="false"]{opacity:.7}
+.gx-stars{display:inline-flex;gap:1px;line-height:1;letter-spacing:0}
+.gx-stars span{color:#c9c2b0}
+.gx-stars span.on{color:#f2a900;text-shadow:0 1px 0 #a86f00}
+.gx-levels{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:8px;margin:0;padding:0;list-style:none}
+.gx-levels button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;min-height:58px;border:1.5px solid #1d2b53;border-radius:12px;background:#fff;color:#1d2b53;font:inherit;cursor:pointer}
+.gx-levels button b{font-size:18px}
+.gx-levels button .gx-stars{font-size:11px}
+.gx-levels button:disabled{border-style:dashed;opacity:.45;cursor:not-allowed}
+.gx-levels button.next{border-width:2.5px;box-shadow:0 0 0 3px color-mix(in srgb,#f2a900 45%,transparent);animation:gx-glow 1.6s ease-in-out infinite}
+.gx-levels button[aria-current="true"]{background:#1d2b53;color:#fff}
+@keyframes gx-glow{50%{box-shadow:0 0 0 6px color-mix(in srgb,#f2a900 20%,transparent)}}
+@keyframes gx-pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.25);opacity:1}100%{transform:scale(1)}}
+.gx-pop{animation:gx-pop .45s cubic-bezier(.3,1.6,.5,1) both}
+@media (prefers-reduced-motion:reduce){.gx-levels button.next,.gx-pop{animation:none}}
