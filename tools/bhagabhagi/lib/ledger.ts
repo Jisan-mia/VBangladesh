@@ -152,9 +152,9 @@ export function perPerson(total: number, count: number, format = formatMoney): s
 
 export function ledgerLine({ total, balances, transfers }: Pick<ReturnType<typeof calculateLedger>, 'total' | 'balances' | 'transfers'>): string {
   if (!total) return 'খরচ লিখলেই হিসাব মিলবে।';
-  if (!transfers.length) return 'সবাই সমান দিয়েছে, কারও কাছে কারও পাওনা নেই!';
+  if (!transfers.length) return 'সবাই সমান দিয়েছে, কারও কাছে কারও পাওনা নেই।';
   const top = balances.reduce((most, balance) => (balance.paid > most.paid ? balance : most));
-  if (top.paid * 2 > total) return `${top.person.name} একাই অর্ধেকের বেশি খরচ টেনেছে। ওর পাওনাটা আগে মিটিয়ে দাও!`;
+  if (top.paid * 2 > total) return `${top.person.name} একাই অর্ধেকের বেশি খরচ টেনেছে। ওর পাওনাটা আগে মিটিয়ে দাও।`;
   return 'হিসাব পরিষ্কার, এবার শুধু টাকা মেটানো বাকি।';
 }
 

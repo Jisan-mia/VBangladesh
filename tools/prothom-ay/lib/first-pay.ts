@@ -124,12 +124,12 @@ export function payLine(pay: Pick<FirstPay, "gifts" | "style" | "source">) {
   const [mother, father] = ma ? ["মা", "বাবা"] : ["আম্মু", "আব্বু"];
   const [mothers, fathers, parents] = ma ? ["মায়ের", "বাবার", "মা-বাবার"] : ["আম্মুর", "আব্বুর", "আম্মু-আব্বুর"];
   if (has(WHOLE)) return `খামটা না খুলেই ${parents} হাতে।`;
-  if (pay.gifts.length === MAX_GIFTS) return "এক খামে এত জনের হাসি। টাকাটা কাজে লেগেছে।";
+  if (pay.gifts.length === MAX_GIFTS) return "তিনটা উপহার, একটাই খাম।";
   if (has("shari") && has("panjabi")) return `${mothers} শাড়ি, ${fathers} পাঞ্জাবি। হিসাব একদম মিলে গেছে।`;
   if (has("shari")) return `${mother} বলেছিল “কেন খরচ করলি?”, তারপর সবাইকে দেখিয়েছিল।`;
   if (has("panjabi")) return `${father} মুখে কিছু বলেনি, কিন্তু প্রতিটা অনুষ্ঠানে ওই পাঞ্জাবিটাই পরত।`;
   if (has("nanu")) return `নতুন চাদর গায়ে, মাথায় হাত। ${ma ? "আশীর্বাদটা" : "দোয়াটা"} এখনো সাথে আছে।`;
-  if (has("mishti")) return "প্রথম টাকায় সবার মুখ মিষ্টি, এর চেয়ে ভালো খরচ নেই।";
+  if (has("mishti")) return "প্রথম টাকায় মিষ্টির প্যাকেট, হাতে হাতে বিলি।";
   if (has("bhaibon")) return "ভাইবোনের হাতে প্রথম উপহার। সেদিন মনে হলো, সত্যিই বড় হয়ে গেছি।";
   if (has("treat")) return pay.source === "tuition" ? "বন্ধুরা বলছিল “ট্রিট কবে?” টিউশনির টাকায় অবশেষে!" : "বন্ধুরা বলছিল “ট্রিট কবে?” অবশেষে!";
   return "প্রথম আয়টা খরচ করিনি, যত্ন করে রেখে দিয়েছি।";

@@ -55,7 +55,7 @@ test("names and cities are NFC, lose control and direction-override characters, 
 test("the human line comes from what was stamped", () => {
   assert.equal(passportLine(["iftar", "ranna"]), "একা ইফতার, তবু প্লেটে দেশের পেঁয়াজু।");
   assert.equal(passportLine(defaultPicks), "মায়ের রান্নার স্বাদ কোনো দোকানে মেলে না।");
-  assert.equal(passportLine(["airport", "bidai"]), "যতবার বিদায়, ততবার চোখ ভেজে।");
+  assert.equal(passportLine(["airport", "bidai"]), "এয়ারপোর্টে একবার, ছুটি ফুরালে আবার। দুবারই চোখ ভেজে।");
   assert.equal(passportLine(moments.map(moment => moment.id)), "পুরো ৪০! এই পাসপোর্টে আর সিলের জায়গা নেই।");
   assert.equal(passportLine(["sim"]), "অল্প কয়টা সিল, প্রত্যেকটায় একটা গল্প।");
   assert.equal(passportLine([]), "পাসপোর্টের পাতা এখনো ফাঁকা।");

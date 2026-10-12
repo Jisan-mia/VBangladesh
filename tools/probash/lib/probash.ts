@@ -151,7 +151,7 @@ export function passportLine(picked: readonly MomentId[]) {
   if (has("cooker")) return "সিনিয়রের পুরনো রাইস কুকারে আজও ভাত ফোটে।";
   if (has("biye")) return "বিয়েটা দেখেছি ফোনের পর্দায়, দোয়া পাঠিয়েছি মন থেকে।";
   if (has("minar")) return "দূর দেশেও একুশের ভোরে হাতে ফুল।";
-  if (has("airport") && has("bidai")) return "যতবার বিদায়, ততবার চোখ ভেজে।";
+  if (has("airport") && has("bidai")) return "এয়ারপোর্টে একবার, ছুটি ফুরালে আবার। দুবারই চোখ ভেজে।";
   if (has("gondho")) return "প্লেনের দরজা খুলতেই সেই চেনা গন্ধ।";
   if (has("bangla")) return "অচেনা রাস্তায় বাংলা শুনলেই মনে হয় বাড়ি।";
   if (has("lal-sobuj")) return "যেখানেই থাকি, লাল-সবুজ দেখলে বুকটা ভরে যায়।";

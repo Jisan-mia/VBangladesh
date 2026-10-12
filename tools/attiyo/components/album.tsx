@@ -116,7 +116,7 @@ export function Album() {
               {guess && (guess === termFor(friend.chain, friend.style) ? <>ঠিক! <b>{friendAnswer.said}</b>। {friendAnswer.other && friendAnswer.other !== friendAnswer.term ? `${STYLES.find(item => item.id !== friend.style)!.home} ${friendAnswer.other.replace(/ \/ /g, " বা ")}।` : ""}</> : <>উঁহু! উত্তর <b>{friendAnswer.said}</b>। নিচের অ্যালবামে দেখো কেন।</>)}
             </p>
           </> : <p className="at-verdict">{friendAnswer.unnamed
-            ? <>এর আলাদা কোনো নাম নেই! বলে <b>“{friendAnswer.said}”</b>। নিচে খুলে দিলাম, এবার নিজের একটা খোঁজো।</>
+            ? <>এর আলাদা নাম নেই। সবাই বলে <b>“{friendAnswer.said}”</b>। নিচে খুলে দিলাম, এবার নিজের একটা খোঁজো।</>
             : <>{STYLES.find(item => item.id === friend.style)!.home} বলে <b>“{friendAnswer.said}”</b>, {STYLES.find(item => item.id !== friend.style)!.home} <b>{friendAnswer.other?.replace(/ \/ /g, " বা ")}</b>। নিচে খুলে দিলাম।</>}</p>}
         </section>
       )}

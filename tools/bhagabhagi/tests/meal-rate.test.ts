@@ -69,7 +69,7 @@ test('a member with no meals pays nothing and gets back what they put in', () =>
   assert.match(cashNote(result), /বাকি ৳৫০০ কে দিয়েছে/);
   assert.match(cashNote(calculateMess(mess(3000, [2, 2], [2000, 2000]))), /বাড়তি ৳১,০০০/);
   assert.equal(messLine(calculateMess(mess(3000, [2, 2]))), 'মিল রেট বের হলো। এবার যার যার ভাগটা জমা দাও!');
-  assert.equal(messLine(calculateMess(mess(3000, [2, 2], [1500, 1500]))), 'সবার হিসাব মিলে গেছে, কেউ কারও কাছে পায় না!');
+  assert.equal(messLine(calculateMess(mess(3000, [2, 2], [1500, 1500]))), 'সবার হিসাব মিলে গেছে, কেউ কারও কাছে পায় না।');
 });
 
 test('names are optional, NFC, tidy and short; impossible messes are refused', () => {

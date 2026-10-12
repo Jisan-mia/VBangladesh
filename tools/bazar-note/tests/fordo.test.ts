@@ -78,7 +78,7 @@ test('titles, previews and the human line come from the list', () => {
   assert.equal(share.preview(fordoHash({ ...fordo, name: '', preset: 'roza' })).title, 'রোজার বাজারের ফর্দ, ৩টা জিনিস');
   assert.equal(share.preview('junk').title, 'বাজারের ফর্দ');
   assert.equal(fordoTitle({ name: '', preset: '' }), 'বাজারের ফর্দ');
-  assert.equal(fordoLine({ ...fordo, budget: 100 }), 'বাজেট একটু ছাড়িয়ে যাচ্ছে, দরদাম করে কিনো কিন্তু!');
+  assert.equal(fordoLine({ ...fordo, budget: 100 }), 'বাজেট ছাড়িয়ে যাচ্ছে। দরদাম করে কিনো।');
   assert.equal(fordoLine({ ...fordo, budget: 100, money: false }), presets.week.line);
 });
 

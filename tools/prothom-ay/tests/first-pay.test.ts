@@ -69,7 +69,7 @@ test("labels follow how the family is addressed; the human line follows the pick
   assert.equal(giftLabel("shari", "ammu"), "আম্মুর জন্য শাড়ি");
   assert.equal(giftLabel("shari", "ma"), "মায়ের জন্য শাড়ি");
   assert.equal(giftLabel("mishti", "ma"), "মিষ্টি বিলি");
-  assert.equal(payLine({ source: "job", gifts: ["mishti"], style: "ammu" }), "প্রথম টাকায় সবার মুখ মিষ্টি, এর চেয়ে ভালো খরচ নেই।");
+  assert.equal(payLine({ source: "job", gifts: ["mishti"], style: "ammu" }), "প্রথম টাকায় মিষ্টির প্যাকেট, হাতে হাতে বিলি।");
   assert.match(payLine({ source: "job", gifts: ["shari", "panjabi"], style: "ma" }), /^মায়ের শাড়ি, বাবার পাঞ্জাবি/);
   assert.match(payLine({ source: "job", gifts: [WHOLE], style: "ammu" }), /আম্মু-আব্বুর হাতে/);
   for (const gift of gifts) for (const style of ["ammu", "ma"] as const) assert.ok(payLine({ source: "tuition", gifts: [gift.id], style }).length > 10);

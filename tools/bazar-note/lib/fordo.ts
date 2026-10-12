@@ -30,8 +30,8 @@ export const pricedCount = (items: readonly Pick<Item, 'unitPrice'>[]) => items.
 
 /** The human line on the card, from what the person picked and whether the budget holds. */
 export function fordoLine(fordo: Fordo) {
-  if (fordo.money && fordo.budget !== null && pricedCount(fordo.items) && basketTotal(fordo) > fordo.budget) return 'বাজেট একটু ছাড়িয়ে যাচ্ছে, দরদাম করে কিনো কিন্তু!';
-  return fordo.preset ? presets[fordo.preset].line : 'আসার সময় এগুলো এনো, ভুলো না যেন!';
+  if (fordo.money && fordo.budget !== null && pricedCount(fordo.items) && basketTotal(fordo) > fordo.budget) return 'বাজেট ছাড়িয়ে যাচ্ছে। দরদাম করে কিনো।';
+  return fordo.preset ? presets[fordo.preset].line : 'আসার সময় এগুলো এনো।';
 }
 
 /** Link state: n=name, p=preset, b=budget, then one i=name*quantity*unit[*price] per item. Prices and budget only when money is on. */
