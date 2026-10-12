@@ -76,7 +76,7 @@ function stopLoops() { for (const stop of [...loops]) stop(); }
  * A continuous sound you steer while it plays, e.g. TV static that gets louder the further the antenna is off.
  * `set(level)` takes 0..1 (0 is silent), `pitch(hz)` retunes it, `stop()` ends it. Returns a silent stub when sound is off.
  */
-export function loop(kind: 'static' | 'hum' | 'wind' = 'static', frequency = 120) {
+export function loop(kind: 'static' | 'hum' | 'whine' | 'wind' = 'static', frequency = 120) {
   const a = context();
   const stub = { set: (_level: number) => {}, pitch: (_hz: number) => {}, stop: () => {} };
   if (!a) return stub;
@@ -84,10 +84,11 @@ export function loop(kind: 'static' | 'hum' | 'wind' = 'static', frequency = 120
   gain.gain.value = 0;
   let source: AudioScheduledSourceNode;
   let tune: AudioParam;
-  if (kind === 'hum') {
+  if (kind === 'hum' || kind === 'whine') {
     const oscillator = a.createOscillator();
     oscillator.type = 'sawtooth'; oscillator.frequency.value = frequency;
-    const filter = a.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 500;
+    // 'whine' keeps the bright overtones (a mosquito, a wire); 'hum' is a soft motor or filament.
+    const filter = a.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = kind === 'whine' ? 3200 : 500;
     oscillator.connect(filter).connect(gain);
     source = oscillator; tune = oscillator.frequency;
   } else {
@@ -111,7 +112,7 @@ export function loop(kind: 'static' | 'hum' | 'wind' = 'static', frequency = 120
   loops.add(stop);
   return {
     set: (level: number) => { if (!stopped) gain.gain.setTargetAtTime(Math.max(0, Math.min(1, level)) * 0.22, a.currentTime, 0.05); },
-    /** 'hum': the tone's pitch in Hz; 'static'/'wind': the filter's centre in Hz (higher sounds thinner). */
+    /** 'hum'/'whine': the tone's pitch in Hz; 'static'/'wind': the filter's centre in Hz (higher sounds thinner). */
     pitch: (hz: number) => { if (!stopped) tune.setTargetAtTime(Math.max(20, hz), a.currentTime, 0.05); },
     stop,
   };
