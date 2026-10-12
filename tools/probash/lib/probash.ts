@@ -146,18 +146,18 @@ export function passportLine(picked: readonly MomentId[]) {
   if (count === 0) return "পাসপোর্টের পাতা এখনো ফাঁকা।";
   if (count === TOTAL) return "পুরো ৪০! এই পাসপোর্টে আর সিলের জায়গা নেই।";
   if (has("iftar")) return "একা ইফতার, তবু প্লেটে দেশের পেঁয়াজু।";
-  if (has("oa")) return "দূর দেশের ঘরে অ আ, এভাবেই বাংলা বাঁচে।";
+  if (has("oa")) return "দূর দেশের ঘরে বসে অ আ শেখানো হচ্ছে।";
   if (has("roommate")) return "রক্তের সম্পর্ক না, তবু রুমমেটরাই এখন পরিবার।";
   if (has("cooker")) return "সিনিয়রের পুরনো রাইস কুকারে আজও ভাত ফোটে।";
   if (has("biye")) return "বিয়েটা দেখেছি ফোনের পর্দায়, দোয়া পাঠিয়েছি মন থেকে।";
   if (has("minar")) return "দূর দেশেও একুশের ভোরে হাতে ফুল।";
-  if (has("airport") && has("bidai")) return "যতবার বিদায়, ততবার চোখ ভেজে।";
+  if (has("airport") && has("bidai")) return "এয়ারপোর্টে একবার, ছুটি ফুরালে আবার। দুবারই চোখ ভেজে।";
   if (has("gondho")) return "প্লেনের দরজা খুলতেই সেই চেনা গন্ধ।";
   if (has("bangla")) return "অচেনা রাস্তায় বাংলা শুনলেই মনে হয় বাড়ি।";
   if (has("lal-sobuj")) return "যেখানেই থাকি, লাল-সবুজ দেখলে বুকটা ভরে যায়।";
   if (has("ranna")) return "মায়ের রান্নার স্বাদ কোনো দোকানে মেলে না।";
   if (has("khela")) return "দেশের খেলা মানে বিদেশে রাত জাগা।";
-  if (count >= 30) return "পাতাভরা সিল, বুকভরা দেশ।";
+  if (count >= 30) return "পাসপোর্টের পাতা প্রায় ভরে এল।";
   if (count <= 3) return "অল্প কয়টা সিল, প্রত্যেকটায় একটা গল্প।";
   return "দূরে আছি, তবু মনটা পড়ে থাকে দেশে।";
 }
@@ -177,7 +177,7 @@ export function whoLine({ name, city }: Pick<Passport, "name" | "city">) {
 
 export function previewTitle(passport: Passport) {
   const who = passport.name ? possessive(passport.name) : "এক বন্ধুর";
-  return `${who} পাসপোর্টে প্রবাস জীবনের ${bn(passport.picked.length)}টা সিল — তোমার কয়টা?`;
+  return `${who} পাসপোর্টে প্রবাস জীবনের ${bn(passport.picked.length)}টা সিল। তোমার কয়টা?`;
 }
 
 /** Share of everyone who stamped this moment, in whole percent. */

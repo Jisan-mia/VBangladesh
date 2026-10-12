@@ -9,7 +9,7 @@ export default function BhortaPage() {
       <JsonLd site={site} />
       <div className="bh-page">
         <section className="container bh-hero" aria-labelledby="bh-title">
-          <p className="bh-hero-kicker">শিলপাটা · ৬টা প্রশ্ন · শুধু মজার জন্য</p>
+          <p className="bh-hero-kicker">শিলপাটা · ৬টা প্রশ্ন</p>
           <h1 id="bh-title">তুমি কোন <span>ভর্তা?</span></h1>
           <p className="bh-lead">{site.lead}</p>
         </section>

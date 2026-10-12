@@ -79,7 +79,7 @@ test("a mostly-nineties tape gets the rewind line", () => {
 test("a friend's tape lines up next to mine", () => {
   const friend: Tape = { ...tape, slots: [defaultSlots[0], defaultSlots[1], ...songs.map((_, index) => index).filter(index => !defaultSlots.includes(index)).slice(0, 8)] };
   assert.match(commonLine([...defaultSlots], friend), /^দুজনেরই আছে: /);
-  assert.equal(commonLine([...defaultSlots], { ...tape }), "“রাফির মিক্সটেপ”-এর সাথে দশটাই মিলে গেছে!");
+  assert.equal(commonLine([...defaultSlots], { ...tape }), "“রাফির মিক্সটেপ”-এর সাথে দশটাই মিলে গেছে");
   assert.equal(commonLine([...defaultSlots], null), "");
 });
 

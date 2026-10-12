@@ -112,7 +112,7 @@ export function dishHeadline(card: Pick<RecipeCard, "title" | "learnedFrom">) {
 export function recipeLine(card: Pick<RecipeCard, "learnedFrom">) {
   const whose = card.learnedFrom.trim();
   if (whose === "নিজের") return "নিজের হাতের রান্না, এবার সবার জন্য খাতায়।";
-  if (whose === "আম্মু" || whose === "আব্বু") return `${possessive(whose)} আন্দাজটা এবার কাগজে উঠল, আর হারাবে না।`;
+  if (whose === "আম্মু" || whose === "আব্বু") return `${possessive(whose)} আন্দাজটা এবার কাগজে উঠল।`;
   if (whose === "নানু" || whose === "দাদু") return `${possessive(whose)} হাতের স্বাদটা এবার খাতায় থেকে গেল।`;
   if (whose) return `${possessive(whose)} রান্নাটা এবার পরিবারের সবার কাছে থাকবে।`;
   return "যে রান্না শুধু মনে ছিল, এবার খাতায় উঠল।";

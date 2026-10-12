@@ -152,10 +152,10 @@ export function perPerson(total: number, count: number, format = formatMoney): s
 
 export function ledgerLine({ total, balances, transfers }: Pick<ReturnType<typeof calculateLedger>, 'total' | 'balances' | 'transfers'>): string {
   if (!total) return 'খরচ লিখলেই হিসাব মিলবে।';
-  if (!transfers.length) return 'সবাই সমান দিয়েছে, কারও কাছে কারও পাওনা নেই!';
+  if (!transfers.length) return 'সবাই সমান দিয়েছে, কারও কাছে কারও পাওনা নেই।';
   const top = balances.reduce((most, balance) => (balance.paid > most.paid ? balance : most));
-  if (top.paid * 2 > total) return `${top.person.name} একাই অর্ধেকের বেশি খরচ টেনেছে। ওর পাওনাটা আগে মিটিয়ে দাও!`;
-  return 'হিসাব পরিষ্কার, বন্ধুত্ব অটুট!';
+  if (top.paid * 2 > total) return `${top.person.name} একাই অর্ধেকের বেশি খরচ টেনেছে। ওর পাওনাটা আগে মিটিয়ে দাও।`;
+  return 'হিসাব পরিষ্কার, এবার শুধু টাকা মেটানো বাকি।';
 }
 
 // Bangla stays as-is (1 char instead of 9 percent-encoded ones) so a 100-expense ledger fits in one link; only URL syntax is escaped.

@@ -123,8 +123,8 @@ test("lines and previews are personal, honest and never about price or meat yiel
   assert.match(weightLine(3, "লালু"), /^লালুকে /);
   assert.match(weightLine(5, "Lalu"), /^Lalu-কে /);
   assert.match(weightLine(15, "রাজা"), /হাটের রাজা/);
-  assert.equal(previewTitle({ ...sample, name: "লালু" }), "লালুর ওজন প্রায় ৪ মণ (১৫৯ কেজি) — তোমাদেরটা কত?");
-  assert.equal(previewTitle(sample), "এই গরুর ওজন প্রায় ৪ মণ (১৫৯ কেজি) — তোমাদেরটা কত?");
+  assert.equal(previewTitle({ ...sample, name: "লালু" }), "লালুর ওজন প্রায় ৪ মণ (১৫৯ কেজি)। তোমাদেরটা কত?");
+  assert.equal(previewTitle(sample), "এই গরুর ওজন প্রায় ৪ মণ (১৫৯ কেজি)। তোমাদেরটা কত?");
   assert.equal(previewTitle({ ...sample, card: "bhag" }), "৩৬ কেজি → ১২ + ১২ + ১২ · ৪৮টা প্যাকেট");
   for (const mon of [1, 3, 5, 9, 20]) assert.doesNotMatch(weightLine(mon, ""), /টাকা|দাম|মাংস/);
 });

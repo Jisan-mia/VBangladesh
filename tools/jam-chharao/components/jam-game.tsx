@@ -313,7 +313,7 @@ export function JamGame() {
 
   function status() {
     if (note) return note;
-    if (pickedCar) return `${NAMES[pickedCar.kind]} বাছা হলো। তীর চাপো, বা টেনে সরাও।`;
+    if (pickedCar) return `${NAMES[pickedCar.kind]} ধরেছ। তীর চাপো, বা টেনে সরাও।`;
     if (phase === "ready") return "★ দেওয়া সবুজ CNG তোমার। গাড়ি টেনে সরাও, নয়তো গাড়িতে চেপে নিচের তীর চাপো।";
     return "গাড়ি টেনে সরাও, নয়তো চেপে তীর চাপো।";
   }

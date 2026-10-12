@@ -41,8 +41,8 @@ export const items = [
 
 export const owners = [
   { id: "ma", label: "মায়ের", line: "আলমারির কোণের লাল বাক্সটা খুললেই মায়ের গন্ধ পাই।" },
-  { id: "nanu", label: "নানুর", line: "ওজন গ্রামে মাপা যায়, স্মৃতি না।" },
-  { id: "dadi", label: "দাদির", line: "দাদি বলত, ‘এটা তোর জন্য রেখে দিলাম।’ কথাটা ওজনের চেয়ে ভারী।" },
+  { id: "nanu", label: "নানুর", line: "নানুর বাক্স খুললেই আগে গল্প বেরোত, তারপর গয়না।" },
+  { id: "dadi", label: "দাদির", line: "দাদি বলত, ‘এটা তোর জন্য রেখে দিলাম।’ ওজনটা তখন কেউ মাপেনি।" },
   { id: "bon", label: "বোনের", line: "একবার ধার নিয়েছিলাম। গয়নাটা ফেরত দিয়েছি, গল্পটা রেখে দিয়েছি।" },
   { id: "amar", label: "আমার", line: "ওজনটা ভুলে যেতাম, দিনটা কখনো ভুলিনি।" },
 ] as const;
@@ -177,6 +177,6 @@ export function parseShareHash(hash: string): Piece | null {
 }
 
 /** "রাফির নানুর হার: ১ ভরি ৫ আনা — ১৫.৩১ গ্রাম" for link previews and the friend banner. */
-export const previewTitle = (card: Card) => `${card.title}: ${card.weight} — ${card.grams} গ্রাম`;
+export const previewTitle = (card: Card) => `${card.title}: ${card.weight}, ${card.grams} গ্রাম`;
 
 export const caption = (card: Card) => `${card.title}: ${card.weight}, মানে ${card.grams} গ্রাম। ${card.line} তোমার বাড়ির পুরোনো গয়নাটা কার?`;

@@ -64,8 +64,8 @@ test("rare picks earn their own line, otherwise the score picks it", () => {
   assert.equal(humanLine(food, all("R"), null, rare), "ফুচকা ছেড়ে চটপটি? সাহস আছে!");
   assert.equal(humanLine(food, all("L"), { match: 12, of: 12 }, null), "তুমি পুরো দেশের মনের কথা বলো।");
   assert.equal(humanLine(food, all("L"), { match: 7, of: 12 }, null), "অর্ধেক দেশ তোমার দলে।");
-  assert.equal(humanLine(food, all("L"), { match: 2, of: 12 }, null), "তুমি নিজের পথের মানুষ।");
-  assert.equal(humanLine(food, all("L"), null, null), "ফুচকা আর কাচ্চি, তোমাকে চিনতে এটুকুই যথেষ্ট।");
+  assert.equal(humanLine(food, all("L"), { match: 2, of: 12 }, null), "দেশ যেদিকে, তুমি প্রায় উল্টোদিকে।");
+  assert.equal(humanLine(food, all("L"), null, null), "ফুচকা আর কাচ্চি। তোমাকে চেনা হয়ে গেল।");
 });
 
 test("a friend's link turns the caption into a match count", () => {

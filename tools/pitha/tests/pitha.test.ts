@@ -73,7 +73,7 @@ test("human line follows which kinds of pitha were right", () => {
 
 test("share preview is personal and tally lists only fixed ids", () => {
   const state = share.normalize(shareHash({ set: "w1", answers: key("w1"), name: "রাফি" }).slice(1))!;
-  assert.equal(share.preview(state).title, "রাফি ১০টা পিঠার ১০টা চিনেছে — তুমি কয়টা চিনবে?");
+  assert.equal(share.preview(state).title, "রাফি ১০টা পিঠার ১০টা চিনেছে। তুমি কয়টা চিনবে?");
   assert.match(share.preview(state).description, /^রাফির সাথে/);
   assert.match(share.preview("garbage").title, /^এক বন্ধু/);
   assert.equal(tallyIds.length, 22);

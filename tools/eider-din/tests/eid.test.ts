@@ -45,7 +45,7 @@ test("names are NFC, lose control and direction-override characters, and are cap
 
 test("the human line comes from what was ticked", () => {
   assert.equal(eidLine(["salami", "salami-dewa"]), "নিলেও, দিলেও। এটাই বড় হওয়া।");
-  assert.equal(eidLine(items.map(item => item.id)), "পুরো ২৫! এমন ঈদ বছরে একবারই আসে।");
+  assert.equal(eidLine(items.map(item => item.id)), "পুরো ২৫টাই হলো। একটাও বাদ যায়নি।");
   assert.equal(eidLine(["ghum"]), "ঈদের আসল আনন্দ দুপুরের ঘুমে।");
   assert.equal(eidLine(["video", "semai"]), "দূরে আছি, তবু ভিডিও কলেই ঈদ মোবারক।");
   assert.equal(eidLine([]), "এখনো একটাও টিক দাওনি।");
@@ -58,9 +58,9 @@ test("friend overlay, previews and the colour tally", () => {
   assert.equal(commonLine({ color: "green", picked: ["semai", "ghum", "adda"] }, friend), "দুজনেরই: সবুজ জামা, সেমাই আর ২টা");
   assert.equal(commonLine({ color: "red", picked: ["chand"] }, friend), "মিমের সাথে একটাও মেলেনি!");
   assert.equal(commonLine({ color: "red", picked: ["chand"] }, null), "");
-  assert.equal(previewTitle({ ...friend, name: "রাফি" }), "রাফির ঈদে ২৫-এ ৪টা হলো — তোমার কয়টা?");
-  assert.equal(previewTitle({ ...friend, name: "" }), "এক বন্ধুর ঈদে ২৫-এ ৪টা হলো — তোমার কয়টা?");
-  assert.equal(share.preview(shareHash(friend).slice(1)).title, "মিমের ঈদে ২৫-এ ৪টা হলো — তোমার কয়টা?");
+  assert.equal(previewTitle({ ...friend, name: "রাফি" }), "রাফির ঈদে ২৫-এ ৪টা হলো। তোমার কয়টা?");
+  assert.equal(previewTitle({ ...friend, name: "" }), "এক বন্ধুর ঈদে ২৫-এ ৪টা হলো। তোমার কয়টা?");
+  assert.equal(share.preview(shareHash(friend).slice(1)).title, "মিমের ঈদে ২৫-এ ৪টা হলো। তোমার কয়টা?");
   assert.equal(leadingColor({ green: 20, red: 5 }, 30), null);
   assert.equal(leadingColor({ green: 20, red: 20 }, 30), null);
   assert.equal(leadingColor({ green: 25, red: 10, semai: 99 }, 30)?.id, "green");

@@ -186,6 +186,6 @@ export function SuggestBox({ tool, question, placeholder }: { tool: string; ques
       <input id={`suggest-${tool}`} value={text} maxLength={300} onChange={event => { setText(event.target.value); if (state !== 'sending') setState('idle'); }} placeholder={placeholder} />
       <button type="submit" className="kit-secondary" disabled={state === 'sending' || text.trim().length < 2}>{state === 'sending' ? 'যাচ্ছে…' : 'পাঠাও'}</button>
     </div>
-    <p className="kit-status" role="status" aria-live="polite">{state === 'sent' ? 'পেয়ে গেছি, ধন্যবাদ! পরের বার যোগ করার চেষ্টা করব।' : state === 'failed' ? 'পাঠানো গেল না। একটু পরে আবার চেষ্টা করো।' : 'নাম বা ফোন নম্বর লাগবে না।'}</p>
+    <p className="kit-status" role="status" aria-live="polite">{state === 'sent' ? 'পেয়ে গেছি, ধন্যবাদ।' : state === 'failed' ? 'পাঠানো গেল না। একটু পরে আবার চেষ্টা করো।' : 'নাম বা ফোন নম্বর লাগবে না।'}</p>
   </form>;
 }

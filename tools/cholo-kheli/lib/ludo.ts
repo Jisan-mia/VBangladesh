@@ -57,11 +57,11 @@ export const ludoCaption = (ludo: Ludo) => `${championKicker(ludo)}: ${championN
 export function ludoLine(wins: readonly number[]) {
   const [top, second = 0] = [...wins].sort((a, b) => b - a);
   const total = wins.reduce((sum, count) => sum + count, 0);
-  if (total === 1) return "মাত্র এক দান হলো, আসল লড়াই তো এখনো বাকি!";
-  if (top === second) return "সমানে সমান! পরের দানেই ফয়সালা হবে।";
-  if (top === total) return "একটা দানও কাউকে ছাড়েনি!";
-  if (top - second === 1) return "মাত্র এক দানের ব্যবধান, পরের বার কিন্তু ছাড় নেই!";
-  return "এবার ছক্কা যেন তার কথাই শুনছিল!";
+  if (total === 1) return "এক দান হলো। এখনো সবার সুযোগ আছে।";
+  if (top === second) return "সমানে সমান। পরের দানে ফয়সালা।";
+  if (top === total) return "সব দান একজনের ঘরেই গেছে।";
+  if (top - second === 1) return "মাত্র এক দানের ব্যবধান। পরের দানে উল্টে যেতে পারে।";
+  return "এবার ছক্কা যেন তার কথাই শুনছিল।";
 }
 
 /** Tally strokes with a slash through every five, as one path on a 110×26 grid; the page and the card draw the same marks.

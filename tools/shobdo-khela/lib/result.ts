@@ -74,7 +74,7 @@ export function humanLine(rows: readonly Row[]) {
   if (solved === total - 1) return 'একটা ফসকে গেছে, বাকিগুলো একদম ঝরঝরে।';
   if (solved * 2 >= total) return 'অর্ধেকের বেশি মিলেছে। কাল আরেকটা বেশি হবে।';
   if (solved > 0) return 'আজ শব্দগুলো একটু লুকোচুরি খেলেছে। কাল আবার দেখা হবে।';
-  return 'আজকেরটা কঠিন ছিল। কাল নতুন পাঁচটা, নতুন সুযোগ।';
+  return 'আজকেরটা কঠিন ছিল। কাল নতুন পাঁচটা আসবে।';
 }
 
 const squares: Record<Mark, string> = { g: '🟩', h: '🟨', x: '⬜', s: '⬜' };

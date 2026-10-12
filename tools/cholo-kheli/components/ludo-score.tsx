@@ -65,7 +65,7 @@ export function LudoScore({ players, site }: { players: number; site: string }) 
   }
 
   const rename = (player: number, name: string) => setSession(current => ({ ...current, names: current.names.map((old, index) => index === player ? name : old) }));
-  const status = !total ? "দান শেষ হলেই যে জিতল, তার ঘরে একবার চাপো।"
+  const status = !total ? "এখনো কোনো দান হয়নি।"
     : `${bn(total)} দান হলো · ${leaders.length > 1 ? `${leaders.map(index => playerName(ludo.names, index)).join(" আর ")} সমান সমান` : `এগিয়ে ${playerName(ludo.names, leaders[0])}`}`;
 
   return <>

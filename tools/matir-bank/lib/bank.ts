@@ -94,10 +94,10 @@ export function bankLine(goal: Pick<Goal, "until">, p: Plan, coins: number | nul
   if (coins !== null) {
     const part = coins / p.count;
     if (coins >= p.count) return "ব্যাংক ভরে গেছে, এবার ভাঙার পালা!";
-    if (coins === 0) return "প্রথম পয়সাটাই সবচেয়ে কঠিন।";
+    if (coins === 0) return "ব্যাংক এখনো খালি, ঝাঁকালে শব্দ নেই।";
     if (part < 0.25) return "ঠং! শুরুটা হয়ে গেছে।";
     if (part < 0.5) return "ঝাঁকালে এখন ঝনঝন শব্দ হয়।";
-    if (part < 0.75) return "অর্ধেক ভরা, বাকি অর্ধেক আরও সহজ।";
+    if (part < 0.75) return "অর্ধেক পথ পার, হাতে নিলে ওজন টের পাওয়া যায়।";
     return "আর অল্প, ব্যাংকটা ভারী হয়ে এসেছে।";
   }
   switch (goal.until) {

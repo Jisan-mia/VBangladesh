@@ -63,13 +63,13 @@ export function humanLine(score: number, set: SetId) {
     return "মুখে ইংরেজি আসা দোষের না। বাংলাটাও জানা থাকুক।";
   }
   if (setById(set)?.sober) {
-    if (score === ROUNDS) return "শুদ্ধ করে লেখাও একুশের প্রতি শ্রদ্ধা।";
+    if (score === ROUNDS) return "দশটাই শুদ্ধ। একুশের পোস্টারের বানান এবার তোমার ভরসায়।";
     if (score >= 6) return "প্রায় সবটাই শুদ্ধ। বাকিটা এবার মনে থাকবে।";
-    return "ভুল থেকেই শেখা। মাতৃভাষা রোজ একটু করে শিখি।";
+    return "ভুল কয়টার নিয়ম নিচে আছে। একবার পড়ে নিলেই হলো।";
   }
   if (score === ROUNDS) return "তোমার হাতে সাইনবোর্ড দিলে একটাও ভুল থাকত না।";
   if (score >= 6) return "প্রায় সব ঠিক, বাকিটা এখন শিখে গেলে।";
-  return "বানান ভুল হয়, ভালোবাসা কমে না।";
+  return "ভুল কয়টার নিয়ম নিচে আছে, একবার চোখ বুলিয়ে নাও।";
 }
 
 export const scoreLine = (score: number) => `${bn(ROUNDS)}-এ ${bn(score)}`;

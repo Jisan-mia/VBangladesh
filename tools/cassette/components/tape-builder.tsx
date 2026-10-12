@@ -82,7 +82,7 @@ export function TapeBuilder() {
   const shown = shownTitle(tape);
   const season = seasonLabel(when);
   const titles = slots.map(slot => songs[slot].title);
-  const caption = `${match ? `${match}! ` : ""}${shown}${season ? ` · ${season}` : ""}: ${titles.slice(0, 3).join(", ")}… দশ গানের ক্যাসেট বানালাম। তোমার ক্যাসেটে কোন গান?`;
+  const caption = `${match ? `${match}। ` : ""}${shown}${season ? ` · ${season}` : ""}: ${titles.slice(0, 3).join(", ")}… দশ গানের ক্যাসেট বানালাম। তোমার ক্যাসেটে কোন গান?`;
   const ranked = everyone && everyone.total >= TALLY_MIN
     ? songs.map((song, index) => ({ song, index, percent: Math.round(((everyone.counts[tallyId(index)] ?? 0) / everyone.total) * 100) })).sort((a, b) => b.percent - a.percent).slice(0, 5)
     : [];
@@ -92,7 +92,7 @@ export function TapeBuilder() {
     <div className="cs">
       {friend && (
         <section className="cs-friend" aria-labelledby="cs-friend-title">
-          <p className="cs-kicker">তোমার জন্য একটা ক্যাসেট এসেছে</p>
+          <p className="cs-kicker">বন্ধু তার ক্যাসেট পাঠিয়েছে</p>
           <h2 id="cs-friend-title">{friend.title ? `“${friend.title}”` : "বন্ধুর ক্যাসেট"}, দশটা গান।<br /><span>তোমার ক্যাসেটে কোন গান?</span></h2>
           <JCard tape={friend} common={commonSongs(slots, friend)} />
           <a className="kit-primary" href="#cs-tape">আমার ক্যাসেট বানাই</a>
@@ -170,13 +170,13 @@ export function TapeBuilder() {
         <div className="cs-everyone">
           <h3>সবার ক্যাসেটে কোন গান বেশি?</h3>
           {joined !== "done" ? <>
-            <p>চাইলে তোমার দশটা গান সবার হিসাবে যোগ করো। ক্যাসেটের নাম যাবে না, শুধু কোন গান সেটা গোনা হবে।</p>
+            <p>তোমার দশটা গান সবার হিসাবে যোগ করতে পারো। ক্যাসেটের নাম যাবে না, শুধু কোন গান সেটা গোনা হবে।</p>
             <button type="button" className="kit-secondary" onClick={join} disabled={joined === "sending"}>{joined === "sending" ? "যোগ হচ্ছে…" : "সবার সাথে মেলাও"}</button>
             {joined === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
           </> : ranked.length && everyone ? <>
             <p>{bn(everyone.total)} জনের ক্যাসেটের সাথে মেলানো হলো।</p>
             <ul className="cs-bars">{ranked.map(({ song, index, percent }) => <li key={index} data-mine={slots.includes(index) || undefined}><span>{song.title}</span><i style={{ width: `${Math.max(percent, 2)}%` }} /><b>{bn(percent)}%</b></li>)}</ul>
-          </> : <p className="kit-status">যোগ হয়েছে! এখনো খুব কম মানুষ ক্যাসেট বানিয়েছে, তাই কোন গান এগিয়ে সেটা এখনই বলা যাবে না। বন্ধুদের লিংক পাঠাও।</p>}
+          </> : <p className="kit-status">যোগ হয়েছে। এখনো খুব কম মানুষ ক্যাসেট বানিয়েছে, তাই কোন গান এগিয়ে, দেখানো যাচ্ছে না। বন্ধুদের লিংক পাঠাও।</p>}
         </div>
       </section>
     </div>

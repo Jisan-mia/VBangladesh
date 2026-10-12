@@ -55,9 +55,9 @@ test("numbers take Bangla or English digits, 0 to 99 only", () => {
 
 test("the human line follows the number, never a player", () => {
   assert.equal(humanLine(10), "দশ নম্বর মানে দায়িত্ব।");
-  assert.equal(humanLine(1), "সবার আগে আমি, সবার শেষেও আমি।");
-  assert.equal(humanLine(44), "জোড়া অঙ্ক, জোড়া কপাল।");
-  assert.equal(humanLine(75), "নম্বরটা আমার, গল্পটাও আমার।");
+  assert.equal(humanLine(1), "এক নম্বর, অনেক দলে এটা গোলকিপারের।");
+  assert.equal(humanLine(44), "দুটো অঙ্কই এক, নম্বরটা মনে থাকবে।");
+  assert.equal(humanLine(75), "নম্বরটা পিঠে মানিয়েছে ভালো।");
   for (let number = 0; number <= 99; number++) assert.ok(humanLine(number).length > 5);
 });
 

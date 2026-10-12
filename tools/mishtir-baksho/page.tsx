@@ -21,7 +21,7 @@ export default function MishtirBakshoPage() {
 
         <section className="container section mishti-places" aria-labelledby="places-title">
           <h2 id="places-title">কোন জেলার কোন মিষ্টি বিখ্যাত</h2>
-          <p>তালিকার যে মিষ্টিগুলো কোনো জায়গার নামে পরিচিত, সেগুলো এখানে। <b className="mishti-gi">জিআই</b> মানে পেটেন্ট, শিল্প-নকশা ও ট্রেডমার্কস অধিদপ্তর (ডিপিডিটি) মিষ্টিটাকে ওই জায়গার ভৌগোলিক নির্দেশক পণ্য হিসেবে নিবন্ধন দিয়েছে।</p>
+          <p>তালিকার যে মিষ্টিগুলো কোনো জায়গার নামে পরিচিত, সেগুলো এখানে। <b className="mishti-gi">জিআই</b> মানে ভৌগোলিক নির্দেশক পণ্য। পেটেন্ট, শিল্প-নকশা ও ট্রেডমার্কস অধিদপ্তর (ডিপিডিটি) মিষ্টিটাকে ওই জায়গার বলে নিবন্ধন দিয়েছে।</p>
           <ul>
             {known.map(sweet => <li key={sweet.id}><strong>{"known" in sweet ? sweet.known : sweet.label}</strong><span>{placeOf(sweet)}</span>{isGi(sweet) && <b className="mishti-gi">জিআই</b>}</li>)}
             <li><strong>গোপালগঞ্জের রসগোল্লা</strong><span>গোপালগঞ্জ · তালিকায় ‘রসগোল্লা’ নামে</span><b className="mishti-gi">জিআই</b></li>

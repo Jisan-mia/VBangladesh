@@ -88,7 +88,7 @@ export function CoverBuilder() {
         <section className="by-friend" aria-labelledby="by-friend-title">
           <canvas ref={friendCanvas} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={summary(friend)} />
           <div>
-            <p className="by-friend-kicker">তোমার জন্য একটা বার্ষিকী এসেছে</p>
+            <p className="by-friend-kicker">বন্ধু তার বার্ষিকী পাঠিয়েছে</p>
             <h2 id="by-friend-title">{coverTitle(friend)}। বছরের শব্দ: <span>{pickLabel(friend, WORD)}</span></h2>
             <p>তোমার বছরটা কেমন গেল?</p>
             <a className="kit-primary" href="#make">আমারটা বানাই</a>
@@ -155,7 +155,7 @@ export function CoverBuilder() {
             <button type="button" className="kit-secondary" onClick={countMine} disabled={counted === "sending"}>{counted === "sending" ? "গোনা হচ্ছে…" : "আমার শব্দটাও গোনো"}</button>
             {counted === "failed" && <p className="kit-status" role="alert">এখন গোনা গেল না। একটু পরে আবার চেষ্টা করো।</p>}
           </> : everyone.total < COMPARE_MIN ? (
-            <p className="kit-status">গোনা হয়েছে! এখনো মাত্র {bn(everyone.total)} জন যোগ দিয়েছে, তাই হিসাব এখনই বলা যাবে না। বন্ধুদের লিংক পাঠাও।</p>
+            <p className="kit-status">গোনা হয়েছে। এখনো মাত্র {bn(everyone.total)} জন যোগ দিয়েছে, তাই হিসাব দেখানো যাচ্ছে না। বন্ধুদের লিংক পাঠাও।</p>
           ) : (
             <ul className="by-bars">{ranked.map(({ word, percent }) => <li key={word.id} data-mine={word.id === wordId(cover)}><span>{word.label}</span><i style={{ width: `${percent}%` }} /><b>{bn(percent)}%</b></li>)}</ul>
           )}

@@ -43,8 +43,8 @@ test("GPAs round to 2 decimals the way the board prints them", () => {
 });
 
 test("the human line follows the GPA bands", () => {
-  assert.equal(humanLine(score(hsc(["A", "A", "A", "A", "A", "A"], "C"))), "দারুণ! পরের ধাপে আরও ভালো হবে।");
-  assert.equal(humanLine(score(hsc(["B", "B", "B", "B", "B", "B"], "C"))), "নম্বর একটা সংখ্যা। তুমি তার চেয়ে অনেক বড়।");
+  assert.equal(humanLine(score(hsc(["A", "A", "A", "A", "A", "A"], "C"))), "খুব ভালো হয়েছে। এবার একটু জিরিয়ে নাও।");
+  assert.equal(humanLine(score(hsc(["B", "B", "B", "B", "B", "B"], "C"))), "পাস করেছ। আম্মু-আব্বুকে একটা ফোন দাও।");
 });
 
 test("a result survives the share-link round trip", () => {
@@ -80,6 +80,6 @@ test("switching group keeps the grades already tapped", () => {
 
 test("link previews are personal and kind", () => {
   const result: Result = { ...hsc(["AP", "AP", "AP", "AP", "A", "AP"], "AP"), name: "রাফি" };
-  assert.equal(previewTitle(result), "রাফির জিপিএ ৫.০০ — তোমারটা হিসাব করো");
+  assert.equal(previewTitle(result), "রাফির জিপিএ ৫.০০। তোমারটা হিসাব করো");
   assert.equal(previewTitle({ ...result, grades: ["F", "AP", "AP", "AP", "AP", "AP"] }), "রাফি বলছে: পরের বার দেখিয়ে দেব");
 });

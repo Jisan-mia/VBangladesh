@@ -206,7 +206,7 @@ export function humanLine(total: number, eidCount: number, daysLeft: number | nu
   }
   if (total < 12) return "প্রথম বছরটাই সবচেয়ে লম্বা।";
   if (total >= 120) return "এত বছরেও উঠোনের মাটির গন্ধটা ভুলিনি।";
-  return "দূরে আছি, মন পড়ে আছে বাড়ির উঠোনে।";
+  return "ফোনে আম্মুর গলা পাই, ভাতের গন্ধটা পাই না।";
 }
 
 export type Card = {

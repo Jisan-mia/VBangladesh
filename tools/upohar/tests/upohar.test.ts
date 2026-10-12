@@ -10,7 +10,7 @@ test("the brief's first screen: cousin, another city, kacchi → ২,০০০�
   assert.equal(card.range, "২,০০০–৩,০০০ টাকা");
   assert.equal(card.occasion, "কাজিনের বিয়ে");
   assert.equal(card.sub, "হালকা আন্দাজ, নিয়ম না");
-  assert.equal(card.note, "কাচ্চি থাকলে খামটা একটু ভারী করো, ভালোবাসাও।");
+  assert.equal(card.note, "কাচ্চি থাকলে খামটা একটু ভারী করো। প্লেটের হিসাবও তো আছে।");
   assert.equal(taka(10000), "১০,০০০");
 });
 

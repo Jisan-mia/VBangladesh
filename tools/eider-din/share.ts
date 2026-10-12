@@ -9,7 +9,7 @@ export const share: ToolShare = {
   preview(state) {
     const eid = parseShareHash(state);
     return {
-      title: eid ? previewTitle(eid) : "ঈদের দিন কয়টা কাজ হলো? — মেহেদির হাতে মিলিয়ে দেখো",
+      title: eid ? previewTitle(eid) : "ঈদের দিন কয়টা কাজ হলো? মেহেদির হাতে মিলিয়ে দেখো",
       description: "নতুন জামা, সেমাই, সালামি, কোলাকুলি… ঈদের দিনের ২৫টা কাজের কয়টা তোমার হলো? টিক দাও, মেহেদি রাঙা হাত বানাও, বন্ধুর সাথে মেলাও।",
     };
   },

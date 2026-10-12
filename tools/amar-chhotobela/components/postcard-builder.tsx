@@ -84,7 +84,7 @@ export function PostcardBuilder() {
         <section className="khata-friend" aria-labelledby="friend-title">
           <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`${friend.name ? possessive(friend.name) : "বন্ধুর"} ছোটবেলার খাতা`} />
           <div>
-            <p className="khata-kicker">তোমার জন্য একটা খাতা এসেছে</p>
+            <p className="khata-kicker">বন্ধু তার খাতা পাঠিয়েছে</p>
             <h2 id="friend-title">{friend.name ? possessive(friend.name) : "তোমার বন্ধুর"} ছোটবেলার {bn(friend.selected.length)}টা মিলেছে।<br /><span>তোমার কয়টা?</span></h2>
             <a className="kit-primary" href="#memory-grid">আমারটা মেলাই</a>
           </div>
@@ -150,7 +150,7 @@ export function PostcardBuilder() {
               {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
             </> : <>
               <p>{bn(everyone.total)} জনের সাথে মেলানো হলো।</p>
-              {everyone.total < COMPARE_MIN ? <p className="kit-status">এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাব এখনই ঠিকমতো বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন মেলালেই জমে যাবে!</p> : <>
+              {everyone.total < COMPARE_MIN ? <p className="kit-status">এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাব দেখানো যাচ্ছে না। বন্ধুদের লিংক পাঠাও, কয়েকজন মেলালে দেখা যাবে।</p> : <>
               {ranked.length > 0 && <div className="khata-rare">
                 <p><span>কম মানুষের যেটা ছিল</span><strong>{ranked[0].memory.label}</strong><em>{ranked[0].percent < 30 ? "মাত্র " : ""}{bn(ranked[0].percent)}% মানুষের ছিল</em></p>
                 {ranked.length > 1 && <p><span>প্রায় সবার যেটা ছিল</span><strong>{ranked.at(-1)!.memory.label}</strong><em>{bn(ranked.at(-1)!.percent)}% মানুষের ছিল</em></p>}

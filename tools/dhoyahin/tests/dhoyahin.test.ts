@@ -18,7 +18,7 @@ test("the brief's example link: 60 days, 600 sticks, 9,000 taka", () => {
 test("quit today is day one, with a per-day promise instead of zero taka", () => {
   const count = tally({ date: TODAY, sticks: 20, price: 7.5, name: "" }, TODAY);
   assert.equal(count.days, 0);
-  assert.equal(count.line, "প্রথম দিনটাই সবচেয়ে কঠিন, আর তুমি সেটা পার করছ।");
+  assert.equal(count.line, "আজ প্রথম দিন। দুটো বীজপাতা নিয়ে চারাটা শুরু করল।");
   assert.deepEqual(stats(count, 20), ["দিনে ২০টা কম", "দিনে ১৫০ টাকা বাঁচবে"]);
 });
 

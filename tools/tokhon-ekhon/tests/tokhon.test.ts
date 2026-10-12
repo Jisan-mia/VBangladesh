@@ -43,12 +43,10 @@ test("growth reads as times, or as a percentage when small", () => {
   assert.equal(growthText(2.04), "গড় দাম বেড়েছে প্রায় ২ গুণ");
 });
 
-test("the human line follows how far prices moved", () => {
-  assert.equal(humanLine({ year: 1995, birth: false }), "দাম যত বেড়েছে, তোমার গল্প বেড়েছে তার চেয়েও বেশি।");
-  assert.equal(humanLine({ year: 1986, birth: true }), "জন্মসাল থেকে দাম যত বেড়েছে, গল্প জমেছে তার চেয়েও বেশি।");
-  assert.match(humanLine({ year: 2005, birth: false }), /জোর কমে গেছে/);
-  assert.match(humanLine({ year: 2024, birth: false }), /^মাত্র ১ বছর!/);
-  for (const year of years) assert.ok(humanLine({ year, birth: false }).length > 10);
+test("the human line says what the sum is worth today", () => {
+  assert.equal(humanLine({ year: 1995 }), "১৯৯৫-এর ১০০ টাকায় যা কেনা যেত, আজ তা কিনতে লাগে প্রায় ৬৭০ টাকা।");
+  assert.equal(humanLine({ year: 1986, amount: 1000 }), "১৯৮৬-এর ১,০০০ টাকায় যা কেনা যেত, আজ তা কিনতে লাগে প্রায় ১১,৭০০ টাকা।");
+  for (const year of years) assert.ok(humanLine({ year }).length > 10);
 });
 
 test("a shared link round-trips and refuses hostile input", () => {

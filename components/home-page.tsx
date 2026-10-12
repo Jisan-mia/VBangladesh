@@ -47,7 +47,7 @@ export function HomePage() {
       <ToolDirectory />
       <section className="home-container home-trust" aria-labelledby="home-trust-title">
         <h2 id="home-trust-title">যা বানাও, তা তোমার ফোনেই থাকে</h2>
-        <p>কোনো অ্যাকাউন্ট নেই, বিজ্ঞাপন নেই। তুমি শেয়ার না করলে কিছুই আমাদের কাছে আসে না। কাকে পাঠাবে, সেটাও তুমিই ঠিক করবে।</p>
+        <p>কোনো অ্যাকাউন্ট নেই, বিজ্ঞাপন নেই। তুমি শেয়ার না করলে কিছুই আমাদের কাছে আসে না।</p>
         <Link href="/privacy">তোমার তথ্য কোথায় থাকে</Link>
       </section>
       <section className="home-container home-faq" aria-labelledby="home-faq-title">
@@ -57,7 +57,7 @@ export function HomePage() {
     </main>
     <footer className="home-footer">
       <div className="home-container home-footer-inner">
-        <div><Link className="home-brand" href="/"><BrandMark /><span>{brand.name}</span></Link><p>বাংলায় ছোট ছোট আনন্দের জায়গা।</p></div>
+        <div><Link className="home-brand" href="/"><BrandMark /><span>{brand.name}</span></Link><p>বাংলায় ছোট ছোট খেলা, কুইজ আর হিসাব।</p></div>
         <nav className="home-nav" aria-label="আরও জানো"><Link href="/amar-chhotobela">আমার ছোটবেলা</Link><Link href="/tools">সব টুল</Link><Link href="/about">আমাদের কথা</Link><Link href="/privacy">গোপনীয়তা</Link></nav>
       </div>
     </footer>

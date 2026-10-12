@@ -52,7 +52,7 @@ test("names are NFC, lose control and direction-override characters, and are cap
 test("the human line follows the brief", () => {
   assert.equal(plateLine([...starters, "haleem"], ""), "হালিম থাকলে ইফতার পুরো।");
   assert.equal(plateLine(starters, "probash"), "দেশের প্লেট, দূরের টেবিল।");
-  assert.equal(plateLine(["chola", "beguni"], ""), "অল্প হলেও আপন।");
+  assert.equal(plateLine(["chola", "beguni"], ""), "প্লেট ছোট, ইফতার ঠিকই আছে।");
   assert.equal(plateLine(["khejur", "chola", "beguni", "jilapi"], ""), "মিষ্টি আর ঝাল, দুটোই চাই।");
   assert.equal(plateLine([], ""), "প্লেটটা এখনো ফাঁকা।");
 });

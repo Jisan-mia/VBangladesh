@@ -57,7 +57,7 @@ test("names are NFC, lose control and direction characters, and are capped", () 
 test("lines and badges follow the score, and the Ekushe set stays sober", () => {
   assert.equal(humanLine(10, "dokan"), "তোমার হাতে সাইনবোর্ড দিলে একটাও ভুল থাকত না।");
   assert.equal(humanLine(7, "school"), "প্রায় সব ঠিক, বাকিটা এখন শিখে গেলে।");
-  assert.equal(humanLine(3, "deyal"), "বানান ভুল হয়, ভালোবাসা কমে না।");
+  assert.equal(humanLine(3, "deyal"), "ভুল কয়টার নিয়ম নিচে আছে, একবার চোখ বুলিয়ে নাও।");
   assert.equal(badge(8, "dokan"), "বানান-বীর");
   assert.equal(badge(10, "e75"), "একুশের ৭৫ বছর");
   assert.ok(!humanLine(3, "e75").includes("ভালোবাসা"));

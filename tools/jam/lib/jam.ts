@@ -89,7 +89,7 @@ export function duration(minutes: number) {
 /** A warm, funny line picked from the person's own numbers. */
 export function humanLine(commute: Commute) {
   const { days } = calculate(commute);
-  if (days >= 365) return `জীবনের ${bn(Math.floor(days / 365))} বছরের বেশি জ্যামে! বাসের সিটটাই এখন দ্বিতীয় বাড়ি।`;
+  if (days >= 365) return `জীবনের ${bn(Math.floor(days / 365))} বছরের বেশি জ্যামে। বাসের সিটটাই এখন দ্বিতীয় বাড়ি।`;
   if (commute.minutes >= 180) return "রোজ এত সময়! হেলপার মামাও এখন নাম ধরে ডাকে।";
   if (days >= 100) return "এত সময়ে একটা ভাষা শেখা যেত, অথবা অনেক ঘুম।";
   if (days >= 30) return `প্রায় ${bn(Math.round(days / 30))} মাস! জানালার সিটটা এখন পুরোনো বন্ধু।`;
@@ -99,7 +99,7 @@ export function humanLine(commute: Commute) {
 
 export function caption(commute: Commute) {
   const result = calculate(commute);
-  return `হিসাব করে দেখলাম, জ্যামে আমার জীবনের ${result.value} ${result.unit} চলে গেছে! মানে ${result.counts[0].text}। তোমার কত দিন?`;
+  return `জ্যামে আমার জীবনের ${result.value} ${result.unit} গেছে। মানে ${result.counts[0].text}। তোমার কত দিন?`;
 }
 
 export function previewTitle(commute: Commute) {

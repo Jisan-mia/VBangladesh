@@ -135,7 +135,7 @@ export function cashNote({ mess, paid }: MessResult): string {
 
 export function messLine({ members, paid }: MessResult): string {
   if (!paid) return 'মিল রেট বের হলো। এবার যার যার ভাগটা জমা দাও!';
-  if (members.every(member => member.net === 0)) return 'সবার হিসাব মিলে গেছে, কেউ কারও কাছে পায় না!';
+  if (members.every(member => member.net === 0)) return 'সবার হিসাব মিলে গেছে, কেউ কারও কাছে পায় না।';
   return 'হিসাব পরিষ্কার, মেসে শান্তি!';
 }
 

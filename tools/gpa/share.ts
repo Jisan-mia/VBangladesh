@@ -11,7 +11,7 @@ export const share: ToolShare = {
     const result = parseResult(state);
     return {
       title: result ? previewTitle(result) : "জিপিএ ক্যালকুলেটর — এসএসসি ও এইচএসসি",
-      description: "বিষয়ের গ্রেড বসাও, ৪র্থ বিষয়সহ জিপিএ সাথে সাথে দেখো। ফ্রি, অ্যাকাউন্ট লাগে না।",
+      description: "বিষয়ের গ্রেড বসাও, ৪র্থ বিষয়সহ জিপিএ দেখো। ফ্রি, অ্যাকাউন্ট লাগে না।",
     };
   },
 };

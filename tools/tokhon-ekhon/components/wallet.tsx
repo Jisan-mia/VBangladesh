@@ -79,7 +79,7 @@ export function Wallet() {
   const top = everyone && everyone.total >= TALLY_MIN
     ? years.map(String).filter(year => (everyone.counts[year] ?? 0) > 0).sort((a, b) => everyone.counts[b] - everyone.counts[a]).slice(0, 3)
     : [];
-  const caption = `${shared.birth ? `আমার জন্মসাল ${bnYear(card.year)}। তখনকার ${bn(card.amount)} টাকা` : card.headline} এখন প্রায় ${bn(card.now)} টাকা! (${card.basis}) তোমার জন্মসালেরটা দেখো তো:`;
+  const caption = `${shared.birth ? `আমার জন্মসাল ${bnYear(card.year)}। তখনকার ${bn(card.amount)} টাকা` : card.headline} এখন প্রায় ${bn(card.now)} টাকা। (${card.basis}) তোমার জন্মসালেরটা দেখো তো:`;
 
   return (
     <div className="te">
@@ -87,7 +87,7 @@ export function Wallet() {
         <section className="te-friend" aria-labelledby="friend-title">
           <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={friendCard.sentence} />
           <div>
-            <p className="te-kicker">তোমার জন্য একটা মানিব্যাগ এসেছে</p>
+            <p className="te-kicker">বন্ধু তার সালটা পাঠিয়েছে</p>
             <h2 id="friend-title">{friend.birth ? <>বন্ধুর জন্মসাল {bnYear(friend.year)}: তখনকার {bn(friend.amount)} টাকা এখন প্রায় {bn(friendCard.now)} টাকা।</> : <>{friendCard.headline} এখন প্রায় {bn(friendCard.now)} টাকা।</>}<br /><span>এবার তোমার সালটা দেখো</span></h2>
             <a className="kit-primary" href="#wallet">আমার সালটা দেখি</a>
           </div>

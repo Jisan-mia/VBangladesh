@@ -94,7 +94,7 @@ export function ShelfBuilder() {
   const tip = ranked.find(item => !read.includes(item.book.id));
   const rarest = ranked.find(item => read.includes(item.book.id));
   const caption = card.match
-    ? `${card.match}! হুমায়ূন আহমেদের ${bn(books.length)}টা বইয়ের ${bn(card.count)}টা আমার পড়া। তুমি কয়টা পড়েছ?`
+    ? `${card.match}। হুমায়ূন আহমেদের ${bn(books.length)}টা বইয়ের ${bn(card.count)}টা আমার পড়া। তুমি কয়টা পড়েছ?`
     : `হুমায়ূন আহমেদের ${bn(books.length)}টা বইয়ের ${bn(card.count)}টা পড়েছি, আমি “${card.tier}”। তুমি কয়টা পড়েছ?`;
 
   return (
@@ -103,7 +103,7 @@ export function ShelfBuilder() {
         <section className="hm-friend" aria-labelledby="friend-title">
           <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`${possessive(friendName)} বইয়ের তাক`} />
           <div>
-            <p className="hm-kicker">তোমার জন্য একটা তাক এসেছে</p>
+            <p className="hm-kicker">বন্ধু তার তাক পাঠিয়েছে</p>
             <h2 id="friend-title">{friendName} {bn(books.length)}টার {bn(friend.read.length)}টা পড়েছে।<br /><span>তুমি কয়টা?</span></h2>
             <a className="kit-primary" href="#shelf">আমার তাক সাজাই</a>
           </div>
@@ -189,7 +189,7 @@ export function ShelfBuilder() {
             <button type="button" className="kit-secondary" onClick={compareWithEveryone} disabled={compared === "sending"}>{compared === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
             {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
           </> : everyone.total < COMPARE_MIN ? (
-            <p className="kit-status">{bn(everyone.total)} জনের সাথে মেলানো হলো। এখনো খুব কম মানুষ, তাই হিসাব এখনই ঠিকমতো বলা যাবে না। বন্ধুদের লিংক পাঠাও!</p>
+            <p className="kit-status">{bn(everyone.total)} জনের সাথে মেলানো হলো। এখনো খুব কম মানুষ, তাই হিসাব দেখানো যাচ্ছে না। বন্ধুদের লিংক পাঠাও।</p>
           ) : (
             <div className="hm-tips">
               {tip && <p><span>পরের বই হিসেবে ধরো</span><strong>{tip.book.title}</strong><em>{tip.share < 30 ? "মাত্র " : ""}{bn(tip.share)}% মানুষ পড়েছে</em></p>}

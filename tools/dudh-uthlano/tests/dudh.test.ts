@@ -67,7 +67,7 @@ test("scores: percent of the rim, floored, 99 at most; a spill is zero", () => {
   assert.equal(totalOf([99, 99, 99, 99, 99]), 99);
   assert.equal(potWord(0, true), "উথলে গেল!");
   assert.equal(potWord(98, false), "একদম কিনারায়!");
-  assert.equal(potWord(91, false), "দারুণ সময়!");
+  assert.equal(potWord(91, false), "প্রায় কিনারায়!");
   assert.equal(potWord(12, false), "দুধ তো ফুটলই না!");
 });
 

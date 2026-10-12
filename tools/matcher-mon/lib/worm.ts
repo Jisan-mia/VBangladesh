@@ -157,7 +157,7 @@ export function together(a: readonly number[], b: readonly number[], sport: Spor
 export function pairLine(same: number, total: number) {
   const share = same / Math.max(total, 1);
   if (share >= 0.75) return "যেন একই সোফায় বসে, একই নিঃশ্বাসে দেখেছি।";
-  if (share >= 0.4) return "কখনো একসাথে, কখনো উল্টো দিকে। খেলা তো এমনই!";
+  if (share >= 0.4) return "কখনো একসাথে, কখনো উল্টো দিকে।";
   return "একজন লাফাল, আরেকজন মাথায় হাত। দুই দলের নাকি?";
 }
 

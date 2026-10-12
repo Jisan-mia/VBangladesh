@@ -42,7 +42,7 @@ const lines: Record<Band, string> = {
   start: "শুরুটা ভালো। আরেক দানে পাহাড় আরও উঁচু হবে!",
   good: "ভালোই সাজিয়েছ! ঘাটের সবাই তাকিয়ে আছে।",
   great: "পাকা হাত! সর্দার খাতায় তোমার নাম লিখে রাখল।",
-  master: "এ তো ওভারলোড ট্রাক! পুরো ঘাট হাততালি দিচ্ছে।",
+  master: "এ তো ওভারলোড ট্রাক! চাকা বসে গেল বলে।",
 };
 export const humanLine = (sacks: number) => lines[bandOf(sacks)];
 

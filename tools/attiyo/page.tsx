@@ -37,7 +37,7 @@ export default function AttiyoPage() {
 
         <section className="container section at-list" aria-labelledby="list-title">
           <h2 id="list-title">সব সম্পর্কের নাম, এক জায়গায়</h2>
-          <p>এখানে {bn(total)}টা সম্পর্কের নাম আছে, সবগুলো হাতে মিলিয়ে দেখা। এর বাইরের সম্পর্কে নাম বানানো হয় না, মানুষ যেমন বলে তেমনই লেখা থাকে।</p>
+          <p>{bn(total)}টা সম্পর্কের নাম আছে, সবগুলো হাতে মিলিয়ে দেখা। এর বাইরের সম্পর্কে নাম বানানো হয় না, মানুষ যেমন বলে তেমনই লেখা থাকে।</p>
           <details>
             <summary>পুরো তালিকা দেখো</summary>
             {groups.map(([kind, label]) => (

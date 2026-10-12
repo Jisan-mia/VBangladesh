@@ -50,12 +50,12 @@ test("share.ts normalises good links, rejects junk and previews personally", () 
   const state = shareHash({ selected: ["ilish", "pabda", "tengra"], name: "রাফি" }).slice(1);
   assert.equal(share.normalize(state), state);
   assert.equal(share.normalize("f=%%%"), null);
-  assert.equal(share.preview(state).title, "রাফির ডালায় ৪০টা দেশি মাছের ৩টা — তোমার কয়টা?");
+  assert.equal(share.preview(state).title, "রাফির ডালায় ৪০টা দেশি মাছের ৩টা। তোমার কয়টা?");
   assert.deepEqual(share.tally, fishes.map(fish => fish.id));
 });
 
 test("the human line comes from what was ticked", () => {
-  assert.equal(fishLine(["pabda", "tengra", "shing", "mola"]), "শিং, পাবদা আর মলা: ছোট মাছের কাঁটা বাছতে জানো, এটা আসল প্রতিভা।");
+  assert.equal(fishLine(["pabda", "tengra", "shing", "mola"]), "শিং, পাবদা আর মলা: ছোট মাছের কাঁটা বাছতে জানো। ওটাই আসল ওস্তাদি।");
   assert.equal(fishLine(["chitol", "baghair", "rui"]), "বাঘাইড় আর চিতল, এখন কম পাওয়া যায় এমন মাছও তোমার পাতে উঠেছে।");
   assert.match(fishLine(["rupchanda", "loitta", "churi", "surma"]), /^রূপচাঁদা, লইট্টা আর ছুরি: সাগরের/);
   assert.match(fishLine(DEFAULT_PICKS), /শুরুটা চেনা মাছ দিয়ে/);

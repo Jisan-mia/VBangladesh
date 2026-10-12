@@ -171,14 +171,14 @@ export function PithaStall() {
       <section className="pt-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="pt-result-head">
           <h2 id="result-title">{done ? <>তুমি চিনেছ <em>১০-এ {bn(score)}</em></> : "তোমার ডালা এখনো ভরছে"}</h2>
-          <p>{done ? humanLine(setId, answers) : `আরও ${bn(PER_SET - answers.length)}টা পিঠা বাকি। শেষ করলেই কার্ড পুরো হবে, তখন শেয়ার করতে পারবে।`}</p>
+          <p>{done ? humanLine(setId, answers) : `আরও ${bn(PER_SET - answers.length)}টা পিঠা বাকি। শেষ করলে কার্ড পুরো হবে, তখন শেয়ার করতে পারবে।`}</p>
         </div>
 
         {done && rival && (
           <div className="pt-vs">
             <div><span>তুমি · {bn(score)}</span><Baskets hits={hits} label={`তোমার ফল: ${bn(score)}টা চিনেছ`} /></div>
             <div><span>{rivalName} · {bn(scoreOf(rival.set, rival.answers))}</span><Baskets hits={marks(rival.set, rival.answers)} label={`${rival.name ? possessive(rival.name) : "বন্ধুর"} ফল`} /></div>
-            <p>{score > scoreOf(rival.set, rival.answers) ? "তুমি এগিয়ে! লিংকটা ফেরত পাঠাও।" : score === scoreOf(rival.set, rival.answers) ? "সমানে সমান! দুজনেই সমান পিঠাখোর।" : `এবার ${rivalName} এগিয়ে। আরেক ডালায় শোধ নাও!`}</p>
+            <p>{score > scoreOf(rival.set, rival.answers) ? "তুমি এগিয়ে! লিংকটা ফেরত পাঠাও।" : score === scoreOf(rival.set, rival.answers) ? "সমানে সমান!" : `এবার ${rivalName} এগিয়ে। আরেক ডালায় শোধ নাও!`}</p>
           </div>
         )}
 
@@ -196,7 +196,7 @@ export function PithaStall() {
             </label>
             <FormatToggle value={format} onChange={setFormat} />
             <ShareBar tool={TOOL} fileName={`pitha-${setId}.png`} makeImage={() => cardBlob({ ...own, friend }, format, site)} imageKey={`${state}|${format}|${friend ? shareHash(friend) : ""}`} caption={caption(own, friend)} state={state} disabled={!done}
-              hint={done ? "লিংক পেলে বন্ধু একই ১০টা পিঠা পাবে, শেষে দুজনের ফল পাশাপাশি দেখবে।" : "১০টা পিঠা শেষ হলেই শেয়ার করা যাবে।"} />
+              hint={done ? "বন্ধু লিংক খুললে একই ১০টা পিঠা খেলবে।" : "১০টা পিঠা শেষ হলেই শেয়ার করা যাবে।"} />
             {done && <div className="pt-again">
               <button type="button" className="kit-secondary" onClick={() => chooseSet(otherSet.id)}>{otherSet.label} খেলো</button>
               <button type="button" className="kit-link" onClick={restart}>এই ডালা আবার খেলো</button>
@@ -211,7 +211,7 @@ export function PithaStall() {
               <p>সবার সাথে মিলিয়ে দেখো। নাম যাবে না, শুধু কোন পিঠাগুলো চিনেছ সেটা গোনা হবে।</p>
               <button type="button" className="kit-secondary" onClick={compareWithEveryone} disabled={compared === "sending"}>{compared === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
               {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
-            </> : seen < COMPARE_MIN ? <p className="kit-status">এই ডালা এখনো {bn(seen)} জন খেলেছে, হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও!</p> : <>
+            </> : seen < COMPARE_MIN ? <p className="kit-status">এই ডালা এখনো {bn(seen)} জন খেলেছে, হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও।</p> : <>
               {hardest && <p className="pt-rare">{hardest.percent < 50 ? "মাত্র " : ""}<strong>{bn(hardest.percent)}%</strong> চিনেছে <strong>{hardest.item.name}</strong>{hardest.hit ? ", তুমি তাদের একজন!" : "।"}</p>}
               <ul className="pt-bars">{known.map(entry => <li key={entry.item.id} data-hit={Boolean(entry.hit)}><span>{entry.item.name}</span><i style={{ width: `${entry.percent}%` }} /><b>{bn(entry.percent)}%</b></li>)}</ul>
               <p className="kit-status">{bn(seen)} জনের সাথে মেলানো।</p>

@@ -9,7 +9,7 @@ export const share: ToolShare = {
   preview(state) {
     return {
       title: previewTitle(parseShareHash(state)),
-      description: "আলু, বেগুন, শুঁটকি না টাকি মাছ? ৬টা মজার প্রশ্নে শিলপাটায় বেটে দেখো তুমি কোন ভর্তা। শুধু মজার জন্য, ফ্রি।",
+      description: "আলু, বেগুন, শুঁটকি না টাকি মাছ? ৬টা মজার প্রশ্নে শিলপাটায় বেটে দেখো তুমি কোন ভর্তা। ফ্রি, অ্যাকাউন্ট লাগে না।",
     };
   },
   tally: tallyIds,

@@ -230,7 +230,7 @@ export function MagicPot() {
           <figure className="kit-card" data-format={format}>
             <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="card-summary" />
             <figcaption id="card-summary" className="ms-sr">{headline(name, made)}, সর্বশেষ {nameOf(own.latest)}।</figcaption>
-            {previewError && <p className="kit-status" role="alert">কার্ডের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
+            {previewError && <p className="kit-status" role="alert">কার্ডের ছবিটা দেখানো যাচ্ছে না। পাতাটা রিলোড করে দেখো।</p>}
           </figure>
 
           <div className="ms-controls">
@@ -247,7 +247,7 @@ export function MagicPot() {
 
         {made >= 5 && (
           <div className="ms-everyone">
-            <h3>তোমার কোন আবিষ্কারটা সবচেয়ে বিরল?</h3>
+            <h3>তোমার কোন জিনিসটা সবচেয়ে কম মানুষ বানিয়েছে?</h3>
             {compared !== "done" || !everyone ? <>
               <p>সবার সাথে মিলিয়ে দেখো। নাম যাবে না, শুধু কোন জিনিসগুলো বানিয়েছ সেটা গোনা হবে।</p>
               <button type="button" className="kit-secondary" onClick={compareWithEveryone} disabled={compared === "sending"}>{compared === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>

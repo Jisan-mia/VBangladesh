@@ -135,7 +135,7 @@ export function MondopBuilder() {
           <button type="button" className="kit-primary mp-plus" onClick={() => add(1)} disabled={count >= MAX_COUNT}><span aria-hidden="true">+</span> মণ্ডপ ঘুরলাম</button>
         </div>
         <p className="mp-line">
-          {count > LAMPS ? "সব প্রদীপ জ্বলে গেছে, পুরো চালচিত্র ঝলমল করছে! " : ""}
+          {count > LAMPS ? "সব প্রদীপ জ্বলে গেছে, পুরো চালচিত্র আলোয় ভরা। " : ""}
           {friend && count > 0 ? (gap > 0 ? `${friendName} ${bn(friend.count)}টা। আর ${bn(gap)}টা হলেই ধরে ফেলবে!` : gap === 0 ? `${friendName}ও ${bn(friend.count)}টা, একদম সমান সমান!` : `${friendName} ${bn(friend.count)}টা, এবার তুমি এগিয়ে!`) : tourLine(count, picked)}
         </p>
 

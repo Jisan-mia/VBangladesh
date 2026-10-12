@@ -10,7 +10,7 @@ export const share: ToolShare = {
     const shared = parseShareHash(state);
     return {
       title: shared ? previewTitle(shared) : "কবে বিয়ে হবে? ঘটকের রিপোর্ট দেখো",
-      description: "শুধু মজা! ৬টা দুষ্টু প্রশ্নের উত্তর দাও, ঘটকের ফাইল থেকে বেরোবে তোমার মজার রিপোর্ট। কোনো ভবিষ্যদ্বাণী না, কোনো চাপও না।",
+      description: "৬টা দুষ্টু প্রশ্নের উত্তর দাও, ঘটকের ফাইল থেকে বেরোবে তোমার মজার রিপোর্ট। আগে বন্ধুর ফাইলটা দেখে নাও।",
     };
   },
   tally: timingIds,

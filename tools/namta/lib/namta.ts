@@ -99,7 +99,7 @@ export const tallyIds = TABLES.map(t => `t${t}`);
 
 export function starWord(score: number) {
   if (score === 10) return "শাবাশ!";
-  if (score >= 8) return "দারুণ!";
+  if (score >= 8) return "প্রায়!";
   if (score >= 5) return "ভালো!";
   return score ? "চলুক!" : "শুরু!";
 }

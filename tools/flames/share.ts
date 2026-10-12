@@ -10,7 +10,7 @@ export const share: ToolShare = {
   preview(state) {
     return {
       title: previewTitle(parseShareHash(state)),
-      description: "খাতার শেষ পাতার সেই খেলা। দুটো নাম লেখো, মিলে যাওয়া অক্ষর কাটো, তারপর F-L-A-M-E-S গুনে দেখো কী আসে। শুধু মজা, ফ্রি।",
+      description: "খাতার শেষ পাতার সেই খেলা। দুটো নাম লেখো, মিলে যাওয়া অক্ষর কাটো, তারপর F-L-A-M-E-S গুনে দেখো কী আসে। ফ্রি।",
     };
   },
 };

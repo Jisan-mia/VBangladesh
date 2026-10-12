@@ -11,7 +11,7 @@ export default function SalamiChekPage() {
       <JsonLd site={site} />
       <div className="salami">
         <section className="salami-hero container" aria-labelledby="salami-title">
-          <p className="salami-kicker">ঈদ সালামি · খেলনা চেক</p>
+          <p className="salami-kicker">ঈদ সালামি · চেক আর খাতা</p>
           <h1 id="salami-title">সালামি চাও? <span>চেকটা কেটে পাঠাও</span></h1>
           <p className="salami-lead">{site.lead}</p>
         </section>

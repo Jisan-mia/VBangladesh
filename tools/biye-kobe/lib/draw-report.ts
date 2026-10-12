@@ -68,7 +68,7 @@ function drawStamp(context: CanvasRenderingContext2D, x: number, y: number, size
   context.strokeStyle = STAMP;
   context.lineWidth = 6; roundedRect(context, -size * 1.6, -size * 0.75, size * 3.2, size * 1.5, 18); context.stroke();
   context.lineWidth = 2.5; roundedRect(context, -size * 1.6 + 12, -size * 0.75 + 12, size * 3.2 - 24, size * 1.5 - 24, 10); context.stroke();
-  fitText(context, [{ text: "শুধু মজা", color: STAMP, weight: 800, display: true }], 0, size * 0.32, size, size * 2.7, "center");
+  fitText(context, [{ text: "ঘটকের সিল", color: STAMP, weight: 800, display: true }], 0, size * 0.32, size, size * 2.7, "center");
   context.restore();
 }
 
@@ -161,7 +161,6 @@ export function drawReport(canvas: HTMLCanvasElement, report: Report, format: Ca
 
   const bottom = fy + fh - 60;
   if (format === "feed") drawStamp(context, left + 150, bottom - 92, 58);
-  fitText(context, [{ text: "ঘটকের কথা ভবিষ্যদ্বাণী না, স্রেফ মজা।", color: MUTED, weight: 500 }], left, bottom - 6, 24, 560);
   context.restore();
 
   drawRibbon(context, fx + fw - 6, fy + fh * 0.42);

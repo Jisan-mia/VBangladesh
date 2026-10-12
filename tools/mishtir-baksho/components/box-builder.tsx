@@ -165,7 +165,7 @@ export function BoxBuilder() {
               <button type="button" className="kit-secondary" onClick={compareWithEveryone} disabled={compared === "sending"}>{compared === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
               {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
             </> : !showCompare ? (
-              <p className="kit-status">এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন মেলালেই মজাটা শুরু!</p>
+              <p className="kit-status">এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন মেলালেই হিসাব দেখা যাবে।</p>
             ) : (
               <div className="mb-rare">
                 {rarestMine && <p><span>তোমার বাক্সের সবচেয়ে বিরল মিষ্টি</span><strong>{sweetById(rarestMine).label}</strong><em>{bn(percent(everyone.counts[rarestMine] ?? 0, everyone.total))}% মানুষ খেয়েছে</em></p>}

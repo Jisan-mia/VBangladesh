@@ -117,7 +117,7 @@ export function humanLine(cups: number, days: number) {
   if (cups < 1) return "এক কাপও হলো না! মামা, বাকি রাখো?";
   if (days < 1) return "আজকের আড্ডাটা হয়ে গেল।";
   if (days < 7) return "এক সপ্তাহের বিকেলগুলো চায়ে চায়ে।";
-  if (days < 60) return "এক মাসের আড্ডা, এক চুমুকে হিসাব।";
+  if (days < 60) return "এক মাসের বিকেল টং-এর বেঞ্চেই কেটে যাবে।";
   if (days < 365) return "কয়েক মাস টং-এর বেঞ্চে বসা যাবে।";
   if (days < 730) return "এক বছরের আড্ডা এক জিনিসে।";
   if (days < 365 * 80) return "বছরের পর বছর, রোজ বিকেলের চা।";

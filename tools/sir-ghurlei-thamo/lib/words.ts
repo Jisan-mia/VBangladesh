@@ -23,7 +23,7 @@ export const BANDS = [
   { below: 160, line: (who: string) => `${who} টেরই পেলেন না!` },
   { below: 230, line: () => "ঘণ্টা পড়ার আগেই পেছনের বেঞ্চে খবর পৌঁছে গেছে।" },
   { below: 330, line: () => "থেমে থেমে, ঠিক সময়ে। চিরকুট জায়গামতো।" },
-  { below: Infinity, line: () => "দেরি হলো, তবু চিরকুট পৌঁছেছে। এটাই আসল কথা!" },
+  { below: Infinity, line: () => "দেরি হলো, তবু চিরকুট পৌঁছেছে।" },
 ] as const;
 export const humanLine = (tenths: number, teacher: Teacher) => BANDS.find(band => tenths < band.below)!.line(TITLE[teacher]);
 

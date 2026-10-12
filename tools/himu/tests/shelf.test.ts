@@ -61,8 +61,8 @@ test("tiers follow the brief's bands", () => {
 });
 
 test("the human line reads the picks, not only the count", () => {
-  assert.equal(readerLine(shelfIds("misir") as BookId[]), "যুক্তি আর রহস্য, দুটোই তোমার।");
-  assert.match(readerLine(shelfIds("himu") as BookId[]), /খালি পায়ে/);
+  assert.equal(readerLine(shelfIds("misir") as BookId[]), "মিসির আলির সবগুলো বই তোমার পড়া।");
+  assert.match(readerLine(shelfIds("himu") as BookId[]), /হলুদ পাঞ্জাবি/);
   assert.match(readerLine(shelfIds("uponnash") as BookId[]), /বাইরের হুমায়ূন/);
   assert.match(readerLine([]), /খালি/);
   assert.match(readerLine(books.map(book => book.id)), /পুরো তাকটাই/);

@@ -164,7 +164,7 @@ export function FirstPayBuilder() {
               </div>
             ) : <button type="button" className="kit-link pa-amount-open" onClick={() => setShowAmount(true)}>টাকার অংকটাও লিখবে? (না লিখলেও চলে)</button>}
             <FormatToggle value={format} onChange={setFormat} />
-            <ShareBar tool={TOOL} fileName="prothom-ay.png" makeImage={() => cardBlob(pay, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} hint="লিংক পেলে বন্ধু তোমার খাম দেখবে, তারপর নিজেরটা বানাবে।" />
+            <ShareBar tool={TOOL} fileName="prothom-ay.png" makeImage={() => cardBlob(pay, format, site)} imageKey={`${state}|${format}`} caption={caption} state={state} hint="বন্ধু লিংক খুলে তোমার খাম দেখবে, তারপর নিজেরটা বানাবে।" />
           </div>
         </div>
 

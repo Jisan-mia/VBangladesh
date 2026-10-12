@@ -44,7 +44,6 @@ export default function BhoriPage() {
           <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{bn(index + 1)}</span><p>{step}</p></li>)}</ol>
         </section>
         <Faq items={site.faq} />
-        <p className="container bhori-end">ওজন গ্রামে মাপা যায়, স্মৃতি না।</p>
       </div>
     </PageFrame>
   );

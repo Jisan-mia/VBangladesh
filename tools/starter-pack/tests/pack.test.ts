@@ -69,7 +69,7 @@ test("names are NFC, lose control, bidi and angle characters, and are capped at 
 });
 
 test("the human line follows what is in the pack", () => {
-  assert.equal(packLine("varsity", fillSlots("varsity").slice(0, CLASSIC)), "খাতা বন্ধুর, চা বাকিতে — ভার্সিটি এভাবেই চলে।");
+  assert.equal(packLine("varsity", fillSlots("varsity").slice(0, CLASSIC)), "খাতা বন্ধুর, চা বাকিতে। ভার্সিটি এভাবেই চলে।");
   assert.equal(packLine("varsity", ["alarm-3am", "photocopy"]), "পুরো সেমিস্টারের পড়া এক রাতেই শেষ হয়।");
   assert.equal(packLine("varsity", ["photocopy"]), "ক্লাস যতই থাকুক, আড্ডাটা কখনো মিস হয় না।");
   for (const pack of packs) for (const line of pack.lines) for (const id of line.when) assert.ok((pack.items as readonly string[]).includes(id), `${pack.id}: ${id}`);

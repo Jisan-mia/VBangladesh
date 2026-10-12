@@ -161,7 +161,7 @@ const lines: Record<ApplianceId, string> = {
   pump: "ট্যাংক ভরে পানিতে, মিটার ভরে ইউনিটে।",
   ricecooker: "ভাতের হাঁড়িতেও মিটার ঘোরে।",
   router: "রাউটার কখনো ঘুমায় না।",
-  computer: "কাজের মেশিন, ইউনিটেরও মেশিন।",
+  computer: "কাজ চলে স্ক্রিনে, হিসাব চলে মিটারে।",
 };
 
 /** One warm line from the person's own home. Never about price hikes or blame. */

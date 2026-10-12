@@ -64,6 +64,7 @@
 .bk-boxes li[data-done=true]{border-color:var(--ink);background:var(--ink)}
 .bk-boxes li[data-current=true]{box-shadow:0 0 0 2px var(--paper),0 0 0 3.5px var(--accent)}
 @media(max-width:379px){.bk-boxes{order:-1;flex-basis:100%;padding-top:8px}}
+@media(max-width:379px){.bk-hero{padding-bottom:34px}}
 
 /* result */
 .bk-result{display:grid;gap:14px;scroll-margin-top:12px;padding-top:18px;border-top:2px dashed var(--line)}

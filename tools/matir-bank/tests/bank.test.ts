@@ -37,7 +37,7 @@ test("starting on the break day itself saves for the next one", () => {
 
 test("the human line follows progress, and the brief's half-full line is exact", () => {
   const p = plan({ ...base, until: "2026-11-09" })!;
-  assert.equal(bankLine(base, p, 15), "অর্ধেক ভরা, বাকি অর্ধেক আরও সহজ।");
+  assert.equal(bankLine(base, p, 15), "অর্ধেক পথ পার, হাতে নিলে ওজন টের পাওয়া যায়।");
   assert.equal(bankLine(base, p, 30), "ব্যাংক ভরে গেছে, এবার ভাঙার পালা!");
   assert.equal(bankLine({ until: "2026-11-09" }, p, null), "দিন গুনে গুনে ব্যাংক ভরবে।");
   assert.equal(bankLine(base, plan(base)!, null), "চাঁদরাত এলে তবেই ব্যাংক ভাঙা।");
