@@ -4,10 +4,11 @@ import { Fragment, useEffect, useRef, useState, type ChangeEvent } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, type Tally } from "../../../shared/share-client";
 import { confetti, sfx, tone } from "../../../shared/game-sound";
-import { SoundToggle } from "../../../shared/game-ui";
+import { totalStars, useLevels } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
-import { bn, caption, check, cleanName, gradeOf, grades, humanLine, opening, parseShareHash, passages, score, shareHash, words, MAX_NAME, TEST_SECONDS, type Shared } from "../lib/typing";
+import { bn, caption, check, cleanName, gradeOf, grades, humanLine, nearMissLine, opening, parseShareHash, passages, score, shareHash, textStars, words, LEVEL_COUNT, MAX_NAME, TEST_SECONDS, type Shared } from "../lib/typing";
 
 const TOOL = "bangla-typing";
 // Percentages from a handful of people are noise.
@@ -39,6 +40,7 @@ export function Typewriter() {
   const friendPreview = useRef<HTMLCanvasElement>(null);
   const result = useRef<HTMLElement>(null);
   const resultVisible = useInView(result);
+  const levels = useLevels(TOOL, LEVEL_COUNT);
 
   const passage = passages[p];
   const progress = check(passage, typed);
@@ -99,6 +101,7 @@ export function Typewriter() {
   function finish(value: string, seconds: number) {
     const { wpm, accuracy } = score(check(passage, value), seconds);
     setDone({ w: wpm, a: accuracy, seconds: Math.max(1, Math.round(seconds)) });
+    levels.record(p + 1, textStars(wpm));
     setCompared("idle");
     input.current?.blur();
     // The top stamp, or beating a friend on the same text, gets the celebration; otherwise just the bell.
@@ -185,12 +188,20 @@ export function Typewriter() {
         <div className="bt-keys" aria-hidden="true">{KEYS.map((key, index) => <i key={key} data-hit={typed.length > 0 && typed.length % KEYS.length === index}>{key}</i>)}</div>
       </div>
 
+      {done && <p className="bt-reward"><StarReveal count={textStars(done.w)} />{nearMissLine(done.w) && <small>{nearMissLine(done.w)}</small>}</p>}
+
       <div className="bt-actions">
         {done && <a className="kit-primary bt-see" href="#result">সার্টিফিকেট দেখো</a>}
         <button type="button" className="kit-secondary" onClick={() => restart(p)} disabled={startedAt === null}>আবার শুরু করো</button>
         <button type="button" className="kit-secondary" onClick={() => restart((p + 1) % passages.length)}>অন্য লেখা দাও</button>
       </div>
       <p className="bt-hint">Avro, Ridmik, Gboard, যেকোনো বাংলা কিবোর্ডে চলবে। দাঁড়ি-কমা না দিলেও চলে।</p>
+
+      <details className="bt-levels">
+        <summary>সব লেখা <span>★ {bn(totalStars(levels.stars))}/{bn(LEVEL_COUNT * 3)}</span></summary>
+        <p>{bn(LEVEL_COUNT)}টা লেখা, প্রতিটায় ৬০ সেকেন্ড। মিনিটে ৩৫টা বা বেশি শব্দ লিখলে ৩ তারা, ২৫টা বা বেশি লিখলে ২, শেষ করলে ১। সব লেখা সব সময় খোলা।</p>
+        <LevelGrid count={LEVEL_COUNT} stars={levels.stars} unlocked={LEVEL_COUNT} current={p + 1} noun="লেখা" onPick={pick => { restart(pick - 1); document.getElementById("tool")?.scrollIntoView({ behavior: "smooth" }); }} />
+      </details>
 
       <StickyNext show={Boolean(card) && !resultVisible} title={<strong>মিনিটে {card ? bn(card.w) : ""}টা শব্দ</strong>} sub={card ? `${bn(card.a)}% নির্ভুল` : ""} href="#result" label="সার্টিফিকেট দেখো" />
 

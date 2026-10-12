@@ -3,12 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { confetti, sfx, shake } from "../../../shared/game-sound";
-import { SoundToggle } from "../../../shared/game-ui";
+import { totalStars, useLevels } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { addToTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { idiomSvg } from "../lib/art";
 import { cardBlob, drawCard, loadPlates } from "../lib/draw-card";
-import { bn, caption, dictionaryUrl, humanLine, marks, parseShareHash, possessive, questionsOf, rank, scoreOf, setById, sets, shareHash, MAX_NAME_LENGTH, PER_SET, type Answer, type SetId, type Shared } from "../lib/idioms";
+import { bn, caption, dictionaryUrl, humanLine, marks, nearMissLine, parseShareHash, possessive, questionsOf, rank, scoreOf, setById, setStars, sets, shareHash, MAX_NAME_LENGTH, PER_SET, type Answer, type SetId, type Shared } from "../lib/idioms";
 
 const TOOL = "bagdhara";
 const LETTERS = ["ক", "খ", "গ"] as const;
@@ -37,12 +38,14 @@ export function GrammarBook() {
   const nextButton = useRef<HTMLButtonElement>(null);
   const result = useRef<HTMLElement>(null);
   const resultVisible = useInView(result);
+  const levels = useLevels(TOOL, sets.length);
 
   const questions = questionsOf(setId);
   const answers = useMemo(() => answersBy[setId] ?? [], [answersBy, setId]);
   const hits = marks(setId, answers);
   const score = scoreOf(setId, answers);
   const done = answers.length === PER_SET;
+  const level = sets.findIndex(item => item.id === setId) + 1;
   const own = useMemo(() => ({ set: setId, answers, name }), [setId, answers, name]);
   const state = done ? shareHash(own).slice(1) : "";
   const rival = friend?.set === setId ? friend : null;
@@ -87,8 +90,8 @@ export function GrammarBook() {
 
   function next() {
     setPos(pos + 1);
-    // A soft chime as the score appears; confetti only for a perfect 10.
-    if (pos + 1 === PER_SET) { if (score === PER_SET) { confetti(); sfx.win(); } else sfx.star(1); }
+    // Stars are saved per set; StarReveal chimes each star, so the big cheer is only for a perfect 10.
+    if (pos + 1 === PER_SET) { levels.record(level, setStars(score)); if (score === PER_SET) { confetti(); sfx.win(); } }
     if (pos + 1 === PER_SET) requestAnimationFrame(() => document.getElementById("result")?.scrollIntoView({ behavior: "smooth" }));
     else requestAnimationFrame(() => document.getElementById("book")?.scrollIntoView({ behavior: "smooth", block: "nearest" }));
   }
@@ -177,11 +180,18 @@ export function GrammarBook() {
         })}
       </fieldset>
 
+      <details className="bg-levels">
+        <summary>সব সেট <span>★ {bn(totalStars(levels.stars))}/{bn(sets.length * 3)}</span></summary>
+        <p>{sets.map((item, index) => `${bn(index + 1)} ${item.label}`).join(" · ")}। ১০টাই ঠিক হলে ৩ তারা, ৭টা বা বেশি ঠিক হলে ২, শেষ করলে ১। সব সেট সব সময় খোলা।</p>
+        <LevelGrid count={sets.length} stars={levels.stars} unlocked={sets.length} current={level} noun="সেট" onPick={pick => chooseSet(sets[pick - 1].id)} />
+      </details>
+
       <StickyNext show={done && !resultVisible} title={<><strong>১০-এ {bn(score)}</strong> · {rank(score)}</>} sub={humanLine(setId, answers)} href="#result" label="কার্ড দেখো" />
 
       <section className="bg-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="bg-result-head">
           <h2 id="result-title">{done ? <>তুমি পেরেছ <em>১০-এ {bn(score)}</em></> : "খাতা এখনো জমা হয়নি"}</h2>
+          {done && <p className="bg-reward"><StarReveal count={setStars(score)} />{nearMissLine(score) && <small>{nearMissLine(score)}</small>}</p>}
           <p>{done ? humanLine(setId, answers) : `ওপরের আরও ${bn(PER_SET - answers.length)}টা বাগধারার মানে বললেই কার্ড পুরো হবে, তারপর শেয়ার করতে পারবে।`}</p>
         </div>
 

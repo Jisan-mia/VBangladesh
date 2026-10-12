@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readLevels, recordLevel, totalStars } from "../../../shared/game-core";
+import { nearMissLine, setStars } from "../lib/game";
+import { wordSets as levelSets } from "../lib/words";
 import { badge, cleanName, compareLine, defaultSet, friendLine, humanLine, isLoan, parseResult, previewTitle, resultHash, rightShare, scoreOf, tallyIds, tallyItems, MAX_NAME_LENGTH, ROUNDS, type Pick } from "../lib/game";
 import { wordSets } from "../lib/words";
 import { share } from "../share";
@@ -132,4 +135,26 @@ test("the খাঁটি বাংলা set has its own sober lines, preview a
   assert.match(share.preview("set=dokan&a=0101010101").description, /বানান/);
   for (const word of wordSets[4].words) assert.ok(!previewTitle(result).includes(word.options[word.right]));
   assert.ok(tallyItems(result).every(item => tallyIds.includes(item)));
+});
+
+test("stars per set: 3 for a perfect 10, 2 for 7 or more, 1 for finishing, with an exact near-miss line", () => {
+  assert.deepEqual([10, 9, 7, 6, 0].map(setStars), [3, 2, 2, 1, 1]);
+  assert.equal(nearMissLine(10), "");
+  assert.equal(nearMissLine(9), "আর ১টা ঠিক হলে ৩ তারা।");
+  assert.equal(nearMissLine(7), "আর ৩টা ঠিক হলে ৩ তারা।");
+  assert.equal(nearMissLine(6), "আর ১টা ঠিক হলে ২ তারা।");
+  assert.equal(nearMissLine(3), "আর ৪টা ঠিক হলে ২ তারা।");
+});
+
+test("progress per set goes through readLevels and recordLevel", () => {
+  const count = levelSets.length;
+  let stars = readLevels(`{"1":3,"2":1,"${count + 1}":3,"x":2,"0":2}`, count);
+  assert.deepEqual(stars, { 1: 3, 2: 1 });
+  stars = recordLevel(stars, 2, setStars(9));
+  assert.equal(stars[2], 2);
+  stars = recordLevel(stars, 2, setStars(2));
+  assert.equal(stars[2], 2, "a worse run never lowers the stars");
+  assert.equal(totalStars(stars), 5);
+  assert.deepEqual(readLevels("not json", count), {});
+  assert.deepEqual(readLevels(null, count), {});
 });

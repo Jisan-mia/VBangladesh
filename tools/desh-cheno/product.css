@@ -128,3 +128,14 @@
 @media(hover:hover){.desh-chip:hover:not(:disabled){transform:rotate(0) translateY(-2px)}}
 @media(prefers-reduced-motion:reduce){.desh-paper,.desh-mark{animation:none}.desh-chip{transition:none}}
 .desh-hero h1 .desh-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 4px;font-size:14px;font-weight:600;color:var(--accent-deep)}
+
+/* sets, stars and progress (levels) */
+.tool-desh-cheno .desh-levels{margin-top:12px;border:1.5px solid color-mix(in srgb,var(--ink) 20%,transparent);border-radius:14px;background:#fff;color:var(--ink)}
+.tool-desh-cheno .desh-levels summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-desh-cheno .desh-levels summary span{font-weight:500;font-size:14px;color:var(--muted)}
+.tool-desh-cheno .desh-levels p{margin:0 14px 10px;font-size:14px;line-height:1.55;color:var(--muted)}
+.tool-desh-cheno .desh-levels .gx-levels{padding:0 12px 12px}
+.tool-desh-cheno .desh-levels .gx-levels li:has(button.next)~li button.next{animation:none;box-shadow:none;border-width:1.5px}
+.tool-desh-cheno .desh-reward{display:flex;align-items:center;flex-wrap:wrap;gap:2px 12px;margin:6px 0 4px}
+.tool-desh-cheno .desh-reward .gx-stars{font-size:30px}
+.tool-desh-cheno .desh-reward small{font-size:15px;font-weight:600;color:var(--accent-deep)}

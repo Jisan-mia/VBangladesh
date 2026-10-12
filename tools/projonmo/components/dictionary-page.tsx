@@ -3,11 +3,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { confetti, sfx, shake } from "../../../shared/game-sound";
-import { SoundToggle } from "../../../shared/game-ui";
+import { totalStars, useLevels } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { addToTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
-import { bn, caption, entriesOf, formula, friendBanner, humanLine, kindLabel, marks, parseShareHash, possessive, sendTo, setById, sets, shareHash, split, splitText, verdict, versusLine, MAX_NAME_LENGTH, PER_SET, type Answer, type Kind, type SetId, type Shared } from "../lib/words";
+import { bn, caption, entriesOf, formula, friendBanner, humanLine, kindLabel, marks, nearMissLine, parseShareHash, possessive, sendTo, setById, setStars, sets, shareHash, split, splitText, verdict, versusLine, MAX_NAME_LENGTH, PER_SET, type Answer, type Kind, type SetId, type Shared } from "../lib/words";
 
 const TOOL = "projonmo";
 // Percentages from a handful of people are noise ("১০০% পেরেছে" after one play).
@@ -46,11 +47,13 @@ export function GenerationDictionary() {
   const nextButton = useRef<HTMLButtonElement>(null);
   const result = useRef<HTMLElement>(null);
   const resultVisible = useInView(result);
+  const levels = useLevels(TOOL, sets.length);
 
   const entries = entriesOf(setId);
   const answers = useMemo(() => answersBy[setId] ?? [], [answersBy, setId]);
   const hits = marks(setId, answers);
   const done = answers.length === PER_SET;
+  const level = sets.findIndex(item => item.id === setId) + 1;
   const mine = split(setId, answers);
   const own = useMemo(() => ({ set: setId, answers, name }), [setId, answers, name]);
   const state = done ? shareHash(own).slice(1) : "";
@@ -95,8 +98,8 @@ export function GenerationDictionary() {
 
   function next() {
     setPos(pos + 1);
-    // A soft chime as the result appears; confetti only for a perfect 10.
-    if (pos + 1 === PER_SET) { if (mine.total === PER_SET) { confetti(); sfx.win(); } else sfx.star(1); }
+    // Stars are saved per set; StarReveal chimes each star, so the big cheer is only for a perfect 10.
+    if (pos + 1 === PER_SET) { levels.record(level, setStars(mine.total)); if (mine.total === PER_SET) { confetti(); sfx.win(); } }
     if (pos + 1 === PER_SET) requestAnimationFrame(() => document.getElementById("result")?.scrollIntoView({ behavior: "smooth" }));
     else requestAnimationFrame(() => document.getElementById("book")?.scrollIntoView({ behavior: "smooth", block: "nearest" }));
   }
@@ -196,11 +199,18 @@ export function GenerationDictionary() {
         })}
       </fieldset>
 
+      <details className="pj-levels">
+        <summary>সব সেট <span>★ {bn(totalStars(levels.stars))}/{bn(sets.length * 3)}</span></summary>
+        <p>{sets.map((item, index) => `${bn(index + 1)} ${item.label}`).join(" · ")}। ১০টাই ঠিক হলে ৩ তারা, ৭টা বা বেশি ঠিক হলে ২, শেষ করলে ১। সব সেট সব সময় খোলা।</p>
+        <LevelGrid count={sets.length} stars={levels.stars} unlocked={sets.length} current={level} noun="সেট" onPick={pick => chooseSet(sets[pick - 1].id)} />
+      </details>
+
       <StickyNext show={done && !resultVisible} title={<><strong>{bn(mine.genzPct)}% জেন-জি</strong> · {verdict(mine)}</>} sub={humanLine(setId, answers)} href="#result" label="কার্ড দেখো" />
 
       <section className="pj-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="pj-result-head">
           <h2 id="result-title">{done ? <>তুমি <em>{bn(mine.genzPct)}% জেন-জি</em>, {bn(mine.elderPct)}% আব্বু-আম্মু</> : "অভিধান এখনো খোলা"}</h2>
+          {done && <p className="pj-reward"><StarReveal count={setStars(mine.total)} />{nearMissLine(mine.total) && <small>{nearMissLine(mine.total)}</small>}</p>}
           <p>{done ? humanLine(setId, answers) : `ওপরের আরও ${bn(PER_SET - answers.length)}টা শব্দের মানে বললেই কার্ড পুরো হবে, তারপর শেয়ার করতে পারবে।`}</p>
         </div>
 

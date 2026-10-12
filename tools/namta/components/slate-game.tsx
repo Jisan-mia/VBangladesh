@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, type Tally } from "../../../shared/share-client";
 import { confetti, sfx, shake } from "../../../shared/game-sound";
-import { SoundToggle } from "../../../shared/game-ui";
+import { totalStars, useLevels } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import {
   bn, caption, cleanName, digitOf, encodeOrder, humanLine, outOf, parseShareHash, parseStart, proudLine, randomOrder, scoreOf, shareHash,
-  starWord, tableName, typeDigit, versusLine, whos, DEFAULT_ORDER, DEFAULT_TABLE, MAX_NAME, TABLES, type Shared, type WhoId,
+  nearMissLine, starWord, tableName, tableStars, typeDigit, versusLine, whos, DEFAULT_ORDER, DEFAULT_TABLE, LEVEL_COUNT, MAX_NAME, TABLES, type Shared, type WhoId,
 } from "../lib/namta";
 
 const TOOL = "namta";
@@ -47,6 +48,7 @@ export function SlateGame() {
   const friendPreview = useRef<HTMLCanvasElement>(null);
   const result = useRef<HTMLElement>(null);
   const resultVisible = useInView(result);
+  const levels = useLevels(TOOL, LEVEL_COUNT);
 
   const pending = feedback !== null;
   const index = pending ? a.length - 1 : a.length;
@@ -143,7 +145,10 @@ export function SlateGame() {
     else if (answers.length === q.length && answers.every((value, at) => value === t * q[at])) { sfx.good(); setTimeout(() => { sfx.win(); confetti(); }, 300); }
     else sfx.good();
     shownAt.current = Date.now();
-    if (answers.length === q.length) setSeconds(Math.max(1, Math.round((Date.now() - (startedAt ?? Date.now())) / 1000)));
+    if (answers.length === q.length) {
+      setSeconds(Math.max(1, Math.round((Date.now() - (startedAt ?? Date.now())) / 1000)));
+      levels.record(t, tableStars(scoreOf({ t, q, a: answers })));
+    }
   }
 
   // A real keyboard works too: digits (0-9 or ০-৯), Backspace, Enter. Typing a name is left alone.
@@ -229,13 +234,14 @@ export function SlateGame() {
         </div>
       </div>
 
-      {done ? (
+      {done ? (<>
+        <p className="nm-reward"><StarReveal count={tableStars(score)} />{nearMissLine(score) && <small>{nearMissLine(score)}</small>}</p>
         <div className="nm-after">
           <a className="kit-primary nm-see" href="#result">স্লেটের ছবি দেখো</a>
           <button type="button" className="kit-secondary" onClick={() => again(t)}>আবার খেলো</button>
           {t < TABLES.at(-1)! && <button type="button" className="kit-secondary" onClick={() => again(t + 1)}>{tableName(t + 1)} খেলো</button>}
         </div>
-      ) : (
+      </>) : (
         <div className="nm-pad" role="group" aria-label="উত্তর লেখার বোতাম">
           {KEYS.map(key => <button type="button" key={key} onClick={() => press(key)} disabled={feedback?.right === false}>{bn(key)}</button>)}
           <button type="button" className="nm-erase" onClick={erase} disabled={pending || !typed} aria-label="একটা অঙ্ক মুছো">
@@ -245,6 +251,12 @@ export function SlateGame() {
           <button type="button" className="nm-ok" onClick={submit} disabled={!pending && !typed} data-nudge={feedback?.right === false}>{pending ? "পরেরটা" : "ঠিক আছে"}</button>
         </div>
       )}
+
+      <details className="nm-levels">
+        <summary>সব নামতা <span>★ {bn(totalStars(levels.stars))}/{bn(TABLES.length * 3)}</span></summary>
+        <p>২ থেকে ২০, প্রতিটা নামতা একটা ঘর। ১০টাই ঠিক হলে ৩ তারা, ৭টা বা বেশি ঠিক হলে ২, শেষ করলে ১। সব নামতা সব সময় খোলা।</p>
+        <LevelGrid count={LEVEL_COUNT} stars={levels.stars} unlocked={LEVEL_COUNT} current={t} noun="নামতা" onPick={pick => { if (pick >= TABLES[0]) again(pick); }} />
+      </details>
 
       <StickyNext show={done && !resultVisible} title={<strong>{outOf(score)}</strong>} sub={card ? proudLine(score, who) : ""} href="#result" label="স্লেটের ছবি দেখো" />
 

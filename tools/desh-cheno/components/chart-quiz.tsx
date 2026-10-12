@@ -3,11 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { confetti, sfx, shake } from "../../../shared/game-sound";
-import { SoundToggle } from "../../../shared/game-ui";
+import { totalStars, useLevels } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
-import { badge, bn, compareLine, defaultSet, humanLine, isRight, parseResult, possessive, resultHash, rightShare, scoreLine, scoreOf, setById, tallyItems, MAX_NAME_LENGTH, ROUNDS, type Pick, type Result } from "../lib/game";
+import { badge, bn, compareLine, defaultSet, humanLine, isRight, nearMissLine, parseResult, possessive, resultHash, rightShare, scoreLine, scoreOf, setById, setStars, tallyItems, MAX_NAME_LENGTH, ROUNDS, type Pick, type Result } from "../lib/game";
 import { quizSets, type SetId } from "../lib/questions";
 import { Doodle, Star } from "./doodle";
 
@@ -32,8 +33,10 @@ export function ChartQuiz() {
   const firstChip = useRef<HTMLButtonElement>(null);
   const moved = useRef(false);
   const resultVisible = useInView(resultBox);
+  const levels = useLevels(TOOL, quizSets.length);
 
   const quiz = setById(setId)!;
+  const level = quizSets.findIndex(item => item.id === setId) + 1;
   const finished = at >= ROUNDS;
   const question = quiz.questions[Math.min(at, ROUNDS - 1)];
   const picked = picks[at];
@@ -62,10 +65,11 @@ export function ChartQuiz() {
     return () => window.removeEventListener("hashchange", readFriend);
   }, []);
 
-  // A soft chime as the score appears; confetti only for a perfect 10.
+  // Stars are saved per set; StarReveal chimes each star, so the big cheer is only for a perfect 10.
   useEffect(() => {
     if (!finished || !moved.current) return;
-    if (score === ROUNDS) { confetti(); sfx.win(); } else sfx.star(1);
+    levels.record(level, setStars(score));
+    if (score === ROUNDS) { confetti(); sfx.win(); }
   }, [finished]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Keyboard and screen-reader users land on the next step, never back at the top.
@@ -187,6 +191,12 @@ export function ChartQuiz() {
         </div>
       </div>
 
+      <details className="desh-levels">
+        <summary>সব সেট <span>★ {bn(totalStars(levels.stars))}/{bn(quizSets.length * 3)}</span></summary>
+        <p>{quizSets.map((item, index) => `${bn(index + 1)} ${item.short}`).join(" · ")}। ১০টাই ঠিক হলে ৩ তারা, ৭টা বা বেশি ঠিক হলে ২, শেষ করলে ১। সব সেট সব সময় খোলা।</p>
+        <LevelGrid count={quizSets.length} stars={levels.stars} unlocked={quizSets.length} current={level} noun="সেট" onPick={pick => { moved.current = false; start(quizSets[pick - 1].id); document.getElementById("chart")?.scrollIntoView(); }} />
+      </details>
+
       <StickyNext show={finished && !resultVisible} title={<><strong>{scoreLine(score)}</strong> · {badge(score)}</>} sub={line} href="#card" label="কার্ডটা দেখো" />
 
       {finished && (
@@ -194,6 +204,7 @@ export function ChartQuiz() {
           <div className="desh-result-head">
             <p className="desh-kicker">{badge(score)}</p>
             <h2 id="card-title">তোমার স্কোর <em>{scoreLine(score)}</em></h2>
+            <p className="desh-reward"><StarReveal count={setStars(score)} />{nearMissLine(score) && <small>{nearMissLine(score)}</small>}</p>
             <p>{line}{friend && friend.set === setId && <strong> {compareLine(score, friend)}</strong>}</p>
           </div>
           <div className="desh-result-body">

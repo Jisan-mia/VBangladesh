@@ -121,3 +121,14 @@
 }
 @media(hover:hover){.tool-bagdhara .bg-opt:not(:disabled):hover{background:#fff;border-color:var(--ink)}}
 @media(prefers-reduced-motion:reduce){.tool-bagdhara .bg-opt,.tool-bagdhara .bg-bars i{transition:none}.tool-bagdhara .bg-plate,.tool-bagdhara .bg-verdict::before{animation:none}}
+
+/* sets, stars and progress (levels) */
+.tool-bagdhara .bg-levels{margin-top:12px;border:1.5px solid color-mix(in srgb,var(--ink) 20%,transparent);border-radius:14px;background:#fff;color:var(--ink)}
+.tool-bagdhara .bg-levels summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-bagdhara .bg-levels summary span{font-weight:500;font-size:14px;color:var(--muted)}
+.tool-bagdhara .bg-levels p{margin:0 14px 10px;font-size:14px;line-height:1.55;color:var(--muted)}
+.tool-bagdhara .bg-levels .gx-levels{padding:0 12px 12px}
+.tool-bagdhara .bg-levels .gx-levels li:has(button.next)~li button.next{animation:none;box-shadow:none;border-width:1.5px}
+.tool-bagdhara .bg-reward{display:flex;align-items:center;flex-wrap:wrap;gap:2px 12px;margin:6px 0 4px}
+.tool-bagdhara .bg-reward .gx-stars{font-size:30px}
+.tool-bagdhara .bg-reward small{font-size:15px;font-weight:600;color:var(--accent-deep)}
