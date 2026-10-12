@@ -29,7 +29,7 @@ export const GATE_M = 1000;
 /** The road switches between the lane and the field every this many মিটার. */
 export const ZONE_M = 400;
 
-export const PUDDLE = 0, BASKET = 1, BIKE = 2, COW = 3, LINE = 4, BRANCH = 5, TIFFIN = 6;
+export const PUDDLE = 0, BASKET = 1, BIKE = 2, COW = 3, LINE = 4, BRANCH = 5, TIFFIN = 6, PAGE = 7;
 /** Hit boxes: `w` wide; for ground things `h` is the top, for hanging things it is the bottom edge. */
 export const SPEC = [
   { w: 50, h: 4, over: false },
@@ -39,7 +39,32 @@ export const SPEC = [
   { w: 40, h: 30, over: true },
   { w: 44, h: 30, over: true },
   { w: 16, h: 14, over: false },
+  { w: 18, h: 16, over: false },
 ] as const;
+/** Things you pick up rather than bump into. */
+export const isPickup = (kind: number) => kind === TIFFIN || kind === PAGE;
+
+/**
+ * The school week as levels: each day's gate is a little farther and adds one thing (a new obstacle, then more speed).
+ * `kinds` lists what may appear; anything else turns into the nearest allowed thing. Three pages from the kid's exercise book
+ * blow along each day's road. Day 0 is "যত দূর পারো": the original endless road (gate at 1000 m), which old links open.
+ */
+export type Day = { name: string; gate: number; boost: number; kinds: readonly number[] };
+export const DAYS: readonly Day[] = [
+  { name: "শনিবার", gate: 300, boost: 0, kinds: [PUDDLE, BASKET, LINE] },
+  { name: "রবিবার", gate: 400, boost: 0, kinds: [PUDDLE, BASKET, LINE, BIKE] },
+  { name: "সোমবার", gate: 500, boost: 10, kinds: [PUDDLE, BASKET, LINE, BIKE, COW] },
+  { name: "মঙ্গলবার", gate: 600, boost: 20, kinds: [PUDDLE, BASKET, LINE, BIKE, COW, BRANCH] },
+  { name: "বুধবার", gate: 800, boost: 35, kinds: [PUDDLE, BASKET, LINE, BIKE, COW, BRANCH] },
+  { name: "বৃহস্পতিবার", gate: 1000, boost: 50, kinds: [PUDDLE, BASKET, LINE, BIKE, COW, BRANCH] },
+];
+export const DAY_COUNT = DAYS.length, PAGES = 3;
+export const dayOf = (day: number) => DAYS[Math.max(1, Math.min(DAY_COUNT, day)) - 1];
+/** The gate for a day (or 1000 m on the endless road). */
+export const gateOf = (day: number) => day ? dayOf(day).gate : GATE_M;
+/** Where page i of a day's three is due: a quarter, a half and three quarters of the way, give or take a gap. */
+export const pageDue = (day: number, index: number) => Math.round(gateOf(day) * (0.25 + 0.25 * index));
+const SWAP: Record<number, number> = { [BIKE]: BASKET, [COW]: PUDDLE, [BRANCH]: LINE };
 export const isOver = (kind: number) => kind === LINE || kind === BRANCH;
 
 /** Piece states. */
@@ -51,8 +76,8 @@ const blank = (): Piece => ({ kind: PUDDLE, x: 0, w: 0, h: 0, y: 0, state: AHEAD
 const clamp = (value: number, low: number, high: number) => Math.min(high, Math.max(low, value));
 const lerp = (from: number, to: number, amount: number) => from + (to - from) * amount;
 
-/** The speed the road is laid out for at `meters`. The real speed is never higher (slow mode caps it lower). */
-export const speedAt = (meters: number) => Math.min(TOP, START + RAMP * Math.max(0, meters));
+/** The speed the road is laid out for at `meters` (a later day starts a little faster). The real speed is never higher (slow mode caps it lower). */
+export const speedAt = (meters: number, day = 0) => Math.min(TOP, START + (day ? dayOf(day).boost : 0) + RAMP * Math.max(0, meters));
 /** Half the roads have a girl in a pinafore with two braids, half a boy in shorts (a hash of the seed, not the road's dice). */
 export const girlFor = (seed: number) => ((Math.imul(seed, 2654435761) >>> 16) & 1) === 1;
 export const zoneOf = (meters: number) => Math.floor(Math.max(0, meters) / ZONE_M) % 2;
@@ -63,10 +88,13 @@ export const airAbove = (height: number) => 2 * Math.sqrt(Math.max(0, JUMP_V * J
 export type Road = {
   rng: () => number; end: number; count: number; nextTiffin: number;
   jumpHinted: boolean; duckHinted: boolean; queued: Piece; hasQueued: boolean;
+  /** The day (0 endless), its gate in মিটার, and how many of its pages are already on the road. */
+  day: number; gate: number; pages: number;
 };
 
-export const makeRoad = (seed: number): Road => ({
+export const makeRoad = (seed: number, day = 0): Road => ({
   rng: makeRng(seed), end: 0, count: 0, nextTiffin: 170, jumpHinted: false, duckHinted: false, queued: blank(), hasQueued: false,
+  day, gate: gateOf(day), pages: 0,
 });
 
 function chooseKind(road: Road, meters: number) {
@@ -74,8 +102,10 @@ function chooseKind(road: Road, meters: number) {
   if (road.count === 0) return PUDDLE;
   if (meters < 120) return roll < 0.55 ? PUDDLE : BASKET;
   if (!road.duckHinted && meters >= 140) return LINE;
-  if (meters < 220) return roll < 0.3 ? PUDDLE : roll < 0.55 ? BASKET : roll < 0.78 ? BIKE : LINE;
-  return roll < 0.2 ? PUDDLE : roll < 0.36 ? BASKET : roll < 0.52 ? BIKE : roll < 0.7 ? COW : roll < 0.86 ? LINE : BRANCH;
+  const kind = meters < 220 ? (roll < 0.3 ? PUDDLE : roll < 0.55 ? BASKET : roll < 0.78 ? BIKE : LINE)
+    : roll < 0.2 ? PUDDLE : roll < 0.36 ? BASKET : roll < 0.52 ? BIKE : roll < 0.7 ? COW : roll < 0.86 ? LINE : BRANCH;
+  // An early day hasn't met this obstacle yet: the nearest one it knows stands in.
+  return road.day && !dayOf(road.day).kinds.includes(kind) ? SWAP[kind] : kind;
 }
 
 /**
@@ -90,33 +120,40 @@ export function nextPiece(road: Road, out: Piece): Piece {
   // Time between the last thing's end and this one's start: generous at first, tighter far down the road.
   let gap = lerp(1.3, 0.72, clamp(meters / 1500, 0, 1)) * (1 + 0.55 * road.rng());
   if (road.rng() < 0.12) gap *= 1.7;
-  let x = road.count === 0 ? 28 * UNIT : road.end + speedAt(meters + 8) * gap;
+  let x = road.count === 0 ? 28 * UNIT : road.end + speedAt(meters + 8, road.day) * gap;
   // Nothing blocks the school gate.
-  if (x < (GATE_M + 15) * UNIT && x + w > (GATE_M - 15) * UNIT) x = (GATE_M + 15) * UNIT;
+  if (x < (road.gate + 15) * UNIT && x + w > (road.gate - 15) * UNIT) x = (road.gate + 15) * UNIT;
   let hint = 0;
   if (isOver(kind) && !road.duckHinted) { road.duckHinted = true; hint = 2; }
   else if (!isOver(kind) && !road.jumpHinted) { road.jumpHinted = true; hint = 1; }
-  const piece = road.count > 0 && meters >= road.nextTiffin && gap >= 0.95 ? road.queued : out;
+  const tiffin = road.count > 0 && meters >= road.nextTiffin && gap >= 0.95;
+  // A day's page waits in a roomy gap once it is due (never in the endless road, which must stay the original).
+  const page = !tiffin && road.day > 0 && road.pages < PAGES && road.count > 0 && meters >= pageDue(road.day, road.pages) && gap >= 0.95;
+  const piece = tiffin || page ? road.queued : out;
   Object.assign(piece, { kind, x, w, h: SPEC[kind].h, y: 0, state: AHEAD, hint });
   const before = road.end;
   road.end = x + w;
   road.count++;
   if (piece === out) return out;
-  // A tiffin box waits in the middle of the gap: low enough to run into, or high enough to need a jump.
   road.hasQueued = true;
+  if (page) {
+    road.pages++;
+    return Object.assign(out, { kind: PAGE, x: (before + x) / 2 - SPEC[PAGE].w / 2, w: SPEC[PAGE].w, h: SPEC[PAGE].h, y: road.rng() < 0.5 ? 8 : 88, state: AHEAD, hint: 0 });
+  }
+  // A tiffin box waits in the middle of the gap: low enough to run into, or high enough to need a jump.
   road.nextTiffin = meters + 260 + road.rng() * 140;
   return Object.assign(out, { kind: TIFFIN, x: (before + x) / 2 - SPEC[TIFFIN].w / 2, w: SPEC[TIFFIN].w, h: SPEC[TIFFIN].h, y: road.rng() < 0.5 ? 6 : 62, state: AHEAD, hint: 0 });
 }
 
 /** The road as a list up to `meters` (for tests and checks; the game itself fills a small ring). */
-export function planRoad(seed: number, meters: number) {
-  const road = makeRoad(seed), pieces: Piece[] = [];
+export function planRoad(seed: number, meters: number, day = 0) {
+  const road = makeRoad(seed, day), pieces: Piece[] = [];
   while (road.end < meters * UNIT || road.hasQueued) pieces.push(nextPiece(road, blank()));
   return pieces;
 }
 
 /** What happened, for the scene's dust, pops and banners. */
-export const JUMPED = 0, LANDED = 1, GOT_TIFFIN = 2, SAVED = 3, MILESTONE = 4, GATE = 5, CRASH = 6;
+export const JUMPED = 0, LANDED = 1, GOT_TIFFIN = 2, SAVED = 3, MILESTONE = 4, GATE = 5, CRASH = 6, GOT_PAGE = 7;
 export type RunEvent = { type: number; t: number; at: number };
 
 const RING = 16;
@@ -128,11 +165,14 @@ export type Run = {
   jumpHeld: boolean; jumpAt: number; duckHeld: boolean; duckUntil: number;
   tiffin: boolean; safeUntil: number; over: boolean; hitKind: number; meters: number; gate: boolean;
   events: RunEvent[]; eventCount: number;
+  /** The day (0 endless), its gate in মিটার, pages picked up, and bumps the tiffin box forgave. A day ends at its gate: over with hitKind −1. */
+  day: number; gateM: number; pages: number; saves: number;
 };
 
-export function createRun(seed: number, cap = TOP): Run {
+export function createRun(seed: number, cap = TOP, day = 0): Run {
   return {
-    seed, road: makeRoad(seed), ring: Array.from({ length: RING }, blank), first: 0, count: 0,
+    day, gateM: gateOf(day), pages: 0, saves: 0,
+    seed, road: makeRoad(seed, day), ring: Array.from({ length: RING }, blank), first: 0, count: 0,
     d: 0, t: 0, speed: START, cap, y: 0, vy: 0, air: -1, hold: 0, ducking: false,
     jumpHeld: false, jumpAt: -9, duckHeld: false, duckUntil: -9,
     tiffin: false, safeUntil: -9, over: false, hitKind: -1, meters: 0, gate: false,
@@ -162,7 +202,7 @@ export const kidTop = (run: Run) => run.y + (run.ducking ? DUCK_H : KID_H);
 
 /** Does the kid's body touch piece `piece` right now? (Only the vertical test: the caller has checked they overlap sideways.) */
 export function touches(run: Run, piece: Piece) {
-  if (piece.kind === TIFFIN) return run.y < piece.y + piece.h && kidTop(run) > piece.y;
+  if (isPickup(piece.kind)) return run.y < piece.y + piece.h && kidTop(run) > piece.y;
   return isOver(piece.kind) ? kidTop(run) > piece.h : run.y < piece.h;
 }
 
@@ -173,7 +213,7 @@ export function touches(run: Run, piece: Piece) {
 export function stepRun(run: Run, dt: number) {
   if (run.over) return;
   run.t += dt;
-  run.speed = Math.min(run.cap, speedAt(run.d / UNIT));
+  run.speed = Math.min(run.cap, speedAt(run.d / UNIT, run.day));
   run.d += run.speed * dt;
 
   // Keep the road laid out a little past the right edge.
@@ -206,8 +246,9 @@ export function stepRun(run: Run, dt: number) {
     if (piece.x + piece.w < left) { piece.state = PASSED; continue; }
     if (!touches(run, piece)) continue;
     if (piece.kind === TIFFIN) { piece.state = TAKEN; run.tiffin = true; emit(run, GOT_TIFFIN, piece.x); continue; }
+    if (piece.kind === PAGE) { piece.state = TAKEN; run.pages++; emit(run, GOT_PAGE, piece.x); continue; }
     if (run.t < run.safeUntil) continue;
-    if (run.tiffin) { run.tiffin = false; run.safeUntil = run.t + SHIELD_TIME; piece.state = HIT; emit(run, SAVED, piece.x); continue; }
+    if (run.tiffin) { run.tiffin = false; run.saves++; run.safeUntil = run.t + SHIELD_TIME; piece.state = HIT; emit(run, SAVED, piece.x); continue; }
     piece.state = HIT; run.over = true; run.hitKind = piece.kind;
     emit(run, CRASH, piece.x);
     break;
@@ -217,8 +258,14 @@ export function stepRun(run: Run, dt: number) {
 
   const meters = Math.floor(run.d / UNIT);
   if (meters !== run.meters) {
-    if (!run.gate && meters >= GATE_M) { run.gate = true; emit(run, GATE, run.d); }
+    if (!run.gate && meters >= run.gateM) {
+      run.gate = true; emit(run, GATE, run.d);
+      if (run.day) { run.meters = run.gateM; run.over = true; run.hitKind = -1; return; }
+    }
     else if (Math.floor(meters / 100) > Math.floor(run.meters / 100)) emit(run, MILESTONE, run.d);
     run.meters = meters;
   }
 }
+
+/** Stars for a day: 0 short of the gate; at the gate one, two with two pages, three with all three. */
+export const dayStars = (run: Pick<Run, "day" | "gate" | "pages" | "over" | "hitKind">) => !run.day || !run.gate || run.hitKind >= 0 ? 0 : run.pages >= PAGES ? 3 : run.pages >= 2 ? 2 : 1;

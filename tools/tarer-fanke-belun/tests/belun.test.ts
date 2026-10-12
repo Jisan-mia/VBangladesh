@@ -169,7 +169,7 @@ test("score bands give a kind line; the friend lines compare honestly", () => {
   assert.equal(versusLine(12, 12, "রাফি"), "সমান সমান! দুজনেই ১২টা ফাঁক।");
   assert.equal(versusLine(10, 12, "জাহিদ"), "আর একটু হলেই! জাহিদের চেয়ে মাত্র ২টা কম।");
   assert.equal(versusLine(2, 12, ""), "এবার বন্ধু এগিয়ে। একই তার, আরেকবার চেষ্টা করো।");
-  const card = { seed: 7, score: 37, name: "রাফি", big: true, slow: false };
+  const card = { seed: 7, score: 37, name: "রাফি", big: true, slow: false, stage: 0 };
   assert.equal(friendBanner(card), "রাফি ৩৭টা ফাঁক পার করেছে। একই তারের জট, এবার তোমার পালা।");
   assert.equal(friendNote(card), "রাফির নিজের ফোনের স্কোর, বড় ফাঁকে");
   assert.equal(previewTitle({ ...card, name: "" }), "এক বন্ধু তারের জটে ৩৭টা ফাঁক পার করেছে। তুমি পারবে?");
@@ -178,11 +178,11 @@ test("score bands give a kind line; the friend lines compare honestly", () => {
 });
 
 test("links round-trip and reject hostile or broken input", () => {
-  const card = { seed: 123456, score: 37, name: "রাফি", big: true, slow: true };
+  const card = { seed: 123456, score: 37, name: "রাফি", big: true, slow: true, stage: 0 };
   const hash = cardHash(card);
   assert.equal(hash, `s=123456&t=37&b=1&d=1&n=${encodeURIComponent("রাফি")}`);
   assert.deepEqual(parseCard(`#${hash}`), card);
-  assert.deepEqual(parseCard("s=9&t=0"), { seed: 9, score: 0, name: "", big: false, slow: false });
+  assert.deepEqual(parseCard("s=9&t=0"), { seed: 9, score: 0, name: "", big: false, slow: false, stage: 0 });
   assert.equal(cardHash({ ...card, score: 5000 }).includes(`t=${MAX_SCORE}`), true);
   for (const bad of ["", "s=0&t=3", "s=1&t=-1", "s=1&t=1000", "s=1.5&t=3", "s=1&t=3.2", "s=abc&t=3", "s=1&t=3&b=2", "s=1&t=3&d=yes", "s=1000000000&t=3", `s=1&t=3&n=${"x".repeat(700)}`]) {
     assert.equal(parseCard(bad), null, bad);

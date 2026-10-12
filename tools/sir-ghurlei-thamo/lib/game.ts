@@ -1,9 +1,9 @@
 // Rules for স্যার ঘুরলেই থামো: the teacher's seeded routine at the blackboard, the chit moving bench to bench,
 // what happens when the teacher looks, and how the time is scored. Pure and allocation-free in the step, so tests can play whole games.
-import { makeRng, pick } from "../../../shared/game-core";
-import { BENCHES, MAX_TENTHS, MIN_TENTHS, SPEED } from "./link";
+import { makeRng, pick, starsFor } from "../../../shared/game-core";
+import { BENCHES, CLASSIC, LEVEL_COUNT, MAX_TENTHS, MIN_TENTHS, SPEED } from "./link";
 
-export { BENCHES, bn, MAX_CATCHES, MAX_TENTHS, MIN_TENTHS, parseShared, previewTitle, seconds, sharedHash, SLUG, SPEED, type Shared } from "./link";
+export { BENCHES, bn, CLASSIC, LEVEL_COUNT, MAX_CATCHES, MAX_TENTHS, MIN_TENTHS, parseShared, previewTitle, seconds, sharedHash, SLUG, SPEED, type Shared } from "./link";
 
 /** write: back to the class. tell: chalk stops, head tilts, then a real turn. look: facing the class.
  *  cough and drop: harmless (a cough; a dropped chalk picked up from the floor). peek: looks like a tell, then back to writing. */
@@ -45,8 +45,36 @@ const SCHEDULE_SECONDS = 720;
 /** Children per bench in the middle row; the chit holder on each bench is one of them. */
 export const SEATS = 2;
 
+/**
+ * The classes, from a teacher who writes long and slow to one who turns fast and fakes it. Each adds one thing.
+ * write = w0 + wd·d + rng·wr seconds (d ramps 0 → 1 over RAMP cycles); a harmless moment splits the writing from cycle `fakeFrom`
+ * with chance f0 + fd·d (a cough with chance `cough`, else a dropped chalk), and is a peek (a fake turn) from cycle `peekFrom` with chance `peek`;
+ * tell = t0 + td·d + rng·tr; look = l0 + rng·(lr + ld·d). Class 5 is the original game's routine, draw for draw, so old links replay it exactly.
+ */
+export type Level = {
+  name: string; first: [number, number]; write: [number, number, number];
+  fakeFrom: number; fake: [number, number]; cough: number; peekFrom: number; peek: number;
+  tell: [number, number, number]; look: [number, number, number];
+};
+const BASE: Level = { name: "", first: [2.6, 0.8], write: [2.3, -0.8, 1.3], fakeFrom: 1, fake: [0.2, 0.3], cough: 0.5, peekFrom: 3, peek: 0.4, tell: [0.8, -0.3, 0.08], look: [1.1, 0.5, 0.7] };
+export const LEVELS: readonly Level[] = [
+  { ...BASE, name: "ধীরে ধীরে লেখা", first: [3.2, 0.6], write: [3.0, -0.4, 1.0], fakeFrom: Infinity, peekFrom: Infinity, tell: [1.0, -0.1, 0.1], look: [1.0, 0.4, 0.3] },
+  { ...BASE, name: "মাঝে মাঝে কাশি", first: [3.0, 0.6], write: [2.8, -0.6, 1.1], fake: [0.25, 0.15], cough: 1, peekFrom: Infinity, tell: [0.95, -0.2, 0.08], look: [1.05, 0.4, 0.4] },
+  { ...BASE, name: "চক পড়ে যায়", write: [2.6, -0.7, 1.2], fake: [0.25, 0.2], peekFrom: Infinity, tell: [0.9, -0.25, 0.08], look: [1.1, 0.5, 0.5] },
+  { ...BASE, name: "হঠাৎ থেমে যাওয়া", write: [2.4, -0.8, 1.3], peekFrom: 2, peek: 0.35, tell: [0.85, -0.3, 0.08], look: [1.1, 0.5, 0.6] },
+  { ...BASE, name: "রোজকার ক্লাস" },
+  { ...BASE, name: "তাড়াতাড়ি ঘোরা", tell: [0.7, -0.3, 0.08] },
+  { ...BASE, name: "বারবার থামা", fake: [0.3, 0.3], peekFrom: 1, peek: 0.55, tell: [0.7, -0.3, 0.08] },
+  { ...BASE, name: "অনেকক্ষণ তাকানো", fake: [0.3, 0.3], peekFrom: 1, peek: 0.55, tell: [0.7, -0.3, 0.08], look: [1.3, 0.6, 0.9] },
+  { ...BASE, name: "ছোট ছোট লেখা", write: [1.9, -0.7, 1.1], fake: [0.3, 0.3], peekFrom: 1, peek: 0.55, tell: [0.65, -0.25, 0.06], look: [1.3, 0.6, 0.9] },
+  { ...BASE, name: "শেষ পিরিয়ড", write: [1.8, -0.7, 1.0], fake: [0.35, 0.3], peekFrom: 1, peek: 0.6, tell: [0.6, -0.25, 0.06], look: [1.3, 0.6, 1.0] },
+];
+export const levelOf = (level: number) => LEVELS[Math.max(1, Math.min(LEVEL_COUNT, level)) - 1];
+
 export type Klass = {
   seed: number;
+  /** Which class (1..LEVEL_COUNT) the routine belongs to. */
+  level: number;
   teacher: Teacher;
   chit: number;
   reply: number;
@@ -61,8 +89,8 @@ export type Klass = {
 const r2 = (value: number) => Math.round(value * 100) / 100;
 
 /** The seed fixes the teacher, the note, the board, the chit's path and the whole routine, so a friend gets the same class. */
-export function makeClass(seed: number): Klass {
-  const rng = makeRng(seed);
+export function makeClass(seed: number, level = CLASSIC): Klass {
+  const rng = makeRng(seed), L = levelOf(level);
   const teacher: Teacher = rng() < 0.5 ? "sir" : "madam";
   const chit = pick(rng, CHITS.length), reply = pick(rng, REPLIES.length), board = pick(rng, BOARDS.length);
   // Mostly zig-zag across the bench, so every hand-off is easy to see.
@@ -75,19 +103,19 @@ export function makeClass(seed: number): Klass {
     if (cycle === RAMP) loopFrom = segments.length;
     const d = Math.min(1, cycle / RAMP);
     // The first stretch is long and calm so the first seconds are fun; later ones are shorter and less even.
-    const write = cycle === 0 ? 2.6 + rng() * 0.8 : 2.3 - 0.8 * d + rng() * 1.3;
-    // From the second cycle a harmless moment may split the writing; a peek (looks like a turn, isn't) only from the fourth.
-    if (cycle >= 1 && rng() < 0.2 + 0.3 * d) {
-      const kind = cycle >= 3 && rng() < 0.4 ? "peek" : rng() < 0.5 ? "cough" : "drop";
+    const write = cycle === 0 ? L.first[0] + rng() * L.first[1] : L.write[0] + L.write[1] * d + rng() * L.write[2];
+    // A harmless moment may split the writing (in the original class from the second cycle); a peek (looks like a turn, isn't) only later.
+    if (cycle >= L.fakeFrom && rng() < L.fake[0] + L.fake[1] * d) {
+      const kind = cycle >= L.peekFrom && rng() < L.peek ? "peek" : rng() < L.cough ? "cough" : "drop";
       const before = 0.8 + rng() * 0.6;
       add("write", before);
       add(kind, kind === "peek" ? 0.55 + rng() * 0.25 : FAKE[kind]);
       add("write", Math.max(0.9, write - before));
     } else add("write", write);
-    add("tell", 0.8 - 0.3 * d + rng() * 0.08);
-    add("look", 1.1 + rng() * (0.5 + 0.7 * d));
+    add("tell", L.tell[0] + L.tell[1] * d + rng() * L.tell[2]);
+    add("look", L.look[0] + rng() * (L.look[1] + L.look[2] * d));
   }
-  return { seed, teacher, chit, reply, board, path, segments, loopFrom };
+  return { seed, level, teacher, chit, reply, board, path, segments, loopFrom };
 }
 
 export type Phase = "ready" | "playing" | "over";
@@ -115,8 +143,8 @@ export type Game = {
   ink: number;
 };
 
-export function createGame(seed: number): Game {
-  return { klass: makeClass(seed), phase: "ready", pos: 0, time: 0, seg: 0, segT: 0, scold: 0, backFrom: 0, backTo: 0, catches: 0, needRelease: false, moving: false, ink: 0 };
+export function createGame(seed: number, level = CLASSIC): Game {
+  return { klass: makeClass(seed, level), phase: "ready", pos: 0, time: 0, seg: 0, segT: 0, scold: 0, backFrom: 0, backTo: 0, catches: 0, needRelease: false, moving: false, ink: 0 };
 }
 
 const nextSeg = (klass: Klass, seg: number) => (seg + 1 < klass.segments.length ? seg + 1 : klass.loopFrom);
@@ -185,3 +213,31 @@ export function statusOf(game: Game, holding: boolean): Status {
   if (game.needRelease && holding && kind !== "look") return "lift";
   return kind;
 }
+
+/** How quickly a player can see things change and react, for the star targets. */
+export const REACTION = 0.25;
+
+/**
+ * A sharp, careful classmate: moves while the teacher writes (or coughs, or picks up the chalk) and stops at every tell,
+ * each change seen `reaction` seconds late. Returns the finishing time in tenths and how often they were caught.
+ */
+export function carefulRun(klass: Pick<Klass, "seed" | "level">, reaction = REACTION, rate = 1) {
+  const game = createGame(klass.seed, klass.level);
+  let seen: string = "write", heard: string = "write", timer = 0, steps = 0;
+  stepGame(game, true, 1 / 60, rate);
+  while (game.phase !== "over" && steps++ < 60 * 600) {
+    const kind = game.scold > 0 ? "scold" : kindOf(game);
+    if (kind !== heard) { heard = kind; timer = reaction; }
+    if (timer > 0 && (timer -= 1 / 60) <= 0) seen = heard;
+    stepGame(game, !game.needRelease && (seen === "write" || seen === "cough" || seen === "drop"), 1 / 60, rate);
+  }
+  return { tenths: tenthsOf(game.time), catches: game.catches };
+}
+
+/** Star targets for a class: three for the careful classmate's time plus one second, two for five seconds more. Finishing is one. */
+export function starTargets(klass: Pick<Klass, "seed" | "level">) {
+  const three = carefulRun(klass).tenths + 10;
+  return { three, two: three + 50 };
+}
+/** Stars for a finished class. Slow mode runs the class at `rate`, so its real seconds count at that rate. */
+export const classStars = (tenths: number, targets: { three: number; two: number }, rate = 1) => starsFor(Math.round(tenths * rate), targets.three, targets.two, true);

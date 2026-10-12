@@ -1,7 +1,8 @@
 // Everything the game says: the status line, the result lines by time band, the post caption and the kind comparison with a friend.
 import { possessive } from "../../../shared/bangla";
+import { readLevels } from "../../../shared/game-core";
 import { TITLE, type Status, type Teacher } from "./game";
-import { bn, BENCHES, seconds, type Shared } from "./link";
+import { bn, BENCHES, CLASSIC, LEVEL_COUNT, seconds, type Shared } from "./link";
 
 export function statusLine(status: Status, teacher: Teacher, tapMode: boolean, reply = "") {
   const who = TITLE[teacher];
@@ -43,4 +44,30 @@ export function compareLine(mine: number, friend: Shared) {
   if (mine < friend.tenths) return `${possessive(who)} চেয়ে ${seconds(gap)} সেকেন্ড আগে!`;
   if (gap <= 30) return `আর একটু হলেই! ${who} মাত্র ${seconds(gap)} সেকেন্ড এগিয়ে।`;
   return `${who} এবার ${seconds(gap)} সেকেন্ড এগিয়ে। আরেকবার?`;
+}
+
+/**
+ * What one more try would change, in real seconds; "" when nothing is close. Slow mode counts its time at `rate`,
+ * so the seconds to save are scaled back to the clock the player sees.
+ */
+export function nearMiss({ tenths, stars, three, two, rate, best }: { tenths: number; stars: number; three: number; two: number; rate: number; best: number | null }) {
+  const scaled = Math.round(tenths * rate), back = (need: number) => seconds(Math.max(1, Math.ceil(need / rate)));
+  if (stars === 2) return `আর ${back(scaled - three)} সেকেন্ড আগে পৌঁছালেই ৩ তারা।`;
+  if (stars === 1) return `আর ${back(scaled - two)} সেকেন্ড আগে পৌঁছালেই ২ তারা।`;
+  if (best !== null && tenths > best && tenths - best <= 30) return `আর ${seconds(tenths - best)} সেকেন্ড আগে হলেই নতুন সেরা।`;
+  return "";
+}
+
+/** The line over a finished class's stars (the reply itself is already in the status strip). */
+export const clearLine = (level: number) => level === LEVEL_COUNT ? "শেষ পিরিয়ডও পার!" : `ক্লাস ${bn(level)} পার!`;
+
+/**
+ * Old phones kept only a best time from the original routine, which is class 5 now. Run once, before the level store is first read:
+ * that class counts as cleared with 1 star, which opens classes 1–6. Returns the new store, or null for nothing to do.
+ */
+export function migrateLevels(levelsRaw: string | null, bestRaw: string | null) {
+  if (levelsRaw !== null || bestRaw === null) return null;
+  const best = Number(bestRaw);
+  if (!Number.isFinite(best) || best <= 0) return null;
+  return JSON.stringify(readLevels(JSON.stringify({ [CLASSIC]: 1 }), LEVEL_COUNT));
 }
