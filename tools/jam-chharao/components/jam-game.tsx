@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { confetti, fitCanvas, sfx, tone, totalStars, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { confetti, fitCanvas, sfx, tone, totalStars, useLevels, useSlowMode, MAX_NAME, buzz } from "../../../shared/game-kit";
 import { LevelGrid, SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
 import { boardHeight, boardWidth, cellX, cellY, drawPicked, drawStreet, drawVehicle, SIDE, TOP } from "../lib/art";
@@ -171,7 +171,7 @@ export function JamGame() {
     if (!next.won) { if (moved === 0) putt(); else sfx.drop(); }
     setGame(next);
     if (!help) setNote("");
-    if (next.won && !slowRef.current && typeof navigator.vibrate === "function") navigator.vibrate(20);
+    if (next.won && !slowRef.current) buzz(20);
     return true;
   }
 

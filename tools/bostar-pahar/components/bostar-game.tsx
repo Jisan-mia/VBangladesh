@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { cleanName, confetti, fitCanvas, hiss, MAX_NAME, newSeed, readLevels, sfx, tone, totalStars, unlockedLevel, useBest, useGameLoop, useLevels, useSlowMode } from "../../../shared/game-kit";
+import { cleanName, confetti, fitCanvas, hiss, MAX_NAME, newSeed, readLevels, sfx, tone, totalStars, unlockedLevel, useBest, useGameLoop, useLevels, useSlowMode, buzz } from "../../../shared/game-kit";
 import { LevelGrid, SoundToggle, Stars } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -74,7 +74,7 @@ export function BostarGame() {
       thump();
       // ঠিক মাঝে climbs a note with every one in a row.
       if (now.verdict === "perfect") sfx.combo(now.combo - 1);
-      if (!slow) navigator.vibrate?.(now.verdict === "perfect" ? 18 : 8);
+      if (!slow) buzz(now.verdict === "perfect" ? 18 : 8);
       const sacks = count - 1, before = starsOf(sacks - 1, now.level), after = starsOf(sacks, now.level);
       if (after > before) {
         levels.record(now.level, after);

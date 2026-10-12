@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { cleanName, confetti, hiss, newSeed, readLevels, sfx, tone, totalStars, unlockedLevel, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { cleanName, confetti, hiss, newSeed, readLevels, sfx, tone, totalStars, unlockedLevel, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME, buzz } from "../../../shared/game-kit";
 import { LevelGrid, SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -118,7 +118,7 @@ export function CycleGame() {
       if (played.streak !== streakBefore) setStreak(played.streak);
       if (view) {
         const happened = absorb(view, played);
-        if (happened & LETTER_TAKEN) { letter(played.streak - 1); if (!slow && typeof navigator.vibrate === "function") navigator.vibrate(8); }
+        if (happened & LETTER_TAKEN) { letter(played.streak - 1); if (!slow) buzz(8); }
         if (happened & BELL_RANG) bell();
         if (happened & CRASHED) {
           if (played.hitKind === PUDDLE) sfx.splash(); else sfx.thud();

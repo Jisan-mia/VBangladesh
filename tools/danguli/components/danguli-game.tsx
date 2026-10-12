@@ -3,7 +3,7 @@
 
 import { useEffect, useRef, useState, type MouseEvent, type PointerEvent } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { cleanName, confetti, fitCanvas, hiss, MAX_NAME, newSeed, readLevels, sfx, tone, totalStars, unlockedLevel, useBest, useGameLoop, useLevels, useSlowMode } from "../../../shared/game-kit";
+import { cleanName, confetti, fitCanvas, hiss, MAX_NAME, newSeed, readLevels, sfx, tone, totalStars, unlockedLevel, useBest, useGameLoop, useLevels, useSlowMode, buzz } from "../../../shared/game-kit";
 import { LevelGrid, SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -109,7 +109,7 @@ export function DanguliGame() {
       else {
         strikeFeel(scene.current, shot);
         knock(shot.quality);
-        if (!slow) navigator.vibrate?.(12);
+        if (!slow) buzz(12);
       }
     }
     sync();

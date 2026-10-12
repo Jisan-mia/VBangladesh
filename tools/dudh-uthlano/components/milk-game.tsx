@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { cleanName, confetti, fitCanvas, hiss, loop, newSeed, sfx, tone, totalStars, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { cleanName, confetti, fitCanvas, hiss, loop, newSeed, sfx, tone, totalStars, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME, buzz } from "../../../shared/game-kit";
 import { LevelGrid, SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -216,7 +216,7 @@ export function MilkGame() {
     streak.current = score >= 90 ? streak.current + 1 : 0;
     if (streak.current > 1) sfx.combo(streak.current - 2);
     else if (score >= 90) sfx.good();
-    if (!slow) navigator.vibrate?.(12);
+    if (!slow) buzz(12);
     bump();
   }
 

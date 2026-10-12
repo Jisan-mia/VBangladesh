@@ -5,7 +5,7 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { confetti, hiss, newSeed, readLevels, sfx, shake, tone, totalStars, unlockedLevel, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { confetti, hiss, newSeed, readLevels, sfx, shake, tone, totalStars, unlockedLevel, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME, buzz } from "../../../shared/game-kit";
 import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -178,7 +178,7 @@ export function ChuruiGame() {
     clapSound();
     if (!hit) return;
     flutter();
-    if (!slow) navigator.vibrate?.(8);
+    if (!slow) buzz(8);
     // Quick shoos in a row climb in pitch.
     const run = streak.current;
     run.count = played.t - run.at < 1.6 ? run.count + 1 : 0;
