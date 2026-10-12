@@ -122,6 +122,7 @@ import { site as bhimruler_chak } from '../tools/bhimruler-chak/content';
 import { site as churir_bazar } from '../tools/churir-bazar/content';
 import { site as mukhe_mukhe_hisab } from '../tools/mukhe-mukhe-hisab/content';
 import { site as chhobir_tukro } from '../tools/chhobir-tukro/content';
+import { site as sat_chara } from '../tools/sat-chara/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -248,6 +249,7 @@ export const toolContent = {
   'churir-bazar': churir_bazar,
   'mukhe-mukhe-hisab': mukhe_mukhe_hisab,
   'chhobir-tukro': chhobir_tukro,
+  'sat-chara': sat_chara,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];

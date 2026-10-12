@@ -124,6 +124,7 @@ import { share as bhimruler_chak } from '../tools/bhimruler-chak/share';
 import { share as churir_bazar } from '../tools/churir-bazar/share';
 import { share as mukhe_mukhe_hisab } from '../tools/mukhe-mukhe-hisab/share';
 import { share as chhobir_tukro } from '../tools/chhobir-tukro/share';
+import { share as sat_chara } from '../tools/sat-chara/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -251,6 +252,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'churir-bazar': churir_bazar,
   'mukhe-mukhe-hisab': mukhe_mukhe_hisab,
   'chhobir-tukro': chhobir_tukro,
+  'sat-chara': sat_chara,
 };
 
 export function toolShare(tool: string): ToolShare | null {
