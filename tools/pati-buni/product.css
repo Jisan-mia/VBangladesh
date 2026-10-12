@@ -82,3 +82,8 @@
 }
 @media(prefers-reduced-motion:reduce){.pb-slip{animation:none}.pb-key:active{transform:none}}
 .pb-hero h1 .pb-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;line-height:1.5;color:var(--khoyeri)}
+/* sound switch beside the pause; near-miss line on the slip */
+.tool-pati-buni .pb-sound{flex:none;border-color:var(--cane-edge);background:#fff}
+.pb-near{margin:4px 0 2px;padding:4px 10px;border-radius:10px;background:#f2b63233;font-size:15px;font-weight:700}
+/* a phone-wide HUD: the snail alone says ধীরে খেলো (aria-label keeps the words), and a long score wraps instead of pushing the page sideways */
+@media(max-width:440px){.tool-pati-buni .pb-hud{flex-wrap:wrap;row-gap:4px;gap:8px}.tool-pati-buni .pb-slow{width:44px;padding:0;justify-content:center}.tool-pati-buni .pb-slow-text{display:none}}

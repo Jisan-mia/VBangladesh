@@ -3,7 +3,8 @@ import test from "node:test";
 import { site } from "../content";
 import { share } from "../share";
 import {
-  bands, banner, caption, compareLine, humanLine, noteText, parseShared, piecesLine, previewTitle, sharedHash, RULES, SOLO_RULE, type Shared,
+  bands, banner, caption, compareLine, humanLine, migrateBest, nearLine, noteText, parseShared, piecesLine, previewTitle, sharedHash, startLevel, starsOf,
+  LEVEL_COUNT, LEVELS, RULES, SOLO_RULE, type Shared,
 } from "../lib/link";
 import {
   createWorld, firstHit, isFree, kineticEnergy, shoot, step, BASE_Y, BOARD, COIN_R, COUNT, MAX_SHOT_TIME, POCKET_R, POCKET_X, POCKET_Y, QUEEN, STEP, STRIKER,
@@ -372,4 +373,66 @@ test("content meets the SEO limits, says what a link carries, and stays clear of
   for (const word of ["নম্বর", "পয়েন্ট", "নাম", "নিজের ফোনে"]) assert.match(privacy, new RegExp(word));
   const everything = JSON.stringify(site) + share.preview("").description + RULES.join(" ") + SOLO_RULE;
   assert.doesNotMatch(everything, /আপনি|করুন|জুয়া|বাজি|টাকা জিত|হারাম|হালাল|জায়েজ|Carrom Pool/);
+});
+
+test("ten boards: distinct seeds, two planted lanes each, targets that rise, and a plain bot earns three stars on every one", () => {
+  assert.equal(LEVEL_COUNT, 10);
+  assert.equal(new Set(LEVELS.map(level => level.seed)).size, LEVEL_COUNT);
+  assert.equal(LEVELS[0].one, 1, "board 1 is passed with a single coin");
+  LEVELS.forEach((level, index) => {
+    assert.ok(level.one >= 1 && level.one < level.two && level.two < level.three && level.three <= MAX_SOLO, level.name);
+    if (index) for (const key of ["one", "two", "three"] as const) assert.ok(level[key] >= LEVELS[index - 1][key], `${level.name} ${key} never drops`);
+    assert.equal(scatter(createWorld(), level.seed).length, 2, `${level.name} has its two easy lanes`);
+    const g = newGame("solo", level.seed);
+    while (g.phase !== "over") playShot(g, bestShot(g));
+    const points = soloPoints(g.world);
+    assert.equal(starsOf(points, index + 1), 3, `${level.name}: the bot made ${points}, three stars need ${level.three}`);
+  });
+});
+
+test("stars, the opening board, the one-time best migration and near-miss lines", () => {
+  assert.equal(starsOf(0, 1), 0);
+  assert.equal(starsOf(1, 1), 1);
+  assert.equal(starsOf(4, 1), 2);
+  assert.equal(starsOf(6, 1), 3);
+  assert.equal(starsOf(4, 10), 0, "below the pass mark");
+  assert.equal(starsOf(5, 99), 0, "no such board");
+  assert.equal(startLevel({}, 1), 1);
+  assert.equal(startLevel({ 1: 3, 2: 1 }, 3), 3);
+  assert.equal(startLevel({ 1: 3, 2: 2, 3: 3 }, 3), 2, "a fully cleared run reopens the furthest board short of three stars");
+  // The old phone-wide best (random boards) becomes board 1's stars, once.
+  assert.equal(migrateBest({}, "7"), 3);
+  assert.equal(migrateBest({}, "2"), 1);
+  assert.equal(migrateBest({}, "0"), 0);
+  assert.equal(migrateBest({}, null), 0);
+  assert.equal(migrateBest({}, "junk"), 0);
+  assert.equal(migrateBest({ 1: 1 }, "9"), 0, "never again once boards are saved");
+  assert.equal(nearLine(0, 2, null), "আর ২ পয়েন্ট হলেই বোর্ড পার।");
+  assert.equal(nearLine(5, 2, null), "আর ২ পয়েন্ট হলে ৩ তারা।");
+  assert.equal(nearLine(3, 2, null), "আর ১ পয়েন্ট হলে ২ তারা।");
+  assert.equal(nearLine(9, 2, 9), "আর ১ পয়েন্ট হলেই নতুন সেরা।");
+  assert.equal(nearLine(9, 2, 15), "");
+  assert.equal(nearLine(3, 0, 5), "", "a friend's old board has no targets");
+});
+
+test("board links carry l, old links without it still open, and a board number must match its seed", () => {
+  const board: Shared = { mode: "solo", seed: LEVELS[2].seed, points: 6, queen: false, name: "রাফি", level: 3 };
+  const hash = sharedHash(board);
+  assert.match(hash, /&l=3/);
+  assert.deepEqual(parseShared(hash), board);
+  assert.equal(share.normalize(hash), hash);
+  const old = parseShared("s=48213&t=8&q=1&n=" + encodeURIComponent("রাফি"));
+  assert.deepEqual(old, { mode: "solo", seed: 48213, points: 8, queen: true, name: "রাফি" });
+  for (const bad of [`s=48213&t=6&l=3`, `s=${LEVELS[0].seed}&t=6&l=0`, `s=${LEVELS[0].seed}&t=6&l=11`, `s=${LEVELS[0].seed}&t=6&l=one`, `s=${LEVELS[0].seed}&t=6&l=1.0`]) assert.equal(parseShared(bad), null, bad);
+  assert.equal(parseShared(`s=5&t=7&q=1&m=d&w=1&l=3`)?.mode, "duo", "two-player links ignore l");
+});
+
+test("the world reports its hardest clack and cushion bump for the page's sounds, without changing the physics", () => {
+  const w = createWorld();
+  w.on[0] = w.on[STRIKER] = 1;
+  w.x[0] = 370; w.y[0] = 300; w.x[STRIKER] = 370; w.y[STRIKER] = 500;
+  shoot(w, 0, -1, 0.8);
+  let clacked = false;
+  while (w.moving) { step(w, STEP); if (w.clack > 0) clacked = true; }
+  assert.ok(clacked && w.bump > 0, "a straight hit clacks, then the coin bumps the top cushion");
 });
