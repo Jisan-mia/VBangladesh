@@ -35,7 +35,7 @@ export function cardText({ occasion, mode, name }: Pick<Shared, "occasion" | "mo
   const shown = cleanName(name);
   return {
     title: picked?.title ?? "উঠোনের আলপনা",
-    line: picked?.line ?? (mode === "draw" ? "নিজের হাতে, রেখায় রেখায় আঁকা।" : "চালের গুঁড়ি গুলে, যত্ন করে আঁকা।"),
+    line: picked?.line ?? (mode === "draw" ? "নিজের হাতে, রেখায় রেখায় আঁকা।" : "চালের গুঁড়ি গুলে উঠোনজুড়ে আঁকা।"),
     signature: shown ? `আঁকল: ${shown}` : "",
   };
 }

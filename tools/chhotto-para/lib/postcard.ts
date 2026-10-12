@@ -35,7 +35,7 @@ const memories: Partial<Record<ObjectKind, string>> = {
 
 export function memoryLine(items: readonly SceneObject[], setting: Setting) {
   const kind = items.findLast(item => memories[item.kind])?.kind;
-  return kind ? memories[kind]! : setting === 'rooftop' ? 'ছাদের বিকেলগুলো এখনো চোখে ভাসে।' : 'উঠোনটা এখনো চোখে ভাসে।';
+  return kind ? memories[kind]! : setting === 'rooftop' ? 'ছাদে উঠলেই বিকেলটা লম্বা হয়ে যেত।' : 'উঠোনে পা দিলেই রোদ গায়ে লাগত।';
 }
 
 export function cardText(card: Postcard) {
