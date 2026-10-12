@@ -127,7 +127,7 @@ export const catalog = [
   { slug: "ponero-ghor", name: "১৫ ঘরের ধাঁধা", description: "ঘুঁটি ঠেলে ১ থেকে সাজাও। মেলার টিনের সেই ধাঁধা, ৩০ লেভেল।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "chhobi-photao", name: "ছবি ফোটাও", description: "সংখ্যা মিলিয়ে ঘর ভরো, ফুটবে ইলিশ, নৌকা, শাপলা। ৩০টা ছবি।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "ghontar-sur", name: "ঘণ্টার সুর", description: "চার কলসির সুর শোনো, একই ক্রমে বাজাও। প্রতিবার একটা সুর বাড়ে।", category: "গেম", action: "সুর বাজাও" },
-  { slug: "konta-nei", name: "কোনটা নেই?", description: "কোনটা নেই?: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "konta-nei", name: "কোনটা নেই?", description: "মুদি দোকানের তাক দেখে রাখো, মামা একটা সরাবে। বলো তো, কোনটা নেই?", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "bhul-kothay", name: "ভুল কোথায়?", description: "ভুল কোথায়?: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "atir-aam", name: "আঁটি থেকে আম", description: "দুটো একই রকম মেলাও, আঁটি থেকে চারা, গাছ, আম, শেষে পুরো বাগান।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "bhimruler-chak", name: "ভিমরুলের চাক", description: "ভিমরুলের চাক: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
