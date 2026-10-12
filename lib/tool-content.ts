@@ -119,6 +119,7 @@ import { site as konta_nei } from '../tools/konta-nei/content';
 import { site as bhul_kothay } from '../tools/bhul-kothay/content';
 import { site as atir_aam } from '../tools/atir-aam/content';
 import { site as bhimruler_chak } from '../tools/bhimruler-chak/content';
+import { site as churir_bazar } from '../tools/churir-bazar/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -242,6 +243,7 @@ export const toolContent = {
   'bhul-kothay': bhul_kothay,
   'atir-aam': atir_aam,
   'bhimruler-chak': bhimruler_chak,
+  'churir-bazar': churir_bazar,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];

@@ -121,6 +121,7 @@ import { share as konta_nei } from '../tools/konta-nei/share';
 import { share as bhul_kothay } from '../tools/bhul-kothay/share';
 import { share as atir_aam } from '../tools/atir-aam/share';
 import { share as bhimruler_chak } from '../tools/bhimruler-chak/share';
+import { share as churir_bazar } from '../tools/churir-bazar/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -245,6 +246,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'bhul-kothay': bhul_kothay,
   'atir-aam': atir_aam,
   'bhimruler-chak': bhimruler_chak,
+  'churir-bazar': churir_bazar,
 };
 
 export function toolShare(tool: string): ToolShare | null {
