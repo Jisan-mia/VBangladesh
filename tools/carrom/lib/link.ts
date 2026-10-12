@@ -55,7 +55,7 @@ export const bands = [
   { below: 4, line: "হাত খুলছে। পরের বোর্ডে আরও ঢুকবে।" },
   { below: 8, line: "ক্লাবঘরে এমন টোকা দিলে সবাই চুপ করে দেখে।" },
   { below: 13, line: "বোর্ডের চার কোনা আজ তোমার কথা শুনছে।" },
-  { below: Infinity, line: "পাড়ার চ্যাম্পিয়নও আজ তোমার কাছে টোকা শিখতে চাইবে!" },
+  { below: Infinity, line: "পাড়ার চ্যাম্পিয়ন এবার তোমার টোকা দেখতে চাইবে।" },
 ] as const;
 export const humanLine = (points: number) => bands.find(band => points < band.below)!.line;
 
@@ -110,7 +110,7 @@ export function noteText(note: Note, { mode, gained, turn, queenBy }: { mode: "s
   switch (note) {
     case "start": return mode === "solo" ? "স্ট্রাইকার থেকে নিচে টেনে ছাড়ো" : "সাদা আগে। স্ট্রাইকার থেকে নিচে টেনে ছাড়ো";
     case "miss": return mode === "solo" ? "এবার ঢুকল না। পরের চালে হবে।" : `ঢুকল না। ${next}`;
-    case "pocket": return `দারুণ! +${bn(gained)}`;
+    case "pocket": return `ঢুকেছে! +${bn(gained)}`;
     case "queen": return mode === "solo" ? `কুইন ঢুকেছে! +${bn(gained)}` : "কুইন ঢুকেছে! এবার নিজের একটা গুটি ঢুকিয়ে কভার করো।";
     case "foul": return mode === "solo" ? "ফাউল! স্ট্রাইকার গর্তে, গুটি মাঝে ফিরল।" : `ফাউল! স্ট্রাইকার গর্তে, একটা গুটি ফেরত। ${next}`;
     case "cover": return `কভার! কুইন এখন ${queenBy === -1 ? "" : SIDE_OF[queenBy]}।${queenBy === turn ? " আবার তোমার চাল।" : ` ${next}`}`;

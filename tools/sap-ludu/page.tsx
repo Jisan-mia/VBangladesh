@@ -15,7 +15,7 @@ export default function SapLuduPage() {
         </section>
         <section className="container" id="tool" aria-label="সাপলুডু খেলো"><SapLuduGame /></section>
         <section className="container sl-board-note" aria-label="আসল বোর্ডে খেললে">
-          <p><b>বাসায় বোর্ড আছে?</b> আসল লুডু বোর্ডে খেললে কে কয় দান জিতল, সেই হিসাব রাখো চলো খেলি-তে।</p>
+          <p><b>বাসায় বোর্ড আছে?</b> আসল লুডু বোর্ডে কে কয় দান জিতল, হিসাব রাখো চলো খেলি-তে।</p>
           <Link href="/cholo-kheli">স্কোর রাখো চলো খেলি-তে →</Link>
         </section>
         <section className="container section sl-guide" id="guide" aria-labelledby="guide-title">
