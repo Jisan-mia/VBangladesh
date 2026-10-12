@@ -82,16 +82,17 @@ export function useSound() {
   return [on, change] as const;
 }
 
-/** Stars per level on this phone, the highest playable level, and `record(level, stars)`, which returns true for a better result. */
+/** Stars per level on this phone, the highest playable level, `record(level, stars)` (true for a better result), and `loaded` once storage has been read. */
 export function useLevels(slug: string, count: number) {
   const key = `ektukhani-levels-${slug}`;
   const [stars, setStars] = useState<LevelStars>({});
-  useEffect(() => { setStars(readLevels(read(key), count)); }, [key, count]);
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => { setStars(readLevels(read(key), count)); setLoaded(true); }, [key, count]);
   const record = useCallback((level: number, earned: number) => {
     const before = readLevels(read(key), count), next = recordLevel(before, level, earned);
     write(key, JSON.stringify(next));
     setStars(next);
     return (next[level] ?? 0) > (before[level] ?? 0);
   }, [key, count]);
-  return { stars, unlocked: unlockedLevel(stars, count), record };
+  return { stars, unlocked: unlockedLevel(stars, count), record, loaded };
 }

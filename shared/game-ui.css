@@ -14,3 +14,4 @@
 @keyframes gx-pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.25);opacity:1}100%{transform:scale(1)}}
 .gx-pop{animation:gx-pop .45s cubic-bezier(.3,1.6,.5,1) both}
 @media (prefers-reduced-motion:reduce){.gx-levels button.next,.gx-pop{animation:none}}
+.gx-sound.gx-compact{min-width:44px;min-height:44px;justify-content:center;padding:6px}
