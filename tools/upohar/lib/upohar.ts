@@ -20,7 +20,7 @@ export const relations = [
   { id: "friend", label: "বন্ধু", of: "বন্ধুর বিয়ে", step: 4, line: "বন্ধুর বিয়ে মানে পুরোনো ব্যাচের রিইউনিয়ন। খামের সাথে গ্রুপ ছবিটাও।" },
   { id: "cousin", label: "কাজিন", of: "কাজিনের বিয়ে", step: 6, line: "কাজিনের বিয়েতে খামের চেয়েও বড় দায়িত্ব: জুতা চুরির দলে থাকা।" },
   { id: "colleague", label: "অফিসের কলিগ", of: "কলিগের বিয়ে", step: 4, line: "অফিসের সবাই মিলে চাঁদা তুললে একটা বড় উপহারও হয়ে যায়।" },
-  { id: "neighbour", label: "প্রতিবেশী", of: "প্রতিবেশীর বিয়ে", step: 3, line: "পাশের বাসার বিয়ে। খাম দিয়ে চেয়ার টানার কাজেও হাত লাগাও।" },
+  { id: "neighbour", label: "প্রতিবেশী", of: "প্রতিবেশীর বিয়ে", step: 3, line: "পাশের বাসার বিয়ে। খামের সাথে চেয়ার টানার কাজেও হাত লাগাও।" },
   { id: "distant", label: "দূর সম্পর্কের আত্মীয়", of: "দূরের আত্মীয়ের বিয়ে", step: 3, line: "দূর সম্পর্কের আত্মীয়। আগে খুঁজে বের করো, তুমি আসলে কে হও।" },
   { id: "boss", label: "বসের বাড়ি", of: "বসের বাড়ির বিয়ে", step: 5, line: "বসের বাড়ির দাওয়াত। খামটা মাপমতো, হাসিটা আসল।" },
 ] as const;
@@ -32,7 +32,7 @@ export const distances = [
 ] as const;
 
 export const foods = [
-  { id: "kacchi", label: "কাচ্চি", step: 1, note: "কাচ্চি থাকলে খামটা একটু ভারী করো, ভালোবাসাও।" },
+  { id: "kacchi", label: "কাচ্চি", step: 1, note: "কাচ্চি থাকলে খামটা একটু ভারী করো। প্লেটের হিসাবও তো আছে।" },
   { id: "roast", label: "রোস্ট-পোলাও", step: 0, note: "রোস্ট-পোলাও আর বোরহানি। খাম মাপমতো, পেট ভরপুর।" },
   { id: "cha", label: "চা-মিষ্টি", step: -2, note: "চা-মিষ্টির ঘরোয়া আয়োজন। ছোট খাম, বড় দোয়া।" },
 ] as const;
@@ -105,9 +105,9 @@ export function createCard(envelope: Envelope): Card {
   const relation = relationOf(envelope.relation);
   const base = { name: cleanName(envelope.name), occasion: relation.of, mode: envelope.mode, ideas, note: foodOf(envelope.food).note };
   if (envelope.mode === "heart") {
-    return { ...base, range: "", low: 0, high: 0, headline: "সামর্থ্য অনুযায়ী", sub: "সাথে অনেক দোয়া আর ভালোবাসা", line: "উপহার মানে ভালোবাসা, অঙ্ক না। হাসিমুখে গেলেই দাওয়াত পূর্ণ।", note: distanceOf(envelope.distance).note };
+    return { ...base, range: "", low: 0, high: 0, headline: "সামর্থ্য অনুযায়ী", sub: "সাথে অনেক দোয়া আর ভালোবাসা", line: "খামে অঙ্ক নেই। হাসিমুখে পৌঁছে যাও, বাকিটা দোয়া।", note: distanceOf(envelope.distance).note };
   }
-  const nudged = envelope.nudge > 0 ? `${envelope.mode === "gift" ? "উপহারটা একটু বড়" : "খাম একটু ভারী"} করছ? বর-কনে খুশি, মানিব্যাগ একটু কাঁদবে।` : envelope.nudge < 0 ? "একটু হালকা হলো? কোনো সমস্যা নেই, হাসিমুখে যাওয়াটাই আসল।" : "";
+  const nudged = envelope.nudge > 0 ? `${envelope.mode === "gift" ? "উপহারটা একটু বড়" : "খাম একটু ভারী"} করছ? বর-কনে খুশি, মানিব্যাগ একটু কাঁদবে।` : envelope.nudge < 0 ? "একটু হালকা হলো? ঠিক আছে। হাসিমুখে পৌঁছালেই বর-কনে খুশি।" : "";
   const line = nudged || (envelope.distance === "abroad" ? distanceOf("abroad").note : relation.line);
   if (envelope.mode === "gift") return { ...base, range: "", low, high, headline: ideas[0], sub: `অথবা ${ideas[1]}`, line };
   return { ...base, range, low, high, headline: range, sub: "হালকা আন্দাজ, নিয়ম না", line };

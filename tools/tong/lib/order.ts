@@ -128,11 +128,11 @@ export function orderLine(lines: readonly Line[]) {
   if (line.tea === "rong" && line.sugar === "0") return "চিনি ছাড়া কড়া রং চা। তুমি সিরিয়াস মানুষ।";
   if (line.sugar === "beshi") return "দিনটা এমনিতেই তেতো, চা-টা অন্তত মিষ্টি হোক।";
   if (line.tea === "tandoori") return "পোড়া মাটির ঘ্রাণ, তন্দুরির মজা এখানেই।";
-  if (line.tea === "malai") return "মালাই চা মানে আজ নিজেকে একটু আদর।";
+  if (line.tea === "malai") return "মালাই চা, ওপরে সরের পরত। প্রথম চুমুকেই গোঁফে লাগবে।";
   if (line.tea === "tetul") return "টক-ঝাল-মিষ্টি, একদম আড্ডার মতো।";
   if (side("singara") || side("puri") || side("dalpuri")) return "ভাজাপোড়া ছাড়া বিকেলের চা জমে না।";
   if (side("toast")) return "টোস্ট ডোবাতে দেরি করলেই কাপের তলায়।";
-  if (side("bonruti")) return "বনরুটি চায়ে ডুবিয়ে খাওয়া, আহা!";
+  if (side("bonruti")) return "বনরুটি ডোবানো চায়ের শেষ চুমুকটা চামচে খেতে হয়।";
   if (side("kola")) return "চা আর একটা কলা, নাশতা হয়ে গেল।";
   if (line.cup === "bhar") return "মাটির কাপের চায়ে স্বাদটা একটু বেশি।";
   if (line.tea === "ada") return "ঠান্ডা লাগলে আদা চা, না লাগলেও আদা চা।";

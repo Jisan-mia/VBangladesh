@@ -55,7 +55,7 @@ test("share.ts normalises good links, rejects junk and previews personally", () 
 });
 
 test("the human line comes from what was ticked", () => {
-  assert.equal(fishLine(["pabda", "tengra", "shing", "mola"]), "শিং, পাবদা আর মলা: ছোট মাছের কাঁটা বাছতে জানো, এটা আসল প্রতিভা।");
+  assert.equal(fishLine(["pabda", "tengra", "shing", "mola"]), "শিং, পাবদা আর মলা: ছোট মাছের কাঁটা বাছতে জানো। ওটাই আসল ওস্তাদি।");
   assert.equal(fishLine(["chitol", "baghair", "rui"]), "বাঘাইড় আর চিতল, এখন কম পাওয়া যায় এমন মাছও তোমার পাতে উঠেছে।");
   assert.match(fishLine(["rupchanda", "loitta", "churi", "surma"]), /^রূপচাঁদা, লইট্টা আর ছুরি: সাগরের/);
   assert.match(fishLine(DEFAULT_PICKS), /শুরুটা চেনা মাছ দিয়ে/);

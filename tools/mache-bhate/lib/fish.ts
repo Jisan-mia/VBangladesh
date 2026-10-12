@@ -146,16 +146,16 @@ export function fishLine(selected: readonly FishId[]) {
   if (!count) return "ডালা এখনো ফাঁকা। ওপর থেকে চেনা মাছগুলো তুলে নাও।";
   const names = (filter: (fish: Fish) => boolean, max = 3) => picked.filter(filter).slice(0, max).map(fish => fish.label);
   const bony = names(fish => fish.group === "chhoto" || fish.id === "pabda" || fish.id === "shing");
-  if (bony.length >= 3 && picked.filter(fish => fish.group === "chhoto").length >= 2) return `${join(bony)}: ছোট মাছের কাঁটা বাছতে জানো, এটা আসল প্রতিভা।`;
+  if (bony.length >= 3 && picked.filter(fish => fish.group === "chhoto").length >= 2) return `${join(bony)}: ছোট মাছের কাঁটা বাছতে জানো। ওটাই আসল ওস্তাদি।`;
   const rare = names(fish => "rare" in fish, 2);
   if (rare.length >= 2) return `${join(rare)}, এখন কম পাওয়া যায় এমন মাছও তোমার পাতে উঠেছে।`;
   const sea = names(fish => fish.group === "sagor");
   if (picked.filter(fish => fish.group === "sagor").length >= 4) return `${join(sea)}: সাগরের মাছেও তোমার জিভ পাকা।`;
   if (picked.filter(fish => fish.group === "nodi").length >= 5) return "নদীর মাছে তোমার জিভ পাকা, ইলিশের কাঁটাও তোমাকে ভয় পায়।";
   if (count <= 3) return "শুরুটা চেনা মাছ দিয়ে। এবার মনে করে দেখো, আর কী কী খেয়েছ?";
-  if (count <= 12) return "পাতে একটু মাছ না থাকলে ভাতটাই যেন জমে না।";
+  if (count <= 12) return "মাছ না থাকলে পাতে ভাতটাই জমে না।";
   if (count <= 24) return "বাজারে কোন মাছ টাটকা, তুমি চোখ বুজেও ধরে ফেলবে।";
-  return "দেশের নদী, বিল আর সাগর, সবখানের মাছ তোমার চেনা।";
+  return "নদী, বিল আর সাগর, তিন জায়গার মাছই তোমার পাতে উঠেছে।";
 }
 
 export type CardContent = {
