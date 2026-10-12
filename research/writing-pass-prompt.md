@@ -12,6 +12,7 @@ The owner says some of the Bangla still reads robotic, like a translation or a m
 Tools: {SLUGS}
 
 ## Read first
+0. `research/bangla-writing-guide.md`: THE ultimate guide, distilled from reading রবীন্দ্রনাথ, সুকুমার রায়, উপেন্দ্রকিশোর, শরৎচন্দ্র and বিভূতিভূষণ. Apply its techniques and run its 10-point self-check on every line. It overrides older guides where they differ.
 1. `research/writing-brief.md`: THIS PASS's main brief (clear, crisp, quietly warm; cut decoration, exaggeration and stating the obvious). Follow it first.
 1b. `research/bangla-copy-review.md`: the earlier bar and what must not change.
 2. `research/bangla-voice-guide.md`: the base rules (তুমি, spoken চলিত, Bangladeshi words).
