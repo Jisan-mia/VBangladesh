@@ -1,0 +1,112 @@
+.tool-al-dhore-hati{--accent:#3d6b21;--accent-deep:#284a14;--ink:#24301b;--muted:#5a6150;--paper:#f4eedc;--paper-edge:#ddd4bb;--mud:#5e4128;--gold:#ffd23f}
+.tool-al-dhore-hati .al-page{color:var(--ink)}
+
+/* hero: one short line, so the field and its buttons land on the first phone screen */
+.al-hero{padding:10px 0 4px}
+.al-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,6vw,40px);line-height:1.3;font-weight:700;letter-spacing:0}
+.al-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+
+.al{display:grid;gap:8px;max-width:480px}
+.al-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+.al-friend{padding:10px 14px;border-radius:14px;background:var(--paper);border-left:5px solid var(--accent)}
+.al-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.4}
+.al-friend p{margin:2px 0 0;font-size:13px;line-height:1.45;color:var(--muted)}
+
+.al-hud{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:30px}
+.al-hud p{margin:0}
+.al-level{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;line-height:1.25}
+.al-level b{font-family:var(--font-display);font-size:17px;font-weight:800}
+.al-level span{font-size:13px;font-weight:600;color:var(--muted)}
+.al-wind{flex:none;font-size:13px;font-weight:800;color:#2f5f8a}
+.al-wind:empty{display:none}
+
+/* the field: press anywhere here; only here does the page stop scrolling under a finger */
+.al-board{position:relative;width:100%;border-radius:14px;overflow:hidden;background:#79b04a;box-shadow:0 6px 18px #24301b33;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
+.al-board canvas{display:block;width:100%;aspect-ratio:360/440}
+.al-call{position:absolute;left:8px;right:8px;top:8px;width:fit-content;margin:0 auto;padding:6px 14px;border-radius:999px;background:#24301be6;color:#fff;font-family:var(--font-display);font-size:16px;font-weight:800;line-height:1.35;text-align:center;pointer-events:none;animation:al-call 1.8s ease-out both}
+@keyframes al-call{0%{opacity:0;transform:translateY(-6px)}10%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0}}
+.al-hint{position:absolute;left:50%;bottom:4%;transform:translateX(-50%);margin:0;padding:8px 16px;border-radius:999px;background:#24301bd9;color:#fff;font-size:16px;font-weight:700;white-space:nowrap;pointer-events:none;animation:al-nudge 1.6s ease-in-out infinite}
+@keyframes al-nudge{50%{transform:translate(-50%,-6px)}}
+.al-overlay{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;padding:16px;background:#24301be0;color:#fff;text-align:center;cursor:default}
+.al-overlay p{margin:0;font-weight:600}
+.al-overlay .kit-primary{min-width:180px;min-height:56px;font-size:19px}
+
+/* under the field: slips so far, how far along, metres */
+.al-track{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px}
+.al-track p{margin:0}
+.al-feet{display:flex;gap:4px}
+.al-feet span{width:14px;height:14px;border-radius:50%;border:2px solid var(--mud);background:transparent}
+.al-feet[data-slips="1"] span:nth-child(-n+1),.al-feet[data-slips="2"] span:nth-child(-n+2),.al-feet[data-slips="3"] span{background:var(--mud)}
+.al-bar{position:relative;height:8px;border-radius:999px;background:var(--paper-edge);overflow:hidden}
+.al-bar span{position:absolute;inset:0;background:var(--accent);transform:scaleX(0);transform-origin:left}
+.al-metres{font-size:13px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.al-status{min-height:44px;margin:0;font-size:15px;font-weight:600;line-height:1.45;text-align:center}
+
+/* the big start button, then two hold buttons */
+.al-start,.al-pad{min-height:64px;border:2px solid var(--accent-deep);border-radius:16px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:22px;font-weight:800;box-shadow:0 4px 0 var(--accent-deep);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .08s ease-out}
+.al-pads{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.al-pad{background:#fff;color:var(--accent-deep)}
+.al-start:active,.al-pad:active{transform:translateY(3px);box-shadow:0 1px 0 var(--accent-deep)}
+.al-pad:active{background:var(--accent);color:#fff}
+.al-pad:disabled{opacity:.5}
+
+.al-prefs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--ink)}
+.al-pill{min-height:44px;padding:6px 14px;border:1.5px solid currentColor;border-radius:999px;background:transparent;color:inherit;font-size:14px;font-weight:700}
+.al-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+.al-best{margin:0 0 0 auto;font-size:13px;color:var(--muted)}
+.al-best b{color:var(--ink)}
+
+/* a cleared or lost field */
+.al-end{display:grid;justify-items:center;gap:6px;padding:12px 14px;border-radius:16px;background:var(--paper);text-align:center}
+.al-end p{margin:0}
+.al-end-line{font-family:var(--font-display);font-size:19px;font-weight:800;line-height:1.4}
+.al-end-note{font-size:14px;line-height:1.45;color:var(--muted)}
+.al-end-note:empty{display:none}
+.al-actions{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;width:100%;margin-top:4px}
+.al-actions:has(> :only-child){grid-template-columns:1fr}
+.tool-al-dhore-hati .al-actions button,.tool-al-dhore-hati .al-again{min-height:56px;font-size:18px}
+.al-see{min-height:44px}
+.al-fell-title{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--mud)}
+.al-fell-line{font-weight:700;line-height:1.45}
+.al-again{width:100%}
+
+.al-drawer{border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff}
+.al-drawer summary{min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;font-weight:700;cursor:pointer}
+.al-drawer summary span{font-weight:500;color:var(--muted);font-size:14px}
+.al-drawer[open]{padding-bottom:12px}
+.al-drawer .gx-levels{padding:0 10px}
+.al-stages{margin:0 14px 10px;font-size:13px;line-height:1.5;color:var(--muted)}
+
+.al-result{scroll-margin-top:12px;margin-top:16px;padding-top:18px;border-top:2px solid var(--paper-edge)}
+.al-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,32px);line-height:1.4}
+.al-result h2 em{font-style:normal;color:var(--accent)}
+.al-result>p{margin:0 0 16px;color:var(--muted)}
+.al-result-body{display:grid;gap:22px}
+.al-share{display:grid;gap:18px;align-content:start}
+.al-name{display:grid;gap:6px;font-weight:600}
+.al-name small{font-weight:400;color:var(--muted);font-size:13px}
+.al-name input{border:1.5px solid var(--paper-edge);border-radius:12px;font-size:17px}
+
+.al-guide h2{font-family:var(--font-display);margin-bottom:12px}
+.al-guide>p{color:var(--muted);max-width:640px}
+.al-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.al-guide li{display:flex;gap:14px;align-items:flex-start}
+.al-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
+.al-guide li p{margin:4px 0 0}
+
+@media (max-width:360px){
+  .al-status{font-size:14px}
+  .al-level b{font-size:15px}
+  .al-start,.al-pad{font-size:19px}
+}
+@media (min-width:720px){.al-lead{display:block}.al-page:has(.al-friend) .al-lead{display:none}}
+.al[data-slow=true] .al-hint{animation:none}
+.al[data-slow=true] .al-call{animation:al-fade 1.8s linear both}
+@media (prefers-reduced-motion:reduce){
+  .al-hint{animation:none}
+  .al-call{animation:al-fade 1.8s linear both}
+  .al-start,.al-pad{transition:none}
+}
+@keyframes al-fade{0%,80%{opacity:1}100%{opacity:0}}
