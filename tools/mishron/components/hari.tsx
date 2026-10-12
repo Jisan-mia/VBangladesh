@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { SoundToggle } from "../../../shared/game-ui";
+import { confetti, hiss, sfx, tone } from "../../../shared/game-sound";
 import { addToTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -104,7 +106,8 @@ export function MagicPot() {
     const next = shown ? [id] : [...picks, id];
     if (shown) setShown(null);
     setPicks(next);
-    if (next.length < 2) return;
+    if (next.length < 2) { sfx.pick(); return; }
+    sfx.drop(); hiss(0.5, 0.08, 700, "lowpass", 0.05);
     const [a, b] = next;
     const mixed = combine(a, b, found);
     setBrewing(true);
@@ -113,7 +116,9 @@ export function MagicPot() {
       setBrewing(false);
       setPicks([]);
       setShown({ a, b, mixed });
+      if (mixed.type === "none") sfx.drop(); else if (mixed.type === "old") sfx.tap();
       if (mixed.type === "new") {
+        if (made + 1 >= MAKEABLE) { sfx.win(); confetti(); } else { sfx.pop(); tone(1250, 0.1, 0.06, "sine", 0.09); }
         setOrder(current => current.includes(mixed.item.id) ? current : [...current, mixed.item.id]);
         setLatest(mixed.item.id);
       }
@@ -200,6 +205,7 @@ export function MagicPot() {
           </div>
           <div className="ms-sayrow">
             <p className="ms-say" role="status">{say}</p>
+            <SoundToggle compact />
             <button type="button" className="ms-hint" onClick={askHint} disabled={!hint}>{hint ? hintLevel ? "আরও ইশারা" : "ইশারা দাও" : "সব শেষ!"}</button>
           </div>
         </div>

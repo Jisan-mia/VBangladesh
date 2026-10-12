@@ -96,3 +96,4 @@
 @media (max-width:340px){.tob-count strong{font-size:40px}.tob-count li{font-size:14px}}
 @media (prefers-reduced-motion:reduce){.tob-leaf,.tob-flower,.tob-seed{animation:none}}
 .dh-hero h1 .dh-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 4px;font-size:13px;font-weight:700;color:var(--clay)}
+.tob-main>.gx-sound{justify-self:center}

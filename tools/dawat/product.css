@@ -55,6 +55,7 @@
 .dw-facts b{color:var(--gold-light)}
 .dw-friend-actions{display:flex;flex-wrap:wrap;gap:10px}
 .dw-friend-actions>*{flex:1 1 160px}
+.dw-friend-actions>.gx-sound{flex:none}
 .dw-friend-actions .kit-secondary{border-color:var(--gold-light);background:transparent;color:var(--gold-light)}
 .dw-coming{background:linear-gradient(180deg,#f6dc8e,#c99a3e);color:#3d0912;box-shadow:0 4px 0 #8a6420;font-size:19px}
 .dw-coming:active{box-shadow:0 1px 0 #8a6420}

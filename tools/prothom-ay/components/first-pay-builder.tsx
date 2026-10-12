@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard, drawStage, STAGE } from "../lib/draw-card";
 import { bn, bnYear, cardTitle, FIRST_YEAR, giftLabel, giftList, gifts, MAX_AMOUNT_DIGITS, MAX_GIFTS, MAX_NAME_LENGTH, parseAmount, parseShareHash, payLine, possessive, sample, shareHash, sourceById, sources, styles, toggleGift, type FirstPay, type GiftId, type SourceId, type StyleId } from "../lib/first-pay";
@@ -70,6 +72,7 @@ export function FirstPayBuilder() {
   function changed() { setJoined(current => current === "done" ? "idle" : current); }
 
   function toggle(id: GiftId) {
+    if (!picked.includes(id)) sfx.coin();
     setPicked(current => {
       const next = toggleGift(current, id);
       // An empty envelope has nothing to show; keep the last pick instead.
@@ -127,6 +130,7 @@ export function FirstPayBuilder() {
             {years.map(item => <option key={item} value={item}>{bnYear(item)}</option>)}
           </select>
         </label>
+        <SoundToggle compact />
       </div>
 
       <StickyNext show={!resultVisible} title={<strong>খামটা তৈরি</strong>} sub={giftList(pay)} href="#result" label="কার্ডটা দেখো" />
