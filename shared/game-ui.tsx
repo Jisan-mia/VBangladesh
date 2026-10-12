@@ -23,11 +23,13 @@ export function Stars({ count, of = 3, label = true }: { count: number; of?: num
 
 /** A grid of level buttons: cleared ones show stars, the next one glows, the rest are locked. */
 export function LevelGrid({ count, stars, unlocked, current, onPick, noun = 'লেভেল' }: { count: number; stars: LevelStars; unlocked: number; current?: number; onPick: (level: number) => void; noun?: string }) {
+  // Only the first open level without stars glows, even when every level is open (quiz sets).
+  const glow = Array.from({ length: Math.min(count, unlocked) }, (_, index) => index + 1).find(level => !stars[level]);
   return <ol className="gx-levels" aria-label={`${noun} বেছে নাও`}>
     {Array.from({ length: count }, (_, index) => {
       const level = index + 1, locked = level > unlocked, earned = stars[level] ?? 0;
       return <li key={level}>
-        <button type="button" disabled={locked} aria-current={level === current ? 'true' : undefined} className={!locked && !earned ? 'next' : ''}
+        <button type="button" disabled={locked} aria-current={level === current ? 'true' : undefined} className={level === glow ? 'next' : ''}
           aria-label={locked ? `${noun} ${bn.format(level)}, বন্ধ` : `${noun} ${bn.format(level)}${earned ? `, ${bn.format(earned)} তারা` : ''}`}
           onClick={() => { sfx.tap(); onPick(level); }}>
           <b>{locked ? '🔒' : bn.format(level)}</b>
