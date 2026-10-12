@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { cardSizes, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { art, figureSvg } from "../lib/art";
 import { cardBlob, drawCard, prepareCard } from "../lib/draw-card";
@@ -97,7 +99,7 @@ export function PackBuilder() {
 
   function swap(item: ItemId) {
     if (editing === null) return;
-    navigator.vibrate?.(12);
+    sfx.pop();
     setSlots(current => ({ ...current, [packId]: swapItem(all, editing, item) }));
     changed();
     dialog.current?.close();
@@ -174,11 +176,14 @@ export function PackBuilder() {
 
       <div className="sp-under">
         <p className="sp-hint">যে খোপের জিনিস মেলে না, সেটা চেপে বদলাও</p>
+        <div className="sp-ctl">
+        <SoundToggle compact />
         <fieldset className="sp-layout">
           <legend className="sp-sr">কয়টা খোপ?</legend>
           <button type="button" aria-pressed={!grid} onClick={() => { setGrid(false); changed(); }}>৬টা</button>
           <button type="button" aria-pressed={grid} onClick={() => { setGrid(true); changed(); }}>৩×৩</button>
         </fieldset>
+        </div>
       </div>
 
       {everyone && everyone.total >= SOCIAL_PROOF_MIN && <p className="sp-proof">এখন পর্যন্ত <strong>{bn(everyone.total)} জন</strong> নিজের প্যাকেট বানিয়েছে</p>}

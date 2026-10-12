@@ -14,6 +14,7 @@
 .mb-stage{scroll-margin-top:12px;max-width:520px;margin:0 auto;padding:0 14px 18px;border-radius:20px;background:radial-gradient(circle at 50% 30%,#fff3d9,var(--mela) 70%)}
 .mb-bunting{height:26px;margin:0 -14px 2px;border-top:2px solid #7a4a2a;border-radius:20px 20px 0 0;background:repeating-linear-gradient(90deg,#d7263d 0 36px,#1f8a70 36px 72px,#f2a900 72px 108px,#2a6fdb 108px 144px,#a8326a 144px 180px);-webkit-mask:conic-gradient(from -28deg at 50% 100%,#000 56deg,transparent 0) 0 0/36px 100% repeat-x;mask:conic-gradient(from -28deg at 50% 100%,#000 56deg,transparent 0) 0 0/36px 100% repeat-x}
 
+.mb-sound{display:flex;justify-content:center;margin-top:6px;color:var(--ink)}
 .mb-machine{position:relative;max-width:400px;margin:0 auto;padding:22px 16px 30px;border-radius:200px 200px 22px 22px/130px 130px 22px 22px;background:linear-gradient(90deg,var(--accent-deep),var(--accent) 18%,#c24a84 50%,var(--accent) 82%,var(--accent-deep));box-shadow:inset 0 0 0 5px #f3dbe655,0 16px 30px #46142833;color:#fff}
 .mb-bulbs{display:flex;justify-content:center;gap:clamp(10px,4vw,20px);margin:0 0 4px;padding:0;list-style:none}
 .mb-bulbs li{width:16px;height:16px;border-radius:50%;background:#5a1638;box-shadow:inset 0 0 0 2px #f3dbe655;transition:background-color .2s ease,box-shadow .2s ease}

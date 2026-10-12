@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { groupDigits, toBanglaDigits, toLatinDigits } from "../../taka-kothay/lib/number-words";
 import { cardBlob, cardTitle, drawCard } from "../lib/draw-card";
@@ -75,7 +77,9 @@ export function ChequeBuilder({ switcher }: { switcher?: ReactNode }) {
     setCheque(current => ({ ...current, ok: true }));
     setMode("done");
     setSignedHere(true);
-    navigator.vibrate?.(30);
+    // The stamp lands, then a coin clinks.
+    sfx.thud();
+    setTimeout(sfx.coin, 140);
     // Only the fixed giver id is counted; the child's name and the amount never leave the link.
     addToTally(TOOL, [cheque.giver]).then(tally => { if (tally) setEveryone(tally); });
   }
@@ -145,6 +149,7 @@ export function ChequeBuilder({ switcher }: { switcher?: ReactNode }) {
       {mode === "sign" && (
         <div className="sc-signbox">
           <button type="button" className="kit-primary sc-signbtn" onClick={sign}>সই করে দাও</button>
+          <SoundToggle compact />
           <p className="sc-note">সই করলে শুধু ‘{giver}’ কথাটা মোট হিসাবে গোনা হয়, নাম বা টাকার অঙ্ক না।</p>
         </div>
       )}

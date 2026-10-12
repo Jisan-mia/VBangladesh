@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { hiss, sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawSheet, type SheetCard } from "../lib/draw-sheet";
 import { bn, bnPoint, caption, gpaOf, gradeLabel, GRADES, humanLine, ke, mergeVotes, nationalOf, nationalScore, packOf, packs, parseCounted, parseShareHash, possessive, sameCount, shareHash, ITEMS_PER_PACK, MAX_NAME_LENGTH, MIN_SAMPLE, type Counted, type Grade, type PackId, type Sheet } from "../lib/grades";
@@ -79,6 +81,9 @@ export function MarkSheet() {
   }, [card, format, site]);
 
   function give(index: number, grade: Grade) {
+    // The red pen scratches the circle; the eighth mark gets a small chime. No right grade, so no confetti.
+    hiss(0.1, 0.12, 3800, "highpass");
+    if (graded === ITEMS_PER_PACK - 1 && !current[index]) setTimeout(sfx.good, 120);
     setGrades(all => ({ ...all, [packId]: all[packId].map((value, position) => position === index ? grade : value) }));
     setCountState(now => now === "done" ? "idle" : now);
   }
@@ -125,6 +130,7 @@ export function MarkSheet() {
       <div className="gd-sheet">
         <div className="gd-paper">
           <header className="gd-head">
+            <SoundToggle compact />
             <p className="gd-head-kicker">দেশি পরীক্ষা · বিষয়: {pack.label}</p>
             <h2 className="gd-head-title">রেজাল্ট শিট</h2>
             <p className="gd-head-meta" aria-live="polite">পরীক্ষক: <b>তুমি</b> · <span>{bn(graded)}/{bn(ITEMS_PER_PACK)}টা খাতা দেখা হয়েছে</span></p>

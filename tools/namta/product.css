@@ -35,6 +35,8 @@
 .nm-beads [data-mark=ok]{border-color:var(--chalk);background:var(--chalk)}
 .nm-beads [data-mark=fix]{border-color:var(--chalk-yellow);background:var(--chalk-yellow)}
 .nm-beads [data-mark=now]{border-color:var(--chalk);animation:nm-blink 1.2s ease-in-out infinite}
+.nm-tools{display:flex;align-items:center;flex:none}
+.nm-tools .gx-sound{border:0;color:var(--chalk-soft);min-width:40px}
 .nm-timer{position:relative;z-index:1;display:inline-flex;align-items:center;gap:5px;flex:none;min-height:44px;padding:0 8px;border:0;border-radius:10px;background:none;color:var(--chalk-soft);font-size:14px;font-variant-numeric:tabular-nums}
 .nm-timer svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 .nm-timer[aria-pressed=true]{background:#f3f1e71f;color:var(--chalk-yellow)}
@@ -132,5 +134,5 @@
   .nm-board{min-height:210px}
   .nm-result-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:36px}
 }
-@media(max-width:360px){.nm-beads{gap:4px}.nm-beads li{width:12px;height:12px}.nm-timer{padding:0 4px}}
+@media(max-width:360px){.nm-beads{gap:4px}.nm-beads li{width:12px;height:12px}.nm-timer{padding:0 4px}.nm-timer[aria-pressed=false] .nm-timer-text{display:none}.nm-tools .gx-sound{min-width:34px}}
 @media(prefers-reduced-motion:reduce){.nm-sum,.nm-wipe,.nm-star,.nm-beads [data-mark=now],.nm-ok[data-nudge=true]{animation:none}.nm-wipe{display:none}}

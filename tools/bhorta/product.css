@@ -37,7 +37,8 @@
   box-shadow:0 6px 10px #0008;animation:bh-pop .6s cubic-bezier(.2,1.5,.4,1) both}
 .bh-ball~.bh-nora{display:none}
 .bh-landed{min-height:22px;margin:8px 0 0;font-size:14px;color:#d8cfc0;text-align:center}
-.bh-redo{display:flex;justify-content:center}
+.bh-redo{display:flex;justify-content:center;align-items:center;gap:10px}
+.bh-redo .gx-sound{color:var(--cream)}
 .tool-bhorta .bh-redo .kit-link{color:var(--turmeric)}
 .bh-redo .kit-link:focus-visible{outline-color:var(--turmeric)}
 

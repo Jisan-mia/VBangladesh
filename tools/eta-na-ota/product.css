@@ -30,8 +30,9 @@
 /* the chalkboard in its wooden frame */
 .ena-frame{padding:10px 10px 0;border-radius:14px;background:repeating-linear-gradient(176deg,#0000 0 7px,#4f2e1630 7px 9px,#0000 9px 15px),var(--wood);box-shadow:0 10px 24px #2a1a1030}
 .ena-board{position:relative;display:grid;gap:6px;padding:12px 12px 6px;border-radius:4px;color:var(--chalk);background:radial-gradient(ellipse at 22% 30%,#f3efe40f,#0000 55%),radial-gradient(ellipse at 80% 75%,#f3efe40c,#0000 50%),var(--slate);box-shadow:inset 0 0 0 3px #0000004d,inset 0 0 40px #00000059}
-.ena-board-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.ena-board-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .ena-board-title{margin:0;font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--chalk-yellow);text-shadow:0 0 2px #ffd36b80}
+.ena-board-head .gx-sound{margin:-10px auto -10px 0;color:var(--chalk)}
 .ena-progress{margin:0;font-size:15px;opacity:.8}
 .ena-progress b{font-size:20px;color:var(--chalk-yellow)}
 

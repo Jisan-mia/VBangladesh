@@ -92,6 +92,7 @@ b.sc-khata-amount{color:var(--pen);font-size:17px;white-space:nowrap}
 .sc-banner em,.sc-result-head em{font-style:normal;color:var(--accent)}
 .sc-signbox{display:grid;gap:4px}
 .sc-signbtn{width:100%;min-height:58px;font-size:20px}
+.sc-signbox .gx-sound{justify-self:center}
 
 /* result */
 .sc-result{scroll-margin-top:12px;margin-top:28px;padding-top:24px;border-top:2px dashed var(--line)}

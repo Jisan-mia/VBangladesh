@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { dialAngle, drawTicketCard, ticketBlob, DIAL_MAX, DIAL_MIN } from "../lib/draw-ticket";
 import { bn, buckets, bucketOf, caption, cleanName, comment, heartAge, parseShareHash, possessive, questions, runningAge, shareHash, ticketNumber, MAX_NAME, QUESTION_COUNT, type Answer, type Reading } from "../lib/moner-boyos";
@@ -83,6 +85,8 @@ export function WeighingMachine() {
 
   function pick(answer: Answer) {
     if (done) return;
+    // A tick for the bulb; the last answer prints the ticket (paper swish, then a ding). No right answers, so no confetti.
+    if (answers.length === QUESTION_COUNT - 1) { sfx.whoosh(); setTimeout(sfx.good, 220); } else sfx.pick();
     setAnswers(current => current.length < QUESTION_COUNT ? [...current, answer] : current);
   }
 
@@ -137,6 +141,7 @@ export function WeighingMachine() {
           )}
           <div className="mb-slot" aria-hidden="true" />
         </div>
+        <div className="mb-sound"><SoundToggle compact /></div>
 
         {done && age !== null && bucket && (
           <div className="mb-ticket-wrap">

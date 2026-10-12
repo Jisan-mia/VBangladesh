@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { hiss, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard, type CardContent } from "../lib/draw-card";
 import { bn, catById, categories, cleanTitle, commonLine, defaults, describe, headline, parseShareHash, placePick, possessive, resolveTyped, samePick, shareHash, sharedPicks, shelfLine, tallyId, MAX_NAME_LENGTH, MAX_TITLE_LENGTH, SLOTS, type CatId, type Choice, type Shelf as ShelfState } from "../lib/shelf";
@@ -11,6 +13,9 @@ import { Shelf } from "./shelf";
 const TOOL = "char-priyo";
 // "৬০% মানুষের তাকে আছে" after three votes is noise; wait for a real crowd per list.
 const TALLY_MIN = 20;
+
+// A book slides onto the shelf (paper swish), then settles on the wood.
+function slideIn() { hiss(0.12, 0.08, 1800, "bandpass"); tone(160, 0.1, 0.1, "sine", 0.08, 100); }
 
 function cardFor(shelf: ShelfState, friend: ShelfState | null): CardContent {
   return { cat: shelf.cat, name: shelf.name, picks: shelf.picks, line: shelfLine(shelf.cat, shelf.picks), match: commonLine(shelf, friend) };
@@ -71,6 +76,7 @@ export function ShelfBuilder() {
   }
 
   function place(pick: Choice) {
+    slideIn();
     setPicksByCat(all => ({ ...all, [cat]: placePick(all[cat], active, pick) }));
     setActive(slot => (slot + 1) % SLOTS);
     changed();
@@ -127,7 +133,10 @@ export function ShelfBuilder() {
             {categories.map(item => <button type="button" key={item.id} aria-pressed={cat === item.id} onClick={() => chooseCategory(item.id)}>{item.label}</button>)}
           </fieldset>
           <Shelf cat={cat} picks={picks} active={active} onPick={slot => setActive(slot)} />
-          <p className="cp-now" aria-live="polite"><b>{bn(active + 1)} নম্বরে:</b> {now.title}{now.by && <small> · {now.by}</small>}</p>
+          <div className="cp-nowrow">
+            <p className="cp-now" aria-live="polite"><b>{bn(active + 1)} নম্বরে:</b> {now.title}{now.by && <small> · {now.by}</small>}</p>
+            <SoundToggle compact />
+          </div>
         </div>
 
         <div className="cp-picker">

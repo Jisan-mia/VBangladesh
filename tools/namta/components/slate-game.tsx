@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, type Tally } from "../../../shared/share-client";
+import { confetti, sfx, shake } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import {
@@ -39,6 +41,7 @@ export function SlateGame() {
   const [everyone, setEveryone] = useState<Tally | null>(null);
   const [compared, setCompared] = useState<"idle" | "sending" | "done" | "failed">("idle");
   const strip = useRef<HTMLDivElement>(null);
+  const board = useRef<HTMLDivElement>(null);
   const shownAt = useRef(0);
   const preview = useRef<HTMLCanvasElement>(null);
   const friendPreview = useRef<HTMLCanvasElement>(null);
@@ -133,7 +136,12 @@ export function SlateGame() {
     const answers = [...a, answer];
     setA(answers);
     setTyped("");
-    setFeedback({ right: answer === t * m, m, answer });
+    const right = answer === t * m;
+    setFeedback({ right, m, answer });
+    // Chime on the slate; a full table (all ten right) earns the big one.
+    if (!right) { sfx.wrong(); shake(board.current); }
+    else if (answers.length === q.length && answers.every((value, at) => value === t * q[at])) { sfx.good(); setTimeout(() => { sfx.win(); confetti(); }, 300); }
+    else sfx.good();
     shownAt.current = Date.now();
     if (answers.length === q.length) setSeconds(Math.max(1, Math.round((Date.now() - (startedAt ?? Date.now())) / 1000)));
   }
@@ -187,15 +195,18 @@ export function SlateGame() {
       </div>
 
       <div className="nm-frame">
-        <div className="nm-board" data-state={done ? "done" : feedback ? (feedback.right ? "right" : "wrong") : "ask"}>
+        <div className="nm-board" ref={board} data-state={done ? "done" : feedback ? (feedback.right ? "right" : "wrong") : "ask"}>
           <div className="nm-board-top">
             <ol className="nm-beads" aria-label={`${bn(q.length)}টার মধ্যে ${bn(a.length)}টা হয়েছে`}>
               {q.map((sum, at) => <li key={at} data-mark={at < a.length ? (a[at] === t * sum ? "ok" : "fix") : at === index && !done ? "now" : "todo"} />)}
             </ol>
+            <span className="nm-tools">
+            <SoundToggle compact />
             <button type="button" className="nm-timer" aria-pressed={timerOn} aria-label={timerOn ? `ঘড়ি চালু, ${bn(elapsed)} সেকেন্ড` : "ঘড়ি বন্ধ"} onClick={() => setTimerOn(on => !on)}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5" /><path d="M12 9.5v4l2.5 2M9.5 3h5" />{!timerOn && <path d="M4 4l16 16" />}</svg>
-              {timerOn ? `${bn(elapsed)} সে.` : "ঘড়ি বন্ধ"}
+              <span className="nm-timer-text">{timerOn ? `${bn(elapsed)} সে.` : "ঘড়ি বন্ধ"}</span>
             </button>
+            </span>
           </div>
           <p className="nm-sr" aria-live="polite">{said}</p>
           {done ? (
