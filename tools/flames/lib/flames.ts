@@ -3,11 +3,11 @@ export const MAX_NAME = 12;
 // The copybook order, F-L-A-M-E-S. Links store names only and the result is recomputed, so labels may change; the order may not.
 // Kind outcomes only: E (Enemies) is played as ঝগড়ুটে বন্ধু, never শত্রু. Two human lines each, picked by the letters left.
 export const outcomes = [
-  { letter: "F", label: "বন্ধু", lines: ["টিফিন ভাগ করে খাওয়ার বন্ধু, সারাজীবনের।", "এক বেঞ্চে বসা, এক খাতায় কাটাকাটি।"] },
+  { letter: "F", label: "বন্ধু", lines: ["টিফিন ভাগ করে খাওয়ার বন্ধু।", "এক বেঞ্চে বসা, এক খাতায় কাটাকাটি।"] },
   { letter: "L", label: "প্রেম", lines: ["খাতার শেষ পাতা জানে, আর কেউ না।", "স্যার দেখার আগেই পাতাটা উল্টে ফেলো।"] },
   { letter: "A", label: "ভালো লাগা", lines: ["দেখা হলেই মনটা একটু ভালো হয়ে যায়।", "নামটা শুনলেই মুখে একটু হাসি।"] },
   { letter: "M", label: "বিয়ে", lines: ["আগে পরীক্ষা, তারপর দাওয়াত!", "কার্ড ছাপাতে দিয়ো না, এটা খেলা!"] },
-  { letter: "E", label: "ঝগড়ুটে বন্ধু", lines: ["রোজ ঝগড়া, তবু টিফিনের সময় পাশাপাশি।", "কথা বন্ধ এক দিনের, বন্ধুত্ব সারাজীবনের।"] },
+  { letter: "E", label: "ঝগড়ুটে বন্ধু", lines: ["রোজ ঝগড়া, তবু টিফিনের সময় পাশাপাশি।", "কথা বন্ধ থাকে বড়জোর এক দিন।"] },
   { letter: "S", label: "ভাইবোন", lines: ["চুল টানাটানি আর চকলেট ভাগাভাগি।", "ঝগড়া করবে, আবার আগলেও রাখবে।"] },
 ] as const;
 
