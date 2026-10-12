@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { site } from "../content";
 import {
-  createRun, fair, inPath, laneX, pieceAt, planRoad, reachIn, scoreOf, speedAt, steer, stepRun,
+  createRun, fair, inPath, laneX, migrateBest, nextMark, pieceAt, planRoad, reachIn, scoreOf, speedAt, starsOf, steer, stepRun, LEVEL_COUNT, ROUTES,
   AHEAD, BELL, BIKE_LEN, BIKE_W, CART, COW, CRASH, FIRST_Y, FRONT_Y, GOAT, GOT_LETTER, HIT, LANE_W, LETTER, PASSED, PUDDLE, RING,
   SLACK, SLOW_CAP, SPEC, START, SWITCH_T, TAKEN, TOP, UNIT, W, type Piece, type Run,
 } from "../lib/ride";
@@ -165,7 +165,7 @@ test("a random tapper ends sanely with a plausible score and a link that parses"
     assert.ok(run.meters >= 20 && run.meters < 3000, `seed ${seed}: ${run.meters}`);
     assert.equal(run.score, scoreOf(run.meters, run.letters, run.bells));
     assert.ok(run.x >= laneX(0) && run.x <= laneX(2));
-    const shared = { seed, score: run.score, meters: run.meters, letters: run.letters, name: "" };
+    const shared = { seed, score: run.score, meters: run.meters, letters: run.letters, name: "", level: 1 };
     assert.deepEqual(parseShareHash(shareHash(shared)), shared);
   }
 });
@@ -257,7 +257,7 @@ test("score bands and lines", () => {
   assert.match(compareLine(500, 522, "রাফি"), /^আর একটু হলেই!/);
   assert.match(compareLine(100, 900, ""), /^বন্ধু এবার/);
   assert.equal(compareLine(300, 300, "নীলা"), "নীলা আর তুমি একদম সমান সমান!");
-  const shared = { seed: 1, score: 527, meters: 387, letters: 12, name: "রাফি" };
+  const shared = { seed: 1, score: 527, meters: 387, letters: 12, name: "রাফি", level: 1 };
   assert.equal(bellsOf(shared), 4);
   assert.equal(detailLine(shared), "৩৮৭ মিটার · ১২টা চিঠি · ৪ বার ক্রিং");
   assert.equal(detailLine({ score: 507, meters: 387, letters: 12 }), "৩৮৭ মিটার · ১২টা চিঠি");
@@ -266,7 +266,7 @@ test("score bands and lines", () => {
 });
 
 test("challenge links round-trip, add up, and refuse hostile or impossible input", () => {
-  const shared = { seed: 4821, score: 527, meters: 387, letters: 12, name: "রাফি" };
+  const shared = { seed: 4821, score: 527, meters: 387, letters: 12, name: "রাফি", level: 1 };
   assert.equal(shareHash(shared), "s=4821&t=527&m=387&c=12&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF");
   assert.deepEqual(parseShareHash(`#${shareHash(shared)}`), shared);
   for (const bad of [
@@ -294,4 +294,91 @@ test("content meets the SEO limits and keeps clear of famous names", () => {
   assert.ok(site.faq.length >= 5);
   assert.ok(site.steps.length >= 3 && site.privacy.some(line => line.includes("লিংক")));
   assert.doesNotMatch(JSON.stringify(site), /road rash|need for speed|subway|tetris|nokia|ডাক বিভাগ|বাংলাদেশ ডাক|আপনি|করুন/i);
+});
+
+test("routes: route 1 is the original road; later routes start faster and denser", () => {
+  assert.equal(LEVEL_COUNT, 10);
+  assert.deepEqual(planRoad(4821, 1500, 1), planRoad(4821, 1500), "route 1 lays the old road");
+  for (let level = 2; level <= LEVEL_COUNT; level++) {
+    const [before, now] = [ROUTES[level - 2], ROUTES[level - 1]];
+    assert.ok(now.boost >= before.boost && now.goal >= before.goal, `route ${level} never gets easier`);
+    assert.ok(now.goal < now.stars[0] && now.stars[0] < now.stars[1]);
+    const run = createRun(7, TOP, level);
+    stepRun(run, DT);
+    assert.ok(run.speed > createRun(7).speed, `route ${level} rides off faster`);
+  }
+  assert.ok(ROUTES[0].goal <= 100, "the first route ends within half a minute");
+});
+
+test("every route's road is fair: an open lane is always in reach in time, at the route's own speed", () => {
+  for (let level = 2; level <= LEVEL_COUNT; level++) {
+    const boost = ROUTES[level - 1].boost;
+    for (let seed = 1; seed <= 60; seed++) {
+      const list = rows(planRoad(seed, 1200, level));
+      let open = 0b010;
+      for (let index = 0; index < list.length; index++) {
+        const row = list[index];
+        assert.ok(row.blocked !== 0b111, `route ${level} seed ${seed}: row ${index} shuts every lane`);
+        if (index > 0) {
+          const time = (row.y - list[index - 1].end - BIKE_LEN) / speedAt(row.y / UNIT + boost);
+          assert.ok(time >= SLACK + SWITCH_T, `route ${level} seed ${seed}: row ${index} leaves ${time.toFixed(2)}s`);
+          assert.ok(fair(open, 0b111 & ~row.blocked, reachIn(time)), `route ${level} seed ${seed}: row ${index} can trap a rider`);
+        }
+        open = 0b111 & ~row.blocked;
+      }
+    }
+  }
+});
+
+test("every route can be finished with three stars: a careful rider never crashes, at full speed, slow, and with a human's reaction", () => {
+  for (let level = 1; level <= LEVEL_COUNT; level++) {
+    const far = ROUTES[level - 1].stars[1] + 20;
+    for (let seed = 1; seed <= 25; seed++) {
+      for (const [cap, scale, delay] of [[TOP, 1, 0], [SLOW_CAP, 0.7, 0], [TOP, 1, 0.2]] as const) {
+        const run = ride(createRun(seed, cap, level), far, careful(delay), scale);
+        assert.equal(run.over, false, `route ${level} seed ${seed} cap ${cap} delay ${delay}: hit at ${run.meters} m`);
+        assert.equal(starsOf(run.meters, level), 3);
+      }
+    }
+  }
+});
+
+test("stars and marks by মিটার; the letter streak climbs and a missed letter resets it", () => {
+  assert.equal(starsOf(99, 1), 0);
+  assert.equal(starsOf(100, 1), 1);
+  assert.equal(starsOf(200, 1), 2);
+  assert.equal(starsOf(320, 1), 3);
+  assert.equal(nextMark(40, 1), 100);
+  assert.equal(nextMark(150, 1), 200);
+  assert.equal(nextMark(400, 1), 0);
+  const first = runWith({ kind: LETTER, w: SPEC[LETTER].w, len: SPEC[LETTER].len });
+  stepRun(first.run, DT);
+  assert.equal(first.run.streak, 1);
+  const missed = runWith({ kind: LETTER, lane: 2, x: laneX(2), w: SPEC[LETTER].w, len: SPEC[LETTER].len });
+  missed.run.streak = 4;
+  for (let index = 0; index < 30; index++) stepRun(missed.run, DT);
+  assert.deepEqual([missed.run.streak, missed.slot.state, missed.run.over], [0, PASSED, false], "riding past a letter ends the streak");
+});
+
+test("the old best moves into route 1's stars once, counting only the মিটার it must have had", () => {
+  assert.equal(migrateBest({}, "340"), 1, "340 could be 100 m with letters and bells");
+  assert.equal(migrateBest({}, "1000"), 3);
+  assert.equal(migrateBest({}, "300"), 0, "300 might be under 100 m: no unearned star");
+  assert.equal(migrateBest({}, null), 0);
+  assert.equal(migrateBest({}, "x"), 0);
+  assert.equal(migrateBest({ 1: 1 }, "1000"), 0, "already moved");
+  for (const score of [340, 527, 999]) {
+    // The bound holds: no ride that scores this has fewer মিটার than the migration assumes.
+    const meters = Math.floor((score - 40) / 3);
+    assert.ok(scoreOf(meters - 1, Math.floor((meters - 1) / 10) + 2, Math.floor((meters - 1) / 5) + 4) < score);
+  }
+});
+
+test("links carry the route; old links without it open route 1; bad routes are refused", () => {
+  const shared = { seed: 4821, score: 527, meters: 387, letters: 12, name: "", level: 3 };
+  assert.equal(shareHash(shared), "s=4821&t=527&m=387&c=12&l=3");
+  assert.deepEqual(parseShareHash(shareHash(shared)), shared);
+  assert.equal(parseShareHash("s=4821&t=527&m=387&c=12")?.level, 1);
+  assert.equal(shareHash({ ...shared, level: 1 }), "s=4821&t=527&m=387&c=12");
+  for (const bad of ["s=1&t=100&m=100&c=0&l=0", "s=1&t=100&m=100&c=0&l=11", "s=1&t=100&m=100&c=0&l=03", "s=1&t=100&m=100&c=0&l=x"]) assert.equal(parseShareHash(bad), null, bad);
 });

@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { confetti, sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-shelf";
@@ -68,6 +70,8 @@ export function ShelfBuilder() {
   function toggle(id: BookId) {
     touchedRef.current = true;
     setTouched(true);
+    // A book sliding onto the shelf; taking one off is silent, and a full shelf gets the win.
+    if (!read.includes(id)) { if (read.length + 1 === books.length) { confetti(); sfx.win(); } else sfx.drop(); }
     setRead(current => toggleBook(current, id));
     // Changed picks make the old comparison stale.
     setCompared(current => current === "done" ? "idle" : current);
@@ -120,7 +124,7 @@ export function ShelfBuilder() {
           </div>
           <NightRoad progress={read.length / books.length} />
         </div>
-        <p className="hm-hint">{!touched ? <>নমুনা হিসেবে <b>৩টা</b> বই আগে থেকেই বাছা আছে। যেগুলো পড়েছ ট্যাপ করো, না পড়লে আবার ট্যাপ করে সরাও।</>
+        <p className="hm-hint"><SoundToggle compact className="hm-sound" />{!touched ? <>নমুনা হিসেবে <b>৩টা</b> বই আগে থেকেই বাছা আছে। যেগুলো পড়েছ ট্যাপ করো, না পড়লে আবার ট্যাপ করে সরাও।</>
           : friend ? <><i className="hm-dot" aria-hidden="true" /> হলুদ ফোঁটা মানে {friendName} পড়েছে। তুমি যেগুলো পড়েছ, সেগুলোয় ট্যাপ করো।</>
           : "যেগুলো পড়েছ, ট্যাপ করো। ভুল হলে আবার ট্যাপ করলেই উঠে যাবে।"}</p>
 

@@ -8,7 +8,7 @@ import { drawings } from "../lib/drawings";
 import { createGameInvitation, EQUIPMENT, findGames, parsePlayerCount, suggestGames, type Game } from "../lib/games";
 import { bn, DEFAULT_TIME, gameById, headline, inviteCaption, inviteHash, MAX_NAME, MAX_PLACE, MAX_TIME, parseInvite, placeOf, SPACES, WHEN, type Invite, type Space, type WhenId } from "../lib/invite";
 import { championKicker, championNames, championStats, championTitle, parseLudo, PIECES, RESUME_FOR, type Ludo } from "../lib/ludo";
-import { LudoScore, savedSession } from "./ludo-score";
+import { diceRattle, LudoScore, savedSession } from "./ludo-score";
 
 const TOOL = "cholo-kheli";
 const placeIcons: Record<Space, string> = {
@@ -110,7 +110,7 @@ export function InviteBuilder() {
 
   function toggleItem(id: string) {
     // The board is only good for ludo, so ticking it means "we're playing ludo": go straight there, at most four players.
-    if (id === "ludo" && !equipment.includes(id)) playLudo(Math.min(players ?? PIECES.length, PIECES.length));
+    if (id === "ludo" && !equipment.includes(id)) { playLudo(Math.min(players ?? PIECES.length, PIECES.length)); diceRattle(); }
     else setEquipment(current => current.includes(id) ? current.filter(item => item !== id) : [...current, id]);
     setTouched(true);
   }

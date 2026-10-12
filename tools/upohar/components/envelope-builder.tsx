@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { hiss } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { bn, canLower, canRaise, createCard, distances, foods, friendLine, modes, parseShareHash, relations, sampleEnvelope, shareHash, MAX_NAME_LENGTH, type Card, type Envelope } from "../lib/upohar";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -126,7 +128,8 @@ export function EnvelopeBuilder() {
           <Chips legend="বিয়েটা কার?" items={relations} value={envelope.relation} onChange={relation => pick({ relation })} />
           <Chips legend="কোথা থেকে যাবে?" items={distances} value={envelope.distance} onChange={distance => pick({ distance })} />
           <Chips legend="মেনুতে কী?" items={foods} value={envelope.food} onChange={food => pick({ food })} />
-          <Chips legend="খামে কী দেবে?" items={modes} value={envelope.mode} onChange={mode => set({ mode })} />
+          <Chips legend="খামে কী দেবে?" items={modes} value={envelope.mode} onChange={mode => { set({ mode }); if (mode === "gift" && mode !== envelope.mode) { hiss(0.22, 0.1, 3000, "highpass"); hiss(0.14, 0.07, 2200, "highpass", 0.16); } }} />
+          <SoundToggle compact />
           <p className="up-honest">এগুলো শুধু হালকা আন্দাজ, কোনো নিয়ম না। পরিবার, এলাকা আর সামর্থ্য ভেদে অঙ্ক আলাদা হয়, আর যেটা তোমার জন্য আরামের, সেটাই ঠিক।</p>
         </div>
       </div>

@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { dhakaToday } from "../../koto-din-baki/lib/countdown";
 import { LAMPS } from "../lib/arch";
@@ -79,7 +81,7 @@ export function MondopBuilder() {
 
   function add(step: number) {
     setCount(current => clampCount(current + step));
-    if (step > 0) navigator.vibrate?.(12);
+    if (step > 0) sfx.pop(); else sfx.tap();
     stale();
   }
 
@@ -134,6 +136,7 @@ export function MondopBuilder() {
           <button type="button" className="mp-minus" onClick={() => add(-1)} disabled={count === 0} aria-label="একটা কমাও">−</button>
           <button type="button" className="kit-primary mp-plus" onClick={() => add(1)} disabled={count >= MAX_COUNT}><span aria-hidden="true">+</span> মণ্ডপ ঘুরলাম</button>
         </div>
+        <div className="mp-sound"><SoundToggle compact /></div>
         <p className="mp-line">
           {count > LAMPS ? "সব প্রদীপ জ্বলে গেছে, পুরো চালচিত্র আলোয় ভরা। " : ""}
           {friend && count > 0 ? (gap > 0 ? `${friendName} ${bn(friend.count)}টা। আর ${bn(gap)}টা হলেই ধরে ফেলবে!` : gap === 0 ? `${friendName}ও ${bn(friend.count)}টা, একদম সমান সমান!` : `${friendName} ${bn(friend.count)}টা, এবার তুমি এগিয়ে!`) : tourLine(count, picked)}

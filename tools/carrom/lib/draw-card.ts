@@ -1,7 +1,7 @@
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, drawFooterBand, fitText, renderCard, type CardFormat, type Segment } from "../../../shared/card-canvas";
 import { paintBoard, paintDisc, palette } from "./art";
-import { bn, duoLine, humanLine, piecesLine, playerName, SIDE_OF, type Shared } from "./link";
+import { bn, duoLine, humanLine, piecesLine, playerName, starsOf, LEVELS, SIDE_OF, type Shared } from "./link";
 import { CENTRE, COIN_R, RAIL, TOTAL } from "./physics";
 import { formation, PER_SIDE, QUEEN_POINTS, STRIKES } from "./rules";
 
@@ -24,7 +24,11 @@ export function drawCard(canvas: HTMLCanvasElement, card: Shared, format: CardFo
 
   const top = story ? 300 : 62;
   const duo = card.mode === "duo";
-  fitText(c, [{ text: duo ? "ক্যারম · দুজনে এক বোর্ড" : `ক্যারম · ${bn(STRIKES)} চাল`, color: palette.accent, weight: 700, display: true }], 84, top + 44, 42, 900);
+  // A board (level) game names the board and shows its stars beside the label.
+  const level = card.mode === "solo" ? card.level ?? 0 : 0, earned = level ? starsOf(card.points, level) : 0;
+  const label: Segment[] = [{ text: duo ? "ক্যারম · দুজনে এক বোর্ড" : level ? `ক্যারম · বোর্ড ${bn(level)} · ${LEVELS[level - 1].name}` : `ক্যারম · ${bn(STRIKES)} চাল`, color: palette.accent, weight: 700, display: true }];
+  if (earned) label.push({ text: "  ", color: palette.ink }, ...[0, 1, 2].map(star => ({ text: "★", color: star < earned ? "#e0a020" : "#c9b89a", weight: 700 })));
+  fitText(c, label, 84, top + 44, 42, 900);
   const head: Segment[] = duo
     ? [{ text: `${playerName(card.winner, card.name)} জিতল!`, color: palette.ink, weight: 800, display: true }]
     : [

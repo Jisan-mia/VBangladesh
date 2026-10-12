@@ -1,3 +1,5 @@
+import { starsFor } from "../../../shared/game-core";
+
 // No outside data: multiplication facts are computed, and every table on the page comes from t × m.
 export const TABLES = Array.from({ length: 19 }, (_, index) => index + 2); // the game: ২ থেকে ২০
 export const MULTIPLIERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -23,6 +25,17 @@ const numbers = new Intl.NumberFormat("bn-BD", { useGrouping: false });
 export const bn = (value: number) => numbers.format(value);
 export const outOf = (score: number) => `১০-এ ${bn(score)}`;
 export const tableName = (t: number) => `${bn(t)}-এর নামতা`;
+
+/** Each table is a level, numbered by the table itself (so level 1 exists but is not played: tables start at 2). */
+export const LEVEL_COUNT = TABLES[TABLES.length - 1];
+/** Stars per table: 3 for all 10 right, 2 for 7 or more, 1 for finishing. */
+export const tableStars = (score: number) => starsFor(score, 10, 7);
+
+/** What the next star needs, with the exact number. Empty at 3 stars. */
+export function nearMissLine(score: number) {
+  if (score >= 10) return "";
+  return score >= 7 ? `আর ${bn(10 - score)}টা ঠিক হলে ৩ তারা।` : `আর ${bn(7 - score)}টা ঠিক হলে ২ তারা।`;
+}
 
 export function randomOrder(random = Math.random) {
   const order = [...MULTIPLIERS];

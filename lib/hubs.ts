@@ -7,13 +7,13 @@ export const hubs: Hub[] = [
     slug: 'games',
     name: 'বাংলা গেম',
     title: 'বাংলা গেম — ফোনেই দেশি আর পুরোনো দিনের খেলা',
-    description: 'সাপলুডু, ক্যারম, বাঘবন্দি, ডাংগুলি থেকে ঝালমুড়ি সাপ আর কালবৈশাখী আম। ২৫টা বাংলা গেম, ফোনের ব্রাউজারেই খেলো। ডাউনলোড বা অ্যাকাউন্ট লাগে না।',
+    description: 'সাপলুডু, ক্যারম, বাঘবন্দি থেকে সুডোকু, গোলকধাঁধা আর ঝালমুড়ি সাপ। লেভেল আর তারার বাংলা গেম, ফোনের ব্রাউজারেই খেলো। ডাউনলোড বা অ্যাকাউন্ট লাগে না।',
     h1: 'বাংলা গেম: ফোনেই দেশি খেলা, একদম ফ্রি',
     intro: [
       'ছোটবেলায় উঠোনে বাঘবন্দি, বিকেলে ডাংগুলি, ঈদের ছুটিতে ক্যারম আর সাপলুডু। সেই খেলাগুলো এখন ফোনে। সাথে আছে পুরোনো মোবাইলের ব্রিক গেমের মতো ছোট খেলাও।',
-      'কোনো অ্যাপ নামাতে হয় না। লিংক খুললেই খেলা শুরু, এক আঙুলেই চলে। শেষে নিজের স্কোরের ছবি পাবে, আর বন্ধুকে একই খেলা পাঠিয়ে দেখতে পারবে কে বেশি পারে। কয়েকটায় এক ফোনে দুজন বা চারজনও খেলতে পারে।',
+      'কোনো অ্যাপ নামাতে হয় না। লিংক খুললেই খেলা শুরু, এক আঙুলেই চলে। শেষে নিজের স্কোরের ছবি পাবে, আর বন্ধুকে একই খেলা পাঠিয়ে দেখতে পারবে কে বেশি পারে। কয়েকটায় এক ফোনে দুজন বা চারজনও খেলতে পারে। ধাঁধার খেলাগুলোয় লেভেল আছে, প্রতিটায় তিন তারা পর্যন্ত।',
     ],
-    tools: ['sap-ludu', 'carrom', 'baghbandi', 'chhok-jora', 'danguli', 'chor-police', 'vo-katta', 'kalbaishakhi-aam', 'jhalmuri-sap', 'dudh-uthlano', 'antenna-thik-koro', 'tarer-fanke-belun', 'sir-ghurlei-thamo', 'deri-hoye-gelo', 'bostar-pahar', 'churui-tarao', 'handi-bhanga', 'peoner-cycle', 'baicher-nouka', 'pati-buni', 'paka-kancha', 'jora-melao', 'jam-chharao', 'shobdo-khoja', 'bhangti-nai'],
+    tools: ['sap-ludu', 'carrom', 'baghbandi', 'chhok-jora', 'danguli', 'chor-police', 'vo-katta', 'kalbaishakhi-aam', 'jhalmuri-sap', 'dudh-uthlano', 'antenna-thik-koro', 'tarer-fanke-belun', 'sir-ghurlei-thamo', 'deri-hoye-gelo', 'bostar-pahar', 'churui-tarao', 'handi-bhanga', 'peoner-cycle', 'baicher-nouka', 'pati-buni', 'paka-kancha', 'jora-melao', 'jam-chharao', 'shobdo-khoja', 'bhangti-nai', 'sudoku', 'switchboard', 'golokdhadha', 'ponero-ghor', 'chhobi-photao', 'bhul-kothay', 'bhimruler-chak', 'churir-bazar', 'atir-aam', 'chhobir-tukro', 'konta-nei', 'ghontar-sur', 'mukhe-mukhe-hisab', 'sat-chara', 'chhip-felo', 'latim', 'nodi-par', 'penalty', 'golir-badminton', 'kagojer-urojahaj', 'marble-sinri', 'roshi-tana', 'moshar-raat', 'al-dhore-hati', 'o-te-ojogor'],
   },
   {
     slug: 'quiz',

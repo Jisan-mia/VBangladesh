@@ -23,8 +23,11 @@
 .tool-jora-melao .jm-hint{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
 .tool-jora-melao .jm-hint b{font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.3}
 .tool-jora-melao .jm-hint span{font-size:14px;color:var(--muted)}
-.tool-jora-melao .jm-count{display:flex;gap:18px;font-size:15px;color:var(--muted)}
+.tool-jora-melao .jm-count{display:grid;gap:0;width:100%}
+.tool-jora-melao .jm-count p{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 14px;font-size:15px;color:var(--muted)}
+.tool-jora-melao .jm-count p>b{font-family:var(--font-display);font-size:20px;color:var(--ink)}
 .tool-jora-melao .jm-count b{color:var(--ink);font-weight:700}
+.tool-jora-melao .jm-count .jm-goal{font-size:13px;line-height:1.4}
 .tool-jora-melao .jm-turn{display:flex;align-items:center;gap:10px;width:100%;padding:5px 14px;border-radius:14px;background:color-mix(in srgb,var(--who) 13%,#fff);font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.3;color:var(--who);animation:jm-in .3s ease-out}
 .tool-jora-melao .jm-turn::before{content:"";flex:none;width:14px;height:14px;border-radius:50%;background:var(--who);box-shadow:0 0 0 4px color-mix(in srgb,var(--who) 22%,transparent)}
 
@@ -119,3 +122,28 @@
   .tool-jora-melao .jm-pop{animation:jm-fade 1.6s linear forwards}
 }
 .tool-jora-melao .jm-hero h1 .jm-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;color:var(--accent)}
+
+/* the end of a game: a panel under the board (an ৮-card board is too short to cover) */
+.tool-jora-melao .jm-over{display:grid;justify-items:center;gap:4px;padding:12px 14px 14px;border:1.5px solid var(--line);border-radius:18px;background:var(--paper);text-align:center;animation:jm-in .25s ease-out}
+.tool-jora-melao .jm-over p{margin:0;font-size:15px;font-weight:600;color:var(--muted)}
+.tool-jora-melao .jm-over strong{font-size:clamp(48px,15vw,72px)}
+.tool-jora-melao .jm-over .gx-reveal{font-size:36px}
+.tool-jora-melao .jm-over .jm-near,.tool-jora-melao .jm-over .jm-next{font-size:13.5px;font-weight:500}
+.tool-jora-melao .jm-over-actions{display:flex;gap:8px;width:100%;justify-content:center;margin-top:4px}
+.tool-jora-melao .jm-over-actions .jm-big{flex:1;min-width:0;margin-top:0}
+.tool-jora-melao .jm-over-actions .kit-secondary{flex:0 1 38%;min-height:58px}
+.tool-jora-melao .jm-sound{margin-inline-start:auto}
+.tool-jora-melao .jm-tile:active .jm-inner{transform:scale(.95)}
+.tool-jora-melao .jm-tile[data-up=true]:active .jm-inner{transform:rotateY(180deg)}
+.tool-jora-melao .jm-levels{padding:10px 12px;border:1.5px solid var(--line);border-radius:16px;background:#fff}
+.tool-jora-melao .jm-levels summary{display:flex;justify-content:space-between;align-items:center;min-height:36px;font-family:var(--font-display);font-size:18px;font-weight:700;cursor:pointer}
+.tool-jora-melao .jm-levels summary span{font-family:var(--font-bengali);font-size:14px;color:#b06a00}
+.tool-jora-melao .jm-levels p{margin:4px 0 10px;font-size:13.5px;line-height:1.5;color:var(--muted)}
+.tool-jora-melao .jm-levels .gx-levels button{border-color:var(--accent-deep);color:var(--accent-deep)}
+.tool-jora-melao .jm-levels .gx-levels button[aria-current=true]{background:var(--accent);color:#fff}
+.tool-jora-melao .jm[data-slow=true] .jm-over{animation:none}
+.tool-jora-melao .jm-over-actions>*{white-space:nowrap}
+@media(max-width:380px){
+  .tool-jora-melao .jm-over-actions .jm-big{padding:0 12px;font-size:20px}
+  .tool-jora-melao .jm-over-actions .kit-secondary{padding:0 10px;font-size:15px}
+}

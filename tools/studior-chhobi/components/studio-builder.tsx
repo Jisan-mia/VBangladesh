@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat, type Photo } from "../../../shared/card-canvas";
+import { buzz, hiss, sfx, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, PhotoPicker, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard, drawSwatch } from "../lib/draw-print";
@@ -13,6 +15,9 @@ const SOCIAL_PROOF_MIN = 50;
 // Percentages from a handful of people are noise.
 const COMPARE_MIN = 20;
 const percent = (count: number, total: number) => Math.round((count / Math.max(total, 1)) * 100);
+
+// The studio camera: a bright snap, then the shutter clacking shut. Plays with the flash.
+function shutter() { hiss(0.04, 0.12, 4500, "highpass"); tone(1400, 0.03, 0.08, "square"); tone(700, 0.05, 0.1, "square", 0.07); buzz(10); }
 
 export function StudioBuilder() {
   const [print, setPrint] = useState<Print>(DEFAULT_PRINT);
@@ -68,20 +73,20 @@ export function StudioBuilder() {
   }
 
   function choose(id: BackdropId) {
-    if (id !== print.backdrop) setFlash(count => count + 1);
+    if (id !== print.backdrop) { setFlash(count => count + 1); shutter(); }
     update({ backdrop: id });
     setCounted(current => current === "done" ? "idle" : current);
   }
 
   function pickPhoto(next: Photo | null) {
     setPhoto(next);
-    if (next) { setFlash(count => count + 1); setTouched(true); }
+    if (next) { setFlash(count => count + 1); shutter(); setTouched(true); }
   }
 
   async function countMine() {
     setCounted("sending");
     const tally = await addToTally(TOOL, [print.backdrop]);
-    if (tally) { setEveryone(tally); setCounted("done"); }
+    if (tally) { setEveryone(tally); setCounted("done"); sfx.good(); }
     else setCounted("failed");
   }
 
@@ -114,6 +119,7 @@ export function StudioBuilder() {
               </button>
             ))}
           </div>
+          <SoundToggle compact />
         </fieldset>
 
         <div className="sc-photo">

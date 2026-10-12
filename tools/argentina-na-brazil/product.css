@@ -104,6 +104,7 @@
 .abn-fan-bunting[data-team=bra] li[data-state=right]{background:var(--canary)}
 .abn-fan-bunting li[data-state=right]{animation:abn-pennant .5s cubic-bezier(.2,.8,.3,1.3) both}
 @keyframes abn-pennant{from{transform:scaleY(.2)}}
+.abn-fan-meta span{display:inline-flex;align-items:center;gap:8px}
 .abn-fan-meta{display:flex;justify-content:space-between;gap:8px;font-size:14px;font-weight:600;color:#ffd3a1}
 .abn-fan-ask{font-size:21px}
 .abn-fan-options{display:grid;gap:8px}

@@ -52,6 +52,7 @@
 .ek-qty button:disabled{opacity:.3;cursor:not-allowed}
 .ek-qty button[aria-disabled=true]{border-color:#c3ccd8;background:#c3ccd8;box-shadow:none}
 .ek-qty input{width:50px;height:44px;padding:0 2px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font-family:var(--font-display);font-size:18px;font-weight:700;text-align:center}
+.ek-sound{display:flex;justify-content:flex-end;color:var(--muted)}
 .ek-note{margin:10px 0 0;font-size:13px;line-height:1.6;color:var(--muted)}
 
 /* result */
@@ -123,7 +124,7 @@
 }
 @media(min-width:960px){
   .ek-shop{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:0 32px;align-items:start}
-  .ek-stage{display:block;position:sticky;top:16px;grid-row:span 4}
+  .ek-stage{display:block;position:sticky;top:16px;grid-row:span 5}
   .ek-board{position:relative;top:auto}
   .ek-tabs{margin-top:0}
 }

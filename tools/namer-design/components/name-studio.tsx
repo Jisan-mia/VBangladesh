@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { loadCardFonts } from "../../../shared/card-canvas";
+import { sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { designBlob, drawDesign, sizes, type Format } from "../lib/draw-name";
@@ -81,7 +83,7 @@ export function NameStudio() {
   async function count() {
     setCounted("sending");
     const tally = await addToTally(TOOL, [shown.style]);
-    if (tally) { setEveryone(tally); setCounted("done"); }
+    if (tally) { setEveryone(tally); setCounted("done"); sfx.good(); }
     else setCounted("failed");
   }
 
@@ -126,13 +128,14 @@ export function NameStudio() {
           <legend>কোন ঢঙে?</legend>
           <div className="namer-styles-row">
             {styles.map((item, index) => (
-              <button type="button" key={item.id} aria-pressed={item.id === shown.style} onClick={() => update({ style: item.id as StyleId })}>
+              <button type="button" key={item.id} aria-pressed={item.id === shown.style} onClick={() => { if (item.id !== shown.style) sfx.pick(); update({ style: item.id as StyleId }); }}>
                 <canvas ref={element => { chips.current[index] = element; }} width={sizes.stage.width * CHIP_SCALE} height={sizes.stage.height * CHIP_SCALE} aria-hidden="true" />
                 <span>{item.label}</span>
               </button>
             ))}
           </div>
         </fieldset>
+        <SoundToggle compact />
       </div>
 
       <StickyNext show={Boolean(name) && !resultVisible} title={<strong>{name} · {style.label}</strong>} sub={line} href="#result" label="ছবিটা নাও" />

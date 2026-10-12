@@ -99,3 +99,4 @@
   .up-friend h2{font-size:24px}
 }
 @media(prefers-reduced-motion:reduce){.up-amount{animation:none}.up-chips button{transition:none}.up-bars i{transition:none}}
+.up-controls .gx-sound{justify-self:start}

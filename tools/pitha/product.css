@@ -115,3 +115,14 @@
 @media(hover:hover){.pt-opt:not(:disabled):hover{background:#fff}}
 @media(prefers-reduced-motion:reduce){.pitha-steam path{animation:none}.pt-opt,.pt-bars i{transition:none}}
 .pt-hero h1 .pt-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 4px;font-size:13px;font-weight:600;color:var(--accent)}
+
+/* sets, stars and progress (levels) */
+.tool-pitha .pt-levels{margin-top:12px;border:1.5px solid color-mix(in srgb,var(--ink) 20%,transparent);border-radius:14px;background:#fff;color:var(--ink)}
+.tool-pitha .pt-levels summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-pitha .pt-levels summary span{font-weight:500;font-size:14px;color:var(--muted)}
+.tool-pitha .pt-levels p{margin:0 14px 10px;font-size:14px;line-height:1.55;color:var(--muted)}
+.tool-pitha .pt-levels .gx-levels{padding:0 12px 12px}
+.tool-pitha .pt-levels .gx-levels li:has(button.next)~li button.next{animation:none;box-shadow:none;border-width:1.5px}
+.tool-pitha .pt-reward{display:flex;align-items:center;flex-wrap:wrap;gap:2px 12px;margin:6px 0 4px}
+.tool-pitha .pt-reward .gx-stars{font-size:30px}
+.tool-pitha .pt-reward small{font-size:15px;font-weight:600;color:var(--accent-deep)}

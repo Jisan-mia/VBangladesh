@@ -56,6 +56,20 @@
 .tool-churui-tarao .ct-toggle[aria-pressed=true] i::after{transform:translateX(14px)}
 .tool-churui-tarao .ct-pause{flex:none;min-width:96px}
 
+/* the level and total stars just above the field */
+.tool-churui-tarao .ct-level{display:flex;justify-content:space-between;gap:8px;width:min(100%,480px,max(300px,calc((100svh - 240px) * .8)));margin:0;font-size:14px;color:var(--muted)}
+.tool-churui-tarao .ct-level b{color:var(--ink)}
+.tool-churui-tarao .ct-level span:last-child{flex:none;font-weight:700;color:#a86f00}
+.tool-churui-tarao .ct-near{margin:0;padding:4px 12px;border-radius:10px;background:#ffd25729;font-size:15px;font-weight:700;color:var(--gold)}
+.tool-churui-tarao .ct-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.tool-churui-tarao .ct-actions .kit-secondary{min-height:56px;border-color:#fff4dc;background:transparent;color:#fff4dc;font-size:17px}
+.tool-churui-tarao .ct-over .gx-reveal{font-size:38px}
+.tool-churui-tarao .ct-bar .gx-sound{flex:none;border:1.5px solid #dccaa8;border-radius:14px;background:#fff;color:var(--ink)}
+.tool-churui-tarao .ct-levels{width:min(100%,480px,max(300px,calc((100svh - 240px) * .8)));padding:10px 14px;border:1.5px solid #dccaa8;border-radius:14px;background:#fff}
+.tool-churui-tarao .ct-levels summary{display:flex;justify-content:space-between;min-height:32px;align-items:center;font-weight:700;cursor:pointer}
+.tool-churui-tarao .ct-levels summary span{color:#a86f00}
+.tool-churui-tarao .ct-levels p{margin:8px 0 12px;font-size:14px;color:var(--muted);line-height:1.5}
+
 /* result */
 .tool-churui-tarao .ct-result{scroll-margin-top:12px;max-width:none;margin-top:24px;padding-top:20px;border-top:2px solid var(--ink)}
 .tool-churui-tarao .ct-result-head h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(24px,5vw,36px);line-height:1.4}

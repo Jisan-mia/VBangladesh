@@ -109,6 +109,31 @@ import { site as jam_chharao } from '../tools/jam-chharao/content';
 import { site as shobdo_khoja } from '../tools/shobdo-khoja/content';
 import { site as carrom } from '../tools/carrom/content';
 import { site as pati_buni } from '../tools/pati-buni/content';
+import { site as sudoku } from '../tools/sudoku/content';
+import { site as switchboard } from '../tools/switchboard/content';
+import { site as golokdhadha } from '../tools/golokdhadha/content';
+import { site as ponero_ghor } from '../tools/ponero-ghor/content';
+import { site as chhobi_photao } from '../tools/chhobi-photao/content';
+import { site as ghontar_sur } from '../tools/ghontar-sur/content';
+import { site as konta_nei } from '../tools/konta-nei/content';
+import { site as bhul_kothay } from '../tools/bhul-kothay/content';
+import { site as atir_aam } from '../tools/atir-aam/content';
+import { site as bhimruler_chak } from '../tools/bhimruler-chak/content';
+import { site as churir_bazar } from '../tools/churir-bazar/content';
+import { site as mukhe_mukhe_hisab } from '../tools/mukhe-mukhe-hisab/content';
+import { site as chhobir_tukro } from '../tools/chhobir-tukro/content';
+import { site as sat_chara } from '../tools/sat-chara/content';
+import { site as chhip_felo } from '../tools/chhip-felo/content';
+import { site as latim } from '../tools/latim/content';
+import { site as nodi_par } from '../tools/nodi-par/content';
+import { site as penalty } from '../tools/penalty/content';
+import { site as golir_badminton } from '../tools/golir-badminton/content';
+import { site as kagojer_urojahaj } from '../tools/kagojer-urojahaj/content';
+import { site as marble_sinri } from '../tools/marble-sinri/content';
+import { site as roshi_tana } from '../tools/roshi-tana/content';
+import { site as moshar_raat } from '../tools/moshar-raat/content';
+import { site as al_dhore_hati } from '../tools/al-dhore-hati/content';
+import { site as o_te_ojogor } from '../tools/o-te-ojogor/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -222,6 +247,31 @@ export const toolContent = {
   'shobdo-khoja': shobdo_khoja,
   'carrom': carrom,
   'pati-buni': pati_buni,
+  'sudoku': sudoku,
+  'switchboard': switchboard,
+  'golokdhadha': golokdhadha,
+  'ponero-ghor': ponero_ghor,
+  'chhobi-photao': chhobi_photao,
+  'ghontar-sur': ghontar_sur,
+  'konta-nei': konta_nei,
+  'bhul-kothay': bhul_kothay,
+  'atir-aam': atir_aam,
+  'bhimruler-chak': bhimruler_chak,
+  'churir-bazar': churir_bazar,
+  'mukhe-mukhe-hisab': mukhe_mukhe_hisab,
+  'chhobir-tukro': chhobir_tukro,
+  'sat-chara': sat_chara,
+  'chhip-felo': chhip_felo,
+  'latim': latim,
+  'nodi-par': nodi_par,
+  'penalty': penalty,
+  'golir-badminton': golir_badminton,
+  'kagojer-urojahaj': kagojer_urojahaj,
+  'marble-sinri': marble_sinri,
+  'roshi-tana': roshi_tana,
+  'moshar-raat': moshar_raat,
+  'al-dhore-hati': al_dhore_hati,
+  'o-te-ojogor': o_te_ojogor,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];

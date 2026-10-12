@@ -127,7 +127,7 @@ test("the link round-trips, and the total is always recomputed", () => {
   const result = { seed: 123456, scores: [94, 88, 0, 97, 91], spills: [false, false, true, false, false], name: "রাফি", slow: false };
   const hash = shareHash(result);
   assert.equal(hash, "s=123456&t=74&p=94.88.x.97.91&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF");
-  assert.deepEqual(parseShare(`#${hash}`), { ...result, total: 74 });
+  assert.deepEqual(parseShare(`#${hash}`), { ...result, total: 74, kitchen: 3 });
   assert.equal(share.normalize(hash), hash);
   assert.equal(parseShare(shareHash({ ...result, slow: true }))?.slow, true);
   assert.equal(previewTitle({ total: 91, name: "রাফি" }), "রাফি দুধ উথলানোর খেলায় ৯১% করেছে। তুমি পারবে?");

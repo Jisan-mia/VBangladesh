@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type MouseEvent, type PointerEvent } from 'react';
 import { cardSizes, loadCardFonts, type CardFormat } from '../../../shared/card-canvas';
 import { FormatToggle, ShareBar, StickyNext, useInView } from '../../../shared/share-kit';
+import { sfx } from '../../../shared/game-sound';
+import { SoundToggle } from '../../../shared/game-ui';
 import { useHistory } from '../../../shared/use-history';
 import { dragPosition, passedDragThreshold } from '../lib/drag';
 import { cardBlob, drawCard, svgImage } from '../lib/draw-postcard';
@@ -86,7 +88,7 @@ export function SceneComposer() {
     if (drag.current) return;
     try {
       const id = crypto.randomUUID();
-      update({ items: addObject(items, { id, kind }) }); setSelectedId(id);
+      update({ items: addObject(items, { id, kind }) }); setSelectedId(id); sfx.drop();
       setStatus(`${objects[kind].label} বসানো হলো। টেনে জায়গামতো নাও।`);
     } catch (error) { setStatus(error instanceof Error ? error.message : 'বসানো গেল না। আরেকবার চেষ্টা করো।'); }
   }
@@ -113,7 +115,7 @@ export function SceneComposer() {
     if (!(event.target as Element).hasAttribute('data-ground')) return;
     if (!selected) { setStatus('আগে একটা জিনিস চেপে বেছে নাও, তারপর যেখানে বসাতে চাও সেখানে চাপো।'); return; }
     const point = scenePoint({ x: event.clientX, y: event.clientY });
-    if (point) reposition(point);
+    if (point) { reposition(point); sfx.drop(); }
   }
 
   function startDrag(event: PointerEvent<SVGSVGElement>) {
@@ -156,7 +158,7 @@ export function SceneComposer() {
     suppressClick.current = active.moved;
     if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
     if (active.moved) {
-      editor.commit({ ...active.document, items: active.latest });
+      editor.commit({ ...active.document, items: active.latest }); sfx.drop();
       setStatus('জায়গা বদলে গেছে। পছন্দ না হলে “এক ধাপ পেছাও” চাপো।');
     }
   }
@@ -180,7 +182,7 @@ export function SceneComposer() {
 
   function removeSelected() {
     if (!selected || drag.current) return;
-    update({ items: removeObject(items, selected.id) }); setSelectedId(null);
+    update({ items: removeObject(items, selected.id) }); setSelectedId(null); sfx.whoosh();
     setStatus(`${objects[selected.kind].label} বাদ দেওয়া হলো।`);
   }
 
@@ -246,6 +248,7 @@ export function SceneComposer() {
     <p className="para-hint" id="scene-keyboard-help">জিনিস একবার চেপে বেছে নিয়ে মাটির অন্য কোথাও চাপলেও সরে যাবে। কিবোর্ডে ছবির ওপর থেকে Enter দিয়ে বেছে নাও, তির দিয়ে সরাও, Delete দিয়ে বাদ দাও।</p>
 
     <div className="para-tools">
+      <SoundToggle compact />
       <div className="para-toggle" role="group" aria-label="কোথায় সাজাবে">{settings.map(([value, label]) => <button type="button" key={value} aria-pressed={setting === value} onClick={() => { update({ setting: value }); setStatus(`এবার ${label}। জিনিসগুলো যেখানে ছিল সেখানেই আছে।`); }}>{label}</button>)}</div>
       <div className="para-history"><button type="button" disabled={!editor.canUndo || preview !== null} onClick={() => historyStep('undo')}>এক ধাপ পেছাও</button><button type="button" disabled={!editor.canRedo || preview !== null} onClick={() => historyStep('redo')}>এক ধাপ এগোও</button></div>
       <p className="para-presets"><span>নতুন করে:</span><button type="button" className="kit-link" disabled={preview !== null} onClick={() => usePreset('courtyard')}>উঠোনের বিকেল</button><button type="button" className="kit-link" disabled={preview !== null} onClick={() => usePreset('rooftop')}>ছাদের আড্ডা</button><button type="button" className="kit-link" disabled={preview !== null || !items.length} onClick={() => setResetOpen(true)}>সব সরাও</button></p>

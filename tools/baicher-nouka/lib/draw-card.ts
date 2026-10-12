@@ -1,7 +1,7 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, wrapText, BODY_FONT, type CardFormat } from "../../../shared/card-canvas";
 import { SCHEMES, drawBoat, drawPatch, drawRope, oarPath, paintBanks, paintWater } from "./art";
 import { laneX, PLAYER_LANE, W } from "./race";
-import { humanLine, ordinal, secs, type Shared } from "./result";
+import { bn, humanLine, ordinal, secs, starsForRank, type Shared } from "./result";
 
 const INK = "#1b2a33", BLUE = "#1d5c8a", DEEP = "#123f61", RED = "#b3302a";
 const S = 3; // card pixels per game unit: the river fills the card's width exactly
@@ -50,7 +50,11 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
   context.fillStyle = "rgba(16,34,44,0.28)"; context.beginPath(); context.roundRect(left + 10, top + 14, right - left, panel.h, 28); context.fill();
   context.fillStyle = "#fff8ea"; context.beginPath(); context.roundRect(left, top, right - left, panel.h, 28); context.fill();
   context.strokeStyle = "#e9d4ae"; context.lineWidth = 4; context.beginPath(); context.roundRect(left + 14, top + 14, right - left - 28, panel.h - 28, 18); context.stroke();
-  fitText(context, [{ text: "বাইচের নৌকা", color: BLUE, weight: 800, display: true }, ...(shared.name ? [{ text: ` · ${shared.name}`, color: INK, weight: 700, display: true }] : [])], left + 56, top + 100, 54, 560);
+  const stars = starsForRank(shared.rank), race = ` · বাইচ ${bn(shared.level)}${stars ? ` ${"★".repeat(stars)}${"☆".repeat(3 - stars)}` : ""}`;
+  fitText(context, [
+    { text: "বাইচের নৌকা", color: BLUE, weight: 800, display: true }, { text: race, color: RED, weight: 700, display: true },
+    ...(shared.name ? [{ text: ` · ${shared.name}`, color: INK, weight: 700, display: true }] : []),
+  ], left + 56, top + 100, 54, 560);
   const [fill, ring] = MEDAL[shared.rank] ?? MEDAL[4];
   const cx = right - 160, cy = top + 210, radius = 112;
   // The time and "সেকেন্ডে" share the line left of the medal.

@@ -1,0 +1,112 @@
+.tool-golir-badminton{--accent:#c2571a;--accent-deep:#8f3d10;--ink:#1b2238;--muted:#585d6e;--paper:#f3ede1;--paper-edge:#ddd3bf;--night:#141b33;--gold:#ffd23f;--me:#e07a2e}
+.tool-golir-badminton .gb-page{color:var(--ink)}
+
+/* hero: one short line, so the court and its button land on the first phone screen */
+.gb-hero{padding:10px 0 4px}
+.gb-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,6vw,40px);line-height:1.3;font-weight:700;letter-spacing:0}
+.gb-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+
+.gb{display:grid;gap:8px;max-width:480px}
+.gb-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+.gb-friend{padding:10px 14px;border-radius:14px;background:var(--paper);border-left:5px solid var(--accent)}
+.gb-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.4}
+.gb-friend p{margin:2px 0 0;font-size:13px;line-height:1.45;color:var(--muted)}
+
+.gb-hud{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:30px}
+.gb-hud p{margin:0}
+.gb-level{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;line-height:1.25}
+.gb-level b{font-family:var(--font-display);font-size:17px;font-weight:800}
+.gb-level span{font-size:13px;font-weight:600;color:var(--muted)}
+.gb-chip{flex:none;padding:4px 10px;border-radius:999px;background:var(--me);color:#fff;font-size:13px;font-weight:800}
+.gb-chip span{display:inline-block}
+
+/* the scoreboard: you, the rally count, them */
+.gb-score{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:6px 12px;border-radius:12px;background:var(--night);color:#f3f1e4}
+.gb-score p{display:flex;align-items:center;gap:8px;margin:0;min-width:0}
+.gb-them{justify-content:flex-end}
+.gb-score b{overflow:hidden;font-size:14px;font-weight:700;white-space:nowrap;text-overflow:ellipsis}
+.gb-score strong{font-family:var(--font-display);font-size:22px;line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
+.gb-shirt{flex:none;width:12px;height:12px;border-radius:3px;box-shadow:0 0 0 1.5px #ffffff55}
+.gb-rally{font-size:12px;color:#c9cbd8}
+.gb-rally b{font-size:15px;color:#fff}
+
+/* the court: press anywhere here; only here does the page stop scrolling under a finger */
+.gb-board{position:relative;width:100%;border-radius:14px;overflow:hidden;background:var(--night);box-shadow:0 6px 18px #1b223833;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
+.gb-board canvas{display:block;width:100%;aspect-ratio:360/400}
+.gb-call{position:absolute;left:8px;right:8px;top:8px;width:fit-content;margin:0 auto;padding:6px 14px;border-radius:999px;background:#141b33e6;color:#fff;font-family:var(--font-display);font-size:16px;font-weight:800;line-height:1.35;text-align:center;pointer-events:none;animation:gb-in .2s ease-out both}
+@keyframes gb-in{from{opacity:0;transform:translateY(-6px)}}
+.gb-sigh{position:absolute;transform:translate(-50%,-100%);margin:0;padding:3px 10px;border-radius:12px 12px 12px 2px;background:#fff7e6;color:#5a3a1a;font-family:var(--font-display);font-size:15px;font-weight:800;pointer-events:none;animation:gb-sigh 1.4s ease-out both}
+@keyframes gb-sigh{0%{opacity:0;transform:translate(-50%,-80%)}15%{opacity:1;transform:translate(-50%,-100%)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-120%)}}
+.gb-hint{position:absolute;left:50%;bottom:3%;transform:translateX(-50%);margin:0;padding:8px 16px;border-radius:999px;background:#141b33d9;color:#fff;font-size:16px;font-weight:700;white-space:nowrap;pointer-events:none;animation:gb-nudge 1.6s ease-in-out infinite}
+@keyframes gb-nudge{50%{transform:translate(-50%,-6px)}}
+.gb-overlay{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;padding:16px;background:#141b33e0;color:#fff;text-align:center;cursor:default}
+.gb-overlay p{margin:0;font-weight:600}
+.gb-overlay .kit-primary{min-width:180px;min-height:56px;font-size:19px}
+
+.gb-status{min-height:44px;margin:0;font-size:15px;font-weight:600;line-height:1.45;text-align:center}
+
+/* the big swing button: press to raise the racket, lift to hit */
+.gb-swing{min-height:60px;border:2px solid var(--accent-deep);border-radius:16px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:22px;font-weight:800;box-shadow:0 4px 0 var(--accent-deep);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .08s ease-out}
+.gb-swing:active{transform:translateY(3px);box-shadow:0 1px 0 var(--accent-deep)}
+.gb-swing:disabled{opacity:.5}
+
+.gb-prefs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--ink)}
+.gb-pill{min-height:44px;padding:6px 14px;border:1.5px solid currentColor;border-radius:999px;background:transparent;color:inherit;font-size:14px;font-weight:700}
+.gb-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+.gb-best{margin:0 0 0 auto;font-size:13px;color:var(--muted)}
+.gb-best b{color:var(--ink)}
+
+/* a won or lost game */
+.gb-end{display:grid;justify-items:center;gap:6px;padding:12px 14px;border-radius:16px;background:var(--paper);text-align:center}
+.gb-end p{margin:0}
+.gb-end-line{font-family:var(--font-display);font-size:19px;font-weight:800;line-height:1.4}
+.gb-end-note{font-size:14px;line-height:1.45;color:var(--muted)}
+.gb-end-note:empty{display:none}
+.gb-actions{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;width:100%;margin-top:4px}
+.gb-actions:has(> :only-child){grid-template-columns:1fr}
+.tool-golir-badminton .gb-actions button,.tool-golir-badminton .gb-again{min-height:56px;font-size:18px}
+.gb-see{min-height:44px}
+.gb-lost-title{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--accent-deep)}
+.gb-lost-line{font-weight:700;line-height:1.45}
+.gb-again{width:100%}
+
+.gb-drawer{border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff}
+.gb-drawer summary{min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;font-weight:700;cursor:pointer}
+.gb-drawer summary span{font-weight:500;color:var(--muted);font-size:14px}
+.gb-drawer[open]{padding-bottom:12px}
+.gb-drawer .gx-levels{padding:0 10px}
+.gb-stages{margin:0 14px 10px;font-size:13px;line-height:1.5;color:var(--muted)}
+
+.gb-result{scroll-margin-top:12px;margin-top:16px;padding-top:18px;border-top:2px solid var(--paper-edge)}
+.gb-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,32px);line-height:1.4}
+.gb-result h2 em{font-style:normal;color:var(--accent)}
+.gb-result>p{margin:0 0 16px;color:var(--muted)}
+.gb-result-body{display:grid;gap:22px}
+.gb-share{display:grid;gap:18px;align-content:start}
+.gb-name{display:grid;gap:6px;font-weight:600}
+.gb-name small{font-weight:400;color:var(--muted);font-size:13px}
+.gb-name input{border:1.5px solid var(--paper-edge);border-radius:12px;font-size:17px}
+
+.gb-guide h2{font-family:var(--font-display);margin-bottom:12px}
+.gb-guide>p{color:var(--muted);max-width:640px}
+.gb-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.gb-guide li{display:flex;gap:14px;align-items:flex-start}
+.gb-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
+.gb-guide li p{margin:4px 0 0}
+
+@media (max-width:360px){
+  .gb-status{font-size:14px}
+  .gb-level b{font-size:15px}
+  .gb-score{padding:6px 8px;gap:4px}
+  .gb-score b{font-size:13px}
+}
+@media (min-width:720px){.gb-lead{display:block}.gb-page:has(.gb-friend) .gb-lead{display:none}}
+.gb[data-slow=true] .gb-hint,.gb[data-slow=true] .gx-pop,.gb[data-slow=true] .gb-call{animation:none}
+.gb[data-slow=true] .gb-sigh{animation:gb-fade 1.4s linear both}
+@media (prefers-reduced-motion:reduce){
+  .gb-hint,.gb-call,.gb-chip .gx-pop{animation:none}
+  .gb-sigh{animation:gb-fade 1.4s linear both}
+  .gb-swing{transition:none}
+}
+@keyframes gb-fade{0%,80%{opacity:1}100%{opacity:0}}

@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { confetti, sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { shortDate } from "../../koto-din-baki/lib/countdown";
 import { bankShapes, coinShapes, type Shape } from "../lib/bank-art";
@@ -106,6 +108,9 @@ export function BankBuilder() {
     setBank(current => ({ ...current, coins: Math.min(p.count, (current.coins ?? 0) + 1) }));
     setDrops(count => count + 1);
     setTouched(true);
+    sfx.coin();
+    // The last coin fills the bank.
+    if (coins + 1 >= p.count) setTimeout(() => { sfx.win(); confetti(); }, 350);
   }
 
   function takeBack() {
@@ -168,6 +173,7 @@ export function BankBuilder() {
           <div className="mb-stage-row">
             <button type="button" className="kit-link" onClick={takeBack} disabled={!coins}>ভুল হয়েছে, একটা ফেরত নাও</button>
             {locked && <button type="button" className="kit-link" onClick={restart}>নতুন ব্যাংক</button>}
+            <SoundToggle compact />
           </div>
         </> : <p className="mb-problem">এই দিনটা আর সামনে নেই। নিচে অন্য একটা দিন বেছে নাও।</p>}
       </div>

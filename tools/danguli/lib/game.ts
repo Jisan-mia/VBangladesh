@@ -1,5 +1,5 @@
 // The rules of the screen game, in ডাং (one stick length) and seconds. Pure and seeded: the same seed gives the same field on every phone.
-import { makeRng } from "../../../shared/game-core";
+import { makeRng, starsFor, type LevelStars } from "../../../shared/game-core";
 import { HITS, MAX_HIT } from "./result";
 
 /** The batter's waist, where the ডাং meets the কাঠি best. */
@@ -28,7 +28,42 @@ const MIN_SKIP = 0.4;
 export type Fielder = { x: number; speed: number };
 export type Field = { winds: number[]; pops: number[]; pond: { from: number; to: number }; cow: number; fielders: Fielder[] };
 
-export function makeField(seed: number): Field {
+/**
+ * The পাড়া tournament: one rival a level, each on a harder field. `wind` scales the wind, `pop` scales how high the কাঠি
+ * jumps (higher comes down faster, so the swing window is shorter), and `fielders` adds a third fielder. Beat `rival` ডাং to
+ * win the level (1 star); `stars` are the totals for 2 and 3. Level 1 is the original field, so old links replay unchanged.
+ */
+export const LEVELS = [
+  { rival: "পাশের বাসার টুটুল", score: 10, stars: [40, 60], wind: 1, pop: 1, fielders: 2 },
+  { rival: "দোকানের রনি", score: 18, stars: [42, 62], wind: 1.15, pop: 1, fielders: 2 },
+  { rival: "ক্লাসের মিলি", score: 24, stars: [45, 64], wind: 1.3, pop: 1.04, fielders: 2 },
+  { rival: "মোড়ের সাকিব", score: 28, stars: [46, 65], wind: 1.45, pop: 1.08, fielders: 3 },
+  { rival: "গলির জনি", score: 30, stars: [47, 66], wind: 1.6, pop: 1.12, fielders: 3 },
+  { rival: "চায়ের দোকানের বাবু", score: 32, stars: [48, 67], wind: 1.7, pop: 1.16, fielders: 3 },
+  { rival: "কলেজপড়ুয়া রিয়া আপু", score: 34, stars: [50, 68], wind: 1.8, pop: 1.2, fielders: 3 },
+  { rival: "ক্রিকেট ক্লাবের শুভ ভাই", score: 36, stars: [52, 70], wind: 1.9, pop: 1.24, fielders: 3 },
+  { rival: "পাড়ার বড় ভাই শাকিল", score: 38, stars: [54, 72], wind: 2.05, pop: 1.27, fielders: 3 },
+  { rival: "ওস্তাদ রহিম চাচা", score: 40, stars: [56, 75], wind: 2.2, pop: 1.3, fielders: 3 },
+] as const satisfies ReadonlyArray<{ rival: string; score: number; stars: readonly [number, number]; wind: number; pop: number; fielders: number }>;
+export const LEVEL_COUNT = LEVELS.length;
+/** Stars for a total: none unless it beats the rival, then 1–3. */
+export const starsOf = (total: number, level: number) => {
+  const { score, stars } = LEVELS[level - 1];
+  return total <= score ? 0 : starsFor(total, stars[1], stars[0]);
+};
+/** The next total that earns something (one past the rival, then 2 and 3 stars), or 0 at three stars. */
+export const nextMark = (total: number, level: number) => {
+  const { score, stars } = LEVELS[level - 1];
+  return [score + 1, stars[0], stars[1]].find(mark => total < mark) ?? 0;
+};
+/** Before the tournament this phone kept only a best total for the one field there was (now level 1). Its stars, or 0 when there is nothing to move. */
+export function migrateBest(stars: LevelStars, oldBest: string | null) {
+  const total = Number(oldBest);
+  if (Object.keys(stars).length || oldBest === null || !Number.isInteger(total) || total < 0) return 0;
+  return starsOf(total, 1);
+}
+
+export function makeField(seed: number, level = 1): Field {
   const rng = makeRng(seed);
   const range = (low: number, high: number) => low + rng() * (high - low);
   // The first hit is calm and floaty so the first ten seconds feel good; wind and pace rise after it.
@@ -39,7 +74,10 @@ export function makeField(seed: number): Field {
   // The cow grazes past the pond, never in it.
   const cow = range(pond.to + 6, pond.to + 14);
   const fielders = [{ x: range(7, 10.5), speed: range(2, 2.8) }, { x: range(19, 24), speed: range(2.2, 2.8) }];
-  return { winds, pops, pond, cow, fielders };
+  // Level changes come after every draw above, so level 1 lays out exactly the original field.
+  const { wind, pop, fielders: count } = LEVELS[level - 1];
+  if (count > 2) fielders.push({ x: range(13, 17), speed: range(1.8, 2.4) });
+  return { winds: winds.map(value => value * wind), pops: pops.map(value => value * pop), pond, cow, fielders };
 }
 
 /** Height of the flicked কাঠি `t` seconds after the flick. */
@@ -121,9 +159,9 @@ export function ballAt(shot: Shot, t: number, out: { x: number; y: number }) {
 }
 
 export type Phase = "aim" | "pop" | "fly" | "rest" | "over";
-export type Game = { seed: number; field: Field; hit: number; phase: Phase; t: number; shots: Shot[] };
+export type Game = { seed: number; level: number; field: Field; hit: number; phase: Phase; t: number; shots: Shot[] };
 
-export const newGame = (seed: number): Game => ({ seed, field: makeField(seed), hit: 0, phase: "aim", t: 0, shots: [] });
+export const newGame = (seed: number, level = 1): Game => ({ seed, level, field: makeField(seed, level), hit: 0, phase: "aim", t: 0, shots: [] });
 
 function next(game: Game) {
   game.t = 0;

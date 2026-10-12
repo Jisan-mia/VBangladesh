@@ -90,6 +90,9 @@
 .tool-chor-police .cp-suspect:active{transform:translateY(3px);box-shadow:0 1px 0 var(--accent-deep)}
 .tool-chor-police .cp-suspect b{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--font-display);font-size:24px;line-height:1.3}
 .tool-chor-police .cp-suspect span{font-size:15px;font-weight:700;color:var(--brick)}
+.tool-chor-police .cp-suspect:disabled{cursor:default;opacity:.55}
+.tool-chor-police .cp-suspect[data-picked=true]{opacity:1;background:#fff3d6;border-color:var(--brass);box-shadow:0 1px 0 var(--accent-deep);transform:translateY(3px)}
+.tool-chor-police .cp-rolling{animation:cp-drum .19s ease-in-out infinite alternate}
 .tool-chor-police .cp-end{justify-self:center;min-height:44px}
 
 .tool-chor-police .cp-names{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0;padding:0;border:0;min-width:0}
@@ -129,6 +132,7 @@
 .tool-chor-police .cp-guide a{display:inline-flex;align-items:center;min-height:44px;color:var(--accent);font-weight:600}
 
 @keyframes cp-pop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+@keyframes cp-drum{from{transform:rotate(-1deg)}to{transform:rotate(1deg) scale(1.03)}}
 @keyframes cp-unfold{from{transform:scaleY(.15);opacity:.3}to{transform:none;opacity:1}}
 .tool-chor-police .cp[data-slow=true] *{animation:none!important;transition:none!important}
 @media(prefers-reduced-motion:reduce){.tool-chor-police .cp *{animation:none!important;transition:none!important}}

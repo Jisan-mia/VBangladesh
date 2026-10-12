@@ -1,3 +1,5 @@
+import { starsFor } from "../../../shared/game-core";
+
 export const TEST_SECONDS = 60;
 export const MAX_NAME = 20;
 export const MAX_WPM = 200;
@@ -117,6 +119,17 @@ export const grades = [
   { id: "ostad", min: 35, stamp: "ওস্তাদ", label: "৩৫ বা তার বেশি" },
 ] as const;
 export const gradeOf = (wpm: number) => grades.findLast(grade => wpm >= grade.min)!;
+
+/** Each passage is a level. Stars use the stamp bands above: ৩৫+ (ওস্তাদ) is 3, ২৫+ (পাকা হাত) is 2, finishing is 1. */
+export const LEVEL_COUNT = passages.length;
+const [TWO, THREE] = [grades[2].min, grades[3].min];
+export const textStars = (wpm: number) => starsFor(wpm, THREE, TWO);
+
+/** What the next star needs, with the exact number. Empty at 3 stars. */
+export function nearMissLine(wpm: number) {
+  if (wpm >= THREE) return "";
+  return wpm >= TWO ? `মিনিটে আর ${bn(THREE - wpm)}টা শব্দ বেশি লিখলে ৩ তারা।` : `মিনিটে আর ${bn(TWO - wpm)}টা শব্দ বেশি লিখলে ২ তারা।`;
+}
 export const tallyIds = grades.map(grade => grade.id);
 
 export function humanLine(wpm: number, accuracy: number) {

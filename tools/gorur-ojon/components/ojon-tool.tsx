@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { hiss, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { dateLine, dhakaToday, nextDate, occasionById, sources as dateSources } from "../../koto-din-baki/lib/countdown";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -9,6 +11,14 @@ import { bn, bowlLine, bowls, cleanName, convertLength, cowHash, cowTitle, input
 import { CowArt } from "./cow-art";
 
 const TOOL = "gorur-ojon";
+
+// A gentle “হাম্বা”: a short rising “হাম”, then a long falling “বা”.
+function humba() {
+  tone(160, 0.18, 0.09, "triangle", 0, 205);
+  tone(215, 0.6, 0.11, "triangle", 0.16, 130);
+  tone(430, 0.5, 0.025, "sine", 0.16, 260);
+  hiss(0.5, 0.04, 500, "lowpass", 0.16);
+}
 
 type FieldProps = { id: string; label: string; hint: string; unit: string; value: number; min: number; max: number; onChange: (value: number) => void; inputRef?: RefObject<HTMLInputElement | null> };
 
@@ -45,6 +55,8 @@ export function OjonTool() {
   const [fontsReady, setFontsReady] = useState(false);
   const [previewError, setPreviewError] = useState(false);
   const girthInput = useRef<HTMLInputElement>(null);
+  // The cow speaks once per visit, at the first measure; after that the tape stays quiet.
+  const mooed = useRef(false);
   const preview = useRef<HTMLCanvasElement>(null);
   const result = useRef<HTMLElement>(null);
   const resultVisible = useInView(result);
@@ -71,7 +83,10 @@ export function OjonTool() {
   }, [state, format, site, fontsReady]); // `state` encodes the whole cow
 
   // The card follows what you touched last: the tape makes a weight card, the bowls a share card.
-  const measure = (patch: Partial<Cow>) => setCow(current => ({ ...current, ...patch, card: "ojon" }));
+  const measure = (patch: Partial<Cow>) => {
+    if (!mooed.current) { mooed.current = true; humba(); }
+    setCow(current => ({ ...current, ...patch, card: "ojon" }));
+  };
   const divide = (patch: Partial<Cow>) => setCow(current => ({ ...current, ...patch, card: "bhag" }));
   const switchUnit = (next: Unit) => setCow(current => ({ ...current, unit: next, girth: convertLength(current.girth, current.unit, next, "girth"), length: convertLength(current.length, current.unit, next, "length") }));
   const setPart = (index: number, delta: number) => divide({ split: cow.split.map((part, i) => i === index ? Math.min(MAX_PART, Math.max(0, part + delta)) : part) as Split });
@@ -114,10 +129,13 @@ export function OjonTool() {
             <TapeField id="ojon-girth" label="বুকের বেড়" hint="সামনের পায়ের ঠিক পেছনে, বুক ঘুরিয়ে" unit={unit} value={cow.girth} min={limits[cow.unit].girth[0]} max={limits[cow.unit].girth[1]} onChange={girth => measure({ girth })} inputRef={girthInput} />
             <TapeField id="ojon-length" label="দৈর্ঘ্য" hint="কাঁধের হাড় থেকে পিন বোন পর্যন্ত" unit={unit} value={cow.length} min={limits[cow.unit].length[0]} max={limits[cow.unit].length[1]} onChange={length => measure({ length })} />
           </div>
-          <fieldset className="kit-chips ojon-units">
-            <legend>ফিতায় কোন মাপ?</legend>
-            {(["in", "cm"] as const).map(id => <button type="button" key={id} aria-pressed={cow.unit === id} onClick={() => switchUnit(id)}>{id === "in" ? "ইঞ্চি" : "সেন্টিমিটার"}</button>)}
-          </fieldset>
+          <div className="ojon-unitrow">
+            <fieldset className="kit-chips ojon-units">
+              <legend>ফিতায় কোন মাপ?</legend>
+              {(["in", "cm"] as const).map(id => <button type="button" key={id} aria-pressed={cow.unit === id} onClick={() => switchUnit(id)}>{id === "in" ? "ইঞ্চি" : "সেন্টিমিটার"}</button>)}
+            </fieldset>
+            <SoundToggle compact />
+          </div>
           <p className="ojon-note"><strong>আনুমানিক, ১০–২০% কমবেশি হতে পারে।</strong> শেফারের সূত্র: বেড়² × দৈর্ঘ্য ÷ ৩০০ (ইঞ্চিতে মাপলে পাউন্ড), ১ মণ = ৪০ কেজি ধরে। এটা দাম বা মাংসের হিসাব না। <a href="#source">সূত্র দেখো</a></p>
         </div>
       </div>

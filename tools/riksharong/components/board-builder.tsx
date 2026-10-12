@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { hiss, sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { boardLine, colorOf, defaultBoard, lineIdeas, motifs, paint, palettes, parseShareHash, plateNumber, possessive, regions, shareHash, swatches, MAX_AREA, MAX_LINE, MAX_NAME, type Board, type RegionId } from "../lib/board";
 import { BOARD, cardBlob, colorFor, drawBoard, drawCard, motifThumb, regionAt } from "../lib/draw-board";
@@ -60,6 +62,7 @@ export function BoardBuilder() {
     if (!hit) return;
     // Every tap on a part moves it to the next enamel colour, like trying paints on a tin board.
     setRegion(hit);
+    hiss(0.09, 0.05, 1800, "bandpass"); sfx.pick();
     update(current => paint(current, hit, (current.colors[regions.findIndex(item => item.id === hit)] + 1) % swatches.length));
   }
 
@@ -83,7 +86,7 @@ export function BoardBuilder() {
       <div className="rr-studio">
         <div className="rr-stage" id="board">
           <canvas ref={boardCanvas} className="rr-board" width={BOARD.width * 2} height={BOARD.height * 2} onClick={tapBoard} role="img" aria-label={`তোমার রিকশার বোর্ড: মাঝে ${motifs.find(motif => motif.id === board.motif)?.label}${board.line ? `, পটিতে লেখা ${board.line}` : ""}`} />
-          <p className="rr-tip">বোর্ডে যেখানে খুশি চাপো, রং বদলে যাবে</p>
+          <p className="rr-tip">বোর্ডে যেখানে খুশি চাপো, রং বদলে যাবে <SoundToggle compact /></p>
         </div>
 
         <div className="rr-controls">

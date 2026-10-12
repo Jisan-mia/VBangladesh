@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readLevels, recordLevel, totalStars } from "../../../shared/game-core";
+import { nearMissLine, tableStars, LEVEL_COUNT } from "../lib/namta";
 import {
   caption, cleanName, decodeOrder, digitOf, encodeOrder, humanLine, parseShareHash, parseStart, previewTitle, proudLine, randomOrder,
   scoreOf, shareHash, tableName, tallyIds, typeDigit, DEFAULT_ORDER, MAX_NAME, MULTIPLIERS, TABLES, type Shared,
@@ -102,4 +104,23 @@ test("captions and link previews are personal; only fixed table ids are counted"
   assert.deepEqual(share.tally, tallyIds);
   assert.equal(tallyIds.length, 19);
   assert.ok(tallyIds.every(id => /^t\d{1,2}$/.test(id)));
+});
+
+test("stars per table: 3 for all 10, 2 for 7 or more, 1 for finishing, with an exact near-miss line", () => {
+  assert.deepEqual([10, 9, 7, 6, 0].map(tableStars), [3, 2, 2, 1, 1]);
+  assert.equal(nearMissLine(10), "");
+  assert.equal(nearMissLine(9), "আর ১টা ঠিক হলে ৩ তারা।");
+  assert.equal(nearMissLine(5), "আর ২টা ঠিক হলে ২ তারা।");
+});
+
+test("each table is its own level, numbered by the table, and progress goes through readLevels and recordLevel", () => {
+  assert.equal(LEVEL_COUNT, TABLES[TABLES.length - 1]);
+  let stars = readLevels(`{"2":3,"${LEVEL_COUNT}":1,"${LEVEL_COUNT + 1}":3,"x":2,"5":7}`, LEVEL_COUNT);
+  assert.deepEqual(stars, { 2: 3, [LEVEL_COUNT]: 1 });
+  stars = recordLevel(stars, LEVEL_COUNT, tableStars(8));
+  assert.equal(stars[LEVEL_COUNT], 2);
+  stars = recordLevel(stars, LEVEL_COUNT, tableStars(1));
+  assert.equal(stars[LEVEL_COUNT], 2, "a worse try never lowers the stars");
+  assert.equal(totalStars(stars), 5);
+  assert.deepEqual(readLevels("not json", LEVEL_COUNT), {});
 });

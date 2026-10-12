@@ -2,10 +2,13 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { confetti, sfx, shake } from "../../../shared/game-sound";
+import { totalStars, useLevels } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { addToTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
-import { bn, caption, humanLine, marks, parseShareHash, possessive, questionsOf, rank, scoreOf, setById, sets, shareHash, MAX_NAME_LENGTH, PER_SET, type Answer, type SetId, type Shared } from "../lib/quiz";
+import { bn, caption, humanLine, marks, nearMissLine, parseShareHash, possessive, questionsOf, rank, scoreOf, setById, setStars, sets, shareHash, MAX_NAME_LENGTH, PER_SET, type Answer, type SetId, type Shared } from "../lib/quiz";
 
 const TOOL = "dom-atkano";
 // Percentages from a handful of people are noise ("১০০% মানুষের মনে আছে" after one vote).
@@ -33,12 +36,14 @@ export function Scoreboard() {
   const nextButton = useRef<HTMLButtonElement>(null);
   const result = useRef<HTMLElement>(null);
   const resultVisible = useInView(result);
+  const levels = useLevels(TOOL, sets.length);
 
   const questions = questionsOf(setId);
   const answers = useMemo(() => answersBy[setId] ?? [], [answersBy, setId]);
   const hits = marks(setId, answers);
   const score = scoreOf(setId, answers);
   const done = answers.length === PER_SET;
+  const level = sets.findIndex(item => item.id === setId) + 1;
   const own = useMemo(() => ({ set: setId, answers, name }), [setId, answers, name]);
   const state = done ? shareHash(own).slice(1) : "";
   const rival = friend?.set === setId ? friend : null;
@@ -74,13 +79,16 @@ export function Scoreboard() {
 
   useEffect(() => { if (revealed) nextButton.current?.focus({ preventScroll: true }); }, [revealed]);
 
-  function pick(option: Answer) {
+  function pick(option: Answer, button: Element) {
     if (revealed) return;
+    if (option === question.answer) sfx.good(); else { sfx.wrong(); shake(button.closest(".dom-board")); }
     setAnswersBy(current => ({ ...current, [setId]: [...(current[setId] ?? []), option] }));
   }
 
   function next() {
     setPos(pos + 1);
+    // Stars are saved per set; StarReveal chimes each star, so the big cheer is only for a perfect 10.
+    if (pos + 1 === PER_SET) { levels.record(level, setStars(score)); if (score === PER_SET) { confetti(); sfx.win(); } }
     if (pos + 1 === PER_SET) requestAnimationFrame(() => document.getElementById("result")?.scrollIntoView({ behavior: "smooth" }));
   }
 
@@ -120,9 +128,10 @@ export function Scoreboard() {
       )}
 
       <div className="dom-board" id="board">
-        <div className="dom-board-top" aria-hidden="true">
-          <p><span>প্রশ্ন</span><b>{bn(Math.min(pos + 1, PER_SET))}</b><i>/১০</i></p>
-          <p><span>ঠিক</span><b>{bn(score)}</b></p>
+        <div className="dom-board-top">
+          <p aria-hidden="true"><span>প্রশ্ন</span><b>{bn(Math.min(pos + 1, PER_SET))}</b><i>/১০</i></p>
+          <p aria-hidden="true"><span>ঠিক</span><b>{bn(score)}</b></p>
+          <SoundToggle compact />
         </div>
         <Plates hits={hits} now={pos} label={`${setById(setId).label}: ${bn(answers.length)}টার উত্তর দেওয়া, ${bn(score)}টা ঠিক`} />
 
@@ -132,7 +141,7 @@ export function Scoreboard() {
           <div className="dom-options" role="group" aria-labelledby="dom-q">
             {question.options.map((option, index) => (
               <button type="button" key={`${question.id}-${index}`} className="dom-opt" aria-pressed={revealed && picked === index} disabled={revealed}
-                data-state={revealed ? index === question.answer ? "right" : index === picked ? "wrong" : "dim" : undefined} onClick={() => pick(index as Answer)}>
+                data-state={revealed ? index === question.answer ? "right" : index === picked ? "wrong" : "dim" : undefined} onClick={event => pick(index as Answer, event.currentTarget)}>
                 {option}
               </button>
             ))}
@@ -163,11 +172,18 @@ export function Scoreboard() {
         })}
       </fieldset>
 
+      <details className="dom-levels">
+        <summary>সব সেট <span>★ {bn(totalStars(levels.stars))}/{bn(sets.length * 3)}</span></summary>
+        <p>{sets.map((item, index) => `${bn(index + 1)} ${item.label}`).join(" · ")}। ১০টাই ঠিক হলে ৩ তারা, ৭টা বা বেশি ঠিক হলে ২, শেষ করলে ১। সব সেট সব সময় খোলা।</p>
+        <LevelGrid count={sets.length} stars={levels.stars} unlocked={sets.length} current={level} noun="সেট" onPick={pick => chooseSet(sets[pick - 1].id)} />
+      </details>
+
       <StickyNext show={done && !resultVisible} title={<><strong>১০-এ {bn(score)}</strong> · {rank(score)}</>} sub={humanLine(setId, answers)} href="#result" label="স্কোরকার্ড" />
 
       <section className="dom-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="dom-result-head">
           <h2 id="result-title">{done ? <>তোমার স্কোরকার্ড: <em>১০-এ {bn(score)}</em></> : "স্কোরকার্ড এখনো চলছে"}</h2>
+          {done && <p className="dom-reward"><StarReveal count={setStars(score)} />{nearMissLine(score) && <small>{nearMissLine(score)}</small>}</p>}
           <p>{done ? humanLine(setId, answers) : `ওপরের ${bn(PER_SET - answers.length)}টা প্রশ্নের উত্তর দিলেই স্কোরকার্ড পুরো হবে, তারপর শেয়ার করতে পারবে।`}</p>
         </div>
 

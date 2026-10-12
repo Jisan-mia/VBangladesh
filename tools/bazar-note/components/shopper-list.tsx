@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { sfx } from '../../../shared/game-sound';
+import { SoundToggle } from '../../../shared/game-ui';
 import { formatQuantity, units } from '../lib/basket';
 import { bn, fordoHash, fordoTitle, formatTaka, readTicks, tickKey, toggleTick, type Fordo } from '../lib/fordo';
 
@@ -18,6 +20,7 @@ export function ShopperList({ fordo }: { fordo: Fordo }) {
   function toggle(index: number) {
     const next = toggleTick(ticks, index);
     setTicks(next);
+    if (next.length > ticks.length) { if (next.length === count) sfx.win(); else sfx.tap(); }
     try { window.localStorage.setItem(key, JSON.stringify(next)); } catch { /* ticks still work for this visit */ }
   }
 
@@ -39,6 +42,7 @@ export function ShopperList({ fordo }: { fordo: Fordo }) {
     </li>)}</ul>
     <div className="shop-actions">
       <button type="button" className="kit-secondary" aria-pressed={onlyLeft} onClick={() => setOnlyLeft(value => !value)}>{onlyLeft ? 'সবগুলো দেখাও' : 'শুধু বাকিগুলো দেখাও'}</button>
+      <SoundToggle compact />
       <a className="kit-link" href="#fordo">নিজের একটা ফর্দ বানাও ↓</a>
     </div>
   </section>;

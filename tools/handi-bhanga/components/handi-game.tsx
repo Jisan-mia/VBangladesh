@@ -4,19 +4,30 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { cleanName, fitCanvas, newSeed, useBest, useGameLoop, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { buzz, cleanName, confetti, fitCanvas, hiss, newSeed, readLevels, sfx, shake, tone, totalStars, unlockedLevel, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
 import { drawAim, drawBall, drawPot, drawStall, drawStick, palette, DESIGN_BODY, DESIGN_PAINT } from "../lib/art";
 import { cardBlob, drawCard } from "../lib/draw-card";
-import { banner, bn, caption, parseShared, sharedHash, tallyLine, CHANCES, POTS, type Shared } from "../lib/link";
+import { banner, bn, caption, migrateBest, nearLine, parseShared, sharedHash, starsOf, tallyLine, CHANCES, LEVEL_COUNT, LEVELS, POTS, type Shared } from "../lib/link";
 import {
-  compareLine, createGame, humanLine, launch, launchDir, moveStick, nudge, potLeft, potTop, step,
-  BALL_R, CELL, DESIGNS, H, POT_DROP, POT_H, POT_W, STICK_H, STICK_W, STICK_Y, W, type Game, type GameEvent,
+  compareLine, createGame, humanLine, launch, launchDir, moveStick, nudge, potTop, potX, step, swayOf, windOf,
+  BALL_R, CELL, COLS, DESIGNS, H, POT_DROP, POT_H, POT_W, STICK_H, STICK_W, STICK_Y, W, type Game, type GameEvent,
 } from "../lib/game";
 
 const TOOL = "handi-bhanga";
 type Phase = "ready" | "playing" | "paused" | "over";
-type Result = { seed: number; score: number; record: boolean; won: boolean };
+type Result = { seed: number; score: number; record: boolean; won: boolean; level: number; stars: number; before: number | null };
+const stored = (key: string) => { try { return localStorage.getItem(key); } catch { return null; } };
+
+/** The লাঠি's swish as the ball goes up. */
+const swish = () => hiss(0.18, 0.12, 2600, "bandpass");
+/** The cloth ball on the bamboo. */
+const tock = () => tone(480, 0.05, 0.09, "triangle", 0, 300);
+/** The signature sound: a tough clay pot rings when it cracks. */
+const ring = () => { tone(420, 0.3, 0.1, "sine"); tone(840, 0.18, 0.035, "sine", 0.01); };
+/** A pot breaking: a burst of clay over a low knock. */
+const smash = () => { hiss(0.28, 0.22, 2200, "bandpass"); tone(150, 0.12, 0.14, "sine", 0, 60); };
 
 const MAX_WIDTH = 420;
 const TAP_SLOP = 10;
@@ -46,6 +57,8 @@ function makeLive() {
     sx: new Float32Array(SHARDS), sy: new Float32Array(SHARDS), vx: new Float32Array(SHARDS), vy: new Float32Array(SHARDS),
     rot: new Float32Array(SHARDS), vr: new Float32Array(SHARDS), life: new Float32Array(SHARDS), color: new Uint8Array(SHARDS),
     calm: false, reduced: false,
+    /** Pots broken since the ball last touched the stick: a run climbs in pitch. */
+    run: 0,
     held: { left: false, right: false, button: 0 },
     gesture: { id: -1, lastX: 0, startX: 0, startY: 0, moved: false },
   };
@@ -59,7 +72,13 @@ export function HandiGame() {
   const [result, setResult] = useState<Result | null>(null);
   const [friend, setFriend] = useState<Shared | null>(null);
   const [slow, setSlow] = useSlowMode();
-  const [best, submitBest] = useBest(TOOL);
+  const [level, setLevel] = useState(1);
+  // Level 1 keeps the key the one-stall game used, so the old best stays level 1's best.
+  const [best, submitBest] = useBest(level === 1 ? TOOL : `${TOOL}-${level}`);
+  const levels = useLevels(TOOL, LEVEL_COUNT);
+  const levelRef = useRef(1);
+  levelRef.current = level;
+  const timers = useRef<number[]>([]);
   const [name, setName] = useState("");
   const [format, setFormat] = useState<CardFormat>("feed");
   const [site, setSite] = useState("");
@@ -82,14 +101,22 @@ export function HandiGame() {
   const seed = useRef(1);
   const boardInView = useInView(board);
 
-  const card = result ? { score: result.score, name: cleanName(name) } : null;
-  const state = result ? sharedHash({ seed: result.seed, score: result.score, name }) : "";
+  const card = result ? { score: result.score, name: cleanName(name), level: result.level } : null;
+  const state = result ? sharedHash({ seed: result.seed, score: result.score, name, level: result.level }) : "";
+  const stall = LEVELS[level - 1];
+  const allStars = totalStars(levels.stars);
+  const open = Math.max(levels.unlocked, friend?.level ?? 1);
+  const rivalCard = friend && friend.level === level ? friend : null;
 
   function go(next: Phase) { phaseRef.current = next; setPhaseState(next); }
 
-  function reset(nextSeed: number) {
-    game.current = createGame(nextSeed);
+  function reset(nextSeed: number, nextLevel = levelRef.current) {
+    timers.current.forEach(clearTimeout); timers.current = [];
+    game.current = createGame(nextSeed, nextLevel);
     seed.current = nextSeed;
+    levelRef.current = nextLevel;
+    setLevel(nextLevel);
+    live.run = 0;
     live.life.fill(0);
     live.swingAt.fill(-10);
     setScore(0);
@@ -103,6 +130,7 @@ export function HandiGame() {
     const now = phaseRef.current;
     if (now !== "ready" && now !== "playing") return;
     if (!launch(game.current)) return;
+    swish();
     setResting(false);
     if (now !== "ready") return;
     go("playing");
@@ -114,14 +142,21 @@ export function HandiGame() {
   function resume() { if (phaseRef.current === "paused") go("playing"); }
   function restart() {
     if (phaseRef.current !== "over" || !restartReady) return;
-    reset(friend ? friend.seed : newSeed());
+    reset(rivalCard ? rivalCard.seed : newSeed());
     go("playing");
   }
+  /** The level picker and "পরের লেভেল": a fresh stall on the ready screen (the friend's, when it's their level). */
+  function pick(nextLevel: number) {
+    reset(friend && friend.level === nextLevel ? friend.seed : newSeed(), nextLevel);
+    go("ready");
+    if ((play.current?.getBoundingClientRect().top ?? 0) < 0) play.current?.scrollIntoView({ behavior: live.reduced ? "auto" : "smooth", block: "center" });
+  }
 
-  const buzz = (ms: number) => { if (!slowRef.current && typeof navigator.vibrate === "function") navigator.vibrate(ms); };
+  /** Vibration follows the site's sound switch (the kit's buzz) and stays off in slow mode. */
+  const shakePhone = (ms: number) => { if (!slowRef.current) buzz(ms); };
 
   function burst(index: number) {
-    const g = game.current, cx = potLeft(index) + POT_W / 2, cy = potTop(index) + POT_H * 0.55;
+    const g = game.current, cx = potX(g, index) + POT_W / 2, cy = potTop(index) + POT_H * 0.55;
     const body = g.tough[index] ? 12 : g.design[index], paint = g.tough[index] ? 13 : 6 + g.design[index];
     for (let i = 0, made = 0; i < SHARDS && made < 6; i++) {
       if (live.life[i] > 0) continue;
@@ -138,8 +173,15 @@ export function HandiGame() {
     go("over");
     setScore(g.score);
     setResting(false);
-    setResult({ seed: seed.current, score: g.score, record: best !== null && g.score > best, won });
+    const stars = starsOf(g.score, g.level), record = best !== null && g.score > best;
+    if (stars) levels.record(g.level, stars);
+    setResult({ seed: seed.current, score: g.score, record, won, level: g.level, stars, before: best });
     submitBest(g.score);
+    // The stars chime in one by one (StarReveal); the fanfare follows them, confetti only for 3 stars or a new best.
+    const after = (stars + 1) * 260;
+    if (stars === 3 || record) timers.current.push(window.setTimeout(() => { sfx.levelUp(); confetti(); }, after));
+    else if (stars) timers.current.push(window.setTimeout(sfx.good, after));
+    else sfx.lose();
     // Thumbs are still on the stick when the last ball drops; don't let that tap skip the result.
     setRestartReady(false);
     window.setTimeout(() => setRestartReady(true), 700);
@@ -150,10 +192,18 @@ export function HandiGame() {
 
   function onEvent(event: GameEvent, pot: number) {
     const g = game.current;
-    if (event === "break") { setScore(g.score); if (!live.calm) burst(pot); buzz(8); }
-    else if (event === "crack") { live.swingAt[pot] = live.clock; buzz(4); }
-    else if (event === "stick") live.squashAt = live.clock;
-    else if (event === "lost") { setChances(g.chances); if (!g.over) setResting(true); }
+    if (event === "break") {
+      setScore(g.score); if (!live.calm) burst(pot); shakePhone(8);
+      smash();
+      if (++live.run >= 2) sfx.combo(live.run - 2);
+    }
+    else if (event === "crack") { live.swingAt[pot] = live.clock; shakePhone(4); ring(); }
+    else if (event === "stick") { live.squashAt = live.clock; live.run = 0; tock(); }
+    else if (event === "lost") {
+      live.run = 0;
+      setChances(g.chances);
+      if (!g.over) { setResting(true); sfx.wrong(); shake(board.current); }
+    }
     else if (event === "win" || event === "over") finish(event === "win");
   }
 
@@ -183,16 +233,26 @@ export function HandiGame() {
       const hits = g.hits[i];
       if (hits <= 0) continue;
       const sx = g.design[i] * cw, sy = (g.tough[i] ? (hits === 2 ? 1 : 2) : 0) * ch;
-      const cx = potLeft(i) + POT_W / 2, top = potTop(i) - 1 - SPRITE_TOP;
+      const sway = swayOf(g, Math.floor(i / COLS));
+      const cx = potX(g, i) + POT_W / 2 - sway, top = potTop(i) - 1 - SPRITE_TOP;
       const since = t - live.swingAt[i];
-      if (!calm && since < SWING) {
-        // A cracked pot swings on its string, about its knot.
+      if ((!calm && since < SWING) || sway) {
+        // A cracked pot swings on its string about its knot; on a breezy stall the whole rope sways (the pot's middle sits `sway` off).
         const knot = potTop(i) - POT_DROP;
         c.save();
-        c.translate(cx, knot); c.rotate(0.22 * Math.exp(-since * 4) * Math.sin(since * 16));
+        c.translate(cx, knot); c.rotate((!calm && since < SWING ? 0.22 * Math.exp(-since * 4) * Math.sin(since * 16) : 0) - sway / 24);
         c.drawImage(atlas, sx, sy, cw, ch, -CELL / 2, top - knot, CELL, SPRITE_H);
         c.restore();
       } else c.drawImage(atlas, sx, sy, cw, ch, cx - CELL / 2, top, CELL, SPRITE_H);
+    }
+
+    // The pennant on the awning leans with the wind, so the ball's bend is never a surprise.
+    const wind = windOf(g);
+    if (wind) {
+      const lean = Math.max(-1, Math.min(1, wind / 0.25)), flap = calm ? 0 : Math.sin(t * 9) * 1.5;
+      c.fillStyle = palette.white; c.strokeStyle = palette.rope; c.lineWidth = 1.2;
+      c.beginPath(); c.moveTo(W / 2, 14); c.lineTo(W / 2, 40); c.stroke();
+      c.beginPath(); c.moveTo(W / 2, 15); c.lineTo(W / 2 + lean * 22, 20 + flap); c.lineTo(W / 2, 27); c.closePath(); c.fill(); c.stroke();
     }
 
     const squash = !calm && t - live.squashAt < 0.14 ? 1 - (t - live.squashAt) / 0.14 : 0;
@@ -287,18 +347,22 @@ export function HandiGame() {
       const shared = parseShared(window.location.hash);
       if (!shared) return;
       setFriend(shared);
-      reset(shared.seed);
+      reset(shared.seed, shared.level);
       go("ready");
     };
     setSite(window.location.host);
-    if (!parseShared(window.location.hash)) reset(newSeed());
+    // Before levels this phone kept one best score; it becomes level 1's stars once.
+    let saved = readLevels(stored(`ektukhani-levels-${TOOL}`), LEVEL_COUNT);
+    const moved = migrateBest(saved, stored(`ektukhani-best-${TOOL}`));
+    if (moved) { levels.record(1, moved); saved = { 1: moved }; }
+    if (!parseShared(window.location.hash)) reset(newSeed(), unlockedLevel(saved, LEVEL_COUNT));
     readFriend();
     const letGo = () => { live.held.left = live.held.right = false; live.held.button = 0; };
     const hide = () => { if (document.hidden) { letGo(); pause(); } };
     window.addEventListener("hashchange", readFriend);
     window.addEventListener("blur", letGo);
     document.addEventListener("visibilitychange", hide);
-    return () => { window.removeEventListener("hashchange", readFriend); window.removeEventListener("blur", letGo); document.removeEventListener("visibilitychange", hide); };
+    return () => { window.removeEventListener("hashchange", readFriend); window.removeEventListener("blur", letGo); document.removeEventListener("visibilitychange", hide); timers.current.forEach(clearTimeout); };
   }, []);
 
   // Scrolling the stall away mid-game pauses it, so no ball drops off-screen.
@@ -385,20 +449,24 @@ export function HandiGame() {
     resultBox.current?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
   }
   function playFromCard() {
-    reset(friend ? friend.seed : newSeed());
+    reset(rivalCard ? rivalCard.seed : newSeed());
     go("ready");
     play.current?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
   }
 
   const rival = friend ? possessive(friend.name || "বন্ধু") : "";
   const over = phase === "over" && result;
+  const won = Boolean(result && result.stars > 0);
+  const hasNext = phase === "over" && won && level < LEVEL_COUNT;
+  const near = result ? nearLine(result.score, result.level, result.before) : "";
+  const versus = result && rivalCard && rivalCard.seed === result.seed ? compareLine(result.score, rivalCard.score, rivalCard.name) : "";
   const hint = chances === CHANCES ? "চাপ দাও, বল ছোড়ো" : chances === 1 ? "শেষ চান্স! চাপ দাও, বল ছোড়ো" : `${bn(chances)}টা চান্স বাকি। চাপ দাও, বল ছোড়ো`;
 
   return (
     <div className="hb">
       {friend && (
         <section className="hb-friend" aria-labelledby="hb-friend-title">
-          <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`${rival} কার্ড: ${bn(friend.score)} পয়েন্ট`} />
+          <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`${rival} কার্ড: লেভেল ${bn(friend.level)}, ${bn(friend.score)} পয়েন্ট`} />
           <div>
             <h2 id="hb-friend-title">{banner(friend)}</h2>
             <p>{rival} নিজের ফোনের স্কোর</p>
@@ -406,16 +474,17 @@ export function HandiGame() {
         </section>
       )}
 
+      <p className="hb-level"><span><b>লেভেল {bn(level)}</b> · {stall.name}</span><span>{best !== null && <small>সেরা {bn(best)} · </small>}<span aria-label={`মোট ${bn(allStars)}টা তারা`}>★ {bn(allStars)}/{bn(LEVEL_COUNT * 3)}</span></span></p>
       <div className="hb-hud">
         <p className="hb-score"><span>স্কোর</span><b>{bn(score)}</b></p>
         <p className="hb-chances">
           <span className="hb-sr">চান্স বাকি {bn(chances)}টা</span>
           {[0, 1, 2].map(i => <i key={i} data-on={i < chances} aria-hidden="true" />)}
         </p>
-        {best !== null && <p className="hb-best"><span>সেরা</span><b>{bn(best)}</b></p>}
         <button type="button" className="hb-slow" aria-pressed={slow} onClick={() => setSlow(!slow)}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="12" r="5.5" /><path d="M10 12a2 2 0 1 0 2-2M2.5 18h15a3 3 0 0 0 3-3v-4m0 0-1.2-3m1.2 3 1.8-2.4" /></svg>ধীরে খেলো
         </button>
+        <SoundToggle compact className="hb-sound" />
         <button type="button" className="hb-pause" onClick={phase === "paused" ? resume : pause} disabled={phase !== "playing" && phase !== "paused"} aria-label={phase === "paused" ? "চালিয়ে যাও" : "একটু থামাও"}>
           <svg viewBox="0 0 24 24" aria-hidden="true">{phase === "paused" ? <path d="M8 5v14l11-7z" className="hb-fill" /> : <path d="M9 5v14M15 5v14" />}</svg>
         </button>
@@ -427,7 +496,8 @@ export function HandiGame() {
           {phase === "ready" && (
             <div className="hb-overlay" data-at="middle">
               <div className="hb-note">
-                <p className="hb-howto"><b>আঙুল সরাও</b>, হাঁড়ি ভাঙো</p>
+                <p className="hb-howto">{level === 1 ? <><b>আঙুল সরাও</b>, হাঁড়ি ভাঙো</> : <><b>লেভেল {bn(level)}</b> · {stall.name}</>}</p>
+                {level > 1 && <p className="hb-note-line">{stall.note}</p>}
                 <button type="button" className="kit-primary" onClick={throwBall}>শুরু করো</button>
               </div>
             </div>
@@ -441,15 +511,17 @@ export function HandiGame() {
               </div>
             </div>
           )}
-          <p className="screen-reader-only" aria-live="polite">{over && result ? `খেলা শেষ। ${bn(result.score)} পয়েন্ট। ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
+          <p className="screen-reader-only" aria-live="polite">{over && result ? `খেলা শেষ। ${bn(result.score)} পয়েন্ট। ${result.stars ? `${bn(result.stars)} তারা।` : ""} ${near} ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
           {over && (
             <div className="hb-overlay hb-block">
               <div className="hb-note hb-slip">
                 <h2>{result.won ? "দোকান সাফ!" : "চান্স শেষ!"}</h2>
+                {result.stars > 0 && <StarReveal count={result.stars} />}
                 <p className="hb-tally">{tallyLine(result.score)}</p>
                 <p className="hb-final"><b>{bn(result.score)}</b> পয়েন্ট</p>
-                <p className="hb-record">{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null && best > result.score ? `এই ফোনে সেরা ${bn(best)}` : humanLine(result.score)}</p>
-                {friend && <p className="hb-versus">{compareLine(result.score, friend.score, friend.name)}</p>}
+                {near && <p className="hb-near">{near}</p>}
+                <p className="hb-record">{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null && best > result.score ? `এই লেভেলে সেরা ${bn(best)}` : humanLine(result.score)}</p>
+                {versus && <p className="hb-versus">{versus}</p>}
                 <button type="button" className="kit-link hb-see" onClick={seeCard}>কার্ড বানাও, বন্ধুকে পাঠাও ↓</button>
               </div>
             </div>
@@ -458,7 +530,10 @@ export function HandiGame() {
 
         <div className="hb-controls">
           {phase === "over" ? (
-            <button type="button" className="kit-primary hb-again" onClick={restart} disabled={!restartReady}>আরেকবার</button>
+            <>
+              {hasNext && <button type="button" className="kit-primary hb-again" onClick={() => pick(level + 1)} disabled={!restartReady}>পরের লেভেল</button>}
+              <button type="button" className={hasNext ? "kit-secondary hb-again" : "kit-primary hb-again"} onClick={restart} disabled={!restartReady}>{won ? "আবার খেলো" : "আরেকবার"}</button>
+            </>
           ) : (
             <>
               <button type="button" className="hb-move" aria-label="লাঠি বাঁয়ে সরাও" {...holdButton(-1)}>
@@ -475,16 +550,22 @@ export function HandiGame() {
         </div>
       </div>
 
+      <details className="hb-levels">
+        <summary>সব লেভেল <span>★ {bn(allStars)}/{bn(LEVEL_COUNT * 3)}</span></summary>
+        <p>দশটা মেলার দোকান। পরের দোকানে মোটা হাঁড়ি বেশি, দড়ি দোলে, বাতাসে বল বাঁকে। পার হলে পরেরটা খোলে, খোলা দোকান খোলাই থাকে।</p>
+        <LevelGrid count={LEVEL_COUNT} stars={levels.stars} unlocked={open} current={level} onPick={pick} />
+      </details>
+
       <section className="hb-result" id="result" ref={resultBox} aria-labelledby="hb-result-title">
         <div className="hb-result-head">
           <h2 id="hb-result-title">{result ? <><em>{tallyLine(result.score)}</em>, কার্ড তৈরি</> : "খেলা শেষে তোমার হাঁড়িভাঙার কার্ড"}</h2>
-          <p>{result ? friend ? compareLine(result.score, friend.score, friend.name) : humanLine(result.score) : "একবার খেললেই এখানে স্কোরসহ একটা কার্ড আসবে। বন্ধুকে পাঠালে সে ঠিক একই হাঁড়ির সারি পাবে।"}</p>
+          <p>{result ? versus || humanLine(result.score) : "একবার খেললেই এখানে স্কোরসহ একটা কার্ড আসবে। বন্ধুকে পাঠালে সে ঠিক একই হাঁড়ির সারি পাবে।"}</p>
         </div>
         {card && (
           <div className="hb-result-body">
             <figure className="kit-card" data-format={format}>
               <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="hb-card-summary" />
-              <figcaption id="hb-card-summary" className="hb-sr">হাঁড়িভাঙার কার্ড: {card.name && `${card.name}, `}{tallyLine(card.score)}, {bn(card.score)} পয়েন্ট। {humanLine(card.score)}</figcaption>
+              <figcaption id="hb-card-summary" className="hb-sr">হাঁড়িভাঙার কার্ড: {card.name && `${card.name}, `}লেভেল {bn(card.level)}, {tallyLine(card.score)}, {bn(card.score)} পয়েন্ট। {humanLine(card.score)}</figcaption>
               {previewError && <p className="kit-status" role="alert">কার্ডের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
             </figure>
             <div className="hb-share">

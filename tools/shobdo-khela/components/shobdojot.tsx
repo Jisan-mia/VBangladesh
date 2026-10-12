@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { cardSizes, loadCardFonts, type CardFormat } from '../../../shared/card-canvas';
 import { addToTally, readTally, type Tally } from '../../../shared/share-client';
+import { confetti, sfx } from '../../../shared/game-sound';
+import { SoundToggle } from '../../../shared/game-ui';
 import { FormatToggle, ShareBar, StickyNext, useInView } from '../../../shared/share-kit';
 import { cardBlob, drawCard } from '../lib/draw-card';
 import { answerOf, checkAnswer, currentPuzzle, dhakaDate, isFinished, nextPuzzle, PER_DAY, pickTile, puzzleById, removeLast, removeTile, restoreGame, revealAnswer, shiftDate, takeHint, tileOrder, type Game } from '../lib/puzzles';
@@ -102,13 +104,16 @@ export function Shobdojot() {
   function choose(tile: number) {
     if (!game || !puzzle || !round) return;
     const placed = pickTile(game, tile);
+    sfx.tap();
     const checked = checkAnswer(placed);
     setGame(checked);
     const after = checked.rounds[checked.index];
     if (after.outcome === 'solved') {
+      sfx.good();
       const share = percent(puzzle.id);
       setNotice(`ঠিক ধরেছ! ‘${answerOf(puzzle)}’।${share !== null ? ` আজ ${bn(share)}% মানুষ এটা পেরেছে।` : ''}`);
     } else if (after.attempts > round.attempts) {
+      sfx.wrong();
       setMiss(count => count + 1);
       const tried = placed.rounds[placed.index].picked.map(index => puzzle.parts[index]).join('');
       setNotice(`উঁহু, ‘${tried}’ হলো না। আবার সাজাও।`);
@@ -135,6 +140,8 @@ export function Shobdojot() {
     if (!game) return;
     const moved = nextPuzzle(game);
     setGame(moved);
+    // A soft chime when the day's result appears; confetti only for all five.
+    if (isFinished(moved)) { sfx.pop(); if (solvedCount(rowsOf(moved)) === PER_DAY) { sfx.win(); confetti(); } }
     setNotice(isFinished(moved) ? '' : round?.outcome === 'playing' ? 'ঠিক আছে, এটা বাদ। নতুন সূত্রটা পড়ো।' : '');
     document.getElementById(isFinished(moved) ? 'result' : 'board')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -182,9 +189,12 @@ export function Shobdojot() {
       <section className="jot-board" id="board" aria-labelledby="board-title" onKeyDown={keyboard}>
         <header className="jot-mast">
           <p><strong id="board-title">আজকের শব্দজট</strong><span>{bnDate(today)}</span></p>
+          <span className="jot-mast-end">
           <ol className="jot-dots" aria-label={`পাঁচটার মধ্যে ${bn(solved)}টা পেরেছ`}>
             {marksSoFar.map((mark, index) => <li key={index} data-mark={mark} aria-current={index === game.index ? 'step' : undefined} />)}
           </ol>
+          <SoundToggle compact />
+          </span>
         </header>
 
         {puzzle && round ? <>

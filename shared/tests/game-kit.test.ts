@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { challengeHash, cleanName, makeRng, pick, readChallenge } from '../game-core';
+import { challengeHash, cleanName, makeRng, pick, readChallenge, readLevels, recordLevel, starsFor, totalStars, unlockedLevel } from '../game-core';
 
 test('the same seed gives the same sequence, different seeds differ', () => {
   const first = makeRng(48213), second = makeRng(48213), other = makeRng(48214);
@@ -28,4 +28,19 @@ test('hostile or broken challenge links are rejected', () => {
   assert.equal(read('#s=5&t=10&n=' + 'x'.repeat(700)), null);
   assert.equal(read('#s=5&t=10')?.name, '');
   assert.equal(cleanName('ক'.repeat(40)).length, 20);
+});
+
+test('level stars: parse safely, keep the best, unlock one past the highest cleared', () => {
+  assert.deepEqual(readLevels('{"1":3,"2":1,"9":2,"3":7,"x":1}', 5), { 1: 3, 2: 1 });
+  assert.deepEqual(readLevels('not json', 5), {});
+  assert.equal(unlockedLevel({}, 5), 1);
+  assert.equal(unlockedLevel({ 1: 2, 2: 1 }, 5), 3);
+  assert.equal(unlockedLevel({ 5: 1 }, 5), 5);
+  assert.deepEqual(recordLevel({ 1: 3 }, 1, 1), { 1: 3 });
+  assert.deepEqual(recordLevel({ 1: 1 }, 1, 3), { 1: 3 });
+  assert.equal(totalStars({ 1: 3, 2: 2 }), 5);
+  assert.equal(starsFor(10, 12, 18, true), 3);
+  assert.equal(starsFor(15, 12, 18, true), 2);
+  assert.equal(starsFor(30, 12, 18, true), 1);
+  assert.equal(starsFor(90, 80, 50), 3);
 });

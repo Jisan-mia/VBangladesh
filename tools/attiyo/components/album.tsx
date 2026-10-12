@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { sfx, shake } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { printFor, printSvg } from "../lib/art";
@@ -75,8 +77,10 @@ export function Album() {
     setCounted(current => current === "done" ? "idle" : current);
   }
 
-  function answerQuiz(option: string) {
+  // Sound only for the friend's one-question guess; the album builder itself stays silent.
+  function answerQuiz(option: string, button: Element) {
     if (!friend) return;
+    if (option === termFor(friend.chain, friend.style)) sfx.good(); else { sfx.wrong(); shake(button.closest(".at-quiz")); }
     setGuess(option);
     setChain(friend.chain);
   }
@@ -104,12 +108,13 @@ export function Album() {
       {friend && friendAnswer && (
         <section className="at-quiz" aria-labelledby="quiz-title">
           <p className="at-kicker">এবার তোমার পালা</p>
+          {options && <SoundToggle compact className="at-sound" />}
           <h2 id="quiz-title">{friendWho} জানতে চায়: <span>{chainText(friend.chain, friend.style)}</span> তোমার কী হয়?</h2>
           {options ? <>
             <div className="at-options" role="group" aria-labelledby="quiz-title">
               {options.map(option => {
                 const right = option === termFor(friend.chain, friend.style);
-                return <button type="button" key={option} disabled={Boolean(guess)} aria-pressed={guess === option} data-state={guess ? right ? "right" : guess === option ? "wrong" : "dim" : undefined} onClick={() => answerQuiz(option)}>{option.replace(/ \/ /g, " বা ")}</button>;
+                return <button type="button" key={option} disabled={Boolean(guess)} aria-pressed={guess === option} data-state={guess ? right ? "right" : guess === option ? "wrong" : "dim" : undefined} onClick={event => answerQuiz(option, event.currentTarget)}>{option.replace(/ \/ /g, " বা ")}</button>;
               })}
             </div>
             <p className="at-verdict" role="status" aria-live="polite">

@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawBoard, type BoardCard } from "../lib/draw-board";
 import { bn, caption, enough, humanLine, label, nationalScore, packOf, packs, pairSplit, parseShareHash, percent, possessive, question, rarestPick, sameCount, shareHash, sideId, MAX_NAME_LENGTH, MIN_SAMPLE, PAIRS_PER_PACK, RARE_PERCENT, type PackId, type Shared, type Side } from "../lib/picks";
@@ -122,6 +124,8 @@ export function TeaStallBoard() {
     if (index >= DONE) return;
     stopTimer();
     const next = current.map((value, position) => position === index ? side : value);
+    // A chalk tick for each pick; a softer chime when the twelfth fills the board. No right or wrong here, so no confetti.
+    if (next.every(Boolean) && !current.every(Boolean)) sfx.good(); else sfx.pick();
     setAnswers(all => ({ ...all, [packId]: next }));
     setCountState(stateNow => stateNow === "done" ? "idle" : stateNow);
     const target = firstOpen(next, index + 1);
@@ -196,6 +200,7 @@ export function TeaStallBoard() {
         <div className="ena-board">
           <div className="ena-board-head">
             <p className="ena-board-title">আজকের তর্ক</p>
+            <SoundToggle compact />
             <p className="ena-progress" aria-live="polite">{index < DONE ? <><b>{bn(index + 1)}</b>/{bn(PAIRS_PER_PACK)}</> : "শেষ"}</p>
           </div>
 

@@ -89,3 +89,4 @@
 }
 @media(hover:hover){.pa-chips button:hover{border-color:var(--accent)}}
 @media(prefers-reduced-motion:reduce){.pa-chips button,.pa-bars i{transition:none}}
+.pa-picks .gx-sound{justify-self:start}

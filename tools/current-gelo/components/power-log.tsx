@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard, type CardData } from "../lib/draw-card";
 import { CROWD_NOTE, DAY, DAY_MINUTES, HOUR, MINUTE, MIN_SAMPLE, bn, bucketOf, caption, clock, crowd, dayKey, dayStart, divisionOf, divisions, duration, humanLine, parseShareHash, previousDay, reports, shareHash, tallyId, votesToSend, whenLabel, type Day } from "../lib/gelo";
@@ -107,8 +109,10 @@ export function PowerLog() {
     setUndo(undoable ? { before: saved, note: message } : null);
   }
 
-  const wentOff = () => act((current, at) => goOff(current, at), `কারেন্ট গেল ${clock(Date.now())}-এ। ফিরলে ‘কারেন্ট এল’ চাপো।`);
-  const cameOn = () => act((current, at) => comeOn(current, at), open ? `কারেন্ট এল! এবার ${duration(Math.round(Math.min(Date.now() - open.off, 12 * HOUR) / MINUTE))} ছিল না।` : "");
+  // A wall-switch click: a sharp tick, then a lower knock; lower when the power goes, higher when it comes back.
+  const click = (pitch: number) => { tone(1600, 0.025, 0.1, "square"); tone(pitch, 0.06, 0.12, "triangle", 0.02, pitch / 2); };
+  const wentOff = () => { click(260); act((current, at) => goOff(current, at), `কারেন্ট গেল ${clock(Date.now())}-এ। ফিরলে ‘কারেন্ট এল’ চাপো।`); };
+  const cameOn = () => { click(420); act((current, at) => comeOn(current, at), open ? `কারেন্ট এল! এবার ${duration(Math.round(Math.min(Date.now() - open.off, 12 * HOUR) / MINUTE))} ছিল না।` : ""); };
 
   function fixEnd() {
     if (!asking) return;
@@ -166,6 +170,7 @@ export function PowerLog() {
         <button type="button" className="cg-switch" data-kind="on" disabled={!ready || !open} onClick={cameOn}>
           <span className="cg-rocker" aria-hidden="true" /><span>কারেন্ট এল</span>
         </button>
+        <SoundToggle compact />
       </div>
 
       {asking ? (

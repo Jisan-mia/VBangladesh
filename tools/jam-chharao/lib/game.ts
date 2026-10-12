@@ -1,4 +1,5 @@
 // One level being played: slides, undo, the hint, replaying a link, and this phone's progress. Pure and server-safe.
+import { starsFor, type LevelStars } from "../../../shared/game-core";
 import { occupancy, parseLevel, reach, solve, solved, type Car, type Move } from "./board";
 import { LEVELS } from "./levels";
 
@@ -6,6 +7,13 @@ export const LEVEL_COUNT = LEVELS.length;
 /** Fewest moves that free the CNG on a level (1-based), as the solver found it. */
 export const fewest = (level: number) => LEVELS[level - 1][1];
 export const isLevel = (level: number) => Number.isInteger(level) && level >= 1 && level <= LEVEL_COUNT;
+/** Moves for two stars: a little slack over the best, more on the long jams. */
+export const twoStarMoves = (level: number) => fewest(level) + Math.max(2, Math.ceil(fewest(level) / 4));
+/** Three stars at the fewest moves, two within twoStarMoves, one for any other way out or a solve with help. */
+export const starsOf = (count: number, level: number, helped = 0) => helped ? 1 : starsFor(count, fewest(level), twoStarMoves(level), true);
+/** The progress kept before stars (level → fewest unaided moves, 0 when helped) as stars, for the one-time move to useLevels. */
+export const starsFromProgress = (progress: Progress): LevelStars =>
+  Object.fromEntries(Object.entries(progress).map(([level, moves]) => [level, moves ? starsOf(moves, Number(level)) : 1]));
 
 export type Game = { level: number; cars: Car[]; pos: number[]; moves: Move[]; helped: number; won: boolean };
 

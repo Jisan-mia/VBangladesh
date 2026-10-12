@@ -4,11 +4,13 @@ import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { buzz, confetti, hiss, sfx, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { sealBlob, sealMark } from "../lib/art";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import {
-  bn, createCard, cricketPick, defaults, displayName, footballPick, matchTitle, pairSplit, parseShareHash, pickText, previewTitle, readPick, runBands, shareHash, sideName, sportLabel, sports, tallyId, tallyIds, teams, verdictLabel, wickets,
+  bn, createCard, cricketPick, defaults, displayName, footballPick, matchTitle, pairSplit, parseShareHash, pickText, previewTitle, readPick, runBands, shareHash, sideName, sportLabel, sports, tallyId, tallyIds, teams, verdict, verdictLabel, wickets,
   MAX_ENTRIES, MAX_GOALS, MAX_NAME_LENGTH, type Entry, type Match, type SportId,
 } from "../lib/seal";
 
@@ -17,6 +19,10 @@ const TOOL = "ami-bolechhilam";
 const CALLS_KEY = "ami-bolechhilam-calls";
 const BREAK_MS = 560;
 type Mode = "compose" | "sealed" | "opened";
+
+// The lac seal pressed down with a soft thud, and later cracked open with a dry snap.
+const pressSeal = () => { sfx.thud(); hiss(0.06, 0.08, 2200); };
+const crackSeal = () => { hiss(0.08, 0.14, 3200, "highpass"); tone(220, 0.07, 0.1, "square", 0, 120); buzz(30); };
 
 const reducedMotion = () => typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
@@ -184,6 +190,7 @@ export function Envelope() {
   function seal() {
     if (full && !mine) return;
     setMine(true);
+    pressSeal();
     setMode("sealed");
     setAnnounce("খাম সিল হয়ে গেছে।");
     desk.current?.scrollIntoView({ behavior: reducedMotion() ? "auto" : "smooth", block: "start" });
@@ -191,11 +198,17 @@ export function Envelope() {
 
   function breakSeal() {
     if (mode !== "sealed" || breaking) return;
-    try { navigator.vibrate?.(30); } catch { /* not every phone allows it */ }
+    crackSeal();
     const open = () => { setMode("opened"); setBreaking(false); setAnnounce("সিল ভাঙা হলো। খেলার আগে যা লেখা হয়েছিল, এখন দেখা যাচ্ছে।"); };
     if (reducedMotion()) { open(); return; }
     setBreaking(true);
     window.setTimeout(open, BREAK_MS);
+  }
+
+  // Only a call that matched to the exact margin or score gets confetti; a right winner gets a soft chime; a miss stays quiet.
+  function celebrate() {
+    const calls = [...others, ...(mine ? [draft] : [])].map(entry => verdict(match.sport, entry.pick, resultDraft));
+    if (calls.includes("exact")) { sfx.win(); confetti(); } else if (calls.includes("right")) sfx.good();
   }
 
   function startAdding() {
@@ -317,6 +330,7 @@ export function Envelope() {
         )}
 
         {mode === "sealed" && <p className="ab-hint">খেলা শেষ? <strong>সিলে চাপ দাও</strong></p>}
+        <div className="ab-sound"><SoundToggle compact /></div>
       </div>
       <p className="ab-sr" role="status" aria-live="polite">{announce}</p>
 
@@ -354,7 +368,7 @@ export function Envelope() {
       {mode === "opened" && (
         <div className="ab-controls ab-real">
           <PickControls key={`r-${match.sport}`} match={match} value={resultDraft} onChange={setResultDraft} legend={match.sport === "f" ? "আসলে স্কোর কত হলো?" : "আসলে কে জিতল?"} />
-          <button type="button" className="kit-primary" disabled={!resultDraft} onClick={() => { setResult(resultDraft); setTouched(true); }}>{result ? "ফল বদলাও" : "ফল মিলিয়ে দেখো"}</button>
+          <button type="button" className="kit-primary" disabled={!resultDraft} onClick={() => { setResult(resultDraft); setTouched(true); celebrate(); }}>{result ? "ফল বদলাও" : "ফল মিলিয়ে দেখো"}</button>
           <p className="ab-honour">সিলটা সম্মানের: আমরা খেলার ফল জানি না, তুমি যা বসাবে, তাই।</p>
         </div>
       )}

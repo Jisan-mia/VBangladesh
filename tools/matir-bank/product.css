@@ -35,7 +35,7 @@
 .mb-count span{font-size:15px;font-weight:600;color:var(--clay-dark)}
 .mb-drop{width:100%;max-width:420px;min-height:56px;font-size:19px;font-family:var(--font-display)}
 .mb-stage-row{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 18px}
-.mb-stage .kit-link{color:var(--ink)}
+.mb-stage .kit-link,.mb-stage .gx-sound{color:var(--ink)}
 .mb-stage .kit-link:disabled{opacity:.4}
 .mb-problem{margin:0;padding:18px 4px;font-size:16px;font-weight:600;line-height:1.5}
 

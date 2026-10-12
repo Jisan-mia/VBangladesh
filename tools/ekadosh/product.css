@@ -92,7 +92,8 @@
 .ek-field small{font-weight:400;color:var(--muted);font-size:13px}
 .ek-field input{border:1.5px solid #c9b28d;border-radius:10px;font-size:17px}
 .ek-everyone{margin-top:24px;padding:16px;border-radius:16px;background:var(--sand)}
-.ek-everyone h3{margin:0 0 6px;font-family:var(--font-display);font-size:20px}
+.ek-everyone-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.ek-everyone h3{margin:0;font-family:var(--font-display);font-size:20px}
 .ek-everyone p{margin:0 0 10px}
 .ek-crowd{display:grid;gap:8px;margin:0}
 .ek-crowd div{display:grid;grid-template-columns:92px 1fr;gap:8px;align-items:baseline}

@@ -3,6 +3,7 @@ import { possessive } from "../../../shared/bangla";
 import { challengeHash, cleanName, readChallenge } from "../../../shared/game-core";
 import { HINT_SECONDS, WORDS, type Level } from "./grid";
 import { packById, type PackId } from "./packs";
+import { secondsShort, stageAt, stageStars, STAGE_COUNT } from "./stages";
 
 const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
 export const bn = (value: number) => digits.format(value);
@@ -11,28 +12,36 @@ export const bn = (value: number) => digits.format(value);
 export const MAX_TIME = 5999;
 export const MIN_TIME = 5;
 
-export type Shared = { seed: number; pack: PackId; level: Level; demo: boolean; hints: number; time: number; name: string };
+/** `stage` is the level number (1–24) for a grid played as a level; free grids have none. */
+export type Shared = { seed: number; pack: PackId; level: Level; demo: boolean; hints: number; time: number; name: string; stage?: number };
 
 /**
- * `#s=<seed>&t=<seconds, hints included>&p=<pack>&l=<0 সহজ, 1 কঠিন>&h=<hints>&d=1 (first grid, one word shown)&n=<name>`.
+ * `#s=<seed>&t=<seconds, hints included>&p=<pack>&l=<0 সহজ, 1 কঠিন>&h=<hints>&d=1 (first grid, one word shown)&v=<level number>&n=<name>`.
+ * `v` came with levels; links without it are free grids and still open.
  * The grid is rebuilt from the seed; the time is the friend's own clock and is shown as that.
  */
 export function parseShared(hash: string): Shared | null {
-  const challenge = readChallenge(hash, { maxTarget: MAX_TIME, extraKeys: ["p", "l", "h", "d"] });
+  const challenge = readChallenge(hash, { maxTarget: MAX_TIME, extraKeys: ["p", "l", "h", "d", "v"] });
   if (!challenge) return null;
-  const { p, l, h, d } = challenge.extra;
+  const { p, l, h, d, v } = challenge.extra;
   const pack = packById(p ?? "");
   const level = l === "0" ? 0 : l === "1" ? 1 : null;
   const demo = d === undefined ? false : d === "1" ? true : null;
   if (!pack || level === null || demo === null || !/^[0-6]$/.test(h ?? "")) return null;
   const hints = Number(h);
   if (hints > WORDS - Number(demo) || challenge.target < MIN_TIME + hints * HINT_SECONDS) return null;
-  return { seed: challenge.seed, pack: pack.id, level, demo, hints, time: challenge.target, name: challenge.name };
+  const shared: Shared = { seed: challenge.seed, pack: pack.id, level, demo, hints, time: challenge.target, name: challenge.name };
+  if (v === undefined) return shared;
+  // A level must match its own pack and difficulty; only level 1 has the teaching grid.
+  const stage = /^\d{1,2}$/.test(v) ? Number(v) : 0, at = stageAt(stage);
+  if (!at || stage > STAGE_COUNT || at.pack !== pack.id || at.level !== level || (demo && stage !== 1)) return null;
+  return { ...shared, stage };
 }
 
-export function sharedHash({ seed, pack, level, demo, hints, time, name }: Shared) {
+export function sharedHash({ seed, pack, level, demo, hints, time, name, stage }: Shared) {
   const extra: Record<string, string | number> = { p: pack, l: level, h: hints };
   if (demo) extra.d = 1;
+  if (stage) extra.v = stage;
   return challengeHash({ seed, target: time, name, extra });
 }
 
@@ -95,5 +104,12 @@ export function caption({ pack, time, hints }: Shared) {
   return `শব্দ খোঁজায় ${possessive(packName(pack))} ছয়টা শব্দ ${spokenIn(time)} খুঁজে পেলাম${helped}! তুমি কত সময়ে পারবে?`;
 }
 
-/** The card's top line. */
-export const kicker = ({ name, pack }: Shared) => `${cleanName(name) ? `${possessive(cleanName(name))} ` : ""}শব্দ খোঁজা · ${packName(pack)}`;
+/** The card's top line; a level adds its number and stars. */
+export const kicker = ({ name, pack, stage, time }: Shared) =>
+  `${cleanName(name) ? `${possessive(cleanName(name))} ` : ""}শব্দ খোঁজা · ${stage ? `লেভেল ${bn(stage)} · ` : ""}${packName(pack)}${stage ? ` ${"★".repeat(stageStars(stage, time))}` : ""}`;
+
+/** Under the stars: exactly how much faster earns the next one. */
+export function nearLine(stage: number, time: number) {
+  const short = secondsShort(stage, time);
+  return short ? `আর ${spoken(short)} কম লাগলে ${bn(stageStars(stage, time) + 1)} তারা।` : "";
+}

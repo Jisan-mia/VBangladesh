@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { confetti, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import {
@@ -12,6 +14,9 @@ import {
 import { Tob } from "./tob";
 
 const TOOL = "dhoyahin";
+// Only these round days get confetti and a chime, once each; nothing ever marks a restart or a slip.
+const MILESTONES = [7, 30, 100, 365, 1000];
+const CHEERED = "dhoyahin-cheered";
 const storage = () => { try { return window.localStorage; } catch { return null; } };
 const quickDays = [{ ago: 0, label: "আজ" }, { ago: 1, label: "গতকাল" }, { ago: 7, label: "৭ দিন আগে" }, { ago: 30, label: "৩০ দিন আগে" }] as const;
 
@@ -78,6 +83,16 @@ export function TobBuilder() {
   const previewError = useCard(preview, today ? quit : null, today, format, site);
   const friendError = useCard(friendCanvas, replyQuit, today, "feed", site);
 
+  // Runs once, when the saved count is read: opening the page on a milestone day is the celebration (picking dates doesn't count).
+  useEffect(() => {
+    if (!today || !MILESTONES.includes(count.days)) return;
+    const mark = `${quit.date}:${count.days}`;
+    try { if (localStorage.getItem(CHEERED) === mark) return; localStorage.setItem(CHEERED, mark); } catch { return; }
+    confetti();
+    // A chime queued before the first tap would only play late, on the next one.
+    if (navigator.userActivation?.hasBeenActive) { tone(784, 0.5, 0.07); tone(1175, 0.7, 0.06, "sine", 0.18); }
+  }, [today]); // eslint-disable-line react-hooks/exhaustive-deps
+
   function restart() {
     if (count.days > 0 && !window.confirm("আজ থেকে আবার গোনা শুরু করবে?")) return;
     setDate(day);
@@ -137,6 +152,7 @@ export function TobBuilder() {
           <Tob plant={shape} label={count.days < 0 ? "টবে একটা বীজ, চারা গজাবে শুরুর দিন থেকে" : `টবের চারায় ${bn(shape.leaves.length)}টা পাতা${shape.flowers.length ? `, ${bn(shape.flowers.length)}টা ফুল` : ""}`} />
         </div>
         <p className="tob-legend">প্রতিদিন একটা নতুন পাতা, প্রতি মাসে একটা ফুল।</p>
+        <SoundToggle compact />
 
         <div className="tob-controls">
           <div className="tob-field">

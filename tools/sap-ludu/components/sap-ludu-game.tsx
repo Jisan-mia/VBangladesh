@@ -4,14 +4,15 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type MouseEvent as ReactMouseEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { fitCanvas, newSeed, useBest, useGameLoop, useSlowMode } from "../../../shared/game-kit";
+import { buzz, confetti, fitCanvas, hiss, newSeed, sfx, shake, tone, useBest, useGameLoop, useSlowMode } from "../../../shared/game-kit";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
 import { JUMPS, LAST, cellOf, isLadder } from "../lib/board";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import { alongJump, centerOf, drawBoard, drawGhost, drawPiece, SEATS, slotOffset, type Point } from "../lib/draw-board";
 import { choose, landing, makeDice, newGame, options, piecesFor, roll, type Game, type Move, type Players } from "../lib/game";
 import {
-  biteText, bn, caption, cardHash, cardOf, friendBanner, friendNote, headline, humanLine, jumpNews, MAX_PLAYER_NAME, parseCard, sameRace, seatName, SEAT_NAMES,
+  biteText, bn, caption, cardHash, cardOf, friendBanner, friendNote, headline, humanLine, jumpNews, MAX_PLAYER_NAME, nearBest, parseCard, sameRace, seatName, SEAT_NAMES,
   versusLine, winnerMoves, type Result,
 } from "../lib/result";
 
@@ -30,7 +31,21 @@ const PIPS: Record<number, [number, number][]> = {
 };
 
 type News = { title: string; sub: string; tone: "up" | "down" | "stuck" | "plain"; jump?: number };
-type Anim = { slot: number; seat: number; from: number; to: number; end: number; jump: number; t: number; walk: number; pause: number; slide: number; total: number; told: boolean; news: News | null };
+type Anim = { slot: number; seat: number; from: number; to: number; end: number; jump: number; t: number; walk: number; pause: number; slide: number; total: number; told: boolean; news: News | null; hop: number; sounded: boolean };
+
+/** The die rattling in a cupped hand, then landing on the board. */
+function rattle() { for (let i = 0; i < 3; i++) hiss(0.035, 0.1, 2400 + i * 400, "bandpass", i * 0.045); tone(260, 0.06, 0.09, "triangle", 0.15); }
+/** One square hopped: a soft tick that climbs a little with each hop. */
+const hopTick = (hop: number) => tone(620 + 40 * Math.min(8, hop), 0.03, 0.045, "triangle");
+/** A ladder's ঝিং up, or a snake's long, silly slide down. */
+function jumpSound(jump: number) {
+  if (isLadder(jump)) { tone(523, 0.55, 0.08, "triangle", 0, 1568); tone(1047, 0.5, 0.05, "sine", 0.08, 2093); return; }
+  tone(1100, 0.75, 0.08, "triangle", 0, 140);
+  hiss(0.6, 0.07, 1400, "bandpass");
+  tone(320, 0.14, 0.06, "sine", 0.74, 210);
+}
+/** Too far for 100: a short, dull "no". */
+const stuckSound = () => tone(196, 0.14, 0.07, "square", 0, 165);
 
 function Shape({ seat, size = 18 }: { seat: number; size?: number }) {
   const { color, deep, shape } = SEATS[seat];
@@ -95,6 +110,7 @@ export function SapLuduGame() {
   const anim = useRef<Anim | null>(null);
   const overAt = useRef(0);
   const wrap = useRef<HTMLDivElement>(null);
+  const playRow = useRef<HTMLDivElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const context = useRef<CanvasRenderingContext2D | null>(null);
   const boardImage = useRef<HTMLCanvasElement | null>(null);
@@ -171,6 +187,9 @@ export function SapLuduGame() {
     const a = anim.current;
     if (!a) return;
     a.t += dt * 1000;
+    if (a.t < a.walk) { const hop = Math.floor(a.t / HOP_MS); if (hop !== a.hop) { a.hop = hop; hopTick(hop); } }
+    // The ladder or snake sounds as the piece starts to slide (or as it lands, when ধীরে খেলো skips the slide).
+    if (a.jump >= 0 && !a.sounded && a.t >= (a.slide ? a.walk + a.pause : a.walk)) { a.sounded = true; jumpSound(a.jump); }
     if (!a.told && a.t >= a.walk) { a.told = true; if (a.news) setNews(a.news); }
     if (a.t >= a.total) finishAnim();
   }, [finishAnim]);
@@ -247,13 +266,14 @@ export function SapLuduGame() {
     const move = next.last;
     if (next.phase === "choose" || !move) { setNews(null); return; }
     const said = moveNews(move, next.players > 1 ? seatName(names, move.player) : "", next);
-    if (move.stuck || fast) { setNews(said.jump ?? said.plain); return; }
+    if (move.stuck) { stuckSound(); shake(playRow.current); }
+    if (move.stuck || fast) { if (move.jump >= 0) jumpSound(move.jump); else if (!move.stuck) hopTick(0); setNews(said.jump ?? said.plain); return; }
     const walk = slow ? 0 : (move.to - move.from) * HOP_MS;
     const pause = move.jump < 0 ? 0 : slow ? SLOW_HOLD_MS : PAUSE_MS;
     const slide = move.jump < 0 || slow ? 0 : isLadder(move.jump) ? LADDER_MS : SNAKE_MS;
     anim.current = {
       slot: move.player * next.pieces + move.piece, seat: move.player, from: move.from, to: move.to, end: move.end, jump: move.jump,
-      t: 0, walk, pause, slide, total: walk + pause + slide + REST_MS, told: false, news: said.jump,
+      t: 0, walk, pause, slide, total: walk + pause + slide + REST_MS, told: false, news: said.jump, hop: -1, sounded: false,
     };
     setNews(said.plain);
     setAnimating(true);
@@ -266,7 +286,8 @@ export function SapLuduGame() {
     const current = live.current;
     if (current.phase !== "play") return;
     const next = roll(current, dice.current(current.rolls));
-    if (!slow) navigator.vibrate?.(8);
+    rattle();
+    if (!slow) buzz(8);
     setGame(next);
     begin(next);
   }
@@ -275,6 +296,7 @@ export function SapLuduGame() {
     if (paused) return;
     const next = choose(live.current, piece);
     if (next === live.current) return;
+    sfx.tap();
     setGame(next);
     begin(next);
   }
@@ -322,7 +344,12 @@ export function SapLuduGame() {
   const settled = over && !animating;
   useEffect(() => {
     if (!settled) return;
-    if (solo) { const beaten = submitBest(winnerMoves(game)); setRecord(best === null ? "first" : beaten ? "new" : ""); }
+    // Confetti for a real feat only: a new best on this phone, or the end of a game among friends.
+    if (solo) {
+      const beaten = submitBest(winnerMoves(game));
+      setRecord(best === null ? "first" : beaten ? "new" : "");
+      if (beaten && best !== null) { sfx.win(); confetti(); } else sfx.good();
+    } else { sfx.win(); confetti(); }
     const timer = setTimeout(() => { overAt.current = performance.now(); setShowOver(true); }, slow ? 150 : OVER_DELAY_MS);
     return () => clearTimeout(timer);
     // Once per finished game: the best changing right after must not run it again.
@@ -418,6 +445,7 @@ export function SapLuduGame() {
             <p className="sl-kicker">{solo ? "১০০-তে পৌঁছে গেছ!" : "খেলা শেষ!"}</p>
             <strong className={solo ? "" : "sl-winner"} style={solo ? undefined : { color: SEATS[game.winner].color }}>{solo ? bn(winnerMoves(game)) : headline(result)}{solo && <small> চালে</small>}</strong>
             <p>{solo ? (record === "new" ? "এই ফোনে নতুন রেকর্ড!" : record === "first" || best === null ? "প্রথম খেলা, এটাই এখন এই ফোনের সেরা" : `এই ফোনে সেরা ${bn(best)} চাল`) : `${bn(winnerMoves(game))} চালে · ${biteText(game.bites[game.winner])}`}</p>
+            {solo && record === "" && nearBest(winnerMoves(game), best) && <p className="sl-near">{nearBest(winnerMoves(game), best)}</p>}
             {versus && <p className="sl-vs">{versus}</p>}
             <button type="button" className="sl-big" onClick={() => again()}>আরেকবার</button>
             {solo && <button type="button" className="sl-link" onClick={() => again(true)}>একই ছক্কায় আবার</button>}
@@ -442,7 +470,7 @@ export function SapLuduGame() {
           })}
         </div>
       ) : (
-        <div className="sl-play">
+        <div className="sl-play" ref={playRow}>
           <button type="button" className="sl-dice" onClick={tapDice} disabled={paused || (over && !animating)} aria-label={`${diceLabel}${face ? `। শেষবার ${bn(face)} পড়েছিল` : ""}`} style={{ "--seat": SEATS[turnSeat].color } as CSSProperties}>
             <span className="sl-die" key={game.rolls} data-rolled={game.rolls > 0}><DieFace value={face} cowrie={cowrie} /></span>
             <span className="sl-dice-label">{diceLabel}</span>
@@ -464,6 +492,7 @@ export function SapLuduGame() {
         <button type="button" className="sl-toggle" aria-pressed={cowrie} onClick={() => setCowrie(!cowrie)}><i aria-hidden="true" />কড়ি</button>
         <button type="button" className="sl-toggle" aria-pressed={fast} onClick={() => { setFast(!fast); finishAnim(); }}><i aria-hidden="true" />চাল দ্রুত করো</button>
         <button type="button" className="sl-toggle" aria-pressed={slow} onClick={() => setSlow(!slow)}><i aria-hidden="true" />ধীরে খেলো</button>
+        <SoundToggle compact className="sl-sound" />
         {inProgress && <button type="button" className="sl-link" onClick={() => { dropFriend(); start(newSeed(), players, twoPieces); }}>নতুন খেলা</button>}
       </div>
       <p className="sl-rule">{solo ? "একা খেললে দুই গুটি: যেকোনোটা আগে ১০০-তে তুললেই হলো। " : ""}৬ পড়লে আরেকবার। ঠিক ১০০-তে পড়তে হবে, বেশি পড়লে গুটি নড়বে না।</p>

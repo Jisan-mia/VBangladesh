@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readLevels, recordLevel, totalStars } from "../../../shared/game-core";
+import { nearMissLine, textStars, LEVEL_COUNT, passages as levelTexts } from "../lib/typing";
 import { check, cleanName, fold, gradeOf, parseShareHash, passages, previewTitle, score, shareHash, tallyIds, MAX_NAME, MAX_WPM } from "../lib/typing";
 import { share } from "../share";
 
@@ -85,4 +87,25 @@ test("link previews are personal, and only fixed speed buckets are counted", () 
   assert.equal(gradeOf(0).id, "shikkhanobish");
   assert.equal(gradeOf(28).id, "paka");
   assert.equal(gradeOf(200).id, "ostad");
+});
+
+test("stars per text follow the stamp bands: 35+ is 3, 25+ is 2, finishing is 1, with an exact near-miss line", () => {
+  assert.deepEqual([40, 35, 34, 25, 24, 0].map(textStars), [3, 3, 2, 2, 1, 1]);
+  assert.equal(nearMissLine(35), "");
+  assert.equal(nearMissLine(34), "মিনিটে আর ১টা শব্দ বেশি লিখলে ৩ তারা।");
+  assert.equal(nearMissLine(25), "মিনিটে আর ১০টা শব্দ বেশি লিখলে ৩ তারা।");
+  assert.equal(nearMissLine(24), "মিনিটে আর ১টা শব্দ বেশি লিখলে ২ তারা।");
+  assert.equal(nearMissLine(10), "মিনিটে আর ১৫টা শব্দ বেশি লিখলে ২ তারা।");
+});
+
+test("each text is a level and progress goes through readLevels and recordLevel", () => {
+  assert.equal(LEVEL_COUNT, levelTexts.length);
+  let stars = readLevels(`{"1":3,"2":1,"${LEVEL_COUNT + 1}":3,"x":2,"3":9}`, LEVEL_COUNT);
+  assert.deepEqual(stars, { 1: 3, 2: 1 });
+  stars = recordLevel(stars, 2, textStars(30));
+  assert.equal(stars[2], 2);
+  stars = recordLevel(stars, 2, textStars(5));
+  assert.equal(stars[2], 2, "a slower try never lowers the stars");
+  assert.equal(totalStars(stars), 5);
+  assert.deepEqual(readLevels("not json", LEVEL_COUNT), {});
 });

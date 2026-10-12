@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { drawTicketCard, ticketBlob } from "../lib/draw-ticket";
@@ -58,6 +60,8 @@ export function TicketCounter() {
   }, [answers, done, shownName, format, site, friend]);
 
   function pick(answer: Answer) {
+    // Only the last pick makes a sound: the ticket stamp landing. The questions stay quiet.
+    if (answers.length === QUESTION_COUNT - 1) setTimeout(sfx.thud, 300);
     setAnswers(current => current.length < QUESTION_COUNT ? [...current, answer] : current);
   }
 
@@ -119,6 +123,7 @@ export function TicketCounter() {
             </div>
           )}
           <div className="jb-redo">
+            <SoundToggle compact />
             {answers.length > 0 && !done && <button type="button" className="kit-link" onClick={() => setAnswers(current => current.slice(0, -1))}>আগেরটায় ফেরো</button>}
             {done && <button type="button" className="kit-link" onClick={restart}>আবার টিকিট কাটো</button>}
           </div>

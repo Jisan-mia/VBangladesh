@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { confetti, hiss, sfx, shake, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar } from "../../../shared/share-kit";
 import { drawFanCard, fanCardBlob, loadScene } from "../lib/draw-card";
 import { fanBadge, fanCaption, fanLaneLine, fanLaneTitle, fanLine, fanPair, fanScore, fanTest, fanTitle, newSeed, rivalOf, scoreLine, type FanTeam } from "../lib/fan";
@@ -9,6 +11,16 @@ import { bn, FAN_ROUNDS, possessive, shareHash, teamOf, type Pick, type Roof, ty
 
 const TOOL = "argentina-na-brazil";
 const letters = ["ক", "খ", "গ"];
+
+/** The referee's whistle at the reveal; a top score adds a crowd swell and confetti. */
+function reveal(top: boolean) {
+  tone(2900, 0.16, 0.05, "triangle", 0, 3300);
+  tone(3100, 0.24, 0.05, "triangle", 0.18, 2700);
+  if (!top) return;
+  hiss(0.9, 0.1, 1400, "bandpass", 0.3);
+  sfx.win();
+  confetti();
+}
 
 /** The আসল ফ্যান test, offered under the roof card once Argentina or Brazil is up. */
 export function FanTest({ own, team, neighbour, linkSeed, site }: { own: Roof; team: FanTeam; neighbour: Roof | null; linkSeed: number | null; site: string }) {
@@ -21,6 +33,7 @@ export function FanTest({ own, team, neighbour, linkSeed, site }: { own: Roof; t
   const nextButton = useRef<HTMLButtonElement>(null);
   const firstOption = useRef<HTMLButtonElement>(null);
   const moved = useRef(false);
+  const optionsBox = useRef<HTMLDivElement>(null);
 
   const rounds = useMemo(() => seed === null ? [] : fanTest(team, seed), [team, seed]);
   const finished = seed !== null && at >= FAN_ROUNDS;
@@ -60,6 +73,9 @@ export function FanTest({ own, team, neighbour, linkSeed, site }: { own: Roof; t
 
   function pick(option: Pick) {
     moved.current = true;
+    if (picks.length === at) {
+      if (option === round.right) sfx.good(); else { sfx.wrong(); shake(optionsBox.current); }
+    }
     setPicks(current => current.length === at ? [...current, option] : current);
   }
 
@@ -82,13 +98,13 @@ export function FanTest({ own, team, neighbour, linkSeed, site }: { own: Roof; t
       <div className="abn-fan-board" key={at}>
         <div className="abn-fan-meta">
           <span>{possessive(label)} আসল ফ্যান পরীক্ষা</span>
-          <span aria-label={`${bn(at + 1)} নম্বর প্রশ্ন, মোট ${bn(FAN_ROUNDS)}টা`}>{bn(at + 1)}/{bn(FAN_ROUNDS)}</span>
+          <span><span aria-label={`${bn(at + 1)} নম্বর প্রশ্ন, মোট ${bn(FAN_ROUNDS)}টা`}>{bn(at + 1)}/{bn(FAN_ROUNDS)}</span> <SoundToggle compact /></span>
         </div>
         <ol className="abn-fan-bunting" data-team={team} aria-hidden="true">
           {rounds.map((item, index) => <li key={item.question.id} data-state={picks[index] === undefined ? (index === at ? "now" : "") : picks[index] === item.right ? "right" : "wrong"} />)}
         </ol>
         <h2 className="abn-fan-ask" id="fan-ask">{question.ask}</h2>
-        <div className="abn-fan-options" role="group" aria-labelledby="fan-ask">
+        <div className="abn-fan-options" ref={optionsBox} role="group" aria-labelledby="fan-ask">
           {options.map((option, index) => {
             const status = picked === undefined ? undefined : index === round.right ? "right" : index === picked ? "wrong" : "dim";
             return <button type="button" key={option} ref={index === 0 ? firstOption : undefined} data-status={status} disabled={picked !== undefined} onClick={() => pick(index as Pick)}>
@@ -104,7 +120,11 @@ export function FanTest({ own, team, neighbour, linkSeed, site }: { own: Roof; t
           <p>{question.fact} <small>সূত্র: {question.source}</small></p>
         </div>}
         <p className="abn-sr" aria-live="polite">{picked !== undefined ? `${right ? "ঠিক" : "হয়নি"}। উত্তর: ${options[round.right]}। ${question.fact}` : ""}</p>
-        {picked !== undefined && <button type="button" ref={nextButton} className="kit-primary abn-fan-next" onClick={() => { moved.current = true; setAt(current => current + 1); }}>{at === FAN_ROUNDS - 1 ? "স্কোর দেখো" : "পরের প্রশ্ন"}</button>}
+        {picked !== undefined && <button type="button" ref={nextButton} className="kit-primary abn-fan-next" onClick={() => {
+          moved.current = true;
+          if (at === FAN_ROUNDS - 1) reveal(fanScore(team, seed, picks) >= 7);
+          setAt(current => current + 1);
+        }}>{at === FAN_ROUNDS - 1 ? "স্কোর দেখো" : "পরের প্রশ্ন"}</button>}
       </div>
     </section>;
   }

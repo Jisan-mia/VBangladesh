@@ -2,11 +2,11 @@
 // so a cheap phone keeps its frame rate. Slow mode drops parallax, dust, shake and the bell's swing.
 import { BODY_FONT, DISPLAY_FONT } from "../../../shared/card-canvas";
 import {
-  drawBasket, drawBell, drawBike, drawBranch, drawCow, drawGate, drawKid, drawLine, drawMilestone, drawPuddle, drawSitting, drawTiffin,
+  drawBasket, drawBell, drawBike, drawBranch, drawCow, drawGate, drawKid, drawLine, drawMilestone, drawPage, drawPuddle, drawSitting, drawTiffin,
   duckPose, jumpDownPose, jumpUpPose, runPose,
 } from "./art";
 import {
-  pieceAt, AHEAD, GATE, GATE_M, GOT_TIFFIN, GROUND, H, KID_X, LANDED, MILESTONE, PUDDLE, SAVED, TAKEN, TIFFIN, UNIT, W, ZONE_M, zoneOf, type Run,
+  pieceAt, AHEAD, GATE, GATE_M, GOT_PAGE, GOT_TIFFIN, GROUND, H, KID_X, LANDED, MILESTONE, PAGE, PAGES, PUDDLE, SAVED, TAKEN, TIFFIN, UNIT, W, ZONE_M, zoneOf, type Run,
 } from "./road";
 import { bn } from "./result";
 
@@ -22,10 +22,10 @@ export type Scene = {
   context: CanvasRenderingContext2D; k: number; girl: boolean;
   sky: Sprite; far: [Sprite, Sprite]; ground: [Sprite, Sprite]; tree: Sprite;
   kidRun: Sprite[]; kidUp: Sprite; kidDown: Sprite; kidDuck: [Sprite, Sprite]; kidSit: Sprite;
-  puddles: Sprite[]; things: Sprite[]; tiffin: Sprite; tiffinIcon: Sprite; milestone: Sprite; bell: Sprite; gate: Sprite | null;
+  puddles: Sprite[]; things: Sprite[]; tiffin: Sprite; tiffinIcon: Sprite; page: Sprite; pageIcon: Sprite; milestone: Sprite; bell: Sprite; gate: Sprite | null;
   clock: number; idle: number; landAt: number; shakeAt: number; savedAt: number;
   popups: Popup[]; puffs: Puff[]; seen: number; run: Run | null;
-  metersShown: number; metersText: string; gateText: string; markText: string; markFor: number;
+  metersShown: number; metersText: string; gateText: string; markText: string; markFor: number; pagesShown: number; pagesText: string;
 };
 
 /** Paints a `w`×`h` unit area into a canvas at `k` device pixels a unit; (ox, oy) is where the drawing's origin sits. */
@@ -236,13 +236,15 @@ export function makeScene(canvas: HTMLCanvasElement, cssWidth: number, girl: boo
     ],
     tiffin: sprite(32, 32, k, 16, 24, context => drawTiffin(context)),
     tiffinIcon: sprite(18, 22, k, 9, 20, context => drawTiffin(context, false)),
+    page: sprite(32, 32, k, 16, 24, context => drawPage(context)),
+    pageIcon: sprite(18, 22, k, 9, 20, context => drawPage(context, false)),
     milestone: sprite(20, 26, k, 10, 23, drawMilestone),
     bell: sprite(18, 18, k, 9, 9, context => drawBell(context, 0, 0, 6.4)),
     gate: previous?.gate ?? null,
     clock: previous?.clock ?? 0, idle: previous?.idle ?? 0, landAt: -9, shakeAt: -9, savedAt: -9,
     popups: Array.from({ length: 4 }, () => ({ t: -9, text: "", color: "" })),
     puffs: Array.from({ length: PUFFS }, () => ({ x: 0, y: 0, t: -9, r: 0 })),
-    seen: 0, run: null, metersShown: -1, metersText: "", gateText: "", markText: "", markFor: -1,
+    seen: 0, run: null, metersShown: -1, metersText: "", gateText: "", markText: "", markFor: -1, pagesShown: -1, pagesText: "",
   } as Omit<Scene, "kidRun" | "kidUp" | "kidDown" | "kidDuck" | "kidSit"> as Scene;
   buildKid(scene, k, girl);
   return scene;
@@ -314,6 +316,7 @@ function drawPieces(scene: Scene, run: Run) {
     if (x + piece.w < -60 || piece.state === TAKEN) continue;
     const cx = x + piece.w / 2;
     if (piece.kind === TIFFIN) stamp(scene, scene.tiffin, cx, GROUND - piece.y + Math.sin(scene.clock * 4 + index) * 1.5);
+    else if (piece.kind === PAGE) stamp(scene, scene.page, cx, GROUND - piece.y + Math.sin(scene.clock * 3 + index) * 2);
     else if (piece.kind === PUDDLE) stamp(scene, scene.puddles[Math.min(3, Math.max(0, Math.round((piece.w - 44) / 6)))], cx, GROUND);
     else stamp(scene, scene.things[piece.kind], cx, GROUND);
   }
@@ -331,20 +334,20 @@ function drawHints(scene: Scene, run: Run) {
   }
 }
 
-/** Markers on the far side of the lane: a stone every 100 m, the school gate at 1000 m and a friend's flag. */
-function drawMarkers(scene: Scene, d: number, friend: { meters: number; name: string } | null) {
+/** Markers on the far side of the lane: a stone every 100 m, the school gate (at the day's distance) and a friend's flag. */
+function drawMarkers(scene: Scene, d: number, friend: { meters: number; name: string } | null, gateM: number) {
   const { context, k } = scene;
   const near = Math.floor(d / UNIT / 100) * 100;
   for (const meters of [near, near + 100]) {
     const x = meters * UNIT + KID_X - d;
-    if (meters <= 0 || meters === GATE_M || x < -20 || x > W + 20) continue;
+    if (meters <= 0 || meters === gateM || x < -20 || x > W + 20) continue;
     stamp(scene, scene.milestone, x, BACK + 2);
     if (scene.markFor !== meters) { scene.markFor = meters; scene.markText = bn(meters); }
     context.setTransform(k, 0, 0, k, 0, 0);
     context.font = `700 7px ${BODY_FONT}`; context.fillStyle = "#3a3226"; context.textAlign = "center";
     context.fillText(scene.markText, x, BACK - 6);
   }
-  const gateX = GATE_M * UNIT + KID_X - d;
+  const gateX = gateM * UNIT + KID_X - d;
   if (scene.gate && gateX > -90 && gateX < W + 90) stamp(scene, scene.gate, gateX, BACK + 2);
   if (friend) {
     const x = friend.meters * UNIT + KID_X - d;
@@ -385,13 +388,15 @@ function readEvents(scene: Scene, run: Run, slow: boolean) {
     } else if (event.type === GOT_TIFFIN) popup(scene, event.t, "টিফিন পেলে! একটা ধাক্কা মাফ", "#ffe38a");
     else if (event.type === SAVED) { scene.savedAt = event.t; if (!slow) scene.shakeAt = event.t; popup(scene, event.t, "বাঁচলে! টিফিনটা গেল", "#ffd2c4"); }
     else if (event.type === MILESTONE) popup(scene, event.t, `${bn(Math.floor(event.at / UNIT / 100) * 100)} মিটার!`, "#ffffff");
-    else if (event.type === GATE) popup(scene, event.t, "গেটে পৌঁছে গেছ! ঘণ্টা পড়েনি!", "#ffe38a");
+    else if (event.type === GATE && !run.day) popup(scene, event.t, "গেটে পৌঁছে গেছ! ঘণ্টা পড়েনি!", "#ffe38a");
+    else if (event.type === GOT_PAGE) popup(scene, event.t, `খাতার পাতা! ${bn(run.pages)}/${bn(PAGES)}`, "#ffffff");
   }
 }
 
 function drawKidNow(scene: Scene, run: Run | null) {
   const t = run?.t ?? scene.clock;
-  if (run?.over) { stamp(scene, scene.kidSit, KID_X, GROUND); return; }
+  // Bumped: sits in the dust. Reached the day's gate: stands there, mid-stride.
+  if (run?.over && run.hitKind >= 0) { stamp(scene, scene.kidSit, KID_X, GROUND); return; }
   const d = run ? run.d : scene.idle;
   let image = scene.kidRun[Math.floor(d / STRIDE) % RUN_FRAMES];
   if (run && run.ducking) image = scene.kidDuck[Math.floor(d / (STRIDE * 3)) % 2];
@@ -406,8 +411,8 @@ function drawKidNow(scene: Scene, run: Run | null) {
   scene.context.globalAlpha = 1;
 }
 
-/** One frame. `run` is null on the ready screen (the kid runs in place on an empty road). */
-export function drawScene(scene: Scene, run: Run | null, slow: boolean, friend: { meters: number; name: string } | null) {
+/** One frame. `run` is null on the ready screen (the kid runs in place on an empty road); `gateM` is where the next day's gate stands. */
+export function drawScene(scene: Scene, run: Run | null, slow: boolean, friend: { meters: number; name: string } | null, gateM = run?.gateM ?? GATE_M) {
   const { context, k } = scene;
   if (run) readEvents(scene, run, slow);
   const t = run?.t ?? 0;
@@ -416,7 +421,7 @@ export function drawScene(scene: Scene, run: Run | null, slow: boolean, friend: 
   context.setTransform(k, 0, 0, k, shake * k, 0);
   context.drawImage(scene.sky.canvas, 0, 0, W, BACK + 2);
   drawBackdrop(scene, d, slow);
-  drawMarkers(scene, d, friend);
+  drawMarkers(scene, d, friend, gateM);
   if (run) drawPieces(scene, run);
   drawKidNow(scene, run);
 
@@ -445,16 +450,17 @@ export function drawScene(scene: Scene, run: Run | null, slow: boolean, friend: 
     context.fillStyle = item.color; context.fillText(item.text, W / 2, y);
   }
   context.globalAlpha = 1;
-  drawHud(scene, run, slow);
+  drawHud(scene, run, slow, gateM);
 }
 
-function drawHud(scene: Scene, run: Run | null, slow: boolean) {
+function drawHud(scene: Scene, run: Run | null, slow: boolean, gateM: number) {
   const { context } = scene;
   const meters = run?.meters ?? 0;
-  if (meters !== scene.metersShown) {
-    scene.metersShown = meters;
+  // The texts change a few times a second at most; rebuilt only then (the gate moves with the day, so it is part of the key).
+  if (meters * 4096 + gateM !== scene.metersShown) {
+    scene.metersShown = meters * 4096 + gateM;
     scene.metersText = `${bn(meters)} মি`;
-    scene.gateText = meters >= GATE_M ? "গেট পার!" : `গেট ${bn(GATE_M - meters)} মি`;
+    scene.gateText = meters >= gateM ? "গেট পার!" : `গেট ${bn(gateM - meters)} মি`;
   }
   context.setTransform(scene.k, 0, 0, scene.k, 0, 0);
   context.textAlign = "left";
@@ -462,16 +468,25 @@ function drawHud(scene: Scene, run: Run | null, slow: boolean) {
   context.font = `800 18px ${DISPLAY_FONT}`; context.fillStyle = "#fff4dc";
   context.fillText(scene.metersText, 22, 31);
   if (run?.tiffin) { pill(context, 108, 10, 34); stamp(scene, scene.tiffinIcon, 125, 34); }
+  if (run?.day) {
+    if (run.pages !== scene.pagesShown) { scene.pagesShown = run.pages; scene.pagesText = `${bn(run.pages)}/${bn(PAGES)}`; }
+    context.setTransform(scene.k, 0, 0, scene.k, 0, 0);
+    pill(context, 10, 46, 62, 24);
+    stamp(scene, scene.pageIcon, 24, 66);
+    context.setTransform(scene.k, 0, 0, scene.k, 0, 0);
+    context.font = `800 14px ${DISPLAY_FONT}`; context.fillStyle = "#fff4dc"; context.textAlign = "left";
+    context.fillText(scene.pagesText, 35, 63);
+  }
   context.setTransform(scene.k, 0, 0, scene.k, 0, 0);
   pill(context, W - 130, 10, 120);
   // The school bell swings for half a second every two and a half (it rings; it never flashes).
   const ring = scene.clock % 2.5;
-  const swing = !slow && meters < GATE_M && ring < 0.6 ? Math.sin(ring * 22) * 0.4 * (1 - ring / 0.6) : 0;
+  const swing = !slow && meters < gateM && ring < 0.6 ? Math.sin(ring * 22) * 0.4 * (1 - ring / 0.6) : 0;
   const { k } = scene, cos = Math.cos(swing) * k, sin = Math.sin(swing) * k;
   context.setTransform(cos, sin, -sin, cos, (W - 113) * k, 18 * k);
   context.drawImage(scene.bell.canvas, -scene.bell.ox, -scene.bell.oy + 6, scene.bell.w, scene.bell.h);
   context.setTransform(k, 0, 0, k, 0, 0);
-  context.font = `700 14px ${BODY_FONT}`; context.fillStyle = meters >= GATE_M ? "#ffe38a" : "#fff4dc"; context.textAlign = "left";
+  context.font = `700 14px ${BODY_FONT}`; context.fillStyle = meters >= gateM ? "#ffe38a" : "#fff4dc"; context.textAlign = "left";
   context.fillText(scene.gateText, W - 99, 30);
 }
 

@@ -3,7 +3,7 @@ import test from "node:test";
 import { challengeHash, makeRng, pick } from "../../../shared/game-core";
 import { site } from "../content";
 import { act, BABU, CHOR, DAKAT, DEFAULT_POINTS, MAX_ROUNDS, POLICE, cleanPlayer, dative, dealFor, deals, nameOf, newPlay, roundPoints, standings, suspects, totals, type Game, type Play, type Role } from "../lib/game";
-import { friendBanner, gameHash, humanLine, parseGame, previewTitle, roundNews, scoreLine, versusLine } from "../lib/result";
+import { friendBanner, gameHash, humanLine, parseGame, previewTitle, recordLine, roundNews, scoreLine, versusLine } from "../lib/result";
 import { share } from "../share";
 
 const game = (overrides: Partial<Game> = {}): Game => ({ seed: 48213, names: ["আম্মু", "ভাইয়া", "আপু", "আমি"], points: [...DEFAULT_POINTS], caught: [], occasion: "eid", ...overrides });
@@ -112,6 +112,14 @@ test("card lines: tie, close, one round, every catch, no catch, a runaway", () =
   const runaway = find(g => gap(g) >= 3000, { caught: [true, false, true, false, true, false, true, false] });
   assert.match(humanLine(runaway), /হাতেই উঠেছে/);
   assert.match(scoreLine(game({ caught: [true] })), /^[^·]+ ১০০০ · /);
+});
+
+test("the near-miss line names the exact gap to the record, only when one round could close it", () => {
+  const evening = game({ caught: [true, true, false] }), top = standings(evening)[0].total;
+  assert.equal(recordLine(evening, top + 199), `এই ফোনের রেকর্ড ${new Intl.NumberFormat("bn-BD", { useGrouping: false }).format(top + 199)}। আর ২০০ পয়েন্ট হলেই নতুন রেকর্ড হতো।`);
+  assert.match(recordLine(evening, top + 1), /আর ২ পয়েন্ট/);
+  assert.match(recordLine(evening, top), /^এই ফোনে এক খেলায় সবচেয়ে বেশি: /, "a first evening is its own record");
+  assert.match(recordLine(evening, top + 5000), /^এই ফোনে এক খেলায় সবচেয়ে বেশি: /);
 });
 
 test("round news says who the thief was, and the cost of a wrong guess", () => {

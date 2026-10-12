@@ -165,7 +165,8 @@ test("replay rejects any flip that isn't a real flip", () => {
   assert.equal(replay(3, 16, 1, [16]), null);
   assert.equal(replay(3, 12, 1, [12]), null);
   assert.deepEqual(readFlips(flipsText(game.flips)), game.flips);
-  assert.equal(readFlips("0g"), null);
+  assert.deepEqual(readFlips("0g"), [0, 16], "base 32: the 20-card board needs flips past f");
+  assert.equal(readFlips("0w"), null);
   assert.equal(readFlips("AB"), null);
 });
 
@@ -181,7 +182,7 @@ test("score bands and the human lines", () => {
   assert.equal(band(9, 12), 1);
   assert.match(soloLine(8, 16), /একটাও ভুল চাল নেই/);
   assert.match(soloLine(40, 16), /ধৈর্য/);
-  const duo = (pairs: [number, number], names: [string, string] = ["রাফি", "মিম"]): Card => ({ seed: 1, size: 16, players: 2, moves: 20, pairs, names, flips: "" });
+  const duo = (pairs: [number, number], names: [string, string] = ["রাফি", "মিম"]): Card => ({ seed: 1, size: 16, players: 2, moves: 20, pairs, names, flips: "", level: 0 });
   assert.equal(winner(duo([4, 4])), null);
   assert.equal(winner(duo([3, 5])), 1);
   assert.match(duoLine(duo([4, 4])), /সমান সমান/);
@@ -219,7 +220,7 @@ test("links carry the flips, round-trip, and re-check every move", () => {
   assert.deepEqual(parseCard(duoHash), duoCard);
   assert.equal(parseCard(duoHash.replace(`a=${duo.pairs[0]}`, `a=${(duo.pairs[0] + 1) % 7}`)), null, "pairs must match the replay");
   // Very long games are too long to prove; they're accepted as told, with pairs that add up.
-  assert.deepEqual(parseCard("s=9&t=80&m=2&a=5&q=%E0%A6%AE%E0%A6%BF%E0%A6%AE"), { seed: 9, size: 16, players: 2, moves: 80, pairs: [5, 3], names: ["", "মিম"], flips: "" });
+  assert.deepEqual(parseCard("s=9&t=80&m=2&a=5&q=%E0%A6%AE%E0%A6%BF%E0%A6%AE"), { seed: 9, size: 16, players: 2, moves: 80, pairs: [5, 3], names: ["", "মিম"], flips: "", level: 0 });
   assert.equal(friendNote(parseCard("s=9&t=80")!), "৪×৪ · অনেক লম্বা খেলা, চাল মিলিয়ে দেখা হয়নি");
   assert.equal(friendNote(card), "৪×৪ · প্রতিটা চাল মিলিয়ে দেখা হয়েছে");
   const long = cardOf({ ...game, moves: 61 }, [""]);
@@ -238,7 +239,7 @@ test("hostile or broken links are refused", () => {
 });
 
 test("banners, previews and captions", () => {
-  const solo: Card = { seed: 7, size: 16, players: 1, moves: 23, pairs: [8, 0], names: ["রাফি", ""], flips: "" };
+  const solo: Card = { seed: 7, size: 16, players: 1, moves: 23, pairs: [8, 0], names: ["রাফি", ""], flips: "", level: 0 };
   assert.equal(friendBanner(solo), "রাফি ২৩ চালে পেরেছে। একই খেলা, এবার তোমার পালা।");
   assert.equal(previewTitle(solo), "রাফি ২৩ চালে সব জোড়া মিলিয়েছে। তুমি পারবে?");
   assert.equal(previewTitle({ ...solo, names: ["", ""] }), "এক বন্ধু ২৩ চালে সব জোড়া মিলিয়েছে। তুমি পারবে?");

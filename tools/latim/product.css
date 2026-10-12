@@ -1,0 +1,106 @@
+.tool-latim{--accent:#b5441b;--accent-deep:#7f2c0e;--ink:#2b1d12;--muted:#6a5a49;--clay:#c9895a;--sun:#ffd166;--paper:#fff6e9;--good:#2f8a4c}
+.tool-latim .lt-page{color:var(--ink)}
+.tool-latim .lt-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero: short, so the top and the button land on the first phone screen */
+.tool-latim .lt-hero{padding:12px 0 8px}
+.tool-latim .lt-hero h1{margin:0 0 2px;font-family:var(--font-display);font-size:clamp(22px,6vw,44px);line-height:1.3;letter-spacing:0}
+.tool-latim .lt-hero h1 .lt-hero-kicker{display:block;font-family:var(--font-bengali);font-size:13px;font-weight:600;line-height:1.5;color:var(--accent)}
+.tool-latim .lt-lead{max-width:560px;margin:0;color:var(--muted);font-size:15px;line-height:1.55}
+.tool-latim .lt-page:has(.lt-friend) .lt-lead{display:none}
+
+.tool-latim .lt{display:grid;gap:28px}
+.tool-latim .lt-play{display:grid;gap:8px;width:100%;max-width:480px}
+
+.tool-latim .lt-friend{display:grid;grid-template-columns:60px 1fr;gap:12px;align-items:center;padding:10px 12px;border-radius:16px;background:var(--paper);border:1.5px solid #ead6b8}
+.tool-latim .lt-friend canvas{width:100%;height:auto;border-radius:6px;box-shadow:0 4px 12px #2b1d1233;transform:rotate(-3deg)}
+.tool-latim .lt-kicker{margin:0;font-size:13px;font-weight:600;color:var(--accent)}
+.tool-latim .lt-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.4}
+.tool-latim .lt-friend p:last-child{margin:0;font-size:13px;color:var(--muted)}
+
+.tool-latim .lt-level{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 10px;margin:0;font-size:14px;line-height:1.4;color:var(--muted)}
+.tool-latim .lt-level b{font-family:var(--font-display);font-size:16px;color:var(--ink)}
+.tool-latim .lt-level-stars{white-space:nowrap}
+
+.tool-latim .lt-stage{position:relative;border-radius:16px}
+.tool-latim .lt-stage canvas{display:block;width:100%;aspect-ratio:10/9;border-radius:16px;touch-action:none;user-select:none;-webkit-user-select:none;background:var(--clay);box-shadow:0 8px 22px #2b1d122e}
+.tool-latim .lt-resume{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);min-height:56px;font-size:20px}
+
+/* throw quality: two bars that fill as the finger pulls, and a verdict after the throw */
+.tool-latim .lt-meter{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;align-items:center;--power:0;--straight:0}
+.tool-latim .lt-meter span{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center}
+.tool-latim .lt-meter i{font-style:normal;font-size:13px;font-weight:600;color:var(--muted)}
+.tool-latim .lt-meter b{position:relative;height:10px;border-radius:5px;background:#eadfcd;overflow:hidden}
+.tool-latim .lt-meter b::after{content:"";position:absolute;inset:0;transform-origin:left;border-radius:5px}
+.tool-latim .lt-power::after{background:var(--accent);transform:scaleX(var(--power))}
+.tool-latim .lt-straight::after{background:var(--good);transform:scaleX(var(--straight))}
+.tool-latim .lt-meter em{grid-column:1/-1;font-style:normal;font-weight:700;font-size:14px;text-align:center;color:var(--accent-deep)}
+.tool-latim .lt-hint{margin:0;min-height:1.6em;font-size:14px;line-height:1.5;color:var(--muted);text-align:center}
+
+.tool-latim .lt-controls{display:flex;gap:8px}
+.tool-latim .lt-main{flex:1;min-height:64px;font-family:var(--font-display);font-size:22px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.tool-latim .lt-main[data-view=spin]{background:#2f6f4a;box-shadow:0 4px 0 #1d4630}
+.tool-latim .lt-main:disabled{opacity:1;background:#5a4636;box-shadow:0 4px 0 #3a2b1f}
+.tool-latim .lt-main:active{transform:scale(.97)}
+.tool-latim .lt-pick{flex:0 0 40%;min-height:64px;font-family:var(--font-display);font-size:20px;touch-action:manipulation;animation:gx-pop .45s cubic-bezier(.3,1.6,.5,1) both}
+
+.tool-latim .lt-over{display:grid;justify-items:center;gap:4px;padding:10px 12px 12px;border-radius:16px;background:var(--paper);border:1.5px solid #ead6b8;text-align:center}
+.tool-latim .lt-over p{margin:0}
+.tool-latim .lt-over-kicker{font-family:var(--font-display);font-size:17px;font-weight:700;line-height:1.4}
+.tool-latim .lt-score{font-family:var(--font-display);font-size:22px;line-height:1.2;color:var(--accent)}
+.tool-latim .lt-score b{font-size:46px;color:var(--ink)}
+.tool-latim .lt-score small{font-size:15px;color:var(--good)}
+.tool-latim .lt-near{font-weight:700;color:var(--accent-deep)}
+.tool-latim .lt-best,.tool-latim .lt-versus{font-size:15px;color:var(--muted)}
+.tool-latim .lt-versus{font-weight:700;color:var(--ink)}
+.tool-latim .lt-badge-new{padding:2px 12px;border-radius:999px;background:#fff1c7;font-size:14px;font-weight:700}
+.tool-latim .lt-over-actions{display:flex;gap:8px;width:100%;margin-top:6px}
+.tool-latim .lt-over-actions button{flex:1;min-height:58px;padding-inline:10px;font-family:var(--font-display);font-size:20px;white-space:nowrap}
+.tool-latim .lt-over-actions .kit-primary{flex:1.4}
+
+.tool-latim .lt-toggles{display:flex;flex-wrap:wrap;gap:8px}
+.tool-latim .lt-toggles button{min-height:44px;padding:6px 14px;border:1.5px solid #cdbb9f;border-radius:999px;background:#fff;color:var(--ink);font-size:14px;font-weight:600}
+.tool-latim .lt-toggles button[aria-pressed=true]{border-color:var(--good);background:#e6f3e8}
+.tool-latim .lt-toggles .gx-sound{padding:6px}
+
+.tool-latim .lt-levels{border:1.5px solid #e4d5bb;border-radius:14px;background:#fff}
+.tool-latim .lt-levels summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-latim .lt-levels summary span{font-weight:500;font-size:14px;color:var(--muted)}
+.tool-latim .lt-levels p{margin:0 14px 10px;font-size:14px;color:var(--muted)}
+.tool-latim .lt-levels .gx-levels{padding:0 12px 12px}
+.tool-latim .lt-badges{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0 12px 12px;list-style:none}
+.tool-latim .lt-badges li{display:flex;gap:6px;align-items:center;padding:4px 10px;border:1.5px dashed #cdbb9f;border-radius:999px;font-size:13px;color:var(--muted)}
+.tool-latim .lt-badges li[data-on=true]{border-style:solid;border-color:#e3a400;background:#fff6d6;color:var(--ink);font-weight:700}
+.tool-latim .lt-badges li[data-on=true] span[aria-hidden]{color:#e39b00}
+
+.tool-latim .lt-result{scroll-margin-top:12px;padding-top:22px;border-top:2px solid var(--ink)}
+.tool-latim .lt-result h2{margin:0 0 4px;font-family:var(--font-display);font-size:clamp(24px,5vw,34px);line-height:1.4}
+.tool-latim .lt-result h2 em{font-style:normal;color:var(--accent)}
+.tool-latim .lt-result>p{margin:0 0 16px;color:var(--muted)}
+.tool-latim .lt-result-body{display:grid;gap:20px}
+.tool-latim .lt-share{display:grid;gap:16px;align-content:start}
+.tool-latim .lt-name{display:grid;gap:6px;font-weight:600}
+.tool-latim .lt-name small{font-weight:400;color:var(--muted);font-size:13px}
+.tool-latim .lt-name input{border:1.5px solid #cdbb9f;border-radius:12px;font-size:17px}
+
+.tool-latim .lt-field-note{margin-top:28px;padding:14px 16px;border-left:4px solid var(--sun);background:var(--paper);border-radius:0 12px 12px 0}
+.tool-latim .lt-field-note p{margin:0;font-size:15px}
+
+.tool-latim .lt-guide h2{font-family:var(--font-display);margin-bottom:16px}
+.tool-latim .lt-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.tool-latim .lt-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-latim .lt-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--sun);font-weight:700}
+.tool-latim .lt-guide li p{margin:4px 0 0}
+
+@media(max-width:360px){
+  .tool-latim .lt-main{font-size:19px}
+  .tool-latim .lt-over-actions button{font-size:17px;padding-inline:6px}
+}
+@media(min-width:720px){
+  .tool-latim .lt-hero{padding:32px 0 18px}
+  .tool-latim .lt-friend{grid-template-columns:110px 1fr}
+  .tool-latim .lt-friend h2{font-size:20px}
+  .tool-latim .lt-result-body{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:32px}
+}
+@media(prefers-reduced-motion:reduce){.tool-latim .lt-pick{animation:none}.tool-latim .lt-main:active{transform:none}}
+.tool-latim .lt-meter em:empty{display:none}

@@ -96,3 +96,4 @@
   .gh-flyer,.gh-flyer[data-launch=true],.gh-stage[data-mode=fanush] .gh-flyer,.gh-stage-title b{animation:none!important}
   .gh-bars i{transition:none}
 }
+.gh-panel>.gx-sound{justify-self:start}

@@ -58,6 +58,18 @@
 
 /* under the controls: slow mode, the drum sound (off unless turned on) and pause */
 .tool-baicher-nouka .bn-bar{display:flex;gap:8px}
+.tool-baicher-nouka .bn-sound{flex:none;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink)}
+.tool-baicher-nouka .bn-level{display:flex;justify-content:space-between;gap:8px;margin:0 0 6px;font-size:14px;color:var(--muted)}
+.tool-baicher-nouka .bn-level b{color:var(--ink);font-size:15px}
+.tool-baicher-nouka .bn-goal{margin:0;font-size:14px;font-weight:700;color:#ffd166}
+.tool-baicher-nouka .bn-over .gx-reveal{justify-self:start}
+.tool-baicher-nouka .bn-near{margin:0;font-size:15px;font-weight:700;color:var(--accent)}
+.tool-baicher-nouka .bn-card-link{justify-self:center}
+.tool-baicher-nouka .bn-levels{margin-top:8px;border:1.5px solid var(--line);border-radius:14px;background:#fff}
+.tool-baicher-nouka .bn-levels summary{display:flex;align-items:center;gap:8px;min-height:46px;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-baicher-nouka .bn-levels summary span{font-weight:500;font-size:14px;color:var(--muted)}
+.tool-baicher-nouka .bn-levels p{margin:0 14px 10px;font-size:14px;line-height:1.5;color:var(--muted)}
+.tool-baicher-nouka .bn-levels .gx-levels{padding:0 12px 12px}
 .tool-baicher-nouka .bn-toggle,.tool-baicher-nouka .bn-pause{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:6px 10px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;line-height:1.2;white-space:nowrap}
 .tool-baicher-nouka .bn-toggle{flex:1 1 0;min-width:0}
 .tool-baicher-nouka .bn-toggle i{flex:none;position:relative;width:34px;height:20px;border-radius:99px;background:var(--line)}

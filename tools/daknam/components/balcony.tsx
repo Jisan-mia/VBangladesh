@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { daknamBlob, drawDaknam, sizes } from "../lib/draw-daknam";
 import { bn, callLine, caption, cleanName, defaultDaknam, humanLine, isBlocked, moods, nameFromTallyId, nextPick, nickname, orders, parseShareHash, possessive, sets, shareHash, summary, tallyId, times, MAX_NAME, type Daknam, type Tap } from "../lib/daknam";
@@ -101,10 +103,11 @@ export function Balcony() {
             <b>{nick}!</b> {callLine(daknam)}
           </p>
         </div>
-        <button type="button" className="balcony-again" onClick={() => update({ pick: nextPick(daknam.pick) })}>
+        <button type="button" className="balcony-again" onClick={() => { sfx.pop(); update({ pick: nextPick(daknam.pick) }); }}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" /></svg>
           আরেকটা ডাকনাম
         </button>
+        <SoundToggle compact />
       </div>
 
       <div className="balcony-controls">

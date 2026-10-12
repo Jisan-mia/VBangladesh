@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readLevels, recordLevel, totalStars } from "../../../shared/game-core";
+import { nearMissLine, setStars } from "../lib/idioms";
+import { sets as levelSets } from "../lib/idioms";
 import { share } from "../share";
 import { artIds, idiomSvg } from "../lib/art";
 import { allIdioms, cleanName, dictionaryUrl, humanLine, parseShareHash, rank, scoreOf, sets, shareHash, tallyIds, trapsOf, MAX_NAME_LENGTH, PER_SET, type Answer } from "../lib/idioms";
@@ -88,4 +91,26 @@ test("share preview is personal and spoiler-free; tally lists only fixed ids", (
   assert.match(share.preview("garbage").title, /^এক বন্ধু/);
   assert.equal(tallyIds.length, 22);
   assert.ok(tallyIds.every(id => /^(seen:s\d|[a-z-]+)$/.test(id)));
+});
+
+test("stars per set: 3 for a perfect 10, 2 for 7 or more, 1 for finishing, with an exact near-miss line", () => {
+  assert.deepEqual([10, 9, 7, 6, 0].map(setStars), [3, 2, 2, 1, 1]);
+  assert.equal(nearMissLine(10), "");
+  assert.equal(nearMissLine(9), "আর ১টা ঠিক হলে ৩ তারা।");
+  assert.equal(nearMissLine(7), "আর ৩টা ঠিক হলে ৩ তারা।");
+  assert.equal(nearMissLine(6), "আর ১টা ঠিক হলে ২ তারা।");
+  assert.equal(nearMissLine(3), "আর ৪টা ঠিক হলে ২ তারা।");
+});
+
+test("progress per set goes through readLevels and recordLevel", () => {
+  const count = levelSets.length;
+  let stars = readLevels(`{"1":3,"2":1,"${count + 1}":3,"x":2,"0":2}`, count);
+  assert.deepEqual(stars, { 1: 3, 2: 1 });
+  stars = recordLevel(stars, 2, setStars(9));
+  assert.equal(stars[2], 2);
+  stars = recordLevel(stars, 2, setStars(2));
+  assert.equal(stars[2], 2, "a worse run never lowers the stars");
+  assert.equal(totalStars(stars), 5);
+  assert.deepEqual(readLevels("not json", count), {});
+  assert.deepEqual(readLevels(null, count), {});
 });

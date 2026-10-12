@@ -1,0 +1,100 @@
+.tool-sat-chara{--accent:#b4472a;--accent-deep:#7d2c17;--ink:#2b1d14;--muted:#6b4f3a;--paper:#fbefd9;--paper-edge:#e7d2ae;--clay:#c46d3f;--ball:#d8473a}
+.tool-sat-chara .sc-page{color:var(--ink)}
+
+/* hero: one short line, so the lane and its controls land on the first phone screen */
+.sc-hero{padding:10px 0 4px}
+.sc-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,6vw,40px);line-height:1.3;font-weight:700;letter-spacing:0}
+.sc-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+
+.sc{display:grid;gap:8px;max-width:480px}
+
+.sc-friend{padding:10px 14px;border-radius:14px;background:var(--paper);border-left:5px solid var(--accent)}
+.sc-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.4}
+.sc-friend p{margin:2px 0 0;font-size:13px;line-height:1.45;color:var(--muted)}
+
+/* level, balls left, stones down */
+.sc-hud{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px}
+.sc-hud p{margin:0}
+.sc-level{display:grid;line-height:1.25}
+.sc-level b{font-family:var(--font-display);font-size:17px;font-weight:800}
+.sc-level span{font-size:13px;font-weight:600;color:var(--muted)}
+.sc-balls{display:flex;gap:5px;padding:8px 10px;border-radius:12px;background:var(--paper)}
+.sc-balls i{width:16px;height:16px;border-radius:50%;border:2px solid var(--ball);background:transparent;transition:transform .18s ease-out}
+.sc-balls i[data-on=true]{background:radial-gradient(circle at 35% 35%,#ffffff80 0 18%,transparent 20%),var(--ball)}
+.sc-balls i[data-on=false]{transform:scale(.8);opacity:.55}
+.sc-down{display:flex;align-items:center;gap:6px;min-height:40px;padding:4px 12px 4px 8px;border-radius:12px;background:var(--ink);color:#f6e7c8;font-family:var(--font-display);font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.sc-down b{display:inline-block;font-size:21px;color:#ffd27a}
+.sc-chip{width:22px;height:8px;border-radius:2px 3px 2px 2px;background:var(--clay);box-shadow:0 -6px 0 -1px #b5582f,0 -12px 0 -2px #c97c4d}
+
+/* the lane: drag anywhere here; only here does the page stop scrolling under a finger */
+.sc-board{position:relative;width:100%;border-radius:14px;overflow:hidden;box-shadow:0 6px 18px #2b1d1426;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:crosshair}
+.sc-board canvas{display:block;width:100%;aspect-ratio:3/2}
+.sc-hint{position:absolute;left:14%;top:79%;margin:0;padding:6px 12px;border-radius:999px;background:#2b1d14d9;color:#fff;font-size:15px;font-weight:700;pointer-events:none;animation:sc-nudge 1.6s ease-in-out infinite}
+.sc-hint span{display:inline-block;margin-right:2px}
+@keyframes sc-nudge{50%{transform:translate(-8px,6px)}}
+.sc-overlay{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;padding:16px;background:#2b1d14e0;color:#fff;text-align:center}
+.sc-overlay p{margin:0;font-weight:600}
+.sc-overlay .kit-primary{min-width:180px;min-height:56px;font-size:19px}
+
+.sc-status{min-height:44px;margin:0;font-size:15px;font-weight:600;line-height:1.45;text-align:center}
+
+/* the tap path: one big button, first for the direction, then the power */
+.sc-tap{min-height:58px;border:2px solid var(--ink);border-radius:16px;background:#fff;color:var(--ink);font-family:var(--font-display);font-size:20px;font-weight:800;box-shadow:0 4px 0 var(--paper-edge);touch-action:manipulation;transition:transform .09s ease-out}
+.sc-tap:active{transform:translateY(3px);box-shadow:0 1px 0 var(--paper-edge)}
+.sc-tap[data-armed]{background:var(--accent);border-color:var(--accent-deep);color:#fff;box-shadow:0 4px 0 var(--accent-deep)}
+.sc-tap:disabled{opacity:.5}
+
+.sc-prefs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--ink)}
+.sc-pill{min-height:44px;padding:6px 14px;border:1.5px solid currentColor;border-radius:999px;background:transparent;color:inherit;font-size:14px;font-weight:700}
+.sc-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+
+/* a cleared level, or three balls gone */
+.sc-clear,.sc-lost{display:grid;justify-items:center;gap:6px;padding:12px 14px;border-radius:16px;background:var(--paper);text-align:center}
+.sc-clear p,.sc-lost p{margin:0}
+.sc-clear-line{font-family:var(--font-display);font-size:19px;font-weight:800;line-height:1.4}
+.sc-clear-note{font-size:14px;line-height:1.45;color:var(--muted)}
+.sc-actions{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;width:100%;margin-top:4px}
+.sc-actions:has(> :only-child){grid-template-columns:1fr}
+.tool-sat-chara .sc-actions button,.tool-sat-chara .sc-again{min-height:56px;font-size:18px}
+.sc-see{min-height:44px}
+.sc-lost-title{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--accent)}
+.sc-lost-line{font-weight:700;line-height:1.45}
+.sc-again{width:100%}
+
+.sc-drawer{border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff}
+.sc-drawer summary{min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;font-weight:700;cursor:pointer}
+.sc-drawer summary span{font-weight:500;color:var(--muted);font-size:14px}
+.sc-drawer[open]{padding-bottom:12px}
+.sc-drawer .gx-levels{padding:0 10px}
+.sc-worlds{margin:0 14px 10px;font-size:13px;line-height:1.5;color:var(--muted)}
+
+.sc-result{scroll-margin-top:12px;margin-top:16px;padding-top:18px;border-top:2px solid var(--paper-edge)}
+.sc-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,32px);line-height:1.4}
+.sc-result h2 em{font-style:normal;color:var(--accent)}
+.sc-result>p{margin:0 0 16px;color:var(--muted)}
+.sc-result-body{display:grid;gap:22px}
+.sc-share{display:grid;gap:18px;align-content:start}
+.sc-name{display:grid;gap:6px;font-weight:600}
+.sc-name small{font-weight:400;color:var(--muted);font-size:13px}
+.sc-name input{border:1.5px solid var(--paper-edge);border-radius:12px;font-size:17px}
+
+.sc-guide h2{font-family:var(--font-display);margin-bottom:12px}
+.sc-guide>p{color:var(--muted);max-width:640px}
+.sc-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.sc-guide li{display:flex;gap:14px;align-items:flex-start}
+.sc-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--clay);color:#fff;font-weight:700}
+.sc-guide li p{margin:4px 0 0}
+
+@media (max-width:360px){
+  .sc-status{font-size:14px}
+  .sc-level b{font-size:15px}
+  .sc-balls{padding:8px 6px;gap:3px}
+  .sc-balls i{width:13px;height:13px}
+  .sc-down{padding-inline:6px}
+}
+@media (min-width:720px){.sc-lead{display:block}.sc-page:has(.sc-friend) .sc-lead{display:none}}
+.sc[data-slow=true] .sc-hint,.sc[data-slow=true] .gx-pop{animation:none}
+@media (prefers-reduced-motion:reduce){
+  .sc-hint,.sc-down .gx-pop{animation:none}
+  .sc-balls i,.sc-tap{transition:none}
+}

@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { confetti, sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -57,6 +59,8 @@ export function DalaBuilder() {
   }, [card, format, site, friend]);
 
   function toggle(id: FishId) {
+    // A fish dropping into the basket; taking one out is silent, and a full basket gets the win.
+    if (!selected.includes(id)) { if (selected.length + 1 === fishes.length) { confetti(); sfx.win(); } else sfx.drop(); }
     setSelected(current => toggleFish(current, id));
     // Changed picks make the old comparison stale; let them compare again.
     setCompared(current => current === "done" ? "idle" : current);
@@ -102,6 +106,7 @@ export function DalaBuilder() {
           {selected.length > TRAY_SHOWN && <span className="mb-tray-more">+{bn(selected.length - TRAY_SHOWN)}</span>}
         </div>
         <p className="mb-tag" aria-live="polite"><span>{bn(fishes.length)}-এ</span><strong>{bn(selected.length)}</strong><span className="mb-sr">টা মাছ ডালায়</span></p>
+        <SoundToggle compact />
       </div>
       <p className="mb-hint">নিচে যে মাছ খেয়েছ, সেটায় চাপ দাও। ভুল হলে আবার চাপলেই নেমে যাবে।</p>
 

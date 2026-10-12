@@ -29,7 +29,8 @@
 /* the result sheet: security-print waves around a ruled paper form */
 .gd-sheet{margin-inline:-10px;padding:7px;border-radius:6px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='10'%3E%3Cpath d='M0 5Q9-1 18 5T36 5' fill='none' stroke='%2393bfa3' stroke-width='1.1'/%3E%3C/svg%3E") 0 0/36px 10px,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='36' height='10'%3E%3Cpath d='M0 5Q9 11 18 5T36 5' fill='none' stroke='%23b5d5c0' stroke-width='1.1'/%3E%3C/svg%3E") 0 0/36px 10px,#e3f0e6;box-shadow:0 10px 26px #1f5c4524}
 .gd-paper{padding:10px 8px 8px;border:2px solid var(--print);border-radius:2px;background:var(--paper);box-shadow:inset 0 0 0 3px var(--paper),inset 0 0 0 4px #1f5c4566}
-.gd-head{text-align:center;padding:2px 4px 8px}
+.gd-head{position:relative;text-align:center;padding:2px 4px 8px}
+.gd-head .gx-sound{position:absolute;top:-6px;right:-6px;color:var(--print)}
 .gd-head-kicker{margin:0;font-size:13px;font-weight:600;color:var(--print-soft)}
 .gd-head-title{margin:0;font-family:var(--font-display);font-size:24px;line-height:1.3;font-weight:800;color:var(--print);letter-spacing:.02em}
 .gd-head-meta{margin:0;font-size:13px;color:var(--muted)}

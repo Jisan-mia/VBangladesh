@@ -1,5 +1,5 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, type CardFormat } from "../../../shared/card-canvas";
-import { bn, channelName, humanLine, makeRounds, ROUNDS, seconds, SHOWS, type Shared } from "./antenna";
+import { bn, channelName, humanLine, makeRounds, ROUNDS, seconds, SHOWS, starsOf, type Shared } from "./antenna";
 import { drawPicture, drawRoofScene, drawTv, TV_SCREEN } from "./art";
 
 const INK = "#1d2b2a";
@@ -20,7 +20,7 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("এই ব্রাউজারে ছবি বানানো যাচ্ছে না।");
   const at = LAYOUT[format];
-  const rounds = makeRounds(shared.seed);
+  const rounds = makeRounds(shared.seed, shared.level);
   const last = rounds[ROUNDS - 1].picture;
 
   drawRoofScene(ctx, width, at.roof, 3, at.pole, at.antenna, 38);
@@ -34,7 +34,11 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
   fitText(ctx, [{ text: number, color: INK, weight: 800, display: true }], left - 4, at.time, 150, 420);
   const numberWidth = ctx.measureText(number).width;
   fitText(ctx, [{ text: "সেকেন্ডে", color: INK, weight: 700, display: true }], left + numberWidth + 14, at.time, 50, 560 - numberWidth - 14);
-  fitText(ctx, [{ text: `${bn(ROUNDS)}টা চ্যানেল, ${bn(ROUNDS)}টাই ঝকঝকে`, color: DEEP, weight: 700 }], left, at.sub, 38, 560);
+  const earned = starsOf(shared.tenths, shared.level);
+  fitText(ctx, [
+    ...[0, 1, 2].map(index => ({ text: "★", color: index < earned ? "#e39b00" : "#9fb59d", weight: 700 })),
+    { text: `  লেভেল ${bn(shared.level)} · ${bn(ROUNDS)}টা চ্যানেলই ঝকঝকে`, color: DEEP, weight: 700 },
+  ], left, at.sub, 38, 560);
 
   const tvWidth = 240 * at.tvScale, tvX = (width - tvWidth) / 2, s = at.tvScale;
   ctx.fillStyle = "#7a4a26"; ctx.fillRect(tvX - 60, at.tv + 148 * s, tvWidth + 120, 22);

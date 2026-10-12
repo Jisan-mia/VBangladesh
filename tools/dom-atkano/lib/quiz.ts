@@ -1,4 +1,5 @@
 import { possessive } from "../../../shared/bangla";
+import { starsFor } from "../../../shared/game-core";
 
 export const MAX_NAME_LENGTH = 20;
 export const PER_SET = 10;
@@ -118,6 +119,15 @@ export type Shared = { set: SetId; answers: Answer[]; name: string };
 
 const numbers = new Intl.NumberFormat("bn-BD");
 export const bn = (value: number) => numbers.format(value);
+
+/** Stars per set: 3 for a perfect 10, 2 for 7 or more, 1 for finishing. */
+export const setStars = (score: number) => starsFor(score, PER_SET, 7);
+
+/** What the next star needs, with the exact number. Empty at 3 stars. */
+export function nearMissLine(score: number) {
+  if (score >= PER_SET) return "";
+  return score >= 7 ? `আর ${bn(PER_SET - score)}টা ঠিক হলে ৩ তারা।` : `আর ${bn(7 - score)}টা ঠিক হলে ২ তারা।`;
+}
 
 export const isSetId = (id: string): id is SetId => sets.some(item => item.id === id);
 export const setById = (id: SetId) => sets.find(item => item.id === id)!;

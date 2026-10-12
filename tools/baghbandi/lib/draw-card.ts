@@ -1,6 +1,6 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, roundedRect, type CardFormat } from "../../../shared/card-canvas";
 import { palette, PILE_OFFSETS, SEED, SEED_FACE, SEED_SHINE, TIGER_EYES, TIGER_STONE, TIGER_STRIPES } from "./art";
-import { BOARD, GOAT, LINES, POINTS, spot, type Game } from "./game";
+import { winStars, BOARD, GOAT, LINES, POINTS, spot, type Game } from "./game";
 import { bn, cardNames, detail, headline, humanLine, type Shared } from "./link";
 
 let shapes: { stone: Path2D; stripes: Path2D; seed: Path2D; face: Path2D; shine: Path2D } | null = null;
@@ -64,11 +64,12 @@ export function drawYard(c: CanvasRenderingContext2D, game: Game, x: number, y: 
   c.restore();
 }
 
-/** Who played what, for the card's top line. */
-function kicker({ mode, name, other }: Shared) {
+/** Who played what (and against the bot, its level and your stars), for the card's top line. */
+function kicker({ mode, name, other, game }: Shared) {
   const [goats, tigers] = cardNames(mode, name, other);
   if (mode === 0 && !(goats && tigers)) return "বাঘবন্দি · দুজনে এক ফোনে";
-  return `বাঘবন্দি · ${goats || "ছাগল"} ছাগল, ${tigers || "বাঘ"} বাঘ`;
+  const stars = winStars(game), level = mode === 0 ? "" : ` · লেভেল ${bn(game.level)}${stars ? ` ${"★".repeat(stars)}${"☆".repeat(3 - stars)}` : ""}`;
+  return `বাঘবন্দি${level} · ${goats || "ছাগল"} ছাগল, ${tigers || "বাঘ"} বাঘ`;
 }
 
 /** The final yard on a sunlit courtyard: who won and in how many moves above it, the kind line below. */

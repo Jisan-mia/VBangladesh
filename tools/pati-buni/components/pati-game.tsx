@@ -4,20 +4,21 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { cleanName, fitCanvas, newSeed, useBest, useGameLoop, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { buzz, cleanName, confetti, fitCanvas, hiss, newSeed, sfx, shake, tone, useBest, useGameLoop, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
 import { drawBamboo, drawRoll, paintSprites, paintWeft, palette, spriteIndex } from "../lib/art";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import { banner, bn, caption, parseShared, sharedHash, ROW_POINTS, type Shared } from "../lib/link";
 import {
-  across, clearMs, compareLine, createGame, hardDrop, humanLine, level, move, rotate, tick as advance,
+  across, clearMs, compareLine, createGame, hardDrop, humanLine, level, matName, move, nearLine, nextMat, rotate, tick as advance,
   COLS, PIECES, ROWS, TURNS, type Event, type Game,
 } from "../lib/weave";
 
 const TOOL = "pati-buni";
 type Phase = "ready" | "playing" | "paused" | "over";
 type Action = "left" | "right" | "rotate" | "drop";
-type Result = Shared & { record: boolean };
+type Result = Shared & { record: boolean; before: number | null };
 
 const MAX_WIDTH = 440;
 /** Holding ◀ or ▶ repeats after this long; a quick press-and-release of নামাও drops straight down. */
@@ -27,6 +28,19 @@ const TAP_MS = 180;
 const SWEEP = 0.55;
 const TOGETHER = ["", "", "দুই সারি একসাথে!", "তিন সারি একসাথে!", "চার সারি একসাথে!"];
 const KEYS: Record<string, Action> = { ArrowLeft: "left", ArrowRight: "right", ArrowUp: "rotate", ArrowDown: "drop", a: "left", d: "right", w: "rotate", s: "drop", x: "rotate", A: "left", D: "right", W: "rotate", S: "drop", X: "rotate" };
+/** Sliding a strip one cell: a light tap of cane; against a wall or the stack, a dull knock. */
+const nudge = () => tone(1500, 0.02, 0.035, "triangle");
+const knock = () => tone(260, 0.04, 0.04, "triangle");
+/** Turning a strip: a short cane creak. */
+const creak = () => { tone(700, 0.05, 0.05, "triangle", 0, 950); hiss(0.03, 0.03, 4000, "highpass"); };
+/** A strip settles into the weave: a dry rustle. */
+const rustle = () => hiss(0.09, 0.08, 2600, "bandpass");
+/** A full row weaves and rolls away: সরসর, one swish per row and one more. */
+const sorsor = (rows: number) => { for (let k = 0; k <= rows; k++) hiss(0.13, 0.09, 1600 + k * 600, "bandpass", k * 0.1); };
+/** Straight down: a soft thump on the mat. */
+const plonk = () => tone(170, 0.1, 0.12, "sine", 0, 90);
+const goalOf = (rows: number) => { const next = nextMat(rows); return next ? [`আর ${bn(next.min - rows)} সারি`, next.name] : ["", ""]; };
+
 const smooth = (t: number) => t * t * (3 - 2 * t);
 const motionBehavior = (): ScrollBehavior => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
 
@@ -46,6 +60,10 @@ function makeLive() {
     repeatDir: 0 as -1 | 0 | 1, repeatFor: 0,
     floatAt: -1, floatText: "", floatSub: "", floatY: 0,
     rowsText: "০", speedText: "গতি ১",
+    /** The next mat to weave, beside the frame: "আর ৫ সারি" over its name. */
+    goalText: "", goalName: "",
+    /** Pieces in a row that each wove at least one row. */
+    streak: 0,
   };
 }
 
@@ -88,6 +106,8 @@ export function PatiGame() {
     live.floatAt = -1;
     live.rowsText = bn(0);
     live.speedText = `গতি ${bn(1)}`;
+    [live.goalText, live.goalName] = goalOf(0);
+    live.streak = 0;
     setScore(0);
     draw();
   }
@@ -104,7 +124,8 @@ export function PatiGame() {
   }
 
   function feedback() {
-    const g = game.current, count = g.clearing.length;
+    const g = game.current, count = g.clearing.length, faster = level(g.rows) > level(g.rows - count);
+    const mat = matName(g.rows) !== matName(g.rows - count) ? matName(g.rows) : "";
     let sum = 0;
     for (const row of g.clearing) sum += row;
     setScore(g.score);
@@ -112,9 +133,14 @@ export function PatiGame() {
     live.speedText = `গতি ${bn(level(g.rows) + 1)}`;
     live.floatAt = performance.now();
     live.floatText = `+${bn(ROW_POINTS[count])}`;
-    live.floatSub = count > 1 ? TOGETHER[count] : level(g.rows) > level(g.rows - count) ? "গতি বাড়ল" : "";
+    live.floatSub = mat ? `${mat} হলো` : count > 1 ? TOGETHER[count] : faster ? "গতি বাড়ল" : "";
     live.floatY = live.frame + (sum / count - 0.4) * live.cell;
-    if (!slowRef.current && typeof navigator.vibrate === "function") navigator.vibrate(count > 1 ? 18 : 10);
+    [live.goalText, live.goalName] = goalOf(g.rows);
+    sorsor(count);
+    // Weaving with strip after strip climbs in pitch; a new mat is a real milestone, a faster stage a smaller one.
+    if (++live.streak >= 2) sfx.combo(live.streak - 2);
+    if (mat) { sfx.win(); confetti({ count: 60 }); } else if (faster) sfx.levelUp();
+    if (!slowRef.current) buzz(count > 1 ? 18 : 10);
   }
 
   function finish() {
@@ -122,15 +148,18 @@ export function PatiGame() {
     letGo();
     go("over");
     setScore(g.score);
-    setResult({ seed: seed.current, score: g.score, rows: g.rows, pattern: g.woven.slice(), name: "", record: best !== null && g.score > best });
+    const record = best !== null && g.score > best;
+    setResult({ seed: seed.current, score: g.score, rows: g.rows, pattern: g.woven.slice(), name: "", record, before: best });
     submitBest(g.score);
+    if (record) { sfx.win(); confetti(); } else { sfx.lose(); shake(board.current); }
     // Thumbs are still on the buttons when the frame fills; don't let those taps skip the result.
     setRestartReady(false);
     window.setTimeout(() => setRestartReady(true), 700);
   }
 
   function handle(event: Event) {
-    if (event === "clear") feedback();
+    if (event === "lock") { rustle(); live.streak = 0; }
+    else if (event === "clear") { rustle(); feedback(); }
     else if (event === "over") finish();
   }
 
@@ -141,11 +170,11 @@ export function PatiGame() {
     else if (now === "paused") { resume(); return; }
     else if (now !== "playing") return;
     const g = game.current;
-    if (action === "rotate") rotate(g);
-    else if (action === "drop") { live.soft = true; live.softAt = performance.now(); live.softPiece = g.pieces; }
+    if (action === "rotate") { if (rotate(g)) creak(); else knock(); }
+    else if (action === "drop") { live.soft = true; live.softAt = performance.now(); live.softPiece = g.pieces; sfx.tick(); }
     else {
       const dx = action === "left" ? -1 : 1;
-      move(g, dx);
+      if (move(g, dx)) nudge(); else knock();
       live.repeatDir = dx; live.repeatFor = 0;
     }
   }
@@ -154,7 +183,7 @@ export function PatiGame() {
     if (action !== "drop" || !live.soft) return;
     live.soft = false;
     // A quick tap puts the same strip straight down; a long hold was a soft drop and just stops.
-    if (phaseRef.current === "playing" && performance.now() - live.softAt < TAP_MS && game.current.pieces === live.softPiece) handle(hardDrop(game.current));
+    if (phaseRef.current === "playing" && performance.now() - live.softAt < TAP_MS && game.current.pieces === live.softPiece) { plonk(); handle(hardDrop(game.current)); }
   }
 
   function tick(dt: number) {
@@ -162,7 +191,7 @@ export function PatiGame() {
     const g = game.current, ms = dt * 1000;
     if (live.repeatDir) {
       live.repeatFor += ms;
-      if (live.repeatFor >= REPEAT_DELAY) { move(g, live.repeatDir); live.repeatFor -= slowRef.current ? 140 : 80; }
+      if (live.repeatFor >= REPEAT_DELAY) { if (move(g, live.repeatDir)) nudge(); live.repeatFor -= slowRef.current ? 140 : 80; }
     }
     handle(advance(g, ms, live.soft));
   }
@@ -246,6 +275,12 @@ export function PatiGame() {
     c.font = live.labelFont;
     c.fillStyle = palette.muted;
     c.fillText(live.speedText, cx, rowsY + cell * 2.05);
+    if (live.goalText) {
+      c.fillStyle = palette.ink;
+      c.fillText(live.goalText, cx, rowsY + cell * 3.1);
+      c.fillStyle = palette.muted;
+      c.fillText(live.goalName, cx, rowsY + cell * 3.65);
+    }
     const diameter = Math.min(sideW * 0.42, cell * 0.55 + g.rows * cell * 0.03);
     drawRoll(c, sideX + 8, height - frame - diameter / 2 - 4, sideW - 16, diameter);
 
@@ -370,7 +405,7 @@ export function PatiGame() {
     if (now === "ready") start();
     else if (now === "paused") resume();
     else if (now === "over") restart();
-    else if (event.key === " ") handle(hardDrop(game.current));
+    else if (event.key === " ") { plonk(); handle(hardDrop(game.current)); }
     else pause();
   };
   useEffect(() => {
@@ -419,6 +454,7 @@ export function PatiGame() {
 
   const rival = friend ? possessive(friend.name || "বন্ধু") : "";
   const over = phase === "over" && result;
+  const near = result ? nearLine(result.score, result.rows, result.before) : "";
 
   return (
     <div className="pb">
@@ -435,9 +471,10 @@ export function PatiGame() {
       <div className="pb-hud">
         <p className="pb-score"><span>পয়েন্ট</span><b>{bn(score)}</b></p>
         {best !== null && <p className="pb-best"><span>সেরা</span><b>{bn(best)}</b></p>}
-        <button type="button" className="pb-slow" aria-pressed={slow} onClick={() => setSlow(!slow)}>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="12" r="5.5" /><path d="M10 12a2 2 0 1 0 2-2M2.5 18h15a3 3 0 0 0 3-3v-4m0 0-1.2-3m1.2 3 1.8-2.4" /></svg>ধীরে খেলো
+        <button type="button" className="pb-slow" aria-pressed={slow} aria-label="ধীরে খেলো" onClick={() => setSlow(!slow)}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="12" r="5.5" /><path d="M10 12a2 2 0 1 0 2-2M2.5 18h15a3 3 0 0 0 3-3v-4m0 0-1.2-3m1.2 3 1.8-2.4" /></svg><span className="pb-slow-text">ধীরে খেলো</span>
         </button>
+        <SoundToggle compact className="pb-sound" />
         <button type="button" className="pb-pause" onClick={phase === "paused" ? resume : pause} disabled={phase !== "playing" && phase !== "paused"} aria-label={phase === "paused" ? "চালিয়ে যাও" : "একটু থামাও"}>
           <svg viewBox="0 0 24 24" aria-hidden="true">{phase === "paused" ? <path d="M8 5v14l11-7z" className="pb-fill" /> : <path d="M9 5v14M15 5v14" />}</svg>
         </button>
@@ -461,13 +498,14 @@ export function PatiGame() {
             </div>
           </div>
         )}
-        <p className="screen-reader-only" aria-live="polite">{over && result ? `খেলা শেষ। ${bn(result.score)} পয়েন্ট, ${bn(result.rows)} সারি বোনা হলো। ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
+        <p className="screen-reader-only" aria-live="polite">{over && result ? `খেলা শেষ। ${bn(result.score)} পয়েন্ট, ${bn(result.rows)} সারি বোনা হলো। ${near} ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
         {over && (
           <div className="pb-overlay">
             <div className="pb-note pb-slip">
               <h2>আর জায়গা নেই!</h2>
               <p className="pb-final"><b>{bn(result.score)}</b> পয়েন্ট</p>
               <p className="pb-rows">{bn(result.rows)} সারি বোনা হলো</p>
+              {near && <p className="pb-near">{near}</p>}
               <p className="pb-record">{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null && best > result.score ? `এই ফোনে সেরা ${bn(best)}` : humanLine(result.rows)}</p>
               {friend && <p className="pb-versus">{compareLine(result.score, friend.score, friend.name)}</p>}
               <button type="button" className="kit-link pb-see" onClick={seeCard}>পাটির কার্ড দেখো ↓</button>

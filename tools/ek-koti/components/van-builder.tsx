@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { cardSizes, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { buzz, sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard, prepareCard } from "../lib/draw-card";
 import { parcelIcon, vanSvg } from "../lib/van-art";
@@ -103,11 +105,12 @@ export function VanBuilder() {
     const after = countOf(next, id);
     if (wanted > after) {
       const item = itemById(id);
+      sfx.wrong();
       setWarn(current => ({ key: current.key + 1, text: after >= (item.max ?? Infinity) ? "এটা একটাই কেনা যায়!" : `টাকায় কুলোচ্ছে না! বাকি আছে ${taka(leftOf(next))}` }));
     }
     if (after === before) { setPop(current => ({ ...current, text: "" })); return; }
     const moved = (after - before) * itemById(id).price;
-    if (after > before) navigator.vibrate?.(10);
+    if (after > before) { sfx.coin(); buzz(10); }
     setPop(current => ({ key: current.key + 1, text: moved > 0 ? `−${taka(moved)}` : `+${taka(-moved)}` }));
     const was = groupLevels(current);
     setFresh(groupLevels(next).findIndex((level, index) => level > was[index]));
@@ -172,6 +175,8 @@ export function VanBuilder() {
         </div>
 
         {everyone && everyone.total >= SOCIAL_PROOF_MIN && <p className="ek-proof">এখন পর্যন্ত <strong>{bn(everyone.total)} জন</strong> নিজের ভ্যান বোঝাই করেছে</p>}
+
+        <div className="ek-sound"><SoundToggle compact /></div>
 
         <div className="ek-tabs" role="group" aria-label="কী কিনবে">
           {groups.map((group, index) => (

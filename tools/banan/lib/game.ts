@@ -1,4 +1,5 @@
 import { possessive } from "../../../shared/bangla";
+import { starsFor } from "../../../shared/game-core";
 import { wordSets, type SetId, type Word, type WordSet } from "./words";
 
 export const ROUNDS = 10;
@@ -70,6 +71,15 @@ export function humanLine(score: number, set: SetId) {
   if (score === ROUNDS) return "তোমার হাতে সাইনবোর্ড দিলে একটাও ভুল থাকত না।";
   if (score >= 6) return "প্রায় সব ঠিক, বাকিটা এখন শিখে গেলে।";
   return "ভুল কয়টার নিয়ম নিচে আছে, একবার চোখ বুলিয়ে নাও।";
+}
+
+/** Stars per set: 3 for a perfect ROUNDS, 2 for 7 or more, 1 for finishing. */
+export const setStars = (score: number) => starsFor(score, ROUNDS, 7);
+
+/** What the next star needs, with the exact number. Empty at 3 stars. */
+export function nearMissLine(score: number) {
+  if (score >= ROUNDS) return "";
+  return score >= 7 ? `আর ${bn(ROUNDS - score)}টা ঠিক হলে ৩ তারা।` : `আর ${bn(7 - score)}টা ঠিক হলে ২ তারা।`;
 }
 
 export const scoreLine = (score: number) => `${bn(ROUNDS)}-এ ${bn(score)}`;

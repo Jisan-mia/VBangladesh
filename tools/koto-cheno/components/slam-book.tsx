@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { confetti, sfx, shake } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { site as content } from "../content";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -84,10 +86,17 @@ export function SlamBook() {
     return () => { cancelled = true; };
   }, [card, format, site, mode]);
 
-  function choose(question: number, option: Pick) {
-    if (!link) setAnswers(current => current.map((pick, index) => index === question ? option : pick));
+  function choose(question: number, option: Pick, button: Element) {
+    if (!link) { setAnswers(current => current.map((pick, index) => index === question ? option : pick)); return; }
+    // Sound only while guessing: writing your own answers has no right or wrong.
+    if (guesses[question] === null) {
+      const hit = option === link.answers[question];
+      if (hit) sfx.good(); else { sfx.wrong(); shake(button.closest(".kc-q")); }
+      // On the last guess a soft chime follows; confetti only for 8 out of 8.
+      if (guessed === TOTAL - 1) setTimeout(() => { if (hit && score === TOTAL - 1) { confetti(); sfx.win(); } else sfx.star(1); }, 250);
+    }
     // A guess is final: once the answer shows, changing it would be cheating.
-    else setGuesses(current => current[question] !== null ? current : current.map((pick, index) => index === question ? option : pick));
+    setGuesses(current => current[question] !== null ? current : current.map((pick, index) => index === question ? option : pick));
   }
 
   function startOwn() {
@@ -171,6 +180,7 @@ export function SlamBook() {
             <div className="kc-spiral" aria-hidden="true">{Array.from({ length: 14 }, (_, index) => <i key={index} />)}</div>
             <div className="kc-book-head">
               <p className="kc-tape">{mode === "write" ? "আমার স্লাম বুক" : `${ownerOf(owner)} স্লাম বুক`}</p>
+              {mode === "guess" && <SoundToggle compact />}
               <p className="kc-count" aria-live="polite">{mode === "write" ? <><b>{bn(answered)}</b>/{bn(TOTAL)} লেখা হলো</> : guessed ? <><b>{bn(score)}</b>/{bn(guessed)} মিলেছে</> : <><b>{bn(TOTAL)}</b>টা প্রশ্ন</>}</p>
             </div>
             {mode === "write"
@@ -188,7 +198,7 @@ export function SlamBook() {
                     <div className="kc-options">
                       {question.options.map((option, choice) => {
                         const mark = !revealed ? undefined : choice === answer ? (choice === guess ? "right" : "answer") : choice === guess ? "wrong" : "dim";
-                        return <button type="button" key={option.label} className="kc-option" aria-pressed={link ? guess === choice : answers[index] === choice} data-mark={mark} disabled={revealed} onClick={() => choose(index, choice as Pick)}>
+                        return <button type="button" key={option.label} className="kc-option" aria-pressed={link ? guess === choice : answers[index] === choice} data-mark={mark} disabled={revealed} onClick={event => choose(index, choice as Pick, event.currentTarget)}>
                           <Doodle drawing={option.drawing} color={"color" in option ? option.color : undefined} />
                           <span>{option.label}</span>
                           <svg className="kc-loop" viewBox="0 0 100 60" preserveAspectRatio="none" aria-hidden="true"><path pathLength={100} d="M18 8C44 0 92 4 96 28c3 22-30 30-54 30C16 58 3 46 4 30 5 16 28 7 56 5" /></svg>

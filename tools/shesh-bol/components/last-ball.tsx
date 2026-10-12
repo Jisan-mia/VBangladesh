@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, type PointerEvent, type MouseEvent } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, type Tally } from "../../../shared/share-client";
+import { buzz, confetti, hiss, sfx, shake, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import { bn, bucket, buckets, caption, cleanName, delivery, humanLine, innings, modeOf, modes, outcomeAt, outcomeWord, parseShareHash, positionAt, shareHash, triesText, zones, MAX_NAME, MAX_SEED, type ModeId, type Outcome, type Shared } from "../lib/game";
@@ -14,6 +16,16 @@ const BATTER = { x: 180, y: 168 };
 const CENTRE = { x: 180, y: 128 };
 const reach: Record<string, number> = { 6: 1.16, 4: 0.97, 2: 0.62, 1: 0.42, 0: 0.18 };
 const newSeed = () => 1 + Math.floor(Math.random() * MAX_SEED);
+
+// The bat's crack, then what the shot earned: a bowled stumps, a thump for a dot, a bright ring for a boundary.
+function shotSound(outcome: Outcome, wins: boolean) {
+  tone(220, 0.07, 0.16, "square", 0, 110); hiss(0.05, 0.14, 3500, "highpass");
+  if (wins) return; // the winning shot gets the fanfare below
+  if (outcome === "W") sfx.wrong();
+  else if (outcome === 6) { sfx.levelUp(); buzz(60); }
+  else if (outcome === 4) sfx.good();
+  else if (outcome === 0) sfx.drop();
+}
 
 function zoneGradient(centre: number) {
   const stops: Array<[string, number, number]> = [
@@ -121,8 +133,12 @@ export function LastBall() {
     setBalls(next);
     setAiming(false);
     flyBall(outcome, position - ball.centre);
-    if (outcome === 6) { setFlash(true); setTimeout(() => setFlash(false), 1400); navigator.vibrate?.(60); }
-    if (innings(mode, next).state === "won") {
+    const wins = innings(mode, next).state === "won";
+    shotSound(outcome, wins);
+    if (outcome === "W") shake(document.getElementById("ground"));
+    if (outcome === 6) { setFlash(true); setTimeout(() => setFlash(false), 1400); }
+    if (wins) {
+      setTimeout(() => { sfx.win(); confetti(); }, 450);
       setWon({ mode, seed, tries, name: "", runs: next });
       setCompared("idle");
     }
@@ -203,6 +219,7 @@ export function LastBall() {
       <div className={`shesh-ground${flash ? " shesh-flash" : ""}`} id="ground">
         <div className="shesh-board">
           <p><b>{info.ask}</b>{mode === "over12" && <span> · {bn(played.runs)} রান</span>}</p>
+          <SoundToggle compact />
           <p>চেষ্টা <b>{bn(tries)}</b></p>
         </div>
         {mode === "over12" && (

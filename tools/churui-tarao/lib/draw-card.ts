@@ -1,6 +1,6 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, wrapText, BODY_FONT, type CardFormat } from "../../../shared/card-canvas";
 import { drawPaddy, drawScarecrow, drawSparrow, WINGS_DOWN, WINGS_UP } from "./art";
-import { bn, humanLine, type Shared } from "./game";
+import { bn, humanLine, starsOf, type Shared } from "./game";
 
 const INK = "#4a2410", CREAM = "#fff7e4", GOLD = "#ffe08a";
 
@@ -56,7 +56,14 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
     context.save(); context.translate(x, y(at)); context.scale(facing, 1); context.rotate(-0.2); drawSparrow(context, size, index % 2 ? WINGS_UP : WINGS_DOWN); context.restore();
   }
 
-  fitText(context, [{ text: "চড়ুই তাড়াও", color: INK, weight: 800, display: true }, ...(shared.name ? [{ text: ` · ${shared.name}`, color: "#7a3a14", weight: 700, display: true }] : [])], cx, y(140), 52, 760, "center");
+  // The title row also carries the field (level) and its stars, once there is more than the first field.
+  const earned = starsOf(shared.saved, shared.level);
+  fitText(context, [
+    { text: "চড়ুই তাড়াও", color: INK, weight: 800, display: true },
+    ...(shared.name ? [{ text: ` · ${shared.name}`, color: "#7a3a14", weight: 700, display: true }] : []),
+    { text: ` · লেভেল ${bn(shared.level)}`, color: "#7a3a14", weight: 700, display: true },
+    ...(earned ? [{ text: " ", color: INK }, ...[0, 1, 2].map(star => ({ text: "★", color: star < earned ? "#c98200" : "#fff7e4b0", weight: 700 }))] : []),
+  ], cx, y(140), 52, 860, "center");
   fitText(context, [{ text: `${bn(shared.saved)}%`, color: "#5a2a10", weight: 800, display: true }], cx, y(330), 200, 700, "center");
   fitText(context, [{ text: "ধান বাঁচল", color: INK, weight: 800, display: true }], cx, y(410), 64, 700, "center");
   // The sparrows shooed, on a little paddy-gold ribbon.

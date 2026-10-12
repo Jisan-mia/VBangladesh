@@ -44,13 +44,8 @@
 .bt-clock b{display:inline-block;min-width:2.2em;margin-right:4px;padding:0 8px;border-radius:8px;background:#121518;color:var(--amber);font-family:var(--font-display);font-size:24px;line-height:1.5;text-align:center;font-variant-numeric:tabular-nums}
 .bt-clock[data-low=true] b{color:#ff8a7a}
 .bt-count{flex:1}
+.bt-strip .gx-sound{color:#c4ccd4}
 .bt-count b{color:#fff;font-size:17px}
-.bt-bell{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:#3a434b;cursor:pointer}
-.bt-bell svg{width:24px;height:24px;fill:var(--amber);transform-origin:50% 10%}
-.bt-bell[aria-pressed=false] svg{fill:#8a939c}
-.bt-bell-off{stroke:#ff8a7a;stroke-width:2.4;stroke-linecap:round}
-.bt-ring{animation:bt-swing .7s ease-out}
-@keyframes bt-swing{20%{transform:rotate(22deg)}45%{transform:rotate(-16deg)}70%{transform:rotate(8deg)}}
 
 .bt-input{display:block}
 .bt-input textarea{display:block;width:100%;min-height:66px;padding:10px 12px;border:0;border-radius:12px;background:#fff;color:var(--ink);font-size:18px;line-height:1.6;resize:none;box-shadow:inset 0 2px 0 #1a1f2b22}
@@ -105,5 +100,16 @@
   .bt-text{font-size:24px}
   .bt-result-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:36px}
 }
-@media(prefers-reduced-motion:reduce){.bt-ring,.bt-done{animation:none}.bt-keys i{transition:none}}
+@media(prefers-reduced-motion:reduce){.bt-done{animation:none}.bt-keys i{transition:none}}
 .bt-hero h1 .bt-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 2px;font-size:13px;font-weight:600;color:var(--accent)}
+
+/* sets, stars and progress (levels) */
+.tool-bangla-typing .bt-levels{margin-top:12px;border:1.5px solid color-mix(in srgb,var(--ink) 20%,transparent);border-radius:14px;background:#fff;color:var(--ink)}
+.tool-bangla-typing .bt-levels summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-bangla-typing .bt-levels summary span{font-weight:500;font-size:14px;color:var(--muted)}
+.tool-bangla-typing .bt-levels p{margin:0 14px 10px;font-size:14px;line-height:1.55;color:var(--muted)}
+.tool-bangla-typing .bt-levels .gx-levels{padding:0 12px 12px}
+.tool-bangla-typing .bt-levels .gx-levels li:has(button.next)~li button.next{animation:none;box-shadow:none;border-width:1.5px}
+.tool-bangla-typing .bt-reward{display:flex;align-items:center;flex-wrap:wrap;gap:2px 12px;margin:6px 0 4px}
+.tool-bangla-typing .bt-reward .gx-stars{font-size:30px}
+.tool-bangla-typing .bt-reward small{font-size:15px;font-weight:600;color:var(--accent-deep)}

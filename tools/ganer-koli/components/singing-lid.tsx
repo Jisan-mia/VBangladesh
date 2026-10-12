@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { buzz, sfx, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import { bn, caption, defaultTeams, drawLetter, gameTitle, humanLine, letters, MAX_NAME, occasions, parseShareHash, ROUND_SECONDS, scoreLine, scores, shareHash, teamName, turnOf, type Game, type OccasionId, type Round } from "../lib/game";
@@ -9,22 +11,11 @@ import { bn, caption, defaultTeams, drawLetter, gameTitle, humanLine, letters, M
 const TOOL = "ganer-koli";
 const SAVED = "ganer-koli-game";
 
-/** A short reed-like buzz when time runs out, so a noisy room hears it. Sound is best-effort. */
-function buzz() {
-  navigator.vibrate?.([120, 60, 120]);
-  try {
-    const audio = new AudioContext();
-    const gain = audio.createGain();
-    gain.gain.setValueAtTime(0.12, audio.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.7);
-    gain.connect(audio.destination);
-    for (const pitch of [220, 223]) {
-      const reed = audio.createOscillator();
-      reed.type = "sawtooth"; reed.frequency.value = pitch;
-      reed.connect(gain); reed.start(); reed.stop(audio.currentTime + 0.7);
-    }
-    setTimeout(() => audio.close(), 900);
-  } catch { /* no sound on this browser; the screen still says time is up */ }
+/** A short reed-like buzz when time runs out, so a noisy room hears it. The screen says it too. */
+function timeUpBuzz() {
+  tone(220, 0.7, 0.1, "sawtooth");
+  tone(223, 0.7, 0.1, "sawtooth");
+  buzz([120, 60, 120]);
 }
 
 function ClayPot() {
@@ -91,7 +82,7 @@ export function SingingLid() {
     const tick = () => {
       const remaining = Math.max(0, ROUND_SECONDS - Math.floor((Date.now() - current.startedAt) / 1000));
       setLeft(remaining);
-      if (remaining === 0 && !buzzed) { buzzed = true; buzz(); }
+      if (remaining === 0 && !buzzed) { buzzed = true; timeUpBuzz(); }
     };
     tick();
     const timer = setInterval(tick, 250);
@@ -111,6 +102,7 @@ export function SingingLid() {
   }, [state, format, site, friend]);
 
   function start(letter: string) {
+    sfx.pick();
     setCurrent({ letter, startedAt: Date.now() });
     setLeft(ROUND_SECONDS);
     setLastScorer(null);
@@ -128,7 +120,7 @@ export function SingingLid() {
     setRounds([...rounds, { letter: current.letter, team }]);
     setCurrent(null);
     setLastScorer(team);
-    navigator.vibrate?.(40);
+    sfx.good();
   }
 
   function pick(letter: string) {
@@ -205,6 +197,7 @@ export function SingingLid() {
       <div className="koli-tools">
         {(current || rounds.length > 0) && <button type="button" className="kit-link" onClick={undo}>{current ? "অক্ষরটা ফেরত রাখো" : "শেষ রাউন্ডটা ফেরাও"}</button>}
         {rounds.length > 0 && <button type="button" className="kit-link" onClick={newGame}>নতুন খেলা</button>}
+        <SoundToggle compact />
       </div>
 
       <details className="koli-pick" ref={picker}>

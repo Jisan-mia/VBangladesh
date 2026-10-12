@@ -4,15 +4,22 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { cleanName, newSeed, useBest, useGameLoop, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { cleanName, confetti, hiss, newSeed, readLevels, sfx, tone, totalStars, unlockedLevel, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME, buzz } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
-import { banner, bn, bumpLine, caption, compareLine, detailLine, humanLine, parseShareHash, shareHash, type Shared } from "../lib/result";
-import { createRun, steer, stepRun, SLOW_CAP, TOP, type Run } from "../lib/ride";
-import { absorb, drawScene, makeScene, resetScene, setFriendName, tickScene, BELL_RANG, LETTER_TAKEN, type Scene } from "../lib/scene";
-import { bell, blip, unlock } from "../lib/sound";
+import { banner, bn, bumpLine, caption, compareLine, detailLine, humanLine, parseShareHash, routeLabel, shareHash, type Shared } from "../lib/result";
+import { createRun, migrateBest, nextMark, starsOf, steer, stepRun, LEVEL_COUNT, PUDDLE, ROUTES, SLOW_CAP, TOP, type Run } from "../lib/ride";
+import { absorb, announce, drawScene, makeScene, resetScene, setFriendName, tickScene, BELL_RANG, CRASHED, LETTER_TAKEN, type Scene } from "../lib/scene";
 
 const TOOL = "peoner-cycle";
+const stored = (key: string) => { try { return localStorage.getItem(key); } catch { return null; } };
+/** When each won star pops in on the result, in seconds (the CSS delay and the sound share it). */
+const starAt = (index: number) => 0.3 + index * 0.28;
+/** ক্রিং-ক্রিং: two strikes of a small metal dome (a few inharmonic partials that fade). */
+const bell = () => { for (const strike of [0, 0.13]) for (const [frequency, volume] of [[2350, 0.09], [3720, 0.05], [5480, 0.025]] as const) tone(frequency, 0.45, volume, "sine", strike); };
+/** A letter in the bag: a paper flick and a blip that climbs with every letter in a row. */
+const letter = (step: number) => { hiss(0.05, 0.04, 3000, "highpass"); sfx.combo(step); };
 /** Slow mode runs the road at this speed (and SLOW_CAP stops it getting faster). */
 const SLOW_TIME = 0.75;
 /** After "চালিয়ে যাও" the road waits this long, so nobody resumes blind. */
@@ -20,13 +27,19 @@ const RESUME_GRACE = 0.6;
 /** How long the wobble and the flying letters play after a bump. */
 const SETTLE_MS = 2400;
 type Phase = "ready" | "playing" | "paused" | "over";
-type Result = Shared & { kind: number; record: boolean };
+type Result = Shared & { kind: number; record: boolean; stars: number };
 
 export function CycleGame() {
   const [phase, setPhase] = useState<Phase>("ready");
   const [slow, setSlow] = useSlowMode();
-  const [sound, setSound] = useState(false);
-  const [best, submitBest] = useBest(TOOL);
+  const [level, setLevel] = useState(1);
+  // Route 1 keeps the key the one-road game used, so the old best stays route 1's best.
+  const [best, submitBest] = useBest(level === 1 ? TOOL : `${TOOL}-${level}`);
+  const levels = useLevels(TOOL, LEVEL_COUNT);
+  const [previousBest, setPreviousBest] = useState<number | null>(null);
+  const [streak, setStreak] = useState(0);
+  const timers = useRef<number[]>([]);
+  const goal = useRef<{ meters: number; name: string }>({ meters: ROUTES[0].goal, name: ROUTES[0].name });
   const [friend, setFriend] = useState<Shared | null>(null);
   const [result, setResult] = useState<Result | null>(null);
   const [settling, setSettling] = useState(false);
@@ -47,25 +60,43 @@ export function CycleGame() {
   const settleTimer = useRef(0);
   const stageInView = useInView(stage);
 
-  const card: Shared | null = result ? { seed: result.seed, score: result.score, meters: result.meters, letters: result.letters, name: cleanName(name) } : null;
+  const card: Shared | null = result ? { seed: result.seed, score: result.score, meters: result.meters, letters: result.letters, name: cleanName(name), level: result.level } : null;
   const state = card ? shareHash(card) : "";
+  // A friend's link races on their road only on their route.
+  const rival = friend && friend.level === level ? friend : null;
+  const route = ROUTES[level - 1];
+  const open = Math.max(levels.unlocked, friend?.level ?? 1);
+  const allStars = totalStars(levels.stars);
 
-  function start() {
-    run.current = createRun(friend ? friend.seed : newSeed(), slow ? SLOW_CAP : TOP);
+  function choose(nextLevel: number) {
+    setLevel(nextLevel);
+    goal.current = { meters: ROUTES[nextLevel - 1].goal, name: ROUTES[nextLevel - 1].name };
+  }
+  function start(nextLevel = level) {
+    choose(nextLevel);
+    run.current = createRun(friend && friend.level === nextLevel ? friend.seed : newSeed(), slow ? SLOW_CAP : TOP, nextLevel);
     if (scene.current) resetScene(scene.current);
     grace.current = 0;
+    timers.current.forEach(clearTimeout); timers.current = [];
     setResult(null);
     setSettling(false);
+    setStreak(0);
     setPhase("playing");
+    bell();
   }
   function pause() { setPhase(current => current === "playing" ? "paused" : current); }
   function resume() { grace.current = RESUME_GRACE; setPhase(current => current === "paused" ? "playing" : current); }
   function restart() { if (performance.now() - overAt.current > 450) start(); }
 
   function finish(played: Run) {
-    const record = submitBest(played.score) && played.score > 0;
+    const record = submitBest(played.score) && played.score > 0 && best !== null, stars = starsOf(played.meters, level);
     overAt.current = performance.now();
-    setResult({ seed: played.seed, score: played.score, meters: played.meters, letters: played.letters, name: "", kind: played.hitKind, record });
+    setPreviousBest(best);
+    setResult({ seed: played.seed, score: played.score, meters: played.meters, letters: played.letters, name: "", kind: played.hitKind, record, stars, level });
+    const later = (seconds: number, play: () => void) => timers.current.push(window.setTimeout(play, seconds * 1000));
+    for (let star = 0; star < stars; star++) later(starAt(star), () => sfx.star(star));
+    if (stars === 3 || record) later(starAt(stars), () => { sfx.win(); confetti(); });
+    else if (stars > 0) later(starAt(stars), sfx.good);
     setSettling(true);
     window.clearTimeout(settleTimer.current);
     settleTimer.current = window.setTimeout(() => setSettling(false), SETTLE_MS);
@@ -75,24 +106,37 @@ export function CycleGame() {
   /** A tap on one side, a button or an arrow: the ready screen starts; a ride moves one lane. */
   function side(towards: -1 | 1) {
     if (phase === "ready") start();
-    else if (phase === "playing" && run.current) steer(run.current, towards);
+    else if (phase === "playing" && run.current) { steer(run.current, towards); sfx.tap(); }
   }
 
   const step = (dt: number) => {
     const played = run.current, view = scene.current;
     if (phase === "playing" && played && !played.over) {
+      const before = played.meters, streakBefore = played.streak;
       if (grace.current > 0) grace.current -= dt;
       else { played.cap = slow ? SLOW_CAP : TOP; stepRun(played, slow ? dt * SLOW_TIME : dt); }
+      if (played.streak !== streakBefore) setStreak(played.streak);
       if (view) {
         const happened = absorb(view, played);
-        if (happened & LETTER_TAKEN) { if (sound) blip(); if (!slow && typeof navigator.vibrate === "function") navigator.vibrate(8); }
-        if (happened & BELL_RANG && sound) bell();
+        if (happened & LETTER_TAKEN) { letter(played.streak - 1); if (!slow) buzz(8); }
+        if (happened & BELL_RANG) bell();
+        if (happened & CRASHED) {
+          if (played.hitKind === PUDDLE) sfx.splash(); else sfx.thud();
+          if (!slow) stage.current?.animate?.([{ transform: "translateX(0)" }, { transform: "translateX(-6px)" }, { transform: "translateX(6px)" }, { transform: "translateX(0)" }], { duration: 200, easing: "ease-out" });
+        }
+        // Passing the route's goal delivers its letters (the next route opens); the marks after it add stars.
+        const earnedBefore = starsOf(before, level), earned = starsOf(played.meters, level);
+        if (earned > earnedBefore) {
+          levels.record(level, earned);
+          if (earnedBefore === 0) { sfx.levelUp(); announce(view, `${route.name} পৌঁছে গেলে!`); }
+          else { sfx.star(earned - 1); announce(view, `${bn(earned)} তারা!`); }
+        }
       }
       if (played.over) finish(played);
     }
     if (view) tickScene(view, slow ? dt * SLOW_TIME : dt, slow, phase === "ready" && !slow);
   };
-  const draw = () => { if (scene.current) drawScene(scene.current, phase === "ready" ? null : run.current, slow, friend?.meters ?? 0); };
+  const draw = () => { if (scene.current) drawScene(scene.current, phase === "ready" ? null : run.current, slow, rival?.meters ?? 0, goal.current); };
   const drawRef = useRef(draw);
   drawRef.current = draw;
   const pauseRef = useRef(pause);
@@ -124,15 +168,20 @@ export function CycleGame() {
       const shared = parseShareHash(window.location.hash);
       if (!shared) return;
       setFriend(shared);
+      choose(shared.level);
       if (scene.current) setFriendName(scene.current, shared.name || "বন্ধু");
       setPhase(current => current === "playing" ? current : "ready");
     };
+    let saved = readLevels(stored(`ektukhani-levels-${TOOL}`), LEVEL_COUNT);
+    const migrated = migrateBest(saved, stored(`ektukhani-best-${TOOL}`));
+    if (migrated) { levels.record(1, migrated); saved = { 1: migrated }; }
+    choose(unlockedLevel(saved, LEVEL_COUNT));
     readFriend();
     setSite(window.location.host);
     const hide = () => { if (document.hidden) pauseRef.current(); };
     window.addEventListener("hashchange", readFriend);
     document.addEventListener("visibilitychange", hide);
-    return () => { window.removeEventListener("hashchange", readFriend); document.removeEventListener("visibilitychange", hide); };
+    return () => { window.removeEventListener("hashchange", readFriend); document.removeEventListener("visibilitychange", hide); timers.current.forEach(clearTimeout); };
   }, []);
 
   // The scene may be built after the link was read (or rebuilt on a resize): keep the friend's flag name on it.
@@ -200,10 +249,18 @@ export function CycleGame() {
     setPhase("ready");
     stage.current?.scrollIntoView({ behavior: smooth(), block: "center" });
   }
-  function toggleSound() {
-    if (!sound) unlock();
-    setSound(!sound);
+  /** From the route list or "পরের রুট": the route is set, and the ride waits on the ready screen for a tap. */
+  function pickRoute(nextLevel: number) {
+    choose(nextLevel);
+    setResult(null);
+    setPhase("ready");
+    stage.current?.scrollIntoView({ behavior: smooth(), block: "center" });
   }
+  const won = (result?.stars ?? 0) > 0;
+  const mark = result ? nextMark(result.meters, level) : 0;
+  // The near miss, with the exact gap: to the goal or the next star, or (at three stars) to this phone's best.
+  const nearLine = !result ? "" : mark ? `আর ${bn(mark - result.meters)} মিটার গেলেই ${won ? `${bn(result.stars + 1)} তারা` : `${route.name} পৌঁছাতে`}।`
+    : previousBest !== null && !result.record ? `আর ${bn(previousBest - result.score + 1)} হলেই নতুন সেরা।` : "";
 
   const friendName = friend?.name || "";
   const whose = friendName ? possessive(friendName) : "বন্ধুর";
@@ -220,13 +277,14 @@ export function CycleGame() {
         </section>
       )}
 
+      <p className="pc-level"><b>{routeLabel(level)}</b> <span aria-label={`মোট ${bn(allStars)}টা তারা`}>★ {bn(allStars)}/{bn(LEVEL_COUNT * 3)}</span></p>
       <div className="pc-stage" ref={stage} data-phase={phase} onPointerDown={onStageDown}>
         <canvas ref={canvas} role="img" aria-label="ভোরের মেঠো পথে চিঠির ঝোলা নিয়ে সাইকেলে পিয়ন। রাস্তার বাঁ বা ডান পাশে চাপলে এক লেন সরে যায়। কিবোর্ডে বাঁ-ডান তীর।" />
         {phase === "ready" && (
           <div className="pc-overlay pc-ready">
             <p className="pc-how">বাঁয়ে-ডানে চাপো</p>
-            <p className="pc-sub">গরু-ছাগল, কাদা বাঁচাও, চিঠি তোলো</p>
-            <button type="button" className="kit-primary pc-go" onPointerDown={keepTap} onClick={start}>শুরু করো</button>
+            <p className="pc-sub">{route.name} পর্যন্ত {bn(route.goal)} মিটার। গরু-ছাগল, কাদা বাঁচাও, চিঠি তোলো।</p>
+            <button type="button" className="kit-primary pc-go" onPointerDown={keepTap} onClick={() => start()}>শুরু করো</button>
           </div>
         )}
         {phase === "paused" && (
@@ -235,7 +293,8 @@ export function CycleGame() {
             <button type="button" className="kit-primary pc-go" onPointerDown={keepTap} onClick={resume}>চালিয়ে যাও</button>
           </div>
         )}
-        <p className="screen-reader-only" aria-live="polite">{phase === "over" && result ? `খেলা শেষ। ${bn(result.score)} পয়েন্ট। ${detailLine(result)} ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
+        {phase === "playing" && streak >= 2 && <p className="pc-streak" key={streak} aria-hidden="true">টানা {bn(streak)} চিঠি</p>}
+        <p className="screen-reader-only" aria-live="polite">{phase === "over" && result ? `খেলা শেষ। ${bn(result.score)} পয়েন্ট। ${detailLine(result)}।${result.stars ? ` ${route.name} পৌঁছেছ, ${bn(result.stars)} তারা।` : ""}${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
         {phase === "over" && result && (
           <div className="pc-overlay pc-bump">
             <p className="pc-kicker">{bumpLine(result.kind)}</p>
@@ -246,12 +305,20 @@ export function CycleGame() {
 
       {phase === "over" && result ? (
         <div className="pc-over">
-          <p className="pc-score"><b>{bn(result.score)}</b><span>{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null ? `এই ফোনে সেরা: ${bn(best)}` : ""}</span></p>
+          <div className="pc-over-head">
+            <p className="pc-over-kicker">{won ? `${possessive(route.name)} চিঠি পৌঁছে গেছে।` : `${route.name} ছিল ${bn(route.goal)} মিটারে।`}</p>
+            <p className="gx-stars pc-over-stars" role="img" aria-label={`৩টার মধ্যে ${bn(result.stars)}টা তারা`}>
+              {[0, 1, 2].map(star => <span key={star} className={star < result.stars ? "on gx-pop" : ""} style={{ animationDelay: `${starAt(star)}s` }}>★</span>)}
+            </p>
+          </div>
+          <p className="pc-score"><b>{bn(result.score)}</b><span>{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null ? `এই রুটে এই ফোনের সেরা: ${bn(best)}` : ""}</span></p>
           <p className="pc-detail">{detailLine(result)}</p>
-          {friend && <p className="pc-versus">{compareLine(result.score, friend.score, friendName)}</p>}
+          {nearLine && <p className="pc-near">{nearLine}</p>}
+          {rival && <p className="pc-versus">{compareLine(result.score, rival.score, friendName)}</p>}
           <div className="pc-over-actions">
-            <button type="button" ref={again} className="kit-primary pc-again" onClick={restart}>আরেকবার</button>
-            <button type="button" className="pc-to-card" onClick={goToCard}>ছবি বানাও ↓</button>
+            {won && level < LEVEL_COUNT
+              ? <><button type="button" ref={again} className="kit-primary pc-again" onClick={() => pickRoute(level + 1)}>পরের রুট</button><button type="button" className="pc-to-card" onClick={restart}>আবার খেলো</button></>
+              : <><button type="button" ref={again} className="kit-primary pc-again" onClick={restart}>আরেকবার</button><button type="button" className="pc-to-card" onClick={goToCard}>ছবি বানাও ↓</button></>}
           </div>
         </div>
       ) : (
@@ -269,13 +336,17 @@ export function CycleGame() {
         <button type="button" className="pc-toggle" aria-pressed={slow} onClick={() => setSlow(!slow)}>
           <i aria-hidden="true" />ধীরে খেলো
         </button>
-        <button type="button" className="pc-toggle" aria-pressed={sound} onClick={toggleSound}>
-          <i aria-hidden="true" />শব্দ
-        </button>
+        <SoundToggle compact className="pc-sound" />
         <button type="button" className="pc-pause" onClick={phase === "paused" ? resume : pause} disabled={phase !== "playing" && phase !== "paused"}>
           {phase === "paused" ? "চালিয়ে যাও" : "থামাও"}
         </button>
       </div>
+
+      <details className="pc-levels">
+        <summary>সব রুট <span>★ {bn(allStars)}/{bn(LEVEL_COUNT * 3)}</span></summary>
+        <p>প্রতি রুটে রাস্তা আগের চেয়ে জোরে চলে, গরু-ঠেলাগাড়ি আসে আগে। রাস্তার ওপরের দাগ পার হলেই চিঠি পৌঁছায়, পরের রুট খোলে। আরও দূর গেলে বেশি তারা।</p>
+        <LevelGrid count={LEVEL_COUNT} stars={levels.stars} unlocked={open} current={level} noun="রুট" onPick={pickRoute} />
+      </details>
 
       {card && result && (
         <section className="pc-result" id="result" ref={resultBox} aria-labelledby="pc-result-title">

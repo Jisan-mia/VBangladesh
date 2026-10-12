@@ -1,8 +1,8 @@
 // Rules and physics for হাঁড়িভাঙা: 5 rows of 7 clay pots on a fair-stall rope, a cloth ball and a bamboo লাঠি.
 // The seed picks which pots are tough (two hits) and how each is painted. The ball moves in small substeps, one axis at a time, so even a fast ball never slips through a pot.
-import { makeRng, pick } from "../../../shared/game-core";
+import { makeRng, pick, type LevelStars } from "../../../shared/game-core";
 import { possessive } from "../../../shared/bangla";
-import { bn, CHANCES, CHANCE_POINTS, POTS, POT_POINTS } from "./link";
+import { bn, CHANCES, CHANCE_POINTS, LEVEL_COUNT, LEVELS, POTS, POT_POINTS, starsOf } from "./link";
 
 /** The board is always 360 × 500 world units, scaled to the screen. */
 export const W = 360;
@@ -36,6 +36,9 @@ const LAUNCH_ANGLE = (18 * Math.PI) / 180;
 export const TOUGH = 8;
 export const DESIGNS = 6;
 
+/** The most a row may sway either way: the gap beside an edge pot, so it never pokes into a pole. */
+export const MAX_SWAY = (CELL - POT_W) / 2;
+
 export const potLeft = (index: number) => WALL + (index % COLS) * CELL + (CELL - POT_W) / 2;
 export const potTop = (index: number) => ROPE_Y + Math.floor(index / COLS) * ROW_GAP + POT_DROP;
 const LAST_ROW_BOTTOM = potTop(POTS - 1) + POT_H;
@@ -59,14 +62,19 @@ export type Game = {
   score: number;
   over: boolean;
   won: boolean;
+  level: number;
+  /** Seconds of play: the clock the wind and the swaying ropes run on. */
+  clock: number;
+  windPhase: number;
 };
 
 export type GameEvent = "crack" | "break" | "stick" | "wall" | "lost" | "win" | "over";
 export type Listener = (event: GameEvent, pot: number) => void;
 const quiet: Listener = () => {};
 
-export function createGame(seed: number): Game {
+export function createGame(seed: number, level = 1): Game {
   const rng = makeRng(seed);
+  const { tough: toughCount } = LEVELS[Math.min(LEVEL_COUNT, Math.max(1, level)) - 1];
   const design = new Uint8Array(POTS);
   for (let i = 0; i < POTS; i++) {
     // Neighbours on a rope never wear the same painting.
@@ -77,12 +85,32 @@ export function createGame(seed: number): Game {
   const order = Array.from({ length: POTS }, (_, i) => i);
   for (let i = POTS - 1; i > 0; i--) { const j = pick(rng, i + 1); [order[i], order[j]] = [order[j], order[i]]; }
   const tough = new Uint8Array(POTS);
-  for (let k = 0; k < TOUGH; k++) tough[order[k]] = 1;
+  for (let k = 0; k < toughCount; k++) tough[order[k]] = 1;
   const hits = Int8Array.from(tough, t => t ? 2 : 1);
-  return { hits, tough, design, x: W / 2, y: STICK_Y - BALL_R, dx: 0, dy: -1, stick: W / 2, resting: true, chances: CHANCES, broken: 0, rowsCleared: 0, score: 0, over: false, won: false };
+  // Drawn last, so level 1 lays out exactly the stall the one-level game did.
+  const windPhase = rng() * Math.PI * 2;
+  return { hits, tough, design, x: W / 2, y: STICK_Y - BALL_R, dx: 0, dy: -1, stick: W / 2, resting: true, chances: CHANCES, broken: 0, rowsCleared: 0, score: 0, over: false, won: false, level, clock: 0, windPhase };
 }
 
-export const speed = (rowsCleared: number, slow: boolean) => Math.min(MAX_SPEED, BASE_SPEED + rowsCleared * ROW_BONUS) * (slow ? SLOW : 1);
+const levelOf = (game: Pick<Game, "level">) => LEVELS[Math.min(LEVEL_COUNT, Math.max(1, game.level)) - 1];
+
+/** Ball speed: a little faster per cleared row, plus the stall's own `bonus`, up to a cap (also raised by the bonus). */
+export const speed = (rowsCleared: number, slow: boolean, bonus = 0) => Math.min(MAX_SPEED + bonus, BASE_SPEED + bonus + rowsCleared * ROW_BONUS) * (slow ? SLOW : 1);
+
+/** How far a row hangs off centre right now: whole ropes sway in the breeze, neighbouring ropes the other way. */
+export function swayOf(game: Pick<Game, "level" | "clock">, row: number) {
+  const { sway, swaySpeed } = levelOf(game);
+  return sway ? sway * Math.sin(game.clock * swaySpeed + row * 2.1) : 0;
+}
+
+/** Sideways wind on the ball (turns of direction a second): gusts that come and go, never constant. */
+export function windOf(game: Pick<Game, "level" | "clock" | "windPhase">) {
+  const { wind } = levelOf(game);
+  return wind ? wind * Math.sin(game.clock * 0.3 + game.windPhase) : 0;
+}
+
+/** A pot's left edge right now, swaying rows included. */
+export const potX = (game: Pick<Game, "level" | "clock">, index: number) => potLeft(index) + swayOf(game, Math.floor(index / COLS));
 
 export function moveStick(game: Game, x: number) {
   game.stick = Math.max(WALL + STICK_W / 2, Math.min(W - WALL - STICK_W / 2, x));
@@ -110,7 +138,7 @@ export function bounceAngle(ballX: number, stickX: number) {
 }
 
 export function overlaps(game: Game, index: number) {
-  const left = potLeft(index), top = potTop(index);
+  const left = potX(game, index), top = potTop(index);
   const nx = Math.max(left, Math.min(left + POT_W, game.x)) - game.x;
   const ny = Math.max(top, Math.min(top + POT_H, game.y)) - game.y;
   return nx * nx + ny * ny < BALL_R * BALL_R;
@@ -179,7 +207,15 @@ function substep(game: Game, distance: number, on: Listener) {
 export function step(game: Game, dt: number, slow: boolean, on: Listener = quiet) {
   if (game.over) return;
   if (game.resting) { game.x = game.stick; game.y = STICK_Y - BALL_R; return; }
-  const distance = speed(game.rowsCleared, slow) * dt;
+  game.clock += slow ? dt * SLOW : dt;
+  const wind = windOf(game);
+  if (wind) {
+    // The wind bends the ball's path a little; it never flattens it past the stick's own steepest angle.
+    const steep = Math.cos(MAX_ANGLE), dx = game.dx + wind * dt, length = Math.hypot(dx, game.dy);
+    game.dx = dx / length; game.dy /= length;
+    if (Math.abs(game.dy) < steep) { game.dy = Math.sign(game.dy) * steep; game.dx = Math.sign(game.dx) * Math.sin(MAX_ANGLE); }
+  }
+  const distance = speed(game.rowsCleared, slow, levelOf(game).speed) * dt;
   const count = Math.max(1, Math.ceil(distance / (BALL_R * 0.5)));
   for (let i = 0; i < count && !game.resting && !game.over; i++) substep(game, distance / count, on);
 }

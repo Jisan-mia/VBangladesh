@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { buzz, hiss, sfx, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard, type CardContent } from "../lib/draw-card";
@@ -11,6 +13,9 @@ import { JCard } from "./j-card";
 const TOOL = "cassette";
 // "৮০% ক্যাসেটে আছে" after three votes is noise; wait for a real crowd.
 const TALLY_MIN = 20;
+
+// A song dropping into its slot: the tape deck's plastic clunk.
+function clunk() { tone(120, 0.09, 0.2, "square", 0, 70); hiss(0.05, 0.1, 900); buzz(10); }
 
 export function TapeBuilder() {
   const [slots, setSlots] = useState<number[]>([...defaultSlots]);
@@ -67,6 +72,7 @@ export function TapeBuilder() {
     if (active === null) return;
     setSlots(current => placeSong(current, active, song));
     setSpin(value => value + 1);
+    clunk();
     setJoined(current => current === "done" ? "idle" : current);
     picker.current?.close();
   }
@@ -75,7 +81,7 @@ export function TapeBuilder() {
     setJoined("sending");
     // Only listed song ids are counted; the tape's name never leaves the link.
     const tally = await addToTally(TOOL, slots.map(tallyId));
-    if (tally) { setEveryone(tally); setJoined("done"); } else setJoined("failed");
+    if (tally) { setEveryone(tally); setJoined("done"); sfx.good(); } else setJoined("failed");
   }
 
   const now = active === null ? null : songs[slots[active]];
@@ -100,7 +106,7 @@ export function TapeBuilder() {
       )}
 
       <div className="cs-stage" id="cs-tape">
-        <p className="cs-hint">যে গানটা বদলাবে, তার লাইনে ট্যাপ করো।</p>
+        <p className="cs-hint">যে গানটা বদলাবে, তার লাইনে ট্যাপ করো। <SoundToggle compact /></p>
         <JCard tape={tape} onPick={open} spin={spin} />
         <div className="cs-dress">
           <label className="cs-field">

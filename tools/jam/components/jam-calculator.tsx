@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { SoundToggle } from "../../../shared/game-ui";
+import { tone } from "../../../shared/game-sound";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import { bn, bucketOf, buckets, calculate, caption, clamp, cleanRoute, defaults, habitLine, humanLine, limits, overAnHour, parseShareHash, readDigits, shareHash, MAX_ROUTE, WEEKS_PER_YEAR, type Commute } from "../lib/jam";
@@ -78,9 +80,13 @@ export function JamCalculator() {
 
   async function compareWithEveryone() {
     setCompared("sending");
+    tone(20, 0.01, 0); // silent: wakes the audio inside the tap, so the honk can play once the answer is back
     const tally = await addToTally(TOOL, [mine.id]);
-    if (tally) { setEveryone(tally); setCompared("done"); }
-    else setCompared("failed");
+    if (tally) {
+      setEveryone(tally); setCompared("done");
+      // A two-note bus horn, honked twice.
+      for (const delay of [0, 0.3]) { tone(392, 0.2, 0.07, "square", delay); tone(494, 0.2, 0.07, "square", delay); }
+    } else setCompared("failed");
   }
 
   const friendTotals = friend ? calculate(friend) : null;
@@ -159,7 +165,7 @@ export function JamCalculator() {
           <h3>সবার সাথে মিলিয়ে দেখবে?</h3>
           {compared !== "done" || !everyone ? <>
             <p>দেখো তোমার মতো কতজন রোজ এতক্ষণ রাস্তায় বসে থাকে। শুধু তোমার রোজকার মিনিটের ঘরটা (যেমন ‘{mine.label}’) গোনা হবে, আর কিছু না।</p>
-            <button type="button" className="kit-secondary" onClick={compareWithEveryone} disabled={compared === "sending"}>{compared === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
+            <button type="button" className="kit-secondary" onClick={compareWithEveryone} disabled={compared === "sending"}>{compared === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button> <SoundToggle compact />
             {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
           </> : everyone.total < COMPARE_MIN ? <p className="kit-status">এখনো খুব কম মানুষ হিসাব করেছে, তাই এখনই কিছু বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন মেলালে দেখা যাবে।</p> : <>
             <p className="jam-everyone-big">যারা হিসাব করেছে, তাদের <strong>{bn(percent(longer, everyone.total))}%</strong> রোজ ১ ঘণ্টা বা তার বেশি জ্যামে থাকে।</p>

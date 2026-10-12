@@ -2,7 +2,7 @@
 // Server-safe: share.ts (and so the share API) imports this file, so it uses game-core, never React or game-kit.
 import { possessive } from "../../../shared/bangla";
 import { challengeHash, readChallenge } from "../../../shared/game-core";
-import type { Shot } from "./game";
+import { LEVEL_COUNT, LEVELS, type Shot } from "./game";
 
 export const HITS = 3;
 export const MAX_HIT = 60;
@@ -11,22 +11,36 @@ const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
 export const bn = (value: number) => digits.format(value);
 export const ordinal = (index: number) => ["১ম", "২য়", "৩য়"][index] ?? bn(index + 1);
 
-export type Card = { seed: number; total: number; hits: string[]; name: string };
+export type Card = { seed: number; total: number; hits: string[]; name: string; level: number };
 
 const HIT_TOKEN = /^(c|m|60|[1-5]?\d)$/;
 
-/** Reads a challenge link (`s` seed, `t` total, `h` the three hits, `n` name). The hits must add up to the total. */
+/**
+ * Reads a challenge link (`s` seed, `t` total, `h` the three hits, `l` the level, `n` name). The hits must add up to the total.
+ * Links from before the tournament have no `l` and open level 1, the same field they were played on.
+ */
 export function parseCard(hash: string): Card | null {
-  const challenge = readChallenge(hash, { maxTarget: HITS * MAX_HIT, extraKeys: ["h"] });
+  const challenge = readChallenge(hash, { maxTarget: HITS * MAX_HIT, extraKeys: ["h", "l"] });
   if (!challenge) return null;
   const hits = (challenge.extra.h ?? "").split("-");
   if (hits.length !== HITS || !hits.every(hit => HIT_TOKEN.test(hit))) return null;
   const sum = hits.reduce((count, hit) => count + (/\d/.test(hit) ? Number(hit) : 0), 0);
   if (sum !== challenge.target) return null;
-  return { seed: challenge.seed, total: challenge.target, hits, name: challenge.name };
+  const rawLevel = challenge.extra.l ?? "1", level = Number(rawLevel);
+  if (!/^[1-9]\d?$/.test(rawLevel) || level > LEVEL_COUNT) return null;
+  return { seed: challenge.seed, total: challenge.target, hits, name: challenge.name, level };
 }
 
-export const cardHash = (card: Card) => challengeHash({ seed: card.seed, target: card.total, name: card.name, extra: { h: card.hits.join("-") } });
+// Level 1 leaves `l` out, so its links stay exactly the old format.
+export const cardHash = (card: Card) => challengeHash({ seed: card.seed, target: card.total, name: card.name, extra: { h: card.hits.join("-"), ...(card.level > 1 && { l: card.level }) } });
+
+/** After a level: who won, by how much, and the gap to winning when it was close. */
+export function matchLine(total: number, level: number) {
+  const { rival, score } = LEVELS[level - 1];
+  if (total > score) return `${rival}কে ${bn(total - score)} ডাং-এ হারালে।`;
+  if (total === score) return `${rival} আর তুমি সমান, ${bn(score)} ডাং। জিততে আর ১ ডাং লাগত।`;
+  return `${rival} জিতল, ${bn(score)} বনাম ${bn(total)}।`;
+}
 
 export const hitLabel = (token: string) => token === "c" ? "ক্যাচ" : token === "m" ? "ফসকে" : `${bn(Number(token))} ডাং`;
 

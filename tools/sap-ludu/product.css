@@ -80,6 +80,8 @@
 
 /* players, options, motion */
 .tool-sap-ludu .sl-controls{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.tool-sap-ludu .sl-sound{border-color:var(--line);background:#fff;color:var(--ink)}
+.tool-sap-ludu .sl-over .sl-near{color:var(--accent-deep);font-weight:700}
 .tool-sap-ludu .sl-seg{display:inline-flex;padding:3px;border:1.5px solid var(--line);border-radius:999px;background:#fff}
 .tool-sap-ludu .sl-seg button{min-height:40px;padding:0 10px;border:0;border-radius:999px;background:none;color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .tool-sap-ludu .sl-seg button[aria-pressed=true]{background:var(--accent);color:#fff}

@@ -2,9 +2,9 @@ import { cardSizes, drawFooterBand, fitText, renderCard, type CardFormat, type S
 import { drawKite } from "../../ghuri/lib/draw-card";
 import { paintRoofs, paintSky, palette, strokeString } from "./art";
 import { HAND } from "./game";
-import { bn, humanLine, LOOKS, type Look } from "./link";
+import { bn, humanLine, starsOf, LEVELS, LOOKS, type Look } from "./link";
 
-export type Card = { cuts: number; name: string; look: Look };
+export type Card = { cuts: number; name: string; look: Look; level: number };
 
 /** Where the cut kites tumble on a feed card: x, y, size, spin. The first ones sit nearest the hook. */
 const FALLEN: ReadonlyArray<readonly [number, number, number, number]> = [
@@ -55,6 +55,12 @@ export function drawCard(canvas: HTMLCanvasElement, card: Card, format: CardForm
   if (card.name) count.push({ text: `${card.name} `, color: palette.cream, weight: 700, display: true });
   count.push({ text: `${bn(card.cuts)}টা`, color: palette.window, weight: 800, display: true }, { text: card.name ? " ঘুড়ি কাটল" : " ঘুড়ি কাটলাম", color: palette.cream, weight: 700, display: true });
   fitText(c, count, 86, y(268), 70, 900);
+  // The পাড়া (level) and its stars under the count.
+  const earned = starsOf(card.cuts, card.level), para = LEVELS[Math.min(LEVELS.length, Math.max(1, card.level)) - 1];
+  fitText(c, [
+    { text: `লেভেল ${bn(card.level)} · ${para.name}`, color: palette.cream, weight: 700, display: true },
+    ...(earned ? [{ text: "  ", color: palette.cream }, ...[0, 1, 2].map(star => ({ text: "★", color: star < earned ? palette.window : "#ffffff66", weight: 700 }))] : []),
+  ], 88, y(340), 46, 900);
   c.shadowColor = "transparent";
 
   fitText(c, [{ text: humanLine(card.cuts), color: palette.cream, weight: 600 }], width / 2, footer - 40, story ? 44 : 40, 960, "center");

@@ -129,3 +129,19 @@
 }
 @media(prefers-reduced-motion:reduce){.cr-slip,.cr-turn-note{animation:none}.cr-shoot[data-on=true]{transform:none}}
 .cr-hero h1 .cr-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;line-height:1.5;color:var(--accent)}
+
+/* boards (levels): the board and total stars above the score, the next target in it, and the picker below the game */
+.cr-level{display:flex;justify-content:space-between;gap:8px;margin:0 0 -2px;font-size:14px;color:var(--muted)}
+.cr-level b{color:var(--ink)}
+.cr-level>span:last-child{flex:none;font-weight:700;color:#a86f00}
+.cr-goal{margin-left:auto!important;padding:4px 10px;border-radius:999px;background:#f2a90024;color:#7a5200;font-size:13px;font-weight:700}
+.cr-near{padding:4px 10px;border-radius:10px;background:#f2a90024;font-size:15px!important;font-weight:700!important}
+.cr-slip .gx-reveal{font-size:30px}
+.cr-controls[data-two=true]{grid-template-columns:1fr 1fr}
+.cr-controls[data-two=true] .cr-again{grid-column:auto}
+.tool-carrom .kit-secondary.cr-again{border-color:var(--ink);color:var(--ink);border-radius:18px}
+.cr-levels{padding:10px 14px;border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff}
+.cr-levels summary{display:flex;justify-content:space-between;align-items:center;min-height:32px;font-family:var(--font-display);font-size:18px;font-weight:700;cursor:pointer}
+.cr-levels summary span{font-family:var(--font-bengali);font-size:15px;color:#a86f00}
+.cr-levels p{margin:8px 0 12px;font-size:14px;color:var(--muted);line-height:1.5}
+.tool-carrom .cr-options .cr-sound{min-height:44px;padding:6px;border:1.5px solid var(--paper-edge);background:#fff}

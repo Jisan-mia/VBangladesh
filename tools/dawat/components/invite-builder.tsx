@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { drawInvite, drawReply, inviteBlob, replyBlob } from "../lib/draw-invite";
 import { cleanInvite, cleanMapLink, cleanName, dateText, humanLine, inviteTitle, occasionById, occasions, parseShareHash, replyHash, replyLine, replyTitle, replyTo, shareHash, timeText, titleOf, MAX_MAP, MAX_NAME, MAX_PLACE, type Invite, type OccasionId, type Shared } from "../lib/invite";
@@ -81,6 +83,7 @@ export function InviteBuilder() {
 
   function startReply() {
     setReplying(true);
+    sfx.thud();
     requestAnimationFrame(() => guestInput.current?.focus({ preventScroll: false }));
   }
 
@@ -96,6 +99,7 @@ export function InviteBuilder() {
             <canvas ref={friendCanvas} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={inviteSummary(invited)} />
             <div className="dw-friend-actions">
               {!replying && <button type="button" className="kit-primary dw-coming" onClick={startReply}>আমি আসছি</button>}
+              <SoundToggle compact />
               {invited.map && <a className="kit-secondary" href={invited.map} target="_blank" rel="noopener noreferrer nofollow">ম্যাপে জায়গাটা দেখো</a>}
             </div>
             <ul className="dw-facts">
