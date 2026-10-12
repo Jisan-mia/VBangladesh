@@ -1,0 +1,103 @@
+.tool-kagojer-urojahaj{--accent:#2f6fb3;--accent-deep:#1d4a7c;--ink:#1f2a44;--muted:#5a6478;--paper:#fbfaf3;--rule:#9cc4e8;--margin:#e07f7f;--sun:#ffd23f;--good:#2f8a4c}
+.tool-kagojer-urojahaj .ku-page{color:var(--ink)}
+.tool-kagojer-urojahaj .ku-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* hero: short, so the sky and the controls land on the first phone screen */
+.tool-kagojer-urojahaj .ku-hero{padding:10px 0 6px}
+.tool-kagojer-urojahaj .ku-hero h1{margin:0 0 2px;font-family:var(--font-display);font-size:clamp(21px,5.6vw,42px);line-height:1.3;letter-spacing:0}
+.tool-kagojer-urojahaj .ku-hero-kicker{display:block;font-family:var(--font-bengali);font-size:13px;font-weight:600;line-height:1.5;color:var(--accent)}
+.tool-kagojer-urojahaj .ku-lead{max-width:560px;margin:0;color:var(--muted);font-size:15px;line-height:1.5}
+.tool-kagojer-urojahaj .ku-page:has(.ku-friend) .ku-lead{display:none}
+
+.tool-kagojer-urojahaj .ku{display:grid;gap:28px}
+.tool-kagojer-urojahaj .ku-play{display:grid;gap:8px;width:100%;max-width:480px}
+
+.tool-kagojer-urojahaj .ku-friend{display:grid;grid-template-columns:60px 1fr;gap:12px;align-items:center;padding:10px 12px;border-radius:16px;background:var(--paper);border:1.5px solid #d6dfea}
+.tool-kagojer-urojahaj .ku-friend canvas{width:100%;height:auto;border-radius:6px;box-shadow:0 4px 12px #1f2a4433;transform:rotate(-3deg)}
+.tool-kagojer-urojahaj .ku-kicker{margin:0;font-size:13px;font-weight:600;color:var(--accent)}
+.tool-kagojer-urojahaj .ku-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.4}
+.tool-kagojer-urojahaj .ku-friend p:last-child{margin:0;font-size:13px;color:var(--muted)}
+
+.tool-kagojer-urojahaj .ku-level{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 10px;margin:0;font-size:14px;line-height:1.4;color:var(--muted)}
+.tool-kagojer-urojahaj .ku-level b{font-family:var(--font-display);font-size:16px;color:var(--ink)}
+.tool-kagojer-urojahaj .ku-level-stars{white-space:nowrap}
+
+/* the sky: 4:5, never taller than leaves room for the controls on a phone */
+.tool-kagojer-urojahaj .ku-stage{position:relative;width:min(100%,calc((100svh - 300px) * .8));min-width:min(100%,260px);margin-inline:auto;border-radius:16px}
+.tool-kagojer-urojahaj .ku-stage canvas{display:block;width:100%;aspect-ratio:4/5;border-radius:16px;touch-action:none;user-select:none;-webkit-user-select:none;background:#a9bdd1;box-shadow:0 8px 22px #1f2a442e;cursor:ew-resize}
+.tool-kagojer-urojahaj .ku-resume{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);min-height:56px;font-size:20px}
+
+.tool-kagojer-urojahaj .ku-hud{position:absolute;inset:6px 8px auto;display:flex;justify-content:space-between;align-items:flex-start;gap:6px;pointer-events:none;font-family:var(--font-display);color:var(--ink)}
+.tool-kagojer-urojahaj .ku-hud>span{display:flex;align-items:baseline;gap:4px;padding:2px 9px;border-radius:999px;background:#fbfaf3d9;font-size:17px;font-weight:800;line-height:1.5}
+.tool-kagojer-urojahaj .ku-hud small{font-family:var(--font-bengali);font-size:11px;font-weight:600;color:var(--muted)}
+.tool-kagojer-urojahaj .ku-clouds [data-done=true]{color:var(--good)}
+.tool-kagojer-urojahaj .ku-dry{align-items:center!important}
+.tool-kagojer-urojahaj .ku-dry i{width:11px;height:11px;border:1.5px solid var(--accent);border-radius:3px;background:var(--paper)}
+.tool-kagojer-urojahaj .ku-dry[data-wet="1"] i:nth-of-type(1),.tool-kagojer-urojahaj .ku-dry[data-wet="2"] i:nth-of-type(-n+2),.tool-kagojer-urojahaj .ku-dry[data-wet="3"] i{background:var(--accent);border-radius:50% 50% 50% 0;transform:rotate(-45deg)}
+.tool-kagojer-urojahaj .ku-combo{position:absolute;left:50%;top:44px;transform:translateX(-50%);padding:2px 12px;border-radius:999px;background:var(--sun);font-family:var(--font-display);font-size:16px;font-weight:800;opacity:0;pointer-events:none}
+.tool-kagojer-urojahaj .ku-combo.ku-flash{animation:ku-flash .8s ease-out}
+@keyframes ku-flash{0%{opacity:0;transform:translate(-50%,6px) scale(.9)}15%{opacity:1;transform:translate(-50%,0) scale(1.05)}70%{opacity:1}100%{opacity:0}}
+.tool-kagojer-urojahaj .ku-hint{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:max-content;max-width:86%;margin:0;padding:10px 14px;border-radius:14px;background:#fbfaf3eb;font-size:15px;font-weight:600;line-height:1.5;text-align:center;pointer-events:none;box-shadow:0 4px 14px #1f2a4426}
+
+.tool-kagojer-urojahaj .ku-controls{display:grid;gap:6px}
+.tool-kagojer-urojahaj .ku-go{min-height:60px;font-family:var(--font-display);font-size:22px}
+.tool-kagojer-urojahaj .ku-goal{margin:0;font-size:13px;line-height:1.5;color:var(--muted);text-align:center}
+.tool-kagojer-urojahaj .ku-steer{grid-template-columns:1fr 1fr;gap:10px}
+.tool-kagojer-urojahaj .ku-arrow{display:flex;align-items:center;justify-content:center;gap:8px;min-height:60px;border:2px solid var(--accent);border-radius:16px;background:var(--paper);color:var(--accent-deep);font-family:var(--font-display);font-size:19px;font-weight:700;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
+.tool-kagojer-urojahaj .ku-arrow span{font-size:16px}
+.tool-kagojer-urojahaj .ku-arrow:active{background:#e3eef9;transform:scale(.97)}
+
+.tool-kagojer-urojahaj .ku-over{display:grid;justify-items:center;gap:4px;padding:10px 12px 12px;border-radius:16px;background:var(--paper);border:1.5px solid #d6dfea;text-align:center}
+.tool-kagojer-urojahaj .ku-over p{margin:0}
+.tool-kagojer-urojahaj .ku-over-kicker{font-family:var(--font-display);font-size:17px;font-weight:700;line-height:1.4}
+.tool-kagojer-urojahaj .ku-final{font-family:var(--font-display);font-size:22px;line-height:1.2;color:var(--accent)}
+.tool-kagojer-urojahaj .ku-final b{font-size:46px;color:var(--ink)}
+.tool-kagojer-urojahaj .ku-tally{font-size:14px;color:var(--muted)}
+.tool-kagojer-urojahaj .ku-near{font-weight:700;color:var(--accent-deep)}
+.tool-kagojer-urojahaj .ku-best,.tool-kagojer-urojahaj .ku-versus{font-size:15px;color:var(--muted)}
+.tool-kagojer-urojahaj .ku-versus{font-weight:700;color:var(--ink)}
+.tool-kagojer-urojahaj .ku-over-actions{display:flex;gap:8px;width:100%;margin-top:6px}
+.tool-kagojer-urojahaj .ku-over-actions button{flex:1;min-height:58px;padding-inline:10px;font-family:var(--font-display);font-size:20px;white-space:nowrap}
+.tool-kagojer-urojahaj .ku-over-actions .kit-primary{flex:1.4}
+
+.tool-kagojer-urojahaj .ku-toggles{display:flex;flex-wrap:wrap;gap:8px}
+.tool-kagojer-urojahaj .ku-toggles button{min-height:44px;padding:6px 14px;border:1.5px solid #b8c6d6;border-radius:999px;background:#fff;color:var(--ink);font-size:14px;font-weight:600}
+.tool-kagojer-urojahaj .ku-toggles button[aria-pressed=true]{border-color:var(--good);background:#e6f3e8}
+.tool-kagojer-urojahaj .ku-toggles .gx-sound{padding:6px}
+
+.tool-kagojer-urojahaj .ku-levels{border:1.5px solid #d6dfea;border-radius:14px;background:#fff}
+.tool-kagojer-urojahaj .ku-levels summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-kagojer-urojahaj .ku-levels summary span{font-weight:500;font-size:14px;color:var(--muted)}
+.tool-kagojer-urojahaj .ku-levels p{margin:0 14px 10px;font-size:14px;color:var(--muted)}
+.tool-kagojer-urojahaj .ku-levels .gx-levels{padding:0 12px 12px}
+
+.tool-kagojer-urojahaj .ku-result{scroll-margin-top:12px;padding-top:22px;border-top:2px solid var(--ink)}
+.tool-kagojer-urojahaj .ku-result h2{margin:0 0 4px;font-family:var(--font-display);font-size:clamp(24px,5vw,34px);line-height:1.4}
+.tool-kagojer-urojahaj .ku-result h2 em{font-style:normal;color:var(--accent)}
+.tool-kagojer-urojahaj .ku-result>p{margin:0 0 16px;color:var(--muted)}
+.tool-kagojer-urojahaj .ku-result-body{display:grid;gap:20px}
+.tool-kagojer-urojahaj .ku-share{display:grid;gap:16px;align-content:start}
+.tool-kagojer-urojahaj .ku-name{display:grid;gap:6px;font-weight:600}
+.tool-kagojer-urojahaj .ku-name small{font-weight:400;color:var(--muted);font-size:13px}
+.tool-kagojer-urojahaj .ku-name input{border:1.5px solid #b8c6d6;border-radius:12px;font-size:17px}
+
+.tool-kagojer-urojahaj .ku-guide h2{font-family:var(--font-display);margin-bottom:16px}
+.tool-kagojer-urojahaj .ku-guide>p{margin:-8px 0 16px;color:var(--muted)}
+.tool-kagojer-urojahaj .ku-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.tool-kagojer-urojahaj .ku-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-kagojer-urojahaj .ku-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--sun);font-weight:700}
+.tool-kagojer-urojahaj .ku-guide li p{margin:4px 0 0}
+
+@media(max-width:360px){
+  .tool-kagojer-urojahaj .ku-hud>span{padding:1px 7px;font-size:15px}
+  .tool-kagojer-urojahaj .ku-hud small{font-size:10px}
+  .tool-kagojer-urojahaj .ku-over-actions button{font-size:17px;padding-inline:6px}
+}
+@media(min-width:720px){
+  .tool-kagojer-urojahaj .ku-hero{padding:32px 0 18px}
+  .tool-kagojer-urojahaj .ku-friend{grid-template-columns:110px 1fr}
+  .tool-kagojer-urojahaj .ku-friend h2{font-size:20px}
+  .tool-kagojer-urojahaj .ku-result-body{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:32px}
+}
+@keyframes ku-fade{15%,70%{opacity:1}100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.tool-kagojer-urojahaj .ku-combo.ku-flash{animation-name:ku-fade}.tool-kagojer-urojahaj .ku-arrow:active{transform:none}}
