@@ -1,7 +1,8 @@
 import type { SiteContent } from "../../shared/site-types";
 
 export const site: SiteContent = {
-  slug: "koto-din-baki", socialImage: "/social/koto-din-baki.png",
+  // Same day as the "যাচাই করা: ১০ অক্টোবর ২০২৬" line in page.tsx.
+  slug: "koto-din-baki", socialImage: "/social/koto-din-baki.png", verified: "2026-10-10",
   name: "কত দিন বাকি?",
   title: "ঈদ কত দিন বাকি? — সব উৎসবের কাউন্টডাউন",
   description: "ঈদ, রমজান, দুর্গাপূজা, বড়দিন, বুদ্ধ পূর্ণিমা, পহেলা বৈশাখ, বিজয় দিবস বা নিজের কোনো দিন আর কত দিন বাকি, ক্যালেন্ডারের পাতায় দেখো। ফ্রি, অ্যাকাউন্ট লাগে না।",

@@ -9,8 +9,7 @@ export default function ChhokJoraPage() {
       <JsonLd site={site} />
       <div className="cj-page">
         <section className="cj-hero container" aria-labelledby="cj-title">
-          <p className="cj-hero-kicker">খাতার পাতার ডট-বক্স খেলা, এবার নকশিকাঁথায়</p>
-          <h1 id="cj-title">{site.headline}</h1>
+          <h1 id="cj-title"><span className="cj-hero-kicker">খাতার পাতার ডট-বক্স খেলা, এবার নকশিকাঁথায়</span> {site.headline}</h1>
           <p className="cj-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="ছক-জোড়া খেলো"><QuiltGame /></section>

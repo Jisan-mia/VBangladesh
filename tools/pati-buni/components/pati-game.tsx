@@ -461,9 +461,10 @@ export function PatiGame() {
             </div>
           </div>
         )}
+        <p className="screen-reader-only" aria-live="polite">{over && result ? `খেলা শেষ। ${bn(result.score)} পয়েন্ট, ${bn(result.rows)} সারি বোনা হলো। ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
         {over && (
           <div className="pb-overlay">
-            <div className="pb-note pb-slip" role="status">
+            <div className="pb-note pb-slip">
               <h2>আর জায়গা নেই!</h2>
               <p className="pb-final"><b>{bn(result.score)}</b> পয়েন্ট</p>
               <p className="pb-rows">{bn(result.rows)} সারি বোনা হলো</p>

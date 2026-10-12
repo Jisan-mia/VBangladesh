@@ -10,8 +10,7 @@ export default function DanguliPage() {
       <JsonLd site={site} />
       <div className="dg-page">
         <section className="dg-hero container" aria-labelledby="dg-title">
-          <p className="dg-hero-kicker">{site.name} · দুই চাপের দেশি খেলা</p>
-          <h1 id="dg-title">{site.headline}</h1>
+          <h1 id="dg-title"><span className="dg-hero-kicker">{site.name} · দুই চাপের দেশি খেলা</span> {site.headline}</h1>
           <p className="dg-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="ডাংগুলি খেলো"><DanguliGame /></section>

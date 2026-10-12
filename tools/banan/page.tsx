@@ -10,8 +10,7 @@ export default function BananPage() {
       <JsonLd site={site} />
       <div className="banan-page">
         <section className="banan-hero container" aria-labelledby="banan-title">
-          <p className="banan-kicker">১০টা সাইনবোর্ড · বাংলা একাডেমির বানান</p>
-          <h1 id="banan-title">কোন বানানটা <span>শুদ্ধ?</span></h1>
+          <h1 id="banan-title"><span className="banan-kicker">শুদ্ধ বানান কুইজ · ১০টা সাইনবোর্ড</span> কোন বানানটা <span>শুদ্ধ?</span></h1>
           <p className="banan-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="শুদ্ধ বানান বেছে নাও"><SignboardGame /></section>

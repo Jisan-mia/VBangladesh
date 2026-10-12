@@ -8,8 +8,7 @@ export default function BhagabhagiPage() {
     <JsonLd site={site} />
     <div className="bhagabhagi">
       <section className="split-hero container" aria-labelledby="split-title">
-        <p className="split-kicker">ট্যুরের হিসাবের খাতা · কক্সবাজার, সাজেক, মেসের মিল রেট</p>
-        <h1 id="split-title">ট্যুর শেষ, হিসাব বাকি?<br /><span>এক মিনিটে মিলিয়ে ফেলো</span></h1>
+        <h1 id="split-title"><span className="split-kicker">খরচ ভাগাভাগির হিসাব · কক্সবাজার, সাজেক, মেসের মিল রেট</span> ট্যুর শেষ, হিসাব বাকি?<br /><span>এক মিনিটে মিলিয়ে ফেলো</span></h1>
         <p className="split-lead">{site.lead}</p>
       </section>
       <section className="container" id="tool" aria-label="খরচের হিসাব"><SplitModes /></section>

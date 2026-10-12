@@ -4,6 +4,9 @@ import { getToolContent, toolSlugs } from '../../lib/tool-content';
 import robots from '../../app/robots';
 import sitemap from '../../app/sitemap';
 import { pageMetadata, siteMetadata, websiteSchema } from '../seo';
+import { hubOf, hubs } from '../../lib/hubs';
+
+const isApp = (node: { '@type'?: unknown }) => [node['@type']].flat().includes('WebApplication');
 
 const expectedSlugs = [
   'alpana', 'amar-chhotobela', 'bazar-note', 'bhagabhagi', 'bhara', 'bhashar-chhobi',
@@ -105,7 +108,8 @@ const expectedSlugs = [
   'pati-buni',
 ].sort();
 const origin = 'https://example.org';
-const expectedPaths = ['/', '/tools', '/about', '/privacy', ...expectedSlugs.flatMap(slug => [`/${slug}`, `/${slug}/guide`, `/${slug}/privacy`])];
+// Guide and per-tool privacy pages stay reachable but noindex, so only tool pages and category hubs are in the sitemap.
+const expectedPaths = ['/', '/tools', ...hubs.map(hub => `/${hub.slug}`), '/about', '/privacy', ...expectedSlugs.map(slug => `/${slug}`)];
 
 function withSiteUrl(value: string | undefined, check: () => void) {
   const previous = process.env.SITE_URL;
@@ -182,7 +186,7 @@ test('tool schemas describe one application at its route rather than twenty sepa
     const actual = toolSlugs.map(slug => {
       const graph = websiteSchema(contentFor(slug))['@graph'];
       return {
-        applications: graph.filter(node => node['@type'] === 'WebApplication').map(node => 'url' in node ? node.url : undefined),
+        applications: graph.filter(isApp).map(node => 'url' in node ? node.url : undefined),
         websites: graph.filter(node => node['@type'] === 'WebSite').length,
       };
     });
@@ -205,17 +209,21 @@ test('published breadcrumbs lead from the hub to the matching tool', () => {
       const breadcrumbs = websiteSchema(contentFor(slug))['@graph'].find(node => node['@type'] === 'BreadcrumbList');
       return breadcrumbs && 'itemListElement' in breadcrumbs ? breadcrumbs.itemListElement?.map(item => ({ ...item, item: new URL(item.item).href })) : undefined;
     });
-    const expected = toolSlugs.map(slug => [
-      { '@type': 'ListItem', position: 1, name: 'একটুখানি', item: `${origin}/` },
-      { '@type': 'ListItem', position: 2, name: contentFor(slug).name, item: `${origin}/${slug}` },
-    ]);
+    const expected = toolSlugs.map(slug => {
+      const hub = hubOf(slug);
+      return [
+        { '@type': 'ListItem', position: 1, name: 'একটুখানি', item: `${origin}/` },
+        ...(hub ? [{ '@type': 'ListItem', position: 2, name: hub.name, item: `${origin}/${hub.slug}` }] : []),
+        { '@type': 'ListItem', position: hub ? 3 : 2, name: contentFor(slug).name, item: `${origin}/${slug}` },
+      ];
+    });
     assert.deepEqual(actual, expected);
   });
 });
 
 test('unpublished application schema omits deployment URLs', () => {
   withSiteUrl(undefined, () => {
-    const urls = toolSlugs.flatMap(slug => websiteSchema(contentFor(slug))['@graph'].filter(node => node['@type'] === 'WebApplication').map(node => 'url' in node ? node.url : undefined));
+    const urls = toolSlugs.flatMap(slug => websiteSchema(contentFor(slug))['@graph'].filter(isApp).map(node => 'url' in node ? node.url : undefined));
     assert.deepEqual(urls, toolSlugs.map(() => undefined));
   });
 });
@@ -228,7 +236,12 @@ test('the published sitemap contains all sixty-three pages once under the public
 
 test('published robots point at the consolidated sitemap', () => {
   withSiteUrl(origin, () => {
-    assert.deepEqual(robots(), { rules: { userAgent: '*', allow: '/', disallow: '/api/' }, sitemap: `${origin}/sitemap.xml` });
+    const published = robots();
+    assert.equal(published.sitemap, `${origin}/sitemap.xml`);
+    const rules = [published.rules].flat();
+    assert.deepEqual(rules[0], { userAgent: '*', allow: '/', disallow: '/api/' });
+    // Training crawlers may read the site but not the personal share pages.
+    assert.ok(rules.some(rule => [rule.userAgent].flat().includes('GPTBot') && [rule.disallow].flat().includes('/s/')));
   });
 });
 

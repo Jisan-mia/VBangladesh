@@ -9,8 +9,7 @@ export default function BaicherNoukaPage() {
       <JsonLd site={site} />
       <div className="bn-page">
         <section className="bn-hero container" aria-labelledby="bn-title">
-          <p className="bn-hero-kicker">ছোটবেলার রেসিং গেম, এবার নদীতে</p>
-          <h1 id="bn-title">ঢোলের তালে বৈঠা, <span>সবার আগে ঘাটে!</span></h1>
+          <h1 id="bn-title"><span className="bn-hero-kicker">নৌকাবাইচ গেম · ছোটবেলার রেসিং, এবার নদীতে</span> ঢোলের তালে বৈঠা, <span>সবার আগে ঘাটে!</span></h1>
           <p className="bn-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="বাইচের নৌকা খেলো"><BaichGame /></section>

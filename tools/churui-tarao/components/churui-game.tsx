@@ -202,8 +202,9 @@ export function ChuruiGame() {
             <button type="button" className="kit-primary ct-go" onPointerDown={keepTap} onClick={() => setPhase("playing")}>চালিয়ে যাও</button>
           </div>
         )}
+        <p className="screen-reader-only" aria-live="polite">{phase === "over" && result ? `খেলা শেষ। ${bn(result.saved)}% ধান বাঁচল, ${bn(result.shooed)}টা চড়ুই তাড়ালে। ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
         {phase === "over" && result && (
-          <div className="ct-overlay ct-dim ct-over" role="status">
+          <div className="ct-overlay ct-dim ct-over">
             <p className="ct-kicker">{result.reason === 2 ? "সব ধান খেয়ে ফেলল!" : "সন্ধ্যা নামল, চড়ুইরা বাসায় ফিরল।"}</p>
             <p className="ct-big"><b>{bn(result.saved)}% ধান</b><span>বাঁচল, {bn(result.shooed)}টা চড়ুই হুশ!</span></p>
             <p className="ct-best">{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null ? `এই ফোনে সেরা: ${bn(best)}%` : ""}</p>

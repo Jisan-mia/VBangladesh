@@ -323,8 +323,9 @@ export function BaichGame() {
             <button type="button" className="kit-primary bn-go" onPointerDown={keepTap} onClick={resume}>চালিয়ে যাও</button>
           </div>
         )}
+        <p className="screen-reader-only" aria-live="polite">{phase === "over" && result ? `ঘাটে পৌঁছালে। ${ordinal(result.rank)} হলে, ${secs(result.tenths)} সেকেন্ডে।` : ""}</p>
         {phase === "over" && result && (
-          <div className="bn-overlay bn-finish" role="status">
+          <div className="bn-overlay bn-finish">
             <p className="bn-kicker">{result.rank === 1 ? "সবার আগে ঘাটে!" : "ঘাটে পৌঁছালে!"}</p>
             <p className="bn-headline">{ordinal(result.rank)} হলে, {secs(result.tenths)} সেকেন্ডে</p>
           </div>

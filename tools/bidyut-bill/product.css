@@ -168,3 +168,4 @@
   .bb-wheel>span,.bb-row-bar{transition:none}
   .bb-slot i{animation:none;transform:translateX(36px)}
 }
+.bb-hero h1 .bb-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 2px;font-size:14px;font-weight:600;color:var(--muted)}

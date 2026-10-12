@@ -1,12 +1,12 @@
 import type { SiteContent } from "../../shared/site-types";
-import { CHECKED } from "./lib/cpi";
+import { CHECKED, CHECKED_ON } from "./lib/cpi";
 import { bn, bnYear, createCard, FIRST_YEAR, LATEST_YEAR } from "./lib/tokhon";
 
 const latest = bnYear(LATEST_YEAR);
 const example = (year: number) => bn(createCard({ year, amount: 100, birth: false }).now);
 
 export const site: SiteContent = {
-  slug: "tokhon-ekhon", socialImage: "/social/tokhon-ekhon.png",
+  slug: "tokhon-ekhon", socialImage: "/social/tokhon-ekhon.png", verified: CHECKED_ON,
   name: "দাম তখন আর এখন",
   headline: "সেই ১০০ টাকা আজ কত টাকা?",
   title: "আগের দিনের দাম — সেই ১০০ টাকা আজ কত?",

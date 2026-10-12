@@ -9,8 +9,7 @@ export default function GpaPage() {
       <JsonLd site={site} />
       <div className="gpa-page">
         <section className="gpa-hero container" aria-labelledby="gpa-title">
-          <p className="gpa-kicker">এসএসসি · এইচএসসি · ৪র্থ বিষয়সহ</p>
-          <h1 id="gpa-title">তোমার জিপিএ <span>কত হলো?</span></h1>
+          <h1 id="gpa-title"><span className="gpa-kicker">জিপিএ ক্যালকুলেটর · এসএসসি, এইচএসসি, ৪র্থ বিষয়সহ</span> তোমার জিপিএ <span>কত হলো?</span></h1>
           <p className="gpa-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="জিপিএ হিসাব করো"><GpaBoard /></section>

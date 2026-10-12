@@ -13,8 +13,7 @@ export default function TakaKothayPage() {
       <JsonLd site={site} />
       <div className="tk-wrap">
         <section className="tk-hero container" aria-labelledby="tk-title">
-          <p className="tk-kicker">ধারাপাত · চেক আর ফর্মের জন্য</p>
-          <h1 id="tk-title">যেকোনো অঙ্ক, <span>কথায় লেখা</span></h1>
+          <h1 id="tk-title"><span className="tk-kicker">টাকা কথায় লেখো · চেক আর ফর্মের জন্য</span> যেকোনো অঙ্ক, <span>কথায় লেখা</span></h1>
           <p className="tk-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="টাকার অঙ্ক কথায় লেখো"><PrimerBuilder /></section>

@@ -141,3 +141,4 @@
   .tool-sap-ludu .sl-bubble{animation:sl-fade 3.2s linear forwards}
   .tool-sap-ludu :is(.sl-board,.sl-seats li,.sl-dice),.tool-sap-ludu .sl-toggle i::after{transition:none}
 }
+.tool-sap-ludu .sl-hero h1 .sl-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;color:var(--accent)}

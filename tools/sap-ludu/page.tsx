@@ -10,8 +10,7 @@ export default function SapLuduPage() {
       <JsonLd site={site} />
       <div className="sl-page">
         <section className="sl-hero container" aria-labelledby="sl-title">
-          <p className="sl-hero-kicker">{site.name} · এক ফোনে একা থেকে ৪ জন</p>
-          <h1 id="sl-title">{site.headline}</h1>
+          <h1 id="sl-title"><span className="sl-hero-kicker">{site.name} · এক ফোনে একা থেকে ৪ জন</span> {site.headline}</h1>
           <p className="sl-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="সাপলুডু খেলো"><SapLuduGame /></section>

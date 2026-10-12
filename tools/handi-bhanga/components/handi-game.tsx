@@ -441,9 +441,10 @@ export function HandiGame() {
               </div>
             </div>
           )}
+          <p className="screen-reader-only" aria-live="polite">{over && result ? `খেলা শেষ। ${bn(result.score)} পয়েন্ট। ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
           {over && (
             <div className="hb-overlay hb-block">
-              <div className="hb-note hb-slip" role="status">
+              <div className="hb-note hb-slip">
                 <h2>{result.won ? "দোকান সাফ!" : "চান্স শেষ!"}</h2>
                 <p className="hb-tally">{tallyLine(result.score)}</p>
                 <p className="hb-final"><b>{bn(result.score)}</b> পয়েন্ট</p>

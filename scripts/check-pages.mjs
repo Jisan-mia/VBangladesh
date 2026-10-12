@@ -9,7 +9,7 @@ assert.ok(['http:', 'https:'].includes(origin.protocol) && origin.pathname === '
 const publishedOrigin = publicOrigin(process.env.SITE_URL);
 const bengali = /[\u0980-\u09ff]/;
 const oldToolPort = /https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\]):(?:310[1-9]|311[0-3])(?:\/|$)/;
-const routes = ['/', '/tools', '/about', '/privacy', ...toolSlugs.flatMap(slug => [`/${slug}`, `/${slug}/guide`, `/${slug}/privacy`])];
+const routes = ['/', '/tools', '/games', '/quiz', '/hishab', '/utsob', '/about', '/privacy', ...toolSlugs.flatMap(slug => [`/${slug}`, `/${slug}/guide`, `/${slug}/privacy`])];
 const routeSet = new Set(routes);
 const uniqueValues = { title: new Map(), description: new Map(), heading: new Map() };
 const assets = new Set(['/icon.svg', '/fonts/bangla.woff2', '/fonts/latin.woff2']);
@@ -127,7 +127,7 @@ function checkToolSchema(html, slug) {
   const path = `/${slug}`;
   assert.match(html, /\bid="tool"/, `${path}: interactive tool section`);
   const nodes = schemaNodes(html);
-  const apps = nodes.filter(node => node['@type'] === 'WebApplication');
+  const apps = nodes.filter(node => [node['@type']].flat().includes('WebApplication'));
   assert.equal(apps.length, 1, `${path}: one WebApplication schema`);
   assert.equal(apps[0].url, publishedOrigin ? publishedOrigin + path : undefined, `${path}: application URL`);
   assert.equal(nodes.filter(node => node['@type'] === 'WebSite').length, 0, `${path}: tool is not a separate website`);

@@ -134,3 +134,4 @@
 }
 @media(hover:hover){.cg-switch:not(:disabled):hover{filter:brightness(1.06)}.cg-stepper button:not(:disabled):hover{background:#f2f7f5}}
 @media(prefers-reduced-motion:reduce){.cg-room,.cg-room::before,.cg-tube,.cg-lamp-glass,.cg-switch{transition:none}.cg-flame,.cg-halo{animation:none}}
+.cg-hero h1 .cg-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 2px;font-size:13px;font-weight:600;color:var(--accent)}

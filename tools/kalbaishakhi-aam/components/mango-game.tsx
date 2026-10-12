@@ -249,8 +249,9 @@ export function MangoGame() {
             <button type="button" className="kit-primary ka-go" onPointerDown={keepTap} onClick={() => setPhase("playing")}>চালিয়ে যাও</button>
           </div>
         )}
+        <p className="screen-reader-only" aria-live="polite">{phase === "over" && result ? `খেলা শেষ। ${bn(result.count)}টা আম, ${bn(result.score)} পয়েন্ট। ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
         {phase === "over" && result && (
-          <div className="ka-overlay ka-dim ka-over" role="status">
+          <div className="ka-overlay ka-dim ka-over">
             <p className="ka-kicker">{result.reason === 2 ? "তিনটা ডাল পড়ল ডালায়!" : "ঝড় থেমে গেল!"}</p>
             <p className="ka-big"><b>{bn(result.count)}টা আম</b><span>{bn(result.score)} পয়েন্ট</span></p>
             <p className="ka-best">{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null ? `এই ফোনে সেরা: ${bn(best)} পয়েন্ট` : ""}</p>

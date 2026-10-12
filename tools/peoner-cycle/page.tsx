@@ -9,8 +9,7 @@ export default function PeonerCyclePage() {
       <JsonLd site={site} />
       <div className="pc-page">
         <section className="pc-hero container" aria-labelledby="pc-title">
-          <p className="pc-hero-kicker">ছোটবেলার ব্রিক গেমের রেস, এবার গ্রামের পথে</p>
-          <h1 id="pc-title">ভোরের পথে চিঠি নিয়ে, <span>ক্রিং ক্রিং!</span></h1>
+          <h1 id="pc-title"><span className="pc-hero-kicker">ছোটবেলার ব্রিক গেমের রেস, এবার গ্রামের পথে</span> ভোরের পথে চিঠি নিয়ে, <span>ক্রিং ক্রিং!</span></h1>
           <p className="pc-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="পিয়নের সাইকেল খেলো"><CycleGame /></section>

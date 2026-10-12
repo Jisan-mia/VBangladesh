@@ -120,3 +120,4 @@
   .by-friend h2{font-size:26px}
 }
 @media(prefers-reduced-motion:reduce){.np-age{animation:none}.by-bars i{transition:none}}
+.boyos-hero h1 .boyos-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 6px;font-size:14px;font-weight:600;color:var(--accent)}

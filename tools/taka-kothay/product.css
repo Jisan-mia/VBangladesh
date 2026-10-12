@@ -76,3 +76,4 @@
 @media(min-width:900px){.tk-result-body{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}.tk-page{padding:20px 22px 20px 56px}}
 @media(prefers-reduced-motion:no-preference){.tk-words{animation:tk-ink .35s ease-out}}
 @keyframes tk-ink{from{opacity:.4;filter:blur(1px)}}
+.tk-hero h1 .tk-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 2px;font-size:14px;font-weight:600;color:var(--accent)}

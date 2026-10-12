@@ -9,8 +9,7 @@ export default function JomiPage() {
     <JsonLd site={site} />
     <div className="jomi-page">
       <section className="jomi-hero container" aria-labelledby="jomi-title">
-        <p className="jomi-kicker">আমিনের শিকল লাগবে না · সরকারি মান ধরে</p>
-        <h1 id="jomi-title">শতাংশ, কাঠা, বিঘা<br /><span>কোনটা কত?</span></h1>
+        <h1 id="jomi-title"><span className="jomi-kicker">জমির মাপ ক্যালকুলেটর · সরকারি মান ধরে</span> শতাংশ, কাঠা, বিঘা<br /><span>কোনটা কত?</span></h1>
         <p className="jomi-lead">{site.lead}</p>
       </section>
 

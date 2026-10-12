@@ -14,8 +14,7 @@ export default function PithaPage() {
       <JsonLd site={site} />
       <div className="pt-page">
         <section className="container pt-hero" aria-labelledby="pt-title">
-          <p className="pt-kicker">পিঠার কুইজ · ছবি দেখে নাম বলো · ১০টা পিঠা</p>
-          <h1 id="pt-title">শীতের পিঠা, <span>কয়টা চেনো?</span></h1>
+          <h1 id="pt-title"><span className="pt-kicker">পিঠার কুইজ · ছবি দেখে নাম বলো</span> শীতের পিঠা, <span>কয়টা চেনো?</span></h1>
         </section>
         <section className="container" id="tool" aria-label="পিঠা চেনার খেলা"><PithaStall /></section>
         <section className="container section pt-guide" id="guide" aria-labelledby="guide-title">

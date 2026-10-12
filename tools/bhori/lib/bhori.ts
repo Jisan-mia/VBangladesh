@@ -12,6 +12,8 @@
 import { possessive } from "../../../shared/bangla";
 
 export const CHECKED = "১০ অক্টোবর ২০২৬";
+// ISO twin of the date above for schema dateModified and sitemap lastmod; bump both together.
+export const CHECKED_ON = "2026-10-10";
 export const MAX_NAME_LENGTH = 20;
 /** Grams per পয়েন্ট × 100000. */
 const POINT_MICRO = 1215;

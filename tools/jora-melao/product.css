@@ -118,3 +118,4 @@
   .tool-jora-melao :is(.jm-tile,.jm-turn,.jm-cover){animation:none}
   .tool-jora-melao .jm-pop{animation:jm-fade 1.6s linear forwards}
 }
+.tool-jora-melao .jm-hero h1 .jm-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;color:var(--accent)}

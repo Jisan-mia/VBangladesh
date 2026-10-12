@@ -94,3 +94,4 @@
 }
 @media(hover:hover){.dh-chips button[data-mark=idle]:not(:disabled):hover{background:#ffc35a26}.dh-days button:not(:disabled):hover{border-color:var(--flame)}}
 @media(prefers-reduced-motion:reduce){.dh-flame,.dh-chips button{animation:none;transition:none}}
+.dh-hero h1 .dh-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 4px;font-size:14px;font-weight:600;color:var(--accent)}

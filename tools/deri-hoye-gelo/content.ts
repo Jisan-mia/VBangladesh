@@ -4,7 +4,7 @@ import type { SiteContent } from "../../shared/site-types";
 export const site: SiteContent = {
   slug: "deri-hoye-gelo", socialImage: "/social/deri-hoye-gelo.png",
   name: "দেরি হয়ে গেল!",
-  title: "লাফ দেওয়ার বাংলা গেম — দেরি হয়ে গেল!",
+  title: "লাফের গেম — দেরি হয়ে গেল! লাফিয়ে স্কুলে চলো",
   description: "স্কুলে দেরি, ঘণ্টা বাজছে! চাপ দিলে লাফ: কাদাপানি, গরু, সাইকেল টপকাও, গামছার নিচে মাথা নোয়াও। কত মিটার যাও দেখো। ফ্রি, অ্যাকাউন্ট লাগে না।",
   lead: "গেট এখনো ১০০০ মিটার দূরে। চাপ দিলে লাফ, নিচে টানলে মাথা নিচু।",
   cta: "শুরু করো",

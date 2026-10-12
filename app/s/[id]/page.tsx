@@ -8,19 +8,28 @@ import { HubFrame } from '../../../shared/site-shell';
 
 type Props = { params: Promise<{ id: string }> };
 
-async function load({ params }: Props) {
+async function find({ params }: Props) {
   const { id } = await params;
   const row = getShare(id);
   const share = row ? toolShare(row.tool) : null;
   const site = row ? getToolContent(row.tool) : undefined;
-  if (!row || !share || !site) notFound();
-  return { id, site, href: `/${row.tool}#${row.state}`, preview: share.preview(row.state) };
+  return row && share && site ? { id, site, href: `/${row.tool}#${row.state}`, preview: share.preview(row.state) } : null;
+}
+
+async function load(props: Props) {
+  const found = await find(props);
+  if (!found) notFound();
+  return found;
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
-  const { id, site, preview } = await load(props);
-  // Personal previews are for chat apps, not search results.
-  return { ...siteMetadata({ title: preview.title, description: preview.description, path: `/s/${id}`, image: site.socialImage }), robots: { index: false, follow: false } };
+  // A missing card gets plain metadata here; the page itself shows the friendly not-found screen.
+  const found = await find(props);
+  if (!found) return { title: 'কার্ডটা আর নেই | একটুখানি', robots: { index: false, follow: true } };
+  const { id, site, preview } = found;
+  // Personal previews are for chat apps, not search results: noindex, no canonical, links still followed.
+  const metadata = siteMetadata({ title: preview.title, description: preview.description, path: `/s/${id}`, image: site.socialImage, noindex: true });
+  return { ...metadata, alternates: undefined };
 }
 
 export default async function SharedCard(props: Props) {

@@ -128,3 +128,4 @@
   .cr-friend h2{font-size:20px}
 }
 @media(prefers-reduced-motion:reduce){.cr-slip,.cr-turn-note{animation:none}.cr-shoot[data-on=true]{transform:none}}
+.cr-hero h1 .cr-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;line-height:1.5;color:var(--accent)}

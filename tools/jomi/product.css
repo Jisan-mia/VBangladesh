@@ -83,3 +83,12 @@
   .jomi-result-body{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}
 }
 @media(prefers-reduced-motion:reduce){.jomi-list{transition:none}}
+.jomi-hero h1 .jomi-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 4px;font-size:14px;font-weight:600;color:var(--accent)}
+.jomi-sides{font-size:14px;color:var(--muted)}
+.jomi-sides summary{min-height:44px;display:flex;align-items:center;font-weight:700;color:var(--accent-deep);cursor:pointer}
+.jomi-sides-row{display:flex;align-items:end;gap:8px}
+.jomi-sides-row label{flex:1;min-width:0;display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:6px;font-weight:600}
+.jomi-sides-row label input{grid-column:1;min-height:48px;width:100%;font-size:20px;font-weight:700}
+.jomi-sides-row label small{grid-column:2;grid-row:2}
+.jomi-sides-row>span{padding-bottom:12px;font-size:20px;font-weight:700}
+.jomi-sides p{margin:8px 0 0;line-height:1.5}

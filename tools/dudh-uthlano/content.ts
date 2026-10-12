@@ -3,7 +3,7 @@ import type { SiteContent } from "../../shared/site-types";
 export const site: SiteContent = {
   slug: "dudh-uthlano", socialImage: "/social/dudh-uthlano.png",
   name: "দুধ উথলানোর আগে",
-  title: "দুধ উথলানোর খেলা — ফোনে মজার বাংলা গেম",
+  title: "দুধ উথলানোর খেলা — ঠিক সময়ে পাতিল নামাও",
   description: "চুলায় পাঁচটা পাতিল, ফেনা উঠছে। উথলানোর ঠিক আগে নামাও, কিনারার যত কাছে তত নম্বর। বন্ধুকে একই পাতিলে চ্যালেঞ্জ দাও। ফ্রি, অ্যাকাউন্ট লাগে না।",
   lead: "চেপে ধরো, ফেনা কিনারায় ওঠার ঠিক আগে ছাড়ো। যত কাছে, তত নম্বর।",
   cta: "খেলা শুরু করো",

@@ -10,8 +10,7 @@ export default function BharaPage() {
     <JsonLd site={site} />
     <div className="bhara">
       <section className="bhara-hero container" aria-labelledby="bhara-title">
-        <p className="bhara-kicker">ঢাকা মেট্রোরেল · উত্তরা উত্তর থেকে মতিঝিল</p>
-        <h1 id="bhara-title">মেট্রোতে যাচ্ছ?<br /><span>ভাড়াটা দেখে নাও</span></h1>
+        <h1 id="bhara-title"><span className="bhara-kicker">মেট্রো রেলের ভাড়া · উত্তরা উত্তর থেকে মতিঝিল</span> মেট্রোতে যাচ্ছ?<br /><span>ভাড়াটা দেখে নাও</span></h1>
         <p className="bhara-lead">{site.lead} <a href="#chart">পুরো ভাড়ার তালিকা ↓</a></p>
       </section>
 

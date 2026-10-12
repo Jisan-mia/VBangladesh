@@ -10,8 +10,7 @@ export default function NamerDesignPage() {
       <JsonLd site={site} />
       <div className="namer-page">
         <section className="container namer-hero" aria-labelledby="namer-title">
-          <p className="namer-hero-kicker">বাংলা নাম স্টাইল · ৮টা ঢং</p>
-          <h1 id="namer-title">{site.headline}</h1>
+          <h1 id="namer-title"><span className="namer-hero-kicker">বাংলা নাম স্টাইল · ৮টা ঢং</span> {site.headline}</h1>
           <p className="namer-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="নাম সাজাও"><NameStudio /></section>

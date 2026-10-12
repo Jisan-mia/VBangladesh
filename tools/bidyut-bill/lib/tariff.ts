@@ -55,6 +55,7 @@ export const tariffInfo = {
   order: "বিইআরসির ৩ জুন ২০২৬-এর আদেশ (স্মারক ২৮.০১.০০০০.০১২.০৪.০০৩.২৬.২৫২১), ৪ জুন ২০২৬-এ সংশোধিত (স্মারক …২৫৬৯)",
   short: "বিইআরসির দর, বিল মাস জুন ২০২৬",
   checked: "১১ অক্টোবর ২০২৬",
+  checkedOn: "2026-10-11", // ISO twin of `checked` for schema and sitemap; bump both together.
   sources: [
     { label: "বিইআরসি: খুচরা মূল্যহার পুনর্নির্ধারণ, ৩ জুন ২০২৬ + লাইফলাইন ও প্রথম ধাপের সংশোধন, ৪ জুন ২০২৬ (পিডিএফ)", url: "https://objectstorage.ap-dcc-gazipur-1.oraclecloud15.com/n/axvjbnqprylg/b/V2Ministry/o/office-dpdc/2026/5/a54abcb7-19d9-4b7a-92d7-fe738615f3f5.pdf" },
     { label: "ডিপিডিসি: ট্যারিফ হার (বিল মাস জুন ২০২৬ থেকে)", url: "https://dpdc.gov.bd/pages/static-pages/6922de6f933eb65569e1a9c4" },

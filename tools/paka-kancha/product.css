@@ -112,3 +112,4 @@
   .tool-paka-kancha .pk-friend{grid-template-columns:96px 1fr}
   .tool-paka-kancha .pk-friend h2{font-size:20px}
 }
+.tool-paka-kancha .pk-hero h1 .pk-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;color:var(--accent)}

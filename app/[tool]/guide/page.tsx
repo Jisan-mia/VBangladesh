@@ -7,7 +7,7 @@ import { pageMetadata } from '../../../shared/seo';
 export async function generateMetadata({ params }: { params: Promise<{ tool: string }> }) {
   const site = getToolContent((await params).tool);
   if (!site) notFound();
-  return pageMetadata(site, { title: `${site.guideTitle} | ${site.name}`, description: site.guideIntro, path: '/guide' });
+  return pageMetadata(site, { title: `${site.guideTitle} | ${site.name}`, description: site.guideIntro, path: '/guide', noindex: true });
 }
 
 export default async function GuidePage({ params }: { params: Promise<{ tool: string }> }) {

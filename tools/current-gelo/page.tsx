@@ -9,8 +9,7 @@ export default function CurrentGeloPage() {
       <JsonLd site={site} />
       <div className="cg-page">
         <section className="cg-hero container" aria-labelledby="cg-title">
-          <p className="cg-hero-kicker">লোডশেডিংয়ের খাতা · শুধু তোমার হিসাব</p>
-          <h1 id="cg-title">আজ কত ঘণ্টা <span>কারেন্ট ছিল না?</span></h1>
+          <h1 id="cg-title"><span className="cg-hero-kicker">লোডশেডিংয়ের খাতা · শুধু তোমার হিসাব</span> আজ কত ঘণ্টা <span>কারেন্ট ছিল না?</span></h1>
           <p className="cg-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="লোডশেডিংয়ের হিসাব রাখো"><PowerLog /></section>

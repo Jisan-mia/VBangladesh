@@ -4,7 +4,7 @@ import type { SiteContent } from "../../shared/site-types";
 export const site: SiteContent = {
   slug: "baicher-nouka", socialImage: "/social/baicher-nouka.png",
   name: "বাইচের নৌকা",
-  title: "নৌকাবাইচের বাংলা গেম: বাইচের নৌকা",
+  title: "নৌকাবাইচ গেম — ঢোলের তালে বাইচের নৌকা",
   description: "নদীতে নৌকাবাইচ! ঢোলের তালে চাপো, নৌকা ছুটবে। বাঁয়ে-ডানে সরে কচুরিপানা এড়াও, পাশের তিন নৌকাকে পেছনে ফেলো। ফোনেই খেলো, ফ্রি, অ্যাকাউন্ট লাগে না।",
   lead: "ঢোল বাজলেই মাঝখানে চাপো, নৌকা ছুটবে। কচুরিপানা দেখলে বাঁয়ে-ডানে সরে যাও।",
   cta: "শুরু করো",

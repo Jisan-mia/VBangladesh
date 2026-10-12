@@ -8,8 +8,7 @@ export default function BazarNotePage() {
     <JsonLd site={site} />
     <div className="bazar">
       <section className="bazar-hero container" aria-labelledby="bazar-title">
-        <p className="bazar-kicker">বাজারের লিস্ট · সাপ্তাহিক, মাসের, রোজার, ঈদের</p>
-        <h1 id="bazar-title">বাজারে কী কী আনতে হবে?<br /><span>ফর্দটা লিখে পাঠাও</span></h1>
+        <h1 id="bazar-title"><span className="bazar-kicker">বাজারের লিস্ট · সাপ্তাহিক, মাসের, রোজার, ঈদের</span> বাজারে কী কী আনতে হবে?<br /><span>ফর্দটা লিখে পাঠাও</span></h1>
         <p className="bazar-lead">{site.lead}</p>
       </section>
       <section className="container" id="tool" aria-label="বাজারের ফর্দ"><FordoBuilder /></section>

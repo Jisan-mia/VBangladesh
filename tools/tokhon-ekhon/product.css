@@ -116,3 +116,4 @@
 }
 @media(hover:hover){.te-chips button:hover,.te-nudge:hover{border-color:var(--cream)}}
 @media(prefers-reduced-motion:reduce){.te-note{transition:none}}
+.tokhon-hero h1 .tokhon-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 4px;font-size:14px;font-weight:600;color:var(--accent)}

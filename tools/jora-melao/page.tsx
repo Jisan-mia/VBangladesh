@@ -9,8 +9,7 @@ export default function JoraMelaoPage() {
       <JsonLd site={site} />
       <div className="jm-page">
         <section className="jm-hero container" aria-labelledby="jm-title">
-          <p className="jm-hero-kicker">{site.name} · একা বা দুজনে</p>
-          <h1 id="jm-title">{site.headline}</h1>
+          <h1 id="jm-title"><span className="jm-hero-kicker">মেমোরি গেম · একা বা দুজনে</span> {site.headline}</h1>
           <p className="jm-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="জোড়া মেলাও খেলো"><PairsGame /></section>

@@ -98,3 +98,4 @@
   .khata-flames svg{animation:none}
   .khata-left,.khata-answer{transition:none}
 }
+.flames-hero h1 .flames-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 2px;font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.02em}

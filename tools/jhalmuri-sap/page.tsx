@@ -9,8 +9,7 @@ export default function JhalmuriSapPage() {
       <JsonLd site={site} />
       <div className="js-page">
         <section className="js-hero container" aria-labelledby="js-title">
-          <p className="js-hero-kicker">পুরোনো দিনের সাপের গেম, এবার ঠোঙায়</p>
-          <h1 id="js-title">সাপটা ঝালমুড়ি খাবে, <span>তুমি চালাও</span></h1>
+          <h1 id="js-title"><span className="js-hero-kicker">পুরোনো দিনের সাপের গেম, এবার ঠোঙায়</span> সাপটা ঝালমুড়ি খাবে, <span>তুমি চালাও</span></h1>
           <p className="js-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="ঝালমুড়ি সাপ খেলো"><SnakeGame /></section>
