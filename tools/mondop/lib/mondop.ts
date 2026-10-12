@@ -139,7 +139,7 @@ export function tourLine(count: number, picked: readonly MomentId[]) {
   if (has("mela")) return "মেলার নাগরদোলা আর মাটির খেলনা, ছোটবেলা ফিরে এল।";
   if (has("arati")) return "সন্ধ্যার আরতির আলো চোখে লেগে থাকবে অনেক দিন।";
   if (has("anjali")) return "সকালের অঞ্জলি, নতুন জামা, ঢাকের শব্দ। পূজা মানেই এই।";
-  if (has("bondhu")) return "বন্ধুর সাথে মণ্ডপে, উৎসবটা সবার।";
+  if (has("bondhu")) return "বন্ধুর সাথে মণ্ডপে ঘোরার মজাই আলাদা।";
   if (count <= 3) return "অল্প কয়টা, কিন্তু প্রতিটা মণ্ডপই মনে থাকবে।";
   return "ঢাকের তালে তালে মণ্ডপ থেকে মণ্ডপে।";
 }
@@ -156,7 +156,7 @@ export function cardHeadline(name: string) {
 
 /** Link preview: name and count only. Pandal names stay out of previews on purpose. */
 export function previewTitle(tour: Pick<Tour, "count" | "name">) {
-  return `${tour.name || "এক বন্ধু"} এবার পূজায় ${bn(tour.count)}টা মণ্ডপ ঘুরেছে — তুমি কয়টা ঘুরলে?`;
+  return `${tour.name || "এক বন্ধু"} এবার পূজায় ${bn(tour.count)}টা মণ্ডপ ঘুরেছে। তুমি কয়টা ঘুরলে?`;
 }
 
 /** What everyone's opt-in counts say, once enough people have joined; null until then. */

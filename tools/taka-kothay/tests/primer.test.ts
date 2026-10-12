@@ -23,8 +23,8 @@ test("hostile or unrelated hashes are ignored", () => {
 
 test("the margin note follows the number", () => {
   assert.equal(humanLine(primer(25_00_00_000)), "এত শূন্য! গুনতে গুনতে চা ঠান্ডা।");
-  assert.equal(humanLine(primer(39_000)), "ঊনচল্লিশ — এই বানানে কতজন আটকায়!");
-  assert.equal(humanLine(primer(1_289)), "ঊননব্বই — এই বানানে কতজন আটকায়!");
+  assert.equal(humanLine(primer(39_000)), "ঊনচল্লিশ: এই বানানে কতজন আটকায়!");
+  assert.equal(humanLine(primer(1_289)), "ঊননব্বই: এই বানানে কতজন আটকায়!");
   assert.equal(humanLine(primer(50_000)), "গোল সংখ্যা, মন খুশি।");
   assert.equal(humanLine(primer(500)), "গোল সংখ্যা, মন খুশি।");
   assert.equal(humanLine(primer(1_999)), "নিরানব্বইয়ের ধাক্কা, আরেকটু হলেই গোল!");

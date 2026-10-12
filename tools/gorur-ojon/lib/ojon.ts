@@ -183,7 +183,7 @@ export function packetText(cow: Cow) {
 
 export function bowlLine(cow: Cow) {
   const count = packetCount(cow.meat, cow.split, cow.packet);
-  if (count === 1) return "একটা প্যাকেট, তবু কারও দরজায় ঈদের খুশি পৌঁছাবে।";
+  if (count === 1) return "একটা প্যাকেট হলেও একজনের দরজায় পৌঁছাবে।";
   if (count > 1) return `${bn(count)}টা প্যাকেট মানে ${bn(count)}বার কারও দরজায় কড়া নাড়া।`;
   return "ভাগ কীভাবে হবে, সেটা তোমাদের পরিবারই ঠিক করবে।";
 }
@@ -191,5 +191,5 @@ export function bowlLine(cow: Cow) {
 export function previewTitle(cow: Cow) {
   if (cow.card === "bhag") return `${cow.name ? `${possessive(cow.name)} ভাগ: ` : ""}${shareEquation(cow)}${packetText(cow) ? ` · ${packetText(cow)}` : ""}`;
   const weight = weightOf(cow);
-  return `${cow.name ? possessive(cow.name) : "এই গরুর"} ওজন প্রায় ${monText(weight.mon)} মণ (${kgText(weight.kg)} কেজি) — তোমাদেরটা কত?`;
+  return `${cow.name ? possessive(cow.name) : "এই গরুর"} ওজন প্রায় ${monText(weight.mon)} মণ (${kgText(weight.kg)} কেজি)। তোমাদেরটা কত?`;
 }

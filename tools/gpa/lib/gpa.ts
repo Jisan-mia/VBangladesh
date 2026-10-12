@@ -128,8 +128,8 @@ export const bn = (value: number) => plain.format(value);
 export function humanLine(value: Score) {
   if (value.failed) return "এবার হয়নি। আবার হবে।";
   if (value.gpa >= 5) return "সব রাত জাগার দাম আজ মিলল।";
-  if (value.gpa >= 4) return "দারুণ! পরের ধাপে আরও ভালো হবে।";
-  return "নম্বর একটা সংখ্যা। তুমি তার চেয়ে অনেক বড়।";
+  if (value.gpa >= 4) return "খুব ভালো হয়েছে। এবার একটু জিরিয়ে নাও।";
+  return "জিপিএ একটা সংখ্যাই, তোমার পুরোটা না।";
 }
 
 export function cleanName(name: string) {
@@ -173,7 +173,7 @@ export function previewTitle(result: Result) {
   const value = score(result);
   const who = result.name ? possessive(result.name) : "বন্ধুর";
   if (value.failed) return `${result.name || "বন্ধু"} বলছে: পরের বার দেখিয়ে দেব`;
-  return `${who} জিপিএ ${bnGpa(value.gpa)} — তোমারটা হিসাব করো`;
+  return `${who} জিপিএ ${bnGpa(value.gpa)}। তোমারটা হিসাব করো`;
 }
 
 export { possessive };

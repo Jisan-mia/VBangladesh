@@ -43,8 +43,8 @@ test("names and pandal names are NFC, cleaned and capped", () => {
 });
 
 test("previews carry the name and count, never pandal names; the tally is fixed ids only", () => {
-  assert.equal(previewTitle(tour), "রাফি এবার পূজায় ১১টা মণ্ডপ ঘুরেছে — তুমি কয়টা ঘুরলে?");
-  assert.equal(previewTitle({ count: 3, name: "" }), "এক বন্ধু এবার পূজায় ৩টা মণ্ডপ ঘুরেছে — তুমি কয়টা ঘুরলে?");
+  assert.equal(previewTitle(tour), "রাফি এবার পূজায় ১১টা মণ্ডপ ঘুরেছে। তুমি কয়টা ঘুরলে?");
+  assert.equal(previewTitle({ count: 3, name: "" }), "এক বন্ধু এবার পূজায় ৩টা মণ্ডপ ঘুরেছে। তুমি কয়টা ঘুরলে?");
   const preview = share.preview(shareHash(tour).slice(1));
   assert.doesNotMatch(preview.title + preview.description, /ঢাকেশ্বরী|বনানী/);
   assert.deepEqual(share.tally, [...moments.map(moment => moment.id), ...buckets.map(bucket => bucket.id)]);
@@ -69,7 +69,7 @@ test("the human line, the friend line and the sign-off", () => {
   assert.equal(tourLine(5, ["dhunuchi", "dhak"]), "ধুনুচির ধোঁয়া আর ঢাকের তাল, রাতটা জমে গেছে।");
   assert.equal(tourLine(40, ["prasad"]), "পা ব্যথা, মন ভরা। এবার প্রায় পুরো শহর ঘোরা হলো।");
   assert.equal(tourLine(2, []), "অল্প কয়টা, কিন্তু প্রতিটা মণ্ডপই মনে থাকবে।");
-  assert.equal(tourLine(2, ["bondhu"]), "বন্ধুর সাথে মণ্ডপে, উৎসবটা সবার।");
+  assert.equal(tourLine(2, ["bondhu"]), "বন্ধুর সাথে মণ্ডপে ঘোরার মজাই আলাদা।");
   assert.deepEqual(toggleMoment(toggleMoment(["mela"], "arati"), "mela"), ["arati"]);
   assert.equal(friendLine(7, { ...tour, name: "রিমা" }), "রিমা ১১টা · আমি ৭টা");
   assert.equal(friendLine(7, { ...tour, name: "" }), "বন্ধু ১১টা · আমি ৭টা");

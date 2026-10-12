@@ -81,11 +81,11 @@ export const tripLine = (trip: Trip) => `${mode(trip.mode).by} ${bn(trip.hours)}
 /** The warm line on the card, picked from the person's own hours. */
 export function humanLine({ hours, onTheWay, mode: how }: Trip) {
   if (onTheWay) return hours >= 10 ? "এত লম্বা পথ, তবু মনটা আগেই বাড়ি পৌঁছে গেছে।" : "আর একটু! বাড়িতে চুলায় হাঁড়ি চড়ে গেছে।";
-  if (hours > 20) return "প্রায় এক দিনের পথ! তবু উঠানে পা রাখতেই সব ক্লান্তি উধাও।";
+  if (hours > 20) return "প্রায় এক দিনের পথ। তবু উঠানে পা রাখতেই ক্লান্তি উধাও।";
   if (hours > 12) return "লম্বা পথ, শেষে মায়ের হাতের রান্না।";
   if (hours > 7) return how === "launch" ? "রাতভর নদী, ভোরে ঘাটে নামতেই বাড়ির গন্ধ।" : "পথটা লম্বা, তবু জানালার বাইরে সবুজ দেখতে দেখতেই শেষ।";
   if (hours > 3) return "এক ঘুমেই পথ শেষ, চোখ খুলেই বাড়ির উঠান।";
-  return "চোখের পলকে বাড়ি! বাকিরা একটু হিংসা করবে।";
+  return "চোখের পলকে বাড়ি। বাকিরা একটু হিংসা করবে।";
 }
 
 /** A joke estimate, said as one: about one "কতদূর এলি?" call from home every two hours. */

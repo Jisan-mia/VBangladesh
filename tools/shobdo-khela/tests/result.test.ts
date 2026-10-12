@@ -44,7 +44,7 @@ test('share links round-trip and reject hostile input', () => {
 
 test('the link preview is personal and the tally only lists fixed puzzle ids', () => {
   const state = shareHash({ date: DAY, rows: [{ mark: 'g', tiles: 2 }, { mark: 's', tiles: 3 }], streak: 0, name: 'রাফি' }).slice(1);
-  assert.equal(share.preview(state).title, 'রাফি ১০ অক্টোবরের শব্দজটে ২টার মধ্যে ১টা পেরেছে — তুমি কয়টা পারো?');
+  assert.equal(share.preview(state).title, 'রাফি ১০ অক্টোবরের শব্দজটে ২টার মধ্যে ১টা পেরেছে। তুমি কয়টা পারো?');
   assert.match(share.preview('d=2026-10-10&r=g2').title, /^এক বন্ধু/);
   assert.equal(share.tally?.length, bank.length * 2);
   assert.ok(share.tally?.includes('seen:kite') && share.tally.includes('kite'));

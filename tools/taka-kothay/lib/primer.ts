@@ -34,7 +34,7 @@ export function humanLine({ amount, formal }: Primer) {
   const words = banglaAmount(amount, { formal });
   if (taka >= 10_000_000) return "এত শূন্য! গুনতে গুনতে চা ঠান্ডা।";
   const tricky = UN_WORDS.find(word => words.includes(word));
-  if (tricky) return `${tricky} — এই বানানে কতজন আটকায়!`;
+  if (tricky) return `${tricky}: এই বানানে কতজন আটকায়!`;
   if (words.includes("নিরানব্বই")) return "নিরানব্বইয়ের ধাক্কা, আরেকটু হলেই গোল!";
   if (taka === 0 && paisa === 0) return "শূন্য টাকা, তবু লিখতে জানা ভালো।";
   if (paisa) return "পয়সাও বাদ যায়নি, হিসাব একদম পাক্কা।";
