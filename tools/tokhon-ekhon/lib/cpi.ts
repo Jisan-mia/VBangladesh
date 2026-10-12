@@ -56,6 +56,17 @@ export const SOURCE_URL = "https://data.worldbank.org/indicator/FP.CPI.TOTL?loca
 /** The World Bank's own "lastupdated" for this series (2026-10-08). */
 export const WB_UPDATED = "৮ অক্টোবর ২০২৬";
 /** Shown as "যাচাই করা: …" next to every result. */
-export const CHECKED = "১১ অক্টোবর ২০২৬";
+export const CHECKED = "১২ অক্টোবর ২০২৬";
 // ISO twin of the date above for schema dateModified and sitemap lastmod; bump both together.
-export const CHECKED_ON = "2026-10-11";
+export const CHECKED_ON = "2026-10-12";
+
+/*
+ * "Now" is the current year, which has no annual average yet. Its price level is the latest annual average
+ * carried forward by BBS's latest point-to-point inflation (September 2026: 8.34%, released 7 October 2026).
+ * Update monthly or yearly: change the rate, month and link; once the World Bank publishes the 2026 average,
+ * add it to CPI above and move NOW_YEAR on.
+ */
+export const NOW_YEAR = 2026;
+export const NOW_INFLATION = 8.34;
+export const NOW_AS_OF = "সেপ্টেম্বর ২০২৬";
+export const NOW_SOURCE_URL = "https://www.bssnews.net/business/432352";

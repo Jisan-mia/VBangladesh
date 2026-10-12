@@ -1,10 +1,14 @@
-import { CPI } from "./cpi";
+import { CPI, NOW_AS_OF, NOW_INFLATION, NOW_YEAR } from "./cpi";
 
 const dataYears = Object.keys(CPI).map(Number).sort((a, b) => a - b);
 export const FIRST_YEAR = dataYears[0];
-/** "Now" is the latest year in the data, never the phone's clock. */
-export const LATEST_YEAR = dataYears[dataYears.length - 1];
-/** Years you can pick: every year in the data before the latest one. */
+/** The newest full-year average in the data (the base for "now"). */
+export const LAST_FULL_YEAR = dataYears[dataYears.length - 1];
+/** "Now" is a fixed year from cpi.ts, never the phone's clock. */
+export const LATEST_YEAR = NOW_YEAR;
+/** Price level per year: the annual averages, plus "now" estimated from the latest full year and current inflation. */
+export const LEVEL: Readonly<Record<number, number>> = { ...CPI, [NOW_YEAR]: CPI[LAST_FULL_YEAR] * (1 + NOW_INFLATION / 100) };
+/** Years you can pick: every full year in the data. */
 export const years = dataYears.filter(year => year < LATEST_YEAR);
 export const amounts = [10, 100, 1000] as const;
 export type Amount = (typeof amounts)[number];
@@ -19,9 +23,9 @@ const decimal = new Intl.NumberFormat("bn-BD", { maximumFractionDigits: 1 });
 export const bn = (value: number) => grouped.format(value);
 export const bnYear = (value: number) => plain.format(value);
 
-/** What `amount` taka of `from` costs in `to`, by the average consumer price index: amount × CPI(to) ÷ CPI(from). */
+/** What `amount` taka of `from` costs in `to`, by the consumer price index: amount × level(to) ÷ level(from). */
 export function worth(amount: number, from: number, to = LATEST_YEAR) {
-  const then = CPI[from], now = CPI[to];
+  const then = LEVEL[from], now = LEVEL[to];
   if (!then || !now) throw new RangeError("এই সালের হিসাব নেই।");
   return (amount * now) / then;
 }
@@ -36,7 +40,7 @@ export function roughly(value: number) {
 /** How many fresh notes the wallet shows for "now": the price multiple, rounded, between 1 and 12. */
 export const noteCount = (times: number) => Math.min(12, Math.max(1, Math.round(times)));
 
-/** "গড় দাম বেড়েছে প্রায় ৬.৭ গুণ"; under 1.5× a percentage reads better ("প্রায় ৯%"). */
+/** "গড় দাম বেড়েছে প্রায় ৭.৩ গুণ"; under 1.5× a percentage reads better ("প্রায় ৮%"). */
 export function growthText(times: number) {
   return times < 1.5 ? `গড় দাম বেড়েছে প্রায় ${bn(Math.round((times - 1) * 100))}%` : `গড় দাম বেড়েছে প্রায় ${decimal.format(times)} গুণ`;
 }
@@ -86,12 +90,12 @@ export function createCard(shared: Shared): Card {
     headline: `${bnYear(shared.year)} সালের ${bn(shared.amount)} টাকা`,
     sentence: `${bnYear(shared.year)} সালের ${bn(shared.amount)} টাকা ≈ এখনকার ${bn(now)} টাকা`,
     growth: growthText(times),
-    basis: `${bnYear(LATEST_YEAR)}-এর গড় দামের হিসাবে আনুমানিক`,
+    basis: `${NOW_AS_OF}-এর দামে আনুমানিক`,
     line: humanLine(shared),
   };
 }
 
-/** Link-preview and post text, e.g. "আমার জন্মসাল ১৯৯৫: তখনকার ১০০ টাকা এখন প্রায় ৬৭০ টাকা". */
+/** Link-preview and post text, e.g. "আমার জন্মসাল ১৯৯৫: তখনকার ১০০ টাকা এখন প্রায় ৭২৬ টাকা". */
 export function previewTitle(shared: Shared) {
   const card = createCard(shared);
   return shared.birth
