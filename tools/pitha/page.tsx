@@ -25,7 +25,7 @@ export default function PithaPage() {
         </section>
         <section className="container section pt-list" aria-labelledby="list-title">
           <h2 id="list-title">৩০টা পিঠার নাম, ২০টার ছবিসহ</h2>
-          <p>খেলার আগে খুললে উত্তর জেনে যাবে কিন্তু!</p>
+          <p>খেলার আগে খুললে উত্তর জেনে যাবে।</p>
           <details>
             <summary>পিঠার নামের তালিকা দেখো</summary>
             <ul className="pt-grid">

@@ -31,7 +31,6 @@ export default function UpoharPage() {
           <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{bn(index + 1)}</span><p>{step}</p></li>)}</ol>
         </section>
         <Faq items={site.faq} />
-        <p className="container upohar-end">উপহার মানে ভালোবাসা, অঙ্ক না।</p>
       </div>
     </PageFrame>
   );

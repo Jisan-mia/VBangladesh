@@ -10,7 +10,7 @@ export const share: ToolShare = {
     const shared = parseShareHash(state);
     const score = shared ? `${bn(scoreOf(shared.set, shared.answers))}টা` : "কয়টা";
     return {
-      title: `${shared?.name || "এক বন্ধু"} ১০টা পিঠার ${score} চিনেছে — তুমি কয়টা চিনবে?`,
+      title: `${shared?.name || "এক বন্ধু"} ১০টা পিঠার ${score} চিনেছে। তুমি কয়টা চিনবে?`,
       description: `${shared?.name ? possessive(shared.name) : "বন্ধুর"} সাথে একই ১০টা শীতের পিঠা: ভাপা, চিতই, পাটিসাপটা, নকশি… ছবি দেখে নাম বলো, অন্য এলাকার নামও জেনে নাও। ফ্রি।`,
     };
   },

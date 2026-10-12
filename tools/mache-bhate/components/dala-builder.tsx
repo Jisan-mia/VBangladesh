@@ -170,7 +170,7 @@ export function DalaBuilder() {
               {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
             </> : <>
               <p>{bn(everyone.total)} জনের ডালার সাথে মেলানো হলো।</p>
-              {everyone.total < COMPARE_MIN ? <p className="kit-status">এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন সাজালেই মজাটা শুরু!</p> : <>
+              {everyone.total < COMPARE_MIN ? <p className="kit-status">এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন সাজালেই হিসাব মিলবে।</p> : <>
                 <div className="mb-rare">
                   {ranked[0] && <p><span>তোমার ডালার সবচেয়ে বিরল মাছ</span><strong>{ranked[0].fish.label}</strong><em>{ranked[0].share < 30 ? "মাত্র " : ""}{bn(ranked[0].share)}% মানুষের ডালায় আছে</em></p>}
                   {missing && <p><span>সবার ডালায় আছে, তোমারটায় নেই</span><strong>{missing.fish.label}</strong><em>{bn(missing.share)}% মানুষ খেয়েছে। তুমি কখনো চেখে দেখেছ?</em></p>}

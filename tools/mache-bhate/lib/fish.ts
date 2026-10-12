@@ -186,7 +186,7 @@ export function createCard(own: Shared, friend?: Shared | null): CardContent {
 
 export function previewTitle(shared: Shared) {
   const who = shared.name ? possessive(shared.name) : "এক বন্ধুর";
-  return `${who} ডালায় ${bn(fishes.length)}টা দেশি মাছের ${bn(shared.selected.length)}টা — তোমার কয়টা?`;
+  return `${who} ডালায় ${bn(fishes.length)}টা দেশি মাছের ${bn(shared.selected.length)}টা। তোমার কয়টা?`;
 }
 
 export { possessive };

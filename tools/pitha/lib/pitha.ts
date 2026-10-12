@@ -121,7 +121,7 @@ export function humanLine(set: SetId, answers: readonly Answer[]) {
   const right = marks(set, answers);
   const score = right.filter(Boolean).length;
   const all = (kind: Kind) => questionsOf(set).every((question, index) => question.kind !== kind || right[index]);
-  if (score === PER_SET) return "১০-এ ১০! নানি-দাদির পিঠার ঝুড়ি এবার তোমার হাতে।";
+  if (score === PER_SET) return "১০-এ ১০! নানি-দাদির সব পিঠাই চেনো।";
   if (score <= 3) return "এবার শীতে মোড়ের পিঠার দোকানে দাঁড়াও, চেখে চেখেই চিনে যাবে।";
   if (all("everyday")) return "রোজের পিঠা চেনো, উৎসবেরটা এবার শিখে নাও।";
   if (all("festive")) return "উৎসবের পিঠা চেনো, অথচ মোড়ের পিঠায় ভুল! কাল ভোরে বেরিয়ে পড়ো।";
