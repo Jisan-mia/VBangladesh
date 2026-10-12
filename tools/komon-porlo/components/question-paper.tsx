@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, type Tally } from "../../../shared/share-client";
+import { confetti, hiss, sfx, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { drawPaper, paperBlob } from "../lib/draw-paper";
 import { bingoLines, bingoWord, bn, caption, chipOrder, countOf, createCard, defaultPack, has, headline, humanLine, packById, parseShareHash, possessive, seasonPack, shareHash, squareId, tallyItems, toggle, MAX_NAME_LENGTH, SIZE, type PackId, type Shared } from "../lib/paper";
@@ -10,6 +12,8 @@ import { bingoLines, bingoWord, bn, caption, chipOrder, countOf, createCard, def
 const TOOL = "komon-porlo";
 // Percentages from a handful of people are noise ("১০০% মানুষের কমন" after one vote).
 const COMPARE_MIN = 20;
+// A rubber stamp landing on paper: a dull knock and a quick scuff. Lifting a stamp stays silent.
+const stampDown = () => { tone(150, 0.09, 0.1, "sine", 0, 75); hiss(0.04, 0.07, 1800); };
 const percent = (count: number, total: number) => Math.round((count / Math.max(total, 1)) * 100);
 
 export function QuestionPaper() {
@@ -85,8 +89,13 @@ export function QuestionPaper() {
     const current = latest.current[packId] ?? 0;
     const next = toggle(current, index);
     const before = bingoLines(current).length, after = bingoLines(next).length;
-    if (after > before) { setFlash(value => value + 1); setNews(`${bingoWord(after)} ${bn(countOf(next))}টা কমন।`); }
-    else setNews(has(next, index) ? `কমন! মোট ${bn(countOf(next))}টা।` : `ছাপ তোলা হলো। মোট ${bn(countOf(next))}টা।`);
+    if (has(next, index)) stampDown();
+    if (after > before) {
+      sfx.win();
+      if (countOf(next) === SIZE) confetti();
+      setFlash(value => value + 1);
+      setNews(`${bingoWord(after)} ${bn(countOf(next))}টা কমন।`);
+    } else setNews(has(next, index) ? `কমন! মোট ${bn(countOf(next))}টা।` : `ছাপ তোলা হলো। মোট ${bn(countOf(next))}টা।`);
     stamp(next);
     // Changed picks make the old comparison stale; let them compare again.
     setCompared(current => current === "done" ? "idle" : current);
@@ -142,7 +151,10 @@ export function QuestionPaper() {
           <p className="paper-meta"><span>সময়: {pack.time}</span><span>পূর্ণমান: {bn(SIZE)}</span></p>
         </header>
         <div className="paper-score" aria-hidden="true"><b>{bn(card.count)}</b><span>{bn(SIZE)}</span></div>
-        <p className="paper-rule"><strong>নির্দেশনা:</strong> যেটা শুনেছ বা ঘটেছে, তাতে চাপ দাও। এক লাইন মিললেই বিঙ্গো!</p>
+        <div className="paper-rulerow">
+          <p className="paper-rule"><strong>নির্দেশনা:</strong> যেটা শুনেছ বা ঘটেছে, তাতে চাপ দাও। এক লাইন মিললেই বিঙ্গো!</p>
+          <SoundToggle compact />
+        </div>
         {ghost && <p className="paper-ghost-note">হালকা ছাপগুলো {friendName} কমন।</p>}
         <div className="paper-grid">
           {pack.squares.map((text, index) => (

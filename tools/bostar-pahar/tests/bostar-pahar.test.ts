@@ -3,7 +3,7 @@ import test from "node:test";
 import { challengeHash } from "../../../shared/game-core";
 import { site } from "../content";
 import {
-  DROP_TIME, HALF_VIEW, LEAN_MAX, MIN_SWING, PERFECT, SETTLE_TIME, SLIP, STRAIGHTEN,
+  DROP_TIME, GHATS, HALF_VIEW, LEVEL_COUNT, migrateBest, nextMark, starsOf, LEAN_MAX, MIN_SWING, PERFECT, SETTLE_TIME, SLIP, STRAIGHTEN,
   judge, leanOf, newGame, placePivot, scoreOf, step, swingOf, swingX, tap, topX, type Game,
 } from "../lib/game";
 import { bandOf, cardHash, friendBanner, humanLine, parseCard, previewTitle, shout, versusLine, type Card } from "../lib/result";
@@ -71,8 +71,8 @@ test("slow mode swings slower: the same moment finds the sack in a different pla
 });
 
 /** Plays headlessly at 240 steps a second. `aim(game)` returns where, relative to the top sack, this player lets go. */
-function play(seed: number, aim: (game: Game) => number, slow = false, maxSacks = 400) {
-  const game = newGame(seed);
+function play(seed: number, aim: (game: Game) => number, slow = false, maxSacks = 400, level = 1) {
+  const game = newGame(seed, level);
   let steps = 0, previous = swingX(game) - topX(game) - aim(game);
   while (game.phase !== "over" && scoreOf(game) < maxSacks && steps++ < 2_000_000) {
     if (game.phase === "ready" || game.phase === "swing") {
@@ -142,17 +142,17 @@ test("score bands, lines and comparisons", () => {
   assert.match(versusLine(10, 28, "জাহিদ"), /^জাহিদ এগিয়ে, ১৮টা বস্তা/);
   assert.equal(shout("perfect", 1), "ঠিক মাঝে!");
   assert.equal(shout("perfect", 3), "ঠিক মাঝে! ×৩");
-  assert.equal(friendBanner({ seed: 1, sacks: 28, perfect: 9, streak: 4, name: "রাফি" }), "রাফি ২৮টা বস্তা সাজিয়েছে। একই দোল, এবার তোমার পালা।");
+  assert.equal(friendBanner({ seed: 1, sacks: 28, perfect: 9, streak: 4, name: "রাফি", level: 1 }), "রাফি ২৮টা বস্তা সাজিয়েছে। একই দোল, এবার তোমার পালা।");
 });
 
 test("a card survives the link round trip in the game kit's link format", () => {
-  const card: Card = { seed: 48213, sacks: 28, perfect: 9, streak: 4, name: "রাফি" };
+  const card: Card = { seed: 48213, sacks: 28, perfect: 9, streak: 4, name: "রাফি", level: 1 };
   const hash = cardHash(card);
   assert.equal(hash, challengeHash({ seed: 48213, target: 28, name: "রাফি", extra: { p: 9, c: 4 } }));
   assert.deepEqual(parseCard(`#${hash}`), card);
-  assert.deepEqual(parseCard("#s=5&t=12"), { seed: 5, sacks: 12, perfect: 0, streak: 0, name: "" }, "older or hand-made links without counts still open");
+  assert.deepEqual(parseCard("#s=5&t=12"), { seed: 5, sacks: 12, perfect: 0, streak: 0, name: "", level: 1 }, "older or hand-made links without counts still open");
   const game = play(31337, g => (scoreOf(g) % 4) * 0.1 - 0.15, false, 40);
-  const played: Card = { seed: game.seed, sacks: scoreOf(game), perfect: game.perfect, streak: game.bestCombo, name: "" };
+  const played: Card = { seed: game.seed, sacks: scoreOf(game), perfect: game.perfect, streak: game.bestCombo, name: "", level: 1 };
   assert.deepEqual(parseCard(cardHash(played)), played);
 });
 
@@ -166,7 +166,7 @@ test("share refuses hostile or impossible links and caps names", () => {
   assert.equal(share.normalize("s=7&t=999&p=999&c=999"), "s=7&t=999&p=999&c=999");
   assert.equal(parseCard(`s=7&t=10&n=${encodeURIComponent("ক".repeat(50))}`)?.name.length, 20);
   assert.equal(parseCard(`s=7&t=10&n=${encodeURIComponent("রা‮ফি")}`)?.name, "রাফি", "no text-direction tricks in names");
-  assert.equal(previewTitle({ seed: 7, sacks: 28, perfect: 9, streak: 4, name: "রাফি" }), "রাফি ২৮টা বস্তা সাজিয়েছে। তুমি পারবে?");
+  assert.equal(previewTitle({ seed: 7, sacks: 28, perfect: 9, streak: 4, name: "রাফি", level: 1 }), "রাফি ২৮টা বস্তা সাজিয়েছে। তুমি পারবে?");
   assert.equal(share.preview("s=7&t=28&p=9&c=4").title, "এক বন্ধু ২৮টা বস্তা সাজিয়েছে। তুমি পারবে?");
   assert.ok(share.preview("nope").title.length > 0);
 });
@@ -181,4 +181,63 @@ test("content meets the SEO limits and stays clear of gambling words", () => {
   assert.ok(site.steps.length >= 3 && site.privacy.some(line => line.includes("লিংক")));
   const copy = JSON.stringify(site) + JSON.stringify(share.preview("s=7&t=28&p=9&c=4"));
   assert.doesNotMatch(copy, /টাকা জিত|বাজি|জুয়া|লটারি|আপনি|করুন/);
+});
+
+test("ghats: ghat 1 is the original game, later ones swing faster from the start and ask for taller loads", () => {
+  assert.equal(LEVEL_COUNT, 10);
+  assert.deepEqual(newGame(48213, 1).swing, swingOf(48213, 0), "ghat 1 swings exactly as before");
+  const speed = (game: Game) => (2 * Math.PI * game.swing.amp) / game.swing.period;
+  for (let level = 2; level <= LEVEL_COUNT; level++) {
+    const [before, now] = [GHATS[level - 2], GHATS[level - 1]];
+    assert.ok(now.offset >= before.offset && now.goal >= before.goal, `ghat ${level} never gets easier`);
+    assert.ok(now.goal < now.stars[0] && now.stars[0] < now.stars[1]);
+    let faster = 0;
+    for (let seed = 1; seed <= 50; seed++) if (speed(newGame(seed, level)) >= speed(newGame(seed, 1))) faster++;
+    assert.ok(faster >= 40, `ghat ${level} starts faster on most seeds`);
+  }
+  assert.ok(GHATS[0].goal <= 5, "the first truck fills in the first few drops");
+});
+
+test("stars: none below the goal, then 1–3 by height; the next mark is exact", () => {
+  assert.equal(starsOf(4, 1), 0);
+  assert.equal(starsOf(5, 1), 1);
+  assert.equal(starsOf(11, 1), 1);
+  assert.equal(starsOf(12, 1), 2);
+  assert.equal(starsOf(20, 1), 3);
+  assert.equal(starsOf(400, 10), 3);
+  assert.equal(nextMark(0, 1), 5);
+  assert.equal(nextMark(5, 1), 12);
+  assert.equal(nextMark(19, 1), 20);
+  assert.equal(nextMark(20, 1), 0);
+});
+
+test("every ghat is fair: aiming at the middle reaches three stars on every seed", () => {
+  for (let level = 1; level <= LEVEL_COUNT; level++) {
+    for (const seed of [1, 48213, 999_999_999, 31337, 7, 2024]) {
+      const game = play(seed, () => 0, false, GHATS[level - 1].stars[1], level);
+      assert.equal(starsOf(scoreOf(game), level), 3, `ghat ${level} seed ${seed} stopped at ${scoreOf(game)}`);
+    }
+    // A sloppy-but-thinking player (a quarter sack off, counter-steering) still fills the truck.
+    const steer = play(555, game => (leanOf(game) > 0 ? -0.2 : 0.2), false, GHATS[level - 1].goal, level);
+    assert.ok(starsOf(scoreOf(steer), level) >= 1, `ghat ${level}: the goal is in reach`);
+  }
+});
+
+test("the old best moves into ghat 1's stars once, and only when there is nothing newer", () => {
+  assert.equal(migrateBest({}, "12"), 2);
+  assert.equal(migrateBest({}, "30"), 3);
+  assert.equal(migrateBest({}, "3"), 0, "below the goal: nothing to move");
+  assert.equal(migrateBest({}, null), 0);
+  assert.equal(migrateBest({}, "abc"), 0);
+  assert.equal(migrateBest({ 1: 1 }, "30"), 0, "already moved");
+});
+
+test("links carry the ghat; old links without it open ghat 1; bad ghats are refused", () => {
+  const card: Card = { seed: 48213, sacks: 14, perfect: 3, streak: 2, name: "", level: 4 };
+  assert.equal(cardHash(card), "s=48213&t=14&p=3&c=2&l=4");
+  assert.deepEqual(parseCard(cardHash(card)), card);
+  assert.equal(parseCard("s=48213&t=14&p=3&c=2")?.level, 1);
+  assert.equal(cardHash({ ...card, level: 1 }), "s=48213&t=14&p=3&c=2", "ghat 1 links look exactly like before");
+  for (const bad of ["s=7&t=10&l=0", "s=7&t=10&l=11", "s=7&t=10&l=02", "s=7&t=10&l=x", "s=7&t=10&l=2.5"]) assert.equal(parseCard(bad), null, bad);
+  assert.match(friendBanner(card), /বাদামতলী|চাঁদপুর|ঘাটে/);
 });

@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { challengeHash } from "../../../shared/game-core";
 import { site } from "../content";
-import { CONTACT, SWEET_Y, ballAt, makeField, newGame, popTime, popY, step, strike, tap, tokenOf, totalOf, type Field, type Game } from "../lib/game";
-import { HITS, MAX_HIT, bandOf, cardHash, hitLabel, humanLine, parseCard, previewTitle, versusLine, type Card } from "../lib/result";
+import { CONTACT, LEVEL_COUNT, LEVELS, SWEET_Y, ballAt, makeField, migrateBest, nextMark, starsOf, newGame, popTime, popY, step, strike, tap, tokenOf, totalOf, type Field, type Game } from "../lib/game";
+import { HITS, MAX_HIT, bandOf, cardHash, hitLabel, humanLine, matchLine, parseCard, previewTitle, versusLine, type Card } from "../lib/result";
 import { share } from "../share";
 
 const calm = (overrides: Partial<Field> = {}): Field => ({ winds: [0, 0, 0], pops: [2, 2, 2], pond: { from: 100, to: 104 }, cow: 200, fielders: [], ...overrides });
@@ -100,8 +100,8 @@ test("slow mode floats the কাঠি, so the same height comes later", () => 
 });
 
 /** Plays a whole game headlessly at 60 steps a second, swinging when the falling কাঠি reaches `aim[hit]`. */
-function play(seed: number, aim: number[], slow = false) {
-  const game: Game = newGame(seed);
+function play(seed: number, aim: number[], slow = false, level = 1) {
+  const game: Game = newGame(seed, level);
   let steps = 0;
   while (game.phase !== "over" && steps++ < 5000) {
     if (game.phase === "aim") tap(game);
@@ -144,12 +144,12 @@ test("score bands and lines", () => {
 });
 
 test("a card survives the link round trip in the game kit's link format", () => {
-  const card: Card = { seed: 48213, total: 37, hits: ["12", "c", "25"], name: "রাফি" };
+  const card: Card = { seed: 48213, total: 37, hits: ["12", "c", "25"], name: "রাফি", level: 1 };
   const hash = cardHash(card);
   assert.equal(hash, challengeHash({ seed: 48213, target: 37, name: "রাফি", extra: { h: "12-c-25" } }));
   assert.deepEqual(parseCard(`#${hash}`), card);
   const game = play(31337, [0.8, 1.2, 0.3]).game;
-  const played: Card = { seed: game.seed, total: totalOf(game.shots), hits: game.shots.map(tokenOf), name: "" };
+  const played: Card = { seed: game.seed, total: totalOf(game.shots), hits: game.shots.map(tokenOf), name: "", level: 1 };
   assert.deepEqual(parseCard(cardHash(played)), played);
 });
 
@@ -163,7 +163,7 @@ test("share refuses hostile or impossible links and caps names", () => {
   assert.equal(share.normalize("s=7&t=180&h=60-60-60"), "s=7&t=180&h=60-60-60");
   const long = parseCard(`s=7&t=10&h=5-5-0&n=${encodeURIComponent("ক".repeat(50))}`);
   assert.equal(long?.name.length, 20);
-  assert.equal(previewTitle({ seed: 7, total: 37, hits: ["12", "c", "25"], name: "রাফি" }), "রাফি ৩৭ ডাং মেরেছে। তুমি পারবে?");
+  assert.equal(previewTitle({ seed: 7, total: 37, hits: ["12", "c", "25"], name: "রাফি", level: 1 }), "রাফি ৩৭ ডাং মেরেছে। তুমি পারবে?");
   assert.equal(share.preview("s=7&t=37&h=12-c-25").title, "এক বন্ধু ৩৭ ডাং মেরেছে। তুমি পারবে?");
   assert.ok(share.preview("nope").title.length > 0);
 });
@@ -179,4 +179,67 @@ test("content meets the SEO limits and never says গুলি on its own", () =
   const copy = JSON.stringify(site) + JSON.stringify(share.preview("s=7&t=37&h=12-c-25"));
   assert.doesNotMatch(copy.replaceAll("ডাংগুলি", ""), /গুলি/);
   assert.doesNotMatch(copy, /টাকা জিত|বাজি|জুয়া/);
+});
+
+test("the tournament: level 1 is the original field; later fields add wind, a faster fall and a third fielder", () => {
+  assert.equal(LEVEL_COUNT, 10);
+  for (const seed of [1, 48213, 999_999_999]) assert.deepEqual(makeField(seed, 1), makeField(seed), "level 1 lays out the old field");
+  for (let level = 2; level <= LEVEL_COUNT; level++) {
+    const [before, now] = [LEVELS[level - 2], LEVELS[level - 1]];
+    assert.ok(now.score >= before.score && now.wind >= before.wind && now.pop >= before.pop && now.fielders >= before.fielders, `level ${level} never gets easier`);
+    assert.ok(now.score < now.stars[0] && now.stars[0] < now.stars[1] && now.stars[1] <= HITS * MAX_HIT);
+    const field = makeField(48213, level), base = makeField(48213, 1);
+    assert.equal(field.fielders.length, now.fielders);
+    assert.deepEqual(field.pond, base.pond, "the same ground, only the conditions change");
+  }
+  assert.ok(LEVELS[0].score <= 10, "the first rival falls to one decent hit");
+});
+
+test("every match is fair: on every field the best swings beat three stars, and a steady swing at the waist beats the rival", () => {
+  for (let level = 1; level <= LEVEL_COUNT; level++) {
+    let beaten = 0;
+    for (let seed = 1; seed < 200; seed++) {
+      const field = makeField(seed * 7919, level);
+      let top = 0;
+      for (let hit = 0; hit < HITS; hit++) {
+        let best = 0;
+        for (let y = 0.06; y < SWEET_Y + CONTACT; y += 0.01) best = Math.max(best, strike(field, hit, y).distance);
+        top += best;
+      }
+      assert.equal(starsOf(top, level), 3, `level ${level} seed ${seed * 7919}: best is ${top}`);
+      if (starsOf(totalOf(play(seed * 7919, [SWEET_Y, SWEET_Y, SWEET_Y], false, level).game.shots), level) > 0) beaten++;
+    }
+    assert.ok(beaten >= 150, `level ${level}: waist swings beat the rival on ${beaten}/199 fields`);
+  }
+});
+
+test("stars: none without beating the rival, then 1–3; the next mark and the match line are exact", () => {
+  assert.equal(starsOf(10, 1), 0, "a tie is not a win");
+  assert.equal(starsOf(11, 1), 1);
+  assert.equal(starsOf(40, 1), 2);
+  assert.equal(starsOf(60, 1), 3);
+  assert.equal(nextMark(0, 1), 11);
+  assert.equal(nextMark(11, 1), 40);
+  assert.equal(nextMark(60, 1), 0);
+  assert.equal(matchLine(14, 1), "পাশের বাসার টুটুলকে ৪ ডাং-এ হারালে।");
+  assert.equal(matchLine(6, 1), "পাশের বাসার টুটুল জিতল, ১০ বনাম ৬।");
+  assert.match(matchLine(10, 1), /সমান/);
+});
+
+test("the old best moves into level 1's stars once, and only when there is nothing newer", () => {
+  assert.equal(migrateBest({}, "37"), 1);
+  assert.equal(migrateBest({}, "64"), 3);
+  assert.equal(migrateBest({}, "8"), 0, "it never beat the first rival: nothing to move");
+  assert.equal(migrateBest({}, null), 0);
+  assert.equal(migrateBest({}, "x"), 0);
+  assert.equal(migrateBest({ 2: 1 }, "64"), 0, "already moved");
+});
+
+test("links carry the level; old links without it open level 1; bad levels are refused", () => {
+  const card: Card = { seed: 48213, total: 37, hits: ["12", "c", "25"], name: "", level: 4 };
+  assert.equal(cardHash(card), "s=48213&t=37&h=12-c-25&l=4");
+  assert.deepEqual(parseCard(cardHash(card)), card);
+  assert.equal(parseCard("s=48213&t=37&h=12-c-25")?.level, 1, "an old link opens the field it was played on");
+  assert.equal(cardHash({ ...card, level: 1 }), "s=48213&t=37&h=12-c-25");
+  for (const bad of ["s=7&t=10&h=5-5-0&l=0", "s=7&t=10&h=5-5-0&l=11", "s=7&t=10&h=5-5-0&l=01", "s=7&t=10&h=5-5-0&l=two"]) assert.equal(parseCard(bad), null, bad);
 });

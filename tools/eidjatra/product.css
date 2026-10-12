@@ -66,7 +66,8 @@
 
 /* "যারা জানিয়েছে" (opt-in) */
 .jatra-tally{margin-top:28px;padding:18px;border-radius:16px;background:var(--kraft-light)}
-.jatra-tally h3{margin:0 0 6px;font-family:var(--font-display);font-size:21px;line-height:1.4}
+.jatra-tally-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.jatra-tally h3{margin:0;font-family:var(--font-display);font-size:21px;line-height:1.4}
 .jatra-tally>p{margin:0 0 12px;color:var(--muted);font-size:15px}
 .jatra-tally .jatra-tally-big{color:var(--pen);font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1.5}
 

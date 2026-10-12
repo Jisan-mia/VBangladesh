@@ -230,13 +230,27 @@ export function tick(game: Game, ms: number, soft = false): Event {
   return game.lock >= lockMs(game.slow) ? lockPiece(game) : "none";
 }
 
+/** The mats you weave on the way: each is a milestone, celebrated in play and named on the card. */
 export const bands = [
-  { min: 0, line: "প্রথম কয় সারিই সবচেয়ে কঠিন।" },
-  { min: 5, line: "ছোট্ট একটা আসন হয়ে গেল!" },
-  { min: 15, line: "এই পাটিতে দুজন আরাম করে বসবে।" },
-  { min: 30, line: "গরমের দুপুরে পুরো পরিবারের পাটি!" },
+  { min: 0, name: "", line: "প্রথম কয় সারিই সবচেয়ে কঠিন।" },
+  { min: 5, name: "ছোট আসন", line: "ছোট্ট একটা আসন হয়ে গেল!" },
+  { min: 15, name: "দুজনের পাটি", line: "এই পাটিতে দুজন আরাম করে বসবে।" },
+  { min: 30, name: "পরিবারের পাটি", line: "গরমের দুপুরে পুরো পরিবারের পাটি!" },
+  { min: 50, name: "উঠানজোড়া পাটি", line: "উঠান ভরে গেল, পুরো বাড়ি বসবে।" },
 ] as const;
 export const humanLine = (rows: number) => bands.findLast(band => rows >= band.min)!.line;
+/** The mat these rows make ("" under five rows), and the next one still to weave (null after the biggest). */
+export const matName = (rows: number) => bands.findLast(band => rows >= band.min)!.name;
+export const nextMat = (rows: number) => bands.find(band => band.min > rows) ?? null;
+
+/** One near-miss line after a game, with the exact gap: a best within reach first, then the next mat; "" when nothing was close. */
+export function nearLine(score: number, rows: number, before: number | null) {
+  if (before !== null && score > 0 && score <= before && before - score <= Math.max(30, Math.round(before * 0.2))) {
+    return score === before ? "সেরার সমান। আর এক সারি হলেই নতুন সেরা।" : `সেরা ${bn(before)} থেকে মাত্র ${bn(before - score)} পয়েন্ট দূরে।`;
+  }
+  const next = nextMat(rows);
+  return next && next.min - rows <= 3 ? `আর ${bn(next.min - rows)} সারি হলেই ${next.name}।` : "";
+}
 
 /** After a friend's challenge: kind either way. */
 export function compareLine(score: number, target: number, name: string) {

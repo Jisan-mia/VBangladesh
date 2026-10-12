@@ -3,7 +3,7 @@ import test from "node:test";
 import { site } from "../content";
 import { JUMPS, LADDERS, LAST, SNAKES, cellOf, isLadder, jumpFrom } from "../lib/board";
 import { band, choicesText, choose, landing, makeDice, MAX_ROLLS, newGame, options, piecesFor, readChoices, replay, roll, smartPick, type Game, type Pieces, type Players } from "../lib/game";
-import { caption, cardHash, cardOf, cleanPlayerName, friendBanner, friendNote, headline, highlights, humanLine, MAX_CHOICES, parseCard, previewTitle, sameRace, scoreboard, seatName, versusLine, winnerMoves, type Result } from "../lib/result";
+import { caption, cardHash, cardOf, cleanPlayerName, friendBanner, friendNote, headline, highlights, humanLine, MAX_CHOICES, nearBest, parseCard, previewTitle, sameRace, scoreboard, seatName, versusLine, winnerMoves, type Result } from "../lib/result";
 import { share } from "../share";
 
 const bn = (value: number) => new Intl.NumberFormat("bn-BD", { useGrouping: false }).format(value);
@@ -270,4 +270,12 @@ test("content fits the SEO limits and never names a trademark or a ruling", () =
   assert.ok(site.faq.length >= 5);
   assert.ok(site.privacy.some(line => line.includes("লিংক") && line.includes("নাম")));
   assert.doesNotMatch(JSON.stringify(site), /chutes|hasbro|milton|বাজি|জুয়া|হারাম|হালাল|জায়েজ/i);
+});
+
+test("the near-miss line names exactly how many fewer rolls beat this phone's best", () => {
+  assert.equal(nearBest(24, 21), "আর ৪ চাল কম লাগলেই নতুন সেরা।");
+  assert.equal(nearBest(21, 21), "আর ১ চাল কম লাগলেই নতুন সেরা।", "a tie isn't a new best");
+  assert.equal(nearBest(20, 21), "", "already a new best");
+  assert.equal(nearBest(40, 21), "", "too far to call it close");
+  assert.equal(nearBest(30, null), "", "no best yet");
 });

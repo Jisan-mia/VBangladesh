@@ -4,12 +4,16 @@
 import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { cleanName, newSeed, useBest, useGameLoop, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { buzz, cleanName, confetti, hiss, newSeed, sfx, tone, totalStars, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import { drawScene, makeScene, paintGate, popup, setKid, tickScene, type Scene } from "../lib/draw-scene";
-import { bn, bumpLine, caption, compareLine, headline, humanLine, parseShareHash, shareHash, type Shared } from "../lib/result";
-import { createRun, girlFor, pressDuck, pressJump, releaseDuck, releaseJump, stepRun, SLOW_CAP, TOP, type Run } from "../lib/road";
+import { bn, bumpLine, caption, compareLine, headline, humanLine, migrateLevels, nearMiss, parseShareHash, shareHash, type Shared } from "../lib/result";
+import {
+  createRun, dayOf, dayStars, gateOf, girlFor, pressDuck, pressJump, releaseDuck, releaseJump, stepRun,
+  CRASH, DAY_COUNT, GATE, GOT_PAGE, GOT_TIFFIN, JUMPED, LANDED, MILESTONE, PAGES, PUDDLE, SAVED, SLOW_CAP, TOP, type Run,
+} from "../lib/road";
 
 const TOOL = "deri-hoye-gelo";
 /** Slow mode runs the road at this speed (and SLOW_CAP stops it getting faster). */
@@ -18,13 +22,33 @@ const SLOW_TIME = 0.7;
 const RESUME_GRACE = 0.7;
 /** A finger that moves this far down (CSS pixels) is a swipe: duck. */
 const SWIPE = 22;
+const LEVELS_KEY = `ektukhani-levels-${TOOL}`, BEST_KEY = `ektukhani-best-${TOOL}`;
 type Phase = "ready" | "playing" | "paused" | "over";
-type Result = Shared & { kind: number; record: boolean };
+type Result = Shared & { kind: number; record: boolean; day: number; stars: number; pages: number; best: number | null };
+
+// The road's sounds, all made in code: soft footsteps, a hop, a landing, the ছপাৎ of a puddle, a bump, a page caught, and the school bell at the gate.
+const footstep = (left: boolean) => tone(left ? 150 : 135, 0.05, 0.035, "sine", 0, 80);
+const hop = () => tone(380, 0.09, 0.05, "triangle", 0, 620);
+const land = () => tone(120, 0.06, 0.06, "sine", 0, 70);
+const bump = () => { sfx.thud(); tone(196, 0.16, 0.06, "square", 0.05, 150); };
+const schoolBell = () => { for (let ring = 0; ring < 3; ring++) { tone(880, 0.9, 0.1, "triangle", ring * 0.38); tone(1320, 0.6, 0.045, "sine", ring * 0.38); tone(2210, 0.35, 0.025, "sine", ring * 0.38); } buzz([20, 40, 20]); };
 
 export function LateGame() {
   const [phase, setPhase] = useState<Phase>("ready");
   const [slow, setSlow] = useSlowMode();
+  // Before the level store is read: an old phone's best on the endless road opens the days it passed (once).
+  useEffect(() => {
+    try {
+      const moved = migrateLevels(localStorage.getItem(LEVELS_KEY), localStorage.getItem(BEST_KEY));
+      if (moved) localStorage.setItem(LEVELS_KEY, moved);
+    } catch { /* storage blocked: nothing to move */ }
+  }, []);
+  const levels = useLevels(TOOL, DAY_COUNT);
   const [best, submitBest] = useBest(TOOL);
+  // The day being played or about to be (1..DAY_COUNT), or 0 for the endless road.
+  const [day, setDay] = useState(1);
+  const chosen = useRef(false);
+  const heard = useRef({ events: 0, step: 0 });
   const [friend, setFriend] = useState<Shared | null>(null);
   const [result, setResult] = useState<Result | null>(null);
   const [name, setName] = useState("");
@@ -44,12 +68,15 @@ export function LateGame() {
   const finished = useRef(false);
   const pointer = useRef({ id: -1, x: 0, y: 0, ducked: false });
 
-  const card: Shared | null = result ? { seed: result.seed, meters: result.meters, name: cleanName(name) } : null;
+  const card: Shared | null = result ? { seed: result.seed, meters: result.meters, name: cleanName(name), ...(result.day ? { day: result.day } : {}) } : null;
   const state = card ? shareHash(card) : "";
+  const friendFits = (forDay: number) => Boolean(friend) && (friend!.day ?? 0) === forDay;
 
-  function start() {
-    const seed = friend ? friend.seed : newSeed();
-    run.current = createRun(seed, slow ? SLOW_CAP : TOP);
+  function start(forDay = day) {
+    const seed = friendFits(forDay) ? friend!.seed : newSeed();
+    run.current = createRun(seed, slow ? SLOW_CAP : TOP, forDay);
+    heard.current = { events: 0, step: 0 };
+    setDay(forDay);
     if (scene.current) setKid(scene.current, girlFor(seed));
     grace.current = 0;
     finished.current = false;
@@ -75,10 +102,33 @@ export function LateGame() {
     if (finished.current) return;
     finished.current = true;
     letGo();
-    const record = submitBest(played.meters) && played.meters > 0;
+    const stars = dayStars(played);
+    if (stars) levels.record(played.day, stars);
+    const before = best, record = !played.day && submitBest(played.meters) && played.meters > 0;
     overAt.current = performance.now();
-    setResult({ seed: played.seed, meters: played.meters, name: "", kind: played.hitKind, record });
+    setResult({ seed: played.seed, meters: played.meters, name: "", kind: played.hitKind, record, day: played.day, stars, pages: played.pages, best: before });
     setPhase("over");
+    // Confetti only for three stars, the last day, or a new best on the endless road; a plain day gets the stars' own notes and the bell.
+    const party = stars === 3 || (stars > 0 && played.day === DAY_COUNT) || record;
+    window.setTimeout(() => { if (party) { if (record) sfx.win(); else sfx.levelUp(); confetti(); } else if (stars) sfx.good(); }, stars ? 1500 : 500);
+  }
+
+  /** Sounds for what just happened on the road (events are rare), plus a soft footstep every stride on the ground. */
+  function listen(played: Run) {
+    const ear = heard.current;
+    for (; ear.events < played.eventCount; ear.events++) {
+      const event = played.events[ear.events % played.events.length];
+      if (event.type === JUMPED) hop();
+      else if (event.type === LANDED) land();
+      else if (event.type === GOT_TIFFIN) sfx.coin();
+      else if (event.type === GOT_PAGE) { sfx.pick(); sfx.combo(played.pages + 1); }
+      else if (event.type === SAVED) { sfx.pop(); hiss(0.2, 0.12, 900); }
+      else if (event.type === MILESTONE) sfx.tick();
+      else if (event.type === GATE) schoolBell();
+      else if (event.type === CRASH) { if (played.hitKind === PUDDLE) { sfx.splash(); buzz(40); } else bump(); }
+    }
+    const stride = Math.floor(played.d / 36);
+    if (stride !== ear.step) { ear.step = stride; if (played.air < 0 && !played.ducking && !played.over) footstep(stride % 2 === 0); }
   }
 
   const step = (dt: number) => {
@@ -89,13 +139,14 @@ export function LateGame() {
         played.cap = slow ? SLOW_CAP : TOP;
         const hadTiffin = played.tiffin;
         stepRun(played, slow ? dt * SLOW_TIME : dt);
-        if (played.tiffin !== hadTiffin && !slow && "vibrate" in navigator) navigator.vibrate(10);
+        if (played.tiffin !== hadTiffin) buzz(10);
+        listen(played);
         if (played.over) finish(played);
       }
     }
     if (scene.current) tickScene(scene.current, slow ? dt * SLOW_TIME : dt, phase === "ready");
   };
-  const draw = () => { if (scene.current) drawScene(scene.current, phase === "ready" ? null : run.current, slow, friend); };
+  const draw = () => { if (scene.current) drawScene(scene.current, phase === "ready" ? null : run.current, slow, friend && friendFits(day) ? friend : null, gateOf(day)); };
   const drawRef = useRef(draw);
   drawRef.current = draw;
   const pauseRef = useRef(pause);
@@ -130,6 +181,8 @@ export function LateGame() {
       const shared = parseShareHash(window.location.hash);
       if (!shared) return;
       setFriend(shared);
+      chosen.current = true;
+      setDay(shared.day ?? 0);
       if (scene.current) { setKid(scene.current, girlFor(shared.seed)); drawRef.current(); }
       setPhase(current => current === "playing" ? current : "ready");
     };
@@ -159,7 +212,7 @@ export function LateGame() {
       if (!here || !(isJump(event.key) || event.key === "Enter")) return;
       if (phase === "ready") { event.preventDefault(); start(); }
       else if (phase === "paused") { event.preventDefault(); resume(); }
-      else if (phase === "over" && performance.now() - overAt.current > 600 && document.activeElement === document.body) { event.preventDefault(); start(); }
+      else if (phase === "over" && performance.now() - overAt.current > 600 && document.activeElement === document.body) { event.preventDefault(); primary(); }
     };
     const up = (event: KeyboardEvent) => {
       const current = run.current;
@@ -174,6 +227,13 @@ export function LateGame() {
     return () => { window.removeEventListener("keydown", down); window.removeEventListener("keyup", up); };
   });
 
+  // Saved stars load after the first paint: open the furthest day reached, unless the player or a friend's link chose one.
+  useEffect(() => {
+    if (!levels.loaded || chosen.current) return;
+    chosen.current = true;
+    setDay(current => phase === "ready" ? levels.unlocked : current);
+  }, [levels.loaded]);
+
   // "আরেকবার" takes focus a moment after a bump, so a jump pressed at the instant of the bump doesn't restart at once.
   useEffect(() => {
     if (phase !== "over") return;
@@ -185,13 +245,13 @@ export function LateGame() {
     let cancelled = false;
     loadCardFonts("দেরি হয়ে গেল মিটার ০১২৩৪৫৬৭৮৯").then(() => {
       if (cancelled) return;
-      if (card && preview.current) drawCard(preview.current, card, format, site);
+      if (card && preview.current) drawCard(preview.current, card, format, site, result?.stars ?? 0);
       if (friend && friendPreview.current) drawCard(friendPreview.current, friend, "feed", site);
       setCardError(false);
     }).catch(() => { if (!cancelled) setCardError(true); });
     return () => { cancelled = true; };
     // `state` encodes everything the card draws.
-  }, [state, format, site, friend]);
+  }, [state, format, site, friend, result?.stars]);
 
   function onStageDown(event: ReactPointerEvent<HTMLDivElement>) {
     const control = pointer.current;
@@ -238,6 +298,16 @@ export function LateGame() {
   }
 
   function restart() { if (performance.now() - overAt.current > 450) start(); }
+  const nextDay = result && result.stars && result.day < DAY_COUNT ? result.day + 1 : 0;
+  /** After a day: the next one when this one is done, else the same day again. */
+  function primary() { if (performance.now() - overAt.current > 450) start(nextDay || day); }
+  /** A day from the grid, or the endless road: back to the ready screen. */
+  function choose(to: number) {
+    chosen.current = true;
+    setDay(to); setResult(null); setPhase("ready");
+    stage.current?.scrollIntoView({ behavior: slow ? "auto" : "smooth", block: "center" });
+  }
+  const gate = gateOf(day), miss = result ? nearMiss({ day: result.day, meters: result.meters, stars: result.stars, pages: result.pages, best: result.best }) : "";
 
   const goToCard = () => document.getElementById("result")?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
   const keepTap = (event: ReactPointerEvent) => event.stopPropagation();
@@ -256,14 +326,20 @@ export function LateGame() {
         </section>
       )}
 
+      <div className="dh-top">
+        <p className="dh-where">{day ? <>{dayOf(day).name} <span>· {bn(gate)} মিটারে গেট · ★ {bn(totalStars(levels.stars))}/{bn(DAY_COUNT * 3)}</span></> : <>যত দূর পারো <span>· শেষ নেই{best !== null ? `, সেরা ${bn(best)} মি` : ""}</span></>}</p>
+        <SoundToggle compact />
+      </div>
+
       <div className="dh-stage" ref={stage} data-phase={phase} tabIndex={-1}
         onPointerDown={onStageDown} onPointerMove={onStageMove} onPointerUp={onStageUp} onPointerCancel={onStageUp}>
         <canvas ref={canvas} role="img" aria-label="গ্রামের রাস্তা ধরে স্কুলের পথে এক বাচ্চা, পিঠে ব্যাগ। চাপ দিলে লাফ, নিচে টানলে মাথা নিচু। স্পেস বা ওপরের তীরে লাফ, নিচের তীরে নিচু।" />
         {phase === "ready" && (
           <div className="dh-overlay dh-ready">
             <p className="dh-how">চাপ দিলে লাফ</p>
-            <p className="dh-sub">নিচে টানলে মাথা নিচু · ১০০০ মিটারে গেট</p>
-            <button type="button" className="kit-primary dh-go" onPointerDown={keepTap} onClick={start}>শুরু করো</button>
+            <p className="dh-sub">নিচে টানলে মাথা নিচু · {bn(gate)} মিটারে গেট</p>
+            {day > 0 && <p className="dh-target">খাতার পাতা কুড়াও: ২টায় <b>★★</b>, {bn(PAGES)}টায় <b>★★★</b></p>}
+            <button type="button" className="kit-primary dh-go" onPointerDown={keepTap} onClick={() => start()}>শুরু করো</button>
           </div>
         )}
         {phase === "paused" && (
@@ -272,21 +348,23 @@ export function LateGame() {
             <button type="button" className="kit-primary dh-go" onPointerDown={keepTap} onClick={resume}>চালিয়ে যাও</button>
           </div>
         )}
-        <p className="screen-reader-only" aria-live="polite">{phase === "over" && result ? `খেলা শেষ। ${bn(result.meters)} মিটার গেলে। ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
+        <p className="screen-reader-only" aria-live="polite">{phase === "over" && result ? `খেলা শেষ। ${bn(result.meters)} মিটার গেলে। ${result.stars ? `${dayOf(result.day).name}ের গেটে, ${bn(result.stars)} তারা।` : ""}${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""} ${miss}` : ""}</p>
         {phase === "over" && result && (
           <div className="dh-overlay dh-bump">
-            <p className="dh-kicker">{bumpLine(result.kind)}</p>
-            <p className="dh-headline">{headline(result.meters)}</p>
+            <p className="dh-kicker">{result.stars ? `${dayOf(result.day).name}ের গেটে! ঘণ্টা পড়ার আগেই।` : bumpLine(result.kind)}</p>
+            {result.stars > 0 ? <StarReveal count={result.stars} /> : <p className="dh-headline">{headline(result.meters, gateOf(result.day))}</p>}
           </div>
         )}
       </div>
 
       {phase === "over" && result ? (
         <div className="dh-over">
-          <p className="dh-score"><b>{bn(result.meters)} মিটার</b><span>{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null ? `এই ফোনে সেরা: ${bn(best)} মিটার` : ""}</span></p>
-          {friend && <p className="dh-versus">{compareLine(result.meters, friend.meters, friendName)}</p>}
-          <div className="dh-over-actions">
-            <button type="button" ref={again} className="kit-primary dh-again" onClick={restart}>আরেকবার</button>
+          <p className="dh-score"><b>{bn(result.meters)} মিটার</b><span>{result.day ? `খাতার পাতা ${bn(result.pages)}/${bn(PAGES)}` : result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null ? `এই ফোনে সেরা: ${bn(best)} মিটার` : ""}</span></p>
+          {miss && <p className="dh-miss">{miss}</p>}
+          {friend && friendFits(result.day) && <p className="dh-versus">{compareLine(result.meters, friend.meters, friendName)}</p>}
+          <div className="dh-over-actions" data-two={nextDay > 0}>
+            <button type="button" ref={again} className="kit-primary dh-again" onClick={nextDay ? primary : restart}>{nextDay ? "পরের দিন" : "আরেকবার"}</button>
+            {nextDay > 0 && <button type="button" className="dh-to-card" onClick={restart}>আবার খেলো</button>}
             <button type="button" className="dh-to-card" onClick={goToCard}>ছবি বানাও ↓</button>
           </div>
         </div>
@@ -312,16 +390,25 @@ export function LateGame() {
         </button>
       </div>
 
+      <details className="dh-levels">
+        <summary>সপ্তাহের সব দিন <span>★ {bn(totalStars(levels.stars))}/{bn(DAY_COUNT * 3)}</span></summary>
+        <LevelGrid count={DAY_COUNT} stars={levels.stars} unlocked={Math.max(levels.unlocked, friend?.day ?? 1)} current={day || undefined} onPick={choose} noun="দিন" />
+        <p>শনিবার থেকে বৃহস্পতিবার: প্রতিদিন গেট একটু দূরে, রাস্তায় নতুন কিছু। গেটে পৌঁছালে ১ তারা। খাতার ২টা পাতা কুড়ালে ২, ৩টাই কুড়ালে ৩ তারা।</p>
+        <button type="button" className="dh-endless" aria-pressed={day === 0} onClick={() => choose(0)}>
+          যত দূর পারো<small>১০০০ মিটারে গেট, তারপরও রাস্তা চলে{best !== null ? ` · সেরা ${bn(best)} মি` : ""}</small>
+        </button>
+      </details>
+
       {card && result && (
         <section className="dh-result" id="result" aria-labelledby="dh-result-title">
           <div className="dh-result-head">
             <h2 id="dh-result-title">স্কুলের পথে <em>{bn(card.meters)} মিটার</em></h2>
-            <p>{friend ? `${compareLine(card.meters, friend.meters, friendName)} ${humanLine(card.meters)}` : humanLine(card.meters)}</p>
+            <p>{friend && friendFits(result.day) ? `${compareLine(card.meters, friend.meters, friendName)} ${humanLine(card.meters, gateOf(result.day))}` : humanLine(card.meters, gateOf(result.day))}</p>
           </div>
           <div className="dh-result-body">
             <figure className="kit-card" data-format={format}>
               <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="dh-card-summary" />
-              <figcaption id="dh-card-summary" className="dh-sr">দেরি হয়ে গেল!{card.name && ` · ${card.name}`}: {bn(card.meters)} মিটার। {humanLine(card.meters)}</figcaption>
+              <figcaption id="dh-card-summary" className="dh-sr">দেরি হয়ে গেল!{card.day ? ` · ${dayOf(card.day).name}` : ""}{card.name && ` · ${card.name}`}: {bn(card.meters)} মিটার{result.stars ? `, ${bn(result.stars)} তারা` : ""}। {humanLine(card.meters, gateOf(result.day))}</figcaption>
               {cardError && <p className="kit-status" role="alert">ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
             </figure>
             <div className="dh-controls">
@@ -330,7 +417,7 @@ export function LateGame() {
                 <input value={name} maxLength={MAX_NAME} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
               </label>
               <FormatToggle value={format} onChange={setFormat} />
-              <ShareBar tool={TOOL} fileName="deri-hoye-gelo.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption(card)} state={state} hint="বন্ধু লিংক খুললে ঠিক এই রাস্তাটাই পাবে, তোমার পতাকাসহ।" />
+              <ShareBar tool={TOOL} fileName="deri-hoye-gelo.png" makeImage={() => cardBlob(card, format, site, result.stars)} imageKey={`${state}|${format}|${result.stars}`} caption={caption(card)} state={state} hint="বন্ধু লিংক খুললে ঠিক এই রাস্তাটাই পাবে, তোমার পতাকাসহ।" />
             </div>
           </div>
         </section>

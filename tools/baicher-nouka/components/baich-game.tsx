@@ -1,18 +1,20 @@
 "use client";
 // IP: what we avoided — no famous racing or rhythm game's name, cars, tracks, notes, approach circles' look or music, and no real নৌকাবাইচ:
 // no race name, team, boat name, sponsor, venue or region. Our own boats, river, crowd and rope flags are drawn from scratch, the চার লাইনের সারি
-// is written fresh, the drum is synthesized (and off unless turned on), and the rule numbers are ours.
+// is written fresh, the drum is synthesized, and the rule numbers are ours.
 
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { cleanName, newSeed, useBest, useGameLoop, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { buzz, cleanName, confetti, hiss, loop, newSeed, sfx, tone, totalStars, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
-import { createRace, lagFrom, steer, stepRace, tapBeat, CALIB_BEATS, MAX_LAG, MIN_LAG, WINDOW, type Race } from "../lib/race";
-import { banner, bn, caption, compareLine, humanLine, ordinal, parseShareHash, resultLine, secs, shareHash, type Shared } from "../lib/result";
+import { createRace, lagFrom, steer, stepRace, tapBeat, CALIB_BEATS, LEVEL_COUNT, MAX_LAG, MIN_LAG, VMAX, WINDOW, type Race } from "../lib/race";
+import {
+  banner, bn, caption, compareLine, humanLine, nearMiss, openingLevel, ordinal, parseShareHash, resultLine, secs, shareHash, starsForRank, type Shared,
+} from "../lib/result";
 import { absorb, drawScene, fontsReady, makeScene, pending, resetScene, setSideText, tickScene, DRUM, SNAGGED, type Scene } from "../lib/scene";
-import { dhin, splash, ta, unlock } from "../lib/sound";
 
 const TOOL = "baicher-nouka";
 /** Slow mode runs the whole race at this speed, so the beat's window is wider in real time too. */
@@ -23,7 +25,19 @@ const RESUME_GRACE = 0.8;
 const SETTLE_MS = 2600;
 const LAG_KEY = "ektukhani-baicher-nouka-lag";
 type Phase = "ready" | "playing" | "paused" | "over" | "calib";
-type Result = Shared & { hits: number; beats: number; snags: number; record: boolean };
+type Result = Shared & { hits: number; beats: number; snags: number; record: boolean; stars: number; behind: number; bestBefore: number | null };
+
+/** ধিন: the drum's beat, a low thump that drops in pitch. */
+const dhin = () => tone(140, 0.22, 0.32, "sine", 0, 55);
+/** তা: you caught the beat, a bright slap over a lower one. */
+const ta = () => { tone(420, 0.09, 0.16, "sine", 0, 230); tone(180, 0.12, 0.18, "sine", 0, 90); };
+/** A tap off the beat: a dull, quiet knock. */
+const thock = () => tone(120, 0.07, 0.08, "sine", 0, 90);
+/** The oars swing the boat one lane over; a boat alongside knocks it back. */
+const swish = () => hiss(0.14, 0.06, 1800, "bandpass");
+const knock = () => tone(260, 0.05, 0.07, "square");
+/** ছপ: into the কচুরিপানা. */
+const snag = () => { hiss(0.3, 0.24, 900); buzz(25); };
 
 const readLag = () => {
   try { const saved = Number(localStorage.getItem(LAG_KEY)); return Number.isFinite(saved) ? Math.min(MAX_LAG, Math.max(MIN_LAG, saved)) : 0; } catch { return 0; }
@@ -33,8 +47,9 @@ const saveLag = (lag: number) => { try { localStorage.setItem(LAG_KEY, String(la
 export function BaichGame() {
   const [phase, setPhase] = useState<Phase>("ready");
   const [slow, setSlow] = useSlowMode();
-  const [sound, setSound] = useState(false);
   const [best, submitBest] = useBest(TOOL, false);
+  const levels = useLevels(TOOL, LEVEL_COUNT);
+  const [level, setLevel] = useState(1);
   const [friend, setFriend] = useState<Shared | null>(null);
   const [result, setResult] = useState<Result | null>(null);
   const [settling, setSettling] = useState(false);
@@ -57,30 +72,61 @@ export function BaichGame() {
   const grace = useRef(0);
   const overAt = useRef(0);
   const settleTimer = useRef(0);
+  // The river rushing past the hull: louder and brighter the faster you row. Runs only while racing.
+  const rush = useRef<ReturnType<typeof loop> | null>(null);
   const stageInView = useInView(stage);
 
-  const card: Shared | null = result ? { seed: result.seed, tenths: result.tenths, rank: result.rank, name: cleanName(name) } : null;
+  const card: Shared | null = result ? { seed: result.seed, tenths: result.tenths, rank: result.rank, level: result.level, name: cleanName(name) } : null;
   const state = card ? shareHash(card) : "";
+  const total = totalStars(levels.stars);
+  const next = result && result.stars > 0 && result.level < LEVEL_COUNT ? result.level + 1 : 0;
+
+  function startRush() { rush.current?.stop(); rush.current = loop("wind"); }
+  function stopRush() { rush.current?.stop(); rush.current = null; }
+  /** A friend's river while you race their race; any other race gets a fresh one. */
+  const seedFor = (at: number) => friend && friend.level === at ? friend.seed : newSeed();
+  /** Sets up race `at` on the ready screen, waiting for the first tap. */
+  function ready(at: number) {
+    setLevel(at);
+    race.current = createRace(seedFor(at), lag, at);
+    if (scene.current) resetScene(scene.current, race.current);
+    setResult(null);
+    setPhase("ready");
+  }
 
   /** The race on the ready screen is the one that starts; after a race a fresh river (the friend's again, if any). */
-  function start() {
+  function start(at = level) {
     const waiting = race.current;
-    if (!waiting || waiting.t > 0) race.current = createRace(friend ? friend.seed : newSeed(), lag);
+    if (!waiting || waiting.t > 0 || waiting.level !== at) race.current = createRace(seedFor(at), lag, at);
+    setLevel(at);
     if (scene.current) resetScene(scene.current, race.current!);
     grace.current = 0;
     setResult(null);
     setSettling(false);
     setPhase("playing");
+    startRush();
   }
   function pause() { setPhase(current => current === "playing" ? "paused" : current); }
-  function resume() { grace.current = RESUME_GRACE; setPhase(current => current === "paused" ? "playing" : current); }
-  function restart() { if (performance.now() - overAt.current > 450) start(); }
+  function resume() { grace.current = RESUME_GRACE; setPhase(current => current === "paused" ? "playing" : current); if (phase === "paused") startRush(); }
+  const settled = () => performance.now() - overAt.current > 450;
+  function restart() { if (settled()) start(result?.level ?? level); }
+  /** After a race: the next one once you've placed, else the same race again. */
+  function primary() { if (settled()) start(next || (result?.level ?? level)); }
 
   function finish(played: Race) {
-    const record = submitBest(played.tenths);
+    const record = submitBest(played.tenths), stars = starsForRank(played.rank);
+    if (stars) levels.record(played.level, stars);
+    // How far behind the boat one place ahead, for the near-miss line.
+    const mine = played.boats[0].done;
+    let ahead = -1;
+    for (let index = 1; index < played.boats.length; index++) { const done = played.boats[index].done; if (done >= 0 && done < mine && done > ahead) ahead = done; }
+    stopRush();
+    // Confetti only for a real feat: 1st place, a new best, or the last race placed. StarReveal chimes each star.
+    if (stars === 3 || record || (stars && played.level === LEVEL_COUNT)) { sfx.win(); confetti(); } else if (stars) sfx.good(); else sfx.drop();
     overAt.current = performance.now();
     setResult({
-      seed: played.seed, tenths: played.tenths, rank: played.rank, name: "", record,
+      seed: played.seed, tenths: played.tenths, rank: played.rank, level: played.level, name: "", record, stars, bestBefore: best,
+      behind: ahead >= 0 ? Math.max(1, Math.round((mine - ahead) * 10)) : 0,
       hits: played.hits, beats: played.marks.filter(mark => mark !== 0).length, snags: played.patchHits,
     });
     setSettling(true);
@@ -107,17 +153,20 @@ export function BaichGame() {
   /** The left or right side: the ready screen starts; a race moves one lane. */
   function side(towards: -1 | 1) {
     if (phase === "ready") start();
-    else if (phase === "playing" && race.current && grace.current <= 0) steer(race.current, towards);
+    else if (phase === "playing" && race.current && grace.current <= 0) { if (steer(race.current, towards)) swish(); else knock(); }
   }
   /** The drum: the ready screen starts; a race counts the beat; তাল মেলাও notes the tap. */
   function beat() {
     if (phase === "ready") { start(); return; }
     if (phase === "calib") { calib.current.taps.push(calib.current.t); return; }
     if (phase !== "playing" || !race.current || grace.current > 0) return;
-    if (tapBeat(race.current) > 0) {
-      if (sound) ta();
-      if (!slow && typeof navigator.vibrate === "function") navigator.vibrate(10);
-    }
+    const rating = tapBeat(race.current);
+    if (rating > 0) {
+      ta();
+      // A run of beats climbs in pitch.
+      if (race.current.streak >= 2) sfx.combo(race.current.streak - 2);
+      if (!slow) buzz(10);
+    } else if (rating < 0) thock();
   }
 
   const step = (dt: number) => {
@@ -129,14 +178,17 @@ export function BaichGame() {
       else { played.lag = lag * scale; stepRace(played, dt * scale); }
       if (view) {
         const happened = absorb(view, played);
-        if (sound && happened & DRUM) dhin();
-        if (sound && happened & SNAGGED) splash();
+        if (happened & DRUM) dhin();
+        if (happened & SNAGGED) snag();
       }
+      const speed = played.boats[0].speed;
+      rush.current?.set(0.12 + 0.55 * speed / VMAX);
+      rush.current?.pitch(320 + speed * 2.2);
       if (played.over) finish(played);
     } else if (phase === "over" && settling) stepRace(played, dt * scale);
     else if (phase === "calib") {
       calib.current.t += dt;
-      if (sound && CALIB_BEATS.some(at => at <= calib.current.t && at > calib.current.t - dt)) dhin();
+      if (CALIB_BEATS.some(at => at <= calib.current.t && at > calib.current.t - dt)) dhin();
       if (calib.current.t > CALIB_BEATS[CALIB_BEATS.length - 1] + 0.7) endCalib();
     }
     if (view) tickScene(view, dt);
@@ -189,7 +241,8 @@ export function BaichGame() {
       if (!shared) return;
       setFriend(shared);
       if (phaseRef.current === "playing" || phaseRef.current === "calib") return;
-      race.current = createRace(shared.seed);
+      setLevel(shared.level);
+      race.current = createRace(shared.seed, 0, shared.level);
       if (scene.current) resetScene(scene.current, race.current);
       setResult(null);
       setPhase("ready");
@@ -209,6 +262,16 @@ export function BaichGame() {
     setSideText(scene.current, friend ? `${friend.name || "বন্ধু"} ${secs(friend.tenths)}` : best !== null ? `সেরা ${secs(best)}` : "");
     drawRef.current();
   });
+
+  // Once this phone's races are read, an untouched ready screen opens the furthest race not yet won (a friend's link keeps theirs).
+  useEffect(() => {
+    if (!levels.loaded || friend || phaseRef.current !== "ready" || (race.current?.t ?? 0) > 0) return;
+    ready(openingLevel(levels.stars, levels.unlocked));
+  }, [levels.loaded]);
+
+  // The rushing water never outlives the race: pause, finish, calibration and leaving the page all stop it.
+  useEffect(() => { if (phase !== "playing") stopRush(); }, [phase]);
+  useEffect(() => stopRush, []);
 
   // Scrolling the river away mid-race pauses it.
   useEffect(() => { if (!stageInView) pause(); }, [stageInView]);
@@ -231,7 +294,7 @@ export function BaichGame() {
       event.preventDefault();
       if (phase === "ready") start();
       else if (phase === "paused") resume();
-      else if (phase === "over") restart();
+      else if (phase === "over") primary();
     };
     window.addEventListener("keydown", down);
     return () => window.removeEventListener("keydown", down);
@@ -273,14 +336,13 @@ export function BaichGame() {
   const smooth = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
   const goToCard = () => resultBox.current?.scrollIntoView({ behavior: smooth(), block: "start" });
   function playFromCard() {
-    race.current = createRace(friend ? friend.seed : newSeed(), lag);
-    if (scene.current) resetScene(scene.current, race.current);
-    setPhase("ready");
+    ready(next || (result?.level ?? level));
     stage.current?.scrollIntoView({ behavior: smooth(), block: "center" });
   }
-  function toggleSound() {
-    if (!sound) unlock();
-    setSound(!sound);
+  function pickLevel(at: number) {
+    if (phase === "playing" || phase === "calib") return;
+    ready(at);
+    stage.current?.scrollIntoView({ behavior: smooth(), block: "center" });
   }
 
   const friendName = friend?.name || "";
@@ -299,13 +361,15 @@ export function BaichGame() {
         </section>
       )}
 
+      <p className="bn-level"><b>বাইচ {bn(level)}</b> <span aria-label={`মোট ${bn(total)}টা তারা, ${bn(LEVEL_COUNT * 3)}টার মধ্যে`}>★ {bn(total)}/{bn(LEVEL_COUNT * 3)}</span></p>
       <div className="bn-stage" ref={stage} data-phase={phase} onPointerDown={onStageDown}>
         <canvas ref={canvas} role="img" aria-label="ওপর থেকে দেখা নদীতে নৌকাবাইচ। মাঝের লেনে তোমার নীল-হলুদ লম্বা নৌকা, পাশে লাল, সবুজ আর হলুদ তিনটা নৌকা, দুই পাড়ে লোকের ভিড়। নৌকার মাঝখানে ঢোলের চারপাশে একটা বৃত্ত ছোট হয়ে ঢোলে মিললে চাপতে হয়। নদীর বাঁ পাশে চাপলে এক লেন বাঁয়ে, ডান পাশে চাপলে ডানে। কিবোর্ডে বাঁ-ডান তীর, স্পেসে ঢোল।" />
         {phase === "ready" && (
           <div className="bn-overlay bn-ready">
             <p className="bn-how">ঢোলের তালে চাপো, নৌকা ছুটবে!</p>
             <p className="bn-sub">বৃত্ত ঢোলে মিললেই মাঝখানে চাপো<br />কচুরিপানা দেখলে বাঁয়ে-ডানে সরো</p>
-            <button type="button" className="kit-primary bn-go" onPointerDown={keepTap} onClick={start}>শুরু করো</button>
+            <p className="bn-goal">বাইচ {bn(level)} · ১ম হলে ৩ তারা</p>
+            <button type="button" className="kit-primary bn-go" onPointerDown={keepTap} onClick={() => start()}>শুরু করো</button>
             {calibNote && <p className="bn-sub" role="status">{calibNote}</p>}
             <button type="button" className="bn-calib-link" onPointerDown={keepTap} onClick={startCalib}>{lag ? "তাল মেলানো আছে · আবার মেলাও" : "চাপ দেরিতে ধরে? তাল মেলাও"}</button>
           </div>
@@ -334,13 +398,17 @@ export function BaichGame() {
 
       {phase === "over" && result ? (
         <div className="bn-over">
+          {result.stars > 0 && <StarReveal count={result.stars} />}
           <p className="bn-score"><b>{secs(result.tenths)} সেকেন্ড · {ordinal(result.rank)}</b><span>{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null ? `এই ফোনে সেরা: ${secs(best)} সে` : ""}</span></p>
           <p className="bn-detail">{bn(result.beats)}টা তালের {bn(result.hits)}টা ধরেছ{result.snags ? ` · কচুরিপানায় ${bn(result.snags)} বার` : " · কচুরিপানা ছোঁয়নি!"}</p>
+          {nearMiss(result.rank, result.behind, result.tenths, result.bestBefore) && <p className="bn-near">{nearMiss(result.rank, result.behind, result.tenths, result.bestBefore)}</p>}
           {friend && <p className="bn-versus">{compareLine(result.tenths, friend.tenths, friendName)}</p>}
           <div className="bn-over-actions">
-            <button type="button" ref={again} className="kit-primary bn-again" onClick={restart}>আরেকবার</button>
-            <button type="button" className="bn-to-card" onClick={goToCard}>ছবি বানাও ↓</button>
+            <button type="button" ref={again} className="kit-primary bn-again" onClick={primary}>{next ? "পরের বাইচ" : "আরেকবার"}</button>
+            {next ? <button type="button" className="bn-to-card" onClick={restart}>আবার খেলো</button>
+              : <button type="button" className="bn-to-card" onClick={goToCard}>ছবি বানাও ↓</button>}
           </div>
+          {next ? <button type="button" className="kit-link bn-card-link" onClick={goToCard}>ছবি বানাও ↓</button> : null}
         </div>
       ) : (
         <div className="bn-pad" aria-label="নৌকা চালানোর বোতাম">
@@ -360,13 +428,17 @@ export function BaichGame() {
         <button type="button" className="bn-toggle" aria-pressed={slow} onClick={() => setSlow(!slow)}>
           <i aria-hidden="true" />ধীরে খেলো
         </button>
-        <button type="button" className="bn-toggle" aria-pressed={sound} onClick={toggleSound}>
-          <i aria-hidden="true" />ঢোলের শব্দ
-        </button>
+        <SoundToggle compact className="bn-sound" onChange={on => { if (on && phaseRef.current === "playing") startRush(); else if (!on) rush.current = null; }} />
         <button type="button" className="bn-pause" onClick={phase === "paused" ? resume : pause} disabled={phase !== "playing" && phase !== "paused"}>
           {phase === "paused" ? "চালিয়ে যাও" : "থামাও"}
         </button>
       </div>
+
+      <details className="bn-levels">
+        <summary>সব বাইচ <span>★ {bn(total)}/{bn(LEVEL_COUNT * 3)}</span></summary>
+        <p>প্রতি বাইচে পাশের তিন নৌকা আগেরটার চেয়ে জোরে চলে। ১ম হলে ৩ তারা, ২য় হলে ২, ৩য় হলে ১। ৩য় হলেই পরের বাইচ খোলে।</p>
+        <LevelGrid count={LEVEL_COUNT} noun="বাইচ" stars={levels.stars} unlocked={levels.unlocked} current={level} onPick={pickLevel} />
+      </details>
 
       {card && result && (
         <section className="bn-result" id="result" ref={resultBox} aria-labelledby="bn-result-title">

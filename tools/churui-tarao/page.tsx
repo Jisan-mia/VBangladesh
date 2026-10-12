@@ -9,7 +9,7 @@ export default function ChuruiTaraoPage() {
       <JsonLd site={site} />
       <div className="ct-page">
         <section className="ct-hero container" aria-labelledby="ct-title">
-          <p className="ct-hero-kicker">সোনালি বিকেলের ধানক্ষেত · ৪৫ সেকেন্ডের খেলা</p>
+          <p className="ct-hero-kicker">সোনালি বিকেলের দশটা ধানক্ষেত · ৪৫ সেকেন্ডের খেলা</p>
           <h1 id="ct-title">ধান পেকেছে, <span>চড়ুই এসেছে!</span></h1>
           <p className="ct-lead">{site.lead}</p>
         </section>

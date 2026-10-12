@@ -25,6 +25,7 @@
 .ab-sport button[aria-pressed=true]{border-color:var(--kraft);background:var(--kraft);color:var(--ink)}
 .ab-hint{margin:6px 0 0;text-align:center;color:#d6e6df;font-size:15px}
 .ab-hint strong{color:#ffd98a}
+.ab-sound{display:flex;justify-content:flex-end;margin-top:2px;color:#e7efe9}
 
 /* the envelope, writing and sealed */
 .ab-stage{position:relative;height:270px}

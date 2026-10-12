@@ -4,7 +4,7 @@ import { site } from "../content";
 import { share } from "../share";
 import { banner, caption, parseShared, previewTitle, reachable, sharedHash, MAT_ROWS, MAX_ROWS, MAX_SCORE, ROW_POINTS } from "../lib/link";
 import {
-  bands, colourOf, compareLine, createGame, dropMs, fits, hardDrop, humanLine, move, rotate, rowPattern, tick,
+  bands, colourOf, compareLine, createGame, dropMs, fits, hardDrop, humanLine, matName, move, nearLine, nextMat, rotate, rowPattern, tick,
   BUNDLE, CELLS, COLS, KINDS, LEVEL_EVERY, OPENING, PIECES, ROWS, TURNS, type Game, type Kind,
 } from "../lib/weave";
 
@@ -289,7 +289,8 @@ test("score bands and the friendly comparison", () => {
   assert.equal(humanLine(4), bands[0].line);
   assert.equal(humanLine(5), "ছোট্ট একটা আসন হয়ে গেল!");
   assert.equal(humanLine(18), "এই পাটিতে দুজন আরাম করে বসবে।");
-  assert.equal(humanLine(300), bands[3].line);
+  assert.equal(humanLine(40), bands[3].line);
+  assert.equal(humanLine(300), bands[4].line);
   assert.equal(compareLine(235, 215, "রাফি"), "রাফির চেয়ে ২০ বেশি!");
   assert.equal(compareLine(215, 215, "রাফি"), "একদম সমান! রাফিও ২১৫।");
   assert.equal(compareLine(200, 215, "রাফি"), "আর একটু হলেই! মাত্র ১৫ কম।");
@@ -361,4 +362,28 @@ test("content meets the SEO limits and never names a trademark", () => {
   const everything = JSON.stringify(site) + share.preview("").description;
   assert.doesNotMatch(everything, /tetris|টেট্রিস|tetromino|টেট্রোমিনো|-?tris\b|ট্রিস|korobeiniki|কোরোবেইনিকি/i);
   assert.doesNotMatch(everything, /আপনি|করুন/);
+});
+
+test("milestone mats: names, the next goal and near-miss lines with exact gaps", () => {
+  for (let i = 1; i < bands.length; i++) assert.ok(bands[i].min > bands[i - 1].min && bands[i].name, `band ${i}`);
+  assert.equal(matName(4), "");
+  assert.equal(matName(5), "ছোট আসন");
+  assert.equal(matName(49), "পরিবারের পাটি");
+  assert.equal(nextMat(0)?.min, 5);
+  assert.equal(nextMat(15)?.name, "পরিবারের পাটি");
+  assert.equal(nextMat(50), null);
+  assert.equal(nearLine(200, 3, 240), "সেরা ২৪০ থেকে মাত্র ৪০ পয়েন্ট দূরে।");
+  assert.equal(nearLine(240, 20, 240), "সেরার সমান। আর এক সারি হলেই নতুন সেরা।");
+  assert.equal(nearLine(100, 13, 400), "আর ২ সারি হলেই দুজনের পাটি।", "a best far off gives way to the next mat");
+  assert.equal(nearLine(100, 13, null), "আর ২ সারি হলেই দুজনের পাটি।");
+  assert.equal(nearLine(300, 20, 200), "", "a new best needs no near-miss line");
+  assert.equal(nearLine(80, 8, null), "");
+  assert.equal(nearLine(900, 60, null), "", "nothing after the biggest mat");
+});
+
+test("old challenge links (made before milestones) still open unchanged", () => {
+  const hash = "s=48213&t=25&r=2&p=55550000&n=" + encodeURIComponent("রাফি");
+  const shared = parseShared(hash);
+  assert.deepEqual(shared, { seed: 48213, score: 25, rows: 2, pattern: [0x5555, 0], name: "রাফি" });
+  assert.equal(sharedHash(shared!), hash);
 });

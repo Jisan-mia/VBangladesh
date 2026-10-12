@@ -4,20 +4,44 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { newSeed, useBest, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { buzz, confetti, hiss, newSeed, sfx, shake, tone, totalStars, useBest, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import {
-  botMove, canUndo, createGame, findMove, humanSide, isBotTurn, legalMoves, play, pointAt, threatened, undo,
-  BOARD, GOAT, GOATS, MAX_MOVES, SIZE, TIGER, TIGER_GOAL, type Game, type Mode,
+  botMove, canUndo, createGame, findMove, humanSide, isBotTurn, ladderSlug, legalMoves, migrateBest, openingLevel, play, pointAt, threatened, undo, winStars,
+  BOARD, BOT_LEVELS, GOAT, LEGACY_LEVEL, GOATS, MAX_MOVES, SIZE, TIGER, TIGER_GOAL, type Game, type Mode, type Side,
 } from "../lib/game";
-import { bannerNote, bn, caption, compareLine, detail, feat, headline, humanLine, parseShared, playNames, sharedHash, sideWord, type Shared } from "../lib/link";
+import { bannerNote, bn, caption, compareLine, detail, feat, headline, humanLine, nearMiss, parseShared, playNames, sharedHash, sideWord, type Shared } from "../lib/link";
 import { Seed, Tiger, YardBoard } from "./yard-board";
 
 const TOOL = "baghbandi";
 const MODES: Array<{ mode: Mode; label: string }> = [{ mode: 2, label: "ছাগল হবো" }, { mode: 1, label: "বাঘ হবো" }, { mode: 0, label: "দুজনে" }];
 const KEY_STEPS: Record<string, number> = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: SIZE, ArrowUp: -SIZE };
 const smooth = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" as const : "smooth" as const;
+const LEVELS = BOT_LEVELS.length;
+const modeFor = (side: Side): Mode => side === TIGER ? 1 : 2;
+
+/** A stone set down on the clay: a bright tick for a goat seed, a deeper knock for a tiger stone. */
+function click(side: Side, soft = false) {
+  const volume = soft ? 0.05 : 0.08;
+  if (side === GOAT) { tone(1700, 0.03, volume, "square"); tone(820, 0.05, volume * 0.8, "triangle"); }
+  else { tone(900, 0.03, volume, "square"); tone(330, 0.07, volume, "triangle", 0, 260); }
+}
+/** The tiger's capture: a short, cartoonish growl. */
+function growl() {
+  tone(210, 0.34, 0.08, "sawtooth", 0, 120);
+  tone(150, 0.3, 0.06, "square", 0.04, 95);
+  hiss(0.28, 0.07, 480);
+  buzz(18);
+}
+/** Plays whatever the last move was. */
+function voice(game: Game, soft = false) {
+  const last = game.log[game.log.length - 1];
+  if (!last) return;
+  if (last.over >= 0) growl(); else click(game.log.length % 2 === 1 ? GOAT : TIGER, soft);
+}
+const read = (key: string) => { try { return localStorage.getItem(key); } catch { return null; } };
 
 export function BaghbandiGame() {
   const [game, setGame] = useState<Game>(() => createGame(1, 2));
@@ -30,6 +54,17 @@ export function BaghbandiGame() {
   const [slow, setSlow] = useSlowMode();
   const [bestTiger, submitTiger] = useBest(`${TOOL}-bagh`);
   const [bestGoat, submitGoat] = useBest(`${TOOL}-chhagol`);
+  // Must run before useLevels reads its keys (effects run in order): an old best that proves a win becomes a star, once.
+  useEffect(() => {
+    for (const side of [TIGER, GOAT] as const) {
+      const key = `ektukhani-levels-${ladderSlug(side)}`, moved = migrateBest(side, read(`ektukhani-best-${ladderSlug(side)}`), read(key));
+      if (moved) try { localStorage.setItem(key, moved); } catch { /* private mode: nothing to keep */ }
+    }
+  }, []);
+  const tigerLevels = useLevels(ladderSlug(TIGER), LEVELS);
+  const goatLevels = useLevels(ladderSlug(GOAT), LEVELS);
+  const ladderOf = (side: Side) => side === TIGER ? tigerLevels : goatLevels;
+  const [earned, setEarned] = useState(0);
   const [record, setRecord] = useState(false);
   const [format, setFormat] = useState<CardFormat>("feed");
   const [site, setSite] = useState("");
@@ -56,24 +91,32 @@ export function BaghbandiGame() {
   // Teaching marks: goats a tiger could jump right now (on the goats' turn), and tigers that can make a jump (on the tigers' turn).
   const threats = canPlay && game.turn === GOAT && selected < 0 ? threatened(game.goats, game.tigers) : [];
   const leapers = canPlay && game.turn === TIGER && selected < 0 ? [...new Set(moves.filter(move => move.over >= 0).map(move => move.from))] : [];
-  const firstHint = phase === "ready" && canPlay && selected < 0 && !slow ? [legalMoves(game)[botMove(game)].from] : [];
+  const firstHint = phase === "ready" && canPlay && selected < 0 && !slow ? [legalMoves(game)[botMove({ ...game, level: LEGACY_LEVEL })].from] : [];
   const rival = friend && !viewing && friend.game.seed === game.seed && game.mode !== 0 ? friend : null;
   const result: Shared | null = game.over ? { mode, name: names[0], other: names[1], game } : null;
   const state = result ? sharedHash(result) : "";
   const best = mode === 1 ? bestTiger : mode === 2 ? bestGoat : null;
+  const ladder = me === null ? null : ladderOf(me);
+  const total = totalStars(tigerLevels.stars) + totalStars(goatLevels.stars);
 
-  function fresh(next: Mode) {
-    setGame(createGame(friend ? friend.game.seed : newSeed(), next));
+  /** A new game. Against the bot: the level asked for, else a friend's bot, else where this side's ladder left off. */
+  function fresh(next: Mode, level?: number) {
+    const side = humanSide(next), theirs = friend && friend.mode !== 0 ? friend.game.level : undefined;
+    const own = side === null ? undefined : openingLevel(ladderOf(side).stars, ladderOf(side).unlocked);
+    const chosen = level ?? theirs ?? own;
+    // A friend's game stays on their seed while you play their bot, so the comparison is fair.
+    setGame(createGame(friend && (level === undefined || chosen === theirs) ? friend.game.seed : newSeed(), next, chosen));
     setViewing(false);
     setPaused(false);
     setSelected(-1);
     setRecord(false);
+    setEarned(0);
   }
 
   function move(index: number) {
     const next = play(game, index);
     if (!next) return;
-    if (next.log[next.log.length - 1].over >= 0 && !slow && typeof navigator.vibrate === "function") navigator.vibrate(12);
+    voice(next);
     setGame(next);
     setSelected(-1);
   }
@@ -81,16 +124,18 @@ export function BaghbandiGame() {
   /** One tap on a point: pick a piece, move it to a lit point, or let go. On the first screen, tapping a tiger means "I'll be the tiger". */
   function tap(at: number) {
     if (at < 0) return;
-    if (phase === "ready" && mode !== 0 && game.turn === GOAT && me === GOAT && game.tigers.includes(at)) { fresh(1); return; }
+    if (phase === "ready" && mode !== 0 && game.turn === GOAT && me === GOAT && game.tigers.includes(at)) { sfx.pick(); fresh(1); return; }
     if (!canPlay) return;
     const to = selected >= 0 ? findMove(game, selected, at) : -1;
     if (to >= 0) { move(to); return; }
     const mine = game.turn === GOAT ? game.goats[at] > 0 : game.tigers.includes(at);
+    if (mine && at !== selected) sfx.pick(); else sfx.tap();
     setSelected(mine && at !== selected ? at : -1);
   }
 
   function takeBack() {
     if (!canUndo(game)) return;
+    sfx.drop();
     setGame(undo(game));
     setSelected(-1);
     setPaused(false);
@@ -99,19 +144,45 @@ export function BaghbandiGame() {
   // The bot answers after a short beat, so each of its moves can be seen. Paused or hidden: it waits.
   useEffect(() => {
     if (!botTurn || paused || viewing) return;
-    const timer = window.setTimeout(() => setGame(current => isBotTurn(current) ? play(current, botMove(current)) ?? current : current), slow ? 1200 : 650);
+    const timer = window.setTimeout(() => {
+      if (!isBotTurn(gameRef.current)) return;
+      const next = play(gameRef.current, botMove(gameRef.current));
+      if (!next) return;
+      voice(next, true);
+      // The bot's tiger took one of your goats: a gentle shake, never a scold.
+      if (next.log[next.log.length - 1].over >= 0) shake(board.current);
+      setGame(next);
+    }, slow ? 1200 : 650);
     return () => window.clearTimeout(timer);
   }, [game, botTurn, paused, viewing, slow]);
 
   useEffect(() => {
-    if (!game.over || finished.current === game || me === null) return;
+    if (!game.over || finished.current === game || viewing) return;
     finished.current = game;
+    if (me === null) { sfx.win(); return; }
     // This phone's best: most goats taken as the tiger, most goats kept as the goats.
     const score = me === TIGER ? game.taken : GOATS - game.taken;
     const before = me === TIGER ? bestTiger : bestGoat;
-    setRecord(before !== null && score > before);
+    const beaten = before !== null && score > before;
+    setRecord(beaten);
     (me === TIGER ? submitTiger : submitGoat)(score);
+    const stars = winStars(game);
+    setEarned(stars);
+    if (!stars) { sfx.lose(); return; }
+    ladderOf(me).record(game.level, stars);
+    // Confetti only for a real feat: three stars, a new best, or the last level beaten. StarReveal chimes each star.
+    if (stars === 3 || beaten || game.level === LEVELS) { sfx.win(); confetti(); } else sfx.good();
   }, [game]);
+
+  // Once this phone's levels are read, a game nobody has touched yet starts where the ladder left off.
+  useEffect(() => {
+    if (!tigerLevels.loaded || !goatLevels.loaded) return;
+    setGame(current => {
+      const side = humanSide(current.mode);
+      if (current.moves.length || side === null || (friend && friend.mode !== 0)) return current;
+      return createGame(current.seed, current.mode, openingLevel(ladderOf(side).stars, ladderOf(side).unlocked));
+    });
+  }, [tigerLevels.loaded, goatLevels.loaded]);
 
   useEffect(() => {
     // Only a real challenge link counts; in-page jumps never touch the hash.
@@ -120,7 +191,7 @@ export function BaghbandiGame() {
       if (!shared) return false;
       setFriend(shared);
       setViewing(true);
-      setGame(createGame(shared.game.seed, 1));
+      setGame(createGame(shared.game.seed, 1, shared.mode !== 0 ? shared.game.level : undefined));
       setPaused(false);
       setSelected(-1);
       return true;
@@ -166,7 +237,7 @@ export function BaghbandiGame() {
     if (target?.closest?.("button, a, summary")) return;
     event.preventDefault();
     if (phase === "paused") setPaused(false);
-    else if (phase === "over") fresh(mode);
+    else if (phase === "over") primary();
     else if (phase === "friend") fresh(1);
     else if (cursor >= 0) tap(cursor);
     else setCursor(12);
@@ -193,9 +264,18 @@ export function BaghbandiGame() {
     if (at === pressed.current) tap(at);
     pressed.current = -1;
   }
+  const won = game.over && me !== null && earned > 0;
+  const nextLevel = won && game.level < LEVELS ? game.level + 1 : 0;
+  /** After a game: the next level when you've cleared one, else the same level again. */
+  function primary() { if (nextLevel) fresh(mode, nextLevel); else fresh(mode, me === null ? undefined : game.level); }
+  function pickLevel(side: Side, level: number) {
+    fresh(modeFor(side), level);
+    board.current?.scrollIntoView({ behavior: smooth(), block: "center" });
+  }
+
   function seeCard() { resultBox.current?.scrollIntoView({ behavior: smooth(), block: "start" }); }
   function playFromCard() {
-    fresh(mode);
+    primary();
     board.current?.scrollIntoView({ behavior: smooth(), block: "center" });
   }
 
@@ -261,6 +341,10 @@ export function BaghbandiGame() {
         {MODES.map(choice => <button key={choice.mode} type="button" aria-pressed={phase !== "friend" && mode === choice.mode} onClick={() => fresh(choice.mode)}>{choice.label}</button>)}
       </fieldset>
 
+      {me !== null && phase !== "friend" && ladder && (
+        <p className="bb-level"><b>{sideWord(me)} হয়ে লেভেল {bn(game.level)}</b> <span aria-label={`মোট ${bn(total)}টা তারা, ${bn(LEVELS * 6)}টার মধ্যে`}>★ {bn(total)}/{bn(LEVELS * 6)}</span></p>
+      )}
+
       <div className="bb-hud">
         {pill(GOAT)}
         <p className="bb-clock"><small>চাল</small><b>{bn(shown.moves.length)}</b></p>
@@ -285,8 +369,10 @@ export function BaghbandiGame() {
 
       {phase === "over" ? (
         <div className="bb-over" role="status">
+          {won && <StarReveal count={earned} />}
           <p className="bb-over-score">{headline(game)}</p>
           <p className="bb-over-verdict">{verdict()} <span>{detail(game)}।</span> <span>{bestLine()}</span></p>
+          {me !== null && nearMiss(game) && <p className="bb-near">{nearMiss(game)}</p>}
         </div>
       ) : (
         <p className="bb-status" role="status" aria-live="polite">{status()}</p>
@@ -300,8 +386,9 @@ export function BaghbandiGame() {
           </>
         ) : phase === "over" ? (
           <>
-            <button type="button" className="kit-primary bb-big" onClick={() => fresh(mode)}>আরেকবার</button>
-            <button type="button" className="kit-link bb-see" onClick={seeCard}>কার্ড দেখো ↓</button>
+            <button type="button" className="kit-primary bb-big" onClick={primary}>{nextLevel ? "পরের লেভেল" : "আরেকবার"}</button>
+            {nextLevel ? <button type="button" className="bb-tool" onClick={() => fresh(mode, game.level)}>আবার খেলো</button>
+              : <button type="button" className="kit-link bb-see" onClick={seeCard}>কার্ড দেখো ↓</button>}
           </>
         ) : (
           <>
@@ -310,10 +397,22 @@ export function BaghbandiGame() {
             </button>
             <button type="button" className="bb-tool" onClick={() => fresh(mode)} disabled={phase === "ready"}>নতুন খেলা</button>
             <button type="button" className="bb-tool bb-slow" aria-pressed={slow} onClick={() => setSlow(!slow)}>ধীরে খেলো</button>
+            <SoundToggle compact className="bb-sound" />
           </>
         )}
       </div>
       <p className="bb-rules-link"><a href="#guide">আমাদের নিয়ম</a> · বাঘ {bn(TIGER_GOAL)}টা ছাগল ধরলে বাঘের জিত। বাঘ আটকা পড়লে, বা {bn(MAX_MOVES)} চাল টিকে গেলে ছাগলের জিত।</p>
+
+      <details className="bb-levels">
+        <summary>সব লেভেল <span>★ {bn(total)}/{bn(LEVELS * 6)}</span></summary>
+        <p>বাঘ হয়ে কম চালে ৮টা ধরলে বেশি তারা। ছাগল হয়ে বাঘ বন্দি করলে ৩ তারা, ৩টার বেশি না হারিয়ে টিকে গেলে ২।</p>
+        {([GOAT, TIGER] as const).map(side => (
+          <div key={side} className="bb-ladder">
+            <h3>{sideWord(side)} হয়ে</h3>
+            <LevelGrid count={LEVELS} stars={ladderOf(side).stars} unlocked={ladderOf(side).unlocked} current={me === side ? game.level : undefined} onPick={level => pickLevel(side, level)} />
+          </div>
+        ))}
+      </details>
 
       <section className="bb-result" id="result" ref={resultBox} aria-labelledby="bb-result-title">
         <div className="bb-result-head">

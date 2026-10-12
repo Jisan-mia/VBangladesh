@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readLevels, recordLevel, totalStars } from "../../../shared/game-core";
+import { nearMissLine, setStars } from "../lib/words";
+import { sets as levelSets } from "../lib/words";
 import { share } from "../share";
 import { site } from "../content";
 import { allEntries, caption, cleanName, dictionaryUrl, formula, friendBanner, humanLine, parseShareHash, sendTo, sets, shareHash, split, tallyIds, verdict, MAX_NAME_LENGTH, PER_KIND, PER_SET, type Answer, type SetId } from "../lib/words";
@@ -120,4 +123,26 @@ test("SEO copy stays within its limits", () => {
   assert.ok(site.title.length <= 45, site.title);
   assert.ok(site.description.length >= 120 && site.description.length <= 160, String(site.description.length));
   assert.ok(site.faq.length >= 5);
+});
+
+test("stars per set: 3 for a perfect 10, 2 for 7 or more, 1 for finishing, with an exact near-miss line", () => {
+  assert.deepEqual([10, 9, 7, 6, 0].map(setStars), [3, 2, 2, 1, 1]);
+  assert.equal(nearMissLine(10), "");
+  assert.equal(nearMissLine(9), "আর ১টা ঠিক হলে ৩ তারা।");
+  assert.equal(nearMissLine(7), "আর ৩টা ঠিক হলে ৩ তারা।");
+  assert.equal(nearMissLine(6), "আর ১টা ঠিক হলে ২ তারা।");
+  assert.equal(nearMissLine(3), "আর ৪টা ঠিক হলে ২ তারা।");
+});
+
+test("progress per set goes through readLevels and recordLevel", () => {
+  const count = levelSets.length;
+  let stars = readLevels(`{"1":3,"2":1,"${count + 1}":3,"x":2,"0":2}`, count);
+  assert.deepEqual(stars, { 1: 3, 2: 1 });
+  stars = recordLevel(stars, 2, setStars(9));
+  assert.equal(stars[2], 2);
+  stars = recordLevel(stars, 2, setStars(2));
+  assert.equal(stars[2], 2, "a worse run never lowers the stars");
+  assert.equal(totalStars(stars), 5);
+  assert.deepEqual(readLevels("not json", count), {});
+  assert.deepEqual(readLevels(null, count), {});
 });

@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat, type Photo } from "../../../shared/card-canvas";
 import { FormatToggle, PhotoPicker, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
+import { sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { drawPoster, posterBlob } from "../lib/draw-poster";
 import { cleanName, createPoster, genreById, genres, isBlocked, nextTitle, parseShareHash, possessive, shareHash, DEFAULT_STATE, MAX_NAME_LENGTH, NEW_FACES, type GenreId, type PosterState } from "../lib/poster";
 
@@ -81,7 +83,7 @@ export function PosterBuilder() {
         <legend>কোন ধরনের ছবি?</legend>
         <div>
           {genres.map(item => (
-            <button type="button" key={item.id} data-genre={item.id} aria-pressed={item.id === state.genre} onClick={() => set({ genre: item.id as GenreId })}>{item.chip}</button>
+            <button type="button" key={item.id} data-genre={item.id} aria-pressed={item.id === state.genre} onClick={() => { if (item.id !== state.genre) sfx.thud(); set({ genre: item.id as GenreId }); }}>{item.chip}</button>
           ))}
         </div>
       </fieldset>
@@ -107,10 +109,11 @@ export function PosterBuilder() {
             <figcaption id="cp-summary" className="cp-sr">{poster.ribbon} {poster.title}। অভিনয়ে {poster.name || NEW_FACES}{poster.costar ? ` ও ${poster.costar}` : ""}। {poster.line}</figcaption>
             {previewError && <p className="kit-status" role="alert">পোস্টারটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
           </figure>
-          <button type="button" className="cp-shuffle" onClick={() => setState(nextTitle)}>
+          <button type="button" className="cp-shuffle" onClick={() => { sfx.pick(); setState(nextTitle); }}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h11l-3-3m3 3-3 3M20 17H9l3 3m-3-3 3-3" /></svg>
             আরেকটা নাম দাও
           </button>
+          <SoundToggle compact />
         </div>
 
         <div className="cp-controls">

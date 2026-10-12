@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { buzz, sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import {
@@ -124,7 +126,9 @@ export function MoodBoard() {
     setTaps(count => count + 1);
     setStatus(`${bn(own.moods.length + 1)} নম্বর চাপ: ${moods[mood].label}`);
     setCounted(current => current === "done" ? "idle" : current);
-    try { navigator.vibrate?.(18); } catch { /* not every phone allows it */ }
+    // A short note per mood: the happier the mood, the higher it sings.
+    sfx.note(moods.length - 1 - mood, 0.14);
+    buzz(18);
   }
 
   function undo() {
@@ -212,6 +216,7 @@ export function MoodBoard() {
         <button type="button" className="mm-undo" onClick={undo} disabled={!canUndo}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 7 4 12l5 5M4.5 12H15a5 5 0 0 1 0 10h-3" /></svg>ফিরিয়ে আনো</button>
         <p className="mm-status" role="status" aria-live="polite">{status || sportOf(own.sport).hint}</p>
         {hasOwn && <button type="button" className="mm-fresh" onClick={startFresh}>নতুন ম্যাচ</button>}
+        <SoundToggle compact />
       </div>
 
       <StickyNext show={ready && !resultVisible} title={<><strong>{bn(own.moods.length)}টা</strong> চাপ{last !== undefined && <> · এখন {moods[last].label}</>}</>} sub="খেলা শেষ হলে কার্ডটা দেখো" href="#result" label="খেলা শেষ" />

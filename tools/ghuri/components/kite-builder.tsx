@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { buzz, hiss, sfx, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard, drawKite, drawLantern } from "../lib/draw-card";
@@ -71,6 +73,9 @@ export function KiteBuilder() {
 
   function fly() {
     setFlights(count => count + 1);
+    // A kite catches the wind and the string gives a tug; a lantern just lifts off softly.
+    if (kite) { sfx.whoosh(); tone(220, 0.14, 0.14, "triangle", 0.12, 120); buzz(14); }
+    else { hiss(0.6, 0.06, 500); tone(392, 0.5, 0.05, "sine", 0.05, 587); }
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.setTimeout(() => document.getElementById("result")?.scrollIntoView({ behavior: still ? "auto" : "smooth" }), still ? 0 : 1100);
   }
@@ -78,7 +83,7 @@ export function KiteBuilder() {
   async function countMine() {
     setCounted("sending");
     const tally = await addToTally(TOOL, [clean.pattern]);
-    if (tally) { setEveryone(tally); setCounted("done"); }
+    if (tally) { setEveryone(tally); setCounted("done"); sfx.good(); }
     else setCounted("failed");
   }
 
@@ -139,6 +144,7 @@ export function KiteBuilder() {
           </label>
 
           <button type="button" className="kit-primary gh-fly" onClick={fly}>ওড়াও!</button>
+          <SoundToggle compact />
           {!kite && <p className="gh-note">এই ফানুস শুধু ছবিতে ভাসে, আগুন লাগে না।</p>}
         </div>
       </div>

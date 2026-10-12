@@ -4,7 +4,8 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { cleanName, fitCanvas, newSeed, useBest, useGameLoop, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { buzz, cleanName, confetti, fitCanvas, hiss, loop, newSeed, readLevels, sfx, shake, tone, totalStars, unlockedLevel, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
 import { drawKite } from "../../ghuri/lib/draw-card";
 import { FONT_HUD, FONT_POP, FONT_POP_SMALL, METER, POLE, meterX, paintFog, paintScene, palette, strokeString } from "../lib/art";
@@ -13,11 +14,20 @@ import {
   controlX, controlY, createGame, plan, step, steerBy, steerTo, timeLeft, zone,
   BREAK_TIME, H, HI, LO, ROOFS, ROUND_TIME, W, type Game, type GameEvent, type Kite,
 } from "../lib/game";
-import { banner, bn, caption, compareLine, cutLine, humanLine, lookFromGhuri, parseShared, sharedHash, LOOKS, ROUNDS, type Look, type Shared } from "../lib/link";
+import { banner, bn, caption, compareLine, cutLine, humanLine, lookFromGhuri, migrateBest, nearLine, parseShared, sharedHash, starsOf, LEVEL_COUNT, LEVELS, LOOKS, ROUNDS, type Look, type Shared } from "../lib/link";
 
 const TOOL = "vo-katta";
 type Phase = "ready" | "playing" | "paused" | "over";
-type Result = { seed: number; cuts: number; record: boolean };
+type Result = { seed: number; cuts: number; record: boolean; level: number; stars: number; before: number | null };
+const stored = (key: string) => { try { return localStorage.getItem(key); } catch { return null; } };
+
+/** Two strings catch: a quick rising zing. */
+const zing = () => { tone(620, 0.2, 0.07, "triangle", 0, 1700); hiss(0.08, 0.06, 5000, "highpass"); };
+/** The roofs shout "ভো-কাট্টা!": a rising cheer over a murmur of the crowd. */
+const cheer = () => { [262, 330, 392, 523].forEach((frequency, index) => tone(frequency, 0.5, 0.04, "triangle", index * 0.03, frequency * 1.5)); hiss(0.6, 0.05, 1100); };
+/** A new round: a short call from the roof. */
+const call = () => { tone(660, 0.1, 0.07, "triangle"); tone(880, 0.16, 0.07, "triangle", 0.1); };
+type Loop = ReturnType<typeof loop>;
 type Hint = "start" | "cross" | "attack" | "pull" | "good" | "tight" | "lost" | "next" | "gone" | "break";
 
 const HINTS: Record<Hint, string> = {
@@ -64,6 +74,10 @@ function makeLive() {
     pull: { pointer: false, key: false, toggle: false },
     gesture: { id: -1, lastX: 0, lastY: 0, startX: 0, startY: 0, moved: false },
     hint: "start" as Hint,
+    /** The wind you hear (louder in a gust) and the string's hum while hooked (higher as you pull). Null when silent. */
+    wind: null as Loop | null, hum: null as Loop | null,
+    /** Kites cut in a row without losing yours. */
+    streak: 0,
   };
 }
 
@@ -79,7 +93,13 @@ export function VoKattaGame() {
   const [result, setResult] = useState<Result | null>(null);
   const [friend, setFriend] = useState<Shared | null>(null);
   const [slow, setSlow] = useSlowMode();
-  const [best, submitBest] = useBest(TOOL);
+  const [level, setLevel] = useState(1);
+  // Level 1 keeps the key the one-evening game used, so the old best stays level 1's best.
+  const [best, submitBest] = useBest(level === 1 ? TOOL : `${TOOL}-${level}`);
+  const levels = useLevels(TOOL, LEVEL_COUNT);
+  const levelRef = useRef(1);
+  levelRef.current = level;
+  const timers = useRef<number[]>([]);
   const [name, setName] = useState("");
   const [format, setFormat] = useState<CardFormat>("feed");
   const [site, setSite] = useState("");
@@ -106,10 +126,27 @@ export function VoKattaGame() {
   const seed = useRef(1);
   const boardInView = useInView(board);
 
-  const card: Card | null = result ? { cuts: result.cuts, name: cleanName(name), look } : null;
-  const state = result ? sharedHash({ seed: result.seed, cuts: result.cuts, name, look }) : "";
+  const card: Card | null = result ? { cuts: result.cuts, name: cleanName(name), look, level: result.level } : null;
+  const state = result ? sharedHash({ seed: result.seed, cuts: result.cuts, name, look, level: result.level }) : "";
+  const para = LEVELS[level - 1];
+  const allStars = totalStars(levels.stars);
+  const open = Math.max(levels.unlocked, friend?.level ?? 1);
+  const rivalCard = friend && friend.level === level ? friend : null;
 
-  function go(next: Phase) { phaseRef.current = next; setPhaseState(next); }
+  /** The two loops run only while playing; they start from a tap (browsers need one) and stop on pause, over, a hidden tab and unmount. */
+  function startLoops() {
+    stopLoops();
+    live.wind = loop("wind");
+    live.hum = loop("hum", 200);
+  }
+  function stopLoops() {
+    live.wind?.stop(); live.hum?.stop();
+    live.wind = live.hum = null;
+  }
+  function go(next: Phase) {
+    phaseRef.current = next; setPhaseState(next);
+    if (next === "playing") startLoops(); else stopLoops();
+  }
 
   function syncPulling() {
     const on = live.pull.pointer || live.pull.key || live.pull.toggle;
@@ -123,9 +160,13 @@ export function VoKattaGame() {
     syncPulling();
   }
 
-  function reset(nextSeed: number) {
-    game.current = createGame(nextSeed);
+  function reset(nextSeed: number, nextLevel = levelRef.current) {
+    timers.current.forEach(clearTimeout); timers.current = [];
+    game.current = createGame(nextSeed, nextLevel);
     seed.current = nextSeed;
+    levelRef.current = nextLevel;
+    setLevel(nextLevel);
+    live.streak = 0;
     live.pop.at = -10;
     live.hint = "start";
     setCuts(0);
@@ -147,11 +188,18 @@ export function VoKattaGame() {
   function resume() { if (phaseRef.current === "paused") go("playing"); }
   function restart() {
     if (phaseRef.current !== "over" || !restartReady) return;
-    reset(friend ? friend.seed : newSeed());
+    reset(rivalCard ? rivalCard.seed : newSeed());
     go("playing");
   }
+  /** The level picker and "পরের লেভেল": a fresh evening on the ready screen (the friend's sky, when it's their level). */
+  function pick(nextLevel: number) {
+    reset(friend && friend.level === nextLevel ? friend.seed : newSeed(), nextLevel);
+    go("ready");
+    if ((play.current?.getBoundingClientRect().top ?? 0) < 0) play.current?.scrollIntoView({ behavior: live.reduced ? "auto" : "smooth", block: "center" });
+  }
 
-  const buzz = (ms: number) => { if (!slowRef.current && typeof navigator.vibrate === "function") navigator.vibrate(ms); };
+  /** Vibration follows the site's sound switch (the kit's buzz) and stays off in slow mode. */
+  const shakePhone = (ms: number) => { if (!slowRef.current) buzz(ms); };
 
   function finish() {
     const g = game.current;
@@ -159,8 +207,15 @@ export function VoKattaGame() {
     letGo();
     setCuts(g.cuts);
     setBreakRound(null);
-    setResult({ seed: seed.current, cuts: g.cuts, record: best !== null && g.cuts > best });
+    const stars = starsOf(g.cuts, g.level), record = best !== null && g.cuts > best;
+    if (stars) levels.record(g.level, stars);
+    setResult({ seed: seed.current, cuts: g.cuts, record, level: g.level, stars, before: best });
     submitBest(g.cuts);
+    // The stars chime in one by one (StarReveal); the fanfare follows them, confetti only for 3 stars or a new best.
+    const after = (stars + 1) * 260;
+    if (stars === 3 || record) timers.current.push(window.setTimeout(() => { sfx.levelUp(); confetti(); }, after));
+    else if (stars) timers.current.push(window.setTimeout(sfx.good, after));
+    else sfx.lose();
     // Thumbs are still on টান when the clock runs out; don't let that tap skip the result.
     setRestartReady(false);
     window.setTimeout(() => setRestartReady(true), 700);
@@ -171,12 +226,16 @@ export function VoKattaGame() {
 
   function onEvent(event: GameEvent, x: number, y: number) {
     const g = game.current;
-    if (event === "hook") buzz(6);
+    if (event === "hook") { shakePhone(6); zing(); }
     else if (event === "cut" || event === "lost") {
       Object.assign(live.pop, { at: live.clock, x: Math.min(Math.max(x, 80), W - 80), y: Math.min(Math.max(y, 90), 300), cut: event === "cut" });
-      if (event === "cut") { setCuts(g.cuts); buzz(12); }
+      if (event === "cut") {
+        setCuts(g.cuts); shakePhone(12); cheer();
+        // Cuts in a row without losing your kite climb in pitch.
+        if (++live.streak >= 2) sfx.combo(live.streak - 2);
+      } else { live.streak = 0; sfx.wrong(); shake(board.current); }
     } else if (event === "round-end") setBreakRound(g.round + 1);
-    else if (event === "round") { setBreakRound(null); setRound(g.round); }
+    else if (event === "round") { setBreakRound(null); setRound(g.round); call(); }
     else if (event === "over") finish();
   }
 
@@ -197,6 +256,10 @@ export function VoKattaGame() {
     if (kx || ky) steerBy(g, kx * KEY_SPEED * dt, ky * KEY_SPEED * dt);
     step(g, dt, slowRef.current, onEvent);
     if (phaseRef.current !== "playing") return;
+    // Sound that carries the state: the wind's loudness and pitch follow its strength, the string hums higher the harder you pull.
+    const gust = Math.min(1, Math.abs(g.wind) / 22);
+    live.wind?.set(0.08 + 0.45 * gust); live.wind?.pitch(380 + 900 * gust);
+    live.hum?.set(g.hooked ? 0.32 : 0); live.hum?.pitch(150 + 330 * g.you.tension);
     const next = hintFor(g);
     if (next !== live.hint) { live.hint = next; setHint(next); }
   }
@@ -372,7 +435,7 @@ export function VoKattaGame() {
       const shared = parseShared(window.location.hash);
       if (!shared) return;
       setFriend(shared);
-      reset(shared.seed);
+      reset(shared.seed, shared.level);
       go("ready");
     };
     setSite(window.location.host);
@@ -380,13 +443,17 @@ export function VoKattaGame() {
     // A kite made in ঘুড়ি আর ফানুস can arrive in the hash; fly that one.
     const made = lookFromGhuri(window.location.hash);
     if (made) setLook(made);
-    if (!parseShared(window.location.hash)) reset(newSeed());
+    // Before levels this phone kept one best count; it becomes level 1's stars once.
+    let saved = readLevels(stored(`ektukhani-levels-${TOOL}`), LEVEL_COUNT);
+    const moved = migrateBest(saved, stored(`ektukhani-best-${TOOL}`));
+    if (moved) { levels.record(1, moved); saved = { 1: moved }; }
+    if (!parseShared(window.location.hash)) reset(newSeed(), unlockedLevel(saved, LEVEL_COUNT));
     readFriend();
     const hide = () => { if (document.hidden) pause(); };
     window.addEventListener("hashchange", readFriend);
     window.addEventListener("blur", letGo);
     document.addEventListener("visibilitychange", hide);
-    return () => { window.removeEventListener("hashchange", readFriend); window.removeEventListener("blur", letGo); document.removeEventListener("visibilitychange", hide); };
+    return () => { window.removeEventListener("hashchange", readFriend); window.removeEventListener("blur", letGo); document.removeEventListener("visibilitychange", hide); timers.current.forEach(clearTimeout); stopLoops(); };
   }, []);
 
   // Scrolling the sky away mid-game pauses it.
@@ -435,7 +502,7 @@ export function VoKattaGame() {
     loadCardFonts("ভো-কাট্টা! ১২৩৪টা ঘুড়ি কাটল").then(() => {
       if (cancelled) return;
       if (card && preview.current) drawCard(preview.current, card, format, site);
-      if (friend && friendPreview.current) drawCard(friendPreview.current, { cuts: friend.cuts, name: friend.name, look: friend.look ?? LOOKS[0] }, "feed", site);
+      if (friend && friendPreview.current) drawCard(friendPreview.current, { cuts: friend.cuts, name: friend.name, look: friend.look ?? LOOKS[0], level: friend.level }, "feed", site);
       setPreviewError(false);
     }).catch(() => { if (!cancelled) setPreviewError(true); });
     return () => { cancelled = true; };
@@ -496,13 +563,17 @@ export function VoKattaGame() {
     resultBox.current?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
   }
   function playFromCard() {
-    reset(friend ? friend.seed : newSeed());
+    reset(rivalCard ? rivalCard.seed : newSeed());
     go("ready");
     play.current?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
   }
 
   const rival = friend ? possessive(friend.name || "বন্ধু") : "";
   const over = phase === "over" && result;
+  const won = Boolean(result && result.stars > 0);
+  const hasNext = phase === "over" && won && level < LEVEL_COUNT;
+  const near = result ? nearLine(result.cuts, result.level, result.before) : "";
+  const versus = result && rivalCard && rivalCard.seed === result.seed ? compareLine(result.cuts, rivalCard.cuts, rivalCard.name) : "";
   const line = phase === "ready" ? HINTS.start : phase === "paused" ? "থেমে আছে। তৈরি হলে চালিয়ে যাও।" : phase === "over" ? "সন্ধ্যা নামল, নাটাই গোটাও!" : HINTS[hint];
   const tone = phase === "playing" && (hint === "good" || hint === "pull" || hint === "tight") ? hint : "plain";
 
@@ -510,7 +581,7 @@ export function VoKattaGame() {
     <div className="vk">
       {friend && (
         <section className="vk-friend" aria-labelledby="vk-friend-title">
-          <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`${rival} কার্ড: ${bn(friend.cuts)}টা ঘুড়ি কাটা`} />
+          <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`${rival} কার্ড: লেভেল ${bn(friend.level)}, ${bn(friend.cuts)}টা ঘুড়ি কাটা`} />
           <div>
             <h2 id="vk-friend-title">{banner(friend)}</h2>
             <p>{rival} নিজের ফোনের স্কোর</p>
@@ -518,12 +589,13 @@ export function VoKattaGame() {
         </section>
       )}
 
+      <p className="vk-level"><span><b>লেভেল {bn(level)}</b> · {para.name}</span><span>{best !== null && <small>সেরা {bn(best)} · </small>}<span aria-label={`মোট ${bn(allStars)}টা তারা`}>★ {bn(allStars)}/{bn(LEVEL_COUNT * 3)}</span></span></p>
       <div className="vk-hud">
         <p className="vk-score"><span>কাটলে</span><b>{bn(cuts)}</b><span>টা</span></p>
-        {best !== null && <p className="vk-best"><span>সেরা</span><b>{bn(best)}</b></p>}
         <button type="button" className="vk-slow" aria-pressed={slow} onClick={() => setSlow(!slow)}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="12" r="5.5" /><path d="M10 12a2 2 0 1 0 2-2M2.5 18h15a3 3 0 0 0 3-3v-4m0 0-1.2-3m1.2 3 1.8-2.4" /></svg>ধীরে খেলো
         </button>
+        <SoundToggle compact className="vk-sound" onChange={on => { if (on && phaseRef.current === "playing") startLoops(); }} />
         <button type="button" className="vk-pause" onClick={phase === "paused" ? resume : pause} disabled={phase !== "playing" && phase !== "paused"} aria-label={phase === "paused" ? "চালিয়ে যাও" : "একটু থামাও"}>
           <svg viewBox="0 0 24 24" aria-hidden="true">{phase === "paused" ? <path d="M8 5v14l11-7z" className="vk-fill" /> : <path d="M9 5v14M15 5v14" />}</svg>
         </button>
@@ -535,12 +607,13 @@ export function VoKattaGame() {
           {phase === "ready" && (
             <div className="vk-overlay" data-at="low">
               <div className="vk-note">
+                {level > 1 && <p className="vk-howto"><b>লেভেল {bn(level)} · {para.name}</b><br />{para.note}</p>}
                 <button type="button" className="kit-primary" onClick={start}>শুরু করো</button>
                 <button type="button" className="kit-link vk-look" onClick={nextLook}>ঘুড়ি বদলাও</button>
               </div>
             </div>
           )}
-          <p className="screen-reader-only" aria-live="polite">{over && result ? `খেলা শেষ। ${bn(result.cuts)}টা ঘুড়ি কাটলে। ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : phase === "playing" && breakRound !== null ? `রাউন্ড ${bn(breakRound + 1)} · ${ROOFS[breakRound].name}` : ""}</p>
+          <p className="screen-reader-only" aria-live="polite">{over && result ? `খেলা শেষ। ${bn(result.cuts)}টা ঘুড়ি কাটলে। ${result.stars ? `${bn(result.stars)} তারা।` : ""} ${near} ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : phase === "playing" && breakRound !== null ? `রাউন্ড ${bn(breakRound + 1)} · ${ROOFS[breakRound].name}` : ""}</p>
           {phase === "playing" && breakRound !== null && (
             <div className="vk-overlay">
               <div className="vk-note vk-round">
@@ -561,9 +634,11 @@ export function VoKattaGame() {
             <div className="vk-overlay vk-block">
               <div className="vk-note vk-slip">
                 <h2>{result.cuts > 0 ? "ভো-কাট্টা!" : "সন্ধ্যা নামল!"}</h2>
+                {result.stars > 0 && <StarReveal count={result.stars} />}
                 <p className="vk-final"><b>{bn(result.cuts)}</b>টা ঘুড়ি কাটলে</p>
-                <p className="vk-record">{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null && best > result.cuts ? `এই ফোনে সেরা ${bn(best)}টা` : humanLine(result.cuts)}</p>
-                {friend && <p className="vk-versus">{compareLine(result.cuts, friend.cuts, friend.name)}</p>}
+                {near && <p className="vk-near">{near}</p>}
+                <p className="vk-record">{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null && best > result.cuts ? `এই লেভেলে সেরা ${bn(best)}টা` : humanLine(result.cuts)}</p>
+                {versus && <p className="vk-versus">{versus}</p>}
                 <button type="button" className="kit-link vk-see" onClick={seeCard}>কার্ড বানাও, বন্ধুকে পাঠাও ↓</button>
               </div>
             </div>
@@ -575,7 +650,10 @@ export function VoKattaGame() {
 
         <div className="vk-controls">
           {phase === "over" ? (
-            <button type="button" className="kit-primary vk-again" onClick={restart} disabled={!restartReady}>আরেকবার</button>
+            <>
+              {hasNext && <button type="button" className="kit-primary vk-again" onClick={() => pick(level + 1)} disabled={!restartReady}>পরের লেভেল</button>}
+              <button type="button" className={hasNext ? "kit-secondary vk-again" : "kit-primary vk-again"} onClick={restart} disabled={!restartReady}>{won ? "আবার খেলো" : "আরেকবার"}</button>
+            </>
           ) : (
             <>
               <button
@@ -596,16 +674,22 @@ export function VoKattaGame() {
         <p className="vk-safety">সত্যিকারের ঘুড়ি? খোলা মাঠে ওড়াও, বিদ্যুতের তারের কাছে না।</p>
       </div>
 
+      <details className="vk-levels">
+        <summary>সব লেভেল <span>★ {bn(allStars)}/{bn(LEVEL_COUNT * 3)}</span></summary>
+        <p>পুরান ঢাকার দশটা পাড়া, প্রতিটায় তিন ছাদ। পরের পাড়ার ঘুড়ি জোরে ছোটে, টান মাপা, বাতাস দমকা। পার হলে পরেরটা খোলে, খোলা পাড়া খোলাই থাকে।</p>
+        <LevelGrid count={LEVEL_COUNT} stars={levels.stars} unlocked={open} current={level} onPick={pick} />
+      </details>
+
       <section className="vk-result" id="result" ref={resultBox} aria-labelledby="vk-result-title">
         <div className="vk-result-head">
           <h2 id="vk-result-title">{result ? <><em>{bn(result.cuts)}টা ঘুড়ি</em> কাটলে, কার্ড তৈরি</> : "খেলা শেষে তোমার ভো-কাট্টার কার্ড"}</h2>
-          <p>{result ? friend ? compareLine(result.cuts, friend.cuts, friend.name) : humanLine(result.cuts) : "একবার খেললেই এখানে স্কোরসহ একটা কার্ড আসবে। বন্ধুকে পাঠালে সে একই বাতাস আর একই ছাদের ঘুড়ি পাবে।"}</p>
+          <p>{result ? versus || humanLine(result.cuts) : "একবার খেললেই এখানে স্কোরসহ একটা কার্ড আসবে। বন্ধুকে পাঠালে সে একই বাতাস আর একই ছাদের ঘুড়ি পাবে।"}</p>
         </div>
         {card && (
           <div className="vk-result-body">
             <figure className="kit-card" data-format={format}>
               <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="vk-card-summary" />
-              <figcaption id="vk-card-summary" className="vk-sr">ভো-কাট্টার কার্ড: {cutLine(card.cuts, card.name)}। {humanLine(card.cuts)}</figcaption>
+              <figcaption id="vk-card-summary" className="vk-sr">ভো-কাট্টার কার্ড, লেভেল {bn(card.level)}: {cutLine(card.cuts, card.name)}। {humanLine(card.cuts)}</figcaption>
               {previewError && <p className="kit-status" role="alert">কার্ডের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
             </figure>
             <div className="vk-share">

@@ -1,11 +1,22 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, wrapText, BODY_FONT, type CardFormat } from "../../../shared/card-canvas";
 import { drawDalaBack, drawDalaFront, drawMango, pileSlots } from "./art";
-import { bn, humanLine, ripeOf, type Shared } from "./storm";
+import { bn, humanLine, ripeOf, stageOf, CLASSIC_STAGE, type Shared } from "./storm";
 
 const CREAM = "#fff6e2", AMBER = "#ffd27a", INK = "#3a2414";
 
+function star(context: CanvasRenderingContext2D, x: number, y: number, r: number, on: boolean) {
+  context.beginPath();
+  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, d = i % 2 ? r * 0.45 : r; context.lineTo(x + Math.cos(a) * d, y + Math.sin(a) * d); }
+  context.closePath();
+  context.fillStyle = on ? "#ffc93c" : "#fff6e233"; context.fill();
+  context.lineWidth = 4; context.strokeStyle = on ? "#a9561a" : "#fff6e244"; context.stroke();
+}
+
+/** This phone's extras for its own card (never in the link): the storm's stars and the all-time mango badge. */
+export type CardExtra = { stars?: number; milestone?: number };
+
 /** The ডালা heaped with the mangoes from the storm, under the edge of the tree, the count big above it. */
-export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: CardFormat, site: string) {
+export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: CardFormat, site: string, extra: CardExtra = {}) {
   const { width, height } = cardSizes[format];
   canvas.width = width; canvas.height = height;
   const context = canvas.getContext("2d");
@@ -54,6 +65,12 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
   fitText(context, [{ text: `${bn(shared.count)}টা আম`, color: CREAM, weight: 800, display: true }], cx, y(450), 150, 900, "center");
   fitText(context, [{ text: `${bn(shared.score)} পয়েন্ট`, color: AMBER, weight: 700 }, { text: `  ·  পাকা ${bn(ripe)}, কাঁচা ${bn(green)}`, color: "#f3dcc0", weight: 600 }], cx, y(530), 46, 900, "center");
 
+  const stage = shared.stage ?? CLASSIC_STAGE, stars = extra.stars ?? 0;
+  // Stars sit on the canopy above the title; the storm and the all-time badge sit just above the heap, which can rise to about y(620).
+  if (stars) for (let i = 0; i < 3; i++) star(context, cx + (i - 1) * 74, y(212), 30, i < stars);
+  const badge = `ঝড় ${bn(stage)} · ${stageOf(stage).name}${extra.milestone ? ` · মোট ${bn(extra.milestone)}+ আম` : ""}`;
+  fitText(context, [{ text: badge, color: "#f3dcc0", weight: 600 }], cx, y(582), 32, 900, "center");
+
   // The ডালা and its heap: up to fifteen mangoes, ripe and green in the same mix as the score.
   const dala = 600, rimY = y(930), shown = Math.min(15, shared.count);
   context.fillStyle = "#4a2c1430";
@@ -72,4 +89,4 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
   drawFooterBand(context, format, "তুমি কয়টা কুড়াতে পারবে?", site, { band: "#2a1d14", ask: AMBER, site: CREAM });
 }
 
-export const cardBlob = (shared: Shared, format: CardFormat, site: string) => renderCard(canvas => drawCard(canvas, shared, format, site));
+export const cardBlob = (shared: Shared, format: CardFormat, site: string, extra: CardExtra = {}) => renderCard(canvas => drawCard(canvas, shared, format, site, extra));

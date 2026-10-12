@@ -271,6 +271,31 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 20 | shobdo-khoja | শব্দ খোঁজা | গেম | G24 | done | games-2026-10.md §4.3 #24 |
 | 20 | carrom | ক্যারম | গেম | G10 | done | games-2026-10.md §4.3 #10 |
 | 20 | pati-buni | পাটি বুনি | গেম | G03 | done | games-2026-10.md §4.3 #3 |
+| 21 | golokdhadha | গোলকধাঁধা | গেম | GW01 | done | games-wave-2.md #1 |
+| 21 | ponero-ghor | ১৫ ঘরের ধাঁধা | গেম | GW02 | done | games-wave-2.md #2 |
+| 21 | switchboard | সুইচবোর্ড | গেম | GW03 | done | games-wave-2.md #3 |
+| 21 | sudoku | সুডোকু বাংলায় | গেম | GW04 | done | games-wave-2.md #4 |
+| 21 | chhobi-photao | ছবি ফোটাও | গেম | GW05 | done | games-wave-2.md #5 |
+| 22 | ghontar-sur | ঘণ্টার সুর | গেম | GW06 | done | games-wave-2.md #6 |
+| 22 | konta-nei | কোনটা নেই? | গেম | GW07 | done | games-wave-2.md #7 |
+| 22 | bhul-kothay | ভুল কোথায়? | গেম | GW08 | done | games-wave-2.md #8 |
+| 22 | atir-aam | আঁটি থেকে আম | গেম | GW09 | done | games-wave-2.md #9 |
+| 22 | bhimruler-chak | ভিমরুলের চাক | গেম | GW10 | done | games-wave-2.md #10 |
+| 23 | churir-bazar | চুড়ির বাজার | গেম | GW11 | done | games-wave-2.md #11 |
+| 23 | mukhe-mukhe-hisab | মুখে মুখে হিসাব | গেম | GW12 | done | games-wave-2.md #12 |
+| 23 | chhobir-tukro | ছবির টুকরো | গেম | GW13 | done | games-wave-2.md #13 |
+| 23 | sat-chara | সাত চাড়া | গেম | GW14 | done | games-wave-2.md #14 |
+| 23 | chhip-felo | ছিপ ফেলো | গেম | GW15 | done | games-wave-2.md #15 |
+| 24 | golir-badminton | গলির ব্যাডমিন্টন | গেম | GW16 | done | games-wave-2.md #16 |
+| 24 | latim | লাটিম | গেম | GW17 | done | games-wave-2.md #17 |
+| 24 | kagojer-urojahaj | কাগজের উড়োজাহাজ | গেম | GW18 | done | games-wave-2.md #18 |
+| 24 | nodi-par | নদী পার | গেম | GW19 | done | games-wave-2.md #19 |
+| 24 | marble-sinri | মার্বেল-সিঁড়ি | গেম | GW20 | done | games-wave-2.md #20 |
+| 25 | penalty | পেনাল্টি কিক | গেম | GW21 | done | games-wave-2.md #21 |
+| 25 | roshi-tana | রশি টানাটানি | গেম | GW22 | done | games-wave-2.md #22 |
+| 25 | moshar-raat | মশার রাত | গেম | GW23 | done | games-wave-2.md #23 |
+| 25 | al-dhore-hati | আল ধরে হাঁটি | গেম | GW24 | done | games-wave-2.md #24 |
+| 25 | o-te-ojogor | অ-তে অজগর | গেম | GW25 | done | games-wave-2.md #25 |
 
 ### Wave deadlines and why
 

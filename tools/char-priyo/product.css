@@ -41,7 +41,9 @@
 .cp-stack i:nth-child(3){height:14px;margin-right:4px;background-color:#b8893a}
 .cp-stack i:nth-child(4){height:9px;margin-left:3px;background-color:#4a3a5e}
 
-.cp-now{margin:8px 0 0;font-size:14px;line-height:1.5;min-height:1.5em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cp-nowrow{display:flex;align-items:center;gap:8px;margin-top:8px}
+.cp-nowrow .gx-sound{flex:none;margin-block:-12px;color:var(--wood-dark)}
+.cp-now{flex:1;min-width:0;margin:0;font-size:14px;line-height:1.5;min-height:1.5em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cp-now b{color:var(--accent)}
 .cp-now small{color:var(--muted);font-size:13px}
 

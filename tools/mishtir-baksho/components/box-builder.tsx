@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { buzz, confetti, sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { art } from "../lib/art";
 import { bn, createCard, groups, isGi, parseShareHash, placeOf, possessive, shareHash, starters, sweetById, sweets, tier, toggleSweet, total, MAX_NAME_LENGTH, type Shared, type SweetId } from "../lib/box";
@@ -60,7 +62,10 @@ export function BoxBuilder() {
   }, [card, format, site, friend]);
 
   function toggle(id: SweetId) {
-    if (!selected.includes(id)) navigator.vibrate?.(12);
+    if (!selected.includes(id)) {
+      // A sweet drops into the box; the last one makes the box complete.
+      if (selected.length + 1 === total) { sfx.win(); confetti(); } else { sfx.drop(); buzz(12); }
+    }
     setSelected(current => toggleSweet(current, id));
     // Changed picks make the old comparison stale; let them compare again.
     setCompared(current => current === "done" ? "idle" : current);
@@ -102,7 +107,7 @@ export function BoxBuilder() {
       <div className="mb-box" id="sweet-box">
         <div className="mb-box-head">
           <p className="mb-count" aria-live="polite"><span>বাক্সে</span> <strong key={count}>{bn(total)}-এ {bn(count)}টা</strong></p>
-          <p className="mb-tier">{tier(count)}</p>
+          <div className="mb-head-end"><p className="mb-tier">{tier(count)}</p><SoundToggle compact /></div>
         </div>
         <ol className="mb-slots" aria-label="বাক্সে যা আছে">
           {selected.map(id => <li key={id} className="mb-slot is-full" title={sweetById(id).label}><SweetArt id={id} /></li>)}

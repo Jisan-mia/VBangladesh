@@ -3,19 +3,19 @@ import test from "node:test";
 import { site } from "../content";
 import { share } from "../share";
 import {
-  createGame, curve, edge, linesCross, segmentsCross, step, steerBy, steerTo, windAt, zone,
+  rivalsFor, ROUND_RIVALS, createGame, curve, edge, linesCross, segmentsCross, step, steerBy, steerTo, windAt, zone,
   HI, HOME, LO, REACH, ROUND_TIME, SEGMENTS, SKY, type Game, type GameEvent,
 } from "../lib/game";
 import {
-  banner, bands, caption, compareLine, cutLine, humanLine, lookFromGhuri, parseShared, previewTitle, readLook, sharedHash, LOOKS, MAX_CUTS,
+  banner, bands, caption, compareLine, cutLine, humanLine, lookFromGhuri, migrateBest, nearLine, parseShared, previewTitle, readLook, sharedHash, starsOf, LEVEL_COUNT, LEVELS, LOOKS, MAX_CUTS,
 } from "../lib/link";
 
 const DT = 1 / 60;
 type Mode = "feather" | "hold" | "idle" | "lazy";
 
 /** A scripted player: flies across the rival's string to hook it, then keeps the needle in the green (or just holds টান). */
-function play(seed: number, { mode = "feather" as Mode, slow = false, limit = 60 * 240 } = {}) {
-  const game = createGame(seed);
+function play(seed: number, { mode = "feather" as Mode, slow = false, limit = 60 * 240, level = 1 } = {}) {
+  const game = createGame(seed, level);
   const events: Partial<Record<GameEvent, number>> = {};
   let frames = 0;
   for (; frames < limit && game.phase !== "over"; frames++) {
@@ -178,7 +178,7 @@ test("score bands, cut lines and kind comparisons", () => {
 });
 
 test("challenge links round-trip, and hostile or impossible ones are refused or trimmed", () => {
-  const shared = { seed: 48213, cuts: 7, name: "রাফি", look: { pattern: "chokhdar", color: "blue" } } as const;
+  const shared = { seed: 48213, cuts: 7, name: "রাফি", look: { pattern: "chokhdar", color: "blue" }, level: 1 } as const;
   const hash = sharedHash(shared);
   assert.equal(hash, "s=48213&t=7&p=chokhdar&c=blue&n=" + encodeURIComponent("রাফি"));
   assert.deepEqual(parseShared("#" + hash), shared);
@@ -204,7 +204,7 @@ test("a kite from ঘুড়ি আর ফানুস flies here; lanterns an
 });
 
 test("previews, banner and caption are personal and honest", () => {
-  const shared = { seed: 48213, cuts: 7, name: "রাফি", look: null };
+  const shared = { seed: 48213, cuts: 7, name: "রাফি", look: null, level: 1 };
   assert.equal(previewTitle(shared), "রাফি ৭টা ঘুড়ি কেটেছে। তুমি পারবে?");
   assert.equal(previewTitle({ ...shared, name: "" }), "সাকরাইনের ছাদে ৭টা ঘুড়ি কাটা! তুমি পারবে?");
   assert.equal(banner(shared), "রাফি ৭টা ঘুড়ি কেটেছে। একই আকাশ, একই বাতাস, এবার তোমার পালা।");
@@ -230,4 +230,63 @@ test("content meets the SEO limits, says what a link carries, and keeps the safe
   assert.equal(glass.length, 1, "glass string comes up once, as a warning");
   assert.match(glass[0].answer, /এই খেলায় কাচ নেই/);
   assert.doesNotMatch(everything.replace(JSON.stringify(glass[0]).slice(1, -1), ""), /কাচ|মাঞ্জা/);
+});
+
+test("ten পাড়া: level 1 is the original evening, and each later one adds one thing and never gets easier", () => {
+  assert.deepEqual(rivalsFor(1), ROUND_RIVALS.map(round => ({ ...round })), "level 1 flies the original rivals");
+  for (const seed of [1, 48213, 999_999_999]) {
+    assert.deepEqual(snapshot(play(seed, { limit: 60 * 40 }).game), snapshot(play(seed, { limit: 60 * 40, level: 1 }).game), "level 1 plays the old game");
+    assert.equal(windAt(createGame(seed, 1), 12, false), windAt({ ...createGame(seed), windScale: undefined }, 12, false));
+  }
+  const keys = ["speed", "steady", "strength", "attack0", "attack", "wind"] as const;
+  for (let level = 2; level <= LEVEL_COUNT; level++) {
+    const [before, now] = [LEVELS[level - 2], LEVELS[level - 1]];
+    assert.ok(now.speed >= before.speed && now.steady <= before.steady && now.strength >= before.strength && now.wind >= before.wind && now.attack <= before.attack, `level ${level} never gets easier`);
+    assert.ok(keys.some(key => now[key] !== before[key]), `level ${level} adds something`);
+    assert.ok(now.pass <= now.two && now.two < now.three && now.three <= MAX_CUTS);
+    const rivals = rivalsFor(level);
+    if (now.attack0) assert.ok(rivals[0].attackEvery > 0, "the first roof comes to hook you");
+  }
+});
+
+test("every পাড়া is fair: a steady player gets 3 stars, never touching cuts nothing, and real scores pass the link check", () => {
+  for (let level = 1; level <= LEVEL_COUNT; level++) {
+    for (const seed of [1, 48213, 2024]) {
+      const good = play(seed, { level });
+      assert.equal(good.game.phase, "over");
+      assert.equal(starsOf(good.game.cuts, level), 3, `level ${level} seed ${seed}: ${good.game.cuts} cuts`);
+      const idle = play(seed, { level, mode: "idle" });
+      assert.equal(starsOf(idle.game.cuts, level), 0, "no stars for doing nothing");
+      assert.deepEqual(parseShared(sharedHash({ seed, cuts: good.game.cuts, name: "", look: null, level })), { seed, cuts: good.game.cuts, name: "", look: null, level });
+    }
+  }
+  // Level 1 is nearly impossible to fail: one cut clears it, and even holding টান non-stop gets one.
+  assert.equal(LEVELS[0].pass, 1);
+  for (const seed of [1, 48213, 2024]) assert.ok(starsOf(play(seed, { mode: "hold" }).game.cuts, 1) >= 1);
+});
+
+test("stars and near-miss lines use exact numbers", () => {
+  assert.deepEqual([starsOf(0, 1), starsOf(1, 1), starsOf(4, 1), starsOf(7, 1), starsOf(12, 1)], [0, 1, 2, 3, 3]);
+  assert.equal(nearLine(0, 1, null), "আর ১টা কাটলেই এই পাড়া পার।");
+  assert.equal(nearLine(5, 1, null), "আর ২টা কাটলেই ৩ তারা।");
+  assert.equal(nearLine(9, 1, 11), "আর ৩টা কাটলেই নতুন সেরা।");
+  assert.equal(nearLine(12, 1, 11), "");
+});
+
+test("the old best moves into level 1's stars once, and only when there is nothing newer", () => {
+  assert.equal(migrateBest({}, "5"), 2);
+  assert.equal(migrateBest({}, "9"), 3);
+  assert.equal(migrateBest({}, "0"), 0, "never cut one: nothing to move");
+  assert.equal(migrateBest({}, null), 0);
+  assert.equal(migrateBest({}, "99"), 0);
+  assert.equal(migrateBest({ 1: 1 }, "9"), 0, "already moved");
+});
+
+test("links carry the পাড়া; old links without it open level 1; bad levels are refused", () => {
+  const shared = { seed: 48213, cuts: 7, name: "", look: { pattern: "chokhdar", color: "blue" }, level: 5 } as const;
+  assert.equal(sharedHash(shared), "s=48213&t=7&p=chokhdar&c=blue&l=5");
+  assert.deepEqual(parseShared(sharedHash(shared)), shared);
+  assert.equal(parseShared("s=48213&t=7&p=chokhdar&c=blue")?.level, 1);
+  assert.equal(sharedHash({ ...shared, level: 1 }), "s=48213&t=7&p=chokhdar&c=blue");
+  for (const bad of ["0", "11", "3.5", "-1", "x", "05"]) assert.equal(parseShared(`s=48213&t=7&l=${bad}`), null, `l=${bad}`);
 });

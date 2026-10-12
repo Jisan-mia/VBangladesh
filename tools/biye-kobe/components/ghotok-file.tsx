@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, type Tally } from "../../../shared/share-client";
+import { sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawReport } from "../lib/draw-report";
 import { bn, caption, createReport, parseShareHash, possessive, questions, shareHash, timings, MAX_NAME_LENGTH, QUESTION_COUNT, type Answer, type Shared } from "../lib/report";
@@ -74,7 +76,8 @@ export function GhotokFile() {
     setAnswers(next);
     setCounted(current => current === "done" ? "idle" : current);
     const target = firstOpen(next, index + 1);
-    timer.current = setTimeout(() => setIndex(target), ADVANCE_MS);
+    // The only sound: the ghotok's stamp thuds down when the report is written.
+    timer.current = setTimeout(() => { setIndex(target); if (target === QUESTION_COUNT) setTimeout(sfx.thud, 250); }, ADVANCE_MS);
   }
 
   function go(target: number) {
@@ -123,6 +126,7 @@ export function GhotokFile() {
           <div className="bk-sheet">
             <div className="bk-sheet-head">
               <span>ফাইল নং ঘ-{report.fileNo}</span>
+              <SoundToggle compact />
               <span aria-live="polite">{question ? <>প্রশ্ন <b>{bn(index + 1)}</b>/{bn(QUESTION_COUNT)}</> : "ফাইল শেষ"}</span>
             </div>
 

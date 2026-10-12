@@ -58,6 +58,9 @@ export function createWorld() {
     sunkCount: 0,
     moving: false,
     shotTime: 0,
+    /** The hardest disc-on-disc and disc-on-cushion hit (closing speed, mm/s) since the page last read and zeroed them: sound only, never physics. */
+    clack: 0,
+    bump: 0,
   };
 }
 export type World = ReturnType<typeof createWorld>;
@@ -97,10 +100,10 @@ export function step(w: World, dt = STEP) {
       x[i] += vx[i] * h;
       y[i] += vy[i] * h;
       const ri = r[i];
-      if (x[i] < ri) { x[i] = ri; if (vx[i] < 0) { vx[i] = -vx[i] * E_WALL; vy[i] *= WALL_GRIP; } }
-      else if (x[i] > BOARD - ri) { x[i] = BOARD - ri; if (vx[i] > 0) { vx[i] = -vx[i] * E_WALL; vy[i] *= WALL_GRIP; } }
-      if (y[i] < ri) { y[i] = ri; if (vy[i] < 0) { vy[i] = -vy[i] * E_WALL; vx[i] *= WALL_GRIP; } }
-      else if (y[i] > BOARD - ri) { y[i] = BOARD - ri; if (vy[i] > 0) { vy[i] = -vy[i] * E_WALL; vx[i] *= WALL_GRIP; } }
+      if (x[i] < ri) { x[i] = ri; if (vx[i] < 0) { if (-vx[i] > w.bump) w.bump = -vx[i]; vx[i] = -vx[i] * E_WALL; vy[i] *= WALL_GRIP; } }
+      else if (x[i] > BOARD - ri) { x[i] = BOARD - ri; if (vx[i] > 0) { if (vx[i] > w.bump) w.bump = vx[i]; vx[i] = -vx[i] * E_WALL; vy[i] *= WALL_GRIP; } }
+      if (y[i] < ri) { y[i] = ri; if (vy[i] < 0) { if (-vy[i] > w.bump) w.bump = -vy[i]; vy[i] = -vy[i] * E_WALL; vx[i] *= WALL_GRIP; } }
+      else if (y[i] > BOARD - ri) { y[i] = BOARD - ri; if (vy[i] > 0) { if (vy[i] > w.bump) w.bump = vy[i]; vy[i] = -vy[i] * E_WALL; vx[i] *= WALL_GRIP; } }
     }
     for (let i = 0; i < COUNT - 1; i++) {
       if (!on[i]) continue;
@@ -115,6 +118,7 @@ export function step(w: World, dt = STEP) {
         x[j] += nx * push * wj; y[j] += ny * push * wj;
         const rvx = vx[j] - vx[i], rvy = vy[j] - vy[i], vn = rvx * nx + rvy * ny;
         if (vn >= 0) continue;
+        if (-vn > w.clack) w.clack = -vn;
         const jn = -(1 + E_DISC) * vn / inv;
         let jt = -(rvy * nx - rvx * ny) / inv;
         const grip = GRIP * jn;

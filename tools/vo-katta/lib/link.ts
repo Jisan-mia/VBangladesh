@@ -1,12 +1,54 @@
 // Scoring, challenge links and preview text. Server-safe: the share routes load this file, so it imports only pure modules.
 import { possessive } from "../../../shared/bangla";
-import { challengeHash, readChallenge } from "../../../shared/game-core";
+import { challengeHash, readChallenge, starsFor, type LevelStars } from "../../../shared/game-core";
 import { colorOf, colors, patternOf, patterns, type ColorId, type PatternId } from "../../ghuri/lib/ghuri";
 
 export const ROUNDS = 3;
 /** Each round has at most this many rival kites, so a higher score is a forged link. */
 export const RIVALS_PER_ROUND = 10;
 export const MAX_CUTS = ROUNDS * RIVALS_PER_ROUND;
+
+/**
+ * Ten Old Dhaka পাড়া, one evening of three rounds each, every one a step harder: quicker rival kites (`speed`), a steadier rival pull
+ * (`steady` shrinks its swing in and out of the green), stronger hands (`strength`), the first roof coming to hook you (`attack0`, seconds
+ * between tries), more frequent hooks (`attack` scales the gap), and gustier wind (`wind`). Level 1 is the original evening, so old links
+ * replay unchanged. `pass` cuts clear the level (1 star); `two` and `three` are the marks for 2 and 3 stars.
+ */
+export const LEVELS = [
+  { name: "সূত্রাপুর", note: "তিন ছাদ, তিন রাউন্ড। প্রথম ছাদ সহজ।", speed: 1, steady: 1, strength: 0, attack0: 0, attack: 1, wind: 1, pass: 1, two: 4, three: 7 },
+  { name: "লক্ষ্মীবাজার", note: "ঘুড়িগুলো ছোটে আরেকটু জোরে।", speed: 1.15, steady: 1, strength: 0, attack0: 0, attack: 1, wind: 1, pass: 2, two: 5, three: 8 },
+  { name: "শাঁখারীবাজার", note: "প্রথম ছাদও প্যাঁচ লাগাতে আসে।", speed: 1.15, steady: 1, strength: 0, attack0: 6, attack: 1, wind: 1, pass: 2, two: 5, three: 9 },
+  { name: "তাঁতীবাজার", note: "ওদের টান আরও মাপা।", speed: 1.15, steady: 0.85, strength: 0, attack0: 6, attack: 1, wind: 1, pass: 2, two: 6, three: 10 },
+  { name: "গেণ্ডারিয়া", note: "ওদের হাতে জোর বেশি।", speed: 1.15, steady: 0.85, strength: 0.05, attack0: 6, attack: 1, wind: 1, pass: 2, two: 6, three: 10 },
+  { name: "ফরাশগঞ্জ", note: "দমকা বাতাস, ঘুড়ি সরে বেশি।", speed: 1.15, steady: 0.85, strength: 0.05, attack0: 6, attack: 1, wind: 1.3, pass: 2, two: 6, three: 11 },
+  { name: "বাংলাবাজার", note: "প্যাঁচ লাগাতে আসে ঘন ঘন।", speed: 1.15, steady: 0.85, strength: 0.05, attack0: 5, attack: 0.8, wind: 1.3, pass: 3, two: 7, three: 11 },
+  { name: "নারিন্দা", note: "ঘুড়ি ছোটে আরও জোরে।", speed: 1.3, steady: 0.85, strength: 0.05, attack0: 5, attack: 0.8, wind: 1.3, pass: 3, two: 7, three: 12 },
+  { name: "কলতাবাজার", note: "টান মাপা, হাতেও জোর।", speed: 1.3, steady: 0.7, strength: 0.1, attack0: 5, attack: 0.8, wind: 1.3, pass: 3, two: 6, three: 11 },
+  { name: "ওয়ারী", note: "পাড়ার সেরা ওস্তাদেরা, সব একসঙ্গে।", speed: 1.4, steady: 0.7, strength: 0.15, attack0: 4, attack: 0.7, wind: 1.5, pass: 3, two: 6, three: 12 },
+] as const;
+export const LEVEL_COUNT = LEVELS.length;
+const levelOf = (level: number) => LEVELS[Math.min(LEVEL_COUNT, Math.max(1, level)) - 1];
+
+/** Stars for the kites cut on a level: 0 below its pass mark. */
+export function starsOf(cuts: number, level: number) {
+  const { pass, two, three } = levelOf(level);
+  return cuts < pass ? 0 : starsFor(cuts, three, two);
+}
+
+/** The near miss with the exact gap: kites to the next star, or (at 3 stars) to this phone's best on the level. */
+export function nearLine(cuts: number, level: number, best: number | null) {
+  const { pass, two, three } = levelOf(level), stars = starsOf(cuts, level);
+  const mark = [pass, two, three].find(value => cuts < value);
+  if (mark !== undefined) return `আর ${bn(mark - cuts)}টা কাটলেই ${stars ? `${bn(stars + 1)} তারা` : "এই পাড়া পার"}।`;
+  return best !== null && cuts <= best && best < MAX_CUTS ? `আর ${bn(best - cuts + 1)}টা কাটলেই নতুন সেরা।` : "";
+}
+
+/** Before levels this phone kept one best count for the one evening there was (now level 1). Its stars, or 0 when there is nothing to move. */
+export function migrateBest(stars: LevelStars, oldBest: string | null) {
+  const cuts = Number(oldBest);
+  if (Object.keys(stars).length || oldBest === null || oldBest === "" || !Number.isInteger(cuts) || cuts < 0 || cuts > MAX_CUTS) return 0;
+  return starsOf(cuts, 1);
+}
 
 const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
 export const bn = (value: number) => digits.format(value);
@@ -28,17 +70,22 @@ export function lookFromGhuri(hash: string): Look | null {
   return params.get("o") === "kite" ? readLook(params.get("p"), params.get("c")) : null;
 }
 
-export type Shared = { seed: number; cuts: number; name: string; look: Look | null };
+export type Shared = { seed: number; cuts: number; name: string; look: Look | null; level: number };
 
-/** s = seed, t = kites cut, n = name, p and c = the sharer's kite. A bad kite is dropped, a bad score rejects the link. */
+/**
+ * s = seed, t = kites cut, n = name, p and c = the sharer's kite, l = the পাড়া (links from before levels have none and open level 1).
+ * A bad kite is dropped; a bad score or level rejects the link.
+ */
 export function parseShared(hash: string): Shared | null {
-  const challenge = readChallenge(hash, { maxTarget: MAX_CUTS, extraKeys: ["p", "c"] });
+  const challenge = readChallenge(hash, { maxTarget: MAX_CUTS, extraKeys: ["p", "c", "l"] });
   if (!challenge) return null;
-  return { seed: challenge.seed, cuts: challenge.target, name: challenge.name, look: readLook(challenge.extra.p, challenge.extra.c) };
+  const rawLevel = challenge.extra.l ?? "1", level = Number(rawLevel);
+  if (!/^[1-9]\d?$/.test(rawLevel) || level > LEVEL_COUNT) return null;
+  return { seed: challenge.seed, cuts: challenge.target, name: challenge.name, look: readLook(challenge.extra.p, challenge.extra.c), level };
 }
 
-export const sharedHash = ({ seed, cuts, name, look }: Shared) =>
-  challengeHash({ seed, target: cuts, name, extra: look ? { p: look.pattern, c: look.color } : {} });
+export const sharedHash = ({ seed, cuts, name, look, level }: Shared) =>
+  challengeHash({ seed, target: cuts, name, extra: { ...(look && { p: look.pattern, c: look.color }), ...(level > 1 && { l: level }) } });
 
 export const bands = [
   { below: 1, line: "প্রথম সাকরাইনে সবারই সুতা জড়ায়। আরেকবার?" },

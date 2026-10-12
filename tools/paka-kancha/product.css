@@ -113,3 +113,25 @@
   .tool-paka-kancha .pk-friend h2{font-size:20px}
 }
 .tool-paka-kancha .pk-hero h1 .pk-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;color:var(--accent)}
+
+/* levels: the mode switch, the level's rule, keys not on this level's pad, and the level picker */
+.tool-paka-kancha .pk-modes{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:3px;border:1.5px solid var(--line);border-radius:999px;background:#fff}
+.tool-paka-kancha .pk-modes button{min-height:40px;padding:0 10px;border:0;border-radius:999px;background:none;color:var(--ink);font-size:15px;font-weight:700;white-space:nowrap;transition:background-color .15s ease-out,color .15s ease-out}
+.tool-paka-kancha .pk-modes button span{font-size:13px;font-weight:600;color:#b9620a}
+.tool-paka-kancha .pk-modes button[aria-pressed=true]{background:var(--accent);color:#fff}
+.tool-paka-kancha .pk-modes button[aria-pressed=true] span{color:var(--gold)}
+.tool-paka-kancha .pk-top .pk-rule{font-size:13px}
+.tool-paka-kancha .pk-key:active:not(:disabled){transform:translateY(2px) scale(.96)}
+.tool-paka-kancha .pk-over .gx-reveal{font-size:38px}
+.tool-paka-kancha .pk-over-actions{display:flex;gap:8px;width:100%}
+.tool-paka-kancha .pk-over-actions>*{flex:1;min-height:56px}
+.tool-paka-kancha .pk-over-actions .kit-secondary{flex:0 1 40%;font-size:16px}
+.tool-paka-kancha .pk-again-note .kit-link{min-height:32px;font-size:13.5px}
+.tool-paka-kancha .pk-levels{padding:10px 12px;border:1.5px solid var(--line);border-radius:16px;background:#fffdf6}
+.tool-paka-kancha .pk-levels summary{display:flex;justify-content:space-between;align-items:center;min-height:36px;font-family:var(--font-display);font-size:18px;font-weight:700;cursor:pointer}
+.tool-paka-kancha .pk-levels summary span{font-family:var(--font-bengali);font-size:14px;color:#b9620a}
+.tool-paka-kancha .pk-levels p{margin:4px 0 10px;font-size:13.5px;line-height:1.5;color:var(--muted)}
+.tool-paka-kancha .pk-levels .gx-levels button{border-color:var(--accent-deep);color:var(--accent-deep)}
+.tool-paka-kancha .pk-levels .gx-levels button[aria-current=true]{background:var(--accent);color:#fff}
+.tool-paka-kancha .pk-over-actions>*{white-space:nowrap}
+@media(max-width:380px){.tool-paka-kancha .pk-over-actions .kit-secondary{padding:0 10px;font-size:15px}.tool-paka-kancha .pk-over-actions .pk-again{font-size:19px}}

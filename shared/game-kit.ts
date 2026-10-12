@@ -2,6 +2,9 @@
 // The pure helpers live in game-core.ts (import those from share.ts and lib/ code); they're re-exported here for components.
 import { useCallback, useEffect, useRef, useState } from 'react';
 export * from './game-core';
+export * from './game-sound';
+import { readLevels, recordLevel, unlockedLevel, type LevelStars } from './game-core';
+import { soundOn, setSoundOn } from './game-sound';
 
 /**
  * Runs `step(dtSeconds)` at a fixed 60 steps a second while `running` is true, and `draw()` once per animation frame.
@@ -69,4 +72,27 @@ export function useBest(slug: string, higherIsBetter = true) {
     return beaten;
   }, [key, higherIsBetter]);
   return [best, submit] as const;
+}
+
+/** The site-wide sound switch (on by default). Every game's toggle shares it. */
+export function useSound() {
+  const [on, setOn] = useState(true);
+  useEffect(() => { setOn(soundOn()); }, []);
+  const change = useCallback((next: boolean) => { setSoundOn(next); setOn(next); }, []);
+  return [on, change] as const;
+}
+
+/** Stars per level on this phone, the highest playable level, `record(level, stars)` (true for a better result), and `loaded` once storage has been read. */
+export function useLevels(slug: string, count: number) {
+  const key = `ektukhani-levels-${slug}`;
+  const [stars, setStars] = useState<LevelStars>({});
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => { setStars(readLevels(read(key), count)); setLoaded(true); }, [key, count]);
+  const record = useCallback((level: number, earned: number) => {
+    const before = readLevels(read(key), count), next = recordLevel(before, level, earned);
+    write(key, JSON.stringify(next));
+    setStars(next);
+    return (next[level] ?? 0) > (before[level] ?? 0);
+  }, [key, count]);
+  return { stars, unlocked: unlockedLevel(stars, count), record, loaded };
 }

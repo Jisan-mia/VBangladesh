@@ -152,3 +152,15 @@
 }
 @media(hover:hover){.tool-projonmo .pj-sense:not(:disabled):hover{background:#fff;border-color:var(--ink)}}
 @media(prefers-reduced-motion:reduce){.tool-projonmo .pj-sense,.tool-projonmo .pj-bars i,.tool-projonmo .pj-bar i{transition:none}.tool-projonmo .pj-entry,.tool-projonmo .pj-verdict{animation:none}}
+.tool-projonmo .pj-label .gx-sound span:first-child{padding:0;border-radius:0;background:none;color:inherit}
+
+/* sets, stars and progress (levels) */
+.tool-projonmo .pj-levels{margin-top:12px;border:1.5px solid color-mix(in srgb,var(--ink) 20%,transparent);border-radius:14px;background:#fff;color:var(--ink)}
+.tool-projonmo .pj-levels summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-projonmo .pj-levels summary span{font-weight:500;font-size:14px;color:var(--muted)}
+.tool-projonmo .pj-levels p{margin:0 14px 10px;font-size:14px;line-height:1.55;color:var(--muted)}
+.tool-projonmo .pj-levels .gx-levels{padding:0 12px 12px}
+.tool-projonmo .pj-levels .gx-levels li:has(button.next)~li button.next{animation:none;box-shadow:none;border-width:1.5px}
+.tool-projonmo .pj-reward{display:flex;align-items:center;flex-wrap:wrap;gap:2px 12px;margin:6px 0 4px}
+.tool-projonmo .pj-reward .gx-stars{font-size:30px}
+.tool-projonmo .pj-reward small{font-size:15px;font-weight:600;color:var(--accent-deep)}

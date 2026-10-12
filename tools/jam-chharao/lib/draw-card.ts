@@ -2,7 +2,7 @@ import { cardSizes, drawFooterBand, fitText, renderCard, type CardFormat, type S
 import { cleanName } from "../../../shared/game-core";
 import { boardHeight, boardWidth, cellX, cellY, drawStreet, drawVehicle, palette } from "./art";
 import { parseLevel } from "./board";
-import { fewest } from "./game";
+import { fewest, starsOf } from "./game";
 import { LEVELS } from "./levels";
 import { bn, humanLine, type Shared } from "./link";
 
@@ -39,8 +39,12 @@ export function drawCard(canvas: HTMLCanvasElement, data: CardData, format: Card
     { text: name ? " জ্যাম ছাড়িয়েছে" : " জ্যাম ছাড়ালাম", color: palette.ink, weight: 700, display: true },
   ];
   fitText(c, headline, cx, story ? 455 : 196, story ? 92 : 82, 960, "center");
-  const note = `সেরা সমাধান ${bn(fewest(data.level))} চাল${data.helped ? ` · ${bn(data.helped)} বার সাহায্য নিয়ে` : ""}`;
-  fitText(c, [{ text: note, color: palette.muted, weight: 600 }], cx, story ? 530 : 262, story ? 42 : 38, 900, "center");
+  const note = `  সেরা সমাধান ${bn(fewest(data.level))} চাল${data.helped ? ` · ${bn(data.helped)} বার সাহায্য নিয়ে` : ""}`;
+  const earned = starsOf(data.count, data.level, data.helped);
+  fitText(c, [
+    ...[0, 1, 2].map(index => ({ text: "★", color: index < earned ? "#e39b00" : "#cfc4b0", weight: 700 })),
+    { text: note, color: palette.muted, weight: 600 },
+  ], cx, story ? 530 : 262, story ? 42 : 38, 900, "center");
 
   const cell = story ? 112 : 102;
   drawJam(c, data.level, cx - boardWidth(cell) / 2, story ? 590 : 300, cell);

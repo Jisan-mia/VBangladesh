@@ -49,6 +49,14 @@ const TEMPO = [2.2, 2.0, 1.8, 1.6] as const;
 
 /** Free-run finishing times (seconds) for the three rivals, fastest first, how often each one misses seeing a patch, and pace styles. */
 const PACE = [[42.5, 44.5], [46, 48.5], [49.5, 52]] as const;
+/**
+ * Races as levels: each race's rivals take this times their usual time (lower is faster). Tuned in headless runs: in race 1 a boat that
+ * never taps is still in the running; by race 12 only rowing close to every beat wins. Race 7 is the pace from before levels, so a link
+ * without a race number opens it unchanged.
+ */
+export const LEVELS = [1.4, 1.3, 1.22, 1.15, 1.09, 1.04, 1, 0.98, 0.96, 0.945, 0.93, 0.92] as const;
+export const LEVEL_COUNT = LEVELS.length, LEGACY_LEVEL = 7;
+export const isLevel = (level: number) => Number.isInteger(level) && level >= 1 && level <= LEVEL_COUNT;
 const MISS = [0.06, 0.12, 0.2] as const;
 const STYLE = [[1.07, 1, 0.94], [1, 1, 1], [0.95, 0.99, 1.07]] as const;
 
@@ -70,7 +78,7 @@ export const HIT = 0, OFF = 1, MISSED = 2, BEAT = 3, PATCH = 4, BLOCKED = 5;
 export type RaceEvent = { type: number; t: number; n: number; v: number };
 
 export type Race = {
-  seed: number; patches: Patch[]; rows: number; beats: number[];
+  seed: number; level: number; patches: Patch[]; rows: number; beats: number[];
   /** Per beat: 0 still to come, 2 দারুণ, 1 তালে, -1 missed. */
   marks: Int8Array;
   /** boats[0] is you. */
@@ -154,8 +162,9 @@ const boat = (lane: number): Boat => ({
   base: 0, style: STYLE[1], phase: 0, miss: new Uint8Array(0), pref: 1,
 });
 
-/** A new race from one seed: the same river, the same rivals and the same drum on every phone. */
-export function createRace(seed: number, lag = 0): Race {
+/** A new race from one seed and race number: the same river, the same rivals and the same drum on every phone. */
+export function createRace(seed: number, lag = 0, level = LEGACY_LEVEL): Race {
+  if (!isLevel(level)) level = LEGACY_LEVEL;
   const rng = makeRng(seed);
   const { patches, rows } = makeCourse(rng);
   const beats = makeBeats(rng);
@@ -165,7 +174,7 @@ export function createRace(seed: number, lag = 0): Race {
   for (let index = slots.length - 1; index > 0; index--) { const other = pick(rng, index + 1); [slots[index], slots[other]] = [slots[other], slots[index]]; }
   PACE.forEach(([low, high], rank) => {
     const rival = boats[slots[rank]];
-    const time = low + rng() * (high - low), style = STYLE[pick(rng, STYLE.length)];
+    const time = (low + rng() * (high - low)) * LEVELS[level - 1], style = STYLE[pick(rng, STYLE.length)];
     rival.style = style;
     rival.base = COURSE / (3 * time) * (1 / style[0] + 1 / style[1] + 1 / style[2]);
     rival.phase = rng() * 6.283;
@@ -174,7 +183,7 @@ export function createRace(seed: number, lag = 0): Race {
     for (let row = 1; row < rows; row++) rival.miss[row] = rng() < MISS[rank] ? 1 : 0;
   });
   return {
-    seed, patches, rows, beats, marks: new Int8Array(beats.length), boats, order: Uint8Array.from([0, 1, 2, 3]),
+    seed, level, patches, rows, beats, marks: new Int8Array(beats.length), boats, order: Uint8Array.from([0, 1, 2, 3]),
     t: 0, next: 0, tick: 0, lag, boost: 0, streak: 0, stumble: 0,
     hits: 0, perfect: 0, offbeats: 0, patchHits: 0, firstPatch: 0, over: false, rank: 0, tenths: 0,
     events: Array.from({ length: 12 }, () => ({ type: 0, t: 0, n: 0, v: 0 })), eventCount: 0,

@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { sfx, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { blendLine, bn, boardFull, caption, cleanName, countLine, groupLine, layoutBoard, linkMembers, parseShareHash, questions, reasonLine, roleById, roleOf, roles, shareHash, shownName, whoText, MAX_BOARD, MAX_NAME, QUESTION_COUNT, type Answer, type Member, type Shared } from "../lib/adda";
 import { cardBlob, drawBoard, drawCard, LOOSE, LOOSE_R, STRIKER_REST } from "../lib/draw-board";
@@ -112,6 +114,7 @@ export function Carrom() {
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const last = answers.length + 1 === QUESTION_COUNT;
     setChosen(option);
+    if (last) { tone(1800, 0.03, 0.1, "square"); sfx.good(); } // the striker's click, then the reveal chime
     // A beat to see the chit pressed before the next question slides in.
     window.setTimeout(() => {
       setChosen(null);
@@ -171,6 +174,7 @@ export function Carrom() {
           ) : undefined}
         </Board>
         <p className="adda-status" aria-live="polite">{done && role ? <>তুমি <strong>{role.piece}</strong> · {role.tag}</> : answers.length ? `${bn(answers.length)}টা উত্তর হলো, আর ${bn(QUESTION_COUNT - answers.length)}টা বাকি` : "যেটা তোমার সাথে সবচেয়ে মেলে, সেটা চাপো"}</p>
+        <SoundToggle compact />
         {answers.length > 0 && <div className="adda-redo">
           {done ? <button type="button" className="kit-link" onClick={restart}>আবার খেলি</button> : <button type="button" className="kit-link" onClick={back}>আগেরটায় ফেরো</button>}
         </div>}

@@ -90,6 +90,22 @@
 .vk-maker a{color:var(--accent-deep)}
 
 @container (max-width:300px){.vk-look{display:none}.vk-note{padding:8px 12px}}
+/* the level and total stars above the HUD, the level list below the game */
+.vk-level{display:flex;justify-content:space-between;gap:8px;margin:0 0 2px;font-size:14px;color:var(--muted)}
+.vk-level b{color:var(--ink)}
+.vk-level>span:last-child{flex:none;font-weight:700;color:#a86f00}
+.vk-level small{font-size:13px;font-weight:600;color:var(--muted)}
+.tool-vo-katta .vk-sound{flex:none;border:0;border-radius:12px;background:var(--paper);color:var(--ink)}
+.vk-slow svg{flex:none}
+.vk-near{margin:0;padding:4px 10px;border-radius:10px;background:#f2a90024;font-size:15px;font-weight:700;color:var(--ink)}
+.vk-slip .gx-reveal{font-size:34px}
+.tool-vo-katta .vk-controls:has(> .vk-again:nth-child(2)){grid-template-columns:1.2fr 1fr}
+.tool-vo-katta .vk-controls:has(> .vk-again:nth-child(2)) .vk-again{grid-column:auto;font-size:19px}
+.vk-levels{margin-top:12px;padding:10px 14px;border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff}
+.vk-levels summary{display:flex;justify-content:space-between;align-items:center;min-height:32px;font-weight:700;cursor:pointer}
+.vk-levels summary span{color:#a86f00}
+.vk-levels p{margin:8px 0 12px;font-size:14px;color:var(--muted);line-height:1.5}
+@media(max-width:350px){.vk-hud{gap:4px}.tool-vo-katta .vk-sound,.vk-pause{min-width:40px;width:40px}}
 @media(max-width:350px){.vk-hud{gap:6px}.vk-slow{padding:0 9px;font-size:13px}.vk-score b{font-size:24px}.vk-controls{grid-template-columns:1fr 88px}.vk-hint{font-size:14px}}
 @media(min-width:720px){
   .vk-lead{display:block}

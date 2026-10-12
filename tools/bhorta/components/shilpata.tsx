@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { hiss, sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { drawPlateCard, plateBlob } from "../lib/draw-plate";
 import { bhortaOf, bhortas, bn, caption, cleanName, pairLine, parseShareHash, questions, reason, shareHash, MAX_NAME, QUESTION_COUNT, type Answer, type Plate } from "../lib/bhorta";
@@ -71,6 +73,10 @@ export function Shilpata() {
   }, [answers, done, shownName, format, site, friend]);
 
   function pick(answer: Answer) {
+    // A spice drops on the stone and the nora rubs it; after the sixth, a small chime says the ball is ready.
+    sfx.drop();
+    hiss(0.2, 0.08, 700, "lowpass", 0.06);
+    if (answers.length === QUESTION_COUNT - 1) setTimeout(sfx.good, 320);
     setAnswers(current => current.length < QUESTION_COUNT ? [...current, answer] : current);
   }
 
@@ -125,10 +131,11 @@ export function Shilpata() {
         <p className="bh-landed" aria-live="polite">
           {done ? "" : answers.length ? `পাটায় পড়ল ${ingredients[answers.length - 1]}` : "প্রতি উত্তরে পাটায় পড়বে একটা করে মসলা"}
         </p>
-        {answers.length > 0 && <div className="bh-redo">
-          {!done && <button type="button" className="kit-link" onClick={() => setAnswers(current => current.slice(0, -1))}>আগেরটায় ফেরো</button>}
+        <div className="bh-redo">
+          <SoundToggle compact />
+          {answers.length > 0 && !done && <button type="button" className="kit-link" onClick={() => setAnswers(current => current.slice(0, -1))}>আগেরটায় ফেরো</button>}
           {done && <button type="button" className="kit-link" onClick={restart}>আবার বাটো</button>}
-        </div>}
+        </div>
       </div>
 
       <StickyNext show={done && !resultVisible} title={<>তুমি <strong>{bhorta?.name}</strong></>} sub={bhorta?.tag} href="#result" label="থালার ছবি নাও" />

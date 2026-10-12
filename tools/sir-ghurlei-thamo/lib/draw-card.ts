@@ -1,7 +1,7 @@
 import { cardSizes, DISPLAY_FONT, drawFooterBand, fitText, renderCard, wrapText, type CardFormat } from "../../../shared/card-canvas";
 import { drawCeilingFan, drawTeacherWriting, paintPaper } from "./art";
 import { CHITS, makeClass, REPLIES } from "./game";
-import { bn, BENCHES, seconds, type Shared } from "./link";
+import { bn, BENCHES, CLASSIC, seconds, type Shared } from "./link";
 import { caughtFact, humanLine } from "./words";
 
 const CHALK = "#f4f1e8";
@@ -23,15 +23,23 @@ function chalk(ctx: CanvasRenderingContext2D, text: string, x: number, y: number
   return used;
 }
 
-/** A blackboard with the time in chalk, and the opened chit lying on the desk below it. */
-export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: CardFormat, site: string) {
+function star(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, on: boolean) {
+  ctx.beginPath();
+  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, d = i % 2 ? r * 0.45 : r; ctx.lineTo(x + Math.cos(a) * d, y + Math.sin(a) * d); }
+  ctx.closePath();
+  ctx.fillStyle = on ? "#ffd166" : "rgba(244,241,232,.18)"; ctx.fill();
+  ctx.lineWidth = 3; ctx.strokeStyle = on ? "#f4f1e8" : "rgba(244,241,232,.35)"; ctx.stroke();
+}
+
+/** A blackboard with the time in chalk, and the opened chit lying on the desk below it. `stars` is this phone's own result (never in the link), 0 for none. */
+export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: CardFormat, site: string, stars = 0) {
   const { width, height } = cardSizes[format];
   canvas.width = width;
   canvas.height = height;
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("এই ব্রাউজারে ছবি বানানো যাচ্ছে না।");
   const at = LAYOUT[format];
-  const klass = makeClass(shared.seed);
+  const level = shared.level ?? CLASSIC, klass = makeClass(shared.seed, level);
 
   ctx.fillStyle = "#ebe4cf"; ctx.fillRect(0, 0, width, at.wall);
   ctx.fillStyle = "#7fae9b"; ctx.fillRect(0, at.wall, width, at.desk - at.wall);
@@ -65,7 +73,8 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
   ctx.font = `800 ${numberSize}px ${DISPLAY_FONT}`;
   const numberWidth = ctx.measureText(number).width;
   chalk(ctx, "সেকেন্ডে", left + numberWidth + 18, at.time, 58, inner - numberWidth - 18);
-  chalk(ctx, `${bn(BENCHES)} বেঞ্চ পার · ${caughtFact(shared.catches)}`, left, at.sub, 40, inner, 600);
+  chalk(ctx, `ক্লাস ${bn(level)} · ${bn(BENCHES)} বেঞ্চ পার · ${caughtFact(shared.catches)}`, left, at.sub, 40, inner, 600);
+  if (stars) for (let i = 0; i < 3; i++) star(ctx, left + inner - 130 + i * 52, at.kicker - 14, 21, i < stars);
 
   // The desk.
   ctx.fillStyle = "#8b5a33"; ctx.fillRect(0, at.desk, width, height - at.desk);
@@ -100,4 +109,4 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
   drawFooterBand(ctx, format, "তুমি কত সেকেন্ডে পারবে?", site, { band: "#24382f", ask: "#ffd166", site: "#ffffff" });
 }
 
-export const cardBlob = (shared: Shared, format: CardFormat, site: string) => renderCard(canvas => drawCard(canvas, shared, format, site));
+export const cardBlob = (shared: Shared, format: CardFormat, site: string, stars = 0) => renderCard(canvas => drawCard(canvas, shared, format, site, stars));

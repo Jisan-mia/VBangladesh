@@ -1,7 +1,7 @@
 // The result card: the shop's yellow signboard on a teal tin wall, and a cash memo with ten customer faces. Plain chits only, never real note art.
 import { possessive } from '../../../shared/bangla';
 import { cardSizes, drawFooterBand, fitText, renderCard, roundedRect, storySafe, wrapText, BODY_FONT, type CardFormat } from '../../../shared/card-canvas';
-import { CUSTOMERS, bn, humanLine } from './game';
+import { CUSTOMERS, bn, dayStars, humanLine } from './game';
 import { outOf } from './link';
 
 export const colors = { wall: '#15605a', wallLine: '#1d7068', sign: '#f6c945', signInk: '#8a1f17', paper: '#fff7e3', ink: '#2a1d12', muted: '#7a6650', face: '#f6c945', cream: '#fdf1d2' };
@@ -53,9 +53,9 @@ const layouts = {
   story: { sign: storySafe.top + 20, signH: 196, kicker: storySafe.top + 290, paper: storySafe.top + 340, paperH: 800, line: 1488 },
 } as const;
 
-export type CardData = { score: number; right: number; name: string };
+export type CardData = { score: number; right: number; name: string; day?: number; clean?: number };
 
-export function drawCard(canvas: HTMLCanvasElement, { score, right, name }: CardData, format: CardFormat, site: string) {
+export function drawCard(canvas: HTMLCanvasElement, { score, right, name, day, clean = 0 }: CardData, format: CardFormat, site: string) {
   const { width, height } = cardSizes[format];
   const layout = layouts[format];
   canvas.width = width;
@@ -81,7 +81,12 @@ export function drawCard(canvas: HTMLCanvasElement, { score, right, name }: Card
   fitText(context, [{ text: 'ভাংতি নাই!', color: colors.signInk, weight: 800, display: true }], width / 2, layout.sign + layout.signH * 0.7, 112, width - 300, 'center');
 
   const shop = name ? `${possessive(name)} দোকান` : 'আজকের দোকান';
-  fitText(context, [{ text: `${shop} · দশজন খদ্দের`, color: colors.cream, weight: 600 }], width / 2, layout.kicker, 40, width - 180, 'center');
+  // A shop day names the day and its stars in place of "দশজন খদ্দের".
+  const earned = dayStars(clean);
+  const kicker = day
+    ? [{ text: `${shop} · দিন ${bn(day)} `, color: colors.cream, weight: 600 }, ...[0, 1, 2].map(star => ({ text: '★', color: star < earned ? colors.sign : '#5f9a93', weight: 700 }))]
+    : [{ text: `${shop} · দশজন খদ্দের`, color: colors.cream, weight: 600 }];
+  fitText(context, kicker, width / 2, layout.kicker, 40, width - 180, 'center');
 
   // The cash memo.
   const left = 90, paperW = width - 180, top = layout.paper, paperH = layout.paperH, mid = width / 2;

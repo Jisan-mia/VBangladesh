@@ -1,7 +1,7 @@
 // The result card: rows of mangoes on a leaf-green board. Spoiler-free: no digit of any guess or of the code is drawn.
 import { possessive } from '../../../shared/bangla';
 import { cardSizes, drawFooterBand, fitText, renderCard, roundedRect, storySafe, type CardFormat } from '../../../shared/card-canvas';
-import { LENGTH, bn, bnDate, humanLine, type Mark } from './game';
+import { LENGTH, bn, bnDate, humanLine, rulesOf, starsOf, type Mark } from './game';
 import { BLUSH, BODY, HALF, HALF_SKIN, LEAF, RAW_SCALE, SEED, STEM, colors } from './mango';
 import { puzzleLabel, tryCount, type Shared } from './result';
 
@@ -70,14 +70,18 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, today: strin
   fitText(context, [{ text: 'পাকা-কাঁচা', color: CREAM, weight: 800, display: true }], width / 2, layout.title, 96, width - 160, 'center');
   const label = rows.length ? puzzleLabel(puzzle, today) : 'বন্ধুর জন্য কোড';
   const kicker = `${name && rows.length ? `${possessive(name)} ` : ''}${label}${puzzle.kind === 'day' ? ` · ${bnDate(puzzle.date)}` : ''}`;
-  fitText(context, [{ text: kicker, color: SOFT, weight: 600 }], width / 2, layout.sub, 38, width - 180, 'center');
+  // A level's card also shows its stars, after the label.
+  const stars = puzzle.kind === 'level' && rows.length ? starsOf(puzzle.level, rows) : 0;
+  const starRun = stars ? [{ text: '  ', color: SOFT, weight: 600 }, ...[0, 1, 2].map(index => ({ text: '★', color: index < stars ? GOLD : '#5f8a66', weight: 700 }))] : [];
+  fitText(context, [{ text: kicker, color: SOFT, weight: 600 }, ...starRun], width / 2, layout.sub, 38, width - 180, 'center');
+  const { tries } = rulesOf(puzzle);
 
   if (!rows.length) drawInvite(context, name, format);
   else {
     const won = rows[rows.length - 1].every(mark => mark === 'p');
-    fitText(context, [{ text: tryCount(rows), color: won ? GOLD : CREAM, weight: 800, display: true }], width / 2, layout.score, won ? 156 : 104, width - 200, 'center');
+    fitText(context, [{ text: tryCount(rows, tries), color: won ? GOLD : CREAM, weight: 800, display: true }], width / 2, layout.score, won ? 156 : 104, width - 200, 'center');
     drawBoard(context, rows, width, layout.top, layout.bottom);
-    fitText(context, [{ text: humanLine(rows), color: CREAM, weight: 600, display: true }], width / 2, layout.line, format === 'story' ? 44 : 40, width - 150, 'center');
+    fitText(context, [{ text: humanLine(rows, tries), color: CREAM, weight: 600, display: true }], width / 2, layout.line, format === 'story' ? 44 : 40, width - 150, 'center');
   }
   drawFooterBand(context, format, 'তুমি কয়বারে পারবে?', site, BAND);
 }

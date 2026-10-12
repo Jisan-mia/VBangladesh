@@ -42,6 +42,7 @@
 .ojon-hint[data-invalid=true]{color:#b3261e;font-weight:600}
 .tool-gorur-ojon .kit-chips button{border-color:#e0c79a;color:var(--ink);font-weight:600}
 .tool-gorur-ojon .kit-chips button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.ojon-unitrow{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
 .ojon-units legend,.ojon-packets legend{font-size:14px}
 .ojon-note{margin:0;font-size:13px;line-height:1.6;color:var(--muted)}
 .ojon-note strong{color:var(--ink)}

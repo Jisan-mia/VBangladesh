@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { hiss } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { countdown, type CardView, type Sheet } from "../lib/chithi";
 
 /** The letter as it reads on the blue pad: real text, so screen readers and copy-paste work. */
@@ -36,6 +38,8 @@ export function Envelope({ view, onOpen }: { view: CardView; onOpen?: () => void
 
   function open() {
     if (view.seal || stage !== "closed") return;
+    hiss(0.18, 0.09, 2600, "highpass"); // the flap
+    hiss(0.3, 0.07, 2000, "highpass", 0.55); // the sheet sliding out
     if (reducedMotion()) { setStage("open"); return; }
     setStage("opening");
     timer.current = window.setTimeout(() => setStage("open"), 1150);
@@ -58,7 +62,7 @@ export function Envelope({ view, onOpen }: { view: CardView; onOpen?: () => void
       </div>
       {view.seal
         ? <p className="ch-env-wait"><strong>{countdown(view.seal.days)}</strong> খোলার দিনের আগে খামটা খোলা যাবে না। {view.seal.written}</p>
-        : <button type="button" className="kit-primary ch-open" onClick={open} disabled={stage !== "closed"}>{stage === "closed" ? "খামটা খোলো" : "খোলা হচ্ছে…"}</button>}
+        : <><button type="button" className="kit-primary ch-open" onClick={open} disabled={stage !== "closed"}>{stage === "closed" ? "খামটা খোলো" : "খোলা হচ্ছে…"}</button><SoundToggle compact /></>}
     </div>
   );
 }

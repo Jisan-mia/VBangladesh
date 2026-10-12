@@ -370,7 +370,8 @@ export function drawScene(context: CanvasRenderingContext2D, cache: SceneCache, 
   const lift = lifted ? 22 * easeOut(wait / 0.3) : 0;
   const shake = spilled && !slow && wait < 0.3 ? Math.sin(wait * 70) * 2.5 * (1 - wait / 0.3) : 0;
   const level = lifted ? round.level * (1 - 0.3 * easeOut(wait / 0.9)) : round.level;
-  const heat = round.phase === "rising" ? 1 : 0.15;
+  // Later kitchens burn hotter: a taller flame for faster pots.
+  const heat = round.phase === "rising" ? 1 + 0.07 * (round.kitchen - 1) : 0.15;
 
   context.setTransform(ratio, 0, 0, ratio, 0, 0);
   context.drawImage(bg, 0, 0, VW, VH);

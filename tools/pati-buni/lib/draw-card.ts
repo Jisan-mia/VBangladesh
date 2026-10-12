@@ -1,7 +1,7 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, wrapText, BODY_FONT, type CardFormat, type Segment } from "../../../shared/card-canvas";
 import { drawMat, palette } from "./art";
 import { bn, MAT_ROWS, type Shared } from "./link";
-import { humanLine } from "./weave";
+import { humanLine, matName } from "./weave";
 
 export type CardData = Pick<Shared, "score" | "rows" | "pattern" | "name">;
 
@@ -43,7 +43,18 @@ export function drawCard(canvas: HTMLCanvasElement, data: CardData, format: Card
   drawMat(c, data.pattern, data.rows, -matWidth / 2, (-cell * MAT_ROWS) / 2, cell, MAT_ROWS);
   c.restore();
 
-  const points = bn(data.score), line = humanLine(data.rows);
+  const points = bn(data.score), line = humanLine(data.rows), mat = matName(data.rows);
+  // The milestone mat, as a little tag above the points.
+  if (mat) {
+    const tagX = story ? width / 2 : 805, tagY = story ? 1350 : 300;
+    c.font = `700 40px ${BODY_FONT}`;
+    const tagW = c.measureText(mat).width + 48;
+    c.fillStyle = palette.gold;
+    c.beginPath(); c.roundRect(tagX - tagW / 2, tagY - 40, tagW, 60, 30); c.fill();
+    c.fillStyle = palette.ink;
+    c.textAlign = "center";
+    c.fillText(mat, tagX, tagY + 4);
+  }
   if (story) {
     fitText(c, [{ text: points, color: RED_BROWN, weight: 800, display: true }, { text: " পয়েন্ট", color: palette.ink, weight: 700 }], width / 2, 1490, 130, 900, "center");
     fitText(c, [{ text: line, color: GREEN, weight: 700 }], width / 2, 1590, 50, 900, "center");

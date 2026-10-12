@@ -4,28 +4,38 @@
 import { useEffect, useRef, useState } from 'react';
 import { possessive } from '../../../shared/bangla';
 import { cardSizes, loadCardFonts, type CardFormat } from '../../../shared/card-canvas';
-import { cleanName, MAX_NAME, newSeed, useBest, useGameLoop, useSlowMode } from '../../../shared/game-kit';
+import { cleanName, confetti, hiss, MAX_NAME, newSeed, sfx, shake, tone, totalStars, useBest, useGameLoop, useLevels, useSlowMode } from '../../../shared/game-kit';
+import { LevelGrid, SoundToggle, StarReveal } from '../../../shared/game-ui';
 import { FormatToggle, ShareBar, useInView } from '../../../shared/share-kit';
 import { cardBlob, drawCard } from '../lib/draw-card';
 import {
-  CHITS, CUSTOMERS, EXAMPLE, EXAMPLE_TRAY, LATE_LINE, MAX_TRAY, PEOPLE, RIGHT_LINES,
-  bn, changeOf, chitsText, current, fewest, give, humanLine, isOver, rightCount, saying, secondsFor, startRun, takeBack, tap, timeUp, trayTotal, undo, wrongLine,
+  CHITS, CUSTOMERS, DAYS, EXAMPLE, EXAMPLE_TRAY, LATE_LINE, MAX_TRAY, PEOPLE, RIGHT_LINES,
+  bestLine, bn, changeOf, chitsText, current, dayStars, fewest, give, humanLine, isOver, nearLine, rightCount, saying, secondsFor, startRun, takeBack, tap, timeUp, trayTotal, undo, wrongLine,
   type Chit, type Customer, type Run,
 } from '../lib/game';
-import { banner, caption, compareLine, outOf, parseShared, sharedHash, type Shared } from '../lib/link';
+import { banner, caption, compareLine, dayTag, outOf, parseShared, sharedHash, type Shared } from '../lib/link';
 import { Chit as ChitArt, Person, Shelf, type Mood } from './art';
 
 const TOOL = 'bhangti-nai';
 const RELAXED = 'bhangti-nai-relaxed';
 type Phase = 'ready' | 'playing' | 'paused' | 'over';
 type Reaction = { kind: 'right' | 'wrong' | 'late' | 'nudge'; text: string; points?: number; bonus?: number; customer?: Customer; index?: number; tray?: Chit[] };
-type Result = { seed: number; score: number; right: number; record: boolean };
+type Result = { seed: number; score: number; right: number; record: boolean; day: number; clean: number; stars: number };
 
 /** Cash-box order: big notes first, the way change is counted out. */
 const BOX: Chit[] = [100, 50, 20, 10, 5, 2, 1];
 
 const readRelaxed = () => { try { return localStorage.getItem(RELAXED) === '1'; } catch { return false; } };
 const saveRelaxed = (on: boolean) => { try { localStorage.setItem(RELAXED, on ? '1' : '0'); } catch { /* private mode: fine */ } };
+
+/** Coins clink, notes rustle: the sound says which kind of chit went down. */
+function chitSound(value: number, soft = false) {
+  const volume = soft ? 0.5 : 1;
+  if (value <= 5) { tone(2637, 0.08, 0.06 * volume, 'sine'); tone(3520, 0.11, 0.04 * volume, 'sine', 0.025); }
+  else { hiss(0.08, 0.1 * volume, 3200, 'highpass'); hiss(0.07, 0.06 * volume, 1800, 'bandpass', 0.05); }
+}
+/** The signature sound: the cash drawer slides out and its bell rings, ক্যাচিং. */
+const till = () => { hiss(0.12, 0.12, 900, 'lowpass'); tone(1760, 0.3, 0.08, 'triangle', 0.06); tone(2637, 0.4, 0.05, 'sine', 0.08); };
 
 export function ShopGame() {
   const [phase, setPhaseState] = useState<Phase>('ready');
@@ -35,14 +45,17 @@ export function ShopGame() {
   const [friend, setFriend] = useState<Shared | null>(null);
   const [slow, setSlow] = useSlowMode();
   const [relaxed, setRelaxedState] = useState(false);
-  const [best, submitBest] = useBest(TOOL);
+  const [day, setDay] = useState(1);
+  // Each shop day keeps its own best; the classic queue from an old link keeps the key it always had.
+  const [best, submitBest] = useBest(day ? `${TOOL}-day-${day}` : TOOL);
+  const levels = useLevels(TOOL, DAYS);
   const [name, setName] = useState('');
   const [format, setFormat] = useState<CardFormat>('feed');
   const [site, setSite] = useState('');
   const [restartReady, setRestartReady] = useState(true);
-  const [shake, setShake] = useState(0);
+  const [wrongs, setWrongs] = useState(0);
   const [previewError, setPreviewError] = useState(false);
-  const [live] = useState(() => ({ elapsed: 0, limit: 10, lock: false, shown: -1, seed: 1 }));
+  const [live] = useState(() => ({ elapsed: 0, limit: 10, lock: false, shown: -1, seed: 1, day: 1, streak: 0, tick: Infinity }));
   const phaseRef = useRef<Phase>('ready');
   const runRef = useRef(run);
   runRef.current = run;
@@ -54,26 +67,35 @@ export function ShopGame() {
   const preview = useRef<HTMLCanvasElement>(null);
   const friendPreview = useRef<HTMLCanvasElement>(null);
   const resultBox = useRef<HTMLElement>(null);
+  const trayBox = useRef<HTMLDivElement>(null);
+  const timers = useRef<number[]>([]);
   const shopInView = useInView(shop);
 
-  const card = result ? { score: result.score, right: result.right, name: cleanName(name) } : null;
-  const state = result ? sharedHash({ seed: result.seed, score: result.score, right: result.right, name }) : '';
+  const dayOf = (r: Result) => r.day ? { day: r.day, clean: r.clean } : {};
+  const card = result ? { score: result.score, right: result.right, name: cleanName(name), ...dayOf(result) } : null;
+  const state = result ? sharedHash({ seed: result.seed, score: result.score, right: result.right, name, ...dayOf(result) }) : '';
+  const allStars = totalStars(levels.stars);
 
   function go(next: Phase) { phaseRef.current = next; setPhaseState(next); }
   const calm = () => slow || matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const buzz = () => { if (!slow && typeof navigator.vibrate === 'function') navigator.vibrate(8); };
 
   function meet(customer: Customer | undefined) {
     live.elapsed = 0;
     live.shown = -1;
-    live.limit = customer ? secondsFor(customer, slow) : 10;
+    live.tick = Infinity;
+    live.limit = customer ? secondsFor(customer, slow, live.day) : 10;
     live.lock = false;
   }
 
-  function startGame(seed: number) {
-    window.clearTimeout(advance.current);
-    const fresh = startRun(seed);
+  function clearTimers() { window.clearTimeout(advance.current); timers.current.forEach(clearTimeout); timers.current = []; }
+
+  function startGame(seed: number, nextDay = live.day) {
+    clearTimers();
+    const fresh = startRun(seed, nextDay);
     live.seed = seed;
+    live.day = nextDay;
+    live.streak = 0;
+    setDay(nextDay);
     meet(fresh.customers[0]);
     setRun(fresh);
     setReaction(null);
@@ -86,8 +108,15 @@ export function ShopGame() {
 
   function finish() {
     const done = runRef.current, right = rightCount(done.results), hadBest = bestRef.current !== null;
+    const stars = dayStars(done.clean), record = submitBest(done.score) && hadBest;
+    if (done.day && stars) levels.record(done.day, stars);
     go('over');
-    setResult({ seed: live.seed, score: done.score, right, record: submitBest(done.score) && hadBest });
+    setResult({ seed: live.seed, score: done.score, right, record, day: done.day, clean: done.clean, stars });
+    // The stars chime in one by one (StarReveal); the fanfare waits for them, confetti only for 3 stars or a new best.
+    const after = ((done.day ? stars : 0) + 1) * 260;
+    if (stars === 3 || record) timers.current.push(window.setTimeout(() => { sfx.levelUp(); confetti(); }, after));
+    else if (stars) timers.current.push(window.setTimeout(sfx.good, after));
+    else sfx.lose();
     // A thumb still on "দাও" must not skip the result with the same tap.
     setRestartReady(false);
     window.setTimeout(() => setRestartReady(true), 700);
@@ -112,30 +141,42 @@ export function ShopGame() {
     }
     setRun(next);
     if (reaction?.kind === 'nudge') setReaction(null);
-    buzz();
+    chitSound(chit);
   }
 
   function putBack(chit: Chit) {
-    if (phaseRef.current === 'playing' && !live.lock) setRun(takeBack(run, chit));
+    if (phaseRef.current !== 'playing' || live.lock) return;
+    setRun(takeBack(run, chit));
+    chitSound(chit, true);
   }
 
   function takeLast() {
-    if (phaseRef.current === 'playing' && !live.lock) setRun(undo(run));
+    if (phaseRef.current !== 'playing' || live.lock || !run.tray.length) return;
+    setRun(undo(run));
+    chitSound(run.tray[run.tray.length - 1], true);
   }
 
   function hand() {
     if (phaseRef.current !== 'playing' || live.lock) return;
-    if (!run.tray.length) { setReaction({ kind: 'nudge', text: 'আগে নিচের চিরকুট চেপে ভাংতি সাজাও।' }); return; }
+    if (!run.tray.length) { sfx.tap(); setReaction({ kind: 'nudge', text: 'আগে নিচের চিরকুট চেপে ভাংতি সাজাও।' }); return; }
     const customer = current(run)!;
     const left = relaxed ? null : Math.max(0, 1 - live.elapsed / live.limit);
     const handed = give(run, left);
     if (handed.diff !== 0) {
       setRun(handed.run);
       setReaction({ kind: 'wrong', text: wrongLine(handed.diff, handed.run.tries) });
-      setShake(count => count + 1);
+      setWrongs(count => count + 1);
+      live.streak = 0;
+      sfx.wrong();
+      shake(trayBox.current);
       return;
     }
     live.lock = true;
+    till();
+    // Right on the first try, again and again: each one in a row rings a step higher.
+    live.streak = run.tries === 0 ? live.streak + 1 : 0;
+    const step = live.streak - 2;
+    if (step >= 0) timers.current.push(window.setTimeout(() => sfx.combo(step), 200));
     setRun(handed.run);
     setReaction({ kind: 'right', text: handed.bonus >= 40 ? 'বাহ, ঝটপট!' : RIGHT_LINES[run.index % 3], points: handed.points, bonus: handed.bonus, customer, index: run.index, tray: run.tray });
     later(850);
@@ -147,13 +188,30 @@ export function ShopGame() {
     const now = runRef.current, customer = current(now);
     if (!customer) return;
     setRun(timeUp(now));
+    live.streak = 0;
+    sfx.drop();
     setReaction({ kind: 'late', text: LATE_LINE, customer, index: now.index, tray: now.tray });
     later(2000);
   }
 
   function pause() { if (phaseRef.current === 'playing') go('paused'); }
   function resume() { if (phaseRef.current === 'paused') go('playing'); }
-  function restart() { if (phaseRef.current === 'over' && restartReady) startGame(friend ? friend.seed : newSeed()); }
+  /** The friend's ten customers while on the friend's day; a fresh queue otherwise. */
+  const seedFor = (forDay: number) => friend && (friend.day ?? 0) === forDay ? friend.seed : newSeed();
+  function restart() { if (phaseRef.current === 'over' && restartReady) startGame(seedFor(live.day)); }
+
+  /** "পরের দিন" starts straight away; a day picked from the list waits on the ready screen. */
+  function nextDay() { if (phaseRef.current === 'over' && restartReady) startGame(newSeed(), live.day + 1); }
+  function pickDay(nextDay: number) {
+    clearTimers();
+    live.day = nextDay;
+    live.seed = seedFor(nextDay);
+    setDay(nextDay);
+    setResult(null);
+    setReaction(null);
+    go('ready');
+    shop.current?.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'center' });
+  }
 
   function setRelaxed(on: boolean) { setRelaxedState(on); saveRelaxed(on); }
 
@@ -161,6 +219,9 @@ export function ShopGame() {
   useGameLoop(dt => {
     if (live.lock) return;
     live.elapsed += dt;
+    // The last three seconds tick, once each.
+    const left = Math.ceil(live.limit - live.elapsed);
+    if (left <= 3 && left < live.tick) { live.tick = left; if (left > 0) sfx.tick(); }
     if (live.elapsed >= live.limit) lateNow();
   }, () => {
     const element = bar.current;
@@ -179,11 +240,13 @@ export function ShopGame() {
     const readFriend = () => {
       const shared = parseShared(window.location.hash);
       if (!shared) return;
-      window.clearTimeout(advance.current);
+      clearTimers();
       setFriend(shared);
       setResult(null);
       setReaction(null);
       live.seed = shared.seed;
+      live.day = shared.day ?? 0;
+      setDay(live.day);
       go('ready');
     };
     if (!parseShared(window.location.hash)) live.seed = newSeed();
@@ -191,8 +254,16 @@ export function ShopGame() {
     const hide = () => { if (document.hidden) pause(); };
     window.addEventListener('hashchange', readFriend);
     document.addEventListener('visibilitychange', hide);
-    return () => { window.removeEventListener('hashchange', readFriend); document.removeEventListener('visibilitychange', hide); window.clearTimeout(advance.current); };
+    return () => { window.removeEventListener('hashchange', readFriend); document.removeEventListener('visibilitychange', hide); clearTimers(); };
   }, []);
+
+  // Open on the furthest day this phone has reached (a friend's link chooses its own day).
+  useEffect(() => {
+    if (!levels.loaded || parseShared(window.location.hash) || phaseRef.current !== 'ready') return;
+    live.day = levels.unlocked;
+    setDay(levels.unlocked);
+    // Only once storage has been read; later clears move on through "পরের দিন".
+  }, [levels.loaded]);
 
   // Scrolling the counter away mid-game pauses it, so no clock runs off-screen.
   useEffect(() => { if (!shopInView) pause(); }, [shopInView]);
@@ -212,6 +283,7 @@ export function ShopGame() {
     if (now === 'ready') startGame(live.seed);
     else if (now === 'playing') hand();
     else if (now === 'paused') resume();
+    else if (hasNext) nextDay();
     else restart();
   };
   useEffect(() => {
@@ -237,7 +309,7 @@ export function ShopGame() {
     resultBox.current?.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'start' });
   }
   function playFromCard() {
-    startGame(friend ? friend.seed : newSeed());
+    startGame(seedFor(live.day));
     shop.current?.scrollIntoView({ behavior: calm() ? 'auto' : 'smooth', block: 'center' });
   }
 
@@ -252,6 +324,10 @@ export function ShopGame() {
   const rival = friend ? possessive(friend.name || 'বন্ধু') : '';
   const right = rightCount(run.results);
   const answer = reaction?.kind === 'late' && reaction.customer ? fewest(changeOf(reaction.customer), reaction.customer.out) : null;
+  const hasNext = Boolean(result && result.day && result.stars > 0 && result.day < DAYS);
+  const near = result && result.day ? nearLine(result.clean) : '';
+  const versus = result && friend && friend.seed === result.seed && (friend.day ?? 0) === result.day ? compareLine(result.score, friend.score, friend.name) : '';
+  const perCustomer = secondsFor(EXAMPLE, slow, day);
 
   return (
     <div className="bt" data-slow={slow}>
@@ -264,6 +340,11 @@ export function ShopGame() {
           </div>
         </section>
       )}
+
+      <p className="bt-level">
+        <span><b>{day ? `দিন ${bn(day)}` : 'বন্ধুর দোকান'}</b> · {relaxed ? 'ঘড়ি ছাড়া' : `খদ্দেরপ্রতি ${bn(Math.round(perCustomer))} সেকেন্ড`}</span>
+        <span aria-label={`মোট ${bn(allStars)}টা তারা`}>★ {bn(allStars)}/{bn(DAYS * 3)}</span>
+      </p>
 
       <div className="bt-hud">
         {ready ? <p className="bt-howto">খদ্দেরের টাকা থেকে দাম বাদ দাও, <b>বাকিটা ফেরত দাও</b>।</p> : <>
@@ -292,7 +373,7 @@ export function ShopGame() {
                 {saying(shown).map((line, row) => <span key={row} className="bt-line">{line.map((part, at) => typeof part === 'number' ? <b key={at}>{bn(part)}</b> : part)}</span>)}
               </p>
               {reaction && reaction.kind !== 'nudge' && (
-                <p className="bt-reply" data-kind={reaction.kind} key={`${shake}-${reaction.kind}`} role="status">
+                <p className="bt-reply" data-kind={reaction.kind} key={`${wrongs}-${reaction.kind}`} role="status">
                   {reaction.text}
                   {reaction.kind === 'right' && <span className="bt-points">+{bn(reaction.points!)}{reaction.bonus ? <small> ঝটপট +{bn(reaction.bonus)} সহ</small> : null}</span>}
                 </p>
@@ -304,7 +385,7 @@ export function ShopGame() {
           </div>
         </div>
 
-        <div className="bt-tray" data-shake={shake % 2 === 1} data-kind={reaction?.kind ?? ''}>
+        <div className="bt-tray" ref={trayBox} data-kind={reaction?.kind ?? ''}>
           {answer ? <p className="bt-answer">ঠিক ভাংতি ছিল <b>{bn(changeOf(reaction!.customer!))}</b> টাকা <span className="bt-sr">: {chitsText(answer)}</span><span className="bt-answer-chits" aria-hidden="true">{answer.map((chit, index) => <ChitArt key={index} value={chit} small />)}</span></p>
             : over ? <p className="bt-answer">আজকের মতো ক্যাশবাক্স বন্ধ।</p>
             : <>
@@ -329,10 +410,12 @@ export function ShopGame() {
         {over && (
           <div className="bt-overlay">
             <div className="bt-note bt-slip" role="status">
-              <h2>দোকান বন্ধ!</h2>
-              <p className="bt-tally">{outOf(result.right)} ঠিক ভাংতি</p>
+              <h2>{result.day ? `দিন ${bn(result.day)} শেষ, দোকান বন্ধ!` : 'দোকান বন্ধ!'}</h2>
+              {result.day > 0 && result.stars > 0 && <StarReveal count={result.stars} />}
+              <p className="bt-tally">{outOf(result.right)} ঠিক ভাংতি{result.day > 0 && <small>একবারে ঠিক {bn(result.clean)} জন</small>}</p>
               <p className="bt-final"><b>{bn(result.score)}</b> পয়েন্ট</p>
-              <p className="bt-record">{friend ? compareLine(result.score, friend.score, friend.name) : result.record ? 'এই ফোনে নতুন রেকর্ড!' : best !== null && best > result.score ? `এই ফোনে সেরা ${bn(best)}` : humanLine(result.right, result.score)}</p>
+              {near && <p className="bt-near">{near}</p>}
+              <p className="bt-record">{versus || (result.record ? 'এই ফোনে নতুন রেকর্ড!' : best !== null && best > result.score ? bestLine(result.score, best, result.day) : humanLine(result.right, result.score))}</p>
               <button type="button" className="kit-link bt-see" onClick={seeCard}>কার্ড বানাও, বন্ধুকে পাঠাও ↓</button>
             </div>
           </div>
@@ -354,23 +437,33 @@ export function ShopGame() {
 
       <div className="bt-actions">
         {ready ? <button type="button" className="kit-primary bt-go" onClick={() => startGame(live.seed)}>শুরু করো</button>
-          : phase === 'over' ? <button type="button" className="kit-primary bt-go" onClick={restart} disabled={!restartReady}>আরেকবার</button>
+          : phase === 'over' ? <>
+            {hasNext && <button type="button" className="kit-primary bt-go" onClick={nextDay} disabled={!restartReady}>পরের দিন</button>}
+            <button type="button" className={hasNext ? 'kit-secondary bt-go' : 'kit-primary bt-go'} onClick={restart} disabled={!restartReady}>{hasNext ? 'আবার খেলো' : 'আরেকবার'}</button>
+          </>
           : <button type="button" className="kit-primary bt-go" onClick={hand}>দাও{run.tray.length > 0 && <small aria-live="polite">{bn(given)} টাকা</small>}</button>}
       </div>
 
       <div className="bt-toggles">
+        <SoundToggle compact />
         <button type="button" aria-pressed={slow} onClick={() => setSlow(!slow)}>ধীরে খেলো</button>
         <button type="button" aria-pressed={relaxed} onClick={() => setRelaxed(!relaxed)}>সময় নিয়ে <small>(ঘড়ি ছাড়া)</small></button>
         <p className="bt-keys">কিবোর্ডে: ১–৭ চিরকুট, Backspace ফেরাও, Enter দাও</p>
       </div>
 
+      <details className="bt-days">
+        <summary>সব দিন <span>★ {bn(allStars)}/{bn(DAYS * 3)}</span></summary>
+        <p>দোকানের বিশ দিন। প্রতিদিন দাম একটু ঘোরানো, ঘড়ি একটু তাড়াতাড়ি। দশজনের ছয়জনকে একবারে ঠিক ভাংতি দিলে দিন পার, আটজনে ২ তারা, দশে দশ হলে ৩ তারা। খোলা দিন খোলাই থাকে।</p>
+        <LevelGrid count={DAYS} stars={levels.stars} unlocked={Math.max(levels.unlocked, friend?.day ?? 1)} current={day || undefined} onPick={pickDay} noun="দিন" />
+      </details>
+
       {card && result && (
         <section className="bt-result" id="result" ref={resultBox} aria-labelledby="bt-result-title">
           <h2 id="bt-result-title"><em>{outOf(result.right)}</em> ঠিক ভাংতি দিয়েছ</h2>
-          <p>{friend ? compareLine(result.score, friend.score, friend.name) : humanLine(result.right, result.score)}</p>
+          <p>{versus || humanLine(result.right, result.score)}</p>
           <figure className="kit-card" data-format={format}>
             <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="bt-card-summary" />
-            <figcaption id="bt-card-summary" className="bt-sr">ভাংতি নাই! কার্ড: {card.name && `${card.name}, `}{outOf(card.right)} ঠিক ভাংতি, {bn(card.score)} পয়েন্ট। {humanLine(card.right, card.score)}</figcaption>
+            <figcaption id="bt-card-summary" className="bt-sr">ভাংতি নাই! কার্ড: {card.name && `${card.name}, `}{dayTag(card.day)}{outOf(card.right)} ঠিক ভাংতি, {bn(card.score)} পয়েন্ট। {humanLine(card.right, card.score)}</figcaption>
             {previewError && <p className="kit-status" role="alert">কার্ডের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
           </figure>
           <label className="bt-name">

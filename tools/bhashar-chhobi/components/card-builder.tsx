@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { cardSizes, loadCardFonts, type CardFormat } from '../../../shared/card-canvas';
+import { sfx } from '../../../shared/game-sound';
+import { SoundToggle } from '../../../shared/game-ui';
 import { addToTally, readTally, type Tally } from '../../../shared/share-client';
 import { FormatToggle, ShareBar, StickyNext, useInView } from '../../../shared/share-kit';
 import { bn, cardText, defaultCard, limitText, objectOf, objects, parseShareHash, selectCardObject, shareHash, MAX_WORD, type LanguageCard } from '../lib/cards';
@@ -78,7 +80,7 @@ export function CardBuilder() {
     if (!card.district) return;
     setCounted('sending');
     const tally = await addToTally(TOOL, [card.district]);
-    if (tally) { setEveryone(tally); setCounted('done'); }
+    if (tally) { setEveryone(tally); setCounted('done'); sfx.good(); }
     else setCounted('failed');
   }
 
@@ -104,7 +106,7 @@ export function CardBuilder() {
         <fieldset className="bc-objects">
           <legend>কোন জিনিসটা?</legend>
           {objects.map(item => (
-            <button type="button" key={item.id} aria-pressed={card.objectId === item.id} onClick={() => update(current => selectCardObject(current, item.id))}>
+            <button type="button" key={item.id} aria-pressed={card.objectId === item.id} onClick={() => { if (card.objectId !== item.id) sfx.pick(); update(current => selectCardObject(current, item.id)); }}>
               <svg data-art={item.id} viewBox="0 0 320 320" aria-hidden="true"><ObjectArt object={item.id} /></svg>
               <span>{item.name}</span>
             </button>
@@ -123,7 +125,7 @@ export function CardBuilder() {
               </optgroup>
             ))}
           </select>
-          <p className="bc-note">ঠিক-ভুলের বিচার নেই। তুমি যা বলো, সেটাই লেখো।</p>
+          <p className="bc-note">ঠিক-ভুলের বিচার নেই। তুমি যা বলো, সেটাই লেখো। <SoundToggle compact /></p>
         </div>
       </div>
 

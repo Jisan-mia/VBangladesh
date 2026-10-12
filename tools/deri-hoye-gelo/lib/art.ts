@@ -382,6 +382,24 @@ export function drawTiffin(context: Ctx, glow = true) {
   context.fillStyle = "#c9d1d6"; context.beginPath(); context.ellipse(0, -14.4, 5.6, 1.4, 0, 0, Math.PI * 2); context.fill();
 }
 
+/** A page torn from the kid's exercise book, blown along the road: ruled lines, a red margin, a soft glow so it reads as a pick-up. */
+export function drawPage(context: Ctx, glow = true) {
+  if (glow) {
+    const halo = context.createRadialGradient(0, -8, 2, 0, -8, 15);
+    halo.addColorStop(0, "#ffffffcc"); halo.addColorStop(1, "#ffffff00");
+    context.fillStyle = halo; context.beginPath(); context.arc(0, -8, 15, 0, Math.PI * 2); context.fill();
+  }
+  context.save();
+  context.rotate(-0.18);
+  context.fillStyle = "#fdfbf3"; context.strokeStyle = "#b9b2a0"; context.lineWidth = 0.7;
+  context.beginPath(); context.moveTo(-7, -17); context.lineTo(6, -17); context.lineTo(8, -14); context.lineTo(8, 0); context.lineTo(-7, 0); context.closePath(); context.fill(); context.stroke();
+  context.strokeStyle = "#8fb3de"; context.lineWidth = 0.6;
+  context.beginPath(); for (let y = -13; y < 0; y += 2.6) { context.moveTo(-6, y); context.lineTo(7.4, y); } context.stroke();
+  stroke(context, "#e0786b", 0.7, [-4, -16.5, -4, -0.5]);
+  stroke(context, "#3d4f86", 0.8, [-2.6, -10.2, 4, -10.2]);
+  context.restore();
+}
+
 /** The school gate: brick pillars, an iron arch, a sign board and the brass bell hanging in the middle. */
 export function drawGate(context: Ctx, sign: string, font: string) {
   for (const x of [-56, 56]) {

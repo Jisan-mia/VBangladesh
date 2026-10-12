@@ -1,7 +1,7 @@
 // Challenge links, names and every line of result text. Server-safe: share.ts loads this, so it reaches only game-core and game.ts.
 import { possessive } from "../../../shared/bangla";
 import { challengeHash, cleanName, readChallenge } from "../../../shared/game-core";
-import { humanSide, replay, GOAT, MAX_MOVES, TIGER, TIGER_GOAL, type Game, type Mode, type Side } from "./game";
+import { humanSide, isLevel, replay, winStars, GOAT, GOAT_STARS_KEPT, LEGACY_LEVEL, MAX_MOVES, TIGER, TIGER_GOAL, TIGER_STARS, type Game, type Mode, type Side } from "./game";
 
 const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
 export const bn = (value: number) => digits.format(value);
@@ -17,23 +17,25 @@ export function decodeMoves(text: string) {
 export type Shared = { mode: Mode; name: string; other: string; game: Game };
 
 /**
- * A finished game: `#s=<seed>&t=<goats taken>&p=<0 two people, 1 বাঘ, 2 ছাগল>&m=<moves>&o=<tiger player, two people only>&n=<name>`.
- * Two people: n is whoever played the goats. The moves are replayed and every bot move re-checked, so the result is proven, not claimed.
+ * A finished game: `#s=<seed>&t=<goats taken>&p=<0 two people, 1 বাঘ, 2 ছাগল>&m=<moves>&l=<bot level>&o=<tiger player, two people only>&n=<name>`.
+ * Two people: n is whoever played the goats. No `l` means level 7, the bot from before levels, so old links still replay. The moves are replayed and every bot move re-checked, so the result is proven, not claimed.
  */
 export function parseShared(hash: string): Shared | null {
-  const challenge = readChallenge(hash, { maxTarget: TIGER_GOAL, extraKeys: ["p", "m", "o"] });
+  const challenge = readChallenge(hash, { maxTarget: TIGER_GOAL, extraKeys: ["p", "m", "o", "l"] });
   if (!challenge) return null;
-  const { p, m, o } = challenge.extra;
+  const { p, m, o, l } = challenge.extra;
   const mode = p === "0" ? 0 : p === "1" ? 1 : p === "2" ? 2 : null;
   const moves = decodeMoves(m ?? "");
-  if (mode === null || !moves) return null;
-  const game = replay(challenge.seed, mode, moves);
+  const level = l === undefined ? LEGACY_LEVEL : /^[1-9]$/.test(l) ? Number(l) : 0;
+  if (mode === null || !moves || !isLevel(level)) return null;
+  const game = replay(challenge.seed, mode, moves, mode === 0 ? LEGACY_LEVEL : level);
   if (!game?.over || game.taken !== challenge.target) return null;
   return { mode, name: challenge.name, other: mode === 0 ? cleanName(o ?? "") : "", game };
 }
 
 export function sharedHash({ mode, name, other, game }: Shared) {
   const extra: Record<string, string> = { p: String(mode), m: encodeMoves(game.moves) };
+  if (mode !== 0 && game.level !== LEGACY_LEVEL) extra.l = String(game.level);
   const second = cleanName(other);
   if (mode === 0 && second) extra.o = second;
   return challengeHash({ seed: game.seed, target: game.taken, name, extra });
@@ -89,12 +91,12 @@ export const previewTitle = (shared: Shared) => `${feat(shared)}। ${shared.mod
 
 export const bannerNote = "চালগুলো আবার মিলিয়ে দেখেছি, ফলটা সত্যি। একই শুরু, একই বট, এবার তোমার পালা।";
 
-/** After playing from a friend's link: kind either way. Same side as the friend, against the same bot: a real comparison. */
+/** After playing from a friend's link: kind either way. Same side as the friend, against the same bot level: a real comparison. */
 export function compareLine(mine: Game, friend: Shared) {
   const who = cleanName(friend.name) || "বন্ধু";
   const side = humanSide(mine.mode);
   const won = mine.winner === side;
-  if (side !== null && friend.mode === mine.mode) {
+  if (side !== null && friend.mode === mine.mode && friend.game.level === mine.level) {
     const theirs = friend.game, theyWon = theirs.winner === side;
     if (won && theyWon) {
       const gap = theirs.moves.length - mine.moves.length;
@@ -113,6 +115,22 @@ export function compareLine(mine: Game, friend: Shared) {
   if (won) return `জিতে গেছ! কার্ডটা ${who}কে পাঠাও।`;
   const theirs = humanSide(friend.mode);
   return theirs === null ? "আরেকবার খেলে দেখো!" : `${who} ছিল ${sideWord(theirs)}। তুমিও একবার ${sideWord(theirs)} হয়ে দেখো!`;
+}
+
+/** The next goal in exact numbers, after a game against the bot: what one more star, or the win, would have taken. Empty when there's none. */
+export function nearMiss(game: Game) {
+  const side = humanSide(game.mode);
+  if (side === null || !game.over) return "";
+  const stars = winStars(game), moves = game.moves.length;
+  if (side === TIGER) {
+    if (!stars) return `আর ${bn(TIGER_GOAL - game.taken)}টা ছাগল ধরলেই জিত।`;
+    if (stars === 3) return "";
+    const target = TIGER_STARS[3 - stars - 1];
+    return `আর ${bn(moves - target)} চাল কম লাগলে ${bn(stars + 1)} তারা।`;
+  }
+  if (!stars) return `আর ${bn(MAX_MOVES - moves)} চাল টিকে থাকলেই জিত।`;
+  if (stars === 3) return "";
+  return stars === 2 ? "বাঘ বন্দি করতে পারলে ৩ তারা।" : `আর ${bn(game.taken - GOAT_STARS_KEPT)}টা ছাগল কম হারালে ২ তারা।`;
 }
 
 export function caption({ mode, name, other, game }: Shared) {

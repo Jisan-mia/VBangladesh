@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { hiss, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import { ainLine, bn, cleanPara, defaultAin, groups, inOrder, matchCount, matchLine, parseShareHash, possessive, rules, shareHash, toggleRule, MAX_PARA_LENGTH, type Ain, type RuleId } from "../lib/ain";
@@ -11,6 +13,8 @@ const TOOL = "golir-ain";
 // Below these, "৩টা পাড়া লিখেছে" reads as an empty room and percentages are noise.
 const SOCIAL_PROOF_MIN = 50;
 const COMPARE_MIN = 20;
+// A piece of chalk touching the wall: a dry scratch and a tiny knock.
+const chalk = () => { hiss(0.06, 0.09, 3800, "highpass"); tone(1500, 0.03, 0.04, "square"); };
 const percent = (count: number, total: number) => Math.round((count / Math.max(total, 1)) * 100);
 
 export function AinWall() {
@@ -54,6 +58,7 @@ export function AinWall() {
   }, [ain, format, site, friend]);
 
   function toggle(id: RuleId) {
+    if (!ticked.includes(id)) chalk();
     setTicked(current => toggleRule(current, id));
     setCompared(current => current === "done" ? "idle" : current);
   }
@@ -101,7 +106,10 @@ export function AinWall() {
         <p className="ga-line" aria-live="polite">{line}</p>
       </div>
 
-      <p className="ga-hint">{friend ? <>তোমার গলিতে যেগুলো চলত, টিক দাও। <b>হলুদ দাগ</b> মানে ওদের গলিতেও ছিল।</> : "তোমার গলিতে যেগুলো চলত, টিক দাও। আবার চাপলে মুছে যাবে।"}</p>
+      <div className="ga-hintrow">
+        <p className="ga-hint">{friend ? <>তোমার গলিতে যেগুলো চলত, টিক দাও। <b>হলুদ দাগ</b> মানে ওদের গলিতেও ছিল।</> : "তোমার গলিতে যেগুলো চলত, টিক দাও। আবার চাপলে মুছে যাবে।"}</p>
+        <SoundToggle compact />
+      </div>
       {groups.map(group => (
         <fieldset className="ga-group" key={group.id}>
           <legend>{group.label}</legend>

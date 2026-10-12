@@ -22,7 +22,11 @@
 .tool-tarer-fanke-belun .tb-stage[data-phase=over]{touch-action:pan-y;cursor:default}
 .tool-tarer-fanke-belun .tb-stage canvas{display:block;width:100%;height:auto;aspect-ratio:360/440}
 .tool-tarer-fanke-belun .tb-stage p{pointer-events:none}
-.tool-tarer-fanke-belun .tb-score{position:absolute;top:6px;left:0;right:0;margin:0;text-align:center;font-family:var(--font-display);font-size:46px;font-weight:800;line-height:1.1;color:#fff;text-shadow:0 2px 0 var(--ink),2px 0 0 var(--ink),-2px 0 0 var(--ink),0 -2px 0 var(--ink),0 4px 0 #241d1c55;animation:tb-bump .25s ease-out}
+.tool-tarer-fanke-belun .tb-score{position:absolute;top:6px;left:0;right:0;margin:0;text-align:center;font-family:var(--font-display);font-size:46px;font-weight:800;line-height:1.1;color:#fff;text-shadow:0 2px 0 var(--ink),2px 0 0 var(--ink),-2px 0 0 var(--ink),0 -2px 0 var(--ink),0 4px 0 #241d1c55}
+.tool-tarer-fanke-belun .tb-score span{display:block;animation:tb-bump .25s ease-out}
+.tool-tarer-fanke-belun .tb-score small{display:inline-block;margin-top:2px;padding:1px 10px;border-radius:999px;background:#241d1cc0;font-family:Bangla,sans-serif;font-size:14px;font-weight:700;text-shadow:none;animation:tb-shake .22s ease-out}
+.tool-tarer-fanke-belun .tb-wind{position:absolute;top:10px;right:10px;margin:0;padding:3px 10px;border-radius:999px;background:#ffffffd9;color:var(--ink);font-size:14px;font-weight:700;line-height:1.4}
+.tool-tarer-fanke-belun .tb-wind[hidden]{display:none}
 .tool-tarer-fanke-belun .tb-tip{position:absolute;left:50%;bottom:12%;transform:translateX(-50%);display:grid;justify-items:center;width:max-content;max-width:88%;margin:0;padding:8px 18px;border-radius:16px;background:#241d1ce0;color:#fff;font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.35;text-align:center}
 .tool-tarer-fanke-belun .tb-tip small{font-family:Bangla,sans-serif;font-size:13px;font-weight:500;opacity:.9}
 .tool-tarer-fanke-belun .tb-pop{position:absolute;margin:0;padding:2px 12px 5px;border:3px solid var(--accent);border-radius:14px;background:#fff;color:var(--accent);font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.2;white-space:nowrap;transform:translate(-30%,-150%) rotate(-6deg);animation:tb-pop .3s ease-out}
@@ -35,6 +39,30 @@
 .tool-tarer-fanke-belun .tb-big{min-height:58px;min-width:190px;margin-top:6px;padding:0 30px;border:0;border-radius:999px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:24px;font-weight:700;box-shadow:0 5px 0 var(--accent-deep);cursor:pointer;touch-action:manipulation}
 .tool-tarer-fanke-belun .tb-big:active{transform:translateY(4px);box-shadow:0 1px 0 var(--accent-deep)}
 .tool-tarer-fanke-belun .tb-big:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+
+/* the level, its wind, the stars so far and the sound switch, above the street */
+.tool-tarer-fanke-belun .tb-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tool-tarer-fanke-belun .tb-where{margin:0;font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.3}
+.tool-tarer-fanke-belun .tb-where i{font-style:normal}
+.tool-tarer-fanke-belun .tb-where span{font-family:Bangla,sans-serif;font-size:14px;font-weight:600;color:var(--muted)}
+@media (max-width:360px){.tool-tarer-fanke-belun .tb-where i{display:none}}
+.tool-tarer-fanke-belun .tb-top .gx-sound{border-color:var(--line);background:#fff;color:var(--ink)}
+.tool-tarer-fanke-belun .tb-miss{padding:4px 12px;border-radius:12px;background:#ffd16655;color:var(--ink)!important;font-weight:700!important}
+.tool-tarer-fanke-belun .tb-actions{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px}
+.tool-tarer-fanke-belun .tb-again{min-height:58px;margin-top:6px;padding:0 18px;border:2px solid var(--accent);border-radius:999px;background:#fff;color:var(--accent);font-family:var(--font-display);font-size:18px;font-weight:700;cursor:pointer}
+.tool-tarer-fanke-belun .tb-actions .tb-big{min-width:0}
+.tool-tarer-fanke-belun .tb-over .gx-reveal{font-size:38px}
+
+/* every level, below the game */
+.tool-tarer-fanke-belun .tb-levels{padding:10px 14px;border:1.5px solid var(--line);border-radius:14px;background:#fff}
+.tool-tarer-fanke-belun .tb-levels summary{display:flex;justify-content:space-between;align-items:center;min-height:40px;font-weight:700;cursor:pointer}
+.tool-tarer-fanke-belun .tb-levels summary span{color:var(--muted);font-weight:600}
+.tool-tarer-fanke-belun .tb-levels .gx-levels{margin-top:8px}
+.tool-tarer-fanke-belun .tb-levels p{margin:10px 0;font-size:14px;line-height:1.5;color:var(--muted)}
+.tool-tarer-fanke-belun .tb-endless{display:grid;width:100%;min-height:52px;padding:6px 14px;border:1.5px solid var(--accent);border-radius:12px;background:var(--paper);color:var(--accent-deep);font:inherit;font-weight:700;text-align:left;cursor:pointer}
+.tool-tarer-fanke-belun .tb-endless small{font-weight:500;color:var(--muted)}
+.tool-tarer-fanke-belun .tb-endless[aria-pressed=true]{background:var(--accent);color:#fff}
+.tool-tarer-fanke-belun .tb-endless[aria-pressed=true] small{color:#fff}
 
 /* the two easy-mode switches */
 .tool-tarer-fanke-belun .tb-controls{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
@@ -68,5 +96,7 @@
 @keyframes tb-in{from{opacity:0;transform:translateY(6px)}}
 @keyframes tb-pop{from{opacity:0;transform:translate(-30%,-150%) rotate(-6deg) scale(.6)}}
 @keyframes tb-bump{from{transform:scale(1.3)}}
-.tool-tarer-fanke-belun .tb[data-slow=true] :is(.tb-score,.tb-pop,.tb-cover){animation:none}
-@media (prefers-reduced-motion:reduce){.tool-tarer-fanke-belun :is(.tb-score,.tb-pop,.tb-cover){animation:none}.tool-tarer-fanke-belun .tb-toggle i::after{transition:none}}
+@keyframes tb-shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.tool-tarer-fanke-belun .tb-again:active{transform:scale(.96)}
+.tool-tarer-fanke-belun .tb[data-slow=true] :is(.tb-score span,.tb-score small,.tb-pop,.tb-cover){animation:none}
+@media (prefers-reduced-motion:reduce){.tool-tarer-fanke-belun :is(.tb-score span,.tb-score small,.tb-pop,.tb-cover){animation:none}.tool-tarer-fanke-belun .tb-toggle i::after{transition:none}}

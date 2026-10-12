@@ -2,11 +2,14 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { confetti, sfx, shake } from "../../../shared/game-sound";
+import { totalStars, useLevels } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { addToTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { stallSvg } from "../lib/art";
 import { cardBlob, drawCard, loadStall } from "../lib/draw-card";
-import { bn, caption, humanLine, marks, parseShareHash, possessive, questionsOf, rank, scoreOf, setById, sets, shareHash, MAX_NAME_LENGTH, PER_SET, type Answer, type SetId, type Shared } from "../lib/pitha";
+import { bn, caption, humanLine, marks, nearMissLine, parseShareHash, possessive, questionsOf, rank, scoreOf, setById, setStars, sets, shareHash, MAX_NAME_LENGTH, PER_SET, type Answer, type SetId, type Shared } from "../lib/pitha";
 
 const TOOL = "pitha";
 // Percentages from a handful of people are noise ("১০০% চিনেছে" after one play).
@@ -34,12 +37,14 @@ export function PithaStall() {
   const nextButton = useRef<HTMLButtonElement>(null);
   const result = useRef<HTMLElement>(null);
   const resultVisible = useInView(result);
+  const levels = useLevels(TOOL, sets.length);
 
   const questions = questionsOf(setId);
   const answers = useMemo(() => answersBy[setId] ?? [], [answersBy, setId]);
   const hits = marks(setId, answers);
   const score = scoreOf(setId, answers);
   const done = answers.length === PER_SET;
+  const level = sets.findIndex(item => item.id === setId) + 1;
   const own = useMemo(() => ({ set: setId, answers, name }), [setId, answers, name]);
   const state = done ? shareHash(own).slice(1) : "";
   const rival = friend?.set === setId ? friend : null;
@@ -75,13 +80,16 @@ export function PithaStall() {
 
   useEffect(() => { if (revealed) nextButton.current?.focus({ preventScroll: true }); }, [revealed]);
 
-  function pick(option: Answer) {
+  function pick(option: Answer, button: Element) {
     if (revealed) return;
+    if (option === question.answer) sfx.good(); else { sfx.wrong(); shake(button.closest(".pt-stall")); }
     setAnswersBy(current => ({ ...current, [setId]: [...(current[setId] ?? []), option] }));
   }
 
   function next() {
     setPos(pos + 1);
+    // Stars are saved per set; StarReveal chimes each star, so the big cheer is only for a perfect 10.
+    if (pos + 1 === PER_SET) { levels.record(level, setStars(score)); if (score === PER_SET) { confetti(); sfx.win(); } }
     if (pos + 1 === PER_SET) requestAnimationFrame(() => document.getElementById("result")?.scrollIntoView({ behavior: "smooth" }));
     else requestAnimationFrame(() => document.getElementById("board")?.scrollIntoView({ behavior: "smooth", block: "nearest" }));
   }
@@ -125,6 +133,7 @@ export function PithaStall() {
         <div className="pt-top">
           <p aria-hidden="true"><span>পিঠা</span><b>{bn(Math.min(pos + 1, PER_SET))}</b><i>/১০</i></p>
           <Baskets hits={hits} now={pos} label={`${setById(setId).label}: ${bn(answers.length)}টার উত্তর দেওয়া, ${bn(score)}টা চিনেছ`} />
+          <SoundToggle compact />
         </div>
 
         {pos < PER_SET ? <>
@@ -134,7 +143,7 @@ export function PithaStall() {
           <div className="pt-options" role="group" aria-labelledby="pt-q">
             {question.options.map((option, index) => (
               <button type="button" key={`${question.id}-${index}`} className="pt-opt" aria-pressed={revealed && picked === index} disabled={revealed}
-                data-state={revealed ? index === question.answer ? "right" : index === picked ? "wrong" : "dim" : undefined} onClick={() => pick(index as Answer)}>
+                data-state={revealed ? index === question.answer ? "right" : index === picked ? "wrong" : "dim" : undefined} onClick={event => pick(index as Answer, event.currentTarget)}>
                 {option}
               </button>
             ))}
@@ -166,11 +175,18 @@ export function PithaStall() {
         })}
       </fieldset>
 
+      <details className="pt-levels">
+        <summary>সব সেট <span>★ {bn(totalStars(levels.stars))}/{bn(sets.length * 3)}</span></summary>
+        <p>{sets.map((item, index) => `${bn(index + 1)} ${item.label}`).join(" · ")}। ১০টাই ঠিক হলে ৩ তারা, ৭টা বা বেশি ঠিক হলে ২, শেষ করলে ১। সব সেট সব সময় খোলা।</p>
+        <LevelGrid count={sets.length} stars={levels.stars} unlocked={sets.length} current={level} noun="সেট" onPick={pick => chooseSet(sets[pick - 1].id)} />
+      </details>
+
       <StickyNext show={done && !resultVisible} title={<><strong>১০-এ {bn(score)}</strong> · {rank(score)}</>} sub={humanLine(setId, answers)} href="#result" label="কার্ড দেখো" />
 
       <section className="pt-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="pt-result-head">
           <h2 id="result-title">{done ? <>তুমি চিনেছ <em>১০-এ {bn(score)}</em></> : "তোমার ডালা এখনো ভরছে"}</h2>
+          {done && <p className="pt-reward"><StarReveal count={setStars(score)} />{nearMissLine(score) && <small>{nearMissLine(score)}</small>}</p>}
           <p>{done ? humanLine(setId, answers) : `আরও ${bn(PER_SET - answers.length)}টা পিঠা বাকি। শেষ করলে কার্ড পুরো হবে, তখন শেয়ার করতে পারবে।`}</p>
         </div>
 

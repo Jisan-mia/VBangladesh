@@ -111,6 +111,31 @@ import { share as jam_chharao } from '../tools/jam-chharao/share';
 import { share as shobdo_khoja } from '../tools/shobdo-khoja/share';
 import { share as carrom } from '../tools/carrom/share';
 import { share as pati_buni } from '../tools/pati-buni/share';
+import { share as sudoku } from '../tools/sudoku/share';
+import { share as switchboard } from '../tools/switchboard/share';
+import { share as golokdhadha } from '../tools/golokdhadha/share';
+import { share as ponero_ghor } from '../tools/ponero-ghor/share';
+import { share as chhobi_photao } from '../tools/chhobi-photao/share';
+import { share as ghontar_sur } from '../tools/ghontar-sur/share';
+import { share as konta_nei } from '../tools/konta-nei/share';
+import { share as bhul_kothay } from '../tools/bhul-kothay/share';
+import { share as atir_aam } from '../tools/atir-aam/share';
+import { share as bhimruler_chak } from '../tools/bhimruler-chak/share';
+import { share as churir_bazar } from '../tools/churir-bazar/share';
+import { share as mukhe_mukhe_hisab } from '../tools/mukhe-mukhe-hisab/share';
+import { share as chhobir_tukro } from '../tools/chhobir-tukro/share';
+import { share as sat_chara } from '../tools/sat-chara/share';
+import { share as chhip_felo } from '../tools/chhip-felo/share';
+import { share as latim } from '../tools/latim/share';
+import { share as nodi_par } from '../tools/nodi-par/share';
+import { share as penalty } from '../tools/penalty/share';
+import { share as golir_badminton } from '../tools/golir-badminton/share';
+import { share as kagojer_urojahaj } from '../tools/kagojer-urojahaj/share';
+import { share as marble_sinri } from '../tools/marble-sinri/share';
+import { share as roshi_tana } from '../tools/roshi-tana/share';
+import { share as moshar_raat } from '../tools/moshar-raat/share';
+import { share as al_dhore_hati } from '../tools/al-dhore-hati/share';
+import { share as o_te_ojogor } from '../tools/o-te-ojogor/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -225,6 +250,31 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'shobdo-khoja': shobdo_khoja,
   'carrom': carrom,
   'pati-buni': pati_buni,
+  'sudoku': sudoku,
+  'switchboard': switchboard,
+  'golokdhadha': golokdhadha,
+  'ponero-ghor': ponero_ghor,
+  'chhobi-photao': chhobi_photao,
+  'ghontar-sur': ghontar_sur,
+  'konta-nei': konta_nei,
+  'bhul-kothay': bhul_kothay,
+  'atir-aam': atir_aam,
+  'bhimruler-chak': bhimruler_chak,
+  'churir-bazar': churir_bazar,
+  'mukhe-mukhe-hisab': mukhe_mukhe_hisab,
+  'chhobir-tukro': chhobir_tukro,
+  'sat-chara': sat_chara,
+  'chhip-felo': chhip_felo,
+  'latim': latim,
+  'nodi-par': nodi_par,
+  'penalty': penalty,
+  'golir-badminton': golir_badminton,
+  'kagojer-urojahaj': kagojer_urojahaj,
+  'marble-sinri': marble_sinri,
+  'roshi-tana': roshi_tana,
+  'moshar-raat': moshar_raat,
+  'al-dhore-hati': al_dhore_hati,
+  'o-te-ojogor': o_te_ojogor,
 };
 
 export function toolShare(tool: string): ToolShare | null {

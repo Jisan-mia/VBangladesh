@@ -35,6 +35,8 @@
 .nm-beads [data-mark=ok]{border-color:var(--chalk);background:var(--chalk)}
 .nm-beads [data-mark=fix]{border-color:var(--chalk-yellow);background:var(--chalk-yellow)}
 .nm-beads [data-mark=now]{border-color:var(--chalk);animation:nm-blink 1.2s ease-in-out infinite}
+.nm-tools{display:flex;align-items:center;flex:none}
+.nm-tools .gx-sound{border:0;color:var(--chalk-soft);min-width:40px}
 .nm-timer{position:relative;z-index:1;display:inline-flex;align-items:center;gap:5px;flex:none;min-height:44px;padding:0 8px;border:0;border-radius:10px;background:none;color:var(--chalk-soft);font-size:14px;font-variant-numeric:tabular-nums}
 .nm-timer svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 .nm-timer[aria-pressed=true]{background:#f3f1e71f;color:var(--chalk-yellow)}
@@ -132,5 +134,17 @@
   .nm-board{min-height:210px}
   .nm-result-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:36px}
 }
-@media(max-width:360px){.nm-beads{gap:4px}.nm-beads li{width:12px;height:12px}.nm-timer{padding:0 4px}}
+@media(max-width:360px){.nm-beads{gap:4px}.nm-beads li{width:12px;height:12px}.nm-timer{padding:0 4px}.nm-timer[aria-pressed=false] .nm-timer-text{display:none}.nm-tools .gx-sound{min-width:34px}}
 @media(prefers-reduced-motion:reduce){.nm-sum,.nm-wipe,.nm-star,.nm-beads [data-mark=now],.nm-ok[data-nudge=true]{animation:none}.nm-wipe{display:none}}
+
+/* sets, stars and progress (levels) */
+.tool-namta .nm-levels{margin-top:12px;border:1.5px solid color-mix(in srgb,var(--ink) 20%,transparent);border-radius:14px;background:#fff;color:var(--ink)}
+.tool-namta .nm-levels summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-namta .nm-levels summary span{font-weight:500;font-size:14px;color:var(--muted)}
+.tool-namta .nm-levels p{margin:0 14px 10px;font-size:14px;line-height:1.55;color:var(--muted)}
+.tool-namta .nm-levels .gx-levels{padding:0 12px 12px}
+.tool-namta .nm-levels .gx-levels li:nth-child(n+2):has(button.next)~li button.next{animation:none;box-shadow:none;border-width:1.5px}
+.tool-namta .nm-reward{display:flex;align-items:center;flex-wrap:wrap;gap:2px 12px;margin:6px 0 4px}
+.tool-namta .nm-reward .gx-stars{font-size:30px}
+.tool-namta .nm-reward small{font-size:15px;font-weight:600;color:var(--accent-deep)}
+.tool-namta .nm-levels .gx-levels li:first-child{display:none}

@@ -4,18 +4,30 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { newSeed, useBest, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { confetti, hiss, newSeed, sfx, shake, totalStars, useBest, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar } from "../../../shared/share-kit";
 import { cardBlob, drawCard, INKS, strokeEnds } from "../lib/draw-card";
 import { demoWord, dragLine, generate, lineBetween, nextHint, totalTime, wordAt, HINT_SECONDS, SIZE, WORDS, type Level, type Puzzle } from "../lib/grid";
-import { bannerNote, bn, caption, clock, compareLine, detail, feat, humanLine, levelName, parseShared, sharedHash, spokenIn, type Shared } from "../lib/link";
+import { bannerNote, bn, caption, clock, compareLine, detail, feat, humanLine, levelName, nearLine, parseShared, sharedHash, spokenIn, type Shared } from "../lib/link";
 import { packById, PACKS, type PackId } from "../lib/packs";
+import { stageAt, stageStars, STAGE_COUNT, TUTORIAL_SEED } from "../lib/stages";
 
 const TOOL = "shobdo-khoja";
-type Round = { seed: number; pack: PackId; level: Level; demo: boolean };
+/** `stage` is the level number, 0 for a free grid picked from the packs. */
+type Round = { seed: number; pack: PackId; level: Level; demo: boolean; stage: number };
 type Phase = "ready" | "playing" | "paused" | "over";
-/** The first grid everyone sees: ফুল, সহজ, with শাপলা already struck to show how. */
-const TUTORIAL: Round = { seed: 303, pack: "phul", level: 0, demo: true };
+/** The first grid everyone sees, level 1: ফুল, সহজ, with শাপলা already struck to show how. */
+const TUTORIAL: Round = { seed: TUTORIAL_SEED, pack: "phul", level: 0, demo: true, stage: 1 };
+/** A level with a fresh grid; level 1 is the teaching grid until it has been cleared once. */
+function roundFor(stage: number, teach = false): Round {
+  const at = stageAt(stage)!;
+  return teach && stage === 1 ? TUTORIAL : { seed: newSeed(), pack: at.pack, level: at.level, demo: false, stage };
+}
+/** A ballpoint dragged across a cell. */
+const scratch = () => hiss(0.05, 0.05, 4800, "highpass");
+// Words found less than this long apart make a run, and each one in a run chimes a step higher.
+const RUN_MS = 10_000;
 const KEY_STEPS: Record<string, [number, number]> = { ArrowRight: [0, 1], ArrowLeft: [0, -1], ArrowDown: [1, 0], ArrowUp: [-1, 0] };
 const U = 100; // one cell in the board's SVG units
 const centre = (cell: number) => [(cell % SIZE + 0.5) * U, (Math.floor(cell / SIZE) + 0.5) * U] as const;
@@ -51,6 +63,9 @@ export function WordSearch() {
   const [noClock, setNoClock] = useState(false);
   const [best, submitBest] = useBest(`${TOOL}-${round.pack}-${round.level}`, false);
   const [record, setRecord] = useState<"" | "first" | "new">("");
+  const [earned, setEarned] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const levels = useLevels(TOOL, STAGE_COUNT);
   const [name, setName] = useState("");
   const [format, setFormat] = useState<CardFormat>("feed");
   const [site, setSite] = useState("");
@@ -66,6 +81,8 @@ export function WordSearch() {
   const since = useRef<number | null>(null);
   const phaseRef = useRef(phase);
   phaseRef.current = phase;
+  const lastFind = useRef(0);
+  const timers = useRef<number[]>([]);
 
   const pack = packById(round.pack)!;
   const seconds = () => (spent.current + (since.current === null ? 0 : performance.now() - since.current)) / 1000;
@@ -92,8 +109,14 @@ export function WordSearch() {
     setNote("");
     setFinal(null);
     setRecord("");
+    setEarned(0);
+    setStreak(0);
+    lastFind.current = 0;
+    timers.current.forEach(clearTimeout); timers.current = [];
   }
-  const fresh = (changes: Partial<Round> = {}) => begin({ seed: newSeed(), pack: round.pack, level: round.level, ...changes, demo: false });
+  /** A free grid: a pack and difficulty picked by hand, no stars. */
+  const fresh = (changes: Partial<Round> = {}) => begin({ seed: newSeed(), pack: round.pack, level: round.level, ...changes, demo: false, stage: 0 });
+  const toStage = (stage: number) => begin(roundFor(stage, !levels.stars[1]));
 
   function start() {
     if (phaseRef.current !== "ready") return;
@@ -108,8 +131,14 @@ export function WordSearch() {
     const time = totalTime(seconds(), hints);
     setFinal(time);
     setPhase("over");
-    setRecord(best === null ? "first" : time < best ? "new" : "");
+    const beaten = best !== null && time < best, stars = round.stage ? stageStars(round.stage, time) : 0;
+    setRecord(best === null ? "first" : beaten ? "new" : "");
     submitBest(time);
+    if (stars) levels.record(round.stage, stars);
+    setEarned(stars);
+    // The stars chime in one by one (StarReveal); the fanfare waits for them, confetti only for 3 stars or a new record.
+    const after = (stars + 1) * 260;
+    timers.current.push(window.setTimeout(() => { if (stars === 3 || beaten) { sfx.levelUp(); confetti(); } else sfx.good(); }, after));
   }
 
   function attempt(cells: number[]) {
@@ -117,22 +146,27 @@ export function WordSearch() {
     if (index < 0) {
       setMiss(cells);
       setNote("এটা লিস্টে নেই। আবার দেখো!");
+      sfx.wrong();
+      shake(board.current);
       return;
     }
     const word = puzzle.words[index].word;
-    if (found.includes(index)) { setNote(`${word} তো আগেই কাটা হয়েছে!`); return; }
+    if (found.includes(index)) { sfx.tap(); setNote(`${word} তো আগেই কাটা হয়েছে!`); return; }
     const next = [...found, index];
     setFound(next);
     setMiss([]);
-    if (!slow && typeof navigator.vibrate === "function") navigator.vibrate(12);
+    const now = performance.now(), run = lastFind.current && now - lastFind.current < RUN_MS ? streak + 1 : 0;
+    lastFind.current = now;
+    setStreak(run);
+    if (run) sfx.combo(run + 1); else sfx.good();
     if (next.length === WORDS) { setNote(""); finish(hinted.length); }
-    else setNote(`পেয়েছ: ${word}! আর ${bn(WORDS - next.length)}টা।`);
+    else setNote(`পেয়েছ: ${word}!${run ? ` টানা ${bn(run + 1)}টা!` : ""} আর ${bn(WORDS - next.length)}টা।`);
   }
 
   /** Tap the first letter, then the last. Tapping the first again lets go of it. */
   function tap(cell: number) {
-    if (firstTap < 0) { setFirstTap(cell); setNote("এবার শব্দের শেষ অক্ষরে চাপো।"); return; }
-    if (firstTap === cell) { setFirstTap(-1); setNote(""); return; }
+    if (firstTap < 0) { sfx.tap(); setFirstTap(cell); setNote("এবার শব্দের শেষ অক্ষরে চাপো।"); return; }
+    if (firstTap === cell) { sfx.tap(); setFirstTap(-1); setNote(""); return; }
     const line = lineBetween(firstTap, cell);
     if (!line) { setFirstTap(cell); setNote("একই লাইনে হতে হবে: পাশাপাশি, ওপর-নিচে বা কোনাকুনি। এই ঘর থেকে আবার ধরলাম।"); return; }
     setFirstTap(-1);
@@ -143,6 +177,7 @@ export function WordSearch() {
     const index = nextHint(puzzle, found, hinted);
     if (index < 0 || phase === "over" || phase === "paused") return;
     start();
+    sfx.pop();
     setHinted([...hinted, index]);
     setFirstTap(-1);
     setNote(`গোল দাগের ঘর থেকে একটা শব্দ শুরু। ঘড়িতে +${bn(HINT_SECONDS)} সেকেন্ড।`);
@@ -167,7 +202,7 @@ export function WordSearch() {
       const shared = parseShared(window.location.hash);
       if (!shared) return;
       setFriend(shared);
-      begin({ seed: shared.seed, pack: shared.pack, level: shared.level, demo: shared.demo });
+      begin({ seed: shared.seed, pack: shared.pack, level: shared.level, demo: shared.demo, stage: shared.stage ?? 0 });
     };
     setSite(window.location.host);
     readFriend();
@@ -178,8 +213,15 @@ export function WordSearch() {
     };
     window.addEventListener("hashchange", readFriend);
     document.addEventListener("visibilitychange", hide);
-    return () => { window.removeEventListener("hashchange", readFriend); document.removeEventListener("visibilitychange", hide); };
+    return () => { window.removeEventListener("hashchange", readFriend); document.removeEventListener("visibilitychange", hide); timers.current.forEach(clearTimeout); };
   }, []);
+
+  // A returning player opens on the furthest level reached; a new one (or a friend's link) keeps the grid it opened on.
+  useEffect(() => {
+    if (!levels.loaded || parseShared(window.location.hash) || phaseRef.current !== "ready" || levels.unlocked === 1) return;
+    begin(roundFor(levels.unlocked));
+    // Once, when storage has been read.
+  }, [levels.loaded]);
 
   useEffect(() => {
     let cancelled = false;
@@ -216,6 +258,7 @@ export function WordSearch() {
     const cells = dragLine(held.from, fx - (held.from % SIZE + 0.5), fy - (Math.floor(held.from / SIZE) + 0.5));
     if (cells.length > 1) held.moved = true;
     if (!held.moved || cells.join() === trailRef.current.join()) return;
+    if (cells.length > trailRef.current.length) scratch();
     trailRef.current = cells;
     setTrail(cells);
     setFirstTap(-1);
@@ -255,8 +298,10 @@ export function WordSearch() {
   }
 
   function seeCard() { resultBox.current?.scrollIntoView({ behavior: smooth(), block: "start" }); }
+  /** Same level (or same pack and difficulty), a new grid. */
+  const again = () => round.stage ? begin(roundFor(round.stage)) : fresh();
   function playFromCard() {
-    fresh();
+    again();
     board.current?.scrollIntoView({ behavior: smooth(), block: "center" });
   }
 
@@ -279,6 +324,9 @@ export function WordSearch() {
   }
 
   const friendTitle = friend ? feat(friend) : "";
+  const allStars = totalStars(levels.stars);
+  const hasNext = phase === "over" && round.stage > 0 && round.stage < STAGE_COUNT;
+  const near = phase === "over" && final !== null && round.stage ? nearLine(round.stage, final) : "";
   const canHint = playable && nextHint(puzzle, found, hinted) >= 0;
 
   return (
@@ -300,7 +348,15 @@ export function WordSearch() {
         ))}
       </fieldset>
 
+      <p className="sk-stage">
+        {round.stage
+          ? <span><b>লেভেল {bn(round.stage)}</b> · {pack.name}, {levelName(round.level)}</span>
+          : <span><b>নিজের মতো</b> · {pack.name}, {levelName(round.level)} <button type="button" className="kit-link" onClick={() => toStage(levels.unlocked)}>লেভেলে ফেরো</button></span>}
+        <span aria-label={`মোট ${bn(allStars)}টা তারা`}>★ {bn(allStars)}/{bn(STAGE_COUNT * 3)}</span>
+      </p>
+
       <div className="sk-hud">
+        <SoundToggle compact className="sk-sound" />
         <p className="sk-count"><b>{bn(found.length)}</b>/{bn(WORDS)}<span className="sk-sr">টা শব্দ পাওয়া গেছে</span></p>
         <p className="sk-clock" aria-live="off">
           {noClock && final === null ? <small>ঘড়ি লুকানো</small> : <><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13.5" r="8" /><path d="M12 13.5 15 10M10 3h4" /></svg><b>{clock(shownTime)}</b></>}
@@ -353,7 +409,9 @@ export function WordSearch() {
 
       {phase === "over" && final !== null ? (
         <div className="sk-over" role="status">
+          {earned > 0 && <StarReveal count={earned} />}
           <p className="sk-over-score">{pack.done} <span>{clock(final)}</span></p>
+          {near && <p className="sk-near">{near}</p>}
           <p className="sk-over-line">{detail({ level: round.level, hints: hinted.length })}। <span>{bestLine()}</span></p>
         </div>
       ) : (
@@ -363,7 +421,8 @@ export function WordSearch() {
       <div className="sk-controls" data-phase={phase}>
         {phase === "over" ? (
           <>
-            <button type="button" className="kit-primary sk-big" onClick={() => fresh()}>আরেকবার</button>
+            {hasNext && <button type="button" className="kit-primary sk-big sk-next" onClick={() => begin(roundFor(round.stage + 1))}>পরের লেভেল</button>}
+            <button type="button" className={hasNext ? "kit-secondary sk-big" : "kit-primary sk-big"} onClick={again}>{round.stage ? "আবার খেলো" : "আরেকবার"}</button>
             <button type="button" className="kit-link sk-see" onClick={seeCard}>কার্ড দেখো ↓</button>
           </>
         ) : (
@@ -375,6 +434,12 @@ export function WordSearch() {
           </>
         )}
       </div>
+
+      <details className="sk-levels">
+        <summary>সব লেভেল <span>★ {bn(allStars)}/{bn(STAGE_COUNT * 3)}</span></summary>
+        <p>আটটা প্যাক তিন দফায়: প্রথমে সহজ, তারপর কঠিন, শেষে কঠিন আরও কম সময়ে। ছয়টা কাটলেই পরের লেভেল খোলে, তাড়াতাড়ি কাটলে বেশি তারা। হিন্টের সময়ও ঘড়িতে যোগ হয়।</p>
+        <LevelGrid count={STAGE_COUNT} stars={levels.stars} unlocked={Math.max(levels.unlocked, friend?.stage ?? 1)} current={round.stage || undefined} onPick={stage => { toStage(stage); board.current?.scrollIntoView({ behavior: smooth(), block: "center" }); }} />
+      </details>
 
       <section className="sk-result" id="result" ref={resultBox} aria-labelledby="sk-result-title">
         <div className="sk-result-head">

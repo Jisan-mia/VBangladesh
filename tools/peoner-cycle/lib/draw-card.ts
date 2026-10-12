@@ -1,7 +1,7 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, wrapText, BODY_FONT, DISPLAY_FONT, type CardFormat } from "../../../shared/card-canvas";
 import { C, drawBanana, drawBike, drawBush, drawCow, drawGoat, drawHay, drawLetter, drawPalm, paintRoad } from "./art";
 import { bn, detailLine, humanLine, type Shared } from "./result";
-import { LANE_W, LANES, ROAD_L, W } from "./ride";
+import { LANE_W, LANES, ROAD_L, starsOf, W } from "./ride";
 
 const INK = "#2b2118", TEAL = "#1d5f50", DEEP = "#174c40", RUST = "#b4532a";
 const S = 3; // card pixels per game unit: the road fills the card's width exactly
@@ -64,7 +64,14 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
   context.beginPath(); context.moveTo(left + 14, top + 14); context.lineTo(width / 2, top + env.h * 0.44); context.lineTo(right - 14, top + 14); context.stroke();
   context.strokeStyle = "#c9a77a"; context.lineWidth = 4; context.beginPath(); context.roundRect(left, top, right - left, env.h, 22); context.stroke();
   stamp(context, right - 140, top + 34);
-  fitText(context, [{ text: "পিয়নের সাইকেল", color: TEAL, weight: 800, display: true }, ...(shared.name ? [{ text: ` · ${shared.name}`, color: INK, weight: 700, display: true }] : [])], left + 50, top + 110, 56, right - left - 250);
+  // The title row also carries the route and, once its letters were delivered, its stars.
+  const earned = starsOf(shared.meters, shared.level);
+  fitText(context, [
+    { text: "পিয়নের সাইকেল", color: TEAL, weight: 800, display: true },
+    ...(shared.name ? [{ text: ` · ${shared.name}`, color: INK, weight: 700, display: true }] : []),
+    { text: ` · রুট ${bn(shared.level)}`, color: INK, weight: 700, display: true },
+    ...(earned ? [{ text: " ", color: INK }, ...[0, 1, 2].map(star => ({ text: "★", color: star < earned ? "#e39b00" : "#d8c7a6", weight: 700 }))] : []),
+  ], left + 50, top + 110, 56, right - left - 250);
   fitText(context, [{ text: bn(shared.score), color: INK, weight: 800, display: true }], width / 2, top + env.h * 0.66, 200, 760, "center");
   fitText(context, [{ text: detailLine(shared), color: RUST, weight: 700 }], width / 2, top + env.h - 50, 42, right - left - 80, "center");
 

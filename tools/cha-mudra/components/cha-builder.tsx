@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import { DEFAULT_HISAB, LIMITS, amountText, bn, caption, cleanLabel, compute, currencies, currencyLabel, parseShareHash, perDayChoices, quickAmounts, readNumber, shareHash, units, validAmount, validPrice, validRate, type CurrencyId, type Hisab, type Prices, type UnitId } from "../lib/hisab";
@@ -9,6 +11,8 @@ import { towerLayout } from "../lib/tower";
 
 const TOOL = "cha-mudra";
 const foreignQuick = [1, 10, 100, 1_000] as const;
+// Two clay cups touching: a dull, warm ting.
+const clink = () => { tone(1568, 0.16, 0.07, "sine"); tone(2349, 0.1, 0.035, "sine", 0.012); };
 const field = (value: number) => bn(value).replace(/,/g, "");
 
 function Tower({ drawn, each }: { drawn: number; each: number }) {
@@ -118,13 +122,16 @@ export function ChaBuilder() {
 
       <div className="cm-stall">
         <div className="cm-ask">
-          <label htmlFor="cm-amount">কোন দামটা চায়ে মাপবে?</label>
+          <div className="cm-askhead">
+            <label htmlFor="cm-amount">কোন দামটা চায়ে মাপবে?</label>
+            <SoundToggle compact />
+          </div>
           <div className="cm-input">
             <input id="cm-amount" ref={amountInput} value={amountField} onChange={event => setAmountField(event.target.value)} onFocus={event => event.currentTarget.select()} inputMode="decimal" autoComplete="off" enterKeyHint="done" maxLength={16} aria-invalid={!amountOk} aria-describedby="cm-problem" />
             <span>{unitName}</span>
           </div>
           <div className="cm-quick" role="group" aria-label="চটজলদি অঙ্ক">
-            {quick.map(value => <button type="button" key={value} aria-pressed={amount === value} onClick={() => setAmountField(field(value))}>{bn(value)}</button>)}
+            {quick.map(value => <button type="button" key={value} aria-pressed={amount === value} onClick={() => { setAmountField(field(value)); clink(); }}>{bn(value)}</button>)}
           </div>
           <div className="cm-money" role="group" aria-labelledby="cm-money-label">
             <span id="cm-money-label">কোন টাকায়?</span>

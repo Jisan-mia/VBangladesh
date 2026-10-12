@@ -296,6 +296,30 @@ function drawPop(context: CanvasRenderingContext2D, x: number, y: number, p: num
   context.globalAlpha = 1;
 }
 
+/**
+ * Wind streaks across the sky, slanting the way the wind pushes (down or up), thicker and faster the stronger it blows.
+ * The HUD says the same thing in words. `clock` 0 holds them still (slow mode).
+ */
+function drawWind(context: CanvasRenderingContext2D, wind: number, clock: number) {
+  const strength = Math.min(1, Math.abs(wind) / 280);
+  if (strength < 0.06) return;
+  const slope = wind > 0 ? 0.45 : -0.45, speed = 150 + 160 * strength, length = 16 + 22 * strength, span = VW + 80, rise = GROUND - 150;
+  context.strokeStyle = "#ffffff";
+  context.globalAlpha = 0.2 + 0.5 * strength;
+  context.lineWidth = 1 + strength;
+  context.lineCap = "round";
+  context.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const travel = clock * speed + i * 131;
+    const x = span - 40 - (travel % span), y = 24 + ((i * 47 + travel * slope) % rise + rise) % rise;
+    context.moveTo(x, y);
+    context.lineTo(x + length, y - slope * length);
+  }
+  context.stroke();
+  context.lineCap = "butt";
+  context.globalAlpha = 1;
+}
+
 /** One frame. `clock` is real seconds, for the string's sway and the crows' wings. */
 export function drawScene(context: CanvasRenderingContext2D, cache: SceneCache, run: Run, slow: boolean, clock: number) {
   const { scale } = cache;
@@ -317,7 +341,8 @@ export function drawScene(context: CanvasRenderingContext2D, cache: SceneCache, 
     if (sx + gate.w < -40) continue;
     drawGate(context, gate, sx, GROUND, gate.x - bx, clock);
   }
-  if (run.phase === "pop" || run.phase === "over") {
+  drawWind(context, run.wind, slow ? 0 : clock);
+  if (run.phase === "pop" || (run.phase === "over" && !run.cleared)) {
     if (run.phase === "pop") drawPop(context, BX, run.y, Math.min(1, (run.t - run.popAt) / POP_SECONDS), slow);
     return;
   }

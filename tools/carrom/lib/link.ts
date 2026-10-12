@@ -1,6 +1,6 @@
 // Challenge links, score lines and preview text. Server-safe: share.ts loads this, so it imports only pure modules.
 import { possessive } from "../../../shared/bangla";
-import { challengeHash, cleanName, readChallenge } from "../../../shared/game-core";
+import { challengeHash, cleanName, readChallenge, starsFor, type LevelStars } from "../../../shared/game-core";
 import { MAX_DUO, MAX_SOLO, PER_SIDE, QUEEN_POINTS, STRIKES, type Note, type Side } from "./rules";
 
 const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
@@ -9,18 +9,66 @@ export const bn = (value: number) => digits.format(value);
 export const SIDE_NAME = ["সাদা", "কালো"] as const;
 export const SIDE_OF = ["সাদার", "কালোর"] as const;
 
+/**
+ * একা খেলার দশটা বোর্ড: each a fixed scatter seed, with points for 1, 2 and 3 stars that rise a step a board.
+ * The tests prove a plain ghost-ball bot earns three stars on every one of them, so none is out of reach.
+ */
+export const LEVELS = [
+  { seed: 733103, name: "পাড়ার ক্লাবঘর", one: 1, two: 4, three: 6 },
+  { seed: 256765, name: "চায়ের দোকান", one: 2, two: 4, three: 7 },
+  { seed: 209458, name: "ছাদের চিলেকোঠা", one: 3, two: 5, three: 7 },
+  { seed: 199343, name: "হোস্টেলের রুম", one: 3, two: 5, three: 8 },
+  { seed: 361494, name: "নানাবাড়ির বারান্দা", one: 3, two: 6, three: 8 },
+  { seed: 675681, name: "স্কুলের কমনরুম", one: 4, two: 6, three: 9 },
+  { seed: 875024, name: "মেসবাড়ি", one: 4, two: 7, three: 9 },
+  { seed: 466223, name: "লঞ্চের কেবিন", one: 4, two: 7, three: 10 },
+  { seed: 837832, name: "পাড়ার টুর্নামেন্ট", one: 5, two: 8, three: 10 },
+  { seed: 513530, name: "টুর্নামেন্টের ফাইনাল", one: 5, two: 8, three: 11 },
+] as const;
+export const LEVEL_COUNT = LEVELS.length;
+
+/** Stars for ten strikes on a board: 0 below its pass mark. */
+export function starsOf(points: number, level: number) {
+  const board = LEVELS[level - 1];
+  return !board || points < board.one ? 0 : starsFor(points, board.three, board.two);
+}
+
+/** Where a returning player starts: the furthest open board that still lacks three stars. */
+export function startLevel(stars: LevelStars, unlocked: number) {
+  for (let level = unlocked; level >= 1; level--) if ((stars[level] ?? 0) < 3) return level;
+  return unlocked;
+}
+
+/** Before boards, this phone kept one best score from random boards. Once, it becomes board 1's stars, so nobody replays the first board. */
+export function migrateBest(saved: LevelStars, raw: string | null) {
+  if (raw === null || Object.keys(saved).length) return 0;
+  const best = Number(raw);
+  return Number.isInteger(best) && best >= 0 ? starsOf(best, 1) : 0;
+}
+
+/** The one near-miss line after a board, with the exact gap, or "" when nothing was close. */
+export function nearLine(points: number, level: number, before: number | null) {
+  const board = LEVELS[level - 1];
+  if (!board) return "";
+  if (points < board.one) return `আর ${bn(board.one - points)} পয়েন্ট হলেই বোর্ড পার।`;
+  const next = points < board.two ? board.two : points < board.three ? board.three : 0;
+  if (next && next - points <= 3) return `আর ${bn(next - points)} পয়েন্ট হলে ${bn(next === board.two ? 2 : 3)} তারা।`;
+  if (before !== null && points <= before && before - points < 2) return `আর ${bn(before - points + 1)} পয়েন্ট হলেই নতুন সেরা।`;
+  return "";
+}
+
 /** A finished game, as a link carries it. Physics differs a hair between phones, so we compare results and never replay them. */
 export type Shared =
-  | { mode: "solo"; seed: number; points: number; queen: boolean; name: string }
+  | { mode: "solo"; seed: number; points: number; queen: boolean; name: string; level?: number }
   | { mode: "duo"; seed: number; points: number; queen: boolean; winner: Side; name: string; other: string };
 
 /**
- * s = seed, t = points, q=1 when the queen went in, n = name.
+ * s = seed, t = points, q=1 when the queen went in, n = name, l = the board (level) when it was one; links from before boards have no l.
  * Two players add m=d, w = the winning side (0 white, 1 black) and o = the other player's name.
  * Impossible combinations (more points than pieces) reject the whole link.
  */
 export function parseShared(hash: string): Shared | null {
-  const challenge = readChallenge(hash, { maxTarget: MAX_SOLO, extraKeys: ["m", "q", "w", "o"] });
+  const challenge = readChallenge(hash, { maxTarget: MAX_SOLO, extraKeys: ["m", "q", "w", "o", "l"] });
   if (!challenge) return null;
   const { seed, target: points, name, extra } = challenge;
   const queen = extra.q === "1";
@@ -32,12 +80,17 @@ export function parseShared(hash: string): Shared | null {
   }
   if (extra.m !== undefined) return null;
   if (points - (queen ? QUEEN_POINTS : 0) > 2 * PER_SIDE) return null;
-  return { mode: "solo", seed, points, queen, name };
+  if (extra.l === undefined) return { mode: "solo", seed, points, queen, name };
+  // A board number must match its own seed, so a link can't pass one board off as another.
+  const level = /^\d{1,2}$/.test(extra.l) ? Number(extra.l) : 0;
+  if (level < 1 || level > LEVEL_COUNT || LEVELS[level - 1].seed !== seed) return null;
+  return { mode: "solo", seed, points, queen, name, level };
 }
 
 export function sharedHash(shared: Shared) {
   const extra: Record<string, string> = {};
   if (shared.mode === "duo") { extra.m = "d"; extra.w = String(shared.winner); }
+  if (shared.mode === "solo" && shared.level) extra.l = String(shared.level);
   if (shared.queen) extra.q = "1";
   if (shared.mode === "duo") { const other = cleanName(shared.other); if (other) extra.o = other; }
   return challengeHash({ seed: shared.seed, target: shared.points, name: shared.name, extra });

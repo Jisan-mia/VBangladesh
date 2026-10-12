@@ -3,17 +3,21 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { buzz, confetti, sfx, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard, prepareCard } from "../lib/draw-card";
 import {
   DEFAULT_ROUTE, FARE_NOTE, MAX_NAME_LENGTH, MAX_ROUNDS, bn, bucketLabel, bucketOf, createCard, finalAnswer, isDone, offer, parseShareHash,
-  possessive, quickLines, resultOf, routeById, routes, shareHash, sliderMin, startGame, suggestedOffer, tallyIds, type Game, type RouteId, type Shared,
+  possessive, quickLines, resultOf, routeById, routes, shareHash, sliderMin, startGame, suggestedOffer, tallyIds, tierOf, type Game, type RouteId, type Shared,
 } from "../lib/haggle";
 import { Street } from "./street";
 
 const TOOL = "mama-jaben";
 // Percentages from a handful of people are noise ("১০০% মানুষ ১ দফায়" after one vote).
 const COMPARE_MIN = 20;
+// The rickshaw bell: two bright rings.
+const ringBell = () => { tone(2600, 0.3, 0.1); tone(2600, 0.3, 0.1, "sine", 0.17); buzz(20); };
 const percent = (count: number, of: number) => Math.round((count / Math.max(of, 1)) * 100);
 
 export function HaggleGame() {
@@ -44,7 +48,12 @@ export function HaggleGame() {
     latest.current = next;
     setGame(next);
     setAmount(suggestedOffer(next));
-    if (next.status === "deal") navigator.vibrate?.(20);
+    if (next.status === "deal") {
+      ringBell();
+      // A fare near the fair one is the win; any other deal just gets the bell.
+      if (tierOf({ route: next.route, fare: next.fare, rounds: next.round }) === "fair") { sfx.win(); confetti(); }
+    } else if (next.status === "gone") sfx.wrong();
+    else if (next.round > 0) sfx.pick();
   }
 
   function begin(id: RouteId) {
@@ -115,6 +124,7 @@ export function HaggleGame() {
       )}
 
       <div className="mj-play">
+      <SoundToggle compact className="mj-sound" />
       <div className="mj-scene" id="haggle" data-status={game.status} key={`scene-${plays}`}>
         <svg className="mj-skyline" viewBox="0 0 200 90" preserveAspectRatio="xMinYMax slice" aria-hidden="true">
           <path d="M0 90V38h26v-14h22v66zm54 0V50h30v40zm36 0V18h28v72zm34 0V58h24v32z" fill="#1d4656" />

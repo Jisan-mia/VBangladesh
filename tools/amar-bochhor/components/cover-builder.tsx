@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat, type Photo } from "../../../shared/card-canvas";
+import { hiss, sfx } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, PhotoPicker, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { coverBlob, drawCover } from "../lib/draw-cover";
@@ -67,6 +69,8 @@ export function CoverBuilder() {
   }, [cover, format, site, photo, friend]);
 
   function choose(prompt: number, option: number) {
+    // A page turning to the next line of the সূচিপত্র; the last line closes with a soft chime.
+    if (picks[prompt] !== option) { hiss(0.14, 0.07, 3200, "bandpass"); if (prompt + 1 === prompts.length) sfx.good(); }
     setPicks(current => current.map((pick, index) => index === prompt ? option : pick));
     // Walk down the সূচিপত্র like a form: the next line opens, the last one closes.
     setOpen(prompt + 1 < prompts.length ? prompt + 1 : -1);
@@ -76,7 +80,7 @@ export function CoverBuilder() {
   async function countMine() {
     setCounted("sending");
     const tally = await addToTally(TOOL, [wordId(cover)]);
-    if (tally) { setEveryone(tally); setCounted("done"); }
+    if (tally) { setEveryone(tally); setCounted("done"); sfx.good(); }
     else setCounted("failed");
   }
 
@@ -104,7 +108,7 @@ export function CoverBuilder() {
           </a>
         </div>
         <div className="by-sheet">
-          <p className="by-sheet-head"><span>সূচিপত্র</span><small>যেটা বদলাতে চাও, ট্যাপ করো</small></p>
+          <p className="by-sheet-head"><span>সূচিপত্র</span><small>যেটা বদলাতে চাও, ট্যাপ করো</small><SoundToggle compact /></p>
           <ol className="by-lines">
             {prompts.map((prompt, index) => (
               <li key={prompt.id}>

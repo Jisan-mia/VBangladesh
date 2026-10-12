@@ -3,7 +3,7 @@
 // and a tug decides who gets cut: tension in the green band saws, too slack or too tight barely does.
 // Everything random is drawn from the seed up front (wind, rival homes, rhythms, looks), so a link replays the same sky.
 import { makeRng, pick } from "../../../shared/game-core";
-import { LOOKS, RIVALS_PER_ROUND, ROUNDS } from "./link";
+import { LEVEL_COUNT, LEVELS as PARAS, LOOKS, RIVALS_PER_ROUND, ROUNDS } from "./link";
 
 /** The sky is always 360 × 500 world units, scaled to the screen. */
 export const W = 360;
@@ -55,14 +55,28 @@ const CALM = 0.4;
 export const SEGMENTS = 10;
 const TAU = Math.PI * 2;
 
-/** Rivals get a little smarter each round: a steadier pull, quicker kites, and from round 2 they come to hook you. */
-export const LEVELS = [
+/** Rivals get a little smarter each round: a steadier pull, quicker kites, and from round 2 they come to hook you. Later পাড়া scale these. */
+export const ROUND_RIVALS = [
   { speed: 40, amp: 0.6, period: 2.4, strength: 0.7, attackEvery: 0, firstAttack: 0, wanderX: 44, wanderY: 24, comeback: false },
   { speed: 56, amp: 0.48, period: 2.0, strength: 0.85, attackEvery: 5, firstAttack: 2.5, wanderX: 38, wanderY: 24, comeback: false },
   { speed: 70, amp: 0.36, period: 1.7, strength: 0.95, attackEvery: 3.5, firstAttack: 1.5, wanderX: 34, wanderY: 22, comeback: true },
 ] as const;
 
 export type Point = { x: number; y: number };
+export type Rival = { speed: number; amp: number; period: number; strength: number; attackEvery: number; firstAttack: number; wanderX: number; wanderY: number; comeback: boolean };
+
+/** One পাড়া's three roofs: the round table scaled by the level. Level 1's factors are all 1 (or 0 to add), so it plays the original evening. */
+export function rivalsFor(level: number): Rival[] {
+  const para = PARAS[Math.min(LEVEL_COUNT, Math.max(1, level)) - 1];
+  return ROUND_RIVALS.map((round, index) => ({
+    ...round,
+    speed: round.speed * para.speed,
+    amp: round.amp * para.steady,
+    strength: round.strength + para.strength,
+    attackEvery: index === 0 ? para.attack0 : round.attackEvery * para.attack,
+    firstAttack: index === 0 && para.attack0 ? 3 : round.firstAttack,
+  }));
+}
 export type KiteState = "fly" | "rise" | "fall" | "gone";
 export type Kite = Point & {
   vx: number; vy: number;
@@ -78,6 +92,10 @@ export type Plan = { hx: number; hy: number; phase: number; w1: number; w2: numb
 export type Phase = "fly" | "break" | "over";
 
 export type Game = {
+  level: number;
+  /** This পাড়া's rival tuning per round, and how gusty its wind is. */
+  rivals: Rival[];
+  windScale: number;
   plans: Plan[][];
   windBase: number; wind1: number; wind2: number; wind: number;
   phase: Phase;
@@ -114,19 +132,20 @@ function kite(x: number, y: number, hand: Point, state: KiteState): Kite {
   return { x, y, vx: 0, vy: 0, tension: 0.3, state, timer: 0, hx: hand.x, hy: hand.y, spin: 0 };
 }
 
-export function createGame(seed: number): Game {
+export function createGame(seed: number, level = 1): Game {
   const rng = makeRng(seed);
   const windBase = (rng() * 2 - 1) * 12, wind1 = rng() * TAU, wind2 = rng() * TAU;
   const plans = ROOFS.map(roof => Array.from({ length: RIVALS_PER_ROUND }, () => ({
     hx: between(rng, roof.home.x), hy: between(rng, roof.home.y), phase: rng() * TAU, w1: rng() * TAU, w2: rng() * TAU, look: pick(rng, LOOKS.length),
   })));
-  const first = plans[0][0];
+  const first = plans[0][0], rivals = rivalsFor(level);
   const game: Game = {
+    level, rivals, windScale: PARAS[Math.min(LEVEL_COUNT, Math.max(1, level)) - 1].wind,
     plans, windBase, wind1, wind2, wind: 0,
     phase: "fly", round: 0, clock: 0, total: 0, breakLeft: 0,
     you: kite(HOME.x, HOME.y, HAND, "fly"), aim: { x: HOME.x, y: HOME.y }, pulling: false,
     rival: kite(first.hx, first.hy, ROOFS[0], "fly"),
-    rivalIndex: 0, rivalAge: 0, nextAttack: LEVELS[0].firstAttack, attackLeft: 0, attack: { x: 0, y: 0 },
+    rivalIndex: 0, rivalAge: 0, nextAttack: rivals[0].firstAttack, attackLeft: 0, attack: { x: 0, y: 0 },
     comebackLeft: 0, comebackUsed: false,
     hooked: false, hook: { x: 0, y: 0 }, reach: REACH, tug: 0,
     cuts: 0, lost: 0,
@@ -141,8 +160,8 @@ export function createGame(seed: number): Game {
 export const plan = (game: Game) => game.plans[game.round][Math.min(game.rivalIndex, RIVALS_PER_ROUND - 1)];
 
 /** Sideways wind in units a second: a seeded lean plus two slow gusts. Calmer in slow mode. */
-export const windAt = (game: Pick<Game, "windBase" | "wind1" | "wind2">, total: number, slow: boolean) =>
-  (game.windBase + 7 * Math.sin(total * 0.29 + game.wind1) + 4 * Math.sin(total * 0.71 + game.wind2)) * (slow ? CALM : 1);
+export const windAt = (game: Pick<Game, "windBase" | "wind1" | "wind2"> & { windScale?: number }, total: number, slow: boolean) =>
+  (game.windBase + 7 * Math.sin(total * 0.29 + game.wind1) + 4 * Math.sin(total * 0.71 + game.wind2)) * (slow ? CALM : 1) * (game.windScale ?? 1);
 
 /** How hard a string saws at this tension: full in the green band, a little when slack, barely when too tight. */
 export const edge = (tension: number) => tension < LO ? SLACK_EDGE * tension / LO : tension <= HI ? 1 : OVER_EDGE;
@@ -268,7 +287,7 @@ function aimAttack(game: Game) {
 }
 
 function moveRival(game: Game, dt: number, on: Listener) {
-  const r = game.rival, level = LEVELS[game.round], p = plan(game);
+  const r = game.rival, level = game.rivals[game.round], p = plan(game);
   if (r.state === "fly") {
     game.rivalAge += dt;
     let tension = MID + level.amp * Math.sin((TAU * game.rivalAge) / level.period + p.phase);
@@ -312,7 +331,7 @@ function cutLoose(k: Kite, from: number, wind: number) {
 }
 
 function tug(game: Game, dt: number, on: Listener) {
-  const you = game.you, r = game.rival, level = LEVELS[game.round];
+  const you = game.you, r = game.rival, level = game.rivals[game.round];
   const saw = you.tension >= LO ? Math.min(SAW_MAX, Math.hypot(you.vx, you.vy) / SAW_SPEED) : 0;
   game.tug += (edge(you.tension) + saw - edge(r.tension) * level.strength) * TUG_RATE * dt;
   // The ওস্তাদ pulls steady for a moment when losing, once per প্যাঁচ.

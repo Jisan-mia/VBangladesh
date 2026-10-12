@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
+import { buzz, sfx, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { art, plateBase } from "../lib/art";
 import { cardBlob, drawCard, prepareCard } from "../lib/draw-plate";
@@ -69,8 +71,9 @@ export function PlateBuilder() {
 
   function toggle(id: ItemId) {
     const next = toggleItem(latest.current, id);
-    if (next.full) { setBump(current => ({ kind: "full", n: current.n + 1 })); return; }
-    if (next.picks.length > latest.current.length) { navigator.vibrate?.(12); setBump(current => ({ kind: "add", n: current.n + 1 })); }
+    if (next.full) { sfx.wrong(); setBump(current => ({ kind: "full", n: current.n + 1 })); return; }
+    // A dish lands on the plate with a small ceramic clink.
+    if (next.picks.length > latest.current.length) { sfx.drop(); tone(2200, 0.05, 0.04, "triangle", 0.03); buzz(12); setBump(current => ({ kind: "add", n: current.n + 1 })); }
     latest.current = next.picks;
     setPicks(next.picks);
     setCompared(current => current === "done" ? "idle" : current);
@@ -129,7 +132,10 @@ export function PlateBuilder() {
           ))}
           {!count && <text x={SCENE.cx} y={SCENE.cy + 8} textAnchor="middle" className="ip-empty">নিচ থেকে বেছে তোলো</text>}
         </svg>
+        <div className="ip-foot">
         <p className="ip-tally">{full ? `প্লেট ভরে গেছে! ${bn(MAX_ITEMS)} পদের বেশি ধরে না, একটা নামিয়ে আরেকটা তোলো।` : ranked ? <>সবার প্লেটে সবচেয়ে বেশি উঠেছে: <strong>{ranked[0].label}</strong></> : "চাপলে প্লেটে ওঠে, আবার চাপলে নেমে যায়।"}</p>
+        <SoundToggle compact />
+        </div>
       </div>
 
       <fieldset className="ip-items" id="plate-items">
