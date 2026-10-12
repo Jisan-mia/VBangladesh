@@ -24,7 +24,7 @@ export const englishGloss: Record<string, string> = {
   "cinema-poster": "Retro film poster with your name.",
   "banan": "Bangla spelling quiz.",
   "dom-atkano": "Bangladesh cricket quiz.",
-  "salami-chek": "Toy Eid salami cheque and log.",
+  "salami-chek": "Eid salami cheque and who-gave log.",
   "eta-na-ota": "This-or-that food polls.",
   "deshe-fera": "Expat homecoming countdown.",
   "biye-kobe": "Joke marriage-prediction quiz.",
