@@ -1,0 +1,142 @@
+.tool-bhimruler-chak{--accent:#2f6b2a;--accent-deep:#1f4a1c;--ink:#24301c;--muted:#5b6b46;--grass:#86bb5c;--grass-deep:#6aa84f;--leaf:#2f6b2a;--leaf-mid:#3f8a36;--leaf-light:#58a144;--earth:#f3e7c6;--earth-edge:#e2d2a4;--gamchha:#c8322b;--mango:#f2b632;--nest:#c99a5b;--nest-line:#9a6d36;--sky:#fdf3cf}
+.tool-bhimruler-chak .bc-page{color:var(--ink)}
+
+/* hero: one short line, so the orchard and its controls land on the first phone screen */
+.bc-hero{padding:10px 0 4px}
+.bc-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(20px,5.6vw,40px);line-height:1.3;font-weight:700;letter-spacing:0}
+.bc-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+
+.bc{display:grid;gap:8px;max-width:480px}
+
+.bc-friend{padding:10px 14px;border-radius:14px;background:var(--sky);border-left:5px solid var(--gamchha)}
+.bc-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.4}
+.bc-friend p{margin:2px 0 0;font-size:13px;line-height:1.45;color:var(--muted)}
+
+/* level, nests left, clock */
+.bc-hud{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px}
+.bc-hud p{margin:0}
+.bc-level{display:grid;line-height:1.25}
+.bc-level b{font-family:var(--font-display);font-size:17px;font-weight:800}
+.bc-level span{font-size:13px;font-weight:600;color:var(--muted)}
+.bc-left{display:flex;align-items:center;gap:6px;min-height:40px;padding:4px 12px 4px 8px;border-radius:12px;background:var(--sky);font-family:var(--font-display);font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+.bc-chip-nest{width:18px;height:22px;border-radius:50% 50% 46% 46%;background:repeating-linear-gradient(0deg,var(--nest) 0 4px,var(--nest-line) 4px 5.5px);box-shadow:inset 0 -2px 0 #0002}
+.bc-clock{min-width:74px;padding:6px 10px;border-radius:12px;background:var(--ink);text-align:center}
+.bc-clock b{font-family:var(--font-display);font-size:21px;font-weight:700;color:var(--mango);font-variant-numeric:tabular-nums;line-height:1.2}
+
+/* the orchard: grass between the bushes, earth where a bush is cleared */
+.bc-board-wrap{position:relative}
+.bc-board{position:relative;padding:6px;border-radius:16px;background:var(--grass);box-shadow:0 5px 0 var(--grass-deep);transition:box-shadow .15s ease-out}
+.bc-board[data-marking]{box-shadow:0 5px 0 var(--grass-deep),0 0 0 3px var(--gamchha)}
+.bc-grid{container-type:inline-size;display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:2px;width:min(100%,calc(var(--cols) * max(34px,(100svh - 340px) / var(--rows))));margin:0 auto;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.bc-cell{--a:var(--leaf-mid);--b:var(--leaf);--c:var(--leaf-light);position:relative;aspect-ratio:1;min-width:0;padding:0;border:0;border-radius:8px;background:transparent;color:var(--ink);font-family:var(--font-display);font-size:calc(100cqw / var(--cols) * .56);font-weight:800;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.bc-cell[data-v="1"]{--a:var(--leaf);--b:var(--leaf-mid);--c:#4c9640}
+.bc-cell[data-v="2"]{--a:#367a30;--b:#2a6126;--c:var(--leaf-light)}
+.bc-cell[data-state=covered],.bc-cell[data-state=marked],.bc-cell[data-state=wrong]{
+  background:radial-gradient(circle at 40% 30%,#ffffff40 0 7%,transparent 8%),radial-gradient(circle at 27% 64%,var(--a) 0 29%,transparent 30%),radial-gradient(circle at 73% 64%,var(--b) 0 29%,transparent 30%),radial-gradient(circle at 50% 40%,var(--c) 0 35%,transparent 36%);
+  transition:transform .09s ease-out}
+.bc-cell[data-state=covered]:active{transform:scale(.92)}
+.bc-cell[data-state=open]{background:var(--earth);box-shadow:inset 0 -2px 0 var(--earth-edge);cursor:default;animation:bc-open .22s ease-out var(--d,0ms) both}
+.bc-cell[data-n]{cursor:pointer}
+.bc-cell[data-n="1"]{color:#2f6b2a}.bc-cell[data-n="2"]{color:#3049a0}.bc-cell[data-n="3"]{color:#b5521b}.bc-cell[data-n="4"]{color:#7b2d6b}
+.bc-cell[data-n="5"]{color:#8a5a00}.bc-cell[data-n="6"]{color:#126e6a}.bc-cell[data-n="7"],.bc-cell[data-n="8"]{color:#24301c}
+@keyframes bc-open{from{transform:scale(.55);opacity:0}}
+
+/* a গামছা tied round the bush: red with a white check, and the knot's tail */
+.bc-cell[data-state=marked]::after,.bc-cell[data-state=wrong]::after{content:"";position:absolute;left:8%;right:8%;top:42%;height:24%;border-radius:3px;background:repeating-linear-gradient(90deg,#ffffffa0 0 2px,transparent 2px 6px),repeating-linear-gradient(0deg,#ffffffa0 0 2px,transparent 2px 6px),var(--gamchha);box-shadow:0 1px 0 #7a1b16;transform:rotate(-9deg);animation:bc-tie .18s ease-out}
+.bc-cell[data-state=marked]::before{content:"";position:absolute;right:6%;top:56%;width:16%;height:26%;border-radius:40% 40% 50% 50%;background:var(--gamchha);transform:rotate(-24deg)}
+@keyframes bc-tie{from{transform:rotate(-9deg) scaleX(.2)}}
+.bc-cell[data-state=wrong]{opacity:.75}
+.bc-cell[data-state=wrong]::before{content:"";position:absolute;inset:12%;background:linear-gradient(45deg,transparent 45%,#fff 45% 55%,transparent 55%),linear-gradient(-45deg,transparent 45%,#fff 45% 55%,transparent 55%);z-index:1}
+
+/* a nest, shown when the round ends: papery stripes, hanging from a twig */
+.bc-cell[data-state=nest],.bc-cell[data-state=boom]{background:var(--earth)}
+.bc-cell[data-state=boom]{background:#ffd3bf;box-shadow:0 0 0 2px var(--gamchha)}
+.bc-cell[data-state=nest]::after,.bc-cell[data-state=boom]::after{content:"";position:absolute;left:24%;right:24%;top:20%;bottom:12%;border-radius:50% 50% 46% 46%;background:repeating-linear-gradient(0deg,var(--nest) 0 13%,var(--nest-line) 13% 17%);box-shadow:inset 0 -3px 0 #0002}
+.bc-cell[data-state=nest]::before,.bc-cell[data-state=boom]::before{content:"";position:absolute;left:48%;top:6%;width:4%;height:16%;background:#7a4b26}
+
+.bc-cell[data-teach]{z-index:1;outline:3px solid var(--mango);outline-offset:-1px;animation:bc-teach 1.3s ease-in-out infinite}
+.bc-cell[data-state=open][data-teach]{animation:bc-teach 1.3s ease-in-out infinite}
+@keyframes bc-teach{50%{box-shadow:0 0 0 5px #f2b63280}}
+.bc-cell[data-hint]{z-index:1;outline:3px solid var(--mango);outline-offset:-1px}
+.bc-cell:focus-visible{z-index:2;outline:3px solid #fff;outline-offset:-2px;box-shadow:0 0 0 3px var(--ink)}
+.bc-cell:disabled{cursor:default}
+
+/* the swarm: six cartoon hornets fly off from the nest, everyone runs, nobody gets stung */
+.bc-swarm{position:absolute;inset:6px;pointer-events:none;overflow:hidden;border-radius:12px}
+.bc-swarm i{position:absolute;left:var(--hx);top:var(--hy);width:26px;height:17px;margin:-9px 0 0 -13px;border-radius:50%;background:repeating-linear-gradient(90deg,#f5b700 0 6px,#2b2416 6px 9px);box-shadow:inset -5px 0 0 #2b2416;animation:bc-fly 1.4s ease-out calc(var(--k) * 50ms) both}
+.bc-swarm i::before,.bc-swarm i::after{content:"";position:absolute;top:-9px;width:13px;height:10px;border-radius:50%;background:#ffffffe0;box-shadow:0 0 0 1px #2b241633}
+.bc-swarm i::before{left:3px;transform:rotate(-20deg)}.bc-swarm i::after{left:10px;transform:rotate(20deg)}
+@keyframes bc-fly{0%{transform:rotate(calc(var(--k) * 60deg)) translateX(0) scale(.4)}60%{opacity:1}100%{transform:rotate(calc(var(--k) * 60deg + 40deg)) translateX(140px) scale(1.1);opacity:0}}
+.bc-swarm b{position:absolute;left:50%;top:clamp(30px,var(--hy),calc(100% - 30px));transform:translate(-50%,-50%);padding:8px 14px;border-radius:16px;background:#fff;color:var(--ink);font-family:var(--font-display);font-size:20px;white-space:nowrap;box-shadow:0 4px 0 #0003;animation:bc-bubble .35s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes bc-bubble{from{transform:translate(-50%,-50%) scale(.3);opacity:0}}
+
+.bc-overlay{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;padding:16px;border-radius:16px;background:#1f2a17e6;color:#fff;text-align:center}
+.bc-overlay p{margin:0;font-weight:600}
+.bc-overlay .kit-primary{min-width:180px;min-height:56px;font-size:19px}
+
+.bc-status{min-height:44px;margin:0;font-size:15px;font-weight:600;line-height:1.45;text-align:center}
+
+/* the big mode toggle: clear or tie a গামছা */
+.bc-modes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bc-modes button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:56px;padding:0 10px;border:2px solid var(--ink);border-radius:14px;background:#fff;color:var(--ink);font-family:var(--font-display);font-size:19px;font-weight:800;touch-action:manipulation}
+.bc-modes button[aria-pressed=true]{background:var(--ink);color:#fff;box-shadow:inset 0 -4px 0 #0005}
+.bc-modes button[aria-pressed=true]:last-child{background:var(--gamchha);border-color:var(--gamchha)}
+.bc-modes button[data-teach]{animation:bc-teach 1.3s ease-in-out infinite}
+.bc-ico{flex:none;width:22px;height:22px}
+.bc-ico-clear{border-radius:50%;background:radial-gradient(circle at 30% 65%,var(--leaf-mid) 0 32%,transparent 33%),radial-gradient(circle at 70% 65%,var(--leaf) 0 32%,transparent 33%),radial-gradient(circle at 50% 38%,var(--leaf-light) 0 38%,transparent 39%)}
+.bc-ico-gamchha{height:14px;border-radius:3px;background:repeating-linear-gradient(90deg,#ffffffa0 0 2px,transparent 2px 6px),repeating-linear-gradient(0deg,#ffffffa0 0 2px,transparent 2px 6px),var(--gamchha);transform:rotate(-9deg);box-shadow:0 0 0 1.5px #fff}
+
+.bc-prefs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--ink)}
+.bc-pill{min-height:44px;padding:6px 14px;border:1.5px solid currentColor;border-radius:999px;background:transparent;color:inherit;font-size:14px;font-weight:700}
+.bc-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+.bc-pill:disabled{opacity:.4}
+
+/* cleared, or caught by the hornets */
+.bc-clear,.bc-lost{display:grid;justify-items:center;gap:6px;padding:12px 14px;border-radius:16px;background:var(--sky);text-align:center}
+.bc-clear p,.bc-lost p{margin:0}
+.bc-clear-line{font-family:var(--font-display);font-size:19px;font-weight:800;line-height:1.4}
+.bc-clear-note,.bc-lost-note{font-size:14px;line-height:1.45;color:var(--muted)}
+.bc-actions{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;width:100%;margin-top:4px}
+.bc-actions:has(> :only-child){grid-template-columns:1fr}
+.tool-bhimruler-chak .bc-actions button,.tool-bhimruler-chak .bc-again{min-height:56px;font-size:18px}
+.bc-lost-title{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--gamchha)}
+.bc-lost-line{font-weight:700;line-height:1.45}
+.bc-again{width:100%}
+
+.bc-drawer{border:1.5px solid var(--earth-edge);border-radius:14px;background:#fff}
+.bc-drawer summary{min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;font-weight:700;cursor:pointer}
+.bc-drawer summary span{font-weight:500;color:var(--muted);font-size:14px}
+.bc-drawer[open]{padding-bottom:12px}
+.bc-drawer .gx-levels{padding:0 10px}
+.bc-worlds{margin:0 14px 10px;font-size:13px;line-height:1.5;color:var(--muted)}
+
+.bc-result{scroll-margin-top:12px;margin-top:16px;padding-top:18px;border-top:2px solid var(--earth-edge)}
+.bc-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,32px);line-height:1.4}
+.bc-result h2 em{font-style:normal;color:var(--gamchha)}
+.bc-result>p{margin:0 0 16px;color:var(--muted)}
+.bc-result-body{display:grid;gap:22px}
+.bc-share{display:grid;gap:18px;align-content:start}
+.bc-name{display:grid;gap:6px;font-weight:600}
+.bc-name small{font-weight:400;color:var(--muted);font-size:13px}
+.bc-name input{border:1.5px solid var(--earth-edge);border-radius:12px;font-size:17px}
+
+.bc-guide h2{font-family:var(--font-display);margin-bottom:12px}
+.bc-guide>p{color:var(--muted);max-width:640px}
+.bc-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.bc-guide li{display:flex;gap:14px;align-items:flex-start}
+.bc-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--mango);color:var(--ink);font-weight:700}
+.bc-guide li p{margin:4px 0 0}
+
+@media (max-width:360px){
+  .bc-modes button{font-size:17px}
+  .bc-status{font-size:14px}
+  .bc-clock{min-width:64px;padding-inline:6px}
+}
+@media (min-width:720px){.bc-lead{display:block}.bc-page:has(.bc-friend) .bc-lead{display:none}}
+.bc[data-slow=true] .bc-cell,.bc[data-slow=true] .bc-cell::after,.bc[data-slow=true] .bc-swarm i,.bc[data-slow=true] .bc-swarm b,.bc[data-slow=true] .bc-modes button{animation:none}
+.bc[data-slow=true] .bc-swarm i{display:none}
+@media (prefers-reduced-motion:reduce){
+  .bc-cell,.bc-cell::after,.bc-swarm b,.bc-modes button{animation:none!important}
+  .bc-swarm i{display:none}
+  .bc-cell[data-state=covered]:active{transform:none}
+}

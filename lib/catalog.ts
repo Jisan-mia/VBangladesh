@@ -130,7 +130,7 @@ export const catalog = [
   { slug: "konta-nei", name: "কোনটা নেই?", description: "মুদি দোকানের তাক দেখে রাখো, মামা একটা সরাবে। বলো তো, কোনটা নেই?", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "bhul-kothay", name: "ভুল কোথায়?", description: "দুটো প্রায় একই ছবি, বাজার থেকে নদীর ঘাট। কোথায় আলাদা, খুঁজে চাপ দাও।", category: "গেম", action: "অমিল খোঁজো" },
   { slug: "atir-aam", name: "আঁটি থেকে আম", description: "দুটো একই রকম মেলাও, আঁটি থেকে চারা, গাছ, আম, শেষে পুরো বাগান।", category: "গেম", action: "খেলা শুরু করো" },
-  { slug: "bhimruler-chak", name: "ভিমরুলের চাক", description: "ভিমরুলের চাক: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "bhimruler-chak", name: "ভিমরুলের চাক", description: "সংখ্যা দেখে লুকানো চাক খোঁজো, গামছা বাঁধো, বাকি ঝোপ সাফ করো।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "churir-bazar", name: "চুড়ির বাজার", description: "চুড়ির বাজার: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "mukhe-mukhe-hisab", name: "মুখে মুখে হিসাব", description: "মুখে মুখে হিসাব: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "chhobir-tukro", name: "ছবির টুকরো", description: "ছবির টুকরো: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
