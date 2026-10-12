@@ -122,7 +122,7 @@ export const catalog = [
   { slug: "carrom", name: "ক্যারম", description: "স্ট্রাইকার টেনে ছাড়ো, গুটি ঢোকাও। একা দশ চাল, নয়তো দুজনে এক ফোনে।", category: "গেম", action: "ক্যারম খেলো" },
   { slug: "pati-buni", name: "পাটি বুনি", description: "বেতের ফালি বসিয়ে সারি ভরাও, নিজের শীতলপাটি বোনো।", category: "গেম", action: "পাটি বোনো" },
   { slug: "sudoku", name: "সুডোকু বাংলায়", description: "ঘর চাপো, বাংলা অঙ্ক বসাও। ৪×৪ থেকে ৯×৯, ৪০ লেভেল আর রোজ নতুন ধাঁধা।", category: "গেম", action: "সুডোকু খেলো" },
-  { slug: "switchboard", name: "সুইচবোর্ড", description: "সুইচবোর্ড: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "switchboard", name: "সুইচবোর্ড", description: "কাঠের বোর্ডে সুইচ চাপো, সব বাতি জ্বালাও কারেন্ট থাকতে থাকতে। ৩০টা লেভেল।", category: "গেম", action: "বাতি জ্বালাও" },
   { slug: "golokdhadha", name: "গোলকধাঁধা", description: "গোলকধাঁধা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "ponero-ghor", name: "১৫ ঘরের ধাঁধা", description: "১৫ ঘরের ধাঁধা: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
