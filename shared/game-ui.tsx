@@ -6,9 +6,9 @@ import { sfx } from './game-sound';
 const bn = new Intl.NumberFormat('bn-BD', { useGrouping: false });
 
 /** The one sound switch every game shows (on by default, remembered for all games). `compact` shows the icon only, for crowded control rows. */
-export function SoundToggle({ className = '', compact = false }: { className?: string; compact?: boolean }) {
+export function SoundToggle({ className = '', compact = false, onChange }: { className?: string; compact?: boolean; onChange?: (on: boolean) => void }) {
   const [on, setOn] = useSound();
-  return <button type="button" className={`gx-sound ${compact ? 'gx-compact' : ''} ${className}`} aria-pressed={on} aria-label={compact ? (on ? 'শব্দ চালু' : 'শব্দ বন্ধ') : undefined} onClick={() => { setOn(!on); if (!on) sfx.tap(); }}>
+  return <button type="button" className={`gx-sound ${compact ? 'gx-compact' : ''} ${className}`} aria-pressed={on} aria-label={compact ? (on ? 'শব্দ চালু' : 'শব্দ বন্ধ') : undefined} onClick={() => { setOn(!on); onChange?.(!on); if (!on) sfx.tap(); }}>
     <span aria-hidden="true">{on ? '🔊' : '🔇'}</span>{!compact && (on ? 'শব্দ চালু' : 'শব্দ বন্ধ')}
   </button>;
 }
