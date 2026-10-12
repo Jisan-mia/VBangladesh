@@ -134,7 +134,7 @@ export const ordinal = (index: number) => `${bn(index + 1)} নম্বর`;
 export function potWord(score: number, spilled: boolean) {
   if (spilled) return "উথলে গেল!";
   if (score >= 97) return "একদম কিনারায়!";
-  if (score >= 90) return "দারুণ সময়!";
+  if (score >= 90) return "প্রায় কিনারায়!";
   if (score >= 75) return "আরেকটু রাখা যেত";
   if (score >= 40) return "একটু আগেই নামালে";
   return "দুধ তো ফুটলই না!";

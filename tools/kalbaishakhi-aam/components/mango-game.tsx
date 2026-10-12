@@ -237,7 +237,7 @@ export function MangoGame() {
             <ul className="ka-legend">
               <li><MangoIcon ripe={false} /><span>কাঁচা <b>+৫</b></span></li>
               <li><MangoIcon ripe /><span>পাকা <b>+১০</b></span></li>
-              <li><TwigIcon /><span>ডাল <b>ধরো না</b></span></li>
+              <li><TwigIcon /><span>ডাল <b>এড়াও</b></span></li>
             </ul>
             <button type="button" className="kit-primary ka-go" onPointerDown={keepTap} onClick={start}>শুরু করো</button>
             <p className="ka-sub">আঙুলে টেনে সরাও, নয়তো বাঁয়ে-ডানে চাপো</p>
