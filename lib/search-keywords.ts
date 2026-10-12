@@ -1,5 +1,6 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "konta-nei": ["memory game", "brain game", "whats missing game", "kims game", "konta nei", "mudi dokan game", "কোনটা নেই", "ব্রেন গেম", "মনে রাখার খেলা", "মুদি দোকান", "বাচ্চাদের গেম"],
   "atir-aam": ["merge game", "merge puzzle", "mango game", "aam game", "atir aam", "jora melano game", "মার্জ গেম", "জোড়া মেলানোর গেম", "আমের গেম", "আঁটি থেকে আম", "পাজল গেম", "ধাঁধা গেম"],
   "chhobi-photao": ["nonogram", "nonogram bangla", "picture puzzle", "chhobi photao", "chobi fotao", "picture logic puzzle", "ননোগ্রাম", "ছবির ধাঁধা", "সংখ্যার ধাঁধা", "ছবি ফোটাও"],
   "ghontar-sur": ["memory game", "sur memory game", "sur mone rakha", "ghontar sur", "kolshi game", "সুরের গেম", "মেমোরি গেম", "সুর মনে রাখার খেলা", "কলসির সুর", "ঘণ্টার সুর"],
