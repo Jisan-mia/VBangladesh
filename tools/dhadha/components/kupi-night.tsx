@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { confetti, sfx, shake } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -98,9 +100,11 @@ export function KupiNight() {
     window.history.replaceState(null, "", day === today ? window.location.pathname : `#d=${day}`);
   }
 
-  function pick(choice: Pick) {
+  function pick(choice: Pick, chips: Element | null) {
     if (!riddle || done) return;
     const next = addPick(picks, choice);
+    // Right answer chimes; confetti only for a first-try solve. A wrong tap shakes the chips.
+    if (choice === 0) { if (next.length === 1) { confetti(); sfx.win(); } else sfx.good(); } else { sfx.wrong(); shake(chips); }
     const updated = { ...played, [date]: { id: riddleId, picks: next } };
     setPlayed(updated);
     save(updated);
@@ -146,13 +150,14 @@ export function KupiNight() {
         <div className="dh-nani">
           <Kupi />
           <p role="status" aria-live="polite"><small>নানি বলছে</small>{nani}</p>
+          <SoundToggle compact />
         </div>
 
         <div className="dh-chips" role="group" aria-label="তোমার উত্তর বেছে নাও">
           {order.map(choice => {
             const tapped = picks.includes(choice);
             const mark = choice === 0 && (tapped || done) ? "right" : tapped ? "wrong" : "idle";
-            return <button type="button" key={choice} data-mark={mark} aria-pressed={tapped} disabled={done || tapped} onClick={() => pick(choice)}>
+            return <button type="button" key={choice} data-mark={mark} aria-pressed={tapped} disabled={done || tapped} onClick={event => pick(choice, event.currentTarget.parentElement)}>
               <span>{chipLabel(riddle, choice)}</span>
               {mark === "right" && <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12l5 5L20 6" /></svg>}
               {mark === "wrong" && <span className="dh-sr">, ভুল</span>}

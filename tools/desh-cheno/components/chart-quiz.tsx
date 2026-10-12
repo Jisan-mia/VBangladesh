@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { confetti, sfx, shake } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -60,6 +62,12 @@ export function ChartQuiz() {
     return () => window.removeEventListener("hashchange", readFriend);
   }, []);
 
+  // A soft chime as the score appears; confetti only for a perfect 10.
+  useEffect(() => {
+    if (!finished || !moved.current) return;
+    if (score === ROUNDS) { confetti(); sfx.win(); } else sfx.star(1);
+  }, [finished]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Keyboard and screen-reader users land on the next step, never back at the top.
   useEffect(() => {
     if (!moved.current) return;
@@ -80,8 +88,9 @@ export function ChartQuiz() {
     return () => { cancelled = true; };
   }, [finished, setId, picks, name, format, site, friend]);
 
-  function pick(option: Pick) {
+  function pick(option: Pick, chip: Element) {
     moved.current = true;
+    if (isRight(question, option)) sfx.good(); else { sfx.wrong(); shake(chip); }
     setPicks(current => current.length === at ? [...current, option] : current);
   }
 
@@ -123,7 +132,10 @@ export function ChartQuiz() {
           <span className="desh-tape desh-tape-r" aria-hidden="true" />
           <div className="desh-meta">
             <span>{quiz.victory ? "বিজয়ের ৫৫ বছর" : quiz.label}</span>
-            <span className="desh-count" aria-label={finished ? "সব শেষ" : `${bn(at + 1)} নম্বর প্রশ্ন, মোট ${bn(ROUNDS)}টা`}>{finished ? "শেষ" : `${bn(at + 1)}/${bn(ROUNDS)}`}</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+              <span className="desh-count" aria-label={finished ? "সব শেষ" : `${bn(at + 1)} নম্বর প্রশ্ন, মোট ${bn(ROUNDS)}টা`}>{finished ? "শেষ" : `${bn(at + 1)}/${bn(ROUNDS)}`}</span>
+              <SoundToggle compact />
+            </span>
           </div>
 
           {finished ? (
@@ -142,7 +154,7 @@ export function ChartQuiz() {
               <div className="desh-chips" role="group" aria-labelledby="desh-ask">
                 {question.options.map((option, index) => {
                   const status = picked === undefined ? undefined : index === question.right ? "right" : index === picked ? "wrong" : "dim";
-                  return <button type="button" key={option} ref={index === 0 ? firstChip : undefined} className="desh-chip" data-tone={index} data-status={status} disabled={picked !== undefined} onClick={() => pick(index as Pick)}>
+                  return <button type="button" key={option} ref={index === 0 ? firstChip : undefined} className="desh-chip" data-tone={index} data-status={status} disabled={picked !== undefined} onClick={event => pick(index as Pick, event.currentTarget)}>
                     <span className="desh-letter" aria-hidden="true">{letters[index]}</span>
                     <span className="desh-option">{option}</span>
                     {status === "right" && <span className="desh-mark" aria-hidden="true"><Star state="right" /></span>}

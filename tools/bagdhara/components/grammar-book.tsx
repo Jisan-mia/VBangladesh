@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { confetti, sfx, shake } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { idiomSvg } from "../lib/art";
@@ -77,13 +79,16 @@ export function GrammarBook() {
 
   useEffect(() => { if (revealed) nextButton.current?.focus({ preventScroll: true }); }, [revealed]);
 
-  function pick(option: Answer) {
+  function pick(option: Answer, button: Element) {
     if (revealed) return;
+    if (option === question.answer) sfx.good(); else { sfx.wrong(); shake(button.closest(".bg-page")); }
     setAnswersBy(current => ({ ...current, [setId]: [...(current[setId] ?? []), option] }));
   }
 
   function next() {
     setPos(pos + 1);
+    // A soft chime as the score appears; confetti only for a perfect 10.
+    if (pos + 1 === PER_SET) { if (score === PER_SET) { confetti(); sfx.win(); } else sfx.star(1); }
     if (pos + 1 === PER_SET) requestAnimationFrame(() => document.getElementById("result")?.scrollIntoView({ behavior: "smooth" }));
     else requestAnimationFrame(() => document.getElementById("book")?.scrollIntoView({ behavior: "smooth", block: "nearest" }));
   }
@@ -127,6 +132,7 @@ export function GrammarBook() {
         <div className="bg-head">
           <span>বাংলা ব্যাকরণ · বাগধারা</span>
           <p aria-hidden="true"><b>{bn(Math.min(pos + 1, PER_SET))}</b>/১০</p>
+          <SoundToggle compact />
         </div>
         <Marks hits={hits} now={pos} label={`${setById(setId).label}: ${bn(answers.length)}টার উত্তর দেওয়া, ${bn(score)}টা ঠিক`} />
 
@@ -139,7 +145,7 @@ export function GrammarBook() {
           <div className="bg-options" role="group" aria-labelledby="bg-q">
             {question.options.map((option, index) => (
               <button type="button" key={`${question.id}-${index}`} className="bg-opt" aria-pressed={revealed && picked === index} disabled={revealed}
-                data-state={revealed ? index === question.answer ? "right" : index === picked ? "wrong" : "dim" : undefined} onClick={() => pick(index as Answer)}>
+                data-state={revealed ? index === question.answer ? "right" : index === picked ? "wrong" : "dim" : undefined} onClick={event => pick(index as Answer, event.currentTarget)}>
                 <i aria-hidden="true">{LETTERS[index]}</i>{option}
               </button>
             ))}

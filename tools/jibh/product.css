@@ -38,7 +38,7 @@
 .jb-done-art{display:flex;gap:6px;margin-top:6px}
 .jb-done-art .jb-dish{width:76px;height:76px}
 .jb-stamp{position:absolute;right:4px;bottom:6px;display:grid;place-items:center;width:96px;height:96px;border:4px solid var(--red);border-radius:50%;box-shadow:inset 0 0 0 4px var(--card),inset 0 0 0 6px var(--red);color:var(--red);font-family:var(--font-display);font-weight:800;font-size:22px;line-height:1.15;text-align:center;opacity:.85;transform:rotate(-14deg);animation:jb-stamp .45s cubic-bezier(.2,1.4,.4,1) both}
-.jb-redo{display:flex;justify-content:center;min-height:44px}
+.jb-redo{display:flex;justify-content:center;align-items:center;gap:8px;min-height:44px}
 .tool-jibh .jb-redo .kit-link{color:var(--accent-deep)}
 
 /* opened from a friend's link */

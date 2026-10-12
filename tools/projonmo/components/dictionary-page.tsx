@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { confetti, sfx, shake } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -85,13 +87,16 @@ export function GenerationDictionary() {
 
   useEffect(() => { if (revealed) nextButton.current?.focus({ preventScroll: true }); }, [revealed]);
 
-  function pick(option: Answer) {
+  function pick(option: Answer, button: Element) {
     if (revealed) return;
+    if (option === entry.answer) sfx.good(); else { sfx.wrong(); shake(button.closest(".pj-entry")); }
     setAnswersBy(current => ({ ...current, [setId]: [...(current[setId] ?? []), option] }));
   }
 
   function next() {
     setPos(pos + 1);
+    // A soft chime as the result appears; confetti only for a perfect 10.
+    if (pos + 1 === PER_SET) { if (mine.total === PER_SET) { confetti(); sfx.win(); } else sfx.star(1); }
     if (pos + 1 === PER_SET) requestAnimationFrame(() => document.getElementById("result")?.scrollIntoView({ behavior: "smooth" }));
     else requestAnimationFrame(() => document.getElementById("book")?.scrollIntoView({ behavior: "smooth", block: "nearest" }));
   }
@@ -146,13 +151,13 @@ export function GenerationDictionary() {
 
         {pos < PER_SET ? (
           <article className="pj-entry" data-kind={entry.kind} key={entry.id}>
-            <p className="pj-label"><span>{kindLabel(entry.kind)}</span><span>শব্দ {bn(pos + 1)}/১০</span></p>
+            <p className="pj-label"><span>{kindLabel(entry.kind)}</span><span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>শব্দ {bn(pos + 1)}/১০<SoundToggle compact /></span></p>
             <h2 className="pj-word" id="pj-q">{entry.word}</h2>
             <p className="pj-ask" id="pj-ask">মানে কী? তিনটার একটা ঠিক।</p>
             <div className="pj-senses" role="group" aria-labelledby="pj-q pj-ask">
               {entry.options.map((option, index) => (
                 <button type="button" key={`${entry.id}-${index}`} className="pj-sense" aria-pressed={revealed && picked === index} disabled={revealed}
-                  data-state={revealed ? index === entry.answer ? "right" : index === picked ? "wrong" : "dim" : undefined} onClick={() => pick(index as Answer)}>
+                  data-state={revealed ? index === entry.answer ? "right" : index === picked ? "wrong" : "dim" : undefined} onClick={event => pick(index as Answer, event.currentTarget)}>
                   <i aria-hidden="true">{bn(index + 1)}</i>{option}
                 </button>
               ))}

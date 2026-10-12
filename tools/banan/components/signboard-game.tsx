@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
+import { confetti, sfx, shake } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { addToTally, readTally, type Tally } from "../../../shared/share-client";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -59,6 +61,12 @@ export function SignboardGame() {
     return () => window.removeEventListener("hashchange", readFriend);
   }, []);
 
+  // A soft chime as the score appears; confetti only for a perfect 10.
+  useEffect(() => {
+    if (!finished || !moved.current) return;
+    if (score === ROUNDS) { confetti(); sfx.win(); } else sfx.star(1);
+  }, [finished]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Keyboard and screen-reader users land on the next step, never back at the top.
   useEffect(() => {
     if (!moved.current) return;
@@ -79,8 +87,9 @@ export function SignboardGame() {
     return () => { cancelled = true; };
   }, [finished, setId, picks, name, format, site, friend]);
 
-  function pick(option: Pick) {
+  function pick(option: Pick, plate: Element) {
     moved.current = true;
+    if (isRight(word, option)) sfx.good(); else { sfx.wrong(); shake(plate.closest(".banan-board")); }
     setPicks(current => current.length === at ? [...current, option] : current);
   }
 
@@ -120,7 +129,10 @@ export function SignboardGame() {
       <div className="banan-stage" id="board">
         <div className="banan-meta">
           <span>{set.label}</span>
-          <span className="banan-count" aria-label={finished ? "সব শেষ" : `${bn(at + 1)} নম্বর, মোট ${bn(ROUNDS)}টা`}>{finished ? "শেষ" : `${bn(at + 1)}/${bn(ROUNDS)}`}</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+            <span className="banan-count" aria-label={finished ? "সব শেষ" : `${bn(at + 1)} নম্বর, মোট ${bn(ROUNDS)}টা`}>{finished ? "শেষ" : `${bn(at + 1)}/${bn(ROUNDS)}`}</span>
+            <SoundToggle compact />
+          </span>
         </div>
 
         {finished ? (
@@ -139,7 +151,7 @@ export function SignboardGame() {
             {picked === undefined ? <>
               <p className="banan-ask" id="banan-ask">{loan ? "খাঁটি বাংলায় কোনটা? ট্যাপ করো" : "কোন বানানটা শুদ্ধ? ট্যাপ করো"}</p>
               <div className="banan-plates" role="group" aria-labelledby="banan-ask">
-                {word.options.map((option, index) => <button type="button" key={option} ref={index === 0 ? firstPlate : undefined} className="banan-plate" onClick={() => pick(index as Pick)}>{option}</button>)}
+                {word.options.map((option, index) => <button type="button" key={option} ref={index === 0 ? firstPlate : undefined} className="banan-plate" onClick={event => pick(index as Pick, event.currentTarget)}>{option}</button>)}
               </div>
             </> : <>
               <p className="banan-verdict" data-right={right}>{right ? "একদম ঠিক!" : loan ? "প্রায়! খাঁটি বাংলায়:" : "প্রায়! শুদ্ধ বানানটা এই:"}</p>

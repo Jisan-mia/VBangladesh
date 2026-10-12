@@ -14,6 +14,7 @@
 /* the ground runs the full width; the road's SVG (160×130) sits on it at the right */
 .hm-sky::before{content:"";position:absolute;left:0;right:0;bottom:0;height:46px;background:#0c1130}
 .hm-count{position:relative;z-index:1}
+.hm-sound{float:right;margin:-2px 0 0 8px;color:#efe6ca}
 .hm-score{margin:0;font-family:var(--font-display);line-height:1.1;font-weight:700}
 .hm-score span{font-size:24px;color:var(--cream)}
 .hm-score strong{font-size:60px;color:var(--yellow)}

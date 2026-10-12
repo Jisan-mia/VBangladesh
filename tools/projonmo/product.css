@@ -152,3 +152,4 @@
 }
 @media(hover:hover){.tool-projonmo .pj-sense:not(:disabled):hover{background:#fff;border-color:var(--ink)}}
 @media(prefers-reduced-motion:reduce){.tool-projonmo .pj-sense,.tool-projonmo .pj-bars i,.tool-projonmo .pj-bar i{transition:none}.tool-projonmo .pj-entry,.tool-projonmo .pj-verdict{animation:none}}
+.tool-projonmo .pj-label .gx-sound span:first-child{padding:0;border-radius:0;background:none;color:inherit}
