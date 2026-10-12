@@ -11,7 +11,7 @@ export const share: ToolShare = {
   },
   preview(state) {
     const ludo = parseLudo(state);
-    if (ludo) return { title: championTitle(ludo), description: "লুডুর আসরে কে কয় দান জিতল, দেখে নাও। তোমরাও খেলছ? দান শেষে যে জিতল তার ঘরে চাপো, তারপর নিজেদের চ্যাম্পিয়ন কার্ড বানাও।" };
+    if (ludo) return { title: championTitle(ludo), description: "লুডুর আসরে কে কয় দান জিতল, দেখে নাও। তোমরাও খেলছ? নিজেদের হিসাব রাখো, চ্যাম্পিয়ন কার্ড বানাও।" };
     const invite = parseInvite(state);
     const game = invite && gameById(invite.game);
     return {
