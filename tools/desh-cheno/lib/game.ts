@@ -63,11 +63,11 @@ export function humanLine({ set, picks }: Result) {
     if (score >= 6) return "লাল-সবুজের বেশিরভাগটাই তোমার জানা।";
     return "বিজয়ের মাসে নতুন করে দেশ চেনা শুরু হলো।";
   }
-  if (score === ROUNDS) return "দেশটা তোমার মুখস্থ, আর মনেও।";
+  if (score === ROUNDS) return "দশটা তারাই তোমার। চার্ট পেপারে আর জায়গা নেই।";
   if (one) return `দেশটা প্রায় মুখস্থ, শুধু ${one} প্রশ্নটা ফসকেছে।`;
   if (score >= 7) return "চার্টের বেশিরভাগ তারা তোমার, বাকিগুলো এবার মনে থাকবে।";
   if (score >= 4) return "অর্ধেক দেশ চেনা হলো, বাকিটা ঘুরে দেখার বাহানা।";
-  return "দেশ চেনা এক দিনের কাজ না। আজ থেকে শুরু।";
+  return "ফাঁকা তারাই বেশি। নিচে প্রতিটার উত্তর আর সূত্র আছে।";
 }
 
 export const scoreLine = (score: number) => `${bn(ROUNDS)}-এ ${bn(score)}`;

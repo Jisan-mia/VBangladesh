@@ -70,13 +70,13 @@ test("names are NFC, lose control and direction characters, and are capped", () 
 test("lines follow the score and name the one question that was missed", () => {
   const protik = quizSets[0];
   const right = allRight(protik);
-  assert.equal(humanLine({ set: "protik", picks: right, name: "" }), "দেশটা তোমার মুখস্থ, আর মনেও।");
+  assert.equal(humanLine({ set: "protik", picks: right, name: "" }), "দশটা তারাই তোমার। চার্ট পেপারে আর জায়গা নেই।");
   const missGach = [...right]; missGach[5] = 0;
   assert.equal(humanLine({ set: "protik", picks: missGach, name: "" }), "দেশটা প্রায় মুখস্থ, শুধু জাতীয় গাছের প্রশ্নটা ফসকেছে।");
   const two = [...missGach]; two[0] = 0;
   assert.equal(humanLine({ set: "protik", picks: two, name: "" }), "চার্টের বেশিরভাগ তারা তোমার, বাকিগুলো এবার মনে থাকবে।");
   const none = right.map(pick => ((pick + 1) % 3) as Pick);
-  assert.equal(humanLine({ set: "protik", picks: none, name: "" }), "দেশ চেনা এক দিনের কাজ না। আজ থেকে শুরু।");
+  assert.equal(humanLine({ set: "protik", picks: none, name: "" }), "ফাঁকা তারাই বেশি। নিচে প্রতিটার উত্তর আর সূত্র আছে।");
   const victory = quizSets[3];
   assert.equal(humanLine({ set: "v55", picks: allRight(victory), name: "" }), "বিজয়ের ৫৫ বছরে দেশটা তোমার পুরো চেনা।");
   assert.equal(badge(10), "ফার্স্ট বেঞ্চ");

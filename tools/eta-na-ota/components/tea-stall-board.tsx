@@ -196,7 +196,7 @@ export function TeaStallBoard() {
         <div className="ena-board">
           <div className="ena-board-head">
             <p className="ena-board-title">আজকের তর্ক</p>
-            <p className="ena-progress" aria-live="polite">{index < DONE ? <><b>{bn(index + 1)}</b>/{bn(PAIRS_PER_PACK)}</> : "শেষ!"}</p>
+            <p className="ena-progress" aria-live="polite">{index < DONE ? <><b>{bn(index + 1)}</b>/{bn(PAIRS_PER_PACK)}</> : "শেষ"}</p>
           </div>
 
           {pair ? (
