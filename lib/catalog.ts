@@ -138,7 +138,7 @@ export const catalog = [
   { slug: "chhip-felo", name: "ছিপ ফেলো", description: "বাঁশের ছিপে মাছ ধরো, ফাতনা পুরো ডুবলে টান দাও। ২০টা মাছের অ্যালবাম ভরাও।", category: "গেম", action: "ছিপ ফেলো" },
   { slug: "latim", name: "লাটিম", description: "নিচে টেনে লাটিম ছোড়ো, টোকায় সামলাও। দেখো কত সেকেন্ড ঘোরে।", category: "গেম", action: "লাটিম ছোড়ো" },
   { slug: "nodi-par", name: "নদী পার", description: "নৌকা, ভেলা, কচুরিপানায় লাফিয়ে নদী পার হও, পথে আম তোলো।", category: "গেম", action: "নদী পার হও" },
-  { slug: "penalty", name: "পেনাল্টি কিক", description: "পেনাল্টি কিক: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "penalty", name: "পেনাল্টি কিক", description: "টেনে শট নাও, কিপার হয়ে ঝাঁপ দাও। পাড়া থেকে জাতীয়, ৮টা ম্যাচ।", category: "গেম", action: "গোল দাও" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.
