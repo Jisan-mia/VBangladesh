@@ -1,7 +1,7 @@
 // The challenge link, the result lines and the personal preview. Runs on the server too (share.ts → /api/share).
 import { possessive } from "../../../shared/bangla";
 import { challengeHash, cleanName, readChallenge } from "../../../shared/game-core";
-import { band, flipsText, pairsOf, readFlips, replay, type Game, type Players, type Size } from "./game";
+import { LEVELS, band, flipsText, isLevel, pairsOf, readFlips, replay, type Game, type Players, type Size } from "./game";
 
 export const MAX_MOVES = 999;
 /** A link proves every game up to this many moves with its flips (two hex digits a move). Longer games aren't worth faking. */
@@ -9,24 +9,25 @@ export const PROOF_MOVES = 60;
 
 const numbers = new Intl.NumberFormat("bn-BD", { useGrouping: false });
 export const bn = (value: number) => numbers.format(value);
-export const sizeLabel = (size: Size) => size === 12 ? "৩×৪" : "৪×৪";
+export const sizeLabel = (size: Size) => `${bn(size / 4)}×৪`;
 
-/** A finished game as a link carries it. Solo: `pairs` is [all, 0] and `names[1]` is empty. */
-export type Card = { seed: number; size: Size; players: Players; moves: number; pairs: [number, number]; names: [string, string]; flips: string };
+/** A finished game as a link carries it. Solo: `pairs` is [all, 0] and `names[1]` is empty. `level` is 0 outside the solo levels. */
+export type Card = { seed: number; size: Size; players: Players; moves: number; pairs: [number, number]; names: [string, string]; flips: string; level: number };
 
-export function cardOf(game: Game, names: readonly string[]): Card {
+export function cardOf(game: Game, names: readonly string[], level = 0): Card {
   const two = game.players === 2;
   return {
-    seed: game.seed, size: game.size, players: game.players, moves: game.moves, pairs: [...game.pairs],
+    seed: game.seed, size: game.size, players: game.players, moves: game.moves, pairs: [...game.pairs], level: two ? 0 : level,
     names: [cleanName(names[0] ?? ""), two ? cleanName(names[1] ?? "") : ""],
     flips: game.moves <= PROOF_MOVES ? flipsText(game.flips) : "",
   };
 }
 
-/** `s` seed, `t` moves, `g=12` the easy board, `m=2` two players with `a` the first one's pairs and `q` the second name, `f` the flips. */
+/** `s` seed, `t` moves, `g` the card count when not 16, `l` the solo level, `m=2` two players with `a` the first one's pairs and `q` the second name, `f` the flips. */
 export function cardHash(card: Card) {
   const extra: Record<string, string | number> = {};
-  if (card.size === 12) extra.g = 12;
+  if (card.size !== 16) extra.g = card.size;
+  if (card.level) extra.l = card.level;
   if (card.players === 2) extra.m = 2;
   if (card.players === 2) extra.a = card.pairs[0];
   if (card.flips) extra.f = card.flips;
@@ -39,11 +40,15 @@ export function cardHash(card: Card) {
  * Null for anything broken, out of range or not adding up.
  */
 export function parseCard(hash: string): Card | null {
-  const challenge = readChallenge(hash, { maxTarget: MAX_MOVES, extraKeys: ["g", "m", "a", "f", "q"] });
+  const challenge = readChallenge(hash, { maxTarget: MAX_MOVES, extraKeys: ["g", "l", "m", "a", "f", "q"] });
   if (!challenge) return null;
-  const { g, m, a, f, q } = challenge.extra;
-  if ((g !== undefined && g !== "12") || (m !== undefined && m !== "2")) return null;
-  const size: Size = g ? 12 : 16, players: Players = m ? 2 : 1, all = pairsOf(size), moves = challenge.target;
+  const { g, l, m, a, f, q } = challenge.extra;
+  if ((g !== undefined && !["8", "12", "20"].includes(g)) || (m !== undefined && m !== "2")) return null;
+  const size = (g ? Number(g) : 16) as Size, players: Players = m ? 2 : 1, all = pairsOf(size), moves = challenge.target;
+  const level = l === undefined ? 0 : /^\d{1,2}$/.test(l) ? Number(l) : -1;
+  if (level && (!isLevel(level) || players === 2 || LEVELS[level - 1].size !== size)) return null;
+  // Two players still choose between ৩×৪ and ৪×৪ only; the other boards come from a level.
+  if (!level && size !== 12 && size !== 16) return null;
   if (moves < all) return null;
   if (players === 1 && (a !== undefined || q !== undefined)) return null;
   if (players === 2 && (a === undefined || !/^\d{1,2}$/.test(a) || Number(a) > all)) return null;
@@ -55,11 +60,11 @@ export function parseCard(hash: string): Card | null {
     const end = flips && replay(challenge.seed, size, players, flips);
     if (!end || end.phase !== "over" || end.moves !== moves || end.pairs[0] !== pairs[0]) return null;
   }
-  return { seed: challenge.seed, size, players, moves, pairs, names: [challenge.name, players === 2 ? cleanName(q ?? "") : ""], flips: f ?? "" };
+  return { seed: challenge.seed, size, players, moves, pairs, names: [challenge.name, players === 2 ? cleanName(q ?? "") : ""], flips: f ?? "", level };
 }
 
 /** The friend's card and mine are the same game when the board and the mode match. */
-export const sameGame = (mine: Card, theirs: Card) => mine.seed === theirs.seed && mine.size === theirs.size && mine.players === theirs.players;
+export const sameGame = (mine: Card, theirs: Card) => mine.seed === theirs.seed && mine.size === theirs.size && mine.players === theirs.players && mine.level === theirs.level;
 
 export const DEFAULT_NAMES = ["প্রথমজন", "দ্বিতীয়জন"] as const;
 /** A player's name for the screen and the card: what they typed, else "প্রথমজন"/"দ্বিতীয়জন". */
@@ -106,14 +111,15 @@ export function friendBanner(card: Card) {
   if (card.players === 2) return `${duoScore(card)} জোড়া। একই খেলা, এবার তোমরা খেলো।`;
   return `${card.names[0] || "তোমার বন্ধু"} ${bn(card.moves)} চালে পেরেছে। একই খেলা, এবার তোমার পালা।`;
 }
-export const friendNote = (card: Card) => `${sizeLabel(card.size)} · ${card.flips ? "প্রতিটা চাল মিলিয়ে দেখা হয়েছে" : "অনেক লম্বা খেলা, চাল মিলিয়ে দেখা হয়নি"}`;
+export const friendNote = (card: Card) => `${card.level ? `লেভেল ${bn(card.level)} · ` : ""}${sizeLabel(card.size)} · ${card.flips ? "প্রতিটা চাল মিলিয়ে দেখা হয়েছে" : "অনেক লম্বা খেলা, চাল মিলিয়ে দেখা হয়নি"}`;
 
 export function previewTitle(card: Card) {
   if (card.players === 2) return `${duoScore(card)} জোড়া! মেলার খেলনার জোড়া মেলাও, তোমরা খেলবে?`;
-  return `${card.names[0] || "এক বন্ধু"} ${bn(card.moves)} চালে সব জোড়া মিলিয়েছে। তুমি পারবে?`;
+  return `${card.names[0] || "এক বন্ধু"} ${card.level ? `লেভেল ${bn(card.level)}-এ ` : ""}${bn(card.moves)} চালে সব জোড়া মিলিয়েছে। তুমি পারবে?`;
 }
 
 export function caption(card: Card) {
   if (card.players === 2) return `জোড়া মেলাও খেললাম দুজনে: ${duoScore(card)}। তোমাদের বাসায় কে জিতবে?`;
+  if (card.level) return `জোড়া মেলাও, লেভেল ${bn(card.level)}: ${bn(card.size)}টা কার্ড ${bn(card.moves)} চালে মিলিয়েছি! একই খেলায় তুমি কত চালে পারবে?`;
   return `মেলার খেলনার জোড়া মেলাও খেলে ${bn(card.moves)} চালে সব জোড়া মিলিয়েছি! একই খেলায় তুমি কত চালে পারবে?`;
 }

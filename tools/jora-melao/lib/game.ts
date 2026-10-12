@@ -6,8 +6,9 @@ export const TOYS = ["belun", "ghuri", "latim", "bansi", "ektara", "putul", "tom
 export type ToyId = (typeof TOYS)[number];
 
 export const COLS = 4;
-/** ৪×৪ (16 cards) or the easy ৩×৪ (12 cards). */
-export type Size = 12 | 16;
+/** Cards on the board, four to a row: ২×৪ and ৫×৪ came with levels; two players choose ৪×৪ or the easy ৩×৪. */
+export type Size = 8 | 12 | 16 | 20;
+export const SIZES: readonly Size[] = [8, 12, 16, 20];
 export type Players = 1 | 2;
 export const rowsOf = (size: Size) => size / COLS;
 export const pairsOf = (size: Size) => size / 2;
@@ -101,9 +102,55 @@ export function replay(seed: number, size: Size, players: Players, flips: readon
   return game;
 }
 
-/** One hex digit per flip: a 16-card game in 23 moves is 46 characters. */
-export const flipsText = (flips: readonly number[]) => flips.map(index => index.toString(16)).join("");
-export const readFlips = (text: string) => /^[0-9a-f]*$/.test(text) ? [...text].map(digit => parseInt(digit, 16)) : null;
+/** One base-32 digit per flip (the same as hex below 16, so old links read the same): a 16-card game in 23 moves is 46 characters. */
+export const flipsText = (flips: readonly number[]) => flips.map(index => index.toString(32)).join("");
+export const readFlips = (text: string) => /^[0-9a-v]*$/.test(text) ? [...text].map(digit => parseInt(digit, 32)) : null;
+
+/**
+ * Solo levels: the board grows (৮ → ১২ → ১৬ → ২০ cards) and par tightens. `three`/`two`: the most moves for 3 and 2 stars; any clear is 1.
+ * A test plays each level with a perfect memory and checks three stars stay within reach.
+ */
+export const LEVELS: ReadonlyArray<{ size: Size; three: number; two: number }> = [
+  { size: 8, three: 7, two: 9 }, { size: 8, three: 6, two: 8 }, { size: 8, three: 6, two: 7 },
+  { size: 12, three: 10, two: 13 }, { size: 12, three: 9, two: 12 }, { size: 12, three: 9, two: 11 },
+  { size: 16, three: 14, two: 18 }, { size: 16, three: 13, two: 16 }, { size: 16, three: 12, two: 15 },
+  { size: 20, three: 18, two: 23 }, { size: 20, three: 17, two: 21 }, { size: 20, three: 16, two: 20 },
+];
+export const LEVEL_COUNT = LEVELS.length;
+export const isLevel = (level: number) => Number.isInteger(level) && level >= 1 && level <= LEVEL_COUNT;
+export function starsOf(level: number, moves: number) {
+  if (!isLevel(level)) return 0;
+  const { three, two } = LEVELS[level - 1];
+  return moves <= three ? 3 : moves <= two ? 2 : 1;
+}
+/** Moves fewer that would have earned the next star (0 at three stars). */
+export function movesToNextStar(level: number, moves: number) {
+  const stars = starsOf(level, moves);
+  if (!stars || stars === 3) return 0;
+  const { three, two } = LEVELS[level - 1];
+  return moves - (stars === 2 ? three : two);
+}
+/** Where to open: the furthest open level unless it already has three stars, then the first one short of three. */
+export function startLevel(stars: Readonly<Record<number, number>>, unlocked: number) {
+  if ((stars[unlocked] ?? 0) < 3) return unlocked;
+  for (let level = 1; level <= LEVEL_COUNT; level++) if ((stars[level] ?? 0) < 3) return level;
+  return unlocked;
+}
+/**
+ * Once, before levels: this phone's old best on ৩×৪ and ৪×৪ (fewest moves) become stars on the first level of that size, judged by its par.
+ * Returns the new level store, or null when there's nothing to move.
+ */
+export function migrateLevels(levelsRaw: string | null, best12: string | null, best16: string | null) {
+  if (levelsRaw !== null) return null;
+  const stars: Record<number, number> = {};
+  for (const [raw, size] of [[best12, 12], [best16, 16]] as const) {
+    const moves = Number(raw);
+    if (raw === null || !Number.isInteger(moves) || moves < pairsOf(size)) continue;
+    const level = LEVELS.findIndex(entry => entry.size === size) + 1;
+    stars[level] = starsOf(level, moves);
+  }
+  return Object.keys(stars).length ? JSON.stringify(stars) : null;
+}
 
 /** Score bands for one player, by how many moves per pair: 0 is a flawless game, 5 is a long, patient one. */
 export function band(moves: number, size: Size) {

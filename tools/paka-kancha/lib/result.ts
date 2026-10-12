@@ -1,17 +1,19 @@
 // Links, banners and lines for পাকা-কাঁচা. Server-safe (share.ts imports it). A link never carries guessed digits.
 import { possessive } from '../../../shared/bangla';
 import { challengeHash, cleanName, readChallenge } from '../../../shared/game-core';
-import { TRIES, asciiDigits, bn, bnDate, clampDate, codeOf, finished, isCode, isDate, parseRows, possibleRow, rowsText, solved, type Mark, type Puzzle } from './game';
+import { LEVEL_COUNT, TRIES, asciiDigits, bn, bnDate, clampDate, codeOf, finished, isCode, isDate, parseRows, poolOf, possibleRow, rowsText, rulesOf, solved, type Mark, type Puzzle } from './game';
 
 export type Shared = { puzzle: Puzzle; rows: Mark[][]; name: string };
 
 /**
  * `d` a day's code · `s` + `t` a seeded code (t = tries, the number to beat) · `c` a friend's code, in plain digits (not secret).
+ * `l` + `s` + `t` a level's seeded code (added with levels; links without `l` read as before).
  * `r` the mangoes only, four letters per try · `n` an optional first name.
  */
 export function shareHash({ puzzle, rows, name }: Shared) {
   const r = rows.length ? { r: rowsText(rows) } : undefined;
   if (puzzle.kind === 'seed') return challengeHash({ seed: puzzle.seed, target: rows.length, name, extra: r });
+  if (puzzle.kind === 'level') return challengeHash({ seed: puzzle.seed, target: rows.length, name, extra: { l: puzzle.level, ...r } });
   const params = new URLSearchParams(puzzle.kind === 'day' ? { d: puzzle.date, ...r } : { c: puzzle.code, ...r });
   const clean = cleanName(name);
   if (clean) params.set('n', clean);
@@ -26,8 +28,12 @@ export function parseShare(hash: string, today: string): Shared | null {
   const rows = rowText === null ? [] : parseRows(rowText);
   if (!rows) return null;
   let puzzle: Puzzle;
-  const date = params.get('d'), code = params.get('c');
-  if (date !== null) {
+  const date = params.get('d'), code = params.get('c'), level = params.get('l');
+  if (level !== null) {
+    const challenge = readChallenge(hash, { maxTarget: TRIES, extraKeys: ['r'] });
+    if (!/^\d{1,2}$/.test(level) || Number(level) < 1 || Number(level) > LEVEL_COUNT || !challenge || challenge.target !== rows.length) return null;
+    puzzle = { kind: 'level', level: Number(level), seed: challenge.seed };
+  } else if (date !== null) {
     if (!isDate(date)) return null;
     puzzle = { kind: 'day', date: clampDate(date, today) };
   } else if (code !== null) {
@@ -41,22 +47,25 @@ export function parseShare(hash: string, today: string): Shared | null {
   }
   // Only a friend's code may come without a result: that's the invitation itself.
   if (!rows.length && puzzle.kind !== 'code') return null;
-  if (rows.length && !finished(rows)) return null;
+  const { digits, tries } = rulesOf(puzzle);
+  if (rows.length && !finished(rows, tries)) return null;
   const answer = codeOf(puzzle);
-  if (!rows.every(row => possibleRow(answer, row))) return null;
+  if (!rows.every(row => possibleRow(answer, row, poolOf(digits)))) return null;
   return { puzzle, rows, name: cleanName(params.get('n') ?? '') };
 }
 
 /** "আজকের কোড", "১০ অক্টোবরের কোড", "নতুন কোড" or "বন্ধুর কোড": what the board and the card call this puzzle. */
 export function puzzleLabel(puzzle: Puzzle, today: string) {
+  if (puzzle.kind === 'level') return `লেভেল ${bn(puzzle.level)}`;
   if (puzzle.kind === 'day') return puzzle.date === today ? 'আজকের কোড' : `${possessive(bnDate(puzzle.date))} কোড`;
   return puzzle.kind === 'seed' ? 'নতুন কোড' : 'বন্ধুর কোড';
 }
 
-export const tryCount = (rows: readonly Mark[][]) => solved(rows) ? `${bn(rows.length)}/${bn(TRIES)}` : 'এবার হয়নি';
+export const tryCount = (rows: readonly Mark[][], tries = TRIES) => solved(rows) ? `${bn(rows.length)}/${bn(tries)}` : 'এবার হয়নি';
 
 /** On the page (`today` known) the code is right there: "এই কোডটা". In a preview it's "একটা কোড". */
 function what(puzzle: Puzzle, today?: string) {
+  if (puzzle.kind === 'level') return `লেভেল ${bn(puzzle.level)}-এর কোড`;
   if (puzzle.kind === 'day') return puzzle.date === today ? 'আজকের কোড' : `${possessive(bnDate(puzzle.date))} কোড`;
   return puzzle.kind === 'seed' && !today ? 'একটা কোড' : 'এই কোডটা';
 }
@@ -65,7 +74,7 @@ function what(puzzle: Puzzle, today?: string) {
 export function previewTitle({ puzzle, rows, name }: Shared) {
   const who = name || 'এক বন্ধু';
   if (!rows.length) return `${who} তোমার জন্য একটা কোড রেখেছে। ৭ বারে ধরতে পারবে?`;
-  return solved(rows) ? `${who} ${what(puzzle)} ${bn(rows.length)} বারে ধরেছে। তুমি কয়বারে পারবে?` : `${who} ${what(puzzle)} ৭ বারেও ধরতে পারেনি। তুমি পারবে?`;
+  return solved(rows) ? `${who} ${what(puzzle)} ${bn(rows.length)} বারে ধরেছে। তুমি কয়বারে পারবে?` : `${who} ${what(puzzle)} ${bn(rulesOf(puzzle).tries)} বারেও ধরতে পারেনি। তুমি পারবে?`;
 }
 
 /** The banner when a friend's link opens. */
@@ -73,7 +82,7 @@ export function friendBanner({ puzzle, rows, name }: Shared, today: string) {
   const who = name || 'এক বন্ধু';
   if (!rows.length) return { title: `${who} তোমার জন্য একটা কোড রেখেছে`, sub: 'কোডটা লিংকের মধ্যেই লেখা, তাই এটা গোপন না। লিংকে উঁকি না দিয়ে খেলো!' };
   const past = puzzle.kind === 'day' && puzzle.date !== today;
-  const title = solved(rows) ? `${who} ${what(puzzle, today)} ${bn(rows.length)} বারে ধরে${past ? 'ছিল' : 'ছে'}।` : `${who} ${what(puzzle, today)} ৭ বারেও ধরতে পারেনি।`;
+  const title = solved(rows) ? `${who} ${what(puzzle, today)} ${bn(rows.length)} বারে ধরে${past ? 'ছিল' : 'ছে'}।` : `${who} ${what(puzzle, today)} ${bn(rulesOf(puzzle).tries)} বারেও ধরতে পারেনি।`;
   return { title, sub: puzzle.kind === 'code' ? 'একই কোড, এবার তোমার পালা। কোডটা লিংকেই লেখা, তাই উঁকি দিয়ো না!' : 'একই কোড, এবার তোমার পালা।' };
 }
 
@@ -91,6 +100,7 @@ export function versusLine(mine: readonly Mark[][], theirs: readonly Mark[][], n
 
 export function caption({ puzzle, rows }: Shared, today: string) {
   if (!rows.length) return 'তোমার জন্য একটা ৪ অঙ্কের কোড রেখেছি। ৭ বারে ধরতে পারবে?';
+  if (puzzle.kind === 'level') return solved(rows) ? `পাকা-কাঁচা, লেভেল ${bn(puzzle.level)}: কোডটা ${bn(rows.length)} বারে ধরেছি! তুমি কয়বারে পারবে?` : `পাকা-কাঁচা, লেভেল ${bn(puzzle.level)}: এবার কোডটা ধরতে পারিনি। তুমি পারবে?`;
   const label = puzzleLabel(puzzle, today);
   return solved(rows) ? `পাকা-কাঁচা: ${label} ${bn(rows.length)} বারে ধরেছি! তুমি কয়বারে পারবে?` : `পাকা-কাঁচা: ${label} ৭ বারেও ধরতে পারিনি। তুমি পারবে?`;
 }

@@ -4,16 +4,23 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { newSeed, useBest, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { buzz, confetti, hiss, newSeed, sfx, tone, useBest, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
 import { FLOWERS, HEART, palette } from "../lib/art";
 import { cardBlob, drawCard, type CardData } from "../lib/draw-card";
 import { botMove, canUndo, createGame, hintGap, nearestGap, play, recent, undo, BOARD, EDGE_COUNT, ROW_SPAN, type Game, type Level } from "../lib/game";
 import { bannerNote, bn, caption, compareLine, feat, humanLine, initials, levelName, parseShared, playNames, scoreLine, sharedHash, type Shared } from "../lib/link";
+import { KatakutiGame } from "./katakuti-game";
 import { QuiltBoard } from "./quilt-board";
 
 const TOOL = "chhok-jora";
 const MODES: Array<{ level: Level; label: string }> = [{ level: 1, label: "সহজ বট" }, { level: 2, label: "কঠিন বট" }, { level: 0, label: "দুজনে" }];
+const COLORS = ["#c23b2a", "#2457a6", "#f3c548", "#fbf3e6", "#3d8a3c"];
+/** A stitch pulled through the cloth: a short thread hiss and the needle's tick. The bot's needle ticks a little lower. */
+const stitchSound = (who: 0 | 1) => { hiss(0.07, 0.07, who ? 2000 : 2700, "bandpass"); tone(who ? 1150 : 1500, 0.02, 0.035, "square", 0.05); };
+/** A box closed: a click, then a bloom chime that climbs with each box in the same turn. */
+const boxSound = (chain: number) => { tone(2200, 0.015, 0.05, "square"); sfx.combo(chain); buzz(10); };
 const KEY_STEPS: Record<string, number> = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: ROW_SPAN, ArrowUp: -ROW_SPAN };
 const smooth = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" as const : "smooth" as const;
 
@@ -31,6 +38,8 @@ export function QuiltGame() {
   const [format, setFormat] = useState<CardFormat>("feed");
   const [site, setSite] = useState("");
   const [previewError, setPreviewError] = useState(false);
+  const [katakuti, setKatakuti] = useState(false);
+  const chain = useRef(0);
   const board = useRef<HTMLDivElement>(null);
   const preview = useRef<HTMLCanvasElement>(null);
   const friendPreview = useRef<HTMLCanvasElement>(null);
@@ -52,7 +61,16 @@ export function QuiltGame() {
   const result: CardData | null = game.over ? { level, score: game.score, name: names[0], other: names[1], owner: game.owner } : null;
   const state = game.over ? sharedHash({ seed: game.seed, level, moves: game.moves, name: names[0], other: names[1], score: game.score }) : "";
 
+  /** The sounds of one stitch: who sewed it, and any box it closed (a chain of boxes climbs in pitch). */
+  function sew(before: Game, next: Game) {
+    stitchSound(before.turn);
+    if (next.lastClosed) { boxSound(chain.current); chain.current += next.lastClosed; }
+    else chain.current = 0;
+  }
+
   function fresh(next: Level) {
+    setKatakuti(false);
+    chain.current = 0;
     setGame(createGame(friend && friend.level === next ? friend.seed : newSeed(), next));
     setPaused(false);
     setGhost(-1);
@@ -63,13 +81,15 @@ export function QuiltGame() {
     if (!canPlay || edge < 0) return;
     const next = play(game, edge);
     if (!next) return;
-    if (next.lastClosed && !slow && typeof navigator.vibrate === "function") navigator.vibrate(10);
+    sew(game, next);
     setGame(next);
     setGhost(-1);
   }
 
   function takeBack() {
     if (!canUndo(game)) return;
+    sfx.whoosh();
+    chain.current = 0;
     setGame(undo(game));
     setGhost(-1);
     setPaused(false);
@@ -78,20 +98,27 @@ export function QuiltGame() {
   // The bot answers after a short beat, one stitch at a time, so each of its moves can be seen. Paused or hidden: it waits.
   useEffect(() => {
     if (!botTurn || paused) return;
-    const timer = window.setTimeout(() => setGame(current => {
-      const bot = current.level;
-      return bot && current.turn === 1 && !current.over ? play(current, botMove(current, bot)) ?? current : current;
-    }), slow ? 1100 : 560);
+    const timer = window.setTimeout(() => {
+      const current = gameRef.current, bot = current.level;
+      const next = bot && current.turn === 1 && !current.over ? play(current, botMove(current, bot)) : null;
+      if (next) { sew(current, next); setGame(next); }
+    }, slow ? 1100 : 560);
     return () => window.clearTimeout(timer);
   }, [game, botTurn, paused, slow]);
 
   useEffect(() => {
     if (!game.over || finished.current === game) return;
     finished.current = game;
-    if (!game.level) return;
-    const before = game.level === 1 ? bestEasy : bestHard;
-    setRecord(before !== null && game.score[0] > before);
-    (game.level === 1 ? submitEasy : submitHard)(game.score[0]);
+    const [mine, theirs] = game.score;
+    const before = game.level === 1 ? bestEasy : game.level === 2 ? bestHard : null;
+    const beaten = before !== null && mine > before;
+    if (game.level) { setRecord(beaten); (game.level === 1 ? submitEasy : submitHard)(mine); }
+    // A cheer for a real win (beating the bot, a new best, or either person in a two-player game), a soft one for a draw.
+    window.setTimeout(() => {
+      if (game.level ? mine > theirs || beaten : mine !== theirs) { sfx.win(); confetti({ colors: COLORS }); }
+      else if (mine === theirs) sfx.good();
+      else sfx.lose();
+    }, 450);
   }, [game]);
 
   useEffect(() => {
@@ -128,7 +155,7 @@ export function QuiltGame() {
   const keyHandler = useRef<(event: KeyboardEvent) => void>(() => {});
   keyHandler.current = event => {
     const target = event.target as HTMLElement | null;
-    if (event.altKey || event.ctrlKey || event.metaKey || !boardInView || target?.closest?.("input, textarea, select, [contenteditable]")) return;
+    if (katakuti || event.altKey || event.ctrlKey || event.metaKey || !boardInView || target?.closest?.("input, textarea, select, [contenteditable]")) return;
     const step = KEY_STEPS[event.key];
     if (step !== undefined) {
       event.preventDefault();
@@ -214,8 +241,11 @@ export function QuiltGame() {
 
       <fieldset className="cj-modes">
         <legend className="cj-sr">কার সাথে খেলবে?</legend>
-        {MODES.map(mode => <button key={mode.level} type="button" aria-pressed={level === mode.level} onClick={() => fresh(mode.level)}>{mode.label}</button>)}
+        {MODES.map(mode => <button key={mode.level} type="button" aria-pressed={!katakuti && level === mode.level} onClick={() => { sfx.tap(); fresh(mode.level); }}>{mode.label}</button>)}
+        <button type="button" aria-pressed={katakuti} onClick={() => { if (!katakuti) { sfx.tap(); setKatakuti(true); setPaused(false); } }}>কাটাকুটি</button>
       </fieldset>
+
+      {katakuti ? <KatakutiGame slow={slow} setSlow={setSlow} /> : <>
 
       <div className="cj-hud">
         {([0, 1] as const).map(player => (
@@ -249,7 +279,7 @@ export function QuiltGame() {
       {phase === "over" ? (
         <div className="cj-over" role="status">
           <p className="cj-over-score">{scoreLine(shown, game.score)}</p>
-          <p className="cj-over-verdict">{verdict()} <span>{rival ? compareLine(game.score[0], rival.score[0], rival.name) : record ? "এই ফোনে নতুন রেকর্ড!" : best !== null && level ? `${levelName(level)} বটের সাথে এই ফোনে সেরা ${bn(best)} ঘর।` : ""}</span></p>
+          <p className="cj-over-verdict">{verdict()} <span>{rival ? compareLine(game.score[0], rival.score[0], rival.name) : record ? "এই ফোনে নতুন রেকর্ড!" : best !== null && level ? `${levelName(level)} বটের সাথে এই ফোনে সেরা ${bn(best)} ঘর।${game.score[0] <= best && best < 16 ? ` আর ${bn(best - game.score[0] + 1)}টা পেলে নতুন রেকর্ড।` : ""}` : ""}</span></p>
         </div>
       ) : (
         <p className="cj-status" role="status" aria-live="polite">{status()}</p>
@@ -268,6 +298,7 @@ export function QuiltGame() {
             </button>
             <button type="button" className="cj-tool" onClick={() => fresh(level)} disabled={phase === "ready"}>নতুন খেলা</button>
             <button type="button" className="cj-tool cj-slow" aria-pressed={slow} onClick={() => setSlow(!slow)}>ধীরে খেলো</button>
+            <SoundToggle compact className="cj-sound" />
           </>
         )}
       </div>
@@ -307,6 +338,7 @@ export function QuiltGame() {
           </div>
         )}
       </section>
+      </>}
     </div>
   );
 }
