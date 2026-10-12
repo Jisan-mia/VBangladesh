@@ -4,9 +4,9 @@ Each batch uses Sonnet with `research/writing-pass-prompt.md` (it reads `researc
 
 | batch | tools | status |
 |---|---|---|
-| W0 site | lib/catalog.ts descriptions, lib/brand.ts, lib/hubs.ts, components/, app/about, app/privacy, shared strings | building |
+| W0 site | lib/catalog.ts descriptions, lib/brand.ts, lib/hubs.ts, components/, app/about, app/privacy, shared strings | done |
 | W1 | bhashar-chhobi amar-chhotobela himu amar-bochhor tokhon-ekhon cassette mess-jibon ghuri | building |
-| W2 | chhotto-para alpana riksharong cinema-poster namer-design studior-chhobi rannakhata mishtir-baksho | todo |
+| W2 | chhotto-para alpana riksharong cinema-poster namer-design studior-chhobi rannakhata mishtir-baksho | building |
 | W3 | pitha tong mache-bhate jibh deshe-fera upohar dawat chithi | todo |
 | W4 | attiyo probash prothom-ay bazar-note bhara bhagabhagi boyos bhori | todo |
 | W5 | matir-bank dhoyahin jomi rokto current-gelo betoner-bhag bidyut-bill | todo |
