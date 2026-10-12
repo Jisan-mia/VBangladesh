@@ -62,8 +62,8 @@ test("headline and human line come from the person's own count and date", () => 
   assert.equal(headline({ count: 7, last: TODAY }, TODAY), "আজ রক্ত দিলাম, এ নিয়ে ৭ বার!");
   assert.equal(headline({ count: 1, last: "2026-01-01" }, TODAY), "প্রথমবার রক্ত দিয়েছি!");
   assert.equal(headline({ count: 12, last: "2026-01-01" }, TODAY), "১২ বার রক্ত দিয়েছি!");
-  assert.equal(humanLine(1), "প্রথমবার! কারও জীবনে তুমি প্রথম ফোঁটা।");
-  assert.equal(humanLine(1, "me"), "প্রথমবার! কারও জীবনে আমি প্রথম ফোঁটা।");
+  assert.equal(humanLine(1), "প্রথমবার! তোমার রক্ত কারও কাজে লাগবে।");
+  assert.equal(humanLine(1, "me"), "প্রথমবার! আমার রক্ত কারও কাজে লাগবে।");
   for (const count of [1, 2, 3, 4, 9, 10, 24, 25, 49, 50, 250]) {
     assert.ok(humanLine(count).length > 10);
     assert.doesNotMatch(humanLine(count, "me"), /তুমি|তোমা/);
