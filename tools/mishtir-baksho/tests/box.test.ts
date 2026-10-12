@@ -63,7 +63,7 @@ test("the human line comes from the picks", () => {
   const tenWithChomchom = sweets.slice(0, 10).map(sweet => sweet.id);
   assert.equal(boxLine(tenWithChomchom), "টাঙ্গাইলের চমচম একবার খেলে ভোলা যায় না।");
   const allDoi = [...starters, "bogura-doi", "bhola-doi", "gournadi-doi", "tok-doi", "monda", "jilapi", "batasha"] as const;
-  assert.equal(boxLine([...allDoi]), "দই ছাড়া দাওয়াত অসম্পূর্ণ।");
+  assert.equal(boxLine([...allDoi]), "দই ছাড়া দাওয়াত জমে না।");
 });
 
 test("the card compares with a friend's box", () => {
