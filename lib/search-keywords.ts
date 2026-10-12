@@ -1,5 +1,6 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "sudoku": ["sudoku", "sudoku bangla", "bangla sudoku", "সুডোকু", "সুডোকু খেলা", "বাংলা সুডোকু", "number puzzle", "সংখ্যার ধাঁধা", "ধাঁধা", "puzzle game", "brain game", "মগজের খেলা"],
   "jam-chharao": ["traffic puzzle", "sliding block puzzle", "car escape puzzle", "gari sorano game", "jam chharao", "cng game", "dhaka jam game", "puzzle game bangla", "গাড়ি সরানোর গেম", "জ্যাম ছাড়াও", "পাজল গেম", "ধাঁধা গেম"],
   "carrom": ["carrom", "carrom board", "carom game", "ক্যারম", "ক্যারম বোর্ড", "ক্যারম খেলা", "carrom khela", "karom", "গুটি", "striker", "দুজনের গেম", "board game bangla"],
   "pati-buni": ["block game", "brick game", "falling blocks game", "pati buni", "patibuni", "shitol pati game", "sheetal pati", "block melano game", "ব্লক গেম", "ব্রিক গেম", "পাটি বুনি", "শীতলপাটি"],
