@@ -125,7 +125,7 @@ export const catalog = [
   { slug: "switchboard", name: "সুইচবোর্ড", description: "কাঠের বোর্ডে সুইচ চাপো, সব বাতি জ্বালাও কারেন্ট থাকতে থাকতে। ৩০টা লেভেল।", category: "গেম", action: "বাতি জ্বালাও" },
   { slug: "golokdhadha", name: "গোলকধাঁধা", description: "গলি পেরিয়ে জিলাপির দোকানে যাও। ৩০টা লেভেল, রোজ একটা নতুন ধাঁধা।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "ponero-ghor", name: "১৫ ঘরের ধাঁধা", description: "ঘুঁটি ঠেলে ১ থেকে সাজাও। মেলার টিনের সেই ধাঁধা, ৩০ লেভেল।", category: "গেম", action: "খেলা শুরু করো" },
-  { slug: "chhobi-photao", name: "ছবি ফোটাও", description: "ছবি ফোটাও: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
+  { slug: "chhobi-photao", name: "ছবি ফোটাও", description: "সংখ্যা মিলিয়ে ঘর ভরো, ফুটবে ইলিশ, নৌকা, শাপলা। ৩০টা ছবি।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "ghontar-sur", name: "ঘণ্টার সুর", description: "চার কলসির সুর শোনো, একই ক্রমে বাজাও। প্রতিবার একটা সুর বাড়ে।", category: "গেম", action: "সুর বাজাও" },
   { slug: "konta-nei", name: "কোনটা নেই?", description: "কোনটা নেই?: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
   { slug: "bhul-kothay", name: "ভুল কোথায়?", description: "ভুল কোথায়?: খুলে দেখো, খেলে দেখো।", category: "গেম", action: "শুরু করো" },
