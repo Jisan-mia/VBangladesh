@@ -127,6 +127,7 @@ import { site as chhip_felo } from '../tools/chhip-felo/content';
 import { site as latim } from '../tools/latim/content';
 import { site as nodi_par } from '../tools/nodi-par/content';
 import { site as penalty } from '../tools/penalty/content';
+import { site as golir_badminton } from '../tools/golir-badminton/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -258,6 +259,7 @@ export const toolContent = {
   'latim': latim,
   'nodi-par': nodi_par,
   'penalty': penalty,
+  'golir-badminton': golir_badminton,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
