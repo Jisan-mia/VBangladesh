@@ -131,6 +131,7 @@ import { share as nodi_par } from '../tools/nodi-par/share';
 import { share as penalty } from '../tools/penalty/share';
 import { share as golir_badminton } from '../tools/golir-badminton/share';
 import { share as kagojer_urojahaj } from '../tools/kagojer-urojahaj/share';
+import { share as marble_sinri } from '../tools/marble-sinri/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -265,6 +266,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'penalty': penalty,
   'golir-badminton': golir_badminton,
   'kagojer-urojahaj': kagojer_urojahaj,
+  'marble-sinri': marble_sinri,
 };
 
 export function toolShare(tool: string): ToolShare | null {
