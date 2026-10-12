@@ -99,3 +99,4 @@
   .rk-result-body{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}
 }
 @media (prefers-reduced-motion:reduce){.rk-groups button{transition:none}.rk-groups button[aria-pressed=true]{transform:none}}
+.rokto-hero h1 .rokto-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 4px;font-size:14px;font-weight:600;color:var(--accent)}

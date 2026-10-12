@@ -10,8 +10,7 @@ export default function DeshChenoPage() {
       <JsonLd site={site} />
       <div className="desh-page">
         <section className="desh-hero container" aria-labelledby="desh-title">
-          <p className="desh-kicker">১০টা প্রশ্ন · ক্লাসের চার্ট পেপার</p>
-          <h1 id="desh-title">নিজের দেশটা <span>কতটা চেনো?</span></h1>
+          <h1 id="desh-title"><span className="desh-kicker">বাংলাদেশ কুইজ · সাধারণ জ্ঞানের ১০টা প্রশ্ন</span> নিজের দেশটা <span>কতটা চেনো?</span></h1>
           <p className="desh-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="দেশ চেনো কুইজ"><ChartQuiz /></section>

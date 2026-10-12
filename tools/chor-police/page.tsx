@@ -10,8 +10,7 @@ export default function ChorPolicePage() {
       <JsonLd site={site} />
       <div className="cp-page">
         <section className="cp-hero container" aria-labelledby="cp-title">
-          <p className="cp-hero-kicker">{site.name} · এক ফোনে চারজন</p>
-          <h1 id="cp-title">{site.headline}</h1>
+          <h1 id="cp-title"><span className="cp-hero-kicker">{site.name} · এক ফোনে চারজন</span> {site.headline}</h1>
           <p className="cp-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="চোর-ডাকাত-পুলিশ-বাবু খেলো"><ChitGame /></section>

@@ -14,8 +14,7 @@ export default function TokhonEkhonPage() {
       <JsonLd site={site} />
       <div className="tokhon">
         <section className="tokhon-hero container" aria-labelledby="tokhon-title">
-          <p className="tokhon-kicker">টাকার মান · {bnYear(years[0])} থেকে {bnYear(LATEST_YEAR)}</p>
-          <h1 id="tokhon-title">{site.headline}</h1>
+          <h1 id="tokhon-title"><span className="tokhon-kicker">মূল্যস্ফীতির হিসাব · {bnYear(years[0])} থেকে {bnYear(LATEST_YEAR)}</span> {site.headline}</h1>
           <p className="tokhon-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="সাল আর টাকা বেছে নাও"><Wallet /></section>

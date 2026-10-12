@@ -9,8 +9,7 @@ export default function RiksharongPage() {
       <JsonLd site={site} />
       <div className="rr-page">
         <section className="rr-hero container" aria-labelledby="rr-title">
-          <p className="rr-hero-kicker">রিকশা পেইন্টিং · এক মিনিটে</p>
-          <h1 id="rr-title">রিকশার পেছনে এবার <span>তোমার বোর্ড</span></h1>
+          <h1 id="rr-title"><span className="rr-hero-kicker">রিকশা পেইন্টিং · এক মিনিটে</span> রিকশার পেছনে এবার <span>তোমার বোর্ড</span></h1>
           <p className="rr-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="রিকশার বোর্ড রাঙাও"><BoardBuilder /></section>

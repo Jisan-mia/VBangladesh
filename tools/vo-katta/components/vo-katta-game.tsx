@@ -540,8 +540,9 @@ export function VoKattaGame() {
               </div>
             </div>
           )}
+          <p className="screen-reader-only" aria-live="polite">{over && result ? `খেলা শেষ। ${bn(result.cuts)}টা ঘুড়ি কাটলে। ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : phase === "playing" && breakRound !== null ? `রাউন্ড ${bn(breakRound + 1)} · ${ROOFS[breakRound].name}` : ""}</p>
           {phase === "playing" && breakRound !== null && (
-            <div className="vk-overlay" aria-live="polite">
+            <div className="vk-overlay">
               <div className="vk-note vk-round">
                 <p className="vk-round-no">রাউন্ড {bn(breakRound + 1)} · {ROOFS[breakRound].name}</p>
                 <p>{ROOFS[breakRound].note}</p>
@@ -558,7 +559,7 @@ export function VoKattaGame() {
           )}
           {over && (
             <div className="vk-overlay vk-block">
-              <div className="vk-note vk-slip" role="status">
+              <div className="vk-note vk-slip">
                 <h2>{result.cuts > 0 ? "ভো-কাট্টা!" : "সন্ধ্যা নামল!"}</h2>
                 <p className="vk-final"><b>{bn(result.cuts)}</b>টা ঘুড়ি কাটলে</p>
                 <p className="vk-record">{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null && best > result.cuts ? `এই ফোনে সেরা ${bn(best)}টা` : humanLine(result.cuts)}</p>

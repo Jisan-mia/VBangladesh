@@ -9,8 +9,7 @@ export default function PatiBuniPage() {
       <JsonLd site={site} />
       <div className="pb-page">
         <section className="pb-hero container" aria-labelledby="pb-title">
-          <p className="pb-hero-kicker">পুরোনো দিনের ব্লক গেম, এবার বেতের ফালিতে</p>
-          <h1 id="pb-title">সারি ভরাও, <span>শীতলপাটি বোনো</span></h1>
+          <h1 id="pb-title"><span className="pb-hero-kicker">পুরোনো দিনের ব্লক গেম, এবার বেতের ফালিতে</span> সারি ভরাও, <span>শীতলপাটি বোনো</span></h1>
           <p className="pb-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="পাটি বুনি খেলো"><PatiGame /></section>

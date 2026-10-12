@@ -99,3 +99,4 @@
   .cj-friend h2{font-size:20px}
 }
 @media(prefers-reduced-motion:reduce){.cj-sew,.cj-bloom,.cj-hint{animation:none}.cj-pill{transition:none}}
+.cj-hero h1 .cj-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;line-height:1.5;color:var(--accent)}

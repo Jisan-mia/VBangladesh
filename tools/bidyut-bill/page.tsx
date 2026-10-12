@@ -12,8 +12,7 @@ export default function BidyutBillPage() {
       <JsonLd site={site} />
       <div className="bb-page">
         <section className="bb-hero container" aria-labelledby="bb-title">
-          <p className="bb-kicker">পুরোনো মিটারের হিসাব · আনুমানিক</p>
-          <h1 id="bb-title">কোন যন্ত্রে <span>কত বিল আসে?</span></h1>
+          <h1 id="bb-title"><span className="bb-kicker">বিদ্যুৎ বিল ক্যালকুলেটর · পুরোনো মিটার, আনুমানিক</span> কোন যন্ত্রে <span>কত বিল আসে?</span></h1>
           <p className="bb-lead">{site.lead}</p>
         </section>
 

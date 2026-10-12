@@ -9,8 +9,7 @@ export default function BanglaTypingPage() {
       <JsonLd site={site} />
       <div className="bt-page">
         <section className="bt-hero container" aria-labelledby="bt-title">
-          <p className="bt-hero-kicker">৬০ সেকেন্ড · যেকোনো বাংলা কিবোর্ডে</p>
-          <h1 id="bt-title">মিনিটে কয়টা <span>বাংলা শব্দ?</span></h1>
+          <h1 id="bt-title"><span className="bt-hero-kicker">বাংলা টাইপিং টেস্ট · ৬০ সেকেন্ড, যেকোনো কিবোর্ডে</span> মিনিটে কয়টা <span>বাংলা শব্দ?</span></h1>
           <p className="bt-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="বাংলা টাইপিং টেস্ট দাও"><Typewriter /></section>

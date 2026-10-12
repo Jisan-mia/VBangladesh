@@ -98,3 +98,4 @@
 @keyframes mb-wobble{0%,100%{transform:none}30%{transform:rotate(-3deg)}65%{transform:rotate(2deg)}}
 @keyframes mb-crack{0%{transform:scale(1)}40%{transform:scale(1.06) rotate(-2deg)}100%{transform:none}}
 @keyframes mb-pop{from{transform:scale(.4)}}
+.mb-hero h1 .mb-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 2px;font-size:14px;font-weight:600;color:var(--accent)}

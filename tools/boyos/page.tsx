@@ -10,8 +10,7 @@ export default function BoyosPage() {
       <JsonLd site={site} />
       <div className="boyos">
         <section className="boyos-hero container" aria-labelledby="boyos-title">
-          <p className="boyos-kicker">বয়স ক্যালকুলেটর · বাংলা জন্মতারিখসহ</p>
-          <h1 id="boyos-title">{site.headline}</h1>
+          <h1 id="boyos-title"><span className="boyos-kicker">বয়স ক্যালকুলেটর · বাংলা জন্মতারিখসহ</span> {site.headline}</h1>
           <p className="boyos-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="বয়স বের করো"><AgeBuilder /></section>

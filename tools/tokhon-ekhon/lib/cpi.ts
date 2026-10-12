@@ -57,3 +57,5 @@ export const SOURCE_URL = "https://data.worldbank.org/indicator/FP.CPI.TOTL?loca
 export const WB_UPDATED = "৮ অক্টোবর ২০২৬";
 /** Shown as "যাচাই করা: …" next to every result. */
 export const CHECKED = "১১ অক্টোবর ২০২৬";
+// ISO twin of the date above for schema dateModified and sitemap lastmod; bump both together.
+export const CHECKED_ON = "2026-10-11";

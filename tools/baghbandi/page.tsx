@@ -9,8 +9,7 @@ export default function BaghbandiPage() {
       <JsonLd site={site} />
       <div className="bb-page">
         <section className="bb-hero container" aria-labelledby="bb-title">
-          <p className="bb-hero-kicker">উঠোনে দাগ কেটে, নুড়ি আর তেঁতুলের বিচি দিয়ে</p>
-          <h1 id="bb-title">{site.headline}</h1>
+          <h1 id="bb-title"><span className="bb-hero-kicker">বাঘবন্দি খেলা · উঠোনের দাগ, নুড়ি আর তেঁতুলের বিচি</span> {site.headline}</h1>
           <p className="bb-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="বাঘবন্দি খেলো"><BaghbandiGame /></section>

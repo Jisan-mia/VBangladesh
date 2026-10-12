@@ -11,8 +11,7 @@ export default function MatirBankPage() {
       <JsonLd site={site} />
       <div className="mb-wrap">
         <section className="mb-hero container" aria-labelledby="mb-title">
-          <p className="mb-kicker">টাকা জমানোর চার্ট · ঈদে ভাঙব</p>
-          <h1 id="mb-title">রোজ একটু, <span>মাটির ব্যাংকে</span></h1>
+          <h1 id="mb-title"><span className="mb-kicker">টাকা জমানোর চার্ট · ঈদে ভাঙব</span> রোজ একটু, <span>মাটির ব্যাংকে</span></h1>
           <p className="mb-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="মাটির ব্যাংকে জমাও"><BankBuilder /></section>

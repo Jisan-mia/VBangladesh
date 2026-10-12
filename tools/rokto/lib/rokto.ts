@@ -17,6 +17,8 @@ export const INTERVALS = [6, 4] as const;
 export type Interval = (typeof INTERVALS)[number];
 export const DEFAULT_INTERVAL: Interval = 6;
 export const VERIFIED = "১১ অক্টোবর ২০২৬";
+// ISO twin of the date above for schema dateModified and sitemap lastmod; bump both together.
+export const VERIFIED_ON = "2026-10-11";
 
 export const MAX_NAME_LENGTH = 30;
 export const MAX_COUNT = 250;

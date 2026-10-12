@@ -83,3 +83,4 @@
 }
 @media(hover:hover){.rr-motifs button:hover,.rr-palettes button:hover{border-color:var(--rr-ink)}}
 @media(prefers-reduced-motion:reduce){.rr-controls button:active{transform:none}}
+.rr-hero h1 .rr-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 6px;font-size:14px;font-weight:700;color:var(--rr-red)}

@@ -9,8 +9,7 @@ export default function PakaKanchaPage() {
       <JsonLd site={site} />
       <div className="pk-page">
         <section className="pk-hero container" aria-labelledby="pk-title">
-          <p className="pk-hero-kicker">{site.name} · রোজ নতুন কোড</p>
-          <h1 id="pk-title">{site.headline}</h1>
+          <h1 id="pk-title"><span className="pk-hero-kicker">সংখ্যার ধাঁধা · রোজ নতুন কোড</span> {site.headline}</h1>
           <p className="pk-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="পাকা-কাঁচা খেলো"><CodeGame /></section>

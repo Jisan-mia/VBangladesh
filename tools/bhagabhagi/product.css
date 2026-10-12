@@ -143,3 +143,4 @@
   .split-friend,.split-notice,.split-manual{grid-column:1/-1}
   .split-result{margin-top:0;padding-top:0;border-top:0}
 }
+.split-hero h1 .split-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 8px;font-size:14px;font-weight:600;color:var(--teal)}

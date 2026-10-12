@@ -11,8 +11,7 @@ export default function RoktoPage() {
       <JsonLd site={site} />
       <div className="rokto">
         <section className="rokto-hero container" aria-labelledby="rokto-title">
-          <p className="rokto-kicker">রক্তদাতা কার্ড · তারিখের হিসাব</p>
-          <h1 id="rokto-title">{site.headline}</h1>
+          <h1 id="rokto-title"><span className="rokto-kicker">রক্তদাতা কার্ড · তারিখের হিসাব</span> {site.headline}</h1>
           <p className="rokto-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="আবার কবে রক্ত দিতে পারবে"><RoktoBuilder /></section>

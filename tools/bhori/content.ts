@@ -1,8 +1,9 @@
 import type { SiteContent } from "../../shared/site-types";
+import { CHECKED_ON } from "./lib/bhori";
 
 // Unit constants and their sources are in lib/bhori.ts.
 export const site: SiteContent = {
-  slug: "bhori", socialImage: "/social/bhori.png",
+  slug: "bhori", socialImage: "/social/bhori.png", verified: CHECKED_ON,
   name: "ভরির হিসাব",
   headline: "ভরি, আনা, রতি — গ্রামে কত?",
   title: "ভরি আনা রতি হিসাব — সোনার ওজন গ্রামে",

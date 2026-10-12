@@ -10,8 +10,7 @@ export default function VoKattaPage() {
       <JsonLd site={site} />
       <div className="vk-page">
         <section className="vk-hero container" aria-labelledby="vk-title">
-          <p className="vk-hero-kicker">পুরান ঢাকার সাকরাইন, শীতের সন্ধ্যা, ছাদে ছাদে প্যাঁচ</p>
-          <h1 id="vk-title">{site.headline}</h1>
+          <h1 id="vk-title"><span className="vk-hero-kicker">ঘুড়ি কাটাকাটির খেলা · পুরান ঢাকার সাকরাইন</span> {site.headline}</h1>
           <p className="vk-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="ভো-কাট্টা খেলো"><VoKattaGame /></section>

@@ -112,3 +112,4 @@
 }
 @media(hover:hover){.banan-plate:hover{background:#00000040}}
 @media(prefers-reduced-motion:reduce){.banan-board,.banan-repaint{animation:none}.banan-plate{transition:none}}
+.banan-hero h1 .banan-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 4px;font-size:14px;font-weight:600;color:var(--accent-deep)}

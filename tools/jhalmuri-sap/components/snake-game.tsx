@@ -440,9 +440,10 @@ export function SnakeGame() {
             </div>
           </div>
         )}
+        <p className="screen-reader-only" aria-live="polite">{over && result ? `খেলা শেষ। ${bn(result.score)} পয়েন্ট। ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
         {over && (
           <div className="js-overlay">
-            <div className="js-note js-slip" role="status">
+            <div className="js-note js-slip">
               <h2>{result.won ? "পুরো ঠোঙা সাবাড়!" : "ঝাল লেগে গেল!"}</h2>
               <p className="js-final"><b>{bn(result.score)}</b> পয়েন্ট</p>
               <p className="js-record">{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null && best > result.score ? `এই ফোনে সেরা ${bn(best)}` : humanLine(result.score)}</p>

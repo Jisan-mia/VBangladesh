@@ -9,6 +9,8 @@
 //   so 1 m² = 10.7639 sq ft; the ministry's rounded "1 Acore = 4047 Square Meter" and "1 Bigha = 1338 Square Meter" agree.
 // গণ্ডা and কানি are left out on purpose: the same ministry page gives each two sizes (1 Kani = 17,280 and 17,424 sq ft).
 export const checked = "১১ অক্টোবর ২০২৬";
+// ISO twin of the date above for schema dateModified and sitemap lastmod; bump both together.
+export const checkedOn = "2026-10-11";
 export const sources = [
   { label: "ভূমি মন্ত্রণালয়: ভূমি পরিমাপের আদর্শ একক", url: "https://minland.gov.bd/site/page/4e44d7ef-2c36-4483-aa4e-77b294de729c" },
   { label: "শিবনগর ইউনিয়ন পরিষদ, দিনাজপুর: ভূমির পরিমাপ", url: "https://shibnagorup.dinajpur.gov.bd/pages/static-pages/69776150c4774958d7c216e4" },

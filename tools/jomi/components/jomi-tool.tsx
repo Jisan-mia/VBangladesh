@@ -13,6 +13,7 @@ export function JomiTool() {
   const [plot, setPlot] = useState<Plot>(sample);
   const [text, setText] = useState(() => inputText(sample.value));
   const [shared, setShared] = useState(false);
+  const [sides, setSides] = useState({ length: "", width: "" });
   const [format, setFormat] = useState<CardFormat>("feed");
   const [site, setSite] = useState("");
   const [fontsReady, setFontsReady] = useState(false);
@@ -77,6 +78,15 @@ export function JomiTool() {
     if (value !== null) setPlot(current => ({ ...current, value }));
   }
 
+  // Length × width in feet only fills the box above; the plot itself stays one value and one unit.
+  function measure(next: typeof sides) {
+    setSides(next);
+    const length = parseAmount(next.length), width = parseAmount(next.width);
+    if (length === null || width === null) return;
+    type(inputText(Math.round(length * width * 100) / 100));
+    pickUnit("sqft");
+  }
+
   function pickUnit(unit: UnitId) { setPlot(current => ({ ...current, unit })); setShared(false); }
   function pickLabel(label: LabelId) { setPlot(current => ({ ...current, label: current.label === label ? "" : label })); }
   function yourTurn() {
@@ -109,6 +119,16 @@ export function JomiTool() {
             </div>
             {!valid && <p id="jomi-help" className="jomi-help" role="alert">{help}</p>}
           </div>
+
+          <details className="jomi-sides">
+            <summary>দৈর্ঘ্য আর প্রস্থ ফুটে জানো?</summary>
+            <div className="jomi-sides-row">
+              <label>দৈর্ঘ্য<input value={sides.length} onChange={event => measure({ ...sides, length: event.target.value })} inputMode="decimal" autoComplete="off" maxLength={10} placeholder="৬০" /><small>ফুট</small></label>
+              <span aria-hidden="true">×</span>
+              <label>প্রস্থ<input value={sides.width} onChange={event => measure({ ...sides, width: event.target.value })} inputMode="decimal" autoComplete="off" maxLength={10} placeholder="৩৬" /><small>ফুট</small></label>
+            </div>
+            <p>চারকোনা জমির জন্য। দুটো লিখলেই ওপরে বর্গফুট বসে যাবে, নিচে বাকি সব মাপ।</p>
+          </details>
 
           <ul className="jomi-list" data-stale={!valid} aria-label={`${sizeText(plot)} সমান`}>
             {list.map(item => <li key={item.id}><strong data-long={item.text.length > 10 ? 2 : item.text.length > 7 ? 1 : undefined}>{item.text}</strong><span>{item.label}</span></li>)}

@@ -119,3 +119,4 @@
 @media(prefers-reduced-motion:reduce){.sk-stroke,.sk-hint{animation:none}.sk-miss{animation:sk-fade .6s linear}}
 /* a friend's banner takes the kicker's place, so the grid and its buttons still fit one phone screen */
 .sk-page:has(.sk-friend) .sk-hero-kicker{display:none}
+.sk-hero h1 .sk-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;line-height:1.5;color:var(--accent)}

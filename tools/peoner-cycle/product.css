@@ -97,3 +97,4 @@
   .tool-peoner-cycle .pc-toggle[aria-pressed=true] i::after{transform:translateX(8px)}
 }
 @media(prefers-reduced-motion:reduce){.tool-peoner-cycle .pc-toggle i::after{transition:none}.tool-peoner-cycle .pc-lane:active{transform:none}}
+.tool-peoner-cycle .pc-hero h1 .pc-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;color:var(--rust)}

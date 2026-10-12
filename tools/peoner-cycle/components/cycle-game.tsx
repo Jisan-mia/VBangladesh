@@ -235,8 +235,9 @@ export function CycleGame() {
             <button type="button" className="kit-primary pc-go" onPointerDown={keepTap} onClick={resume}>চালিয়ে যাও</button>
           </div>
         )}
+        <p className="screen-reader-only" aria-live="polite">{phase === "over" && result ? `খেলা শেষ। ${bn(result.score)} পয়েন্ট। ${detailLine(result)} ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
         {phase === "over" && result && (
-          <div className="pc-overlay pc-bump" role="status">
+          <div className="pc-overlay pc-bump">
             <p className="pc-kicker">{bumpLine(result.kind)}</p>
             <p className="pc-headline">চিঠি উড়ে গেল!</p>
           </div>

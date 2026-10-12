@@ -9,8 +9,7 @@ export default function ShobdoKhojaPage() {
       <JsonLd site={site} />
       <div className="sk-page">
         <section className="sk-hero container" aria-labelledby="sk-title">
-          <p className="sk-hero-kicker">ফুল, মাছ, পিঠা, নদী… যেটা খুশি</p>
-          <h1 id="sk-title">{site.headline}</h1>
+          <h1 id="sk-title"><span className="sk-hero-kicker">বাংলা ওয়ার্ড সার্চ · ফুল, মাছ, পিঠা, নদী… যেটা খুশি</span> {site.headline}</h1>
           <p className="sk-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="শব্দ খোঁজা খেলো"><WordSearch /></section>

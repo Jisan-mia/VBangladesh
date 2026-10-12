@@ -9,8 +9,7 @@ export default function BhasharChhobiPage() {
       <JsonLd site={site} />
       <div className="bc-page">
         <section className="bc-hero container" aria-labelledby="bc-title">
-          <p className="bc-hero-kicker">আঞ্চলিক ভাষা · ৬৪ জেলা</p>
-          <h1 id="bc-title">তোমাদের এলাকায় <span>এটাকে কী বলে?</span></h1>
+          <h1 id="bc-title"><span className="bc-hero-kicker">আঞ্চলিক ভাষা · ৬৪ জেলা</span> তোমাদের এলাকায় <span>এটাকে কী বলে?</span></h1>
           <p className="bc-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="নিজের এলাকার শব্দে কার্ড বানাও"><CardBuilder /></section>

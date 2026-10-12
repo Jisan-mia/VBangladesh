@@ -9,8 +9,7 @@ export default function HandiBhangaPage() {
       <JsonLd site={site} />
       <div className="hb-page">
         <section className="hb-hero container" aria-labelledby="hb-title">
-          <p className="hb-hero-kicker">বল দিয়ে ইট ভাঙার সেই গেম, এবার মেলার হাঁড়িতে</p>
-          <h1 id="hb-title">{site.headline}</h1>
+          <h1 id="hb-title"><span className="hb-hero-kicker">বল দিয়ে ইট ভাঙার সেই গেম, এবার মেলার হাঁড়িতে</span> {site.headline}</h1>
           <p className="hb-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="হাঁড়িভাঙা খেলো"><HandiGame /></section>

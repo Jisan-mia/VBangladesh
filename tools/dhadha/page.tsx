@@ -10,8 +10,7 @@ export default function DhadhaPage() {
       <JsonLd site={site} />
       <div className="dh-page">
         <section className="container dh-hero" aria-labelledby="dh-title">
-          <p className="dh-hero-kicker">রোজ একটা পুরোনো শোলক · রাত ১২টায় নতুন</p>
-          <h1 id="dh-title">নানির ধাঁধা, <span>আজকেরটা পারবে?</span></h1>
+          <h1 id="dh-title"><span className="dh-hero-kicker">বাংলা ধাঁধা · রোজ একটা পুরোনো শোলক</span> নানির ধাঁধা, <span>আজকেরটা পারবে?</span></h1>
         </section>
         <section className="container" id="tool" aria-label="আজকের ধাঁধা খেলো"><KupiNight /></section>
         <section className="container section dh-guide" id="guide" aria-labelledby="guide-title">

@@ -7,7 +7,7 @@ import { pageMetadata } from '../../../shared/seo';
 export async function generateMetadata({ params }: { params: Promise<{ tool: string }> }) {
   const site = getToolContent((await params).tool);
   if (!site) notFound();
-  return pageMetadata(site, { title: `গোপনীয়তা | ${site.name}`, description: `${site.name} ব্যবহার করলে তোমার লেখা, ছবি আর বাছাই কোথায় থাকে, কে দেখতে পায়, সহজ ভাষায় জেনে নাও।`, path: '/privacy' });
+  return pageMetadata(site, { title: `গোপনীয়তা | ${site.name}`, description: `${site.name} ব্যবহার করলে তোমার লেখা, ছবি আর বাছাই কোথায় থাকে, কে দেখতে পায়, সহজ ভাষায় জেনে নাও।`, path: '/privacy', noindex: true });
 }
 
 export default async function PrivacyPage({ params }: { params: Promise<{ tool: string }> }) {

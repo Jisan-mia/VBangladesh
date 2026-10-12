@@ -1,7 +1,8 @@
 import type { SiteContent } from "../../shared/site-types";
+import { VERIFIED_ON } from "./lib/rokto";
 
 export const site: SiteContent = {
-  slug: "rokto", socialImage: "/social/rokto.png",
+  slug: "rokto", socialImage: "/social/rokto.png", verified: VERIFIED_ON,
   name: "রক্তদাতা কার্ড",
   headline: "আবার কবে রক্ত দিতে পারবে?",
   title: "রক্তদাতা কার্ড — আবার কবে রক্ত দিতে পারবে",

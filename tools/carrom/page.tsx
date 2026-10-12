@@ -9,8 +9,7 @@ export default function CarromPage() {
       <JsonLd site={site} />
       <div className="cr-page">
         <section className="cr-hero container" aria-labelledby="cr-title">
-          <p className="cr-kicker">ক্লাবঘরের সেই বোর্ড, এখন ফোনে · একা বা দুজনে</p>
-          <h1 id="cr-title">{site.headline}</h1>
+          <h1 id="cr-title"><span className="cr-kicker">ক্যারম বোর্ড খেলা · একা বা দুজনে</span> {site.headline}</h1>
           <p className="cr-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="ক্যারম খেলো"><CarromGame /></section>

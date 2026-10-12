@@ -38,7 +38,7 @@ export function HomePage() {
           <Link className="home-primary" href="/amar-chhotobela">আমার ছোটবেলা মেলাই<svg viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true"><path d="M3 10h13M10 4l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg></Link>
           <p className="home-promise">ফ্রি · অ্যাকাউন্ট লাগে না · ছবি বানিয়ে শেয়ার করো</p>
           <form className="home-search" action="/tools" role="search">
-            <label htmlFor="home-q">আরও {new Intl.NumberFormat("bn-BD").format(catalog.length)}টা ছোট টুল আছে: খেলা, কুইজ, হিসাব, কার্ড। কী খুঁজছ?</label>
+            <label htmlFor="home-q">আরও {new Intl.NumberFormat("bn-BD").format(catalog.length - 1)}টা ছোট টুল আছে: খেলা, কুইজ, হিসাব, কার্ড। কী খুঁজছ?</label>
             <div><input id="home-q" name="q" type="search" placeholder="ঈদ, cricket, jomi…" /><button type="submit" className="kit-secondary">খোঁজো</button></div>
           </form>
         </div>

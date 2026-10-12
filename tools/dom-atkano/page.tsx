@@ -10,8 +10,7 @@ export default function DomAtkanoPage() {
       <JsonLd site={site} />
       <div className="dom-page">
         <section className="container dom-hero" aria-labelledby="dom-title">
-          <p className="dom-kicker">ক্রিকেট কুইজ · ১০টা প্রশ্ন · জয় আর কষ্টের দিন</p>
-          <h1 id="dom-title">দম আটকানো সেই ম্যাচগুলো <span>কতটা মনে আছে?</span></h1>
+          <h1 id="dom-title"><span className="dom-kicker">বাংলাদেশ ক্রিকেট কুইজ · ১০টা প্রশ্ন · জয় আর কষ্টের দিন</span> দম আটকানো সেই ম্যাচগুলো <span>কতটা মনে আছে?</span></h1>
         </section>
         <section className="container" id="tool" aria-label="ক্রিকেট কুইজ খেলো"><Scoreboard /></section>
         <section className="container section dom-guide" id="guide" aria-labelledby="guide-title">

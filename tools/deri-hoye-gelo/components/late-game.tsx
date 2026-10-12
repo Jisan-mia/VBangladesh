@@ -272,8 +272,9 @@ export function LateGame() {
             <button type="button" className="kit-primary dh-go" onPointerDown={keepTap} onClick={resume}>চালিয়ে যাও</button>
           </div>
         )}
+        <p className="screen-reader-only" aria-live="polite">{phase === "over" && result ? `খেলা শেষ। ${bn(result.meters)} মিটার গেলে। ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
         {phase === "over" && result && (
-          <div className="dh-overlay dh-bump" role="status">
+          <div className="dh-overlay dh-bump">
             <p className="dh-kicker">{bumpLine(result.kind)}</p>
             <p className="dh-headline">{headline(result.meters)}</p>
           </div>

@@ -60,3 +60,4 @@
 }
 @media(hover:hover){.bc-objects button:hover{border-color:var(--bc-deep)}}
 @media(prefers-reduced-motion:reduce){.bc-objects button:active{transform:none}}
+.bc-hero h1 .bc-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 6px;font-size:14px;font-weight:700;color:var(--bc-stamp)}

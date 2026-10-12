@@ -83,3 +83,4 @@
   .tool-danguli .dg-friend h2{font-size:20px}
   .tool-danguli .dg-result-body{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;gap:32px}
 }
+.tool-danguli .dg-hero h1 .dg-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;color:var(--accent)}

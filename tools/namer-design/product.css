@@ -79,3 +79,4 @@
 }
 @media(hover:hover){.namer-styles button:hover{border-color:var(--rule)}}
 @media(prefers-reduced-motion:reduce){.namer-styles button,.namer-gift-toggle b,.namer-gift-toggle b:after{transition:none;transform:none}}
+.namer-hero h1 .namer-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 2px;font-size:14px;font-weight:600;color:var(--accent)}
