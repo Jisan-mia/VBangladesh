@@ -9,7 +9,7 @@ export default function DudhUthlanoPage() {
       <JsonLd site={site} />
       <div className="du-page">
         <section className="du-hero container" aria-labelledby="du-title">
-          <p className="du-kicker">৫টা পাতিল · আধা মিনিটের খেলা</p>
+          <p className="du-kicker">৮টা রান্নাঘর · একেকটা আধা মিনিটের খেলা</p>
           <h1 id="du-title">দুধটা দেখিস! <span>উথলানোর আগে নামাও</span></h1>
           <p className="du-lead">{site.lead}</p>
         </section>

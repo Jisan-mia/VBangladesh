@@ -4,16 +4,35 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { cleanName, fitCanvas, newSeed, useBest, useGameLoop, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { cleanName, confetti, fitCanvas, hiss, newSeed, sfx, tone, totalStars, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
 import { drawFood, drawHead, drawTin, palette } from "../lib/art";
 import { cardBlob, drawCard } from "../lib/draw-card";
+import { chilliesIn, levelInterval, levelOf, levelStars, LEVEL_COUNT } from "../lib/levels";
 import { banner, bn, caption, parseShared, sharedHash, type Shared } from "../lib/link";
-import { compareLine, createGame, humanLine, interval, step, turn, turnSide, BONUS_LIFE, CELLS, COLS, FOODS, ROWS, type Dir, type Game } from "../lib/snake";
+import { compareLine, createGame, humanLine, interval, levelLine, nearMiss, speedStep, step, turn, turnSide, BONUS_LIFE, CELLS, COLS, FOODS, ROWS, type Dir, type Game } from "../lib/snake";
 
 const TOOL = "jhalmuri-sap";
 type Phase = "ready" | "playing" | "paused" | "over";
-type Result = { seed: number; score: number; record: boolean; won: boolean };
+/** level 0: the classic endless game. */
+type Result = { seed: number; score: number; record: boolean; won: boolean; level: number; golden: number; eaten: number; stars: number; before: number; best: number | null };
+
+// The game's sounds, all made in code by the shared kit: a মুড়ি crunch that climbs with the combo, a tin clang, a speed-up chime.
+const crunch = (combo: number) => { hiss(0.05, 0.16, 2600, "bandpass"); hiss(0.05, 0.11, 1700, "bandpass", 0.05); if (combo > 1) sfx.combo(combo - 2); };
+const clang = () => { tone(330, 0.32, 0.06, "square", 0, 262); hiss(0.18, 0.08, 3200, "highpass"); sfx.wrong(); };
+const faster = () => { tone(784, 0.1, 0.08, "triangle"); tone(1175, 0.16, 0.07, "triangle", 0.08); };
+
+/** Stars that pop in one by one, each with its own note. */
+function StarReveal({ count }: { count: number }) {
+  useEffect(() => {
+    const timers = [0, 1, 2].filter(index => index < count).map(index => window.setTimeout(() => sfx.star(index), 300 + index * 240));
+    return () => timers.forEach(window.clearTimeout);
+  }, [count]);
+  return <span className="gx-stars js-stars" role="img" aria-label={`৩টার মধ্যে ${bn(count)}টা তারা`}>
+    {[0, 1, 2].map(index => <span key={index} className={index < count ? "on gx-pop" : ""} style={{ animationDelay: `${300 + index * 240}ms` }}>★</span>)}
+  </span>;
+}
 
 const SWIPE = 22;
 const TAP_SLOP = 14;
@@ -50,10 +69,17 @@ function makeLive() {
 export function SnakeGame() {
   const [phase, setPhaseState] = useState<Phase>("ready");
   const [score, setScore] = useState(0);
+  const [eaten, setEaten] = useState(0);
+  const [golden, setGolden] = useState(0);
   const [result, setResult] = useState<Result | null>(null);
   const [friend, setFriend] = useState<Shared | null>(null);
   const [slow, setSlow] = useSlowMode();
   const [best, submitBest] = useBest(TOOL);
+  const levels = useLevels(TOOL, LEVEL_COUNT);
+  // 0 is the classic endless game; levels start at 1.
+  const [level, setLevel] = useState(1);
+  const levelRef = useRef(1);
+  const chosen = useRef(false);
   const [name, setName] = useState("");
   const [format, setFormat] = useState<CardFormat>("feed");
   const [site, setSite] = useState("");
@@ -73,20 +99,24 @@ export function SnakeGame() {
   const seed = useRef(1);
   const boardInView = useInView(board);
 
-  const card = result ? { score: result.score, name: cleanName(name) } : null;
-  const state = result ? sharedHash({ seed: result.seed, score: result.score, name }) : "";
+  const card = result ? { score: result.score, name: cleanName(name), level: result.level, golden: result.golden } : null;
+  const state = result ? sharedHash({ seed: result.seed, score: result.score, name, level: result.level, golden: result.golden }) : "";
 
   function go(next: Phase) { phaseRef.current = next; setPhaseState(next); }
 
-  function reset(nextSeed: number) {
-    game.current = createGame(nextSeed);
+  function reset(nextSeed: number, nextLevel = levelRef.current) {
+    const repaint = nextLevel !== levelRef.current;
+    levelRef.current = nextLevel;
+    setLevel(nextLevel);
+    game.current = createGame(nextSeed, nextLevel);
     seed.current = nextSeed;
+    if (repaint && live.context) paintBoard();
     live.acc = 0;
     live.prevLength = 0;
     live.bulges.fill(-1);
     live.life.fill(0);
     live.floatAt = -1;
-    setScore(0);
+    setScore(0); setEaten(0); setGolden(0);
     draw();
   }
 
@@ -94,11 +124,22 @@ export function SnakeGame() {
   function pause() { if (phaseRef.current === "playing") go("paused"); }
   // A breath after resuming, to see where the snake is heading before it moves again.
   function resume() { if (phaseRef.current === "paused") { live.hold = performance.now() + 600; go("playing"); } }
-  function restart() {
+  function restart(nextLevel = levelRef.current) {
     if (phaseRef.current !== "over" || !restartReady) return;
-    reset(friend ? friend.seed : newSeed());
+    reset(friend && friendFits(nextLevel) ? friend.seed : newSeed(), nextLevel);
     live.hold = performance.now() + 350;
     go("playing");
+    sfx.tap();
+  }
+  const friendFits = (forLevel: number) => Boolean(friend) && (friend!.level ?? 0) === forLevel;
+
+  /** Picks a level or the classic game from the menu: back to the ready screen, board in view. */
+  function choose(nextLevel: number) {
+    chosen.current = true;
+    reset(friendFits(nextLevel) ? friend!.seed : newSeed(), nextLevel);
+    setResult(null);
+    go("ready");
+    board.current?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
   }
 
   /** A swipe or an arrow key: an absolute direction. */
@@ -107,7 +148,7 @@ export function SnakeGame() {
     if (now === "ready") start();
     else if (now === "paused") resume();
     else if (now !== "playing") return;
-    turn(game.current, dir);
+    if (turn(game.current, dir)) sfx.tap();
   }
 
   /** A tap on one half of the board, or a turn button. A tap on the board in "ready" only starts, so the first touch never steers by surprise. */
@@ -116,14 +157,19 @@ export function SnakeGame() {
     if (now === "ready") { start(); if (!steerAtStart) return; }
     else if (now === "paused") { resume(); return; }
     else if (now !== "playing") return;
-    turnSide(game.current, towards);
+    if (turnSide(game.current, towards)) sfx.tap();
   }
 
-  function feedback(golden: boolean) {
+  function feedback(golden: boolean, sped: boolean) {
     const g = game.current, { fence, cell } = live;
     setScore(g.score);
+    setEaten(g.eaten); setGolden(g.golden);
+    crunch(g.combo);
+    if (golden) sfx.coin();
+    if (sped) faster();
     const x = centerX(g.body[0], fence, cell), y = centerY(g.body[0], fence, cell);
-    live.floatAt = performance.now(); live.floatText = golden ? "+৩০" : "+১০"; live.floatX = x; live.floatY = y - cell * 0.6; live.floatGold = golden;
+    live.floatAt = performance.now(); live.floatX = x; live.floatY = y - cell * 0.6; live.floatGold = golden || sped;
+    live.floatText = sped ? `গতি ${bn(speedStep(g.eaten))}` : `${golden ? "+৩০" : "+১০"}${g.combo > 2 ? ` ×${bn(g.combo)}` : ""}`;
     const slot = live.bulges.indexOf(-1);
     live.bulges[slot < 0 ? 0 : slot] = 0;
     if (slowRef.current) return;
@@ -133,17 +179,24 @@ export function SnakeGame() {
       live.vx[i] = (Math.random() - 0.5) * cell * 9; live.vy[i] = -(0.4 + Math.random()) * cell * 6;
       live.life[i] = 0.45; made++;
     }
-    if (typeof navigator.vibrate === "function") navigator.vibrate(8);
   }
 
   function finish(won: boolean) {
-    const g = game.current;
+    const g = game.current, at = levelRef.current;
     live.crashAt = performance.now();
     if (!won && !slowRef.current) live.shakeUntil = live.crashAt + 260;
     go("over");
     setScore(g.score);
-    setResult({ seed: seed.current, score: g.score, record: best !== null && g.score > best, won });
-    submitBest(g.score);
+    const stars = at && won ? levelStars(at, g.golden) : 0, before = at ? levels.stars[at] ?? 0 : 0;
+    const record = at ? false : best !== null && g.score > best;
+    setResult({ seed: seed.current, score: g.score, record, won, level: at, golden: g.golden, eaten: g.eaten, stars, before, best });
+    if (at) { if (stars) levels.record(at, stars); }
+    else submitBest(g.score);
+    if (!won) clang();
+    else if (!at) sfx.win();
+    // Three stars, a better result on a level or a new best: confetti (the kit skips it in ধীরে খেলো). A plain clear gets the stars' own notes.
+    if (record || stars === 3 || (stars && at === LEVEL_COUNT)) window.setTimeout(() => { if (record) sfx.win(); else sfx.levelUp(); confetti(); }, record ? 150 : 1100);
+    else if (stars) window.setTimeout(sfx.good, 1100);
     // Fingers are still tapping the turn buttons when the snake crashes; don't let those taps skip the result.
     setRestartReady(false);
     window.setTimeout(() => setRestartReady(true), 700);
@@ -155,15 +208,17 @@ export function SnakeGame() {
       live.px[i] += live.vx[i] * dt; live.py[i] += live.vy[i] * dt; live.vy[i] += live.cell * 30 * dt; live.life[i] -= dt;
     }
     if (phaseRef.current !== "playing" || performance.now() < live.hold) return;
-    const g = game.current, every = interval(g.eaten, slowRef.current);
+    const g = game.current, every = g.goal ? levelInterval(levelRef.current, slowRef.current) : interval(g.eaten, slowRef.current);
     live.acc += dt * 1000;
     if (live.acc < every) return;
     live.acc = Math.min(live.acc - every, every);
     live.prev.set(g.body);
     live.prevLength = g.body.length;
+    const speed = speedStep(g.eaten);
     const event = step(g);
     for (let i = 0; i < live.bulges.length; i++) if (live.bulges[i] >= 0 && ++live.bulges[i] >= g.body.length) live.bulges[i] = -1;
-    if (event === "eat" || event === "bonus") feedback(event === "bonus");
+    if (event === "eat" || event === "bonus") feedback(event === "bonus", !g.goal && speedStep(g.eaten) > speed);
+    else if (event === "win" && g.goal) { feedback(false, false); finish(true); }
     else if (event === "crash" || event === "win") finish(event === "win");
   }
 
@@ -186,7 +241,7 @@ export function SnakeGame() {
 
     // The snake slides smoothly between cells: each segment eases from where it was to where it is.
     const length = g.body.length, points = live.points;
-    const t = current === "playing" ? Math.max(0, Math.min(1, live.acc / interval(g.eaten, calm))) : 1;
+    const t = current === "playing" ? Math.max(0, Math.min(1, live.acc / (g.goal ? levelInterval(levelRef.current, calm) : interval(g.eaten, calm)))) : 1;
     for (let i = 0; i < length; i++) {
       const to = g.body[i], from = i < live.prevLength ? live.prev[i] : to;
       let x = centerX(from, fence, cell) + (centerX(to, fence, cell) - centerX(from, fence, cell)) * t;
@@ -263,6 +318,11 @@ export function SnakeGame() {
         b.fillRect(left, y, run, 1.5);
       }
     }
+    // This level's tin walls, painted into the background once.
+    for (const [x, y, w, h] of levelRef.current ? levelOf(levelRef.current).walls : []) {
+      drawTin(b, fence + x * cell, fence + y * cell, w * cell, h * cell, w >= h ? "x" : "y");
+      b.strokeStyle = "#00000040"; b.lineWidth = 1.5; b.strokeRect(fence + x * cell + 0.75, fence + y * cell + 0.75, w * cell - 1.5, h * cell - 1.5);
+    }
     drawTin(b, 0, 0, width, fence, "x");
     drawTin(b, 0, height - fence, width, fence, "x");
     drawTin(b, 0, fence, fence, height - fence * 2, "y");
@@ -314,7 +374,8 @@ export function SnakeGame() {
       const shared = parseShared(window.location.hash);
       if (!shared) return;
       setFriend(shared);
-      reset(shared.seed);
+      chosen.current = true;
+      reset(shared.seed, shared.level ?? 0);
       go("ready");
     };
     setSite(window.location.host);
@@ -328,6 +389,12 @@ export function SnakeGame() {
 
   // Scrolling the board away mid-game pauses it, so nobody crashes off-screen.
   useEffect(() => { if (!boardInView) pause(); }, [boardInView]);
+
+  // Saved stars load after the first paint: open at the furthest level reached, unless a level was already picked or a friend's link chose one.
+  useEffect(() => {
+    if (chosen.current || phaseRef.current !== "ready" || levelRef.current === levels.unlocked || !levelRef.current) return;
+    reset(seed.current, levels.unlocked);
+  }, [levels.unlocked]);
 
   const keyHandler = useRef<(event: KeyboardEvent) => void>(() => {});
   keyHandler.current = event => {
@@ -388,16 +455,15 @@ export function SnakeGame() {
   function seeCard() {
     resultBox.current?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
   }
-  function playFromCard() {
-    reset(friend ? friend.seed : newSeed());
-    go("ready");
-    board.current?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
-  }
-
   const rival = friend ? possessive(friend.name || "বন্ধু") : "";
   // Notes sit in the half away from the snake's head, so nobody resumes blind.
   const noteAt = Math.floor(game.current.body[0] / COLS) >= ROWS / 2 ? "top" : "bottom";
   const over = phase === "over" && result;
+  const goal = level ? levelOf(level).goal : 0, offered = level ? chilliesIn(level) : 0;
+  const cleared = Boolean(result?.level && result.won);
+  const nextLevel = result && result.level && result.level < LEVEL_COUNT ? result.level + 1 : 0;
+  const miss = result ? nearMiss({ ...result, best: result.best }) : "";
+  const resultLine = result ? (result.level ? levelLine(result.level, result.stars, result.eaten) : humanLine(result.score)) : "";
 
   return (
     <div className="js">
@@ -411,12 +477,23 @@ export function SnakeGame() {
         </section>
       )}
 
+      <div className="js-top">
+        <p className="js-where">{level ? <>লেভেল {bn(level)} <span>· ★ {bn(totalStars(levels.stars))}/{bn(LEVEL_COUNT * 3)}</span></> : <>ক্লাসিক <span>· যত খুশি লম্বা হও</span></>}</p>
+        <div className="js-modes" role="group" aria-label="খেলার ধরন">
+          <button type="button" aria-pressed={level > 0} onClick={() => { if (!level) choose(levels.unlocked); }}>লেভেল</button>
+          <button type="button" aria-pressed={level === 0} onClick={() => { if (level) choose(0); }}>ক্লাসিক</button>
+        </div>
+      </div>
+
       <div className="js-hud">
         <p className="js-score"><span>স্কোর</span><b>{bn(score)}</b></p>
-        {best !== null && <p className="js-best"><span>সেরা</span><b>{bn(best)}</b></p>}
-        <button type="button" className="js-slow" aria-pressed={slow} onClick={() => setSlow(!slow)}>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="12" r="5.5" /><path d="M10 12a2 2 0 1 0 2-2M2.5 18h15a3 3 0 0 0 3-3v-4m0 0-1.2-3m1.2 3 1.8-2.4" /></svg>ধীরে খেলো
-        </button>
+        {level ? <>
+          <p className="js-best"><span>খাওয়া</span><b>{bn(eaten)}/{bn(goal)}</b></p>
+          <p className="js-best js-gold"><span>সোনালি</span><b>{bn(golden)}/{bn(offered)}</b></p>
+        </> : <>
+          {best !== null && <p className="js-best"><span>সেরা</span><b>{bn(best)}</b></p>}
+          <p className="js-best"><span>গতি</span><b>{bn(speedStep(eaten))}</b></p>
+        </>}
         <button type="button" className="js-pause" onClick={phase === "paused" ? resume : pause} disabled={phase !== "playing" && phase !== "paused"} aria-label={phase === "paused" ? "চালিয়ে যাও" : "একটু থামাও"}>
           <svg viewBox="0 0 24 24" aria-hidden="true">{phase === "paused" ? <path d="M8 5v14l11-7z" className="js-fill" /> : <path d="M9 5v14M15 5v14" />}</svg>
         </button>
@@ -427,8 +504,9 @@ export function SnakeGame() {
         {phase === "ready" && (
           <div className="js-overlay" data-at={noteAt}>
             <div className="js-note">
+              {level > 0 && <p className="js-goal">{bn(goal)}টা খেলেই পার<span>{bn(offered)}টা সোনালি মরিচ পেলে ৩ তারা</span></p>}
               <p className="js-howto">সোয়াইপ করো, বা <b>বাঁ-ডান</b> পাশে চাপো</p>
-              <button type="button" className="kit-primary" onClick={start}>শুরু করো</button>
+              <button type="button" className="kit-primary" onClick={() => { sfx.tap(); start(); }}>শুরু করো</button>
             </div>
           </div>
         )}
@@ -440,14 +518,16 @@ export function SnakeGame() {
             </div>
           </div>
         )}
-        <p className="screen-reader-only" aria-live="polite">{over && result ? `খেলা শেষ। ${bn(result.score)} পয়েন্ট। ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
+        <p className="screen-reader-only" aria-live="polite">{over && result ? `খেলা শেষ। ${bn(result.score)} পয়েন্ট। ${cleared ? `লেভেল ${bn(result.level)} পার, ${bn(result.stars)} তারা।` : ""}${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""} ${miss}` : ""}</p>
         {over && (
           <div className="js-overlay">
             <div className="js-note js-slip">
-              <h2>{result.won ? "পুরো ঠোঙা সাবাড়!" : "ঝাল লেগে গেল!"}</h2>
+              <h2>{cleared ? `লেভেল ${bn(result.level)} পার!` : result.won ? "পুরো ঠোঙা সাবাড়!" : "ঝাল লেগে গেল!"}</h2>
+              {cleared && <StarReveal count={result.stars} />}
               <p className="js-final"><b>{bn(result.score)}</b> পয়েন্ট</p>
-              <p className="js-record">{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null && best > result.score ? `এই ফোনে সেরা ${bn(best)}` : humanLine(result.score)}</p>
-              {friend && <p className="js-versus">{compareLine(result.score, friend.score, friend.name)}</p>}
+              <p className="js-record">{result.record ? "এই ফোনে নতুন রেকর্ড!" : result.level ? resultLine : best !== null && best > result.score ? `এই ফোনে সেরা ${bn(best)}` : humanLine(result.score)}</p>
+              {miss && <p className="js-miss">{miss}</p>}
+              {friend && (friend.level ?? 0) === result.level && <p className="js-versus">{compareLine(result.score, friend.score, friend.name)}</p>}
               <button type="button" className="kit-link js-see" onClick={seeCard}>কার্ড বানাও, বন্ধুকে পাঠাও ↓</button>
             </div>
           </div>
@@ -456,7 +536,10 @@ export function SnakeGame() {
 
       <div className="js-controls">
         {phase === "over" ? (
-          <button type="button" className="kit-primary js-again" onClick={restart} disabled={!restartReady}>আরেকবার</button>
+          cleared && nextLevel ? <>
+            <button type="button" className="kit-secondary js-again" onClick={() => restart()} disabled={!restartReady}>আবার খেলো</button>
+            <button type="button" className="kit-primary js-again" onClick={() => restart(nextLevel)} disabled={!restartReady}>পরের লেভেল</button>
+          </> : <button type="button" className="kit-primary js-again js-wide" onClick={() => restart()} disabled={!restartReady}>আরেকবার</button>
         ) : (
           <>
             <button type="button" className="js-turn" aria-label="সাপকে তার বাঁয়ে ঘোরাও" {...turnButton(-1)}>
@@ -469,16 +552,29 @@ export function SnakeGame() {
         )}
       </div>
 
+      <div className="js-bar">
+        <SoundToggle className="js-sound" />
+        <button type="button" className="js-slow" aria-pressed={slow} onClick={() => setSlow(!slow)}>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="12" r="5.5" /><path d="M10 12a2 2 0 1 0 2-2M2.5 18h15a3 3 0 0 0 3-3v-4m0 0-1.2-3m1.2 3 1.8-2.4" /></svg>ধীরে খেলো
+        </button>
+      </div>
+
+      <details className="js-levels">
+        <summary>সব লেভেল <span>★ {bn(totalStars(levels.stars))}/{bn(LEVEL_COUNT * 3)}</span></summary>
+        <LevelGrid count={LEVEL_COUNT} stars={levels.stars} unlocked={Math.max(levels.unlocked, friend?.level ?? 1)} current={level || undefined} onPick={choose} />
+        <p>প্রতি লেভেলে নির্দিষ্ট কয়টা খেলেই পার। সবগুলো সোনালি মরিচ খেলে ৩ তারা, অর্ধেক খেলে ২। লেভেল ৩ থেকে মাঠে টিনের দেয়াল।</p>
+      </details>
+
       <section className="js-result" id="result" ref={resultBox} aria-labelledby="js-result-title">
         <div className="js-result-head">
           <h2 id="js-result-title">{result ? <><em>{bn(result.score)}</em> পয়েন্ট, ঠোঙার কার্ড তৈরি</> : "খেলা শেষে তোমার ঠোঙার কার্ড"}</h2>
-          <p>{result ? friend ? compareLine(result.score, friend.score, friend.name) : humanLine(result.score) : "একবার খেললেই এখানে স্কোরসহ একটা কার্ড আসবে। বন্ধুকে পাঠালে সে ঠিক একই ঠোঙা পাবে।"}</p>
+          <p>{result ? friend && (friend.level ?? 0) === result.level ? compareLine(result.score, friend.score, friend.name) : resultLine : "একবার খেললেই এখানে স্কোরসহ একটা কার্ড আসবে। বন্ধুকে পাঠালে সে ঠিক একই ঠোঙা পাবে।"}</p>
         </div>
-        {card && (
+        {card && result && (
           <div className="js-result-body">
             <figure className="kit-card" data-format={format}>
               <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="js-card-summary" />
-              <figcaption id="js-card-summary" className="js-sr">ঝালমুড়ি সাপের কার্ড: {card.name && `${card.name}, `}{bn(card.score)} পয়েন্ট। {humanLine(card.score)}</figcaption>
+              <figcaption id="js-card-summary" className="js-sr">ঝালমুড়ি সাপের কার্ড: {card.name && `${card.name}, `}{result.level ? `লেভেল ${bn(result.level)}, ` : ""}{bn(card.score)} পয়েন্ট। {resultLine}</figcaption>
               {previewError && <p className="kit-status" role="alert">কার্ডের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
             </figure>
             <div className="js-share">
@@ -488,7 +584,7 @@ export function SnakeGame() {
               </label>
               <FormatToggle value={format} onChange={setFormat} />
               <ShareBar tool={TOOL} fileName="jhalmuri-sap.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption(card)} state={state} hint="বন্ধু লিংক খুললে ঠিক একই ঠোঙা পাবে, একই খাবার একই ক্রমে।" />
-              <button type="button" className="kit-link js-again-link" onClick={playFromCard}>আরেকবার খেলো</button>
+              <button type="button" className="kit-link js-again-link" onClick={() => choose(cleared && nextLevel ? nextLevel : result.level)}>{cleared && nextLevel ? "পরের লেভেল খেলো" : "আরেকবার খেলো"}</button>
             </div>
           </div>
         )}

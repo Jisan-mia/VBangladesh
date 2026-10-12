@@ -1,5 +1,5 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, wrapText, BODY_FONT, type CardFormat } from "../../../shared/card-canvas";
-import { bn, humanLine, makePots, spillCount, type Shared } from "./dudh";
+import { bn, humanLine, kitchenOf, kitchenStars, makePots, potsPlain, spillCount, CLASSIC, type Shared } from "./dudh";
 import { drawFlame, drawMilk, drawPotBack, drawPotFront, drawSpill, drawSteam, SHAPES } from "./draw";
 
 const INK = "#2a211c", MUTED = "#6b5b4e", ACCENT = "#b6462b", DEEP = "#7d2c19", WALL = "#dcefe8", TILE = "#c4e0d6", CABINET = "#f7f0e3";
@@ -21,7 +21,15 @@ function pot(context: CanvasRenderingContext2D, vessel: keyof typeof SHAPES, x: 
   context.restore();
 }
 
-/** A tiled kitchen wall with the score, a big ডেকচি steaming on the gas, and the five pots of the round on the counter with their marks. */
+function star(context: CanvasRenderingContext2D, x: number, y: number, r: number, on: boolean) {
+  context.beginPath();
+  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, d = i % 2 ? r * 0.45 : r; context.lineTo(x + Math.cos(a) * d, y + Math.sin(a) * d); }
+  context.closePath();
+  context.fillStyle = on ? "#f2a900" : "#2a211c1f"; context.fill();
+  context.lineWidth = 4; context.strokeStyle = on ? "#8a5a00" : "#2a211c2e"; context.stroke();
+}
+
+/** A tiled kitchen wall with the score, a big ডেকচি steaming on the gas, and the round's pots on the counter with their marks. */
 export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: CardFormat, site: string) {
   const { width, height } = cardSizes[format];
   canvas.width = width;
@@ -48,24 +56,28 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
   fitText(context, [{ text: "দুধ উথলানোর আগে", color: DEEP, weight: 800, display: true }], 84, y(150), 62, 520);
   if (shared.name) fitText(context, [{ text: shared.name, color: INK, weight: 700, display: true }], 86, y(228), 54, 470);
   fitText(context, [{ text: `${bn(shared.total)}%`, color: ACCENT, weight: 800, display: true }], 78, y(480), 230, 440);
-  fitText(context, [{ text: "পাঁচ পাতিলের গড়, কিনারার কত কাছে", color: MUTED, weight: 600 }], 86, y(540), 32, 420);
+  const count = shared.scores.length, kitchen = shared.kitchen ?? CLASSIC, stars = kitchenStars(shared.total);
+  fitText(context, [{ text: `${potsPlain(count)} পাতিলের গড়, কিনারার কত কাছে`, color: MUTED, weight: 600 }], 86, y(540), 32, 420);
+  fitText(context, [{ text: `রান্নাঘর ${bn(kitchen)} · ${kitchenOf(kitchen).name}`, color: INK, weight: 700 }], 86, y(shared.name ? 290 : 228), 34, 470);
+  for (let i = 0; i < 3; i++) star(context, 880 + (i - 1) * 72, y(112), 30, i < stars);
   fitText(context, [{ text: spills ? `${bn(spills)}টা উথলে গেছে` : "একটাও উথলায়নি!", color: spills ? DEEP : INK, weight: 700 }], 86, y(600), 40, 420);
 
-  const pots = makePots(shared.seed);
-  pot(context, "dekchi", 800, y(330), story ? 2.1 : 2.2, spills === 5 ? 1 : shared.total / 100, spills === 5, true);
+  const pots = makePots(shared.seed, kitchen);
+  pot(context, "dekchi", 800, y(330), story ? 2.1 : 2.2, spills === count ? 1 : shared.total / 100, spills === count, true);
 
-  const small = story ? 0.86 : 0.78;
+  // Five pots fill the counter at 210 apart; more pots stand closer and a little smaller.
+  const gap = Math.min(210, 840 / Math.max(1, count - 1)), small = (story ? 0.86 : 0.78) * Math.min(1, gap / 210 + 0.12), left = width / 2 - gap * (count - 1) / 2;
   pots.forEach((each, index) => {
-    const x = 120 + index * 210;
+    const x = left + index * gap;
     pot(context, each.vessel, x, counter - (215 - SHAPES[each.vessel].rimY) * small, small, shared.scores[index] / 100, shared.spills[index], false);
-    fitText(context, [{ text: shared.spills[index] ? "উথলেছে" : `${bn(shared.scores[index])}%`, color: shared.spills[index] ? ACCENT : INK, weight: 800, display: true }], x, y(880), shared.spills[index] ? 38 : 50, 190, "center");
+    fitText(context, [{ text: shared.spills[index] ? "উথলেছে" : `${bn(shared.scores[index])}%`, color: shared.spills[index] ? ACCENT : INK, weight: 800, display: true }], x, y(880), shared.spills[index] ? 38 : 50, gap - 16, "center");
   });
 
   context.font = `600 44px ${BODY_FONT}`;
   wrapText(context, humanLine(shared.scores, shared.spills), 900, 2).forEach((line, index) => {
     fitText(context, [{ text: line, color: INK, weight: 600 }], width / 2, y(990) + index * (story ? 66 : 60), 44, 920, "center");
   });
-  fitText(context, [{ text: `নিজের ফোনে খেলা${shared.slow ? ", ধীরে খেলায়" : ""} · লিংকে একই পাঁচটা পাতিল`, color: MUTED, weight: 500 }], width / 2, y(1160), 28, 900, "center");
+  fitText(context, [{ text: `নিজের ফোনে খেলা${shared.slow ? ", ধীরে খেলায়" : ""} · লিংকে একই ${potsPlain(count)}টা পাতিল`, color: MUTED, weight: 500 }], width / 2, y(1160), 28, 900, "center");
   drawFooterBand(context, format, "তুমি কত পারবে?", site, { band: INK, ask: "#ffd166", site: "#ffffff" });
 }
 

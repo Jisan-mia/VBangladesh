@@ -20,6 +20,7 @@ export type Scene = {
   clock: number; wind: number; leaves: Float32Array; rain: Float32Array;
   popups: Popup[]; seen: number; catchAt: number; hitAt: number; game: Game | null;
   bolts: number[]; boltsFor: Storm | null;
+  comboAt: number; comboText: string;
   scoreShown: number; scoreText: string; timeShown: number; timeText: string;
 };
 
@@ -150,7 +151,7 @@ export function makeScene(canvas: HTMLCanvasElement, cssWidth: number, previous?
     hearts: [sprite(18, 18, k, context => drawHeart(context, 15, false)), sprite(18, 18, k, context => drawHeart(context, 15, true))],
     clock: previous?.clock ?? 0, wind: previous?.wind ?? 0, leaves, rain,
     popups: Array.from({ length: 6 }, () => ({ x: 0, t: -9, text: "", color: "" })),
-    seen: previous?.seen ?? 0, catchAt: -9, hitAt: -9, game: previous?.game ?? null, bolts: [], boltsFor: null,
+    seen: previous?.seen ?? 0, catchAt: -9, hitAt: -9, comboAt: -9, comboText: "", game: previous?.game ?? null, bolts: [], boltsFor: null,
     scoreShown: -1, scoreText: "", timeShown: -1, timeText: "",
   };
 }
@@ -245,14 +246,17 @@ export function drawScene(scene: Scene, game: Game | null, slow: boolean) {
 
   // Fresh catches and bumps, read from the game's event ring.
   if (game) {
-    if (scene.game !== game) { scene.game = game; scene.seen = 0; scene.catchAt = -9; scene.hitAt = -9; for (const popup of scene.popups) popup.t = -9; }
+    if (scene.game !== game) { scene.game = game; scene.seen = 0; scene.catchAt = -9; scene.hitAt = -9; scene.comboAt = -9; for (const popup of scene.popups) popup.t = -9; }
     for (; scene.seen < game.eventCount; scene.seen++) {
       const event = game.events[scene.seen % game.events.length];
       if (!event.caught) continue;
       const popup = scene.popups[scene.seen % scene.popups.length];
       popup.x = event.x; popup.t = event.t;
       if (event.kind === BRANCH) { scene.hitAt = event.t; popup.text = "উফ!"; popup.color = "#ffd2c4"; }
-      else { scene.catchAt = event.t; popup.text = POINT_TEXT[event.kind]; popup.color = event.kind === RIPE ? "#ffd75e" : "#d8f08a"; }
+      else {
+        scene.catchAt = event.t; popup.text = POINT_TEXT[event.kind]; popup.color = event.kind === RIPE ? "#ffd75e" : "#d8f08a";
+        if (event.streak >= 3) { scene.comboAt = event.t; scene.comboText = `টানা ${bn(event.streak)}টা`; }
+      }
     }
   }
 
@@ -290,6 +294,14 @@ export function drawScene(scene: Scene, game: Game | null, slow: boolean) {
     context.globalAlpha = 1 - age / 0.75;
     context.strokeStyle = "#2a1a0e"; context.lineWidth = 4; context.strokeText(popup.text, popup.x, y);
     context.fillStyle = popup.color; context.fillText(popup.text, popup.x, y);
+  }
+  // A catch streak of three or more: the count, big, under the HUD.
+  const comboAge = t - scene.comboAt;
+  if (game && comboAge >= 0 && comboAge < 0.7) {
+    context.globalAlpha = 1 - comboAge / 0.7;
+    context.font = `800 ${slow ? 22 : 22 + 6 * Math.max(0, 1 - comboAge * 6)}px ${DISPLAY_FONT}`;
+    context.strokeStyle = "#2a1a0e"; context.lineWidth = 5; context.strokeText(scene.comboText, W / 2, 72);
+    context.fillStyle = "#ffd75e"; context.fillText(scene.comboText, W / 2, 72);
   }
   context.globalAlpha = 1;
   drawHud(scene, game);

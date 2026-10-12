@@ -1,10 +1,20 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, BODY_FONT, DISPLAY_FONT, type CardFormat, type Segment } from "../../../shared/card-canvas";
 import { drawFood, drawHead, drawThonga, palette } from "./art";
-import { bn, type Shared } from "./link";
-import { humanLine, type Kind } from "./snake";
+import { bitesOf, bn, sharedStars, type Shared } from "./link";
+import { humanLine, levelLine, type Kind } from "./snake";
+
+type CardShared = Pick<Shared, "score" | "name" | "level" | "golden">;
+
+function star(c: CanvasRenderingContext2D, x: number, y: number, r: number, on: boolean) {
+  c.beginPath();
+  for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, d = i % 2 ? r * 0.45 : r; c.lineTo(x + Math.cos(a) * d, y + Math.sin(a) * d); }
+  c.closePath();
+  c.fillStyle = on ? "#f2a900" : "#00000026"; c.fill();
+  c.lineWidth = 5; c.strokeStyle = on ? "#8a5a00" : "#00000033"; c.stroke();
+}
 
 /** A mustard-yellow card: the snake popping out of a ঝালমুড়ির ঠোঙা, a golden chilli at its nose, and the score in chilli red. */
-export function drawCard(canvas: HTMLCanvasElement, shared: Pick<Shared, "score" | "name">, format: CardFormat, site: string) {
+export function drawCard(canvas: HTMLCanvasElement, shared: CardShared, format: CardFormat, site: string) {
   const { width, height } = cardSizes[format];
   canvas.width = width;
   canvas.height = height;
@@ -25,7 +35,8 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Pick<Shared, "score"
 
   const title: Segment[] = [{ text: "ঝালমুড়ি সাপ", color: palette.ink, weight: 800, display: true }];
   if (shared.name) title.push({ text: " · ", color: palette.ink, weight: 600 }, { text: shared.name, color: palette.chilli, weight: 800, display: true });
-  title.push({ text: " · ", color: palette.ink, weight: 600 }, { text: bn(shared.score), color: palette.chilli, weight: 800, display: true });
+  if (shared.level) title.push({ text: ` · লেভেল ${bn(shared.level)}`, color: palette.ink, weight: 700, display: true });
+  else title.push({ text: " · ", color: palette.ink, weight: 600 }, { text: bn(shared.score), color: palette.chilli, weight: 800, display: true });
   fitText(c, title, cx, y(140), 60, 900, "center");
 
   drawThonga(c, cx - 30, y(560), y(880), 230);
@@ -54,8 +65,11 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Pick<Shared, "score"
   const left = cx - (numberWidth + 20 + c.measureText("পয়েন্ট").width) / 2;
   fitText(c, [{ text: number, color: palette.chilli, weight: 800, display: true }], left, y(1060), 210, 700);
   fitText(c, [{ text: "পয়েন্ট", color: palette.ink, weight: 700 }], left + numberWidth + 20, y(1060), 64, 260);
-  fitText(c, [{ text: humanLine(shared.score), color: palette.ink, weight: 700 }], cx, y(1160), 50, 900, "center");
+  const stars = shared.level ? sharedStars({ seed: 1, ...shared }) : 0;
+  const line = shared.level ? levelLine(shared.level, stars, bitesOf(shared)) : humanLine(shared.score);
+  if (stars) for (let i = 0; i < 3; i++) star(c, cx + (i - 1) * 96, y(240), 38, i < stars);
+  fitText(c, [{ text: line, color: palette.ink, weight: 700 }], cx, y(1160), 50, 900, "center");
   drawFooterBand(c, format, "তুমি কত পারবে?", site, { band: palette.ink, ask: palette.gold, site: "#ffffff" });
 }
 
-export const cardBlob = (shared: Pick<Shared, "score" | "name">, format: CardFormat, site: string) => renderCard(canvas => drawCard(canvas, shared, format, site));
+export const cardBlob = (shared: CardShared, format: CardFormat, site: string) => renderCard(canvas => drawCard(canvas, shared, format, site));

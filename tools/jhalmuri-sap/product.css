@@ -22,11 +22,11 @@
 .js-hud p span{font-size:13px;font-weight:600;color:var(--muted)}
 .js-score b{font-family:var(--font-display);font-size:28px;font-weight:800;font-variant-numeric:tabular-nums}
 .js-best b{font-family:var(--font-display);font-size:19px;font-weight:700;color:var(--muted)}
-.js-slow{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-left:auto;padding:0 12px;border:1.5px solid var(--paper-edge);border-radius:999px;background:#fff;color:var(--ink);font-size:14px;font-weight:600;white-space:nowrap}
+.js-slow{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;border:1.5px solid var(--paper-edge);border-radius:999px;background:#fff;color:var(--ink);font-size:14px;font-weight:600;white-space:nowrap}
 .js-slow[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
-.js-hud svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.js-bar svg,.js-hud svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .js-hud .js-fill{fill:currentColor;stroke:none}
-.js-pause{display:grid;place-items:center;width:44px;height:44px;flex:none;padding:0;border:0;border-radius:12px;background:var(--paper);color:var(--ink)}
+.js-pause{margin-left:auto;display:grid;place-items:center;width:44px;height:44px;flex:none;padding:0;border:0;border-radius:12px;background:var(--paper);color:var(--ink)}
 
 /* the board: swipe anywhere, tap a half; only here does the page stop scrolling under a finger */
 .js-board{position:relative;width:100%;border-radius:12px;overflow:hidden;box-shadow:0 8px 22px #2a1d1429;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;outline:0}
@@ -50,9 +50,34 @@
 
 .js-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;touch-action:none}
 .js-turn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:60px;padding:0;border:0;border-radius:16px;background:var(--paper);color:var(--ink);font-size:18px;font-weight:700;box-shadow:0 4px 0 var(--paper-edge);touch-action:manipulation;user-select:none;-webkit-user-select:none}
-.js-turn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--paper-edge)}
+.js-turn:active{transform:translateY(3px) scale(.97);box-shadow:0 1px 0 var(--paper-edge)}
 .js-turn svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-.tool-jhalmuri-sap .js-again{grid-column:1/-1;min-height:60px;font-size:21px}
+.tool-jhalmuri-sap .js-again{min-height:60px;font-size:20px}
+.tool-jhalmuri-sap .js-wide{grid-column:1/-1;font-size:21px}
+
+/* level or classic, the stars so far, and the switch between them */
+.js-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.js-where{margin:0;font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.3}
+.js-where span{font-family:var(--font-bengali);font-size:14px;font-weight:600;color:var(--muted)}
+.js-modes{display:flex;padding:3px;border-radius:999px;background:var(--paper)}
+.js-modes button{min-height:38px;padding:0 14px;border:0;border-radius:999px;background:none;color:var(--ink);font-size:14px;font-weight:600;transition:background .15s ease-out}
+.js-modes button[aria-pressed=true]{background:var(--ink);color:#fff}
+.js-gold b{color:#9a6a00}
+.js-goal{display:grid;margin:0;font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.3;color:var(--accent)}
+.js-goal span{font-family:var(--font-bengali);font-size:14px;font-weight:600;color:var(--muted)}
+.js-stars{font-size:34px;gap:4px}
+.js-miss{margin:2px 0 0;padding:4px 10px;border-radius:10px;background:#f4c53433;font-size:15px;font-weight:700}
+
+/* sound and slow mode, under the turn buttons */
+.js-bar{display:flex;flex-wrap:wrap;gap:8px}
+.js-bar .js-slow{margin-left:0}
+.js-sound{min-height:44px;border-color:var(--paper-edge);background:#fff;color:var(--ink)}
+
+.js-levels{padding:10px 14px;border:1.5px solid var(--paper-edge);border-radius:14px;background:#fffaf0}
+.js-levels summary{display:flex;justify-content:space-between;align-items:center;min-height:40px;font-weight:700;cursor:pointer}
+.js-levels summary span{color:var(--muted);font-weight:600}
+.js-levels .gx-levels{margin-top:8px}
+.js-levels p{margin:10px 0 0;font-size:14px;line-height:1.5;color:var(--muted)}
 
 .js-result{scroll-margin-top:12px;margin-top:22px;padding-top:20px;border-top:2px solid var(--ink)}
 .js-result-head h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(23px,5vw,34px);line-height:1.4}

@@ -1,25 +1,48 @@
 "use client";
 // IP: what we avoided — no fruit-catching game's name, look or characters; our own ডালা, mango tree and Boishakh storm, drawn from scratch, with our own rule numbers.
 
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { newSeed, useBest, useGameLoop, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { confetti, hiss, loop, newSeed, sfx, tone, totalStars, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
+import { LevelGrid, SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import { drawScene, makeScene, tickScene, type Scene } from "../lib/draw-scene";
 import {
-  bn, caption, cleanName, compareLine, createGame, humanLine, parseShareHash, shareHash, stepGame, windAt,
-  BASKET_MAX, BASKET_MIN, FOLLOW_SPEED, MOVE_SPEED, STEP, W, type Game, type Shared,
+  bn, caption, cleanName, compareLine, createGame, humanLine, lightningTimes, makeStorm, migrateLevels, milestoneOf, nearMiss, nextMilestone, parseShareHash, shareHash, stageOf, starTargets, stepGame, stormStars, windAt,
+  BASKET_MAX, BASKET_MIN, BRANCH, CLASSIC_STAGE, FOLLOW_SPEED, LIVES, MOVE_SPEED, RIPE, STAGE_COUNT, STEP, W, type Game, type Shared,
 } from "../lib/storm";
 
 const TOOL = "kalbaishakhi-aam";
+const LEVELS_KEY = `ektukhani-levels-${TOOL}`, BEST_KEY = `ektukhani-best-${TOOL}`, TOTAL_KEY = `ektukhani-${TOOL}-total`;
 /** Slow mode runs the storm at this speed; the ডালা still moves at full speed. */
 const SLOW_TIME = 0.7;
 const TAP_SPEED = MOVE_SPEED * 1.6;
 const HOLD_MS = 220;
 type Phase = "ready" | "playing" | "paused" | "over";
-type Result = Shared & { reason: 1 | 2; record: boolean };
+type Result = Shared & { reason: 1 | 2; record: boolean; stage: number; stars: number; t: number; three: number; two: number; best: number | null; bestStreak: number; milestone: number; total: number };
+
+const readTotal = () => { try { return Math.max(0, Math.floor(Number(localStorage.getItem(TOTAL_KEY)) || 0)); } catch { return 0; } };
+const writeTotal = (total: number) => { try { localStorage.setItem(TOTAL_KEY, String(total)); } catch { /* private mode: fine */ } };
+
+// The storm's sounds, all made in code by the shared kit: a ঠক for a green mango, a soft squelch for a ripe one, a twig's crack, thunder, and the wind.
+const thunder = (delay = 0) => { hiss(1.8, 0.22, 170, "lowpass", delay); tone(52, 1.3, 0.14, "sine", delay, 38); };
+const catchGreen = () => tone(170, 0.1, 0.18, "sine", 0, 85);
+const catchRipe = () => { tone(150, 0.1, 0.16, "sine", 0, 70); hiss(0.14, 0.12, 900, "lowpass", 0.02); tone(320, 0.09, 0.05, "sine", 0.03, 140); };
+const groundThud = () => tone(105, 0.09, 0.05, "sine", 0.22, 60);
+const twigCrack = () => { hiss(0.12, 0.2, 2600, "highpass"); sfx.wrong(); };
+
+/** Stars that pop in one by one, each with its own note. */
+function StarReveal({ count }: { count: number }) {
+  useEffect(() => {
+    const timers = [0, 1, 2].filter(index => index < count).map(index => window.setTimeout(() => sfx.star(index), 300 + index * 240));
+    return () => timers.forEach(window.clearTimeout);
+  }, [count]);
+  return <span className="gx-stars ka-stars" role="img" aria-label={`৩টার মধ্যে ${bn(count)}টা তারা`}>
+    {[0, 1, 2].map(index => <span key={index} className={index < count ? "on gx-pop" : ""} style={{ animationDelay: `${300 + index * 240}ms` }}>★</span>)}
+  </span>;
+}
 
 const clampX = (x: number) => Math.min(BASKET_MAX, Math.max(BASKET_MIN, x));
 
@@ -42,7 +65,22 @@ function TwigIcon() {
 export function MangoGame() {
   const [phase, setPhase] = useState<Phase>("ready");
   const [slow, setSlow] = useSlowMode();
+  // Before the level store is read: an old phone's best from the original storm opens the storms up to it (once).
+  useEffect(() => {
+    try {
+      const moved = migrateLevels(localStorage.getItem(LEVELS_KEY), localStorage.getItem(BEST_KEY));
+      if (moved) localStorage.setItem(LEVELS_KEY, moved);
+    } catch { /* storage blocked: nothing to move */ }
+  }, []);
+  const levels = useLevels(TOOL, STAGE_COUNT);
   const [best, submitBest] = useBest(TOOL);
+  // The storm being played or about to be (1..8); `stage` below is the play area's element.
+  const [level, setLevel] = useState(1);
+  const [pending, setPending] = useState(1);
+  const [gathered, setGathered] = useState(0);
+  const chosen = useRef(false);
+  const wind = useRef<ReturnType<typeof loop> | null>(null);
+  const heard = useRef({ events: 0, bolt: 0, bolts: [] as number[] });
   const [friend, setFriend] = useState<Shared | null>(null);
   const [result, setResult] = useState<Result | null>(null);
   const [name, setName] = useState("");
@@ -61,31 +99,80 @@ export function MangoGame() {
   // One finger at a time. mode: 0 idle, 1 just pressed, 2 dragging, 3 holding to one side.
   const input = useRef({ id: -1, mode: 0, startX: 0, startBasket: W / 2, downAt: 0, side: 0, noStep: false, keys: 0, target: W / 2, speed: MOVE_SPEED });
 
-  const card: Shared | null = result ? { seed: result.seed, score: result.score, count: result.count, name: cleanName(name) } : null;
+  const card: Shared | null = result ? { seed: result.seed, score: result.score, count: result.count, name: cleanName(name), stage: result.stage } : null;
   const state = card ? shareHash(card) : "";
+  const friendFits = (forStage: number) => Boolean(friend) && (friend!.stage ?? CLASSIC_STAGE) === forStage;
+  // The next storm is made on the ready screen, so its star targets can show before it starts.
+  const nextStorm = useMemo(() => makeStorm(pending, level), [pending, level]);
+  const targets = starTargets(nextStorm);
 
-  function start() {
-    seed.current = friend ? friend.seed : newSeed();
-    game.current = createGame(seed.current);
+  const stopWind = () => { wind.current?.stop(); wind.current = null; };
+  const startWind = () => { stopWind(); wind.current = loop("wind"); wind.current.set(0.15); };
+
+  function start(nextSeed = friendFits(level) ? friend!.seed : pending) {
+    seed.current = nextSeed;
+    game.current = createGame(seed.current, LIVES, level);
+    heard.current = { events: 0, bolt: 0, bolts: lightningTimes(game.current.storm) };
     finished.current = false;
     Object.assign(input.current, { mode: 0, keys: 0, target: W / 2, speed: MOVE_SPEED });
     setResult(null);
     setPhase("playing");
+    thunder();
+    startWind();
+  }
+
+  /** A storm from the menu or the next one after a clear: back to the ready screen with a fresh seed. */
+  function choose(nextStage: number, scroll = true) {
+    chosen.current = true;
+    setLevel(nextStage);
+    setPending(friendFits(nextStage) ? friend!.seed : newSeed());
+    setResult(null);
+    setPhase("ready");
+    if (scroll) stage.current?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
   }
 
   function stopInput() {
     Object.assign(input.current, { id: -1, mode: 0, keys: 0, target: game.current?.basket ?? W / 2 });
   }
 
-  function pause() { stopInput(); setPhase(current => current === "playing" ? "paused" : current); }
+  function pause() { stopInput(); stopWind(); setPhase(current => current === "playing" ? "paused" : current); }
+  function resume() { startWind(); setPhase("playing"); }
 
   function finish(played: Game) {
     if (finished.current) return;
     finished.current = true;
-    const record = submitBest(played.score) && played.score > 0;
-    setResult({ seed: seed.current, score: played.score, count: played.caught, name: "", reason: played.over === 2 ? 2 : 1, record });
+    stopWind();
+    const survived = played.over === 1, at = played.storm.stage;
+    const stars = stormStars(played.storm, played.caught, survived), { three, two } = starTargets(played.storm);
+    const before = best, record = submitBest(played.score) && played.score > 0;
+    if (stars) levels.record(at, stars);
+    const oldTotal = readTotal(), total = oldTotal + played.caught;
+    writeTotal(total);
+    setGathered(total);
+    const milestone = milestoneOf(total) > milestoneOf(oldTotal) ? milestoneOf(total) : 0;
+    setResult({ seed: seed.current, score: played.score, count: played.caught, name: "", reason: survived ? 1 : 2, record, stage: at, stars, t: played.t, three, two, best: before, bestStreak: played.bestStreak, milestone, total });
     stopInput();
     setPhase("over");
+    // Confetti only for three stars, a new best, a new mango badge or the last storm cleared; a plain clear gets the stars' own notes.
+    const party = record || stars === 3 || milestone > 0 || (stars > 0 && at === STAGE_COUNT);
+    window.setTimeout(() => {
+      if (party) { if (record) sfx.win(); else sfx.levelUp(); confetti(); }
+      else if (stars) sfx.good();
+      else sfx.lose();
+    }, stars ? 1100 : 250);
+  }
+
+  /** Sounds for what just happened in the storm: catches, a twig, mangoes hitting the ground, thunder after a flash. */
+  function listen(played: Game) {
+    const ear = heard.current;
+    for (; ear.events < played.eventCount; ear.events++) {
+      const event = played.events[ear.events % played.events.length];
+      if (event.kind === BRANCH) { if (event.caught) twigCrack(); continue; }
+      if (!event.caught) { groundThud(); continue; }
+      if (event.kind === RIPE) catchRipe(); else catchGreen();
+      if (event.streak >= 3) sfx.combo(event.streak - 3);
+    }
+    if (ear.bolt < ear.bolts.length && played.t >= ear.bolts[ear.bolt]) { thunder(0.35); ear.bolt++; }
   }
 
   const step = (dt: number) => {
@@ -94,9 +181,9 @@ export function MangoGame() {
       if (control.mode === 1 && performance.now() - control.downAt > HOLD_MS) control.mode = 3;
       if (control.mode === 3) { control.target = control.side < 0 ? BASKET_MIN : BASKET_MAX; control.speed = MOVE_SPEED; }
       else if (control.keys) { control.target = control.keys < 0 ? BASKET_MIN : BASKET_MAX; control.speed = MOVE_SPEED; }
-      const lives = played.lives;
       stepGame(played, slow ? dt * SLOW_TIME : dt, control.target, control.speed * dt);
-      if (played.lives < lives && !slow && "vibrate" in navigator) navigator.vibrate(12);
+      listen(played);
+      wind.current?.set(0.12 + 0.75 * Math.abs(windAt(played.storm.gusts, played.t)));
       if (played.over) finish(played);
     }
     const view = scene.current;
@@ -127,10 +214,15 @@ export function MangoGame() {
       const shared = parseShareHash(window.location.hash);
       if (!shared) return;
       setFriend(shared);
+      chosen.current = true;
+      setLevel(shared.stage ?? CLASSIC_STAGE);
+      setPending(shared.seed);
       setPhase(current => current === "playing" ? current : "ready");
     };
     readFriend();
     setSite(window.location.host);
+    setGathered(readTotal());
+    setPending(current => current === 1 ? newSeed() : current);
     const hide = () => { if (document.hidden) pauseRef.current(); };
     window.addEventListener("hashchange", readFriend);
     document.addEventListener("visibilitychange", hide);
@@ -150,8 +242,8 @@ export function MangoGame() {
       } else if (phase === "playing" && (event.key === "p" || event.key === "Escape")) { event.preventDefault(); pause(); }
       else if (phase === "playing" && event.key === " ") event.preventDefault();
       else if ((event.key === " " || event.key === "Enter") && here && document.activeElement === document.body) {
-        if (phase === "paused") { event.preventDefault(); setPhase("playing"); }
-        else if (phase !== "playing") { event.preventDefault(); start(); }
+        if (phase === "paused") { event.preventDefault(); resume(); }
+        else if (phase !== "playing") { event.preventDefault(); primary(); }
       }
     };
     const up = (event: KeyboardEvent) => {
@@ -163,12 +255,15 @@ export function MangoGame() {
   });
 
   useEffect(() => { if (phase === "over") again.current?.focus({ preventScroll: true }); }, [phase]);
+  useEffect(() => stopWind, []);
+  // Saved stars load after the first paint: open the furthest storm reached, unless one was picked or a friend's link chose it.
+  useEffect(() => { if (!chosen.current && phase === "ready") setLevel(levels.unlocked); }, [levels.unlocked]);
 
   useEffect(() => {
     let cancelled = false;
     loadCardFonts("কালবৈশাখী আম ০১২৩৪৫৬৭৮৯").then(() => {
       if (cancelled) return;
-      if (card && preview.current) drawCard(preview.current, card, format, site);
+      if (card && preview.current) drawCard(preview.current, card, format, site, extra);
       if (friend && friendPreview.current) drawCard(friendPreview.current, friend, "feed", site);
       setCardError(false);
     }).catch(() => { if (!cancelled) setCardError(true); });
@@ -211,6 +306,21 @@ export function MangoGame() {
     Object.assign(control, { id: -1, mode: 0, noStep: false });
   }
 
+  const extra = result ? { stars: result.stars, milestone: milestoneOf(result.total) } : {};
+  const nextStage = result && result.stars && result.stage < STAGE_COUNT ? result.stage + 1 : 0;
+  const miss = result ? nearMiss({ ...result, caught: result.count }) : "";
+  /** After a storm: the next one when this one is cleared, else the same storm again with a fresh seed (a friend's storm stays the same). */
+  function primary() {
+    if (phase === "over" && nextStage) choose(nextStage, false);
+    else again_();
+  }
+  /** The same storm number again, straight away: a fresh seed, or the friend's own storm. */
+  function again_() {
+    if (phase !== "over") { start(); return; }
+    const fresh = friendFits(level) ? friend!.seed : newSeed();
+    setPending(fresh);
+    start(fresh);
+  }
   const goToCard = () => document.getElementById("result")?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
   const keepTap = (event: ReactPointerEvent) => event.stopPropagation();
   const friendName = friend?.name || "";
@@ -228,6 +338,11 @@ export function MangoGame() {
         </section>
       )}
 
+      <div className="ka-top">
+        <p className="ka-where">ঝড় {bn(level)} <span><i>· {stageOf(level).name} </i>· ★ {bn(totalStars(levels.stars))}/{bn(STAGE_COUNT * 3)}</span></p>
+        <SoundToggle className="ka-sound" />
+      </div>
+
       <div className="ka-stage" ref={stage} data-phase={phase} tabIndex={-1}
         onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={event => onPointerUp(event, true)}>
         <canvas ref={canvas} role="img" aria-label="আমগাছের নিচে উঠান, কালবৈশাখীর ঝড়। নিচে একটা ডালা। বাঁ-ডান তীর বা আঙুল দিয়ে ডালা সরিয়ে আম ধরো, শুকনো ডাল এড়াও।" />
@@ -239,24 +354,30 @@ export function MangoGame() {
               <li><MangoIcon ripe /><span>পাকা <b>+১০</b></span></li>
               <li><TwigIcon /><span>ডাল <b>এড়াও</b></span></li>
             </ul>
-            <button type="button" className="kit-primary ka-go" onPointerDown={keepTap} onClick={start}>শুরু করো</button>
+            <p className="ka-target">{level === 1 && <span>এই ঝড়ে ডাল পড়ে না।</span>}{bn(targets.two)}টা আমে <b>★★</b> · {bn(targets.three)}টায় <b>★★★</b></p>
+            <button type="button" className="kit-primary ka-go" onPointerDown={keepTap} onClick={() => start()}>শুরু করো</button>
             <p className="ka-sub">আঙুলে টেনে সরাও, নয়তো বাঁয়ে-ডানে চাপো</p>
           </div>
         )}
         {phase === "paused" && (
           <div className="ka-overlay ka-dim">
             <p className="ka-how">খেলা থেমে আছে</p>
-            <button type="button" className="kit-primary ka-go" onPointerDown={keepTap} onClick={() => setPhase("playing")}>চালিয়ে যাও</button>
+            <button type="button" className="kit-primary ka-go" onPointerDown={keepTap} onClick={resume}>চালিয়ে যাও</button>
           </div>
         )}
-        <p className="screen-reader-only" aria-live="polite">{phase === "over" && result ? `খেলা শেষ। ${bn(result.count)}টা আম, ${bn(result.score)} পয়েন্ট। ${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""}` : ""}</p>
+        <p className="screen-reader-only" aria-live="polite">{phase === "over" && result ? `খেলা শেষ। ${bn(result.count)}টা আম, ${bn(result.score)} পয়েন্ট। ${result.stars ? `ঝড় ${bn(result.stage)} পার, ${bn(result.stars)} তারা।` : ""}${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""} ${miss}` : ""}</p>
         {phase === "over" && result && (
           <div className="ka-overlay ka-dim ka-over">
-            <p className="ka-kicker">{result.reason === 2 ? "তিনটা ডাল পড়ল ডালায়!" : "ঝড় থেমে গেল!"}</p>
-            <p className="ka-big"><b>{bn(result.count)}টা আম</b><span>{bn(result.score)} পয়েন্ট</span></p>
-            <p className="ka-best">{result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null ? `এই ফোনে সেরা: ${bn(best)} পয়েন্ট` : ""}</p>
-            {friend && <p className="ka-versus">{compareLine(result.score, friend.score, friendName)}</p>}
-            <button type="button" ref={again} className="kit-primary ka-go" onPointerDown={keepTap} onClick={start}>আরেকবার</button>
+            <p className="ka-kicker">{result.reason === 2 ? "তিনটা ডাল পড়ল ডালায়!" : `ঝড় ${bn(result.stage)} থেমে গেল!`}</p>
+            {result.stars > 0 && <StarReveal count={result.stars} />}
+            <p className="ka-big"><b>{bn(result.count)}টা আম</b><span>{bn(result.score)} পয়েন্ট{result.bestStreak >= 3 ? ` · টানা ${bn(result.bestStreak)}টা` : ""}</span></p>
+            <p className="ka-best">{result.milestone ? `এ পর্যন্ত ${bn(result.total)}টা আম, ${bn(result.milestone)}-এর ধাপ পার।` : result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null ? `এই ফোনে সেরা: ${bn(best)} পয়েন্ট` : ""}</p>
+            {miss && <p className="ka-miss">{miss}</p>}
+            {friend && (friend.stage ?? CLASSIC_STAGE) === result.stage && <p className="ka-versus">{compareLine(result.score, friend.score, friendName)}</p>}
+            <div className="ka-actions">
+              {nextStage > 0 && <button type="button" className="kit-secondary ka-again" onPointerDown={keepTap} onClick={again_}>আবার খেলো</button>}
+              <button type="button" ref={again} className="kit-primary ka-go" onPointerDown={keepTap} onClick={primary}>{nextStage ? "পরের ঝড়" : "আরেকবার"}</button>
+            </div>
             <button type="button" className="ka-to-card" onPointerDown={keepTap} onClick={goToCard}>ছবি বানাও, বন্ধুকে পাঠাও ↓</button>
           </div>
         )}
@@ -266,10 +387,16 @@ export function MangoGame() {
         <button type="button" className="ka-toggle" aria-pressed={slow} onClick={() => setSlow(!slow)}>
           <i aria-hidden="true" />ধীরে খেলো<small>ঝিলিক, বৃষ্টি বন্ধ</small>
         </button>
-        <button type="button" className="ka-pause" onClick={phase === "paused" ? () => setPhase("playing") : pause} disabled={phase !== "playing" && phase !== "paused"}>
+        <button type="button" className="ka-pause" onClick={phase === "paused" ? resume : pause} disabled={phase !== "playing" && phase !== "paused"}>
           {phase === "paused" ? "চালিয়ে যাও" : "থামাও"}
         </button>
       </div>
+      <p className="ka-tally">{gathered ? <>এ পর্যন্ত কুড়ানো <b>{bn(gathered)}টা আম</b>{nextMilestone(gathered) ? ` · পরের ধাপ ${bn(nextMilestone(gathered))}` : ""}</> : `প্রথম ধাপ: মোট ${bn(nextMilestone(0))}টা আম`}</p>
+      <details className="ka-levels">
+        <summary>সব ঝড় <span>★ {bn(totalStars(levels.stars))}/{bn(STAGE_COUNT * 3)}</span></summary>
+        <LevelGrid count={STAGE_COUNT} stars={levels.stars} unlocked={Math.max(levels.unlocked, friend?.stage ?? 1)} current={level} onPick={stormNo => choose(stormNo)} noun="ঝড়" />
+        <p>ঝড় শেষ হওয়া পর্যন্ত টিকে থাকলে ১ তারা। যত আম পড়ে, তার অর্ধেকের মতো ধরলে ২, দশটায় সাতটা ধরলে ৩ তারা। প্রতিটা ঝড় আগেরটার চেয়ে একটু জোরে।</p>
+      </details>
       <p className="ka-safe">সত্যিকারের কালবৈশাখীতে গাছের নিচে যেয়ো না, বাজ পড়ে, ডাল ভাঙে। আম কুড়াও ঝড় থামলে।</p>
 
       {card && result && (
@@ -290,7 +417,7 @@ export function MangoGame() {
                 <input value={name} maxLength={MAX_NAME} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
               </label>
               <FormatToggle value={format} onChange={setFormat} />
-              <ShareBar tool={TOOL} fileName="kalbaishakhi-aam.png" makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${format}`} caption={caption(card)} state={state} hint="বন্ধু লিংক খুললে ঠিক এই ঝড়টাই পাবে।" />
+              <ShareBar tool={TOOL} fileName="kalbaishakhi-aam.png" makeImage={() => cardBlob(card, format, site, extra)} imageKey={`${state}|${format}|${extra.stars ?? 0}|${extra.milestone ?? 0}`} caption={caption(card)} state={state} hint="বন্ধু লিংক খুললে ঠিক এই ঝড়টাই পাবে।" />
             </div>
           </div>
         </section>
