@@ -214,7 +214,7 @@ export function VanBuilder() {
           <figure className="kit-card" data-format={format}>
             <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="card-summary" />
             <figcaption id="card-summary" className="ek-sr">{card.title}: {card.headline}। {card.list}</figcaption>
-            {previewError && <p className="kit-status" role="alert">ভ্যানের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
+            {previewError && <p className="kit-status" role="alert">ভ্যানের ছবিটা দেখানো যাচ্ছে না। পাতাটা রিলোড করে দেখো।</p>}
           </figure>
 
           <div className="ek-controls">
@@ -236,7 +236,7 @@ export function VanBuilder() {
               <button type="button" className="kit-secondary" onClick={compareWithEveryone} disabled={compared === "sending"}>{compared === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
               {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
             </> : !showCompare ? (
-              <p className="kit-status">এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন মেলালেই মজাটা শুরু!</p>
+              <p className="kit-status">এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন মেলালে দেখা যাবে।</p>
             ) : (
               <div className="ek-rare">
                 {mostOverall && <p><span>সবচেয়ে বেশি কেনা</span><strong>{mostOverall.label}</strong><em>{bn(percent(everyone.counts[mostOverall.id] ?? 0, everyone.total))}% মানুষ কিনেছে{countOf(cart, mostOverall.id) ? ", তুমিও" : ""}</em></p>}

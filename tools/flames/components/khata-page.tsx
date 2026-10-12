@@ -103,7 +103,6 @@ export function KhataPage() {
       )}
 
       <div className="khata" id="khata">
-        <span className="khata-stamp" aria-hidden="true">শুধু মজা</span>
         <form className="khata-form" onSubmit={submit} noValidate>
           <div className="khata-fields">
             <label>
@@ -147,7 +146,7 @@ export function KhataPage() {
             })}
           </ol>
           <p className="khata-count">
-            {done || (step > pairCount && !game.left) ? "" : lastStruck >= 0 ? <>{bn(game.left)} গুনে কাটা গেল <b>{outcomes[lastStruck].letter}</b></> : step > pairCount ? <>এবার {bn(game.left)} গুনে গুনে কাটি…</> : pairCount ? "মিলে যাওয়া অক্ষর কাটছি…" : "কোনো অক্ষর মেলেনি…"}
+            {done || (step > pairCount && !game.left) ? "" : lastStruck >= 0 ? <>{bn(game.left)} গুনে কাটা গেল <b>{outcomes[lastStruck].letter}</b></> : step > pairCount ? <>এবার {bn(game.left)} ধরে গুনে কাটছি…</> : pairCount ? "মিলে যাওয়া অক্ষর কাটছি…" : "কোনো অক্ষর মেলেনি…"}
           </p>
           <p className="khata-answer" data-show={done}>
             <span>{a} + {b} =</span> <strong>{won.label}</strong>
@@ -157,23 +156,23 @@ export function KhataPage() {
         {!done && <button type="button" className="kit-link khata-skip" onClick={() => setStep(99)}>এক্ষুনি ফল দেখাও</button>}
       </div>
 
-      <StickyNext show={touched && done && !resultVisible} title={<><strong>{won.label}</strong></>} sub={`${a} + ${b} · শুধু মজা`} href="#result" label="কার্ডটা নাও" />
+      <StickyNext show={touched && done && !resultVisible} title={<><strong>{won.label}</strong></>} sub={`${a} + ${b}`} href="#result" label="কার্ডটা নাও" />
 
       <section className="flames-result" id="result" ref={result} aria-labelledby="result-title">
         <div className="flames-result-head">
           <h2 id="result-title">{a} + {b} = <em>{done ? won.label : "…"}</em></h2>
-          <p>{line} <span className="flames-fun">শুধু মজা, সত্যি না!</span></p>
+          <p>{line}</p>
         </div>
         <div className="flames-result-body">
           <figure className="kit-card" data-format={format}>
             <canvas ref={card} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="card-summary" />
             <figcaption id="card-summary" className="flames-sr">খাতার পাতায় লেখা {a} আর {b}, মিলে যাওয়া অক্ষর কাটা, বাকি {bn(game.left)}টা অক্ষর। FLAMES থেকে বাকি রইল {won.letter}: {a} + {b} = {won.label}। {line}</figcaption>
-            {previewError && <p className="kit-status" role="alert">কার্ডের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
+            {previewError && <p className="kit-status" role="alert">কার্ডের ছবিটা দেখানো যাচ্ছে না। পাতাটা রিলোড করে দেখো।</p>}
           </figure>
           <div className="flames-controls">
             <FormatToggle value={format} onChange={setFormat} />
             <ShareBar tool={TOOL} fileName={`flames-${format}.png`} makeImage={() => flamesBlob(played, format, site)} imageKey={`${state}|${format}`} caption={caption(played)} state={state}
-              hint="লিংকে দুটো নামই থাকে। বন্ধু খুললে খাতার পাতায় পুরো কাটাকাটি দেখবে, তারপর নিজেরটা খেলবে।" />
+              hint="লিংকে দুটো নামই থাকে। বন্ধু খুললে পুরো কাটাকাটি দেখবে, তারপর নিজেরটা খেলবে।" />
           </div>
         </div>
       </section>

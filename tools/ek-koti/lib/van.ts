@@ -3,7 +3,7 @@ import { possessive } from "../../../shared/bangla";
 export const BUDGET = 1_00_00_000;
 export const MAX_NAME_LENGTH = 30;
 /** Shown next to every price, on the page and on the card. */
-export const PRICE_NOTE = "আনুমানিক, মজার জন্য · অক্টোবর ২০২৬";
+export const PRICE_NOTE = "আনুমানিক, অক্টোবর ২০২৬";
 
 export const groups = [
   { id: "khawa", label: "খাওয়াদাওয়া", short: "খাওয়া" },

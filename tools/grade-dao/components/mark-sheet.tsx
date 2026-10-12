@@ -193,7 +193,7 @@ export function MarkSheet() {
           <figure className="kit-card" data-format={format}>
             <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="card-summary" />
             <figcaption id="card-summary" className="gd-sr">{line} {pack.items.map((item, index) => current[index] ? `${item.name} ${gradeLabel[current[index]!]}` : "").filter(Boolean).join(", ")}</figcaption>
-            {previewError && <p className="kit-status" role="alert">শিটের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
+            {previewError && <p className="kit-status" role="alert">শিটের ছবিটা দেখানো যাচ্ছে না। পাতাটা রিলোড করে দেখো।</p>}
           </figure>
           <div className="gd-controls">
             <label className="gd-field">

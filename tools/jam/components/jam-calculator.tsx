@@ -147,7 +147,7 @@ export function JamCalculator() {
           <figure className="kit-card" data-format={format}>
             <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="card-summary" />
             <figcaption id="card-summary" className="jam-sr">জ্যামে জীবনের {totals.value} {totals.unit}। {habitLine(commute)}। {totals.counts.slice(0, 3).map(item => item.text).join(", ")}। {line}</figcaption>
-            {previewError && <p className="kit-status" role="alert">কার্ডটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
+            {previewError && <p className="kit-status" role="alert">কার্ডটা দেখানো যাচ্ছে না। পাতাটা রিলোড করে দেখো।</p>}
           </figure>
           <div className="jam-share">
             <FormatToggle value={format} onChange={setFormat} />
@@ -161,7 +161,7 @@ export function JamCalculator() {
             <p>দেখো তোমার মতো কতজন রোজ এতক্ষণ রাস্তায় বসে থাকে। শুধু তোমার রোজকার মিনিটের ঘরটা (যেমন ‘{mine.label}’) গোনা হবে, আর কিছু না।</p>
             <button type="button" className="kit-secondary" onClick={compareWithEveryone} disabled={compared === "sending"}>{compared === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
             {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
-          </> : everyone.total < COMPARE_MIN ? <p className="kit-status">এখনো খুব কম মানুষ হিসাব করেছে, তাই এখনই কিছু বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন মেলালেই মজাটা শুরু!</p> : <>
+          </> : everyone.total < COMPARE_MIN ? <p className="kit-status">এখনো খুব কম মানুষ হিসাব করেছে, তাই এখনই কিছু বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন মেলালে দেখা যাবে।</p> : <>
             <p className="jam-everyone-big">যারা হিসাব করেছে, তাদের <strong>{bn(percent(longer, everyone.total))}%</strong> রোজ ১ ঘণ্টা বা তার বেশি জ্যামে থাকে।</p>
             <ul className="jam-bars">{buckets.map(item => { const share = percent(everyone.counts[item.id] ?? 0, everyone.total); return <li key={item.id} data-mine={item.id === mine.id}><span>{item.label}{item.id === mine.id ? " · তুমি" : ""}</span><i style={{ width: `${share}%` }} /><b>{bn(share)}%</b></li>; })}</ul>
             <p className="kit-status">{bn(everyone.total)} জনের হিসাব থেকে। এটা একটুখানির খেলা, কোনো জরিপ না।</p>

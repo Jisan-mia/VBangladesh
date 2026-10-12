@@ -9,7 +9,7 @@ export default function FlamesPage() {
       <JsonLd site={site} />
       <div className="flames-page">
         <section className="container flames-hero" aria-labelledby="flames-title">
-          <h1 id="flames-title"><span className="flames-hero-kicker">ফ্লেমস গেম · খাতার শেষ পাতার খেলা</span> দুই নাম, এক খেলা — <span>কী আসে?</span></h1>
+          <h1 id="flames-title"><span className="flames-hero-kicker">ফ্লেমস গেম · খাতার শেষ পাতার খেলা</span> দুই নাম, এক খেলা। <span>কী আসে?</span></h1>
           <p className="flames-lead">{site.lead}</p>
         </section>
         <section className="container" id="tool" aria-label="ফ্লেমস খেলো"><KhataPage /></section>

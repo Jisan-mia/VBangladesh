@@ -199,7 +199,7 @@ export function HaggleGame() {
             <figure className="kit-card" data-format={format}>
               <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="card-summary" />
               <figcaption id="card-summary" className="mj-sr">{card.title}: {card.route}, {card.headline}, {card.rounds}। মামা বললেন: {card.mama}</figcaption>
-              {previewError && <p className="kit-status" role="alert">কার্ডটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
+              {previewError && <p className="kit-status" role="alert">কার্ডটা দেখানো যাচ্ছে না। পাতাটা রিলোড করে দেখো।</p>}
             </figure>
 
             <div className="mj-controls">
@@ -219,7 +219,7 @@ export function HaggleGame() {
               <button type="button" className="kit-secondary" onClick={compareWithEveryone} disabled={compared === "sending"}>{compared === "sending" ? "মেলানো হচ্ছে…" : "সবার সাথে মেলাও"}</button>
               {compared === "failed" && <p className="kit-status" role="alert">এখন মেলানো গেল না। একটু পরে আবার চেষ্টা করো।</p>}
             </> : !showCompare ? (
-              <p className="kit-status">এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন মেলালেই মজাটা শুরু!</p>
+              <p className="kit-status">এখনো খুব কম মানুষ মিলিয়েছে, তাই হিসাবটা এখনই ঠিক বলা যাবে না। বন্ধুদের লিংক পাঠাও, কয়েকজন মেলালে দেখা যাবে।</p>
             ) : (
               <ul className="mj-bars">
                 {tallyIds.map(id => {
