@@ -116,6 +116,7 @@ import { share as switchboard } from '../tools/switchboard/share';
 import { share as golokdhadha } from '../tools/golokdhadha/share';
 import { share as ponero_ghor } from '../tools/ponero-ghor/share';
 import { share as chhobi_photao } from '../tools/chhobi-photao/share';
+import { share as ghontar_sur } from '../tools/ghontar-sur/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -235,6 +236,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'golokdhadha': golokdhadha,
   'ponero-ghor': ponero_ghor,
   'chhobi-photao': chhobi_photao,
+  'ghontar-sur': ghontar_sur,
 };
 
 export function toolShare(tool: string): ToolShare | null {
