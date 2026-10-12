@@ -231,6 +231,15 @@ export function PenaltyGame() {
     else sfx.good();
   }
 
+  /** Preview images only (`&og=1` on a link): a fixed 3–0 so the card draws without playing. Saves nothing on the phone. */
+  function demo() {
+    const kick = (side: 0 | 1, scored: boolean): Kick => ({ side, scored, result: { outcome: scored ? "goal" : "saved", bx: side ? -0.6 : 0.8, by: 0.6, keeper: 0, close: false } });
+    live.kicks = [kick(0, true), kick(1, false), kick(0, true), kick(1, false), kick(0, true), kick(1, false)];
+    setKicks(live.kicks);
+    setResult({ us: 3, them: 0, stars: 3, improved: false, sudden: false, frame: 0 });
+    setPhaseState("won");
+  }
+
   function pickSide(zone: Zone) {
     if (live.paused || (live.stage !== "ready" && live.stage !== "run")) return;
     if (live.dive !== zone) sfx.tap();
@@ -372,6 +381,7 @@ export function PenaltyGame() {
       if (!found) return;
       setFriend(found);
       startMatch(found.level, found.seed);
+      if (new URLSearchParams(window.location.hash.slice(1)).get("og") === "1") demo();
     };
     const hide = () => {
       if (!document.hidden) return;
