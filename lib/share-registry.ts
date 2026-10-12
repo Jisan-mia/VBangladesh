@@ -128,6 +128,7 @@ import { share as sat_chara } from '../tools/sat-chara/share';
 import { share as chhip_felo } from '../tools/chhip-felo/share';
 import { share as latim } from '../tools/latim/share';
 import { share as nodi_par } from '../tools/nodi-par/share';
+import { share as penalty } from '../tools/penalty/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -259,6 +260,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'chhip-felo': chhip_felo,
   'latim': latim,
   'nodi-par': nodi_par,
+  'penalty': penalty,
 };
 
 export function toolShare(tool: string): ToolShare | null {

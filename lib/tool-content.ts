@@ -126,6 +126,7 @@ import { site as sat_chara } from '../tools/sat-chara/content';
 import { site as chhip_felo } from '../tools/chhip-felo/content';
 import { site as latim } from '../tools/latim/content';
 import { site as nodi_par } from '../tools/nodi-par/content';
+import { site as penalty } from '../tools/penalty/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -256,6 +257,7 @@ export const toolContent = {
   'chhip-felo': chhip_felo,
   'latim': latim,
   'nodi-par': nodi_par,
+  'penalty': penalty,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
