@@ -1,6 +1,6 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, type CardFormat, type Segment } from "../../../shared/card-canvas";
 import { drawBall, drawBrokenRim, drawPot, drawShard, drawStick, palette, DESIGN_BODY } from "./art";
-import { bn, potsFrom, tallyLine, type Shared } from "./link";
+import { bn, potsFrom, starsOf, tallyLine, type Shared } from "./link";
 import { humanLine } from "./game";
 
 // Which of the five card pots break first, so a half-broken rope looks scattered, not cut from one end.
@@ -9,7 +9,7 @@ const CARD_DESIGNS = [0, 3, 1, 4, 5];
 const CARD_POTS = BREAK_ORDER.length;
 
 /** A fair-stall card: the awning, a rope of painted pots (as many broken as the score says), shards and the stick on the floor, then the tally. */
-export function drawCard(canvas: HTMLCanvasElement, shared: Pick<Shared, "score" | "name">, format: CardFormat, site: string) {
+export function drawCard(canvas: HTMLCanvasElement, shared: Pick<Shared, "score" | "name" | "level">, format: CardFormat, site: string) {
   const { width, height } = cardSizes[format];
   canvas.width = width;
   canvas.height = height;
@@ -41,7 +41,11 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Pick<Shared, "score"
 
   const title: Segment[] = [{ text: "হাঁড়িভাঙা", color: palette.ink, weight: 800, display: true }];
   if (shared.name) title.push({ text: " · ", color: palette.ink, weight: 600 }, { text: shared.name, color: palette.awning, weight: 800, display: true });
-  fitText(c, title, cx, y(228), 66, 900, "center");
+  // The stall (level) and its stars share the title row.
+  const earned = starsOf(shared.score, shared.level);
+  title.push({ text: ` · লেভেল ${bn(shared.level)}`, color: palette.ink, weight: 700, display: true });
+  if (earned) title.push({ text: " ", color: palette.ink }, ...[0, 1, 2].map(star => ({ text: "★", color: star < earned ? "#e39b00" : "#c9b98f", weight: 700 })));
+  fitText(c, title, cx, y(228), 66, 940, "center");
 
   // The rope and its pots.
   const rope = y(296), floor = y(570);
@@ -74,4 +78,4 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Pick<Shared, "score"
   drawFooterBand(c, format, "তুমি সব ভাঙতে পারবে?", site, { band: palette.ink, ask: "#f2c26b", site: "#ffffff" });
 }
 
-export const cardBlob = (shared: Pick<Shared, "score" | "name">, format: CardFormat, site: string) => renderCard(canvas => drawCard(canvas, shared, format, site));
+export const cardBlob = (shared: Pick<Shared, "score" | "name" | "level">, format: CardFormat, site: string) => renderCard(canvas => drawCard(canvas, shared, format, site));

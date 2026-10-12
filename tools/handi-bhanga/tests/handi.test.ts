@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { site } from "../content";
 import { share } from "../share";
-import { banner, caption, chancesFrom, parseShared, potsFrom, previewTitle, sharedHash, tallyLine, validScore, MAX_SCORE } from "../lib/link";
+import { banner, caption, chancesFrom, migrateBest, nearLine, parseShared, potsFrom, previewTitle, sharedHash, starsOf, tallyLine, validScore, LEVEL_COUNT, LEVELS, MAX_SCORE } from "../lib/link";
 import {
-  bands, bounceAngle, compareLine, createGame, humanLine, launch, moveStick, nudge, overlaps, potLeft, potTop, speed, step,
+  MAX_SWAY, potX, swayOf, windOf, bands, bounceAngle, compareLine, createGame, humanLine, launch, moveStick, nudge, overlaps, potLeft, potTop, speed, step,
   BALL_R, CELL, COLS, MAX_ANGLE, MAX_SPEED, POT_H, POT_W, ROW_GAP, STICK_SPEED, STICK_W, STICK_Y, TOP, TOUGH, W, WALL, type Game, type GameEvent,
 } from "../lib/game";
 
@@ -13,8 +13,8 @@ const POTS = 35;
 const live = (game: Game) => [...game.hits].filter(hits => hits > 0).length;
 
 /** A fair bot: it can only move the stick as fast as the buttons do, and it aims by picking where on the stick to meet the ball. */
-function play(seed: number, { skill = 1, slow = false, limit = 60 * 60 * 20 } = {}) {
-  const game = createGame(seed);
+function play(seed: number, { skill = 1, slow = false, limit = 60 * 60 * 20, level = 1 } = {}) {
+  const game = createGame(seed, level);
   const events: Record<string, number> = {};
   let bounces = 0, frames = 0;
   const aims = [-0.55, 0.35, 0.75, -0.15, 0.6, -0.8, 0.1, -0.4];
@@ -29,7 +29,8 @@ function play(seed: number, { skill = 1, slow = false, limit = 60 * 60 * 20 } = 
       events[event] = (events[event] ?? 0) + 1;
       if (event === "stick") bounces++;
     });
-    for (let i = 0; i < POTS; i++) if (game.hits[i] > 0) assert.ok(!overlaps(game, i), `ball inside pot ${i}`);
+    // On a swaying stall a pot may brush into the ball between substeps; the next substep hits it. Still rope, never inside.
+    if (level === 1) for (let i = 0; i < POTS; i++) if (game.hits[i] > 0) assert.ok(!overlaps(game, i), `ball inside pot ${i}`);
     assert.ok(game.x - BALL_R >= WALL - 1e-9 && game.x + BALL_R <= W - WALL + 1e-9, "ball between the poles");
     assert.ok(game.y - BALL_R >= TOP - 1e-9, "ball under the awning");
   }
@@ -198,7 +199,7 @@ test("headless runs end sanely with plausible scores", () => {
 });
 
 test("challenge links round-trip, and hostile or impossible ones are refused or capped", () => {
-  const shared = { seed: 48213, score: 280, name: "রাফি" };
+  const shared = { seed: 48213, score: 280, name: "রাফি", level: 1 };
   assert.equal(sharedHash(shared), "s=48213&t=280&n=" + encodeURIComponent("রাফি"));
   assert.deepEqual(parseShared("#" + sharedHash(shared)), shared);
   assert.equal(share.normalize(sharedHash(shared)), sharedHash(shared));
@@ -213,7 +214,7 @@ test("challenge links round-trip, and hostile or impossible ones are refused or 
 });
 
 test("previews, banner and caption are personal and honest", () => {
-  const shared = { seed: 48213, score: 280, name: "রাফি" };
+  const shared = { seed: 48213, score: 280, name: "রাফি", level: 1 };
   assert.equal(previewTitle(shared), "রাফি ২৮০ করেছে। তুমি পারবে?");
   assert.equal(previewTitle({ ...shared, name: "" }), "হাঁড়িভাঙায় ২৮০! তুমি পারবে?");
   assert.equal(banner(shared), "রাফি ২৮০ করেছে। একই হাঁড়ির সারি, এবার তোমার পালা।");
@@ -234,4 +235,88 @@ test("content meets the SEO limits and never names a trademark", () => {
   const everything = JSON.stringify(site) + share.preview("").description;
   assert.doesNotMatch(everything, /breakout|arkanoid|vaus|ব্রেকআউট|আরকানয়েড|অ্যারকানয়েড|atari|আটারি/i);
   assert.doesNotMatch(everything, /আপনি|করুন|জুয়া|বাজি|টাকা জিত/);
+});
+
+test("ten stalls: level 1 is the original stall, and each later stall adds one thing and never gets easier", () => {
+  for (const seed of [1, 48213, 999_999_999]) {
+    const old = createGame(seed), first = createGame(seed, 1);
+    assert.deepEqual([...first.tough, ...first.design], [...old.tough, ...old.design], "level 1 lays out the old stall");
+    assert.equal(swayOf(first, 2), 0);
+    assert.equal(windOf(first), 0);
+  }
+  for (let level = 2; level <= LEVEL_COUNT; level++) {
+    const [before, now] = [LEVELS[level - 2], LEVELS[level - 1]];
+    assert.ok(now.tough >= before.tough && now.speed >= before.speed && now.sway >= before.sway && now.wind >= before.wind && now.pass >= before.pass, `level ${level} never gets easier`);
+    assert.ok([now.tough > before.tough, now.speed > before.speed, now.sway > before.sway, now.wind > before.wind].some(Boolean), `level ${level} adds something`);
+    assert.equal([...createGame(48213, level).tough].filter(Boolean).length, now.tough);
+    assert.ok(now.sway <= MAX_SWAY, "a swaying edge pot never pokes into a pole");
+  }
+});
+
+test("swaying ropes stay inside the poles and keep the gaps tight; the wind bends but never flattens the ball", () => {
+  const game = createGame(48213, LEVEL_COUNT);
+  for (let t = 0; t < 60; t += 0.05) {
+    game.clock = t;
+    for (let row = 0; row < 5; row++) {
+      const left = potX(game, row * COLS), right = potX(game, row * COLS + COLS - 1) + POT_W;
+      assert.ok(left >= WALL - 1e-9 && right <= W - WALL + 1e-9, "inside the poles");
+      assert.ok(left - WALL < BALL_R * 2 && W - WALL - right < BALL_R * 2, "no gap by a pole the ball fits through");
+      assert.ok(Math.abs(swayOf(game, row)) <= MAX_SWAY + 1e-9);
+    }
+    assert.ok(Math.abs(windOf(game)) <= LEVELS[LEVEL_COUNT - 1].wind + 1e-9);
+  }
+  launch(game);
+  for (let i = 0; i < 60 * 30 && !game.over; i++) {
+    moveStick(game, game.x);
+    step(game, DT, false);
+    if (!game.resting) assert.ok(Math.abs(game.dy) >= Math.cos(MAX_ANGLE) - 1e-9, "never flatter than the stick's steepest bounce");
+  }
+});
+
+test("every stall can be cleared with 3 stars, a steady hand clears most, and real scores pass the link check", () => {
+  for (let level = 1; level <= LEVEL_COUNT; level++) {
+    let three = 0, cleared = 0;
+    for (const seed of [11, 48213, 999_999_999, 2024, 7919]) {
+      const good = play(seed, { level });
+      assert.ok(good.game.over && validScore(good.game.score), `level ${level} seed ${seed} ends with a real score`);
+      if (starsOf(good.game.score, level) === 3) three++;
+      const steady = play(seed, { level, skill: 0.7 });
+      if (starsOf(steady.game.score, level) >= 1) cleared++;
+      assert.deepEqual(parseShared(sharedHash({ seed, score: good.game.score, name: "", level })), { seed, score: good.game.score, name: "", level });
+    }
+    assert.equal(three, 5, `level ${level}: a perfect hand always gets 3 stars`);
+    assert.ok(cleared >= 4, `level ${level}: a steady hand clears it (${cleared}/5)`);
+  }
+  // Level 1 is nearly impossible to fail: even a clumsy hand clears it most of the time.
+  let clumsy = 0;
+  for (let seed = 1; seed <= 10; seed++) if (starsOf(play(seed * 7919, { skill: 0.3, limit: 60 * 60 * 10 }).game.score, 1)) clumsy++;
+  assert.ok(clumsy >= 8, `clumsy on level 1: ${clumsy}/10`);
+});
+
+test("stars and near-miss lines use exact numbers", () => {
+  assert.deepEqual([starsOf(70, 1), starsOf(80, 1), starsOf(340, 1), starsOf(400, 1), starsOf(450, 1), starsOf(500, 1)], [0, 1, 1, 2, 3, 3]);
+  assert.equal(starsOf(150, LEVEL_COUNT), 0, "the last stall asks for more pots");
+  assert.equal(nearLine(50, 1, null), "আর ৩টা হাঁড়ি ভাঙলেই ১ তারা।");
+  assert.equal(nearLine(310, 1, null), "আর ৪টা হাঁড়ি ভাঙলেই দোকান সাফ, ২ তারা।");
+  assert.equal(nearLine(400, 1, null), "আর একটা চান্স হাতে রেখে সাফ করলেই ৩ তারা।");
+  assert.equal(nearLine(450, 1, 450), "আর ৫০ পয়েন্ট হলেই নতুন সেরা।");
+  assert.equal(nearLine(500, 1, 500), "");
+});
+
+test("the old best moves into level 1's stars once, and only when there is nothing newer", () => {
+  assert.equal(migrateBest({}, "280"), 1);
+  assert.equal(migrateBest({}, "450"), 3);
+  assert.equal(migrateBest({}, "40"), 0, "never passed: nothing to move");
+  assert.equal(migrateBest({}, "285"), 0, "not a real score");
+  assert.equal(migrateBest({}, null), 0);
+  assert.equal(migrateBest({ 3: 2 }, "450"), 0, "already moved");
+});
+
+test("links carry the stall; old links without it open stall 1; bad stalls are refused", () => {
+  const shared = { seed: 48213, score: 280, name: "", level: 6 };
+  assert.equal(sharedHash(shared), "s=48213&t=280&l=6");
+  assert.deepEqual(parseShared(sharedHash(shared)), shared);
+  assert.equal(parseShared("s=48213&t=280")?.level, 1);
+  assert.equal(sharedHash({ ...shared, level: 1 }), "s=48213&t=280");
+  for (const bad of ["0", "11", "1.5", "-2", "x", "07"]) assert.equal(parseShared(`s=48213&t=280&l=${bad}`), null, `l=${bad}`);
 });

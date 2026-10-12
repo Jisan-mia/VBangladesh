@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { site } from "../content";
 import {
-  bands, birdAt, caption, compareLine, createGame, flight, groupSize, humanLine, makeSchedule, maxSaved, nextBird, nibblesBy, parseShareHash,
+  bands, birdAt, caption, LEVEL_COUNT, LEVELS, migrateBest, nearLine, nextMark, starsOf, compareLine, createGame, flight, groupSize, humanLine, makeSchedule, maxSaved, nextBird, nibblesBy, parseShareHash,
   previewTitle, shareHash, shoo, stepGame, tappable, DURATION, FIELD, FIRST_NIBBLE, FLY, GRAIN, HIT_R, LAST_LANDING, NIBBLE_EVERY, SCARECROW,
   SHOOED, SITTING, TAPPABLE, WAITING, FLYING, type Game,
 } from "../lib/game";
@@ -11,13 +11,13 @@ import { share } from "../share";
 const DT = 1 / 60;
 
 /** A scripted player: `reaction` seconds after a sparrow can be tapped, it claps `offset` units off its centre, at most one clap per `every` seconds. */
-function play(seed: number, reaction: number, every: number, offset = 0) {
-  const game = createGame(seed);
+function play(seed: number, reaction: number, every: number, offset = 0, level = 1) {
+  const game = createGame(seed, level);
   let last = -9;
   for (let steps = 0; !game.over && steps < 10_000; steps++) {
     stepGame(game, DT);
     if (game.t - last < every) continue;
-    const ready = game.birds.find(bird => tappable(bird, game.t) && game.t >= bird.t0 + FLY * TAPPABLE + reaction);
+    const ready = game.birds.find(bird => tappable(bird, game.t) && game.t >= bird.t0 + bird.fly * TAPPABLE + reaction);
     if (ready) { shoo(game, ready.x + offset, ready.y); last = game.t; }
   }
   return game;
@@ -122,7 +122,7 @@ test("headless runs end sanely: quicker hands save more, a perfect one saves it 
       assert.equal(run.grain, GRAIN - eaten(run), "grain adds up from the nibbles");
       assert.equal(run.shooed, run.birds.filter(bird => bird.state === SHOOED).length);
       // Every real run passes the link's check.
-      assert.ok(parseShareHash(shareHash({ seed, saved: run.grain, shooed: run.shooed, name: "" })), `seed ${seed}: ${run.grain}/${run.shooed} refused`);
+      assert.ok(parseShareHash(shareHash({ seed, saved: run.grain, shooed: run.shooed, name: "", level: 1 })), `seed ${seed}: ${run.grain}/${run.shooed} refused`);
     }
   }
 });
@@ -161,7 +161,7 @@ test("the link's check: the sparrows left sitting must have eaten something", ()
 });
 
 test("a result survives the link round trip and the preview names the player", () => {
-  const shared = { seed: 48213, saved: 88, shooed: 34, name: "রাফি" };
+  const shared = { seed: 48213, saved: 88, shooed: 34, name: "রাফি", level: 1 };
   const hash = shareHash(shared);
   assert.equal(hash, "s=48213&t=88&c=34&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF");
   assert.deepEqual(parseShareHash("#" + hash), shared);
@@ -211,4 +211,68 @@ test("content keeps the SEO limits", () => {
   assert.ok(site.privacy.some(line => line.includes("ক্ষেতের নম্বর") && line.includes("ধান") && line.includes("নাম")));
   assert.ok(!/আপনি|করুন|দেখুন/.test(JSON.stringify(site)), "তুমি voice only");
   assert.ok(!/duck|hunt|ডাক হান্ট|বন্দুক দিয়ে/i.test(JSON.stringify(site)), "no light-gun game names");
+});
+
+test("ten fields: level 1 is the original afternoon, and each later field is a step harder, never easier", () => {
+  for (const seed of [1, 48213, 999_999_999]) assert.equal(JSON.stringify(makeSchedule(seed, 1)), JSON.stringify(makeSchedule(seed)), "level 1 lays out the old afternoon");
+  for (let level = 2; level <= LEVEL_COUNT; level++) {
+    const [before, now] = [LEVELS[level - 2], LEVELS[level - 1]];
+    assert.ok(now.gap <= before.gap && now.ramp >= before.ramp && now.every <= before.every && now.fly <= before.fly, `level ${level} never gets easier`);
+    assert.ok([now.gap < before.gap, now.ramp > before.ramp, now.every < before.every, now.fly < before.fly].some(Boolean), `level ${level} adds something`);
+    assert.ok(now.pass < now.two && now.two < now.three && now.three < GRAIN, `level ${level}: marks in order`);
+  }
+});
+
+test("every field is fair: a perfect hand saves it all, a steady one clears it, and later fields bring more sparrows", () => {
+  let lastCount = 0;
+  for (let level = 1; level <= LEVEL_COUNT; level++) {
+    let count = 0, cleared = 0, three = 0;
+    for (let index = 1; index <= 30; index++) {
+      const seed = index * 7919, birds = makeSchedule(seed, level);
+      count += birds.length;
+      for (const bird of birds) assert.ok(bird.x >= FIELD.left && bird.x <= FIELD.right && bird.y >= FIELD.top && bird.y <= FIELD.bottom && bird.land < LAST_LANDING);
+      const perfect = play(seed, 0, 0.12, 20, level);
+      assert.equal(perfect.grain, GRAIN, `level ${level} seed ${seed}: nothing is impossible`);
+      const casual = play(seed, 0.9, 0.6, 20, level), good = play(seed, 0.6, 0.4, 20, level);
+      if (starsOf(casual.grain, level) > 0) cleared++;
+      if (starsOf(good.grain, level) === 3) three++;
+      assert.ok(parseShareHash(shareHash({ seed, saved: good.grain, shooed: good.shooed, name: "", level })), "a real run passes the link's check");
+    }
+    assert.ok(cleared >= 15, `level ${level}: an unhurried hand clears ${cleared}/30`);
+    assert.ok(three >= 5, `level ${level}: three stars are within reach (${three}/30)`);
+    assert.ok(count >= lastCount, `level ${level} has at least as many sparrows`);
+    lastCount = count;
+  }
+  // Level 1 is nearly impossible to fail: even a slow hand clears it.
+  for (const seed of [3, 4242, 90210, 48213]) assert.ok(starsOf(play(seed, 1.3, 0.9, 20).grain, 1) >= 1);
+});
+
+test("stars, marks and near-miss lines use exact numbers", () => {
+  assert.deepEqual([starsOf(29, 1), starsOf(30, 1), starsOf(74, 1), starsOf(75, 1), starsOf(90, 1), starsOf(100, 1)], [0, 1, 1, 2, 3, 3]);
+  assert.deepEqual([nextMark(10, 1), nextMark(30, 1), nextMark(80, 1), nextMark(95, 1)], [30, 75, 90, null]);
+  assert.equal(nearLine(26, 1, null), "আর ৪% ধান বাঁচলেই এই ক্ষেত পার।");
+  assert.equal(nearLine(71, 1, null), "আর ৪% ধান বাঁচলেই ২ তারা।");
+  assert.equal(nearLine(92, 1, 96), "আর ৫% হলেই এই ক্ষেতে নতুন সেরা।");
+  assert.equal(nearLine(97, 1, 96), "");
+  assert.equal(nearLine(100, 1, 100), "");
+});
+
+test("the old best moves into level 1's stars once, and only when there is nothing newer", () => {
+  assert.equal(migrateBest({}, "88"), 2);
+  assert.equal(migrateBest({}, "95"), 3);
+  assert.equal(migrateBest({}, "12"), 0, "it never cleared the field: nothing to move");
+  assert.equal(migrateBest({}, null), 0);
+  assert.equal(migrateBest({}, "x"), 0);
+  assert.equal(migrateBest({}, "250"), 0);
+  assert.equal(migrateBest({ 2: 1 }, "95"), 0, "already moved");
+});
+
+test("links carry the field; old links without it open field 1; bad fields are refused", () => {
+  const birds = makeSchedule(48213, 4);
+  const shared = { seed: 48213, saved: 70, shooed: birds.length, name: "", level: 4 };
+  assert.equal(shareHash(shared), `s=48213&t=70&c=${birds.length}&l=4`);
+  assert.deepEqual(parseShareHash(shareHash(shared)), shared);
+  assert.equal(parseShareHash("s=48213&t=88&c=34")?.level, 1, "an old link opens the field it was played on");
+  assert.equal(shareHash({ ...shared, level: 1, shooed: 34, saved: 88 }), "s=48213&t=88&c=34");
+  for (const bad of ["0", "11", "2.5", "-1", "x", "01"]) assert.equal(parseShareHash(`s=48213&t=50&c=30&l=${bad}`), null, `l=${bad}`);
 });
