@@ -16,3 +16,6 @@
 @media (prefers-reduced-motion:reduce){.gx-levels button.next,.gx-pop{animation:none}}
 .gx-sound.gx-compact{min-width:44px;min-height:44px;justify-content:center;padding:6px}
 .gx-reveal{font-size:34px;gap:4px}
+@keyframes gx-shake{20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+.gx-shake{animation:gx-shake .2s ease-out}
+@media (prefers-reduced-motion:reduce){.gx-shake{animation:none}}

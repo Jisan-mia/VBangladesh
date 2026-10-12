@@ -190,3 +190,12 @@ export function confetti({ count = 90, x = 0.5, y = 0.35, colors = COLORS }: { c
   };
   requestAnimationFrame(frame);
 }
+
+/** A gentle 200 ms shake for a mistake (re-triggers on repeat calls). Skipped in reduced motion via CSS. */
+export function shake(element: Element | null | undefined) {
+  if (!element) return;
+  try { if (localStorage.getItem('ektukhani-slow') === '1') return; } catch { /* storage blocked */ }
+  element.classList.remove('gx-shake');
+  void (element as HTMLElement).offsetWidth;
+  element.classList.add('gx-shake');
+}
