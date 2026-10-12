@@ -170,7 +170,7 @@ export function countdown(pick: Pick, today: string): Countdown {
 export function humanLine(count: Countdown) {
   if (!count.date) return "তারিখটা এখনো ঠিক হয়নি। সরকারি তালিকা এলেই বসিয়ে দেব।";
   if (count.theme === "ekushe") return count.days === 0 ? "আজ একুশে। ভাষাশহিদদের গভীর শ্রদ্ধায় স্মরণ করি।" : "ভাষাশহিদদের স্মরণের দিন আসছে।";
-  if (count.days < 0) return "দিনটা পেরিয়ে গেছে, স্মৃতিটা রয়ে গেছে।";
+  if (count.days < 0) return "দিনটা পেরিয়ে গেছে।";
   if (count.days === 0) return "আজই!";
   if (count.days === 1) return "কালই! আর একটা রাত।";
   if (count.days < 7) return "আর মাত্র ক'টা দিন!";

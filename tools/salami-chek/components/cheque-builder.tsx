@@ -133,7 +133,7 @@ export function ChequeBuilder({ switcher }: { switcher?: ReactNode }) {
               <input value={typed} inputMode="numeric" placeholder="অন্য অঙ্ক" aria-describedby="sc-amount-note" onChange={event => typeAmount(event.target.value)} />
             </label>
           </div>
-          <p id="sc-amount-note" className="sc-note" data-warn={Boolean(typed) && !typedAmount}>{typed && !typedAmount ? `১ থেকে ${amountFigures(MAX_AMOUNT)} টাকার মধ্যে লেখো, চেকে আগেরটাই আছে।` : "এটা খেলনা চেক, টাকা যায় না। শুধু ঈদের মজা।"}</p>
+          <p id="sc-amount-note" className="sc-note" data-warn={Boolean(typed) && !typedAmount}>{typed && !typedAmount ? `১ থেকে ${amountFigures(MAX_AMOUNT)} টাকার মধ্যে লেখো, চেকে আগেরটাই আছে।` : "কথায় লেখাটা নিজে থেকে বসে যায়।"}</p>
         </fieldset>
         <label className="sc-field">
           <span>সালামি কে পাবে? <small>তোমার নাম</small></span>
@@ -145,7 +145,7 @@ export function ChequeBuilder({ switcher }: { switcher?: ReactNode }) {
       {mode === "sign" && (
         <div className="sc-signbox">
           <button type="button" className="kit-primary sc-signbtn" onClick={sign}>সই করে দাও</button>
-          <p className="sc-note">এটা খেলনা চেক, টাকা যায় না। সই করলে শুধু ‘{giver}’ কথাটা মোট হিসাবে গোনা হয়, নাম বা টাকার অঙ্ক না।</p>
+          <p className="sc-note">সই করলে শুধু ‘{giver}’ কথাটা মোট হিসাবে গোনা হয়, নাম বা টাকার অঙ্ক না।</p>
         </div>
       )}
 
@@ -159,7 +159,7 @@ export function ChequeBuilder({ switcher }: { switcher?: ReactNode }) {
           </div>
           <div className="sc-result-body">
             <figure className="kit-card" data-format={format}>
-              <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-label={`${cardTitle(cheque)} ${amountFigures(cheque.amount)} টাকার খেলনা সালামির চেক। ${chequeLine(cheque)}`} />
+              <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-label={`${cardTitle(cheque)} ${amountFigures(cheque.amount)} টাকার সালামির চেক। ${chequeLine(cheque)}`} />
               {previewError && <p className="kit-status" role="alert">চেকের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
             </figure>
             <div className="sc-controls">
