@@ -41,15 +41,9 @@ export function growthText(times: number) {
   return times < 1.5 ? `গড় দাম বেড়েছে প্রায় ${bn(Math.round((times - 1) * 100))}%` : `গড় দাম বেড়েছে প্রায় ${decimal.format(times)} গুণ`;
 }
 
-/** One warm line from the year and how far prices moved since; worded so it reads right on the page and on the card. */
-export function humanLine({ year, birth }: Pick<Shared, "year" | "birth">) {
-  const times = worth(1, year);
-  // The growth line beside it already gives the multiple, so this one doesn't repeat it.
-  if (times >= 5) return birth ? "জন্মসাল থেকে দাম যত বেড়েছে, গল্প জমেছে তার চেয়েও বেশি।" : "দাম যত বেড়েছে, তোমার গল্প বেড়েছে তার চেয়েও বেশি।";
-  if (times >= 3) return "আব্বুর মানিব্যাগের নোটটা দেখতে একই আছে, শুধু ওটার জোর কমে গেছে।";
-  if (times >= 2) return "তখন যে টাকায় বাজারের ব্যাগ ভরত, এখন সেই টাকায় অর্ধেকও ভরে না।";
-  if (times >= 1.5) return "খুব বেশিদিন আগের কথা না, তবু মানিব্যাগটা এখন অনেক হালকা লাগে।";
-  return `মাত্র ${bn(LATEST_YEAR - year)} বছর! তবু বাজারে গেলেই টের পাওয়া যায়, তাই না?`;
+/** One plain line saying what the sum is worth today; worded so it reads right on the page and on the card. */
+export function humanLine({ year, amount = 100 }: Pick<Shared, "year"> & { amount?: number }) {
+  return `${bnYear(year)}-এর ${bn(amount)} টাকায় যা কেনা যেত, আজ তা কিনতে লাগে প্রায় ${bn(roughly(worth(amount, year)))} টাকা।`;
 }
 
 export function shareHash({ year, amount, birth }: Shared) {
@@ -88,7 +82,7 @@ export function createCard(shared: Shared): Card {
     ...shared,
     now,
     times,
-    kicker: shared.birth ? `আমার জন্মসাল ${bnYear(shared.year)}` : "আব্বুর পুরোনো মানিব্যাগ থেকে",
+    kicker: shared.birth ? `আমার জন্মসাল ${bnYear(shared.year)}` : "টাকার মান, তখন আর এখন",
     headline: `${bnYear(shared.year)} সালের ${bn(shared.amount)} টাকা`,
     sentence: `${bnYear(shared.year)} সালের ${bn(shared.amount)} টাকা ≈ এখনকার ${bn(now)} টাকা`,
     growth: growthText(times),

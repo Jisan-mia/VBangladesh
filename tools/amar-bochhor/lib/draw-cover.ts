@@ -115,13 +115,13 @@ export function drawCover(canvas: HTMLCanvasElement, cover: Cover, format: CardF
   const footer = format === "story" ? height - 260 : height - 96;
   drawCoverStock(context, width, height, footer - 26);
 
-  fitText(context, [{ text: `বার্ষিক প্রকাশনা · বর্ষ ${bn(cover.year)} · মূল্য: অমূল্য`, color: YELLOW, weight: 600 }], 84, layout.strip, layout.issueSize - 4, 620);
+  fitText(context, [{ text: `বার্ষিক প্রকাশনা · বর্ষ ${bn(cover.year)} · মূল্য: ফ্রি`, color: YELLOW, weight: 600 }], 84, layout.strip, layout.issueSize - 4, 620);
   context.fillStyle = YELLOW;
   context.fillRect(84, layout.strip + 24, 620, 3);
   fitText(context, [{ text: owner(cover.name), color: "#ffffff", weight: 700, display: true }], 84, layout.owner, layout.ownerSize, 600);
   fitText(context, [{ text: "বার্ষিকী", color: YELLOW, weight: 800, display: true }], 78, layout.title, layout.titleSize, 620);
   drawSeal(context, cover.year, 860, layout.seal, layout.sealR, photo);
-  fitText(context, [{ text: `${bn(daysIn(cover.year))} দিন · ${bn(fridaysIn(cover.year))}টা শুক্রবার · অনেক গল্প`, color: "#ffffff", weight: 500 }], 84, layout.issue, layout.issueSize, 640);
+  fitText(context, [{ text: `${bn(daysIn(cover.year))} দিন · ${bn(fridaysIn(cover.year))}টা শুক্রবার`, color: "#ffffff", weight: 500 }], 84, layout.issue, layout.issueSize, 640);
 
   drawContents(context, cover, layout.panel, layout);
 
