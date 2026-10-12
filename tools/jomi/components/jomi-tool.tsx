@@ -96,7 +96,7 @@ export function JomiTool() {
   }
 
   const help = !text.trim() ? "একটা মাপ লেখো, যেমন ১ বা ২.৫" : "শুধু অঙ্ক লেখো, যেমন ২.৫ বা 2.5। শূন্যের বেশি, ৭ অঙ্কের মধ্যে।";
-  const caption = `${plot.label ? `${labelText(plot.label)}: ` : ""}${equation(plot)}। ${pitchLine(plot)}! তোমার বাড়ির উঠোন কত শতাংশ, মেপে দেখো:`;
+  const caption = `${plot.label ? `${labelText(plot.label)}: ` : ""}${equation(plot)}। ${pitchLine(plot)}। তোমার বাড়ির উঠোন কত শতাংশ, মেপে দেখো:`;
 
   return (
     <div className="jomi">

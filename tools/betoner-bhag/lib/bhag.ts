@@ -126,12 +126,12 @@ export function biggest(month: Month) {
 export const monthTitle = (name: string) => (name ? `${possessive(name)} মাস` : "আমার মাস");
 
 const flexLines: Record<FlexId, string> = {
-  mobile: "এক বাটি যায় মোবাইল আর নেটে, সবার সাথে যোগাযোগে।",
-  bills: "আলো-পাখা-চুলার জন্য আলাদা একটা বাটি।",
-  study: "একটা বাটি আলাদা করে রাখা পড়াশোনার জন্য।",
-  medicine: "একটা বাটি আলাদা থাকে ওষুধপত্রের জন্য।",
-  hobby: "শখের জন্যও একটা বাটি আছে।",
-  dawat: "দাওয়াত আর উপহারের জন্য আলাদা একটা বাটি।",
+  mobile: "এক বাটি মোবাইল আর নেটের।",
+  bills: "এক বাটি আলো, পাখা আর চুলার।",
+  study: "এক বাটি পড়াশোনার।",
+  medicine: "এক বাটি ওষুধপত্রের।",
+  hobby: "এক বাটি শখের, নিজের জন্য।",
+  dawat: "এক বাটি দাওয়াত আর উপহারের।",
 };
 
 /** A warm observation about the split. Never advice, never a verdict on how anyone spends. */
