@@ -149,7 +149,7 @@ function drawTicket(context: CanvasRenderingContext2D, card: TicketCard, x: numb
   const lines = wrapText(context, comment(card.answers), width - pad * 2 - 130, 2);
   fitText(context, [{ text: "মন্তব্য:", color: MUTED, weight: 700 }], pad, cursor, 34, 150);
   lines.forEach((line, index) => fitText(context, [{ text: line, color: INK, weight: 600 }], pad + 130, cursor + index * 54, 40, width - pad * 2 - 130));
-  fitText(context, [{ text: "শুধু মজার জন্য · ৮টা চেনা পছন্দে মাপা", color: MUTED, weight: 500 }], width / 2, height - 34, 26, width - pad * 2, "center");
+  fitText(context, [{ text: "৮টা চেনা পছন্দে মাপা", color: MUTED, weight: 500 }], width / 2, height - 34, 26, width - pad * 2, "center");
   context.restore();
 }
 

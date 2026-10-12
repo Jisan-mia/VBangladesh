@@ -24,7 +24,7 @@ test("every answer set gives a full report, and every timing can come up", () =>
 test("career first and happily single always get their own ending", () => {
   assert.equal(createReport([2, 0, 0, 1, 0, 0], "").timing?.id, "career");
   assert.equal(createReport([0, 2, 1, 2, 1, 0], "").timing?.id, "nijer");
-  assert.match(createReport([0, 2, 1, 2, 1, 0], "").line, /নিজের সাথেই দারুণ/);
+  assert.match(createReport([0, 2, 1, 2, 1, 0], "").line, /নিজের সাথে বেশ আছো/);
 });
 
 test("an unfinished file has no prediction yet", () => {

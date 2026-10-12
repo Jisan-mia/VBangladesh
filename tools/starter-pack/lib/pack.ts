@@ -143,7 +143,7 @@ export const packs = [
       { when: ["sorshe-balish"], text: "সরিষার বালিশ নিয়ে বাড়ির সবার পরামর্শ চলছেই।" },
       { when: ["jhunjhuni"], text: "ঝুনঝুনির শব্দে এখন সারা বাসা জেগে থাকে।" },
     ],
-    fallback: "ঘুম কম, কিন্তু ঘরভরা নতুন হাসি।",
+    fallback: "রাতে ঘুম কম, গ্যালারিতে ছবি বেশি।",
   },
   {
     id: "eid", label: "ঈদের ছুটিতে বাড়ি", chip: "ঈদের ছুটি", color: "#21915a", deep: "#0f5c36", on: "#ffffff", mood: "grin",

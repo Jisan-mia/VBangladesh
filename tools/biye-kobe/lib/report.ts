@@ -86,7 +86,7 @@ export function createReport(answers: readonly (Answer | null)[], name: string):
 
 export function humanLine(answers: readonly Answer[]) {
   if (answers[3] === 1) return "আগে চাকরি, তারপর মিষ্টি। ঘটক চা খেতে খেতে অপেক্ষায়।";
-  if (answers[3] === 2) return "নিজের সাথেই দারুণ আছো। ঘটক ছাতা গুটিয়ে হাসিমুখে বাড়ি গেল।";
+  if (answers[3] === 2) return "নিজের সাথে বেশ আছো। ঘটক ছাতা গুটিয়ে বাড়ি ফিরলেন।";
   return [
     "বাসায় এখন শান্তি, ঘটকের ছাতাও আলমারিতে।",
     "কথা উঠছে, তুমি হাসছ। ঘটক বলে, তাড়ার কিছু নেই।",
@@ -96,7 +96,7 @@ export function humanLine(answers: readonly Answer[]) {
 
 export function caption(report: Report) {
   if (!report.timing) return "";
-  return `ঘটকের রিপোর্টে লেখা: “${report.timing.text}”। শুধু মজা! তোমার রিপোর্টে কী লেখা?`;
+  return `ঘটকের রিপোর্টে লেখা: “${report.timing.text}”। তোমার রিপোর্টে কী লেখা?`;
 }
 
 export function previewTitle(shared: Shared) {

@@ -9,7 +9,7 @@ export default function MonerBoyosPage() {
       <JsonLd site={site} />
       <div className="mb-page">
         <section className="container mb-hero" aria-labelledby="mb-title">
-          <p className="mb-hero-kicker">মেলার মেশিন · ৮টা চাপ · শুধু মজার জন্য</p>
+          <p className="mb-hero-kicker">মেলার মেশিন · ৮টা চাপ</p>
           <h1 id="mb-title">শরীরের বয়স জানো, <span>মনের বয়স কত?</span></h1>
           <p className="mb-lead">{site.lead}</p>
         </section>

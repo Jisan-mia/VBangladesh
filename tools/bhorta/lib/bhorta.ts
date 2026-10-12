@@ -5,8 +5,8 @@ export const MAX_NAME = 20;
 // Nine bhortas, every one of them lovable: no mean trait, no "worst" result. `tag` goes under the name on the
 // card, `line` is the warm personality line. `ball`/`fleck` paint the bhorta ball. Just for fun, no food or health claim.
 export const bhortas = [
-  { id: "alu", name: "আলু ভর্তা", tag: "সবার আপন, সবার আগে শেষ", line: "যে বাসাতেই যাও, সবাই তোমাকেই চায়। মন ভার হোক, মাসের শেষ হোক, বৃষ্টির দুপুর হোক, সবখানে তুমিই ভরসা।", ball: "#e9cf86", fleck: "#2f8a3a" },
-  { id: "begun", name: "বেগুন ভর্তা", tag: "ওপরে পোড়া পোড়া, ভেতরে নরম", line: "আগুনে পুড়েও ধোঁয়া-ধোঁয়া একটা মায়া রেখে দাও। তোমার সাথে একবার বসলে কথা আর শেষ হয় না।", ball: "#8a6f45", fleck: "#c9452d" },
+  { id: "alu", name: "আলু ভর্তা", tag: "সবার আপন, সবার আগে শেষ", line: "যে বাসায় যাও, সবাই তোমাকেই চায়। মাসের শেষ হোক বা বৃষ্টির দুপুর, তুমি থাকলে সব চলে যায়।", ball: "#e9cf86", fleck: "#2f8a3a" },
+  { id: "begun", name: "বেগুন ভর্তা", tag: "ওপরে পোড়া পোড়া, ভেতরে নরম", line: "বাইরে একটু পোড়া দেখালেও ভেতরটা নরম। তোমার সাথে একবার বসলে কথা আর শেষ হয় না।", ball: "#8a6f45", fleck: "#c9452d" },
   { id: "shutki", name: "শুঁটকি ভর্তা", tag: "ঝাঁঝালো, তবু সবাই খোঁজে", line: "নাম শুনে কেউ কেউ নাক কোঁচকায়, একবার চেখে দেখলে আর ভোলে না। তুমি যেখানে, আসর সেখানে জমে।", ball: "#b0552f", fleck: "#5a2a14" },
   { id: "taki", name: "টাকি মাছ ভর্তা", tag: "যত্নে বানানো, নানুবাড়ির স্বাদ", line: "এক এক করে কাঁটা বেছে যত্ন করো সবার। তোমার কাছে এলে মনে হয় বাড়ি ফিরলাম।", ball: "#c79a64", fleck: "#2f8a3a" },
   { id: "kalojira", name: "কালোজিরা ভর্তা", tag: "চুপচাপ, কিন্তু গভীর", line: "কথা কম বলো, যা বলো মনে গেঁথে যায়। ছোট্ট দানার মতো, ভেতরে অনেক স্বাদ।", ball: "#3a2f2a", fleck: "#c9452d" },
