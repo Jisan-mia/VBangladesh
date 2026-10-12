@@ -287,7 +287,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 23 | sat-chara | সাত চাড়া | গেম | GW14 | building | games-wave-2.md #14 |
 | 23 | chhip-felo | ছিপ ফেলো | গেম | GW15 | done | games-wave-2.md #15 |
 | 24 | golir-badminton | গলির ব্যাডমিন্টন | গেম | GW16 | todo | games-wave-2.md #16 |
-| 24 | latim | লাটিম | গেম | GW17 | building | games-wave-2.md #17 |
+| 24 | latim | লাটিম | গেম | GW17 | done | games-wave-2.md #17 |
 | 24 | kagojer-urojahaj | কাগজের উড়োজাহাজ | গেম | GW18 | todo | games-wave-2.md #18 |
 | 24 | nodi-par | নদী পার | গেম | GW19 | building | games-wave-2.md #19 |
 | 24 | marble-sinri | মার্বেল-সিঁড়ি | গেম | GW20 | todo | games-wave-2.md #20 |
