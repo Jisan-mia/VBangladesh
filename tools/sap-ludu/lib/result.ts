@@ -128,6 +128,13 @@ export function versusLine(mine: number, theirs: number, name: string) {
   return `এবার ${who(name)} এগিয়ে। একই ছক্কায় আরেকবার দেখো!`;
 }
 
+/** A solo race that just missed this phone's best (fewer rolls is better): how many fewer would have done it. Empty when it isn't close. */
+export function nearBest(moves: number, best: number | null) {
+  if (best === null || moves < best) return "";
+  const fewer = moves - best + 1;
+  return fewer <= 10 ? `আর ${bn(fewer)} চাল কম লাগলেই নতুন সেরা।` : "";
+}
+
 export function friendBanner(result: Result) {
   const { card, game } = result, moves = bn(winnerMoves(game));
   if (card.players === 1) return `${card.names[0] || "তোমার বন্ধু"} ${moves} চালে ১০০-তে উঠেছে। একই ছক্কা, কার ভাগ্য ভালো?`;

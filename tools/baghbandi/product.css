@@ -58,6 +58,16 @@
 .bb-note p{margin:0;font-weight:600}
 .bb-note .kit-primary{min-width:180px;min-height:56px;font-size:19px}
 
+.bb-level{display:flex;justify-content:space-between;gap:8px;margin:0;font-size:14px;color:var(--muted)}
+.bb-level b{color:var(--ink)}
+.bb-over .gx-reveal{justify-self:start;margin-bottom:2px}
+.bb-near{margin-top:2px;font-weight:700;color:var(--accent-deep)}
+.bb-levels{border:1.5px solid var(--clay-edge);border-radius:14px;background:#fff}
+.bb-levels summary{display:flex;align-items:center;gap:8px;min-height:46px;padding:0 14px;font-weight:700;cursor:pointer}
+.bb-levels summary span{font-weight:500;font-size:14px;color:var(--muted)}
+.bb-levels>p{margin:0 14px 10px;font-size:14px;line-height:1.5;color:var(--muted)}
+.bb-ladder{padding:0 12px 12px}
+.bb-ladder h3{margin:0 0 6px;font-size:15px}
 .bb-status{min-height:48px;margin:0;font-size:15px;font-weight:600;line-height:1.45;color:var(--muted);display:flex;align-items:center}
 .bb-over{display:grid;gap:2px;margin:0;padding:8px 12px;border:2px dashed var(--ink);border-radius:12px;background:var(--clay-soft)}
 .bb-over p{margin:0}
@@ -65,7 +75,8 @@
 .bb-over-verdict{font-weight:700;line-height:1.45}
 .bb-over-verdict span{font-weight:500;color:var(--muted)}
 
-.bb-controls{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:6px}
+.bb-controls{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr) auto;gap:6px}
+.bb-sound{border-color:var(--clay-edge);border-radius:14px;background:#fff;color:var(--ink)}
 .bb-controls[data-phase=over],.bb-controls[data-phase=friend]{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);align-items:center}
 .bb-controls[data-phase=friend] .bb-tool{min-height:56px;white-space:normal}
 .bb-tool{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:48px;padding:4px 6px;white-space:nowrap;border:1.5px solid var(--clay-edge);border-radius:14px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;line-height:1.2}
@@ -99,6 +110,9 @@
 
 @media(max-width:360px){
   .bb-modes button,.bb-tool{font-size:14px}
+  .bb-controls{gap:4px}
+  .bb-tool{white-space:normal;text-align:center}
+  .bb-tool svg{display:none}
   .bb-pill{gap:4px;padding-inline:2px 6px}
   .bb-pill[data-side="1"]{padding-inline:6px 2px}
   .bb-pill svg{width:28px;height:28px}

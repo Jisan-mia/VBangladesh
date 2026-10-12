@@ -231,7 +231,7 @@ test("words: seconds, places, a line for every place, the friend comparison", ()
   assert.equal(compareLine(392, 392, "রাফি"), "রাফি আর তুমি একদম সমান সমান!");
   assert.match(compareLine(398, 392, "রাফি"), /^আর একটু হলেই!/);
   assert.match(compareLine(450, 392, ""), /^বন্ধু এবার ৫.৮ সেকেন্ড এগিয়ে/);
-  const shared = { seed: 48213, tenths: 384, rank: 1, name: "রাফি" };
+  const shared = { seed: 48213, tenths: 384, rank: 1, level: 7, name: "রাফি" };
   assert.equal(banner(shared), "রাফি ৩৮.৪ সেকেন্ডে ১ম হয়েছে। একই নদী, এবার তোমার পালা।");
   assert.equal(previewTitle(shared), "রাফি ৩৮.৪ সেকেন্ডে ১ম হয়েছে। তুমি পারবে?");
   assert.match(previewTitle({ ...shared, name: "" }), /তুমি পারবে\?$/);
@@ -239,7 +239,7 @@ test("words: seconds, places, a line for every place, the friend comparison", ()
 });
 
 test("share links: round trip, caps, and hostile input rejected", () => {
-  const shared = { seed: 48213, tenths: 384, rank: 2, name: "রাফি" };
+  const shared = { seed: 48213, tenths: 384, rank: 2, level: 7, name: "রাফি" };
   const hash = shareHash(shared);
   assert.deepEqual(parseShareHash(`#${hash}`), shared);
   assert.equal(share.normalize(hash), hash);

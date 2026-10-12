@@ -18,7 +18,7 @@
 // there are always empty points, so some goat always touches one; the tests check this.) So no game runs forever, the tigers get MAX_MOVES moves
 // in all (both sides together) to make their goal; if they can't, the goats have held out and win. No draws: in bot play a draw-at-cap
 // rule ended most games in a draw, and a hunt against the clock gives the tiger a reason to hunt.
-import { makeRng } from "../../../shared/game-core";
+import { makeRng, starsFor, type LevelStars } from "../../../shared/game-core";
 
 export const SIZE = 5;
 export const POINTS = SIZE * SIZE;
@@ -60,6 +60,8 @@ export type Move = { from: number; to: number; over: number };
 export type Game = {
   seed: number;
   mode: Mode;
+  /** The bot's level, 1..BOT_LEVELS.length (LEGACY_LEVEL in a game against nobody). */
+  level: number;
   /** Goats standing on each point: 0, 1, or more for a pile that hasn't been unstacked yet. */
   goats: number[];
   /** Where each tiger stands. Slot order never changes, so the board can animate the one that moved. */
@@ -76,10 +78,30 @@ export type Game = {
 };
 export type Ending = "trap" | "hunt" | "hold";
 
-export function createGame(seed: number, mode: Mode): Game {
+/**
+ * Bot levels, one ladder for each side you play. A level sets both bots: the goats you hunt as the tiger (`safe`, `noise`, `careful`)
+ * and the tiger you box in as the goats (`miss`: how often it lets a jump go, `room`, `threat`, `tnoise`). Tuned in headless runs so
+ * level 1 is nearly a sure win and each step is a little harder. Level 7 is the bot from before levels, so old links replay unchanged.
+ */
+type BotLevel = { careful: number; safe: number; noise: number; miss: number; room: number; threat: number; tnoise: number };
+const BOT = { careful: 0.5, safe: 100, noise: 2, miss: 0, room: 1, threat: 0, tnoise: 6 };
+export const BOT_LEVELS: readonly BotLevel[] = [
+  { ...BOT, careful: 0, safe: 0, noise: 30, miss: 1, room: 0, tnoise: 10 },
+  { ...BOT, careful: 0, safe: 2, noise: 20, miss: 0.85, room: 0, tnoise: 10 },
+  { ...BOT, careful: 0, safe: 3, noise: 16, miss: 0.7, tnoise: 10 },
+  { ...BOT, careful: 0, safe: 4, noise: 14, miss: 0.5 },
+  { ...BOT, careful: 0, safe: 5, noise: 10, miss: 0.3 },
+  { ...BOT, careful: 0, safe: 30, noise: 6, miss: 0.12 },
+  BOT,
+  { ...BOT, careful: 1, threat: 3 },
+];
+export const LEGACY_LEVEL = 7;
+export const isLevel = (level: number) => Number.isInteger(level) && level >= 1 && level <= BOT_LEVELS.length;
+
+export function createGame(seed: number, mode: Mode, level = LEGACY_LEVEL): Game {
   const goats = Array<number>(POINTS).fill(0);
   for (const at of START_PILES) goats[at] = GOATS / START_PILES.length;
-  return { seed, mode, goats, tigers: START_TIGERS.slice(), moves: [], log: [], turn: GOAT, taken: 0, winner: null, ending: null, over: false };
+  return { seed, mode, level: isLevel(level) ? level : LEGACY_LEVEL, goats, tigers: START_TIGERS.slice(), moves: [], log: [], turn: GOAT, taken: 0, winner: null, ending: null, over: false };
 }
 
 /** Every legal move for one side, in a fixed order (by point, then direction) so a move's index means the same on every phone. */
@@ -136,24 +158,27 @@ const moved = (tigers: readonly number[], move: Move) => tigers.map(at => at ===
 
 /**
  * The bot's move, as an index into legalMoves(game). Deterministic: a position in a given game always gets the same reply, so a shared
- * move list can be re-checked. Simple on purpose, tuned in bot-against-bot runs so a careful person wins about as often as not:
- * the tigers always take a goat when they can, else keep the most room to roam. The goats never leave a free jump while a safe move
- * exists, squeeze the tigers' room, and about half the time also look one tiger step ahead for a double threat.
+ * move list can be re-checked. Simple on purpose; the game's level (BOT_LEVELS) sets how sharp it is. At level 7, the bot from before
+ * levels: the tigers always take a goat when they can, else keep the most room to roam. The goats never leave a free jump while a safe
+ * move exists, squeeze the tigers' room, and about half the time also look one tiger step ahead for a double threat.
  */
 export function botMove(game: Game) {
-  const list = legalMoves(game);
+  const list = legalMoves(game), bot = BOT_LEVELS[game.level - 1] ?? BOT;
   const rng = makeRng((game.seed ^ Math.imul(game.moves.length + 1, 0x9e3779b1)) >>> 0);
-  const careful = rng() < 0.5;
+  const careful = rng() < bot.careful;
   const previous = game.log[game.log.length - 2];
   let best = 0, bestScore = -Infinity;
   list.forEach((move, index) => {
     const after = apply(game, move, index);
     let score: number;
     if (after.winner === game.turn) score = 1e6;
-    else if (game.turn === TIGER) score = (move.over >= 0 ? 1000 : 0) + movesFor(after.goats, after.tigers, TIGER).length + rng() * 6;
-    else {
+    else if (game.turn === TIGER) {
+      // A missed jump draws from the rng only on levels that miss, so level 7 makes the very same moves as before levels.
+      score = (move.over >= 0 && !(bot.miss && rng() < bot.miss) ? 1000 : 0) + bot.room * movesFor(after.goats, after.tigers, TIGER).length + rng() * bot.tnoise;
+      if (bot.threat) score += bot.threat * threatened(after.goats, after.tigers).length;
+    } else {
       const replies = movesFor(after.goats, after.tigers, TIGER);
-      score = -100 * threatened(after.goats, after.tigers).length - 3 * replies.length + rng() * 2;
+      score = -bot.safe * threatened(after.goats, after.tigers).length - 3 * replies.length + rng() * bot.noise;
       if (careful && replies.some(reply => reply.over < 0 && threatened(after.goats, moved(after.tigers, reply)).length >= 2)) score -= 40;
       if (game.goats[move.from] > 1) score += 2;
       if (previous && previous.from === move.to && previous.to === move.from) score -= 5;
@@ -167,8 +192,8 @@ const botTurn = (game: Game) => game.mode !== 0 && game.turn !== humanSide(game.
 export const isBotTurn = (game: Game) => !game.over && botTurn(game);
 
 /** Rebuilds a game from its move list, checking every move is legal and every bot move is the bot's own reply. Null if anything is off. */
-export function replay(seed: number, mode: Mode, moves: readonly number[]): Game | null {
-  let game: Game | null = createGame(seed, mode);
+export function replay(seed: number, mode: Mode, moves: readonly number[], level = LEGACY_LEVEL): Game | null {
+  let game: Game | null = createGame(seed, mode, level);
   for (const index of moves) {
     if (!game || game.over) return null;
     if (botTurn(game) && index !== botMove(game)) return null;
@@ -189,7 +214,36 @@ export function undo(game: Game): Game {
     while (count && (count - 1) % 2 !== mine) count--;
   }
   if (count) count--;
-  return replay(game.seed, game.mode, game.moves.slice(0, count)) ?? game;
+  return replay(game.seed, game.mode, game.moves.slice(0, count), game.level) ?? game;
+}
+
+/** Your stars for a game against the bot (0 unless you won): the tiger by how few moves it took, the goats for a trap or for goats kept. */
+export const TIGER_STARS = [40, 70] as const, GOAT_STARS_KEPT = 3;
+export function winStars(game: Game) {
+  if (!game.over || game.mode === 0 || game.winner !== humanSide(game.mode)) return 0;
+  if (game.winner === TIGER) return starsFor(game.moves.length, TIGER_STARS[0], TIGER_STARS[1], true);
+  return game.ending === "trap" ? 3 : game.taken <= GOAT_STARS_KEPT ? 2 : 1;
+}
+
+/** Where to start: the furthest open level you haven't three-starred (level 1 for someone new). */
+export function openingLevel(stars: LevelStars, unlocked: number) {
+  let level = unlocked;
+  while (level > 1 && stars[level] === 3) level--;
+  return stars[level] === 3 ? unlocked : level;
+}
+
+/** The levels key for a side (`ektukhani-levels-…`), and the best-score key this phone kept per side before levels. */
+export const ladderSlug = (side: Side) => side === TIGER ? "baghbandi-bagh" : "baghbandi-chhagol";
+
+/**
+ * Before levels, this phone kept only a best score per side (goats taken as the tiger, goats kept as the goats). A best that only a win
+ * over the old bot can give becomes one star on level 7, once: returns the levels JSON to save, or null when there's nothing to move.
+ */
+export function migrateBest(side: Side, best: string | null, levels: string | null) {
+  if (levels !== null || best === null || !Number.isFinite(Number(best))) return null;
+  const score = Number(best);
+  const won = side === TIGER ? score >= TIGER_GOAL : score > GOATS - TIGER_GOAL;
+  return won ? JSON.stringify({ [LEGACY_LEVEL]: 1 }) : null;
 }
 
 /** Board units: points at 50, 150, …, 450 on a 500 × 500 yard. */
