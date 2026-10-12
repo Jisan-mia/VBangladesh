@@ -3,6 +3,8 @@
 import { Fragment, useEffect, useRef, useState, type ChangeEvent } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { addToTally, type Tally } from "../../../shared/share-client";
+import { confetti, sfx, tone } from "../../../shared/game-sound";
+import { SoundToggle } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, StickyNext, useInView } from "../../../shared/share-kit";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import { bn, caption, check, cleanName, gradeOf, grades, humanLine, opening, parseShareHash, passages, score, shareHash, words, MAX_NAME, TEST_SECONDS, type Shared } from "../lib/typing";
@@ -27,15 +29,12 @@ export function Typewriter() {
   const [format, setFormat] = useState<CardFormat>("feed");
   const [site, setSite] = useState("");
   const [previewError, setPreviewError] = useState(false);
-  const [bell, setBell] = useState(true);
-  const [rings, setRings] = useState(0);
   const [everyone, setEveryone] = useState<Tally | null>(null);
   const [compared, setCompared] = useState<"idle" | "sending" | "done" | "failed">("idle");
   const machine = useRef<HTMLDivElement>(null);
   const paper = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
   const lineTop = useRef(0);
-  const audio = useRef<AudioContext | null>(null);
   const preview = useRef<HTMLCanvasElement>(null);
   const friendPreview = useRef<HTMLCanvasElement>(null);
   const result = useRef<HTMLElement>(null);
@@ -94,29 +93,16 @@ export function Typewriter() {
     // `state` encodes everything the card draws.
   }, [state, format, site, friend]);
 
-  function ding() {
-    setRings(count => count + 1);
-    if (!bell) return;
-    try {
-      const context = audio.current ??= new AudioContext();
-      void context.resume();
-      const at = context.currentTime, tone = context.createOscillator(), gain = context.createGain();
-      tone.type = "triangle";
-      tone.frequency.value = 2350;
-      gain.gain.setValueAtTime(0.12, at);
-      gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.7);
-      tone.connect(gain).connect(context.destination);
-      tone.start(at);
-      tone.stop(at + 0.7);
-    } catch { /* no Web Audio here: the bell still swings */ }
-  }
+  // The carriage bell: one bright ping that rings out.
+  const ding = () => tone(2350, 0.7, 0.12, "triangle");
 
   function finish(value: string, seconds: number) {
     const { wpm, accuracy } = score(check(passage, value), seconds);
     setDone({ w: wpm, a: accuracy, seconds: Math.max(1, Math.round(seconds)) });
     setCompared("idle");
     input.current?.blur();
-    ding();
+    // The top stamp, or beating a friend on the same text, gets the celebration; otherwise just the bell.
+    if (gradeOf(wpm).id === "ostad" || (friend && friend.p === p && wpm > friend.w)) { sfx.win(); confetti(); } else ding();
   }
 
   function restart(next: number) {
@@ -188,10 +174,7 @@ export function Typewriter() {
         <div className="bt-strip">
           <p className="bt-clock" data-low={startedAt !== null && !done && clock <= 10}><b>{bn(clock)}</b> সেকেন্ড</p>
           <p className="bt-count">ঠিক শব্দ <b>{bn(progress.correctWords)}</b></p>
-          <button type="button" className="bt-bell" aria-pressed={bell} onClick={() => setBell(on => !on)} title="লাইনের শেষে ঘণ্টি">
-            <svg key={rings} className={rings ? "bt-ring" : undefined} viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1.6 1.6 0 0 1 1.6 1.6v.5A6 6 0 0 1 18 11v4l2 2.5H4L6 15v-4a6 6 0 0 1 4.4-5.9v-.5A1.6 1.6 0 0 1 12 3Zm-2.2 16h4.4a2.2 2.2 0 0 1-4.4 0Z" />{!bell && <path d="M4 4l16 16" className="bt-bell-off" />}</svg>
-            <span className="bt-sr">ঘণ্টির শব্দ</span>
-          </button>
+<SoundToggle compact />
         </div>
         <label className="bt-input">
           <span className="bt-sr">ওপরের লেখাটা এখানে টাইপ করো</span>

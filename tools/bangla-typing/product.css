@@ -44,13 +44,8 @@
 .bt-clock b{display:inline-block;min-width:2.2em;margin-right:4px;padding:0 8px;border-radius:8px;background:#121518;color:var(--amber);font-family:var(--font-display);font-size:24px;line-height:1.5;text-align:center;font-variant-numeric:tabular-nums}
 .bt-clock[data-low=true] b{color:#ff8a7a}
 .bt-count{flex:1}
+.bt-strip .gx-sound{color:#c4ccd4}
 .bt-count b{color:#fff;font-size:17px}
-.bt-bell{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:50%;background:#3a434b;cursor:pointer}
-.bt-bell svg{width:24px;height:24px;fill:var(--amber);transform-origin:50% 10%}
-.bt-bell[aria-pressed=false] svg{fill:#8a939c}
-.bt-bell-off{stroke:#ff8a7a;stroke-width:2.4;stroke-linecap:round}
-.bt-ring{animation:bt-swing .7s ease-out}
-@keyframes bt-swing{20%{transform:rotate(22deg)}45%{transform:rotate(-16deg)}70%{transform:rotate(8deg)}}
 
 .bt-input{display:block}
 .bt-input textarea{display:block;width:100%;min-height:66px;padding:10px 12px;border:0;border-radius:12px;background:#fff;color:var(--ink);font-size:18px;line-height:1.6;resize:none;box-shadow:inset 0 2px 0 #1a1f2b22}
@@ -105,5 +100,5 @@
   .bt-text{font-size:24px}
   .bt-result-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:36px}
 }
-@media(prefers-reduced-motion:reduce){.bt-ring,.bt-done{animation:none}.bt-keys i{transition:none}}
+@media(prefers-reduced-motion:reduce){.bt-done{animation:none}.bt-keys i{transition:none}}
 .bt-hero h1 .bt-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0 0 2px;font-size:13px;font-weight:600;color:var(--accent)}

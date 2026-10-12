@@ -72,8 +72,8 @@
 
 .tool-ganer-koli .koli-draw{width:100%;min-height:62px;font-family:var(--font-display);font-size:24px;touch-action:manipulation}
 .tool-ganer-koli .koli-draw[data-mid=true]{background:#fff;color:var(--accent-deep);border:2px solid var(--accent);box-shadow:0 3px 0 var(--accent);font-size:19px}
-.koli-tools{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.koli-tools:empty{display:none}
+.koli-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.koli-tools .gx-sound{margin-left:auto}
 
 .koli-pick{border:1.5px dashed #c7ad95;border-radius:14px;padding:0 12px}
 .koli-pick summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:600;color:var(--accent-deep)}
