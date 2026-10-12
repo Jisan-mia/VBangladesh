@@ -1,14 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { CPI } from "../lib/cpi";
-import { createCard, growthText, humanLine, parseShareHash, previewTitle, roughly, shareHash, worth, years, FIRST_YEAR, LATEST_YEAR } from "../lib/tokhon";
+import { CPI, NOW_INFLATION, NOW_YEAR } from "../lib/cpi";
+import { createCard, growthText, humanLine, parseShareHash, previewTitle, roughly, shareHash, worth, years, FIRST_YEAR, LAST_FULL_YEAR, LATEST_YEAR, LEVEL } from "../lib/tokhon";
 import { share } from "../share";
 
 test("the CPI table is one unbroken, steadily rising yearly series", () => {
   const keys = Object.keys(CPI).map(Number);
   assert.equal(FIRST_YEAR, 1986);
-  assert.equal(LATEST_YEAR, 2025);
-  assert.deepEqual(keys, Array.from({ length: LATEST_YEAR - FIRST_YEAR + 1 }, (_, index) => FIRST_YEAR + index));
+  assert.equal(LAST_FULL_YEAR, 2025);
+  assert.deepEqual(keys, Array.from({ length: LAST_FULL_YEAR - FIRST_YEAR + 1 }, (_, index) => FIRST_YEAR + index));
   for (const year of keys.slice(1)) {
     const change = CPI[year] / CPI[year - 1];
     // Bangladesh has not had a falling year or a 30% jump in this series; either would mean a broken table.
@@ -22,6 +22,15 @@ test("known years match the World Bank response they were generated from", () =>
   assert.equal(CPI[2025], 285.0006);
 });
 
+test("now is the current year, estimated from the last full year plus current inflation", () => {
+  assert.equal(LATEST_YEAR, NOW_YEAR);
+  assert.equal(LATEST_YEAR, LAST_FULL_YEAR + 1);
+  assert.ok(Math.abs(LEVEL[LATEST_YEAR] - CPI[LAST_FULL_YEAR] * (1 + NOW_INFLATION / 100)) < 1e-9);
+  assert.ok(NOW_INFLATION > 0 && NOW_INFLATION < 30);
+  assert.equal(years.at(-1), LAST_FULL_YEAR);
+  assert.ok(Math.abs(worth(100, LAST_FULL_YEAR) - (100 + NOW_INFLATION)) < 1e-9);
+});
+
 test("a sum survives the round trip to now and back", () => {
   for (const year of [FIRST_YEAR, 1995, 2010, 2024]) assert.ok(Math.abs(worth(worth(100, year), LATEST_YEAR, year) - 100) < 1e-9, String(year));
   assert.throws(() => worth(100, 1985), RangeError);
@@ -32,20 +41,20 @@ test("results are rounded to whole taka without false precision", () => {
   assert.equal(roughly(11738.1), 11700);
   assert.equal(roughly(10.88), 11);
   assert.equal(roughly(108.77), 109);
-  assert.equal(createCard({ year: 1995, amount: 100, birth: false }).sentence, "১৯৯৫ সালের ১০০ টাকা ≈ এখনকার ৬৭০ টাকা");
-  assert.equal(createCard({ year: 1986, amount: 1000, birth: false }).now, 11700);
-  assert.equal(createCard({ year: 1990, amount: 100, birth: false }).now, 884);
+  assert.equal(createCard({ year: 1995, amount: 100, birth: false }).sentence, "১৯৯৫ সালের ১০০ টাকা ≈ এখনকার ৭২৬ টাকা");
+  assert.equal(createCard({ year: 1986, amount: 1000, birth: false }).now, 12700);
+  assert.equal(createCard({ year: 1990, amount: 100, birth: false }).now, 957);
 });
 
 test("growth reads as times, or as a percentage when small", () => {
-  assert.equal(growthText(worth(1, 1995)), "গড় দাম বেড়েছে প্রায় ৬.৭ গুণ");
-  assert.equal(growthText(worth(1, 2024)), "গড় দাম বেড়েছে প্রায় ৯%");
+  assert.equal(growthText(worth(1, 1995)), "গড় দাম বেড়েছে প্রায় ৭.৩ গুণ");
+  assert.equal(growthText(worth(1, 2025)), "গড় দাম বেড়েছে প্রায় ৮%");
   assert.equal(growthText(2.04), "গড় দাম বেড়েছে প্রায় ২ গুণ");
 });
 
 test("the human line says what the sum is worth today", () => {
-  assert.equal(humanLine({ year: 1995 }), "১৯৯৫-এর ১০০ টাকায় যা কেনা যেত, আজ তা কিনতে লাগে প্রায় ৬৭০ টাকা।");
-  assert.equal(humanLine({ year: 1986, amount: 1000 }), "১৯৮৬-এর ১,০০০ টাকায় যা কেনা যেত, আজ তা কিনতে লাগে প্রায় ১১,৭০০ টাকা।");
+  assert.equal(humanLine({ year: 1995 }), "১৯৯৫-এর ১০০ টাকায় যা কেনা যেত, আজ তা কিনতে লাগে প্রায় ৭২৬ টাকা।");
+  assert.equal(humanLine({ year: 1986, amount: 1000 }), "১৯৮৬-এর ১,০০০ টাকায় যা কেনা যেত, আজ তা কিনতে লাগে প্রায় ১২,৭০০ টাকা।");
   for (const year of years) assert.ok(humanLine({ year }).length > 10);
 });
 
@@ -55,7 +64,7 @@ test("a shared link round-trips and refuses hostile input", () => {
   assert.deepEqual(parseShareHash(shareHash(shared)), shared);
   assert.deepEqual(parseShareHash("y=2000&a=10"), { year: 2000, amount: 10, birth: false });
   assert.deepEqual(parseShareHash("#y=1986&a=1000&b=yes&x=1")?.birth, false);
-  for (const hash of ["", "#", "#result", "#y=1985&a=100", "#y=2025&a=100", "#y=1995&a=50", "#y=1995&a=1e2", "#y=1995&a=0100", "#y=1995.0&a=100", "#y=19950&a=100", "#y=১৯৯৫&a=১০০", "#y=<script>&a=100", `#y=1995&a=100&z=${"x".repeat(300)}`]) {
+  for (const hash of ["", "#", "#result", "#y=1985&a=100", "#y=2026&a=100", "#y=1995&a=50", "#y=1995&a=1e2", "#y=1995&a=0100", "#y=1995.0&a=100", "#y=19950&a=100", "#y=১৯৯৫&a=১০০", "#y=<script>&a=100", `#y=1995&a=100&z=${"x".repeat(300)}`]) {
     assert.equal(parseShareHash(hash), null, hash);
   }
 });
@@ -69,9 +78,9 @@ test("every generated text is NFC, so canvas and link previews match the repo", 
 
 test("share: normalize, personal preview, and a tally over fixed year ids only", () => {
   assert.equal(share.normalize("a=100&y=1995&b=1&n=রাফি"), "y=1995&a=100&b=1");
-  assert.equal(share.normalize("y=2025&a=100"), null);
-  assert.equal(share.preview("y=1995&a=100&b=1").title, "আমার জন্মসাল ১৯৯৫: তখনকার ১০০ টাকা এখন প্রায় ৬৭০ টাকা। তোমারটা কত?");
-  assert.equal(share.preview("y=1995&a=100").title, "১৯৯৫ সালের ১০০ টাকা এখন প্রায় ৬৭০ টাকা। তোমার জন্মসালেরটা কত?");
+  assert.equal(share.normalize("y=2026&a=100"), null);
+  assert.equal(share.preview("y=1995&a=100&b=1").title, "আমার জন্মসাল ১৯৯৫: তখনকার ১০০ টাকা এখন প্রায় ৭২৬ টাকা। তোমারটা কত?");
+  assert.equal(share.preview("y=1995&a=100").title, "১৯৯৫ সালের ১০০ টাকা এখন প্রায় ৭২৬ টাকা। তোমার জন্মসালেরটা কত?");
   assert.deepEqual(share.tally, years.map(String));
   assert.ok(!share.tally!.includes(String(LATEST_YEAR)));
 });
