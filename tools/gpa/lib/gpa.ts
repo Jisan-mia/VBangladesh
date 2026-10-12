@@ -129,7 +129,7 @@ export function humanLine(value: Score) {
   if (value.failed) return "এবার হয়নি। আবার হবে।";
   if (value.gpa >= 5) return "সব রাত জাগার দাম আজ মিলল।";
   if (value.gpa >= 4) return "খুব ভালো হয়েছে। এবার একটু জিরিয়ে নাও।";
-  return "জিপিএ একটা সংখ্যাই, তোমার পুরোটা না।";
+  return "পাস করেছ। আম্মু-আব্বুকে একটা ফোন দাও।";
 }
 
 export function cleanName(name: string) {

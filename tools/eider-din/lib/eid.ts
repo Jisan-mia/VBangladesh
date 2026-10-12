@@ -144,8 +144,8 @@ export function eidLine(picked: readonly ItemId[]) {
   if (has("video") && !has("kolakuli")) return "দূরে আছি, তবু ভিডিও কলেই ঈদ মোবারক।";
   if (count >= 18) return "চাঁদরাত থেকে সন্ধ্যা, একটুও ফাঁক নেই।";
   if (has("ghum") && count <= 8) return "ঈদের আসল আনন্দ দুপুরের ঘুমে।";
-  if (has("nanabari")) return "নানু-দাদুর বাড়ির ঈদের স্বাদই আলাদা।";
-  if (has("lukano")) return "জামাটা লুকিয়ে রাখার মজাই আলাদা।";
+  if (has("nanabari")) return "নানু-দাদুর বাড়িতে সেমাইয়ের বাটি কখনো খালি থাকে না।";
+  if (has("lukano")) return "জামাটা লুকিয়ে রাখা, আর রাতে দুবার খুলে দেখা।";
   if (has("semai") && has("polao") && has("jorda")) return "পেট ভরা, মন ভরা।";
   if (has("faka")) return "ফাঁকা শহর, ভরা মন।";
   if (count <= 3) return "অল্প কয়টা, কিন্তু ঈদ তো ঈদই।";

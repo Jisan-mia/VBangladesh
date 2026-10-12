@@ -130,17 +130,17 @@ export function signOff(year: number, today: string) {
 export function tourLine(count: number, picked: readonly MomentId[]) {
   const has = (id: MomentId) => picked.includes(id);
   if (count === 0) return "ঢাকের শব্দ শুনছ? চলো, প্রথম মণ্ডপে।";
-  if (count >= 31) return "পা ব্যথা, মন ভরা। এবার প্রায় পুরো শহর ঘোরা হলো।";
+  if (count >= 31) return "পায়ে ব্যথা। এবার প্রায় পুরো শহর ঘোরা হলো।";
   if (has("dhunuchi") && has("dhak")) return "ধুনুচির ধোঁয়া আর ঢাকের তাল, রাতটা জমে গেছে।";
   if (count >= 16) return "রাত জেগে মণ্ডপ থেকে মণ্ডপে, এবার নিজের রেকর্ড।";
   if (has("sindur")) return "সিঁদুর খেলার রঙে বিজয়ার দিনটা লাল হয়ে গেল।";
-  if (has("bondhu") && count >= 4) return "বন্ধুর হাত ধরে মণ্ডপে মণ্ডপে, এই তো পূজার আনন্দ।";
-  if (has("prasad")) return "প্রসাদের খিচুড়ি আর নাড়ু, পেট ভরা, মন ভরা।";
-  if (has("mela")) return "মেলার নাগরদোলা আর মাটির খেলনা, ছোটবেলা ফিরে এল।";
-  if (has("arati")) return "সন্ধ্যার আরতির আলো চোখে লেগে থাকবে অনেক দিন।";
-  if (has("anjali")) return "সকালের অঞ্জলি, নতুন জামা, ঢাকের শব্দ। পূজা মানেই এই।";
-  if (has("bondhu")) return "বন্ধুর সাথে মণ্ডপে ঘোরার মজাই আলাদা।";
-  if (count <= 3) return "অল্প কয়টা, কিন্তু প্রতিটা মণ্ডপই মনে থাকবে।";
+  if (has("bondhu") && count >= 4) return "বন্ধুর হাত ধরে মণ্ডপ থেকে মণ্ডপ। কে আগে থামে, দেখা যাক।";
+  if (has("prasad")) return "প্রসাদের খিচুড়ি আর নাড়ু। রাতের খাবার আজ বাদ।";
+  if (has("mela")) return "নাগরদোলায় একটা চক্কর, হাতে মাটির খেলনা।";
+  if (has("arati")) return "সন্ধ্যার আরতির আলো এখনো চোখে লেগে আছে।";
+  if (has("anjali")) return "সকালের অঞ্জলি, নতুন জামা, ঢাকের শব্দ।";
+  if (has("bondhu")) return "বন্ধুর সাথে ঘোরা মানে ছবি তুলতেই আধঘণ্টা।";
+  if (count <= 3) return "অল্প কয়টা, কিন্তু শুরুটা তো হলো।";
   return "ঢাকের তালে তালে মণ্ডপ থেকে মণ্ডপে।";
 }
 

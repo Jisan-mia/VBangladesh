@@ -87,7 +87,7 @@ export function OjonTool() {
 
   const caption = cow.card === "bhag"
     ? `${shareEquation(cow)}${packetText(cow) ? ` · ${packetText(cow)}` : ""}। ঈদ মোবারক! তোমাদের ভাগের হিসাবও করে দেখো:`
-    : `${cowTitle(cow.name)}, ফিতার হিসাবে প্রায় ${monText(weight.mon)} মণ (${kgText(weight.kg)} কেজি)! তোমাদের গরু কত মণ, মেপে দেখো:`;
+    : `${cowTitle(cow.name)}, ফিতার হিসাবে প্রায় ${monText(weight.mon)} মণ (${kgText(weight.kg)} কেজি)। তোমাদের গরু কত মণ, মেপে দেখো:`;
   const sharedWeight = shared ? weightOf(shared) : null;
 
   return (

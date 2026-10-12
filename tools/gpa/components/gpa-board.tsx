@@ -89,7 +89,7 @@ export function GpaBoard() {
           {value.failed ? <>
             <p className="gpa-live-label">এবার হয়নি</p>
             <p className="gpa-live-fail">আবার হবে।</p>
-            <p className="gpa-live-note">আবশ্যিক কোনো বিষয়ে F থাকলে জিপিএ আসে না। একটা বিষয়ে আটকেছ, জীবনে না।</p>
+            <p className="gpa-live-note">আবশ্যিক কোনো বিষয়ে F থাকলে জিপিএ আসে না। ভুল করে F বসাওনি তো? একবার দেখে নাও।</p>
           </> : <>
             <p className="gpa-live-label">তোমার জিপিএ</p>
             <p className="gpa-live-number">{bnGpa(value.gpa)}</p>

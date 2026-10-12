@@ -67,9 +67,9 @@ test("pandal counts fall into one range each", () => {
 test("the human line, the friend line and the sign-off", () => {
   assert.equal(tourLine(0, []), "ঢাকের শব্দ শুনছ? চলো, প্রথম মণ্ডপে।");
   assert.equal(tourLine(5, ["dhunuchi", "dhak"]), "ধুনুচির ধোঁয়া আর ঢাকের তাল, রাতটা জমে গেছে।");
-  assert.equal(tourLine(40, ["prasad"]), "পা ব্যথা, মন ভরা। এবার প্রায় পুরো শহর ঘোরা হলো।");
-  assert.equal(tourLine(2, []), "অল্প কয়টা, কিন্তু প্রতিটা মণ্ডপই মনে থাকবে।");
-  assert.equal(tourLine(2, ["bondhu"]), "বন্ধুর সাথে মণ্ডপে ঘোরার মজাই আলাদা।");
+  assert.equal(tourLine(40, ["prasad"]), "পায়ে ব্যথা। এবার প্রায় পুরো শহর ঘোরা হলো।");
+  assert.equal(tourLine(2, []), "অল্প কয়টা, কিন্তু শুরুটা তো হলো।");
+  assert.equal(tourLine(2, ["bondhu"]), "বন্ধুর সাথে ঘোরা মানে ছবি তুলতেই আধঘণ্টা।");
   assert.deepEqual(toggleMoment(toggleMoment(["mela"], "arati"), "mela"), ["arati"]);
   assert.equal(friendLine(7, { ...tour, name: "রিমা" }), "রিমা ১১টা · আমি ৭টা");
   assert.equal(friendLine(7, { ...tour, name: "" }), "বন্ধু ১১টা · আমি ৭টা");

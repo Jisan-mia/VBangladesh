@@ -44,7 +44,7 @@ test("GPAs round to 2 decimals the way the board prints them", () => {
 
 test("the human line follows the GPA bands", () => {
   assert.equal(humanLine(score(hsc(["A", "A", "A", "A", "A", "A"], "C"))), "খুব ভালো হয়েছে। এবার একটু জিরিয়ে নাও।");
-  assert.equal(humanLine(score(hsc(["B", "B", "B", "B", "B", "B"], "C"))), "জিপিএ একটা সংখ্যাই, তোমার পুরোটা না।");
+  assert.equal(humanLine(score(hsc(["B", "B", "B", "B", "B", "B"], "C"))), "পাস করেছ। আম্মু-আব্বুকে একটা ফোন দাও।");
 });
 
 test("a result survives the share-link round trip", () => {
