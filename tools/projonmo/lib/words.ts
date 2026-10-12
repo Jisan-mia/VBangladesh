@@ -212,7 +212,7 @@ export function humanLine(set: SetId, answers: readonly Answer[]) {
   if (result.total === PER_SET) return "দশে দশ! খাবার টেবিলে এখন তুমিই দুই প্রজন্মের দোভাষী।";
   const fooled = entriesOf(set).find((entry, index) => answers[index] === entry.trap);
   if (fooled) return fooled.oops;
-  if (result.genzRight >= 4 && result.elderRight >= 4) return "দুই দিকের ভাষাই চেনো। আব্বু-আম্মু আর ছোটদের মাঝে তুমিই সেতু।";
+  if (result.genzRight >= 4 && result.elderRight >= 4) return "দুই দিকের ভাষাই চেনো। আব্বু-আম্মু কিছু বললে ছোটদের বুঝিয়ে দেওয়ার কাজটা তোমার।";
   if (result.total <= 2) return "দুই প্রজন্মের কেউই তোমাকে দলে নিতে পারছে না! অভিধানটা আরেকবার খোলো।";
   if (result.lean === "genz") return "জেন-জির ভাষায় তুমি পাকা, এবার আব্বু-আম্মুর কথাগুলো একটু কান পেতে শোনো।";
   if (result.lean === "elder") return "আব্বু-আম্মুর কথা তোমার মুখস্থ, জেন-জির শব্দে এখনো একটু কাঁচা।";

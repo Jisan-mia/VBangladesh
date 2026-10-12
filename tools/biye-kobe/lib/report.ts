@@ -86,7 +86,7 @@ export function createReport(answers: readonly (Answer | null)[], name: string):
 
 export function humanLine(answers: readonly Answer[]) {
   if (answers[3] === 1) return "আগে চাকরি, তারপর মিষ্টি। ঘটক চা খেতে খেতে অপেক্ষায়।";
-  if (answers[3] === 2) return "নিজের সাথে বেশ আছো। ঘটক ছাতা গুটিয়ে বাড়ি ফিরলেন।";
+  if (answers[3] === 2) return "নিজের সাথে বেশ আছ। ঘটক ছাতা গুটিয়ে বাড়ি ফিরলেন।";
   return [
     "বাসায় এখন শান্তি, ঘটকের ছাতাও আলমারিতে।",
     "কথা উঠছে, তুমি হাসছ। ঘটক বলে, তাড়ার কিছু নেই।",
