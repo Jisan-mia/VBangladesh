@@ -160,7 +160,7 @@ export const catalog = [
   { slug: "hat-dhui", name: "হাত ধুই, দাঁত মাজি", description: "ফোন বেসিনের পাশে রাখো, ছবি দেখে ২০ সেকেন্ডে হাত ধোয়া আর ২ মিনিটে দাঁত মাজা।", category: "ছোটদের জন্য", action: "একসাথে ধোও" },
   { slug: "abc-bazar", name: "এবিসি বাজার", description: "ছবি দেখে ইংরেজি অক্ষর চেনা: M দিয়ে Mango, বড়-ছোট হাতের অক্ষর, b d p q।", category: "ছোটদের জন্য", action: "খেলা শুরু করো" },
   { slug: "ulto-khela", name: "উল্টো খেলা", description: "সূর্য এলে চাঁদে চাপো, ঘণ্টা বাজলে নিয়ম বদলাও। ৪–৮ বছরের মনোযোগের খেলা।", category: "ছোটদের জন্য", action: "উল্টো খেলো" },
-  { slug: "dinosaur", name: "ডাইনোসর খুঁজি", description: "ডাইনোসর খুঁজি: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
+  { slug: "dinosaur", name: "ডাইনোসর খুঁজি", description: "বালু সরিয়ে হাড় খোঁজে, কঙ্কাল জোড়া দেয়, চেনে ১২টা ডাইনোসর আর কে কী খেত।", category: "ছোটদের জন্য", action: "হাড় খুঁড়ে দেখো" },
   { slug: "ki-hobe", name: "কী হবে বলো তো?", description: "কী হবে বলো তো?: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
   { slug: "shoman-bhag", name: "সমান ভাগ", description: "সমান ভাগ: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
   { slug: "chhaya-melao", name: "ছায়া মেলাও", description: "ছায়া মেলাও: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },

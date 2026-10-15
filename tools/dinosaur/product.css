@@ -1,0 +1,142 @@
+.tool-dinosaur{--accent:#b5652b;--accent-deep:#8a4a1c;--ink:#3b2a1a;--muted:#7a6243;--sand:#f0d9a4;--paper:#fff8e8;--glow:#ffd166;--line:#e2cfa6}
+.tool-dinosaur .dn-page{color:var(--ink)}
+
+.tool-dinosaur .dn-hero{padding:8px 0 0}
+.tool-dinosaur .dn-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,5.8vw,40px);line-height:1.35;font-weight:700}
+.tool-dinosaur .dn-lead{display:none;margin:4px 0 0;color:var(--muted);line-height:1.6}
+.tool-dinosaur .kk-note{margin:8px 0}
+
+.tool-dinosaur .dn{display:grid;gap:8px;max-width:440px;margin-inline:auto}
+.tool-dinosaur .dn-top{display:flex;align-items:center;gap:10px;min-width:0}
+.tool-dinosaur .dn-level{margin:0;font-size:16px;line-height:1.6;white-space:nowrap}
+.tool-dinosaur .dn-dots{display:flex;gap:6px;margin:0;padding:0;list-style:none}
+.tool-dinosaur .dn-dots li{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.tool-dinosaur .dn-dots li.on{background:var(--accent)}
+.tool-dinosaur .dn-dots li.now{background:#fff;box-shadow:0 0 0 2px var(--accent)}
+.tool-dinosaur .dn-book-button{margin-left:auto;display:inline-flex;align-items:center;gap:6px;min-height:48px;padding:4px 12px;border:1.5px solid var(--ink);border-radius:999px;background:var(--paper);color:var(--ink);font:inherit;font-size:16px;font-weight:700;cursor:pointer;touch-action:manipulation}
+.tool-dinosaur .dn-book-button svg{width:28px;height:28px}
+
+/* the board: dig, skeleton, then the dinosaur */
+.tool-dinosaur .dn-board{position:relative;width:100%;aspect-ratio:3/2;border-radius:16px;overflow:hidden;background:linear-gradient(#fdf3dc,#f6e6c2);box-shadow:0 6px 18px #3b2a1a2e;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.tool-dinosaur .dn-under,.tool-dinosaur .dn-sand,.tool-dinosaur .dn-skeleton,.tool-dinosaur .dn-scene{position:absolute;inset:0;width:100%;height:100%;display:block}
+.tool-dinosaur .dn-sand{touch-action:none;cursor:pointer}
+.tool-dinosaur .dn-sand:focus-visible{outline:3px solid var(--accent-deep);outline-offset:-3px}
+.tool-dinosaur .dn-found{animation:dn-lift .5s ease-out both}
+.tool-dinosaur .dn-found path{filter:drop-shadow(0 0 4px #fff6)}
+.tool-dinosaur .dn-skeleton{cursor:pointer;touch-action:manipulation;background:linear-gradient(#f6ead0,#efdcb4)}
+.tool-dinosaur .dn-slot{cursor:pointer;outline:none}
+.tool-dinosaur .dn-slot:focus-visible circle,.tool-dinosaur .dn-slot:focus-visible{outline:2px solid var(--accent-deep)}
+.tool-dinosaur .dn-placed{animation:dn-snap .3s ease-out}
+.tool-dinosaur .dn-glow{fill:#ffd16655;stroke:var(--glow);stroke-width:3;animation:dn-breathe 1.6s ease-in-out infinite}
+
+.tool-dinosaur .dn-board .dn-dino{transform-origin:50% 92%;position:absolute;inset:0;animation:dn-appear .6s ease-out both}
+.tool-dinosaur .dn-mouth{position:absolute;left:3%;top:5%;width:34%;aspect-ratio:1;animation:dn-appear .5s .3s ease-out both}
+.tool-dinosaur .dn-ghost{position:absolute;width:44px;aspect-ratio:48/56;pointer-events:none;z-index:2;filter:drop-shadow(0 2px 3px #0005)}
+.tool-dinosaur .dn-swipe{animation:dn-swipe 1.8s ease-in-out infinite}
+.tool-dinosaur .dn-tap{left:50%;top:50%;animation:dn-tap 1.4s ease-in-out infinite}
+
+/* what to do now */
+.tool-dinosaur .dn-say{min-height:60px;padding:8px 14px;border-radius:14px;background:var(--paper);border-left:5px solid var(--accent)}
+.tool-dinosaur .dn-say.hint{border-left-color:var(--glow)}
+.tool-dinosaur .dn-say p{margin:0;font-size:19px;line-height:1.6}
+.tool-dinosaur .dn-say .dn-say-title{font-family:var(--font-display);font-size:24px;font-weight:800}
+
+/* found bones, the tray, the two food choices */
+.tool-dinosaur .dn-tally{display:flex;justify-content:center;gap:10px;margin:0;padding:0;list-style:none}
+.tool-dinosaur .dn-tally li{width:56px;height:44px;border:2px dashed #c9b28a;border-radius:12px}
+.tool-dinosaur .dn-tally li.on{border:2px solid var(--accent);background:var(--paper);animation:dn-snap .3s ease-out}
+.tool-dinosaur .dn-tray{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;min-height:88px}
+.tool-dinosaur .dn-bone{position:relative;width:96px;height:80px;padding:6px;border:2px solid #c9b28a;border-radius:16px;background:var(--paper);cursor:pointer;touch-action:manipulation;transition:transform .12s ease}
+.tool-dinosaur .dn-bone:active{transform:scale(.94)}
+.tool-dinosaur .dn-bone.picked{border-color:var(--accent);box-shadow:0 0 0 3px var(--glow);transform:translateY(-6px)}
+.tool-dinosaur .dn-bone:focus-visible,.tool-dinosaur .dn-diet-button:focus-visible{outline:3px solid var(--accent-deep);outline-offset:2px}
+.tool-dinosaur .dn-diet{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tool-dinosaur .dn-diet-button{display:grid;justify-items:center;gap:0;min-height:120px;padding:8px 6px;border:2px solid #c9b28a;border-radius:16px;background:var(--paper);color:var(--ink);font:inherit;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform .12s ease}
+.tool-dinosaur .dn-diet-button:active{transform:scale(.95)}
+.tool-dinosaur .dn-diet-button:disabled{opacity:.4;cursor:default}
+.tool-dinosaur .dn-diet-button b{font-size:20px}
+.tool-dinosaur .dn-diet-button small{font-size:16px;color:var(--muted)}
+.tool-dinosaur .dn-icon{width:52px;height:52px}
+.tool-dinosaur .dn-glow-box{border-color:var(--glow);animation:dn-breathe-box 1.6s ease-in-out infinite}
+
+/* the fact card, in the game and in the book */
+.tool-dinosaur .dn-facts{display:grid;gap:8px;padding:12px 14px 14px;border:2px solid var(--line);border-radius:16px;background:#fff}
+.tool-dinosaur .dn-facts header{position:relative;padding-right:56px}
+.tool-dinosaur .dn-facts h3{margin:0;font-family:var(--font-display);font-size:28px;line-height:1.4}
+.tool-dinosaur .dn-science{margin:0;color:var(--muted);font-size:16px;line-height:1.6}
+.tool-dinosaur .dn-science i{font-size:15px}
+.tool-dinosaur .dn-facts .kk-speak{position:absolute;top:0;right:0}
+.tool-dinosaur .dn-size{width:100%;height:auto;display:block}
+.tool-dinosaur .dn-size-label{font-size:13px;font-weight:700;fill:var(--ink)}
+.tool-dinosaur .dn-size-label.in{fill:#fff;paint-order:stroke;stroke:#0005;stroke-width:2px}
+.tool-dinosaur .dn-facts dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:17px;line-height:1.6}
+.tool-dinosaur .dn-facts dt{font-weight:700;color:var(--muted)}
+.tool-dinosaur .dn-facts dd{margin:0}
+.tool-dinosaur .dn-wow{margin:0;padding:8px 12px;border-radius:12px;background:#fff3cf;font-size:18px;font-weight:600;line-height:1.6}
+.tool-dinosaur .dn-keep{justify-self:center;min-width:220px;min-height:64px;font-size:20px}
+
+/* end of a round, and the level menu */
+.tool-dinosaur .dn-end{display:grid;justify-items:center;gap:12px;padding:16px;border-radius:16px;background:var(--paper);text-align:center;box-shadow:0 6px 18px #3b2a1a1f}
+.tool-dinosaur .dn-end p{margin:0}
+.tool-dinosaur .dn-end .gx-stars{font-size:40px}
+.tool-dinosaur .dn-end-finds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+.tool-dinosaur .dn-end-finds span{display:block;min-width:0;aspect-ratio:3/2}
+.tool-dinosaur .dn-end-finds svg,.tool-dinosaur .dn-page-art svg{display:block}
+.tool-dinosaur .dn-end-line{font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1.5}
+.tool-dinosaur .dn-end-note{font-size:17px;line-height:1.6;color:var(--muted)}
+.tool-dinosaur .dn-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(320px,100%)}
+.tool-dinosaur .dn-end-actions button{min-height:64px;font-size:20px;padding-inline:8px}
+.tool-dinosaur .dn-end .dn-quiet{background:#7a6243;box-shadow:0 4px 0 #574530}
+.tool-dinosaur .dn-menu .gx-levels{width:min(320px,100%)}
+
+.tool-dinosaur .dn-controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.tool-dinosaur .dn-pill{min-height:48px;padding:6px 14px;border:1.5px solid currentColor;border-radius:999px;background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:700}
+.tool-dinosaur .dn-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+.tool-dinosaur .dn-controls .gx-sound{color:var(--ink)}
+.tool-dinosaur .dn-drawer{flex:1 1 100%;border:1.5px solid var(--line);border-radius:14px;background:#fff}
+.tool-dinosaur .dn-drawer summary{min-height:48px;display:flex;align-items:center;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-dinosaur .dn-drawer[open]{padding:0 10px 12px}
+.tool-dinosaur .dn-parent{display:grid;justify-items:start}
+.tool-dinosaur .dn-parent .kk-gate-open{width:100%}
+
+/* the finder's book */
+.tool-dinosaur .dn-book{position:fixed;inset:0;z-index:40;overflow:auto;background:#fff8e8;padding:16px}
+.tool-dinosaur .dn-book-inner{display:grid;gap:12px;max-width:440px;margin:0 auto;padding-bottom:24px}
+.tool-dinosaur .dn-book-head h2{margin:0;font-family:var(--font-display);font-size:26px;line-height:1.4}
+.tool-dinosaur .dn-book-head p{margin:0;color:var(--muted);font-size:17px}
+.tool-dinosaur .dn-book-art{aspect-ratio:3/2;border-radius:16px;background:linear-gradient(#fdf3dc,#f0e1bd)}
+.tool-dinosaur .dn-pages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0;padding:0;list-style:none}
+.tool-dinosaur .dn-pages button{display:grid;width:100%;min-height:96px;padding:4px;border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation}
+.tool-dinosaur .dn-pages button:disabled{cursor:default;background:#fbf4e4}
+.tool-dinosaur .dn-page-art{display:block;aspect-ratio:3/2}
+.tool-dinosaur .dn-page-name{font-size:14px;font-weight:700;line-height:1.5;overflow-wrap:anywhere}
+.tool-dinosaur .dn-bird{display:grid;gap:4px;padding:12px;border-radius:16px;background:#e8f2dc}
+.tool-dinosaur .dn-bird svg{width:60%;justify-self:center}
+.tool-dinosaur .dn-bird h3{margin:0;font-family:var(--font-display);font-size:21px;line-height:1.5}
+.tool-dinosaur .dn-bird p{margin:4px 0 0;font-size:17px;line-height:1.6}
+.tool-dinosaur .dn-book-close{justify-self:center;min-width:200px;min-height:56px}
+
+.tool-dinosaur .dn-guide h2{font-family:var(--font-display);margin-bottom:12px}
+.tool-dinosaur .dn-guide>p{color:var(--muted);max-width:640px}
+.tool-dinosaur .dn-guide ol{display:grid;gap:14px;margin:0 0 16px;padding:0;list-style:none}
+.tool-dinosaur .dn-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-dinosaur .dn-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
+.tool-dinosaur .dn-guide li p{margin:4px 0 0}
+
+@media (min-width:720px){.tool-dinosaur .dn-lead{display:block}}
+@media (max-width:360px){.tool-dinosaur .dn-bone{width:84px;height:72px}.tool-dinosaur .dn-tray{gap:12px}.tool-dinosaur .dn-pages{gap:6px}.tool-dinosaur .dn-page-name{font-size:13px}}
+
+.tool-dinosaur .dn-wobble.dn-w0{animation:dn-wobble0 .35s ease}
+.tool-dinosaur .dn-wobble.dn-w1{animation:dn-wobble1 .35s ease}
+@keyframes dn-wobble0{25%{translate:-5px 0}75%{translate:5px 0}}
+@keyframes dn-wobble1{25%{translate:5px 0}75%{translate:-5px 0}}
+@keyframes dn-lift{0%{translate:0 0}50%{translate:0 -6px}100%{translate:0 -2px}}
+@keyframes dn-snap{0%{scale:1.25}100%{scale:1}}
+@keyframes dn-appear{0%{opacity:0;transform:scale(.6)}70%{transform:scale(1.04)}100%{opacity:1;transform:scale(1)}}
+@keyframes dn-breathe{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes dn-breathe-box{0%,100%{box-shadow:0 0 0 2px var(--glow)}50%{box-shadow:0 0 0 6px var(--glow)}}
+@keyframes dn-swipe{0%{transform:translate(-90%,-10%)}50%{transform:translate(10%,10%)}100%{transform:translate(-90%,-10%)}}
+@keyframes dn-tap{0%,100%{transform:translate(-20%,-10%)}50%{transform:translate(-10%,-30%)}}
+
+.tool-dinosaur .dn[data-slow=true] *{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.tool-dinosaur .dn *{animation:none!important;transition:none!important}}
