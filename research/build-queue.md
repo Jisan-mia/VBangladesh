@@ -319,7 +319,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 30 | dinosaur | ডাইনোসর খুঁজি | ছোটদের জন্য | KD21 | done | kids/shortlist.md #21 |
 | 30 | ki-hobe | কী হবে বলো তো? | ছোটদের জন্য | KD22 | building | kids/shortlist.md #22 |
 | 30 | prithibi-ghuri | পৃথিবী ঘুরি | ছোটদের জন্য | KD23 | building | kids/shortlist.md #23 |
-| 30 | sur-banai | সুর বানাই | ছোটদের জন্য | KD24 | todo | kids/shortlist.md #24 |
+| 30 | sur-banai | সুর বানাই | ছোটদের জন্য | KD24 | building | kids/shortlist.md #24 |
 | 30 | nam-shikhi | নাম শিখি | ছোটদের জন্য | KD25 | done | kids/shortlist.md #25 |
 
 ### Wave deadlines and why
