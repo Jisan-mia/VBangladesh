@@ -136,6 +136,7 @@ import { site as al_dhore_hati } from '../tools/al-dhore-hati/content';
 import { site as o_te_ojogor } from '../tools/o-te-ojogor/content';
 import { site as kar_chinho } from '../tools/kar-chinho/content';
 import { site as nam_shikhi } from '../tools/nam-shikhi/content';
+import { site as sourojogot } from '../tools/sourojogot/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -276,6 +277,7 @@ export const toolContent = {
   'o-te-ojogor': o_te_ojogor,
   'kar-chinho': kar_chinho,
   'nam-shikhi': nam_shikhi,
+  'sourojogot': sourojogot,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
