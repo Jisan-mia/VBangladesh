@@ -162,7 +162,7 @@ export const catalog = [
   { slug: "ulto-khela", name: "উল্টো খেলা", description: "সূর্য এলে চাঁদে চাপো, ঘণ্টা বাজলে নিয়ম বদলাও। ৪–৮ বছরের মনোযোগের খেলা।", category: "ছোটদের জন্য", action: "উল্টো খেলো" },
   { slug: "dinosaur", name: "ডাইনোসর খুঁজি", description: "বালু সরিয়ে হাড় খোঁজে, কঙ্কাল জোড়া দেয়, চেনে ১২টা ডাইনোসর আর কে কী খেত।", category: "ছোটদের জন্য", action: "হাড় খুঁড়ে দেখো" },
   { slug: "ki-hobe", name: "কী হবে বলো তো?", description: "কী হবে বলো তো?: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
-  { slug: "shoman-bhag", name: "সমান ভাগ", description: "সমান ভাগ: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
+  { slug: "shoman-bhag", name: "সমান ভাগ", description: "মেহমানের প্লেটে পিঠা সমান ভাগ করে, রুটি কেটে অর্ধেক, চার ভাগের এক ভাগ চেনে।", category: "ছোটদের জন্য", action: "ভাগ করো" },
   { slug: "chhaya-melao", name: "ছায়া মেলাও", description: "বাতি জ্বললে দেয়ালে ছায়া পড়ে, ছোটজন চিনে নেয় কার ছায়া। পড়তে হয় না।", category: "ছোটদের জন্য", action: "বাতি জ্বালাও" },
   { slug: "mongole-rover", name: "মঙ্গলে রোভার", description: "মঙ্গলে রোভার: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
   { slug: "daripalla", name: "দাঁড়িপাল্লা", description: "দাঁড়িপাল্লা: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
