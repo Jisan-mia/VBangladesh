@@ -296,7 +296,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 25 | moshar-raat | মশার রাত | গেম | GW23 | done | games-wave-2.md #23 |
 | 25 | al-dhore-hati | আল ধরে হাঁটি | গেম | GW24 | done | games-wave-2.md #24 |
 | 25 | o-te-ojogor | অ-তে অজগর | গেম | GW25 | done | games-wave-2.md #25 |
-| 26 | kar-chinho | কার-চিহ্ন বসাও | ছোটদের জন্য | KD01 | building | kids/shortlist.md #1 |
+| 26 | kar-chinho | কার-চিহ্ন বসাও | ছোটদের জন্য | KD01 | done | kids/shortlist.md #1 |
 | 26 | juktoborno | যুক্তবর্ণ ভাঙি-জুড়ি | ছোটদের জন্য | KD02 | building | kids/shortlist.md #2 |
 | 26 | borno-likhi | বর্ণ লিখি | ছোটদের জন্য | KD03 | todo | kids/shortlist.md #3 |
 | 26 | chhorar-tal | ছড়ার তালে | ছোটদের জন্য | KD04 | todo | kids/shortlist.md #4 |

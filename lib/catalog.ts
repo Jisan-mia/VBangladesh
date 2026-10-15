@@ -146,7 +146,7 @@ export const catalog = [
   { slug: "moshar-raat", name: "মশার রাত", description: "বাতি নেভানো ঘরে পিন-পিন। ব্যাটে মশা মারো, ভোর পর্যন্ত বালিশ বাঁচাও।", category: "গেম", action: "মশা মারো" },
   { slug: "al-dhore-hati", name: "আল ধরে হাঁটি", description: "ধানখেতের সরু আল ধরে হাঁটো, পা যেন কাদায় না পড়ে।", category: "গেম", action: "হাঁটা শুরু করো" },
   { slug: "o-te-ojogor", name: "অ-তে অজগর", description: "গাছ থেকে বর্ণ পড়ছে, অ-এর পর আ ঝুড়িতে ধরো। ২২টা লেভেল, ছবিসহ।", category: "গেম", action: "বর্ণ ধরো" },
-  { slug: "kar-chinho", name: "কার-চিহ্ন বসাও", description: "কার-চিহ্ন বসাও: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
+  { slug: "kar-chinho", name: "কার-চিহ্ন বসাও", description: "ছবি দেখে শব্দে ঠিক কার-চিহ্ন বসায়, আ-কার থেকে ঔ-কার। প্রিন্টের পাতাও আছে।", category: "ছোটদের জন্য", action: "খেলা শুরু করো" },
   { slug: "nam-shikhi", name: "নাম শিখি", description: "নাম শিখি: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
   { slug: "sourojogot", name: "সৌরজগতের সফর", description: "রকেটে সূর্য থেকে নেপচুন। গ্রহের নাম, ক্রম আর মাপ শেখে, প্রজেক্টের পাতাও প্রিন্ট হয়।", category: "ছোটদের জন্য", action: "সফরে চলো" },
   { slug: "dosh-ghater-nouka", name: "দশ ঘাটের নৌকা", description: "সোজা সারিতে ১–২০ ঘাট গুনে নৌকা চালায়, আব্বুর নৌকার সাথে পাল্লা দিয়ে।", category: "ছোটদের জন্য", action: "চরকি ঘোরাও" },
