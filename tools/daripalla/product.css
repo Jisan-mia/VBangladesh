@@ -1,0 +1,101 @@
+.tool-daripalla{--accent:#9a4b12;--accent-deep:#6e3409;--ink:#3a2a1a;--muted:#6e5a48;--paper:#fbf1de;--line:#ead2ad;--glow:#ffd166;--level:#2f7d4a;--wood:#7a5222}
+.tool-daripalla .dp-page{color:var(--ink)}
+
+.tool-daripalla .dp-hero{padding:8px 0 2px}
+.tool-daripalla .dp-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,40px);line-height:1.4;font-weight:800}
+.tool-daripalla .dp-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
+@media (min-width:700px){.tool-daripalla .dp-lead{display:block}}
+
+.tool-daripalla .dp{display:grid;gap:12px;max-width:520px;margin-top:8px}
+.tool-daripalla .dp-play{position:relative;display:grid;gap:4px;padding:10px 10px 12px;border-radius:18px;background:var(--paper)}
+.tool-daripalla .dp-top{display:flex;align-items:center;gap:8px;min-width:0}
+.tool-daripalla .dp-level{flex:1;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;line-height:1.6}
+.tool-daripalla .dp-level b{font-family:var(--font-display)}
+.tool-daripalla .dp-level span{color:var(--muted)}
+.tool-daripalla .dp-dots{display:flex;gap:6px;margin:0;padding:0;list-style:none}
+.tool-daripalla .dp-dots li{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.tool-daripalla .dp-dots .done{background:var(--accent)}
+.tool-daripalla .dp-dots .now{background:var(--accent);box-shadow:0 0 0 3px #9a4b1240}
+.tool-daripalla .dp-prompt{margin:0;font-family:var(--font-display);font-size:clamp(19px,5.4vw,22px);font-weight:800;line-height:1.6;text-align:center}
+
+/* the balance: the beam and pans are placed by the game's spring (transform), so nothing here animates them */
+.tool-daripalla .dp-scale{position:relative;height:222px;margin-top:4px}
+.tool-daripalla .dp-stand{position:absolute;left:50%;top:12px;width:120px;height:200px;transform:translateX(-50%)}
+.tool-daripalla .dp-beam{position:absolute;left:0;top:0;width:220px;height:10px;border-radius:5px;background:var(--wood);transform-origin:50% 50%;will-change:transform}
+.tool-daripalla .dp-needle{position:absolute;left:50%;bottom:100%;width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-bottom:24px solid var(--accent);transform:translateX(-50%);transition:border-color .2s}
+.tool-daripalla .is-level .dp-needle{border-bottom-color:var(--level)}
+.tool-daripalla .dp-pan{position:absolute;left:0;top:0;width:120px;height:150px;pointer-events:none;will-change:transform}
+.tool-daripalla .dp-strings{position:absolute;left:4px;right:4px;top:0;bottom:12px;width:calc(100% - 8px);height:calc(100% - 12px)}
+.tool-daripalla .dp-pan::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;border-top:4px solid #8a5d22;border-radius:0 0 50% 50%/0 0 100% 100%;background:#c9a46a}
+.tool-daripalla .dp-load{position:absolute;left:2px;right:2px;bottom:14px;display:flex;flex-wrap:wrap-reverse;justify-content:center;align-items:flex-start;gap:2px}
+.tool-daripalla .dp-item{position:relative;flex:none;width:calc((100% - 4px) / 3);aspect-ratio:1;margin:0;padding:0;border:0;background:none;color:inherit;font:inherit;container-type:inline-size}
+.tool-daripalla .dp-item.added{animation:dp-drop .2s ease-out}
+.tool-daripalla .dp-lift{position:absolute;inset:-8px -2px 0;min-width:72px;min-height:72px;margin:0;padding:0;border:0;border-radius:16px;background:transparent;pointer-events:auto;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.tool-daripalla .dp-lift:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.tool-daripalla .dp-lift .dp-ghost{left:auto;right:12%;top:auto;bottom:22%}
+.tool-daripalla .dp-item.big{width:58%}
+.tool-daripalla .dp-item.half{width:47%}
+
+/* one weight, fruit or ঠোঙা; numbers scale with the box (container units) */
+.tool-daripalla .dp-piece{position:relative;display:block;width:100%;height:100%;container-type:inline-size}
+.tool-daripalla .dp-piece svg{position:absolute;left:50%;bottom:0;display:block;transform:translateX(-50%)}
+.tool-daripalla .dp-weight svg{width:calc(100% * var(--s,1));height:calc(100% * var(--s,1))}
+.tool-daripalla .dp-weight b{position:absolute;left:0;right:0;bottom:calc(9% * var(--s,1));font-family:var(--font-display);font-size:calc(40cqw * var(--s,1));font-weight:800;line-height:1.3;color:#fff;text-align:center}
+.tool-daripalla .dp-fruit svg{width:88%;height:88%;bottom:6%}
+.tool-daripalla .dp-fruit i{position:absolute;right:-2%;bottom:-2%;min-width:46%;padding:0 3%;border:1.5px solid var(--ink);border-radius:8px;background:#fff;font-family:var(--font-display);font-size:30cqw;font-style:normal;font-weight:800;line-height:1.35;text-align:center}
+.tool-daripalla .dp-fruit i.unknown{background:var(--accent);border-color:var(--accent);color:#fff}
+.tool-daripalla .dp-fruit i.tried{background:var(--glow)}
+
+.tool-daripalla .dp-equation{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 6px;min-height:44px;margin:0;font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.6}
+.tool-daripalla .dp-term-art{display:inline-block;width:38px;height:38px;vertical-align:middle}
+.tool-daripalla .dp-term-art .dp-piece{width:38px;height:38px}
+.tool-daripalla .dp-op{color:var(--muted)}
+.tool-daripalla .dp-empty{color:var(--muted)}
+.tool-daripalla .dp-sign{min-width:34px;padding:0 6px;border-radius:10px;background:#fff;color:var(--accent);font-size:28px;text-align:center}
+.tool-daripalla .dp-equation.is-level .dp-sign{background:var(--level);color:#fff}
+.tool-daripalla .dp-line{min-height:27px;margin:0;font-size:17px;line-height:1.6;text-align:center;color:var(--muted)}
+
+/* the tray: weights or fruits to add, or the numbers to answer with */
+.tool-daripalla .dp-tray{display:grid;gap:12px;min-height:80px;margin-top:4px}
+.tool-daripalla .dp-take,.tool-daripalla .dp-choice{position:relative;display:grid;place-items:center;min-width:0;min-height:80px;padding:6px 4px;border:3px solid var(--line);border-radius:18px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .08s}
+.tool-daripalla .dp-take:active,.tool-daripalla .dp-choice:active{transform:scale(.94)}
+.tool-daripalla .dp-take .dp-piece{width:min(64px,100%);height:auto;aspect-ratio:1}
+.tool-daripalla .dp-choice{font-family:var(--font-display);font-size:36px;font-weight:800;line-height:1.3}
+.tool-daripalla .dp-choice.is-glow{border-color:var(--glow);animation:dp-glow 1.4s ease-in-out infinite}
+.tool-daripalla .dp-choice.is-tried{border-color:var(--glow);background:#fff7dc}
+.tool-daripalla .dp-next{grid-column:1/-1;min-height:72px;font-size:20px}
+
+.tool-daripalla .dp-controls{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:6px}
+.tool-daripalla .dp-pill{min-height:44px;padding:6px 14px;border:1.5px solid var(--ink);border-radius:999px;background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:700;cursor:pointer}
+.tool-daripalla .dp-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+
+.tool-daripalla .dp-ghost{position:absolute;z-index:3;left:48%;top:44%;width:40px;height:50px;pointer-events:none;filter:drop-shadow(0 2px 2px #0004);animation:dp-tap 1.4s ease-in-out infinite}
+
+.tool-daripalla .dp-over{position:absolute;inset:0;z-index:5;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px 24px;border-radius:18px;background:var(--paper);text-align:center}
+.tool-daripalla .dp-over .gx-stars{font-size:40px}
+.tool-daripalla .dp-end-line{margin:0;font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1.6}
+.tool-daripalla .dp-end-note{margin:0;font-size:18px;line-height:1.6}
+.tool-daripalla .dp-end-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:min(340px,calc(100vw - 80px))}
+.tool-daripalla .dp-end-actions button{width:100%;min-height:72px;padding-inline:6px;font-size:clamp(17px,5.4vw,20px)}
+
+.tool-daripalla .dp-drawer{border:1.5px solid var(--line);border-radius:14px;background:#fff}
+.tool-daripalla .dp-drawer summary{display:flex;align-items:center;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-daripalla .dp-drawer[open]{padding-bottom:12px}
+.tool-daripalla .dp-drawer .gx-levels{padding:0 10px}
+.tool-daripalla .dp-drawer p{margin:8px 14px 0;font-size:16px;line-height:1.6;color:var(--muted)}
+.tool-daripalla .dp-parent{display:grid;gap:8px;justify-items:start}
+.tool-daripalla .dp-parent p{margin:0;font-size:16px;line-height:1.6;color:var(--muted)}
+
+.tool-daripalla .dp-guide h2{margin-bottom:12px;font-family:var(--font-display)}
+.tool-daripalla .dp-guide>p{max-width:640px;color:var(--muted);line-height:1.7}
+.tool-daripalla .dp-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.tool-daripalla .dp-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-daripalla .dp-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
+.tool-daripalla .dp-guide li p{margin:4px 0 0;line-height:1.7}
+
+.tool-daripalla [data-slow] .dp-item,.tool-daripalla [data-slow] .dp-ghost,.tool-daripalla [data-slow] .dp-choice{animation:none}
+@media (prefers-reduced-motion:reduce){.tool-daripalla .dp-item,.tool-daripalla .dp-ghost,.tool-daripalla .dp-choice{animation:none!important;transition:none}}
+
+@keyframes dp-drop{0%{transform:translateY(-18px);opacity:.4}100%{transform:none;opacity:1}}
+@keyframes dp-glow{0%,100%{box-shadow:0 0 0 3px var(--glow)}50%{box-shadow:0 0 0 6px var(--glow),0 0 16px 4px var(--glow)}}
+@keyframes dp-tap{0%,100%{transform:translate(8px,10px)}50%{transform:translate(0,0) scale(.9)}}

@@ -305,7 +305,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 27 | dosh-ghater-nouka | দশ ঘাটের নৌকা | ছোটদের জন্য | KD07 | done | kids/shortlist.md #7 |
 | 27 | gune-dekhi | গুনে দেখি | ছোটদের জন্য | KD08 | done | kids/shortlist.md #8 |
 | 27 | ghori-dekhi | ঘড়ি দেখি | ছোটদের জন্য | KD09 | done | kids/shortlist.md #9 |
-| 27 | daripalla | দাঁড়িপাল্লা | ছোটদের জন্য | KD10 | building | kids/shortlist.md #10 |
+| 27 | daripalla | দাঁড়িপাল্লা | ছোটদের জন্য | KD10 | done | kids/shortlist.md #10 |
 | 28 | shoman-bhag | সমান ভাগ | ছোটদের জন্য | KD11 | done | kids/shortlist.md #11 |
 | 28 | ulto-khela | উল্টো খেলা | ছোটদের জন্য | KD12 | done | kids/shortlist.md #12 |
 | 28 | mongole-rover | মঙ্গলে রোভার | ছোটদের জন্য | KD13 | done | kids/shortlist.md #13 |
