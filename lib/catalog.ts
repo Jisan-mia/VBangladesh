@@ -158,7 +158,7 @@ export const catalog = [
   { slug: "nirapode-thaki", name: "নিরাপদে থাকি", description: "রাস্তা, পুকুর, চুলা, ঘুড়ি, মেলা আর ঝড়ের দিনে কী করবে, ছবি দেখে শেখে।", category: "ছোটদের জন্য", action: "নিয়ম শেখো" },
   { slug: "gune-dekhi", name: "গুনে দেখি", description: "মাছ ছুঁয়ে গোনা, এক নজরে কয়টা চেনা, কোন পুকুরে বেশি: ৩–৬ বছরের গোনার খেলা।", category: "ছোটদের জন্য", action: "মাছ গোনো" },
   { slug: "hat-dhui", name: "হাত ধুই, দাঁত মাজি", description: "হাত ধুই, দাঁত মাজি: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
-  { slug: "abc-bazar", name: "এবিসি বাজার", description: "এবিসি বাজার: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
+  { slug: "abc-bazar", name: "এবিসি বাজার", description: "ছবি দেখে ইংরেজি অক্ষর চেনা: M দিয়ে Mango, বড়-ছোট হাতের অক্ষর, b d p q।", category: "ছোটদের জন্য", action: "খেলা শুরু করো" },
   { slug: "ulto-khela", name: "উল্টো খেলা", description: "উল্টো খেলা: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
