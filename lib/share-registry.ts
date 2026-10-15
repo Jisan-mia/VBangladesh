@@ -160,6 +160,7 @@ import { share as prithibi_ghuri } from '../tools/prithibi-ghuri/share';
 import { share as chhorar_tal } from '../tools/chhorar-tal/share';
 import { share as ammur_number } from '../tools/ammur-number/share';
 import { share as sur_banai } from '../tools/sur-banai/share';
+import { share as borno_likhi } from '../tools/borno-likhi/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -323,6 +324,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'chhorar-tal': chhorar_tal,
   'ammur-number': ammur_number,
   'sur-banai': sur_banai,
+  'borno-likhi': borno_likhi,
 };
 
 export function toolShare(tool: string): ToolShare | null {
