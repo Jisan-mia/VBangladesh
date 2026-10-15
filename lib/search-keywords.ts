@@ -1,5 +1,6 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "sat-tukro": ["tangram", "tangram puzzle", "ট্যানগ্রাম", "ট্যানগ্রাম পাজল", "ট্যানগ্রাম তৈরি", "sat tukro", "shape puzzle for kids", "আকার মেলানো খেলা", "জ্যামিতি খেলা", "ছোটদের ধাঁধা"],
   "abc-bazar": ["abc", "english alphabet", "a for apple", "ইংরেজি বর্ণমালা", "ছোট হাতের অক্ষর", "বড় হাতের অক্ষর", "b d p q", "phonics bangla", "ingreji bornomala", "abcd shikhi"],
   "gune-dekhi": ["counting game", "number game for kids", "subitizing", "shonkha gona", "gune dekhi", "শিশুদের সংখ্যা শেখানো", "সংখ্যা গণনা খেলা", "গুনতে শেখা", "এক নজরে কয়টা", "কোনটা বেশি", "বাচ্চাদের অংক খেলা"],
   "ghori-dekhi": ["ghori dekha", "clock reading game", "telling time for kids", "ঘড়ি দেখা শেখা", "ঘড়ি দেখার নিয়ম", "বাচ্চাদের ঘড়ি দেখা", "সাড়ে সোয়া পৌনে", "কয়টা বাজে", "ghori dekha shikhi", "clock worksheet bangla"],
