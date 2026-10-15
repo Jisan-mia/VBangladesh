@@ -148,6 +148,7 @@ import { share as sat_tukro } from '../tools/sat-tukro/share';
 import { share as nirapode_thaki } from '../tools/nirapode-thaki/share';
 import { share as gune_dekhi } from '../tools/gune-dekhi/share';
 import { share as hat_dhui } from '../tools/hat-dhui/share';
+import { share as abc_bazar } from '../tools/abc-bazar/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -299,6 +300,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'nirapode-thaki': nirapode_thaki,
   'gune-dekhi': gune_dekhi,
   'hat-dhui': hat_dhui,
+  'abc-bazar': abc_bazar,
 };
 
 export function toolShare(tool: string): ToolShare | null {

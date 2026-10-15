@@ -300,7 +300,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 26 | juktoborno | যুক্তবর্ণ ভাঙি-জুড়ি | ছোটদের জন্য | KD02 | building | kids/shortlist.md #2 |
 | 26 | borno-likhi | বর্ণ লিখি | ছোটদের জন্য | KD03 | todo | kids/shortlist.md #3 |
 | 26 | chhorar-tal | ছড়ার তালে | ছোটদের জন্য | KD04 | todo | kids/shortlist.md #4 |
-| 26 | abc-bazar | এবিসি বাজার | ছোটদের জন্য | KD05 | todo | kids/shortlist.md #5 |
+| 26 | abc-bazar | এবিসি বাজার | ছোটদের জন্য | KD05 | building | kids/shortlist.md #5 |
 | 27 | golper-mor | গল্পের মোড় | ছোটদের জন্য | KD06 | done | kids/shortlist.md #6 |
 | 27 | dosh-ghater-nouka | দশ ঘাটের নৌকা | ছোটদের জন্য | KD07 | done | kids/shortlist.md #7 |
 | 27 | gune-dekhi | গুনে দেখি | ছোটদের জন্য | KD08 | building | kids/shortlist.md #8 |

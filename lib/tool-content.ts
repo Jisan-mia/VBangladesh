@@ -146,6 +146,7 @@ import { site as sat_tukro } from '../tools/sat-tukro/content';
 import { site as nirapode_thaki } from '../tools/nirapode-thaki/content';
 import { site as gune_dekhi } from '../tools/gune-dekhi/content';
 import { site as hat_dhui } from '../tools/hat-dhui/content';
+import { site as abc_bazar } from '../tools/abc-bazar/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -296,6 +297,7 @@ export const toolContent = {
   'nirapode-thaki': nirapode_thaki,
   'gune-dekhi': gune_dekhi,
   'hat-dhui': hat_dhui,
+  'abc-bazar': abc_bazar,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
