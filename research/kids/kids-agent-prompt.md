@@ -80,7 +80,7 @@ ONLY `tools/{SLUG}/**` and `app/{SLUG}/page.tsx`. Four other agents are building
 ## Report back (SHORT, ≤220 words, exactly these lines)
 - `concept:` one line
 - `catalog:` description (≤90 chars, natural Bangla written to the parent) | action (2–3 words)
-- `og:` "<title, with | before the highlighted part>" | "<subtitle>" | <light bg hex> | <ink hex> | <accent hex> | <hash, or empty> | <JS that makes the `.kit-card canvas` card appear and finish drawing within ~15s: it may await, and it must end by waiting until the card canvas has drawn pixels>
+- `og:` "<title, with | before the highlighted part>" | "<subtitle>" | <light bg hex> | <ink hex> | <accent hex> | <hash, or empty> | <JS that makes the `.kit-card canvas` card appear and finish drawing within ~15s (scripts/og-image.mjs gives it about 60s in all, so never play a long level; a harmless `#og` hash demo that opens ShowParent with a fixed result and saves nothing is fine): it may await, and it must end by waiting until the card canvas has drawn pixels. Run `node scripts/og-image.mjs {SLUG} /tmp/{SLUG}.webp /tmp/{SLUG}.png "t|t" "s" "#ffffff" "#222222" "#c00000" "<hash>" "<js>"` once yourself to prove it works>
 - `title/H1:` …
 - `tests:` N passed · `tsc:` clean for my files
 - `shots:` paths
