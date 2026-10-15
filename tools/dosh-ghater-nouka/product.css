@@ -1,0 +1,109 @@
+.tool-dosh-ghater-nouka{--accent:#1f6f8b;--accent-deep:#134b5f;--ink:#1f3a40;--muted:#4f6b70;--sky:#eaf6f2;--bank:#9ccf73;--water:#4aa3b5;--step:#d98b5f;--tile:#fff8e8;--glow:#ffd166;--goal:#f2a900}
+.tool-dosh-ghater-nouka .dg-page{color:var(--ink)}
+
+.dg-hero{padding:8px 0 2px}
+.dg-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,40px);line-height:1.4;font-weight:800}
+.dg-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
+
+.dg{display:grid;gap:12px;max-width:520px;margin-top:8px}
+.dg-play{position:relative;display:grid;gap:8px;padding:8px 6px;border-radius:18px;background:var(--sky)}
+
+.dg-top{display:flex;align-items:center;gap:8px;min-width:0}
+.dg-level{flex:1;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;line-height:1.6}
+.dg-level b{font-family:var(--font-display)}
+.dg-level span{color:var(--muted)}
+.dg-pill{flex:none;min-height:44px;padding:6px 12px;border:1.5px solid var(--ink);border-radius:999px;background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:700;cursor:pointer}
+.dg-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+
+/* the whole straight line, start to last ghat, with both boats on it */
+.dg-line{position:relative;height:50px;margin:0 16px}
+.dg-line-bar{position:absolute;left:0;right:0;top:27px;height:6px;border-radius:3px;background:var(--water)}
+.dg-line i{position:absolute;top:24px;width:2px;height:12px;background:var(--ink);translate:-1px 0}
+.dg-line b{position:absolute;top:0;translate:-50% 0;font-size:16px;line-height:1.4;font-weight:700}
+.dg-line em{position:absolute;width:20px;height:11px;border-radius:0 0 10px 10px;translate:-50% 0;transition:left .4s ease}
+.dg-line .dg-mark-0{top:16px;background:#b5562b}
+.dg-line .dg-mark-1{top:36px;background:#2f5d8a}
+
+.dg-row{display:flex;align-items:center;gap:14px;min-height:72px}
+.dg-who{display:flex;align-items:center;gap:12px;margin:0;font-size:20px;line-height:1.6}
+.dg-row[data-turn=true] .dg-who>b{color:var(--accent-deep);text-decoration:underline 3px var(--glow);text-underline-offset:6px}
+.dg-dots{display:inline-flex;align-items:center;gap:6px;min-height:44px}
+.dg-dots i{width:18px;height:18px;border-radius:50%;background:var(--ink)}
+.dg-dots b{margin-left:6px;font-family:var(--font-display);font-size:36px;line-height:1.2}
+
+.dg-spin{position:relative;flex:none;display:block;width:96px;height:96px;padding:0;border:0;border-radius:50%;background:#fff;cursor:pointer;touch-action:manipulation}
+.dg-spin svg{display:block;width:100%;height:100%}
+.dg-spin-small{width:64px;height:64px;margin-left:16px}
+.dg-spin[data-active=true]{animation:dg-glow 1.4s ease-in-out infinite}
+
+/* the river: a window onto one long straight row of ghats on each bank */
+.dg-river{overflow:hidden;border-radius:14px;background:var(--water);touch-action:manipulation}
+.dg-track{--g:108px;position:relative;transition:transform .5s ease}
+.dg-bank{display:grid;align-items:center;padding:8px 0;background:var(--bank)}
+.dg-jetty{justify-self:end;width:56px;height:16px;border-radius:4px;background:#8b5e3c}
+.dg-bank-0 .dg-jetty{align-self:end;margin-bottom:-8px}
+.dg-bank-1 .dg-jetty{align-self:start;margin-top:-8px}
+.dg-ghat{position:relative;justify-self:center;display:grid;place-content:center;justify-items:center;width:calc(var(--g) - 12px);height:96px;padding:0;border:0;border-radius:14px;background:var(--tile);color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation;transition:transform .08s}
+.dg-bank-0 .dg-ghat{border-bottom:9px solid var(--step)}
+.dg-bank-1 .dg-ghat{border-top:9px solid var(--step)}
+.dg-ghat b{font-family:var(--font-display);font-size:40px;font-weight:800;line-height:1.2}
+.dg-ghat small{font-size:16px;line-height:1.4;color:var(--muted)}
+.dg-ghat:disabled{cursor:default;opacity:1;color:var(--ink)}
+.dg-ghat:active:not(:disabled){transform:scale(.95)}
+.dg-ghat.is-past{background:#fde3c2}
+.dg-ghat.is-goal{box-shadow:inset 0 0 0 4px var(--goal)}
+.dg-ghat.is-hint{outline:4px dashed var(--accent-deep);outline-offset:-6px}
+.dg-ghat.is-next{animation:dg-glow 1.2s ease-in-out infinite}
+
+.dg-water{position:relative;height:84px;background:linear-gradient(#ffffff2e 2px,transparent 2px) 0 20px/100% 28px,var(--water)}
+.dg-boat{position:absolute;width:84px;height:50px;translate:-50% 0;transition:left .45s ease;animation:dg-bob 3s ease-in-out infinite}
+.dg-boat-0{top:-2px}
+.dg-boat-1{bottom:-4px;animation-delay:-1.5s}
+.dg-pop{position:absolute;z-index:2;top:8px;translate:-50% 0;display:grid;justify-items:center;color:#fff;font-family:var(--font-display);font-size:44px;font-weight:800;line-height:1.1;text-shadow:0 2px 0 var(--accent-deep),0 0 8px var(--accent-deep);pointer-events:none;animation:dg-rise 1.1s ease-out forwards}
+.dg-pop small{font-size:18px;line-height:1.4}
+
+.dg-ghost{position:absolute;z-index:3;right:-4px;bottom:-22px;width:44px;height:55px;pointer-events:none;filter:drop-shadow(0 2px 2px #0004);animation:dg-tap 1.4s ease-in-out infinite}
+
+.dg-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;margin:0}
+
+.dg-mode{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:16px}
+.dg-mode button{min-height:44px;padding:6px 14px;border:1.5px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink);font:inherit;font-size:16px;cursor:pointer}
+.dg-mode button[aria-pressed=true]{background:var(--ink);color:#fff}
+
+.dg-over{position:absolute;inset:0;z-index:5;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px 24px;border-radius:18px;background:#eaf6f2f2;text-align:center}
+.dg-over .gx-stars{font-size:40px}
+.dg-end-line{margin:0;font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.5}
+.dg-end-note{margin:0;font-size:18px;line-height:1.6}
+.dg-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;max-width:340px}
+.dg-end-actions button{width:100%;min-height:72px;font-size:20px}
+
+.dg-drawer{border:1.5px solid #cfe3e0;border-radius:14px;background:#fff}
+.dg-drawer summary{display:flex;align-items:center;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
+.dg-drawer[open]{padding-bottom:12px}
+.dg-drawer .gx-levels{padding:0 10px}
+.dg-parent{display:grid;gap:8px;justify-items:start}
+.dg-parent p{margin:0;font-size:16px;line-height:1.6;color:var(--muted)}
+
+.dg-guide h2{margin-bottom:12px;font-family:var(--font-display)}
+.dg-guide>p{max-width:640px;color:var(--muted);line-height:1.7}
+.dg-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.dg-guide li{display:flex;gap:14px;align-items:flex-start}
+.dg-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
+.dg-guide li p{margin:4px 0 0;line-height:1.7}
+
+@keyframes dg-glow{0%,100%{box-shadow:0 0 0 4px var(--glow)}50%{box-shadow:0 0 0 7px var(--glow),0 0 18px 6px var(--glow)}}
+@keyframes dg-bob{50%{transform:translateY(3px)}}
+@keyframes dg-rise{0%{opacity:0;transform:scale(.6)}20%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:translateY(-12px)}}
+@keyframes dg-fade{0%,60%{opacity:1}100%{opacity:0}}
+@keyframes dg-tap{0%,100%{transform:translate(8px,10px)}50%{transform:translate(0,0) scale(.9)}}
+
+/* ধীরে খেলো and reduced motion: nothing moves on its own; numbers just fade */
+.dg[data-slow] .dg-boat,.dg[data-slow] .dg-ghost,.dg[data-slow] .dg-spin,.dg[data-slow] .dg-ghat{animation:none;transition:none}
+.dg[data-slow] .dg-pop{animation:dg-fade 1.2s linear forwards}
+.dg[data-slow] .dg-ghat.is-next,.dg[data-slow] .dg-spin[data-active=true]{box-shadow:0 0 0 6px var(--glow)}
+@media (prefers-reduced-motion:reduce){
+  .dg-boat,.dg-ghost,.dg-spin,.dg-ghat,.dg-track,.dg-line em{animation:none;transition:none}
+  .dg-pop{animation:dg-fade 1.2s linear forwards}
+  .dg-ghat.is-next,.dg-spin[data-active=true]{box-shadow:0 0 0 6px var(--glow)}
+}
+@media (min-width:640px){.dg-lead{display:block}}
