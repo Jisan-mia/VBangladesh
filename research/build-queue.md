@@ -316,7 +316,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 29 | hat-dhui | হাত ধুই, দাঁত মাজি | ছোটদের জন্য | KD18 | building | kids/shortlist.md #18 |
 | 29 | ammur-number | আম্মুর নম্বর | ছোটদের জন্য | KD19 | todo | kids/shortlist.md #19 |
 | 29 | sourojogot | সৌরজগতের সফর | ছোটদের জন্য | KD20 | done | kids/shortlist.md #20 |
-| 30 | dinosaur | ডাইনোসর খুঁজি | ছোটদের জন্য | KD21 | todo | kids/shortlist.md #21 |
+| 30 | dinosaur | ডাইনোসর খুঁজি | ছোটদের জন্য | KD21 | building | kids/shortlist.md #21 |
 | 30 | ki-hobe | কী হবে বলো তো? | ছোটদের জন্য | KD22 | todo | kids/shortlist.md #22 |
 | 30 | prithibi-ghuri | পৃথিবী ঘুরি | ছোটদের জন্য | KD23 | todo | kids/shortlist.md #23 |
 | 30 | sur-banai | সুর বানাই | ছোটদের জন্য | KD24 | todo | kids/shortlist.md #24 |
