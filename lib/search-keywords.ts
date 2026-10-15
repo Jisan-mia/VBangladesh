@@ -1,5 +1,6 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "daripalla": ["যোগ অংক খেলা", "শিশুদের যোগ অংক", "দাঁড়িপাল্লা খেলা", "অংকের খেলা", "সমান চিহ্ন", "খালি ঘর পূরণ", "bacchader ongko game", "jog ongko", "balance game", "missing number game", "kids math game"],
   "ki-hobe": ["akash keno nil", "আকাশ কেন নীল", "পানিচক্র কাকে বলে", "চাঁদ কেন ছোট-বড় হয়", "ভাসে না ডোবে", "ছোটদের বিজ্ঞান", "science game for kids", "bigganer khela", "water cycle", "moon phases bangla"],
   "mongole-rover": ["coding game for kids", "kids coding", "mars rover game", "chhotoder coding game", "coding shikha", "ছোটদের কোডিং", "কোডিং গেম", "মঙ্গল গ্রহ", "লাল গ্রহ", "রোভার খেলা"],
   "shoman-bhag": ["fraction game", "sharing game for kids", "division for kids", "bhognangsho", "shoman bhag", "ভগ্নাংশ", "ভাগ অঙ্ক", "অর্ধেক", "সমান ভাগ", "ভগ্নাংশ শেখার খেলা", "বাচ্চাদের অঙ্ক খেলা"],
