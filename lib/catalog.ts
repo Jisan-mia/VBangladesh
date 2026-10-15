@@ -164,7 +164,7 @@ export const catalog = [
   { slug: "ki-hobe", name: "কী হবে বলো তো?", description: "কী হবে বলো তো?: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
   { slug: "shoman-bhag", name: "সমান ভাগ", description: "মেহমানের প্লেটে পিঠা সমান ভাগ করে, রুটি কেটে অর্ধেক, চার ভাগের এক ভাগ চেনে।", category: "ছোটদের জন্য", action: "ভাগ করো" },
   { slug: "chhaya-melao", name: "ছায়া মেলাও", description: "বাতি জ্বললে দেয়ালে ছায়া পড়ে, ছোটজন চিনে নেয় কার ছায়া। পড়তে হয় না।", category: "ছোটদের জন্য", action: "বাতি জ্বালাও" },
-  { slug: "mongole-rover", name: "মঙ্গলে রোভার", description: "মঙ্গলে রোভার: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
+  { slug: "mongole-rover", name: "মঙ্গলে রোভার", description: "তীর সাজিয়ে মঙ্গলে রোভার চালায়, গর্তে ঠেকলে প্ল্যান ঠিক করে। ছোটদের প্রথম কোডিং।", category: "ছোটদের জন্য", action: "রোভার চালাও" },
   { slug: "daripalla", name: "দাঁড়িপাল্লা", description: "দাঁড়িপাল্লা: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
   { slug: "prithibi-ghuri", name: "পৃথিবী ঘুরি", description: "পৃথিবী ঘুরি: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
   { slug: "chhorar-tal", name: "ছড়ার তালে", description: "ছড়ার তালে: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
