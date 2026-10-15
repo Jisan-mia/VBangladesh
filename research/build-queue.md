@@ -296,6 +296,31 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 25 | moshar-raat | মশার রাত | গেম | GW23 | done | games-wave-2.md #23 |
 | 25 | al-dhore-hati | আল ধরে হাঁটি | গেম | GW24 | done | games-wave-2.md #24 |
 | 25 | o-te-ojogor | অ-তে অজগর | গেম | GW25 | done | games-wave-2.md #25 |
+| 26 | kar-chinho | কার-চিহ্ন বসাও | ছোটদের জন্য | KD01 | todo | kids/shortlist.md #1 |
+| 26 | juktoborno | যুক্তবর্ণ ভাঙি-জুড়ি | ছোটদের জন্য | KD02 | todo | kids/shortlist.md #2 |
+| 26 | borno-likhi | বর্ণ লিখি | ছোটদের জন্য | KD03 | todo | kids/shortlist.md #3 |
+| 26 | chhorar-tal | ছড়ার তালে | ছোটদের জন্য | KD04 | todo | kids/shortlist.md #4 |
+| 26 | abc-bazar | এবিসি বাজার | ছোটদের জন্য | KD05 | todo | kids/shortlist.md #5 |
+| 27 | golper-mor | গল্পের মোড় | ছোটদের জন্য | KD06 | todo | kids/shortlist.md #6 |
+| 27 | dosh-ghater-nouka | দশ ঘাটের নৌকা | ছোটদের জন্য | KD07 | todo | kids/shortlist.md #7 |
+| 27 | gune-dekhi | গুনে দেখি | ছোটদের জন্য | KD08 | todo | kids/shortlist.md #8 |
+| 27 | ghori-dekhi | ঘড়ি দেখি | ছোটদের জন্য | KD09 | todo | kids/shortlist.md #9 |
+| 27 | daripalla | দাঁড়িপাল্লা | ছোটদের জন্য | KD10 | todo | kids/shortlist.md #10 |
+| 28 | shoman-bhag | সমান ভাগ | ছোটদের জন্য | KD11 | todo | kids/shortlist.md #11 |
+| 28 | ulto-khela | উল্টো খেলা | ছোটদের জন্য | KD12 | todo | kids/shortlist.md #12 |
+| 28 | mongole-rover | মঙ্গলে রোভার | ছোটদের জন্য | KD13 | todo | kids/shortlist.md #13 |
+| 28 | sat-tukro | সাত টুকরো | ছোটদের জন্য | KD14 | todo | kids/shortlist.md #14 |
+| 28 | chhaya-melao | ছায়া মেলাও | ছোটদের জন্য | KD15 | todo | kids/shortlist.md #15 |
+| 29 | moner-rong | মনের রং | ছোটদের জন্য | KD16 | todo | kids/shortlist.md #16 |
+| 29 | nirapode-thaki | নিরাপদে থাকি | ছোটদের জন্য | KD17 | todo | kids/shortlist.md #17 |
+| 29 | hat-dhui | হাত ধুই, দাঁত মাজি | ছোটদের জন্য | KD18 | todo | kids/shortlist.md #18 |
+| 29 | ammur-number | আম্মুর নম্বর | ছোটদের জন্য | KD19 | todo | kids/shortlist.md #19 |
+| 29 | sourojogot | সৌরজগতের সফর | ছোটদের জন্য | KD20 | todo | kids/shortlist.md #20 |
+| 30 | dinosaur | ডাইনোসর খুঁজি | ছোটদের জন্য | KD21 | todo | kids/shortlist.md #21 |
+| 30 | ki-hobe | কী হবে বলো তো? | ছোটদের জন্য | KD22 | todo | kids/shortlist.md #22 |
+| 30 | prithibi-ghuri | পৃথিবী ঘুরি | ছোটদের জন্য | KD23 | todo | kids/shortlist.md #23 |
+| 30 | sur-banai | সুর বানাই | ছোটদের জন্য | KD24 | todo | kids/shortlist.md #24 |
+| 30 | nam-shikhi | নাম শিখি | ছোটদের জন্য | KD25 | todo | kids/shortlist.md #25 |
 
 ### Wave deadlines and why
 
