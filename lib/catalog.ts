@@ -151,6 +151,7 @@ export const catalog = [
   { slug: "sourojogot", name: "সৌরজগতের সফর", description: "রকেটে সূর্য থেকে নেপচুন। গ্রহের নাম, ক্রম আর মাপ শেখে, প্রজেক্টের পাতাও প্রিন্ট হয়।", category: "ছোটদের জন্য", action: "সফরে চলো" },
   { slug: "dosh-ghater-nouka", name: "দশ ঘাটের নৌকা", description: "সোজা সারিতে ১–২০ ঘাট গুনে নৌকা চালায়, আব্বুর নৌকার সাথে পাল্লা দিয়ে।", category: "ছোটদের জন্য", action: "চরকি ঘোরাও" },
   { slug: "golper-mor", name: "গল্পের মোড়", description: "৯টা ছবির গল্প, প্রতিটায় একটা মোড়। ছোটরা বেছে নেয়, দেখে অন্যজনের কেমন লাগল।", category: "ছোটদের জন্য", action: "গল্প পড়ো" },
+  { slug: "juktoborno", name: "যুক্তবর্ণ ভাঙি-জুড়ি", description: "যুক্তবর্ণ ভাঙি-জুড়ি: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.
