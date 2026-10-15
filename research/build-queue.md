@@ -313,7 +313,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 28 | chhaya-melao | ছায়া মেলাও | ছোটদের জন্য | KD15 | todo | kids/shortlist.md #15 |
 | 29 | moner-rong | মনের রং | ছোটদের জন্য | KD16 | done | kids/shortlist.md #16 |
 | 29 | nirapode-thaki | নিরাপদে থাকি | ছোটদের জন্য | KD17 | done | kids/shortlist.md #17 |
-| 29 | hat-dhui | হাত ধুই, দাঁত মাজি | ছোটদের জন্য | KD18 | todo | kids/shortlist.md #18 |
+| 29 | hat-dhui | হাত ধুই, দাঁত মাজি | ছোটদের জন্য | KD18 | building | kids/shortlist.md #18 |
 | 29 | ammur-number | আম্মুর নম্বর | ছোটদের জন্য | KD19 | todo | kids/shortlist.md #19 |
 | 29 | sourojogot | সৌরজগতের সফর | ছোটদের জন্য | KD20 | done | kids/shortlist.md #20 |
 | 30 | dinosaur | ডাইনোসর খুঁজি | ছোটদের জন্য | KD21 | todo | kids/shortlist.md #21 |
