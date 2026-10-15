@@ -1,0 +1,135 @@
+.tool-ghori-dekhi{--accent:#24607a;--accent-deep:#17475b;--ink:#1f2d38;--muted:#557083;--paper:#eef6fa;--line:#cfe0e8;--hand:#d9480f;--glow:#ffd166}
+.tool-ghori-dekhi .gd-page{color:var(--ink)}
+
+.tool-ghori-dekhi .gd-hero{padding:8px 0 0}
+.tool-ghori-dekhi .gd-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,5.8vw,40px);line-height:1.35;font-weight:700}
+.tool-ghori-dekhi .gd-lead{display:none;margin:4px 0 0;color:var(--muted);line-height:1.6}
+.tool-ghori-dekhi .kk-note{margin:8px 0}
+
+.tool-ghori-dekhi .gd{display:grid;gap:8px;max-width:440px;margin-inline:auto}
+.tool-ghori-dekhi .gd-top{display:flex;align-items:center;gap:10px;min-width:0}
+.tool-ghori-dekhi .gd-level{margin:0;min-width:0;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:16px}
+.tool-ghori-dekhi .gd-level span{color:var(--muted);font-weight:600}
+.tool-ghori-dekhi .gd-dots{display:flex;gap:5px;margin:0 0 0 auto;padding:0;list-style:none;flex:none}
+.tool-ghori-dekhi .gd-dots li{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.tool-ghori-dekhi .gd-dots li.on{background:var(--accent)}
+.tool-ghori-dekhi .gd-dots li.now{box-shadow:0 0 0 2px var(--accent);background:#fff}
+
+/* the stage: today's job, the clock, the hands to choose or the times to pick */
+.tool-ghori-dekhi .gd-stage{position:relative;display:grid;gap:10px;padding:10px;border-radius:16px;background:var(--paper);box-shadow:inset 0 0 0 2px var(--line);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.tool-ghori-dekhi .gd-scene{position:relative;display:grid;grid-template-columns:96px 1fr;align-items:center;gap:12px;min-width:0}
+.tool-ghori-dekhi .gd-scene-art{display:block;width:96px;height:64px;border-radius:10px}
+.tool-ghori-dekhi .gd-ask{min-width:0}
+.tool-ghori-dekhi .gd-ask p{margin:0}
+.tool-ghori-dekhi .gd-what{font-size:16px;font-weight:700;color:var(--muted);line-height:1.6}
+.tool-ghori-dekhi .gd-target{font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.5}
+.tool-ghori-dekhi .gd-target span{display:block;font-family:inherit;font-size:16px;font-weight:600;color:var(--muted);line-height:1.5}
+.tool-ghori-dekhi .gd-scene .kk-speak{position:absolute;top:0;right:0}
+
+.tool-ghori-dekhi .gd-clock-box{display:grid;justify-items:center}
+.tool-ghori-dekhi .gd-clock{display:block;width:min(100%,290px);height:auto;touch-action:none}
+.tool-ghori-dekhi .gd-clock.live{cursor:grab}
+.tool-ghori-dekhi .gd-rim{fill:var(--accent)}
+.tool-ghori-dekhi .gd-dial{fill:#fff}
+.tool-ghori-dekhi .gd-tick{stroke:#a9bfcc;stroke-width:1.5}
+.tool-ghori-dekhi .gd-tick.big{stroke:var(--ink);stroke-width:3}
+.tool-ghori-dekhi .gd-num{font-family:var(--font-display);font-size:28px;font-weight:700;fill:var(--ink);pointer-events:none}
+.tool-ghori-dekhi .gd-hand{transform-box:view-box;transform-origin:150px 150px;transition:transform .25s ease;pointer-events:none}
+.tool-ghori-dekhi .gd-hand.still{transition:none}
+.tool-ghori-dekhi .gd-hour path{fill:var(--ink)}
+.tool-ghori-dekhi .gd-minute path{fill:var(--hand)}
+.tool-ghori-dekhi .gd-ghost-hand path{fill:none;stroke:#e0a800;stroke-width:3;stroke-dasharray:6 5}
+.tool-ghori-dekhi .gd-ghost-hand{transition:none}
+.tool-ghori-dekhi .gd-pin{fill:var(--ink);pointer-events:none}
+.tool-ghori-dekhi .gd-finger{pointer-events:none}
+.tool-ghori-dekhi .gd-finger-path{fill:none;stroke:#e0a800;stroke-width:4;stroke-dasharray:2 9;stroke-linecap:round}
+
+.tool-ghori-dekhi .gd-tools{display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:10px}
+.tool-ghori-dekhi .gd-chip{display:grid;justify-items:center;align-content:center;gap:2px;min-height:72px;padding:6px 4px;border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font:inherit;font-size:16px;font-weight:700;line-height:1.4;cursor:pointer;touch-action:manipulation;transition:transform .12s ease}
+.tool-ghori-dekhi .gd-chip svg{width:40px;height:24px}
+.tool-ghori-dekhi .gd-chip-hour svg{fill:var(--ink)}
+.tool-ghori-dekhi .gd-chip-minute svg{fill:var(--hand)}
+.tool-ghori-dekhi .gd-chip.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);background:#e3f1f7}
+.tool-ghori-dekhi .gd-chip:active{transform:scale(.95)}
+.tool-ghori-dekhi .gd-chip:disabled{opacity:.5}
+.tool-ghori-dekhi .gd-go{min-height:72px;font-size:20px;padding-inline:8px}
+.tool-ghori-dekhi .gd-choices{grid-template-columns:1fr 1fr}
+.tool-ghori-dekhi .gd-choices[data-count="3"] .gd-choice:last-of-type{grid-column:1/-1}
+.tool-ghori-dekhi .gd-choice{min-height:72px;padding:6px 8px;border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font:inherit;font-family:var(--font-display);font-size:21px;font-weight:800;line-height:1.4;cursor:pointer;touch-action:manipulation;transition:transform .12s ease}
+.tool-ghori-dekhi .gd-choice:active{transform:scale(.95)}
+.tool-ghori-dekhi .gd-choice:disabled{opacity:.4;cursor:default}
+.tool-ghori-dekhi .gd-next{grid-column:1/-1}
+.tool-ghori-dekhi .gd-glow{border-color:#e0a800;box-shadow:0 0 0 3px var(--glow),0 0 18px 4px #ffd16688;animation:gd-breathe 1.6s ease-in-out infinite}
+
+/* what to look at, and the round's end */
+.tool-ghori-dekhi .gd-say{position:relative;min-height:60px;padding:8px 56px 8px 14px;border-radius:14px;background:var(--paper);border-left:5px solid var(--accent)}
+.tool-ghori-dekhi .gd-say.hint{border-left-color:var(--glow)}
+.tool-ghori-dekhi .gd-say.empty{visibility:hidden}
+.tool-ghori-dekhi .gd-say p{margin:0;font-size:18px;line-height:1.6}
+.tool-ghori-dekhi .gd-say .gd-say-title{font-family:var(--font-display);font-size:24px;font-weight:800}
+.tool-ghori-dekhi .gd-say .kk-speak{position:absolute;top:8px;right:8px}
+.tool-ghori-dekhi .gd-end{position:absolute;inset:0;z-index:3;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px;border-radius:16px;background:#f5fafcf5;color:var(--ink);text-align:center;overflow:auto}
+.tool-ghori-dekhi .gd-end p{margin:0}
+.tool-ghori-dekhi .gd-end .gx-stars{font-size:40px}
+.tool-ghori-dekhi .gd-end-line{font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1.5}
+.tool-ghori-dekhi .gd-end-note{font-size:17px;line-height:1.6;color:var(--muted)}
+.tool-ghori-dekhi .gd-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(320px,100%)}
+.tool-ghori-dekhi .gd-end-actions button{min-height:72px;font-size:20px;padding-inline:8px}
+.tool-ghori-dekhi .gd-end .gd-quiet{background:#557083;box-shadow:0 4px 0 #3a4f5e}
+.tool-ghori-dekhi .gd-menu .gx-levels{width:min(320px,100%)}
+
+.tool-ghori-dekhi .gd-controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.tool-ghori-dekhi .gd-pill{min-height:48px;padding:6px 14px;border:1.5px solid currentColor;border-radius:999px;background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:700}
+.tool-ghori-dekhi .gd-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+.tool-ghori-dekhi .gd-controls .gx-sound{color:var(--ink)}
+.tool-ghori-dekhi .gd-drawer{flex:1 1 100%;border:1.5px solid var(--line);border-radius:14px;background:#fff}
+.tool-ghori-dekhi .gd-drawer summary{min-height:48px;display:flex;align-items:center;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-ghori-dekhi .gd-drawer[open]{padding:0 10px 12px}
+.tool-ghori-dekhi .gd-parent{display:grid;justify-items:start}
+.tool-ghori-dekhi .gd-parent .kk-gate-open{width:100%}
+
+.tool-ghori-dekhi .gd-guide h2{font-family:var(--font-display);margin-bottom:12px}
+.tool-ghori-dekhi .gd-guide>p{color:var(--muted);max-width:640px}
+.tool-ghori-dekhi .gd-guide ol{display:grid;gap:14px;margin:0 0 16px;padding:0;list-style:none}
+.tool-ghori-dekhi .gd-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-ghori-dekhi .gd-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
+.tool-ghori-dekhi .gd-guide li p{margin:4px 0 0}
+.tool-ghori-dekhi .gd-print-link{color:var(--ink)}
+.tool-ghori-dekhi .gd-print-link a{color:var(--accent-deep);font-weight:700}
+
+/* ?print: six blank clocks */
+.tool-ghori-dekhi .gd-print{display:grid;gap:14px}
+.tool-ghori-dekhi .gd-print-bar{display:flex;flex-wrap:wrap;gap:12px}
+.tool-ghori-dekhi .gd-sheet{padding:14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:#111}
+.tool-ghori-dekhi .gd-sheet h2{margin:0 0 4px;font-family:var(--font-display);font-size:22px;line-height:1.4}
+.tool-ghori-dekhi .gd-sheet>p{margin:0 0 8px;font-size:15px;line-height:1.6}
+.tool-ghori-dekhi .gd-sheet-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 18px;margin:0;padding:0;list-style:none}
+.tool-ghori-dekhi .gd-sheet-grid li{display:grid;justify-items:center;text-align:center;line-height:1.5}
+.tool-ghori-dekhi .gd-sheet-grid b{font-family:var(--font-display);font-size:18px}
+.tool-ghori-dekhi .gd-sheet-grid span{font-size:15px;color:#444}
+.tool-ghori-dekhi .gd-sheet .gd-clock{width:100%;max-width:240px}
+.tool-ghori-dekhi .gd-sheet .gd-rim{fill:#111}
+.tool-ghori-dekhi .gd-sheet .gd-answers{margin:10px 0 0;font-size:12px;color:#666}
+
+@media print{
+  @page{size:A4;margin:10mm}
+  body:has(.gd-print) .site-frame>:not(main),body:has(.gd-print) main>:not(.gd-page),
+  body:has(.gd-print) .gd-page>:not(#tool),body:has(.gd-print) .gd-print-bar{display:none!important}
+  body:has(.gd-print) #tool{padding:0;margin:0;max-width:none}
+  .tool-ghori-dekhi .gd-sheet{width:190mm;padding:0;border:0}
+  .tool-ghori-dekhi .gd-sheet h2{font-size:18pt}
+  .tool-ghori-dekhi .gd-sheet>p{font-size:11pt}
+  .tool-ghori-dekhi .gd-sheet-grid{gap:4mm 10mm}
+  .tool-ghori-dekhi .gd-sheet .gd-clock{width:68mm}
+  .tool-ghori-dekhi .gd-sheet-grid b{font-size:14pt}
+  .tool-ghori-dekhi .gd-sheet-grid span{font-size:11pt}
+  .tool-ghori-dekhi .gd-answers{font-size:8pt}
+}
+
+@media (min-width:720px){.tool-ghori-dekhi .gd-lead{display:block}}
+@media (max-width:360px){.tool-ghori-dekhi .gd-tools{gap:8px}.tool-ghori-dekhi .gd-choice{font-size:19px}.tool-ghori-dekhi .gd-scene{grid-template-columns:80px 1fr;gap:10px}.tool-ghori-dekhi .gd-scene-art{width:80px;height:54px}}
+
+@keyframes gd-breathe{0%,100%{box-shadow:0 0 0 3px var(--glow),0 0 12px 3px #ffd16666}50%{box-shadow:0 0 0 5px var(--glow),0 0 22px 7px #ffd16699}}
+
+.tool-ghori-dekhi .gd[data-slow=true] .gd-stage *{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.tool-ghori-dekhi .gd-stage *{animation:none!important;transition:none!important}}
