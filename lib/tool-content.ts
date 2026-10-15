@@ -156,6 +156,7 @@ import { site as mongole_rover } from '../tools/mongole-rover/content';
 import { site as daripalla } from '../tools/daripalla/content';
 import { site as prithibi_ghuri } from '../tools/prithibi-ghuri/content';
 import { site as chhorar_tal } from '../tools/chhorar-tal/content';
+import { site as ammur_number } from '../tools/ammur-number/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -316,6 +317,7 @@ export const toolContent = {
   'daripalla': daripalla,
   'prithibi-ghuri': prithibi_ghuri,
   'chhorar-tal': chhorar_tal,
+  'ammur-number': ammur_number,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
