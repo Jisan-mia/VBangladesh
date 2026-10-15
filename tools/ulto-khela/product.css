@@ -1,0 +1,89 @@
+.tool-ulto-khela{--accent:#c4511f;--accent-deep:#8a3412;--ink:#3a2a1a;--muted:#6e5a48;--paper:#fff4e3;--line:#efd9bb;--glow:#ffd166;--same:#2f7d4a;--color:#6a3fb0;--shape:#1f6f8b}
+.tool-ulto-khela .uk-page{color:var(--ink)}
+
+.tool-ulto-khela .uk-hero{padding:8px 0 2px}
+.tool-ulto-khela .uk-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,40px);line-height:1.4;font-weight:800}
+.tool-ulto-khela .uk-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
+
+.tool-ulto-khela .uk{display:grid;gap:12px;max-width:520px;margin-top:8px}
+.tool-ulto-khela .uk-play{position:relative;display:grid;gap:12px;padding:10px 12px 12px;border-radius:18px;background:var(--paper)}
+.tool-ulto-khela .uk-top{display:flex;align-items:center;gap:8px;min-width:0}
+.tool-ulto-khela .uk-level{flex:1;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;line-height:1.6}
+.tool-ulto-khela .uk-level b{font-family:var(--font-display)}
+.tool-ulto-khela .uk-level span{color:var(--muted)}
+.tool-ulto-khela .uk-dots{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px;max-width:50%;margin:0;padding:0;list-style:none}
+.tool-ulto-khela .uk-dots li{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.tool-ulto-khela .uk-dots .done{background:var(--accent)}
+.tool-ulto-khela .uk-dots .now{background:var(--accent);box-shadow:0 0 0 3px #c4511f40}
+
+/* the rule: one big sign, its colour changes with it */
+.tool-ulto-khela .uk-rule{--rule:var(--accent);position:relative;display:flex;align-items:center;justify-content:center;gap:12px;min-height:76px;animation:uk-flip .45s ease-out}
+.tool-ulto-khela .uk-rule-same{--rule:var(--same)}
+.tool-ulto-khela .uk-rule-color{--rule:var(--color)}
+.tool-ulto-khela .uk-rule-shape{--rule:var(--shape)}
+.tool-ulto-khela .uk-rule-icon{display:grid;place-items:center;width:76px;height:76px;border-radius:50%;background:var(--rule);color:#fff;box-shadow:0 0 0 4px #fff,0 0 0 7px var(--rule)}
+.tool-ulto-khela .uk-rule-icon svg{width:54px;height:54px}
+.tool-ulto-khela .uk-rule-color .uk-rule-icon{background:#fff}
+.tool-ulto-khela .uk-rule-name{font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.6;color:var(--rule)}
+.tool-ulto-khela .uk-bell{position:absolute;top:-6px;left:calc(50% - 92px);width:40px;height:40px;transform-origin:50% 10%;animation:uk-ring .4s ease-in-out 3}
+.tool-ulto-khela .uk-bell svg{width:100%;height:100%}
+.tool-ulto-khela .uk-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* the picture that came, and the two buttons */
+.tool-ulto-khela .uk-show{position:relative;justify-self:center;width:min(150px,42vw);aspect-ratio:1;padding:10px;border:4px solid var(--line);border-radius:24px;background:#fff;animation:uk-in .25s ease-out}
+.tool-ulto-khela .uk-show svg{display:block;width:100%;height:100%}
+.tool-ulto-khela .uk-pace{position:absolute;left:12px;right:12px;bottom:-12px;height:8px;border-radius:4px;background:var(--glow);transform-origin:left;animation:uk-pace var(--pace) linear forwards}
+.tool-ulto-khela .uk-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.tool-ulto-khela .uk-choice{position:relative;display:grid;justify-items:center;align-content:center;gap:2px;min-height:136px;padding:8px 6px 4px;border:3px solid var(--line);border-radius:20px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .08s}
+.tool-ulto-khela .uk-choice:active{transform:scale(.95)}
+.tool-ulto-khela .uk-art{display:block;width:min(96px,26vw);aspect-ratio:1}
+.tool-ulto-khela .uk-art svg{display:block;width:100%;height:100%}
+.tool-ulto-khela .uk-word{font-size:18px;font-weight:700;line-height:1.6;color:var(--muted)}
+.tool-ulto-khela .uk-baskets .uk-choice{border-color:#c99a52;background:repeating-linear-gradient(45deg,#f7e3bd 0 10px,#f2d8a6 10px 20px)}
+.tool-ulto-khela .uk-choice.is-glow{border-color:var(--glow);animation:uk-glow 1.4s ease-in-out infinite}
+.tool-ulto-khela .uk-choice.is-right{border-color:var(--accent);box-shadow:0 0 0 4px #c4511f55}
+
+.tool-ulto-khela .uk-controls{display:flex;justify-content:flex-end;align-items:center;gap:8px}
+.tool-ulto-khela .uk-pill{min-height:44px;padding:6px 14px;border:1.5px solid var(--ink);border-radius:999px;background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:700;cursor:pointer}
+.tool-ulto-khela .uk-pill small{font-size:16px;font-weight:500}
+.tool-ulto-khela .uk-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+
+.tool-ulto-khela .uk-ghost{position:absolute;z-index:3;left:54%;top:42%;width:44px;height:55px;pointer-events:none;filter:drop-shadow(0 2px 2px #0004);animation:uk-tap 1.4s ease-in-out infinite}
+
+.tool-ulto-khela .uk-over{position:absolute;inset:0;z-index:5;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px 24px;border-radius:18px;background:var(--paper);text-align:center}
+.tool-ulto-khela .uk-over .gx-stars{font-size:40px}
+.tool-ulto-khela .uk-end-line{margin:0;font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1.6}
+.tool-ulto-khela .uk-end-note{margin:0;font-size:18px;line-height:1.6}
+.tool-ulto-khela .uk-end-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:min(340px,calc(100vw - 80px))}
+.tool-ulto-khela .uk-end-actions button{width:100%;min-height:72px;padding-inline:6px;font-size:clamp(17px,5.4vw,20px)}
+
+.tool-ulto-khela .uk-drawer{border:1.5px solid var(--line);border-radius:14px;background:#fff}
+.tool-ulto-khela .uk-drawer summary{display:flex;align-items:center;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-ulto-khela .uk-drawer[open]{padding-bottom:12px}
+.tool-ulto-khela .uk-drawer .gx-levels{padding:0 10px}
+.tool-ulto-khela .uk-drawer p{margin:8px 14px 0;font-size:16px;line-height:1.6;color:var(--muted)}
+.tool-ulto-khela .uk-parent{display:grid;gap:8px;justify-items:start}
+.tool-ulto-khela .uk-parent p{margin:0;font-size:16px;line-height:1.6;color:var(--muted)}
+
+.tool-ulto-khela .uk-guide h2{margin-bottom:12px;font-family:var(--font-display)}
+.tool-ulto-khela .uk-guide>p{max-width:640px;color:var(--muted);line-height:1.7}
+.tool-ulto-khela .uk-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.tool-ulto-khela .uk-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-ulto-khela .uk-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
+.tool-ulto-khela .uk-guide li p{margin:4px 0 0;line-height:1.7}
+
+@keyframes uk-in{0%{opacity:0;transform:scale(.7)}100%{opacity:1;transform:none}}
+@keyframes uk-flip{0%{transform:rotateX(90deg)}100%{transform:none}}
+@keyframes uk-ring{0%,100%{transform:rotate(0)}25%{transform:rotate(18deg)}75%{transform:rotate(-18deg)}}
+@keyframes uk-pace{0%{transform:scaleX(1)}100%{transform:scaleX(0)}}
+@keyframes uk-glow{0%,100%{box-shadow:0 0 0 3px var(--glow)}50%{box-shadow:0 0 0 6px var(--glow),0 0 16px 4px var(--glow)}}
+@keyframes uk-tap{0%,100%{transform:translate(8px,10px)}50%{transform:translate(0,0) scale(.9)}}
+
+/* ধীরে খেলো and reduced motion: nothing moves on its own (the চটপট bar keeps draining: it is the clock, not decoration) */
+.tool-ulto-khela .uk[data-slow] .uk-play *:not(.uk-pace),.tool-ulto-khela .uk[data-slow] .uk-rule{animation:none!important;transition:none!important}
+.tool-ulto-khela .uk[data-slow] .is-glow{box-shadow:0 0 0 5px var(--glow)}
+@media (prefers-reduced-motion:reduce){
+  .tool-ulto-khela .uk .uk-play *:not(.uk-pace),.tool-ulto-khela .uk .uk-rule{animation:none!important;transition:none!important}
+  .tool-ulto-khela .uk .is-glow{box-shadow:0 0 0 5px var(--glow)}
+}
+@media (min-width:640px){.tool-ulto-khela .uk-lead{display:block}}
