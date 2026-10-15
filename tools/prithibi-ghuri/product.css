@@ -1,0 +1,131 @@
+.tool-prithibi-ghuri{--accent:#1f6f8b;--accent-deep:#134a5e;--ink:#23303a;--muted:#55636d;--paper:#eef3ea;--edge:#cfdccb;--good:#2e9e44;--glow:#f5b400;--sky:#bfe3ee}
+.tool-prithibi-ghuri .pg-page{color:var(--ink)}
+
+.pg-hero{padding:8px 0 0}
+.pg-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,40px);line-height:1.4;font-weight:700;letter-spacing:0}
+.pg-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
+.pg-hero .kk-note{margin:8px 0}
+
+.pg{display:grid;gap:12px;max-width:520px;margin-inline:auto;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.pg-stage{position:relative;display:grid;gap:10px;padding:12px;border-radius:20px;background:var(--paper);box-shadow:inset 0 0 0 2px var(--edge)}
+.pg-tools{position:absolute;right:10px;top:8px;z-index:3;display:flex;gap:8px;align-items:center}
+.pg-pill{min-height:44px;padding:4px 12px;border:1.5px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink);font:inherit;font-size:15px;font-weight:700}
+.pg-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+.pg-tools .gx-sound{min-height:44px;min-width:44px;border-radius:999px;background:#fff;color:var(--ink)}
+
+.pg-trip{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;min-height:44px;margin:0;padding-right:120px;font-size:18px;line-height:1.6}
+.pg-trip b{color:var(--accent-deep)}
+.pg-say{margin:0;font-size:20px;font-weight:700;line-height:1.6;text-align:center}
+
+/* The map in a plane window: rounded, with a frame. */
+.pg-window{overflow:hidden;border:6px solid #fff;border-radius:26px;box-shadow:0 0 0 2px var(--edge),0 6px 0 var(--edge)}
+.pg-map{display:block;width:100%;height:auto;aspect-ratio:16/10;background:var(--sky)}
+.pg-map-label{font-family:var(--font-display),sans-serif;font-weight:700;fill:var(--ink);paint-order:stroke;stroke:#fff;stroke-width:.6px;stroke-linejoin:round}
+.pg-route{fill:var(--ink)}
+.pg-trail{fill:var(--ink);opacity:.35}
+.pg-pin.now circle{animation:pg-pulse 1.2s ease-in-out infinite}
+@keyframes pg-pulse{50%{opacity:.6}}
+
+/* Destinations: three big buttons, at least 96px tall, 12–16px apart. */
+.pg-go-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0;padding:0;list-style:none}
+.pg-go{position:relative;display:grid;justify-items:center;align-content:center;gap:6px;width:100%;min-height:112px;padding:10px 4px;border:3px solid var(--edge);border-radius:20px;background:#fff;color:var(--ink);font:inherit;box-shadow:0 5px 0 var(--edge);transition:transform .08s}
+.pg-go:active{transform:translateY(4px);box-shadow:0 1px 0 var(--edge)}
+.pg-go:disabled{cursor:default}
+.pg-go.was{opacity:.6;border-style:dashed;box-shadow:none}
+.pg-go-name{font-size:16px;font-weight:700;line-height:1.4;text-align:center}
+.pg-pin-dot{position:absolute;left:8px;top:8px;display:grid;place-items:center;width:20px;height:20px;border:2px solid #fff;border-radius:50%;color:#fff;font-size:12px;font-weight:800;box-shadow:0 0 0 1px #0002}
+.pg-badge-flag{width:56px;height:auto;border-radius:4px;box-shadow:0 0 0 1px #0003}
+.pg-badge-pic{width:46px;height:46px}
+
+/* Visit: a postcard with one thing on it. */
+.pg-visit{display:grid;gap:10px}
+.pg-where{display:flex;gap:12px;align-items:center;min-height:56px;padding-right:120px}
+.pg-where h2{margin:0;font-family:var(--font-display);font-size:24px;line-height:1.4}
+.pg-where p{margin:0;color:var(--muted);font-size:16px;line-height:1.5}
+.pg-flag{flex:none;width:64px;height:auto;border-radius:4px;box-shadow:0 0 0 1px #0003}
+.pg-card-wrap{animation:pg-in .3s ease-out both}
+@keyframes pg-in{from{opacity:0;transform:translateX(18px) rotate(1deg)}}
+.pg-card{display:grid;justify-items:center;gap:6px;min-height:300px;align-content:center;padding:16px;border-radius:18px;background:#fffdf6;box-shadow:0 2px 0 var(--edge),0 10px 24px #23303a14;text-align:center}
+.pg-card h3{margin:0;font-family:var(--font-display);font-size:26px;line-height:1.4}
+.pg-tag{margin:0;padding:2px 12px;border-radius:999px;background:var(--accent);color:#fff;font-size:16px;font-weight:700;line-height:1.6}
+.pg-pic{display:block;width:100%;height:100%}
+.pg-pic-big{width:min(150px,40vw);height:auto;aspect-ratio:1}
+.pg-note{max-width:400px;margin:0;font-size:18px;line-height:1.6}
+.pg-big{font-size:20px;font-weight:700}
+.pg-word{display:flex;gap:8px;align-items:center;justify-content:center;margin:10px 0;font-family:var(--font-display);font-size:clamp(34px,10vw,48px);font-weight:800;line-height:1.5;color:var(--accent-deep)}
+.pg-word .kk-speak{font-size:22px}
+.pg-pair-flags{display:flex;gap:12px;align-items:center;font-size:24px;font-weight:700}
+.pg-pair-flags .pg-flag,.pg-pair-flags .pg-badge-flag{width:72px}
+.pg-pair-flags .pg-badge-pic{width:64px;height:64px}
+.pg-dots{display:flex;justify-content:center;gap:8px;margin:0;padding:0;list-style:none}
+.pg-dots li{width:12px;height:12px;border-radius:50%;background:#0002}
+.pg-dots li.now{background:var(--glow);box-shadow:0 0 0 2px #fff}
+.pg-dots li.done{background:var(--accent)}
+.tool-prithibi-ghuri .pg-next{position:relative;justify-self:center;min-width:220px;min-height:64px;font-size:20px}
+
+/* The stamp question: picture buttons, at least 104px, 16px apart. */
+.pg-q{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:4px 0;font-size:22px;font-weight:700;line-height:1.6;text-align:center}
+.pg-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0;padding:0;list-style:none}
+.pg-choices.n2{grid-template-columns:repeat(2,minmax(0,150px));justify-content:center}
+.pg-choices.n4{grid-template-columns:repeat(2,minmax(0,150px));justify-content:center}
+.pg-choice{display:grid;place-items:center;width:100%;aspect-ratio:1;min-height:96px;padding:8px;border:3px solid var(--edge);border-radius:20px;background:#fff;box-shadow:0 5px 0 var(--edge);transition:transform .08s}
+.pg-choice:active{transform:translateY(4px);box-shadow:0 1px 0 var(--edge)}
+.pg-choice .pg-pic{width:100%;height:100%}
+.pg-choice-flag{width:100%;height:auto;border-radius:4px;box-shadow:0 0 0 1px #0003}
+.pg-choice.right{border-color:var(--good);background:#eef8e8;box-shadow:0 5px 0 #a6d79a}
+.pg-choice.wrong{border-style:dashed;opacity:.55}
+.pg-choice:disabled{opacity:.4}
+.pg-choice.right:disabled{opacity:1}
+.pg-choice.hint{border-color:var(--glow);animation:pg-hint 1.2s ease-in-out infinite}
+@keyframes pg-hint{50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--glow) 45%,transparent)}}
+.pg-why{min-height:32px;margin:0;font-size:18px;line-height:1.6;text-align:center;color:var(--muted)}
+
+/* The stamp lands on the passport page. */
+.pg-stamp-page{display:grid;justify-items:center;gap:14px;padding:24px 8px 8px;min-height:360px;align-content:center;border-radius:18px;background:repeating-linear-gradient(170deg,#fffdf6 0 22px,#f2efe2 22px 24px)}
+.pg-stamp{display:grid;justify-items:center;align-content:center;width:190px;height:190px;border:8px solid var(--ink);border-radius:50%;outline:3px solid var(--ink);outline-offset:-18px;background:#fffdf6;color:var(--ink);transform:rotate(-6deg);animation:pg-thud .45s cubic-bezier(.2,1.6,.4,1) both}
+.pg-stamp .pg-pic{width:96px;height:96px}
+.pg-stamp span{font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.4}
+@keyframes pg-thud{from{opacity:0;transform:rotate(-6deg) scale(1.7)}to{opacity:1;transform:rotate(-6deg) scale(1)}}
+
+.pg-done{padding-top:44px;display:grid;justify-items:center;gap:12px;text-align:center}
+.pg-done h2{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,28px);line-height:1.45}
+.pg-method{margin:0;font-size:18px;line-height:1.6}
+.pg-mini-stamps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;margin:0;padding:0;list-style:none}
+.pg-mini-stamps li{display:grid;justify-items:center;padding:8px 4px;border:3px solid var(--ink);border-radius:18px;background:#fffdf6;font-size:16px;font-weight:700;line-height:1.5}
+.pg-mini-stamps .pg-pic{width:60px;height:60px}
+.pg-mini-stamps small{font-size:16px;font-weight:600;color:var(--muted)}
+.pg-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(100%,340px)}
+.tool-prithibi-ghuri .pg-pair button{min-height:64px;min-width:0;font-size:20px;font-weight:700}
+.pg-idle{margin:0;padding:48px 16px;text-align:center;font-size:20px;font-weight:600;line-height:1.6}
+
+.pg-levels .gx-levels{grid-template-columns:repeat(6,minmax(0,1fr))}
+.pg-passport{padding:8px 12px;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 2px var(--edge)}
+.pg-passport summary{min-height:44px;display:flex;align-items:center;justify-content:space-between;font-size:18px;font-weight:700;cursor:pointer}
+.pg-passport summary span{color:var(--muted);font-size:16px}
+.pg-passport ul{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin:8px 0;padding:0;list-style:none}
+.pg-passport li{display:grid;justify-items:center;align-content:center;min-height:96px;padding:6px 2px;border:2px dashed var(--edge);border-radius:50%;aspect-ratio:1;font-size:16px;font-weight:700;line-height:1.3;text-align:center}
+.pg-passport li.has{border:3px solid var(--ink);background:#fffdf6}
+.pg-passport li .pg-pic{width:44px;height:44px}
+.pg-passport li span{max-width:80px;font-size:16px}
+.pg-empty{color:#0003;font-size:28px}
+.pg-small{margin:0;font-size:16px;color:var(--muted)}
+
+.pg-parent-line{max-width:520px;margin:12px auto 0;font-size:16px;line-height:1.6;text-align:left}
+.pg-gate{display:flex;justify-content:flex-start}
+
+.pg-ghost-at{position:absolute;left:58%;top:58%;width:0;height:0;pointer-events:none;z-index:3}
+.pg-ghost{position:absolute;left:-10px;top:-2px;width:50px;max-width:none;height:auto;filter:drop-shadow(0 2px 2px #0003);animation:pg-ghost 1.8s ease-in-out 3 both}
+@keyframes pg-ghost{0%{transform:translate(34px,46px);opacity:0}30%{transform:translate(0,0);opacity:1}45%{transform:scale(.86)}60%{transform:scale(1)}85%{opacity:1}100%{opacity:0}}
+
+.pg-guide h2{font-family:var(--font-display);margin-bottom:12px}
+.pg-guide>p{color:var(--muted);max-width:640px}
+.pg-guide ol{display:grid;gap:14px;margin:0 0 18px;padding:0;list-style:none}
+.pg-guide li{display:flex;gap:14px;align-items:flex-start}
+.pg-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
+.pg-guide li p{margin:4px 0 0}
+.pg-privacy{font-size:15px}
+
+@media (max-width:360px){.pg-stage{padding:10px}.pg-go{min-height:104px}.pg-go-name{font-size:16px}.pg-choices{gap:12px}.pg-trip{padding-right:110px;font-size:16px}}
+@media (min-width:720px){.pg-lead{display:block}}
+.pg-slow *,.pg-slow *::before,.pg-slow *::after{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.tool-prithibi-ghuri *{animation:none!important;transition:none!important}}
