@@ -142,6 +142,7 @@ import { share as sourojogot } from '../tools/sourojogot/share';
 import { share as dosh_ghater_nouka } from '../tools/dosh-ghater-nouka/share';
 import { share as golper_mor } from '../tools/golper-mor/share';
 import { share as juktoborno } from '../tools/juktoborno/share';
+import { share as ghori_dekhi } from '../tools/ghori-dekhi/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -287,6 +288,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'dosh-ghater-nouka': dosh_ghater_nouka,
   'golper-mor': golper_mor,
   'juktoborno': juktoborno,
+  'ghori-dekhi': ghori_dekhi,
 };
 
 export function toolShare(tool: string): ToolShare | null {

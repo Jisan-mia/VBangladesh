@@ -140,6 +140,7 @@ import { site as sourojogot } from '../tools/sourojogot/content';
 import { site as dosh_ghater_nouka } from '../tools/dosh-ghater-nouka/content';
 import { site as golper_mor } from '../tools/golper-mor/content';
 import { site as juktoborno } from '../tools/juktoborno/content';
+import { site as ghori_dekhi } from '../tools/ghori-dekhi/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -284,6 +285,7 @@ export const toolContent = {
   'dosh-ghater-nouka': dosh_ghater_nouka,
   'golper-mor': golper_mor,
   'juktoborno': juktoborno,
+  'ghori-dekhi': ghori_dekhi,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
