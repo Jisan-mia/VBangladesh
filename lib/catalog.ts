@@ -157,12 +157,13 @@ export const catalog = [
   { slug: "sat-tukro", name: "সাত টুকরো", description: "সাতটা টুকরো ঘুরিয়ে নৌকা, রিকশা, বিড়াল বানায়। প্রথমে দাগ, পরে শুধু ছায়া।", category: "ছোটদের জন্য", action: "ছবি বানাও" },
   { slug: "nirapode-thaki", name: "নিরাপদে থাকি", description: "রাস্তা, পুকুর, চুলা, ঘুড়ি, মেলা আর ঝড়ের দিনে কী করবে, ছবি দেখে শেখে।", category: "ছোটদের জন্য", action: "নিয়ম শেখো" },
   { slug: "gune-dekhi", name: "গুনে দেখি", description: "মাছ ছুঁয়ে গোনা, এক নজরে কয়টা চেনা, কোন পুকুরে বেশি: ৩–৬ বছরের গোনার খেলা।", category: "ছোটদের জন্য", action: "মাছ গোনো" },
-  { slug: "hat-dhui", name: "হাত ধুই, দাঁত মাজি", description: "হাত ধুই, দাঁত মাজি: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
+  { slug: "hat-dhui", name: "হাত ধুই, দাঁত মাজি", description: "ফোন বেসিনের পাশে রাখো, ছবি দেখে ২০ সেকেন্ডে হাত ধোয়া আর ২ মিনিটে দাঁত মাজা।", category: "ছোটদের জন্য", action: "একসাথে ধোও" },
   { slug: "abc-bazar", name: "এবিসি বাজার", description: "ছবি দেখে ইংরেজি অক্ষর চেনা: M দিয়ে Mango, বড়-ছোট হাতের অক্ষর, b d p q।", category: "ছোটদের জন্য", action: "খেলা শুরু করো" },
-  { slug: "ulto-khela", name: "উল্টো খেলা", description: "উল্টো খেলা: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
+  { slug: "ulto-khela", name: "উল্টো খেলা", description: "সূর্য এলে চাঁদে চাপো, ঘণ্টা বাজলে নিয়ম বদলাও। ৪–৮ বছরের মনোযোগের খেলা।", category: "ছোটদের জন্য", action: "উল্টো খেলো" },
   { slug: "dinosaur", name: "ডাইনোসর খুঁজি", description: "ডাইনোসর খুঁজি: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
   { slug: "ki-hobe", name: "কী হবে বলো তো?", description: "কী হবে বলো তো?: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
   { slug: "shoman-bhag", name: "সমান ভাগ", description: "সমান ভাগ: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
+  { slug: "chhaya-melao", name: "ছায়া মেলাও", description: "ছায়া মেলাও: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.

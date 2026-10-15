@@ -310,7 +310,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 28 | ulto-khela | উল্টো খেলা | ছোটদের জন্য | KD12 | building | kids/shortlist.md #12 |
 | 28 | mongole-rover | মঙ্গলে রোভার | ছোটদের জন্য | KD13 | todo | kids/shortlist.md #13 |
 | 28 | sat-tukro | সাত টুকরো | ছোটদের জন্য | KD14 | done | kids/shortlist.md #14 |
-| 28 | chhaya-melao | ছায়া মেলাও | ছোটদের জন্য | KD15 | todo | kids/shortlist.md #15 |
+| 28 | chhaya-melao | ছায়া মেলাও | ছোটদের জন্য | KD15 | building | kids/shortlist.md #15 |
 | 29 | moner-rong | মনের রং | ছোটদের জন্য | KD16 | done | kids/shortlist.md #16 |
 | 29 | nirapode-thaki | নিরাপদে থাকি | ছোটদের জন্য | KD17 | done | kids/shortlist.md #17 |
 | 29 | hat-dhui | হাত ধুই, দাঁত মাজি | ছোটদের জন্য | KD18 | building | kids/shortlist.md #18 |
