@@ -155,7 +155,7 @@ export const catalog = [
   { slug: "ghori-dekhi", name: "ঘড়ি দেখি", description: "সকাল থেকে রাত, দিনের কাজে কাঁটা ঘুরিয়ে ঘড়ি দেখা শেখে: সাড়ে, সোয়া, পৌনে।", category: "ছোটদের জন্য", action: "ঘড়ি মেলাও" },
   { slug: "moner-rong", name: "মনের রং", description: "ছবি দেখে খুশি, রাগ, ভয়, লজ্জা চেনে, আর ভাবে কী করলে ভালো লাগে।", category: "ছোটদের জন্য", action: "মুখ চেনো" },
   { slug: "sat-tukro", name: "সাত টুকরো", description: "সাত টুকরো: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
-  { slug: "nirapode-thaki", name: "নিরাপদে থাকি", description: "নিরাপদে থাকি: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
+  { slug: "nirapode-thaki", name: "নিরাপদে থাকি", description: "রাস্তা, পুকুর, চুলা, ঘুড়ি, মেলা আর ঝড়ের দিনে কী করবে, ছবি দেখে শেখে।", category: "ছোটদের জন্য", action: "নিয়ম শেখো" },
   { slug: "gune-dekhi", name: "গুনে দেখি", description: "গুনে দেখি: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
