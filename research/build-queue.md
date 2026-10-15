@@ -306,7 +306,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 27 | gune-dekhi | গুনে দেখি | ছোটদের জন্য | KD08 | done | kids/shortlist.md #8 |
 | 27 | ghori-dekhi | ঘড়ি দেখি | ছোটদের জন্য | KD09 | done | kids/shortlist.md #9 |
 | 27 | daripalla | দাঁড়িপাল্লা | ছোটদের জন্য | KD10 | todo | kids/shortlist.md #10 |
-| 28 | shoman-bhag | সমান ভাগ | ছোটদের জন্য | KD11 | todo | kids/shortlist.md #11 |
+| 28 | shoman-bhag | সমান ভাগ | ছোটদের জন্য | KD11 | building | kids/shortlist.md #11 |
 | 28 | ulto-khela | উল্টো খেলা | ছোটদের জন্য | KD12 | building | kids/shortlist.md #12 |
 | 28 | mongole-rover | মঙ্গলে রোভার | ছোটদের জন্য | KD13 | todo | kids/shortlist.md #13 |
 | 28 | sat-tukro | সাত টুকরো | ছোটদের জন্য | KD14 | done | kids/shortlist.md #14 |
