@@ -141,6 +141,7 @@ import { site as dosh_ghater_nouka } from '../tools/dosh-ghater-nouka/content';
 import { site as golper_mor } from '../tools/golper-mor/content';
 import { site as juktoborno } from '../tools/juktoborno/content';
 import { site as ghori_dekhi } from '../tools/ghori-dekhi/content';
+import { site as moner_rong } from '../tools/moner-rong/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -286,6 +287,7 @@ export const toolContent = {
   'golper-mor': golper_mor,
   'juktoborno': juktoborno,
   'ghori-dekhi': ghori_dekhi,
+  'moner-rong': moner_rong,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
