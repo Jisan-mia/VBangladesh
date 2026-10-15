@@ -1,5 +1,6 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "chhaya-melao": ["shadow matching game", "chhaya melao", "chhaya game", "ছায়া মেলানো খেলা", "ছায়া কাকে বলে", "chotoder game", "৩ বছরের বাচ্চাদের খেলা", "বাচ্চাদের শিক্ষামূলক খেলা", "visual matching for toddlers", "ছোটদের গেম"],
   "dinosaur": ["ডাইনোসর গেম", "ডাইনোসর খেলা", "ডাইনোসর কি এখনো আছে", "dinosaur game", "dinosaur game bangla", "dinosor game", "ডাইনোসরের নাম", "টি-রেক্স", "তৃণভোজী মাংসাশী", "জীবাশ্ম", "kids dinosaur"],
   "hat-dhui": ["hat dhowar niyom", "হাত ধোয়ার নিয়ম", "handwashing game", "hand wash for kids", "দাঁত ব্রাশ করার নিয়ম", "tooth brushing timer", "dat brush", "২০ সেকেন্ড হাত ধোয়া", "chotoder game", "kids hygiene bangla"],
   "ulto-khela": ["উল্টো খেলা", "বিপরীত শব্দ", "বিপরীত শব্দের খেলা", "বাচ্চাদের মনোযোগ বাড়ানোর খেলা", "দিন রাত খেলা", "opposite game", "ulto khela", "biporit shobdo"],
