@@ -1,4 +1,10 @@
 import type { ToolShare } from "../../shared/share-types";
 
-// Sharing by short link isn't wired up for this tool yet.
-export const share: ToolShare | null = null;
+// A children's tool: no result links, no challenge links, no tally. Only the plain page link, shared from behind the parent gate.
+export const share: ToolShare = {
+  normalize: () => null,
+  preview: () => ({
+    title: "কী হবে বলো তো? আগে আন্দাজ, তারপর দেখা",
+    description: "নারকেল ভাসে কেন, আকাশ নীল কেন, চাঁদ কেন ছোট-বড় হয়। ১৩টা ছোট পরীক্ষা, ৫–১০ বছরের জন্য, ফ্রি।",
+  }),
+};
