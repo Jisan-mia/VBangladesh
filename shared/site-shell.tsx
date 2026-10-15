@@ -21,7 +21,7 @@ function HubFooterInner({ links }: { links: ReactNode }) {
 }
 
 export function HubFooter() {
-  return <HubFooterInner links={<><Link href="/tools">সব টুল</Link><Link href="/games">বাংলা গেম</Link><Link href="/quiz">কুইজ</Link><Link href="/hishab">হিসাব</Link><Link href="/utsob">উৎসব</Link><Link href="/about">আমাদের কথা</Link><Link href="/privacy">গোপনীয়তা</Link></>} />;
+  return <HubFooterInner links={<><Link href="/tools">সব টুল</Link><Link href="/games">বাংলা গেম</Link><Link href="/chhotoder">ছোটদের খেলাঘর</Link><Link href="/quiz">কুইজ</Link><Link href="/hishab">হিসাব</Link><Link href="/utsob">উৎসব</Link><Link href="/about">আমাদের কথা</Link><Link href="/privacy">গোপনীয়তা</Link></>} />;
 }
 
 export function HubFrame({ children }: { children: ReactNode }) {

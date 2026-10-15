@@ -15,7 +15,7 @@ export default function ToolsPage() {
     <section className="container all-tools-page">
       <h1>সব টুল, এক জায়গায়</h1>
       <p className="all-tools-lead">খেলো, মেলাও, বানাও, হিসাব করো। যেটা দরকার খুঁজে নাও, নয়তো ধরন বেছে ঘুরে দেখো।</p>
-      <p className="hub-links">এক ধরনের সব এক পাতায়: <Link href="/games">বাংলা গেম</Link> · <Link href="/quiz">কুইজ</Link> · <Link href="/hishab">হিসাবের টুল</Link> · <Link href="/utsob">উৎসব</Link></p>
+      <p className="hub-links">এক ধরনের সব এক পাতায়: <Link href="/games">বাংলা গেম</Link> · <Link href="/chhotoder">ছোটদের খেলাঘর</Link> · <Link href="/quiz">কুইজ</Link> · <Link href="/hishab">হিসাবের টুল</Link> · <Link href="/utsob">উৎসব</Link></p>
       <AllTools tools={catalog} categories={categories} previews={previewSlugs()} />
     </section>
   </HubFrame>;

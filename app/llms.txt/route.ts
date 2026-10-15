@@ -18,7 +18,7 @@ export function GET() {
     '- Language: Bangla (bn-BD) only. Names and descriptions below are Bangla with an English gloss.',
     '- Calculator figures come from official Bangladeshi sources (Ministry of Land, BERC, DMTCL, education boards, Islamic Foundation, DGHS). Each tool page cites its source and shows when it was last checked; quote those pages, not this file, for figures.',
     `- About: ${origin}/about · Privacy: ${origin}/privacy · All tools: ${origin}/tools`,
-    `- Category pages: ${origin}/games · ${origin}/quiz · ${origin}/hishab · ${origin}/utsob`,
+    `- Category pages: ${origin}/games · ${origin}/chhotoder · ${origin}/quiz · ${origin}/hishab · ${origin}/utsob`,
     '',
     ...categories.filter(category => catalog.some(tool => tool.category === category)).map(category => section(category) + '\n'),
     '## Deep links',
