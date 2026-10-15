@@ -1,5 +1,7 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "ghori-dekhi": ["ghori dekha", "clock reading game", "telling time for kids", "ঘড়ি দেখা শেখা", "ঘড়ি দেখার নিয়ম", "বাচ্চাদের ঘড়ি দেখা", "সাড়ে সোয়া পৌনে", "কয়টা বাজে", "ghori dekha shikhi", "clock worksheet bangla"],
+  "nirapode-thaki": ["road safety", "child safety game", "rasta par", "rastar niyom", "রাস্তা পারাপারের নিয়ম", "বজ্রপাতে করণীয়", "পানিতে ডোবা", "swimsafe", "নিরাপত্তা শিক্ষা", "chotoder game", "ঘুড়ি তার"],
   "moner-rong": ["feelings game", "emotions for kids", "onubhuti", "moner rong", "অনুভূতি চেনা", "আবেগ", "মৌলিক আবেগ কয়টি", "শিশুর আবেগ", "খুশি রাগ ভয়", "ছোটদের খেলা"],
   "nam-shikhi": ["পশুপাখির নাম", "ফলের নাম ইংরেজিতে", "সবজির নাম", "শরীরের অঙ্গের নাম", "রঙের নাম", "জাতীয় প্রতীক", "pashupakhir naam", "foler naam english", "animal names bangla", "kids vocabulary game", "bangla english words"],
   "kar-chinho": ["kar chinho", "কার চিহ্ন", "কার চিহ্ন দিয়ে শব্দ গঠন", "আকার ইকার", "কার চিহ্ন pdf", "vowel sign bangla", "bangla kids game", "chotoder game", "বাংলা বানান খেলা", "ছোটদের বাংলা শেখা"],
