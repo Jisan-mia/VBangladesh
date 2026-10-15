@@ -1,0 +1,65 @@
+.tool-golper-mor{--accent:#9a4b12;--accent-deep:#6b3209;--ink:#2e2218;--muted:#6e5d4b;--paper:#fff6e3;--paper-edge:#ecdcb8}
+.tool-golper-mor .gm-page{color:var(--ink)}
+
+.gm-hero{padding:8px 0 0}
+.gm-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,5.8vw,36px);line-height:1.4;font-weight:700}
+
+.gm{display:grid;gap:12px;max-width:480px;margin:0 auto 8px;scroll-margin-top:8px}
+
+/* the shelf: every story as a picture book */
+.gm-shelf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:0;padding:0;list-style:none}
+.gm-book{position:relative;display:grid;width:100%;min-height:96px;padding:0 0 8px;border:0;border-radius:14px;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--paper-edge),0 4px 0 var(--book);color:var(--ink);font:inherit;text-align:left;cursor:pointer;overflow:hidden;touch-action:manipulation;transition:transform .08s}
+.gm-book:active{transform:translateY(2px)}
+.gm-thumb{display:block;width:100%;height:auto;aspect-ratio:16/10;border-bottom:4px solid var(--book)}
+.gm-book-title{padding:6px 10px 0;font-family:var(--font-display);font-size:17px;font-weight:700;line-height:1.5}
+.gm-mark{justify-self:start;margin:4px 10px 0;padding:0 8px;border-radius:999px;background:#e5f2dc;color:#2f5d2a;font-size:13px;font-weight:700;line-height:1.7}
+.gm-count{margin:0;color:var(--muted);font-size:16px;text-align:center}
+.gm-grown{display:grid;justify-items:center;gap:8px;padding-top:4px}
+.gm-grown .kk-gate-open{display:grid;gap:10px;justify-items:center}
+
+/* the reader: one picture, its words, one big button */
+.gm-bar{display:flex;align-items:center;gap:8px;min-height:48px}
+.gm-back{min-height:48px;padding:6px 12px;border:1.5px solid var(--paper-edge);border-radius:12px;background:#fff;color:var(--ink);font:inherit;font-size:16px;font-weight:700;cursor:pointer}
+.gm-dots{display:flex;gap:6px;margin-left:auto}
+.gm-dots i{width:10px;height:10px;border-radius:50%;background:var(--paper-edge)}
+.gm-dots i.past{background:color-mix(in srgb,var(--accent) 45%,#fff)}
+.gm-dots i.now{background:var(--accent);transform:scale(1.25)}
+.gm-panel{display:grid;gap:8px;animation:gm-in .22s ease-out}
+.gm-scene{display:block;width:100%;height:auto;aspect-ratio:16/10;border-radius:14px;box-shadow:0 0 0 1.5px var(--paper-edge)}
+.gm-words{display:flex;align-items:flex-start;gap:10px}
+.gm-words p{flex:1;margin:0;font-size:clamp(19px,5.2vw,22px);line-height:1.65}
+.gm-nav{display:grid;grid-template-columns:72px 1fr;gap:16px}
+.gm-prev{min-height:72px;border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff;color:var(--ink);font:inherit;font-size:22px;font-weight:700;cursor:pointer}
+.gm-prev:disabled{opacity:.35;cursor:default}
+.gm-ask .gm-prev{min-height:52px;width:100%;font-size:16px}
+.gm-next{position:relative;min-height:72px;font-size:21px}
+.gm-ask{display:grid;gap:12px}
+.gm-question{margin:0;font-family:var(--font-display);font-size:clamp(21px,6vw,25px);font-weight:800;line-height:1.5;text-align:center}
+.gm-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.gm-choice{display:grid;align-content:start;gap:4px;min-height:96px;padding:0 0 10px;border:2.5px solid var(--accent);border-radius:16px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;overflow:hidden;touch-action:manipulation;transition:transform .08s}
+.gm-choice:active{transform:scale(.97)}
+.gm-choice-pic{display:block;width:100%;height:auto;aspect-ratio:16/10}
+.gm-choice span{padding:2px 8px 0;font-size:18px;font-weight:700;line-height:1.5}
+.gm-choice small{color:var(--muted);font-size:14px}
+
+/* the end: the other child's face, one question, then three calm ways on */
+.gm-end{justify-items:center;text-align:center}
+.gm-end-title{margin:0;color:var(--muted);font-size:16px;font-weight:700}
+.gm-portrait{width:140px;height:140px;border-radius:50%;background:var(--paper);box-shadow:inset 0 0 0 3px var(--paper-edge)}
+.gm-talk-label{margin:0;color:var(--muted);font-size:16px;line-height:1.6}
+.gm-talk{margin:0;font-family:var(--font-display);font-size:clamp(21px,6vw,25px);font-weight:700;line-height:1.5}
+.gm-big{width:100%;min-height:64px;font-size:19px}
+.gm-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%}
+.gm-end .kk-show-button{width:100%}
+
+/* the ghost finger: a soft tap ring on the first move, once a second and a half */
+.gm-finger{position:absolute;right:18px;bottom:14px;width:40px;height:40px;border-radius:50%;background:#ffffffcc;box-shadow:0 0 0 3px var(--accent);pointer-events:none;animation:gm-tap 1.6s ease-in-out infinite}
+.gm-book .gm-finger{right:auto;left:50%;top:28%;bottom:auto;margin-left:-20px}
+
+.gm-guide ol{display:grid;gap:8px;padding-left:22px;line-height:1.7}
+
+@keyframes gm-in{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
+@keyframes gm-tap{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(.7);opacity:.6}}
+.gm-still .gm-panel,.gm-still .gm-finger{animation:none}
+.gm-still .gm-choice,.gm-still .gm-book{transition:none}
+@media (prefers-reduced-motion:reduce){.gm-panel,.gm-finger{animation:none}.gm-choice,.gm-book{transition:none}.gm-choice:active,.gm-book:active{transform:none}}
