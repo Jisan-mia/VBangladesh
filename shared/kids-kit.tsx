@@ -10,14 +10,10 @@ export const bn = (value: number) => bnDigits.format(value);
 const read = (key: string) => { try { return localStorage.getItem(key); } catch { return null; } };
 const write = (key: string, value: string) => { try { localStorage.setItem(key, value); } catch { /* private mode */ } };
 
-/** "আব্বু-আম্মুর জন্য": what the game teaches, for which age, and one way to play together. Open on the first visit, folded after. */
-export function ParentNote({ slug, learns, age, together, school }: { slug: string; learns: string; age: string; together: string; school?: string }) {
-  const [open, setOpen] = useState(true);
-  const seen = useRef<boolean | null>(null);
-  // Read the "seen" flag once: dev Strict Mode runs effects twice and would otherwise fold the note on a first visit.
-  useEffect(() => { seen.current ??= Boolean(read(`ektukhani-kids-note-${slug}`)); if (seen.current) setOpen(false); write(`ektukhani-kids-note-${slug}`, '1'); }, [slug]);
-  return <details className="kk-note" open={open} onToggle={event => setOpen((event.target as HTMLDetailsElement).open)}>
-    <summary>আব্বু-আম্মুর জন্য</summary>
+/** "আব্বু-আম্মুর জন্য": what the game teaches, for which age, and one way to play together. Folded to one line so the game stays on the first screen. */
+export function ParentNote({ learns, age, together, school }: { slug?: string; learns: string; age: string; together: string; school?: string }) {
+  return <details className="kk-note">
+    <summary>আব্বু-আম্মুর জন্য <small>· {age}</small></summary>
     <dl>
       <dt>কী শেখে</dt><dd>{learns}</dd>
       <dt>বয়স</dt><dd>{age}</dd>

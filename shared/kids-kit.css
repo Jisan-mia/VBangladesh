@@ -29,3 +29,4 @@
 .kk-choices button[aria-pressed="true"]{background:#1d2b53;color:#fff}
 .kk-speak{width:48px;height:48px;border-radius:50%;border:1.5px solid currentColor;background:#fff;font-size:22px;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.kk-balloon{animation:none}.kk-balloon.away{animation:none;opacity:0}.kk-gate-button.holding{transition:none}}
+.kk-note summary small{font-weight:400;opacity:.75;margin-left:4px}
