@@ -152,6 +152,7 @@ import { site as dinosaur } from '../tools/dinosaur/content';
 import { site as ki_hobe } from '../tools/ki-hobe/content';
 import { site as shoman_bhag } from '../tools/shoman-bhag/content';
 import { site as chhaya_melao } from '../tools/chhaya-melao/content';
+import { site as mongole_rover } from '../tools/mongole-rover/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -308,6 +309,7 @@ export const toolContent = {
   'ki-hobe': ki_hobe,
   'shoman-bhag': shoman_bhag,
   'chhaya-melao': chhaya_melao,
+  'mongole-rover': mongole_rover,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];

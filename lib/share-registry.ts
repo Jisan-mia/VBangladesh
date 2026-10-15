@@ -154,6 +154,7 @@ import { share as dinosaur } from '../tools/dinosaur/share';
 import { share as ki_hobe } from '../tools/ki-hobe/share';
 import { share as shoman_bhag } from '../tools/shoman-bhag/share';
 import { share as chhaya_melao } from '../tools/chhaya-melao/share';
+import { share as mongole_rover } from '../tools/mongole-rover/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -311,6 +312,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'ki-hobe': ki_hobe,
   'shoman-bhag': shoman_bhag,
   'chhaya-melao': chhaya_melao,
+  'mongole-rover': mongole_rover,
 };
 
 export function toolShare(tool: string): ToolShare | null {
