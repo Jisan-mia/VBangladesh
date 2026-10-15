@@ -1,0 +1,124 @@
+.tool-sourojogot{--accent:#2f4fb3;--accent-deep:#1f357d;--ink:#1b2246;--muted:#5a6185;--sky:#141d3f;--sky-low:#26346a;--paper:#f4f5ff;--glow:#ffd166}
+.tool-sourojogot .sj-page{color:var(--ink)}
+
+.tool-sourojogot .sj-hero{padding:8px 0 0}
+.tool-sourojogot .sj-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,5.8vw,40px);line-height:1.35;font-weight:700}
+.tool-sourojogot .sj-lead{display:none;margin:4px 0 0;color:var(--muted);line-height:1.6}
+.tool-sourojogot .kk-note{margin:8px 0}
+
+.tool-sourojogot .sj{display:grid;gap:8px;max-width:440px;margin-inline:auto}
+.tool-sourojogot .sj-top{display:flex;align-items:center;gap:10px;min-width:0}
+.tool-sourojogot .sj-level{margin:0;min-width:0;line-height:1.6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:16px}
+.tool-sourojogot .sj-level span{color:var(--muted);font-weight:600}
+.tool-sourojogot .sj-dots{display:flex;gap:5px;margin:0 0 0 auto;padding:0;list-style:none;flex:none}
+.tool-sourojogot .sj-dots li{width:10px;height:10px;border-radius:50%;background:#d5d9ef}
+.tool-sourojogot .sj-dots li.on{background:var(--accent)}
+.tool-sourojogot .sj-dots li.now{box-shadow:0 0 0 2px var(--accent);background:#fff}
+
+/* the sky: Sun in the corner, a planet on every orbit */
+.tool-sourojogot .sj-board{position:relative;width:100%;border-radius:16px;overflow:hidden;background:linear-gradient(var(--sky),var(--sky-low));box-shadow:0 6px 18px #1b224633;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.tool-sourojogot .sj-sky{position:absolute;inset:0;width:100%;height:100%}
+.tool-sourojogot .sj-planet{position:absolute;width:22%;aspect-ratio:1;transform:translate(-50%,-50%);padding:0;border:0;border-radius:50%;background:transparent;cursor:pointer;touch-action:manipulation;transition:left .45s ease,top .45s ease,transform .12s ease}
+.tool-sourojogot .sj-planet:active{transform:translate(-50%,-50%) scale(.92)}
+.tool-sourojogot .sj-planet:focus-visible{outline:3px solid var(--glow);outline-offset:-4px}
+.tool-sourojogot .sj-planet.done{filter:saturate(1.1)}
+.tool-sourojogot .sj-name{position:absolute;left:50%;top:84%;transform:translateX(-50%);padding:0 6px;border-radius:8px;background:#141d3fcc;color:#fff;font-size:16px;font-weight:700;line-height:1.6;white-space:nowrap;pointer-events:none}
+.tool-sourojogot .sj-glow{box-shadow:0 0 0 4px var(--glow),0 0 22px 6px #ffd16688;animation:sj-breathe 1.6s ease-in-out infinite}
+.tool-sourojogot .sj-rocket{position:absolute;width:12%;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;transition:left .7s ease-in-out,top .7s ease-in-out}
+.tool-sourojogot .sj-ghost{position:absolute;width:13%;aspect-ratio:48/56;pointer-events:none;z-index:2;animation:sj-tap 1.4s ease-in-out infinite;filter:drop-shadow(0 2px 3px #0006)}
+.tool-sourojogot .sj-wobble.sj-w0{animation:sj-wobble0 .35s ease}
+.tool-sourojogot .sj-wobble.sj-w1{animation:sj-wobble1 .35s ease}
+.tool-sourojogot .sj-planet.sj-w0{animation-name:sj-wp0}
+.tool-sourojogot .sj-planet.sj-w1{animation-name:sj-wp1}
+
+/* the football rounds */
+.tool-sourojogot .sj-quiz{display:grid;gap:10px;align-content:start;min-height:430px;padding:10px 12px 14px;background:#f4f5ff;box-shadow:inset 0 0 0 2px #d5d9ef}
+.tool-sourojogot .sj-scale{width:100%;height:auto;display:block}
+.tool-sourojogot .sj-svg-label{font-size:16px;font-weight:700;fill:var(--ink)}
+.tool-sourojogot .sj-question{margin:0;font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1.6}
+.tool-sourojogot .sj-choices{position:relative;display:grid;grid-template-columns:repeat(var(--n,3),1fr);gap:12px}
+.tool-sourojogot .sj-choices[data-count="2"]{--n:2}.tool-sourojogot .sj-choices[data-count="4"]{--n:4}
+.tool-sourojogot .sj-choices.sj-rows{grid-template-columns:1fr}
+.tool-sourojogot .sj-choice{display:grid;justify-items:center;align-content:center;gap:2px;min-height:96px;padding:6px 4px;border:2px solid #c4c9e6;border-radius:14px;background:#fff;color:var(--ink);font:inherit;font-size:16px;font-weight:700;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform .12s ease}
+.tool-sourojogot .sj-choice:active{transform:scale(.95)}
+.tool-sourojogot .sj-choice:disabled{opacity:.4;cursor:default}
+.tool-sourojogot .sj-rows .sj-choice{grid-template-columns:56px 1fr;justify-items:start;align-items:center;gap:12px;min-height:76px;padding:6px 12px;text-align:left}
+.tool-sourojogot .sj-icon{width:56px;height:56px}
+.tool-sourojogot .sj-choices .sj-ghost{left:50%;top:40%;width:44px}
+.tool-sourojogot .sj-choices .sj-sweep{animation:sj-sweep 2.4s ease-in-out infinite}
+.tool-sourojogot .sj-next{justify-self:center;min-width:200px;min-height:60px;font-size:19px}
+
+/* what was found, and the round's end */
+.tool-sourojogot .sj-say{position:relative;min-height:84px;padding:10px 56px 10px 14px;border-radius:14px;background:var(--paper);border-left:5px solid var(--accent)}
+.tool-sourojogot .sj-say.hint{border-left-color:var(--glow)}
+.tool-sourojogot .sj-say p{margin:0;font-size:19px;line-height:1.6}
+.tool-sourojogot .sj-say .sj-say-title{font-family:var(--font-display);font-size:24px;font-weight:800}
+.tool-sourojogot .sj-say .kk-speak{position:absolute;top:10px;right:10px}
+.tool-sourojogot .sj-end{position:absolute;inset:0;z-index:3;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px;background:#f4f5fff2;color:var(--ink);text-align:center;overflow:auto}
+.tool-sourojogot .sj-end p{margin:0}
+.tool-sourojogot .sj-end .gx-stars{font-size:40px}
+.tool-sourojogot .sj-end-line{font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1.5}
+.tool-sourojogot .sj-end-note{font-size:17px;line-height:1.6;color:var(--muted)}
+.tool-sourojogot .sj-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(320px,100%)}
+.tool-sourojogot .sj-end-actions button{min-height:64px;font-size:20px;padding-inline:8px}
+.tool-sourojogot .sj-end .sj-quiet{background:#5a6185;box-shadow:0 4px 0 #3c4266}
+.tool-sourojogot .sj-menu .gx-levels{width:min(320px,100%)}
+
+.tool-sourojogot .sj-controls{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.tool-sourojogot .sj-pill{min-height:48px;padding:6px 14px;border:1.5px solid currentColor;border-radius:999px;background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:700}
+.tool-sourojogot .sj-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+.tool-sourojogot .sj-controls .gx-sound{color:var(--ink)}
+.tool-sourojogot .sj-drawer{flex:1 1 100%;border:1.5px solid #d5d9ef;border-radius:14px;background:#fff}
+.tool-sourojogot .sj-drawer summary{min-height:48px;display:flex;align-items:center;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-sourojogot .sj-drawer[open]{padding:0 10px 12px}
+.tool-sourojogot .sj-parent{display:grid;justify-items:start}
+.tool-sourojogot .sj-parent .kk-gate-open{width:100%}
+
+.tool-sourojogot .sj-guide h2{font-family:var(--font-display);margin-bottom:12px}
+.tool-sourojogot .sj-guide>p{color:var(--muted);max-width:640px}
+.tool-sourojogot .sj-guide ol{display:grid;gap:14px;margin:0 0 16px;padding:0;list-style:none}
+.tool-sourojogot .sj-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-sourojogot .sj-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
+.tool-sourojogot .sj-guide li p{margin:4px 0 0}
+.tool-sourojogot .sj-guide .sj-print-link{color:var(--ink)}
+.tool-sourojogot .sj-print-link a{color:var(--accent-deep);font-weight:700}
+
+/* ?print: the cut-out sheet */
+.tool-sourojogot .sj-print{display:grid;gap:14px}
+.tool-sourojogot .sj-print-bar{display:flex;flex-wrap:wrap;gap:12px}
+.tool-sourojogot .sj-sheet{padding:14px;border:1.5px solid #d5d9ef;border-radius:12px;background:#fff;color:#111}
+.tool-sourojogot .sj-sheet h2{margin:0 0 4px;font-family:var(--font-display);font-size:22px;line-height:1.4}
+.tool-sourojogot .sj-sheet>p{margin:0 0 8px;font-size:15px;line-height:1.6}
+.tool-sourojogot .sj-sheet-art{display:block;width:100%;height:auto}
+.tool-sourojogot .sj-sheet-art text{font-family:var(--font-display);fill:#111}
+.tool-sourojogot .sj-facts{display:grid;grid-template-columns:1fr;gap:4px 18px;margin:8px 0;padding-left:22px;font-size:15px;line-height:1.5}
+.tool-sourojogot .sj-source{margin:0;font-size:13px;color:#555}
+@media (min-width:640px){.tool-sourojogot .sj-facts{grid-template-columns:1fr 1fr}}
+
+@media print{
+  @page{size:A4;margin:8mm 10mm}
+  body:has(.sj-print) .site-frame>:not(main),body:has(.sj-print) main>:not(.sj-page),
+  body:has(.sj-print) .sj-page>:not(#tool),body:has(.sj-print) .sj-print-bar{display:none!important}
+  body:has(.sj-print) #tool{padding:0;margin:0;max-width:none}
+  .tool-sourojogot .sj-sheet{width:190mm;padding:0;border:0}
+  .tool-sourojogot .sj-sheet h2{font-size:16pt}
+  .tool-sourojogot .sj-sheet>p{font-size:10pt}
+  .tool-sourojogot .sj-sheet-art{width:190mm;height:204mm}
+  .tool-sourojogot .sj-facts{grid-template-columns:1fr 1fr;font-size:8.5pt;line-height:1.4;margin:2mm 0 1mm}
+  .tool-sourojogot .sj-source{font-size:8pt}
+}
+
+@media (min-width:720px){.tool-sourojogot .sj-lead{display:block}}
+@media (max-width:360px){.tool-sourojogot .sj-choices{gap:8px}.tool-sourojogot .sj-choice{font-size:16px}}
+
+@keyframes sj-breathe{0%,100%{box-shadow:0 0 0 3px var(--glow),0 0 14px 4px #ffd16666}50%{box-shadow:0 0 0 5px var(--glow),0 0 26px 8px #ffd16699}}
+@keyframes sj-tap{0%,100%{transform:translate(0,0)}50%{transform:translate(-8%,-12%)}}
+@keyframes sj-sweep{0%,100%{transform:translateX(-120%)}50%{transform:translateX(80%)}}
+@keyframes sj-wobble0{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes sj-wobble1{25%{transform:translateX(5px)}75%{transform:translateX(-5px)}}
+@keyframes sj-wp0{25%{transform:translate(calc(-50% - 5px),-50%)}75%{transform:translate(calc(-50% + 5px),-50%)}}
+@keyframes sj-wp1{25%{transform:translate(calc(-50% + 5px),-50%)}75%{transform:translate(calc(-50% - 5px),-50%)}}
+
+.tool-sourojogot .sj[data-slow=true] .sj-board *{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.tool-sourojogot .sj-board *{animation:none!important;transition:none!important}}
+.tool-sourojogot .sj-say.empty{min-height:0;padding:0;border:0}
