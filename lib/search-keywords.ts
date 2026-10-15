@@ -1,5 +1,6 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "moner-rong": ["feelings game", "emotions for kids", "onubhuti", "moner rong", "অনুভূতি চেনা", "আবেগ", "মৌলিক আবেগ কয়টি", "শিশুর আবেগ", "খুশি রাগ ভয়", "ছোটদের খেলা"],
   "nam-shikhi": ["পশুপাখির নাম", "ফলের নাম ইংরেজিতে", "সবজির নাম", "শরীরের অঙ্গের নাম", "রঙের নাম", "জাতীয় প্রতীক", "pashupakhir naam", "foler naam english", "animal names bangla", "kids vocabulary game", "bangla english words"],
   "kar-chinho": ["kar chinho", "কার চিহ্ন", "কার চিহ্ন দিয়ে শব্দ গঠন", "আকার ইকার", "কার চিহ্ন pdf", "vowel sign bangla", "bangla kids game", "chotoder game", "বাংলা বানান খেলা", "ছোটদের বাংলা শেখা"],
   "sourojogot": ["solar system game", "planet names", "sourojogot", "souro jogot game", "planet cut out", "সৌরজগৎ", "সৌরজগৎ গেম", "গ্রহের নাম", "গ্রহের ক্রম", "সৌরজগৎ প্রজেক্ট", "মহাকাশ খেলা"],
