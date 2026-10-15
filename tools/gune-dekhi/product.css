@@ -1,0 +1,119 @@
+.tool-gune-dekhi{--accent:#0f7c78;--accent-deep:#0a5552;--ink:#1f3a3d;--muted:#566e70;--paper:#eef7f4;--water:#bfe6e8;--water-deep:#4fa9b2;--glow:#ffd166}
+.tool-gune-dekhi .gd-page{color:var(--ink)}
+
+.tool-gune-dekhi .gd-hero{padding:8px 0 2px}
+.tool-gune-dekhi .gd-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,40px);line-height:1.4;font-weight:800}
+.tool-gune-dekhi .gd-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
+
+.tool-gune-dekhi .gd{display:grid;gap:12px;max-width:520px;margin-top:8px}
+
+/* the three games: big picture tabs */
+.tool-gune-dekhi .gd-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.tool-gune-dekhi .gd-modes button{display:grid;justify-items:center;align-content:center;gap:2px;min-height:96px;padding:6px 4px;border:3px solid #d5e8e4;border-radius:16px;background:#fff;color:var(--ink);font:inherit;font-size:16px;font-weight:700;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform .08s}
+.tool-gune-dekhi .gd-modes button[aria-pressed=true]{border-color:var(--accent);background:var(--paper)}
+.tool-gune-dekhi .gd-modes button:active{transform:scale(.95)}
+.tool-gune-dekhi .gd-mode-icon{position:relative;display:flex;align-items:center;justify-content:center;gap:4px;width:64px;height:44px}
+.tool-gune-dekhi .gd-mode-icon>svg{width:56px;height:auto}
+.tool-gune-dekhi .gd-mode-icon>b{position:absolute;top:-6px;right:-2px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:15px;line-height:1}
+.tool-gune-dekhi .gd-mode-icon .gd-pattern{width:42px;height:42px;border-width:2px;border-radius:9px}
+.tool-gune-dekhi .gd-two i{display:grid;gap:2px;width:28px;padding:3px;border-radius:8px;background:var(--water)}
+.tool-gune-dekhi .gd-two svg{width:100%;height:auto}
+
+.tool-gune-dekhi .gd-play{position:relative;display:grid;gap:10px;padding:10px 10px 12px;border-radius:18px;background:var(--paper)}
+.tool-gune-dekhi .gd-top{display:flex;align-items:center;gap:8px;min-width:0}
+.tool-gune-dekhi .gd-level{flex:1;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;line-height:1.6}
+.tool-gune-dekhi .gd-level b{font-family:var(--font-display)}
+.tool-gune-dekhi .gd-level span{color:var(--muted)}
+.tool-gune-dekhi .gd-dots{display:flex;gap:6px;margin:0;padding:0;list-style:none}
+.tool-gune-dekhi .gd-dots li{width:10px;height:10px;border-radius:50%;background:#cfe0dc}
+.tool-gune-dekhi .gd-dots .done{background:var(--accent)}
+.tool-gune-dekhi .gd-dots .now{background:var(--accent);box-shadow:0 0 0 3px #0f7c7840}
+.tool-gune-dekhi .gd-pill{flex:none;min-height:44px;padding:6px 12px;border:1.5px solid var(--ink);border-radius:999px;background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:700;cursor:pointer}
+.tool-gune-dekhi .gd-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+.tool-gune-dekhi .gd-q{display:flex;align-items:center;gap:10px;margin:0;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.6;color:var(--accent-deep)}
+.tool-gune-dekhi .gd-q .kk-speak{flex:none}
+
+/* the pond: each fish a big button in its own grid cell */
+.tool-gune-dekhi .gd-pond{position:relative;display:block;width:100%;padding:0;overflow:hidden;border:4px solid var(--water-deep);border-radius:28px;background:radial-gradient(120% 90% at 30% 20%,#dff4f4,var(--water) 60%,#a6d9dc);font:inherit;color:var(--ink);touch-action:manipulation}
+.tool-gune-dekhi .gd-count{height:min(calc(var(--rows) * 92px),380px)}
+.tool-gune-dekhi .gd-fish{position:absolute;display:grid;place-items:center;width:calc(100% / var(--cols));height:calc(100% / var(--rows));padding:0;border:0;background:none;cursor:pointer;transform:translate(-50%,-50%);-webkit-tap-highlight-color:transparent}
+.tool-gune-dekhi .gd-fish .gd-fish-art{width:min(78%,88px);height:auto;transition:transform .12s}
+.tool-gune-dekhi .gd-fish:active .gd-fish-art{transform:scale(.9)}
+.tool-gune-dekhi .gd-fish.is-on .gd-fish-art{filter:drop-shadow(0 0 0 #fff) drop-shadow(0 0 5px #fff)}
+.tool-gune-dekhi .gd-badge{position:absolute;top:2px;left:50%;display:grid;place-items:center;min-width:34px;height:34px;padding:0 4px;border-radius:17px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:22px;line-height:1;transform:translateX(-50%);animation:gd-pop .3s ease-out}
+.tool-gune-dekhi .gd-badge.is-last{background:var(--glow);color:var(--ink);animation:gd-pulse 1.4s ease-in-out infinite}
+.tool-gune-dekhi .gd-swim .gd-fish-art{animation:gd-in .5s ease-out both;animation-delay:inherit}
+
+/* which has more: two ponds side by side, the whole pond is the button */
+.tool-gune-dekhi .gd-ponds{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tool-gune-dekhi .gd-small{height:250px;cursor:pointer;transition:transform .08s}
+.tool-gune-dekhi .gd-small:active{transform:scale(.97)}
+.tool-gune-dekhi .gd-small>span{position:absolute;width:var(--fish);transform:translate(-50%,-50%);transition:left .4s ease,top .4s ease}
+.tool-gune-dekhi .gd-small svg{display:block;width:100%;height:auto}
+.tool-gune-dekhi .gd-small .is-extra{filter:drop-shadow(0 0 4px var(--glow)) drop-shadow(0 0 4px var(--glow))}
+.tool-gune-dekhi .gd-pond.is-right{border-color:var(--accent-deep);box-shadow:0 0 0 4px #0f7c7855}
+.tool-gune-dekhi .gd-pond.is-glow{animation:gd-glow 1.4s ease-in-out infinite}
+
+/* at a glance: the flashed group, then a cover */
+.tool-gune-dekhi .gd-look{display:flex;align-items:center;justify-content:center;gap:16px;height:210px;border:4px solid var(--water-deep);border-radius:28px;background:var(--water)}
+.tool-gune-dekhi .gd-pattern{position:relative;flex:none;width:min(170px,40vw);aspect-ratio:1}
+.tool-gune-dekhi .gd-look .gd-pattern+.gd-pattern{width:min(130px,36vw)}
+.tool-gune-dekhi .gd-pattern span{position:absolute;display:block;width:30%;transform:translate(-50%,-50%)}
+.tool-gune-dekhi .gd-pattern svg{display:block;width:100%;height:auto}
+.tool-gune-dekhi .gd-pattern.gd-look-dots span{width:20%;aspect-ratio:1;border-radius:50%;background:#e2574c}
+.tool-gune-dekhi .gd-pattern.gd-look-dice{border:3px solid var(--ink);border-radius:18%;background:#fff}
+.tool-gune-dekhi .gd-pattern.gd-look-dice span{width:18%;aspect-ratio:1;border-radius:50%;background:var(--ink)}
+.tool-gune-dekhi .gd-cover{font-family:var(--font-display);font-size:96px;font-weight:800;line-height:1;color:#ffffffcc}
+.tool-gune-dekhi .gd-again{min-height:64px;font-size:20px}
+
+/* answers: three big tiles in counting order */
+.tool-gune-dekhi .gd-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.tool-gune-dekhi .gd-tile{position:relative;display:grid;place-items:center;min-height:96px;padding:6px;border:3px solid #cfe3e0;border-radius:18px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation;transition:transform .08s}
+.tool-gune-dekhi .gd-tile b{font-family:var(--font-display);font-size:60px;line-height:1.2}
+.tool-gune-dekhi .gd-tile:active{transform:scale(.94)}
+.tool-gune-dekhi .gd-tile.is-glow{border-color:var(--glow);animation:gd-glow 1.4s ease-in-out infinite}
+.tool-gune-dekhi .gd-tile.is-right{border-color:var(--accent);background:var(--accent);color:#fff}
+.tool-gune-dekhi .gd-tile.is-right .gd-dotrow i{background:#fff}
+.tool-gune-dekhi .gd-tile:has(.gd-dotrow){padding:2px}
+.tool-gune-dekhi .gd-dotrow{display:flex;justify-content:center;gap:3px}
+.tool-gune-dekhi .gd-dotrow i{width:clamp(10px,3.2vw,16px);aspect-ratio:1;border-radius:50%;background:var(--accent)}
+.tool-gune-dekhi .gd-msg{min-height:1.6em;margin:0;font-size:18px;line-height:1.6;color:var(--muted)}
+
+.tool-gune-dekhi .gd-ghost{position:absolute;z-index:3;left:52%;top:40%;width:44px;height:55px;pointer-events:none;filter:drop-shadow(0 2px 2px #0004);animation:gd-tap 1.4s ease-in-out infinite}
+
+.tool-gune-dekhi .gd-over{position:absolute;inset:0;z-index:5;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px 24px;border-radius:18px;background:var(--paper);text-align:center}
+.tool-gune-dekhi .gd-over .gx-stars{font-size:40px}
+.tool-gune-dekhi .gd-end-line{margin:0;font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1.6}
+.tool-gune-dekhi .gd-end-note{margin:0;font-size:18px;line-height:1.6}
+.tool-gune-dekhi .gd-end-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:min(340px,calc(100vw - 80px))}
+.tool-gune-dekhi .gd-end-actions button{width:100%;min-height:72px;padding-inline:6px;font-size:clamp(17px,5.4vw,20px)}
+
+.tool-gune-dekhi .gd-drawer{border:1.5px solid #d5e8e4;border-radius:14px;background:#fff}
+.tool-gune-dekhi .gd-drawer summary{display:flex;align-items:center;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
+.tool-gune-dekhi .gd-drawer[open]{padding-bottom:12px}
+.tool-gune-dekhi .gd-drawer .gx-levels{padding:0 10px}
+.tool-gune-dekhi .gd-drawer p{margin:8px 14px 0;font-size:16px;line-height:1.6;color:var(--muted)}
+.tool-gune-dekhi .gd-parent{display:grid;gap:8px;justify-items:start}
+.tool-gune-dekhi .gd-parent p{margin:0;font-size:16px;line-height:1.6;color:var(--muted)}
+
+.tool-gune-dekhi .gd-guide h2{margin-bottom:12px;font-family:var(--font-display)}
+.tool-gune-dekhi .gd-guide>p{max-width:640px;color:var(--muted);line-height:1.7}
+.tool-gune-dekhi .gd-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
+.tool-gune-dekhi .gd-guide li{display:flex;gap:14px;align-items:flex-start}
+.tool-gune-dekhi .gd-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
+.tool-gune-dekhi .gd-guide li p{margin:4px 0 0;line-height:1.7}
+
+@keyframes gd-in{0%{opacity:0;transform:translateX(-40px)}100%{opacity:1;transform:none}}
+@keyframes gd-pop{0%{transform:translateX(-50%) scale(.4)}70%{transform:translateX(-50%) scale(1.15)}100%{transform:translateX(-50%) scale(1)}}
+@keyframes gd-pulse{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.18)}}
+@keyframes gd-glow{0%,100%{box-shadow:0 0 0 3px var(--glow)}50%{box-shadow:0 0 0 6px var(--glow),0 0 16px 4px var(--glow)}}
+@keyframes gd-tap{0%,100%{transform:translate(8px,10px)}50%{transform:translate(0,0) scale(.9)}}
+
+/* ধীরে খেলো and reduced motion: nothing moves on its own */
+.tool-gune-dekhi .gd[data-slow] :is(.gd-play,.gd-modes) *{animation:none!important;transition:none!important}
+.tool-gune-dekhi .gd[data-slow] .is-glow{box-shadow:0 0 0 5px var(--glow)}
+@media (prefers-reduced-motion:reduce){
+  .tool-gune-dekhi .gd :is(.gd-play,.gd-modes) *{animation:none!important;transition:none!important}
+  .tool-gune-dekhi .gd .is-glow{box-shadow:0 0 0 5px var(--glow)}
+}
+@media (min-width:640px){.tool-gune-dekhi .gd-lead{display:block}}
