@@ -170,7 +170,7 @@ export const catalog = [
   { slug: "chhorar-tal", name: "ছড়ার তালে", description: "ছড়ার তালে: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
   { slug: "ammur-number", name: "আম্মুর নম্বর", description: "টুকরো টুকরো করে, সুরে সুরে বাচ্চা আম্মুর নম্বর মুখস্থ করে। নম্বর কোথাও থাকে না।", category: "ছোটদের জন্য", action: "নম্বর মুখস্থ করো" },
   { slug: "sur-banai", name: "সুর বানাই", description: "ঘরে চেপে সুর বানায়, আলো নাচে। শুনে সুর মেলানোর খেলাও আছে, শব্দ ছাড়াও চলে।", category: "ছোটদের জন্য", action: "সুর বানাও" },
-  { slug: "borno-likhi", name: "বর্ণ লিখি", description: "বর্ণ লিখি: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
+  { slug: "borno-likhi", name: "বর্ণ লিখি", description: "আঙুলে ডট ধরে অ আ ক খ লেখা, মাত্রা সবার শেষে। সাথে প্রিন্টের পাতা।", category: "ছোটদের জন্য", action: "লেখা শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.
