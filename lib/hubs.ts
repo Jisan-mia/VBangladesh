@@ -13,7 +13,7 @@ export const hubs: Hub[] = [
       'বর্ণ চেনা, যুক্তবর্ণ ভাঙা, ঘড়ি দেখা, গ্রহের নাম, মনের কথা বলা। ৩ থেকে ১২ বছরের ছোটদের জন্য ছোট ছোট খেলা, কিছু বাংলাদেশের, কিছু সারা পৃথিবীর।',
       'প্রতিটা খেলার ওপরে আব্বু-আম্মুর জন্য একটা নোট আছে: কী শেখে, কোন বয়সে, কীভাবে একসাথে খেলবে। নাম লাগে না, বিজ্ঞাপন নেই, খেলার কিছু ফোনের বাইরে যায় না। রোজ ১৫ মিনিট খেলার পর খেলা নিজেই থামতে বলে।',
     ],
-    tools: ['kar-chinho', 'juktoborno', 'abc-bazar', 'nam-shikhi', 'golper-mor', 'moner-rong', 'nirapode-thaki', 'hat-dhui', 'ammur-number', 'chhaya-melao', 'gune-dekhi', 'dosh-ghater-nouka', 'daripalla', 'shoman-bhag', 'ulto-khela', 'mongole-rover', 'ghori-dekhi', 'sat-tukro', 'sourojogot', 'dinosaur', 'ki-hobe'],
+    tools: ['kar-chinho', 'juktoborno', 'abc-bazar', 'nam-shikhi', 'golper-mor', 'moner-rong', 'nirapode-thaki', 'hat-dhui', 'ammur-number', 'chhaya-melao', 'gune-dekhi', 'dosh-ghater-nouka', 'daripalla', 'shoman-bhag', 'ulto-khela', 'mongole-rover', 'ghori-dekhi', 'sat-tukro', 'sourojogot', 'dinosaur', 'ki-hobe', 'sur-banai'],
     more: { heading: 'আরও খেলা, ছোটরাও খেলতে পারে', tools: ['o-te-ojogor', 'namta', 'jora-melao', 'konta-nei', 'golokdhadha', 'chhobir-tukro', 'chhobi-photao', 'ghontar-sur', 'bhul-kothay', 'sap-ludu', 'alpana', 'chhotto-para'] },
   },
   {
