@@ -1,5 +1,6 @@
 // Extra search words per tool: English, common Banglish spellings and Bangla synonyms not already in the name/description.
 export const searchKeywords: Record<string, readonly string[]> = {
+  "chhorar-tal": ["chhora", "bangla chhora", "chotoder chhora", "hattima tim tim", "ata gache tota pakhi", "rhyme game bangla", "ছোটদের ছড়া", "ছড়া খেলা", "হাট্টিমা টিম টিম", "অন্ত্যমিল"],
   "borno-likhi": ["borno likhi", "bangla letter tracing", "bangla handwriting practice", "tracing sheet pdf", "অ আ ক খ লেখার নিয়ম", "বাংলা বর্ণমালা লেখার নিয়ম", "হাতের লেখা", "মাত্রা", "sorborno banjonborno lekha", "bachchader hater lekha"],
   "prithibi-ghuri": ["বিশ্বের দেশের নাম", "দেশের রাজধানী", "পতাকার ছবি", "মহাদেশ কয়টি", "পৃথিবীর দেশ", "ছোটদের সাধারণ জ্ঞান", "chotoder game", "desher nam", "world countries game for kids", "geography game", "passport stamp"],
   "sur-banai": ["music game for kids", "chotoder music game", "sur banai", "sargam", "সরগম", "ছোটদের মিউজিক গেম", "সুর বানানোর খেলা", "সা রে গা মা", "বাচ্চাদের গান", "pentatonic", "rhythm game"],
