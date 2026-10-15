@@ -151,6 +151,7 @@ import { share as hat_dhui } from '../tools/hat-dhui/share';
 import { share as abc_bazar } from '../tools/abc-bazar/share';
 import { share as ulto_khela } from '../tools/ulto-khela/share';
 import { share as dinosaur } from '../tools/dinosaur/share';
+import { share as ki_hobe } from '../tools/ki-hobe/share';
 
 // Each tool owns its share.ts; this map only wires them up for the API routes.
 export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
@@ -305,6 +306,7 @@ export const shareRegistry: Record<ToolSlug, ToolShare | null> = {
   'abc-bazar': abc_bazar,
   'ulto-khela': ulto_khela,
   'dinosaur': dinosaur,
+  'ki-hobe': ki_hobe,
 };
 
 export function toolShare(tool: string): ToolShare | null {

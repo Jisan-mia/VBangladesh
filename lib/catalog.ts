@@ -161,6 +161,7 @@ export const catalog = [
   { slug: "abc-bazar", name: "এবিসি বাজার", description: "ছবি দেখে ইংরেজি অক্ষর চেনা: M দিয়ে Mango, বড়-ছোট হাতের অক্ষর, b d p q।", category: "ছোটদের জন্য", action: "খেলা শুরু করো" },
   { slug: "ulto-khela", name: "উল্টো খেলা", description: "উল্টো খেলা: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
   { slug: "dinosaur", name: "ডাইনোসর খুঁজি", description: "ডাইনোসর খুঁজি: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
+  { slug: "ki-hobe", name: "কী হবে বলো তো?", description: "কী হবে বলো তো?: খুলে দেখো, খেলে দেখো।", category: "ছোটদের জন্য", action: "শুরু করো" },
 ] as const satisfies readonly ToolListing[];
 
 // The homepage leads with this one tool; everything else is listed below it.

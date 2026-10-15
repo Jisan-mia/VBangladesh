@@ -149,6 +149,7 @@ import { site as hat_dhui } from '../tools/hat-dhui/content';
 import { site as abc_bazar } from '../tools/abc-bazar/content';
 import { site as ulto_khela } from '../tools/ulto-khela/content';
 import { site as dinosaur } from '../tools/dinosaur/content';
+import { site as ki_hobe } from '../tools/ki-hobe/content';
 
 export const toolContent = {
   'alpana': alpana,
@@ -302,6 +303,7 @@ export const toolContent = {
   'abc-bazar': abc_bazar,
   'ulto-khela': ulto_khela,
   'dinosaur': dinosaur,
+  'ki-hobe': ki_hobe,
 };
 export type ToolSlug = keyof typeof toolContent;
 export const toolSlugs = Object.keys(toolContent) as ToolSlug[];
