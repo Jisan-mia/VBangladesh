@@ -311,7 +311,7 @@ Status: `live` = in `lib/catalog.ts` today; `W1`…`W15` = its wave in §3.
 | 28 | mongole-rover | মঙ্গলে রোভার | ছোটদের জন্য | KD13 | todo | kids/shortlist.md #13 |
 | 28 | sat-tukro | সাত টুকরো | ছোটদের জন্য | KD14 | building | kids/shortlist.md #14 |
 | 28 | chhaya-melao | ছায়া মেলাও | ছোটদের জন্য | KD15 | todo | kids/shortlist.md #15 |
-| 29 | moner-rong | মনের রং | ছোটদের জন্য | KD16 | building | kids/shortlist.md #16 |
+| 29 | moner-rong | মনের রং | ছোটদের জন্য | KD16 | done | kids/shortlist.md #16 |
 | 29 | nirapode-thaki | নিরাপদে থাকি | ছোটদের জন্য | KD17 | building | kids/shortlist.md #17 |
 | 29 | hat-dhui | হাত ধুই, দাঁত মাজি | ছোটদের জন্য | KD18 | todo | kids/shortlist.md #18 |
 | 29 | ammur-number | আম্মুর নম্বর | ছোটদের জন্য | KD19 | todo | kids/shortlist.md #19 |
