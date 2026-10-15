@@ -18,7 +18,7 @@
 .kk-rest h2{margin:0;font-family:var(--font-display);font-size:30px}
 .kk-rest p{margin:0;max-width:340px;line-height:1.6}
 .kk-rest-cue{font-weight:700}
-.kk-balloon{width:120px;height:148px;border-radius:50% 50% 48% 48%;background:radial-gradient(circle at 35% 30%,#ff9a8b,#e2483d);position:relative;animation:kk-breathe 8s ease-in-out infinite}
+.kk-balloon{margin-bottom:76px;width:120px;height:148px;border-radius:50% 50% 48% 48%;background:radial-gradient(circle at 35% 30%,#ff9a8b,#e2483d);position:relative;animation:kk-breathe 8s ease-in-out infinite}
 .kk-balloon::after{content:"";position:absolute;left:50%;top:100%;width:2px;height:70px;background:#8a7d66}
 .kk-balloon.away{animation:kk-away 3s ease-in forwards}
 @keyframes kk-breathe{0%,100%{transform:scale(.8)}50%{transform:scale(1.15)}}
