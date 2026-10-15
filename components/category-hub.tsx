@@ -29,6 +29,10 @@ export function CategoryHub({ hub }: { hub: Hub }) {
       <h1>{hub.h1}</h1>
       {hub.intro.map(paragraph => <p className="all-tools-lead" key={paragraph}>{paragraph}</p>)}
       <ul className="home-tool-grid">{tools.map(tool => <li className="home-tool" key={tool.slug}><ToolCard tool={tool} hasPreview={withPreview.has(tool.slug)} level={2} /></li>)}</ul>
+      {hub.more && <>
+        <h2>{hub.more.heading}</h2>
+        <ul className="home-tool-grid">{hub.more.tools.flatMap(slug => catalog.filter(tool => tool.slug === slug)).map(tool => <li className="home-tool" key={tool.slug}><ToolCard tool={tool} hasPreview={withPreview.has(tool.slug)} level={3} /></li>)}</ul>
+      </>}
       <p className="hub-more"><Link href="/tools">সব টুল একসাথে দেখো →</Link></p>
     </section>
   </HubFrame>;

@@ -1,8 +1,21 @@
 // Category landing pages for broad searches ("বাংলা গেম", "বাংলা কুইজ", "হিসাব ক্যালকুলেটর", উৎসবের কার্ড).
 // Each lists real tools only; a tool may sit in one hub (its breadcrumb points there).
-export type Hub = { slug: string; name: string; title: string; description: string; h1: string; intro: string[]; tools: string[] };
+export type Hub = { slug: string; name: string; title: string; description: string; h1: string; intro: string[]; tools: string[]; more?: { heading: string; tools: string[] } };
 
 export const hubs: Hub[] = [
+  {
+    slug: 'chhotoder',
+    name: 'ছোটদের খেলাঘর',
+    title: 'ছোটদের শিক্ষামূলক খেলা: বর্ণমালা, অঙ্ক, ধাঁধা আর মহাকাশ',
+    description: 'কার-চিহ্ন, যুক্তবর্ণ, ঘড়ি দেখা, গ্রহের নাম, ডাইনোসর আর ছোটদের গল্প। ৩ থেকে ১২ বছরের জন্য শেখার খেলা, ফোনেই। বিজ্ঞাপন নেই, কোনো তথ্য নেওয়া হয় না।',
+    h1: 'ছোটদের খেলাঘর: খেলতে খেলতে শেখা',
+    intro: [
+      'বর্ণ চেনা, যুক্তবর্ণ ভাঙা, ঘড়ি দেখা, গ্রহের নাম, মনের কথা বলা। ৩ থেকে ১২ বছরের ছোটদের জন্য ছোট ছোট খেলা, কিছু বাংলাদেশের, কিছু সারা পৃথিবীর।',
+      'প্রতিটা খেলার ওপরে আব্বু-আম্মুর জন্য একটা নোট আছে: কী শেখে, কোন বয়সে, কীভাবে একসাথে খেলবে। নাম লাগে না, বিজ্ঞাপন নেই, খেলার কিছু ফোনের বাইরে যায় না। রোজ ১৫ মিনিট খেলার পর খেলা নিজেই থামতে বলে।',
+    ],
+    tools: ['golper-mor'],
+    more: { heading: 'আরও খেলা, ছোটরাও খেলতে পারে', tools: ['o-te-ojogor', 'namta', 'jora-melao', 'konta-nei', 'golokdhadha', 'chhobir-tukro', 'chhobi-photao', 'ghontar-sur', 'bhul-kothay', 'sap-ludu', 'alpana', 'chhotto-para'] },
+  },
   {
     slug: 'games',
     name: 'বাংলা গেম',
