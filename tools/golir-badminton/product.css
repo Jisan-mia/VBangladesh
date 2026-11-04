@@ -1,112 +1,156 @@
-.tool-golir-badminton{--accent:#c2571a;--accent-deep:#8f3d10;--ink:#1b2238;--muted:#585d6e;--paper:#f3ede1;--paper-edge:#ddd3bf;--night:#141b33;--gold:#ffd23f;--me:#e07a2e}
-.tool-golir-badminton .gb-page{color:var(--ink)}
+.tool-golir-badminton{--accent:#c2571a;--accent-deep:#8f3d10;--ink:#1b2238;--muted:#585d6e;--paper:#f3ede1;--paper-edge:#ddd3bf;--night:#141b33;--night-2:#1d2647;--gold:#ffd23f;--me:#e07a2e;--miss:#c8432f}
 
-/* hero: one short line, so the court and its button land on the first phone screen */
-.gb-hero{padding:10px 0 4px}
-.gb-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,6vw,40px);line-height:1.3;font-weight:700;letter-spacing:0}
-.gb-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+/* the game fills the player's stage: HUD, the court (as big as fits), the call and the shot strip, or the end screen */
+.tool-golir-badminton .gp-game{min-height:100%}
+.tool-golir-badminton .gb-wrap{width:100%;max-width:560px;min-width:0}
+.tool-golir-badminton .gb{position:relative;display:flex;flex-direction:column;gap:6px;height:var(--stage-h,auto);min-height:540px;color:var(--ink)}
 
-.gb{display:grid;gap:8px;max-width:480px}
-.gb-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* ---- title ---- */
+.tool-golir-badminton .gb-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:0;padding:12px;border-radius:18px;background:radial-gradient(120% 70% at 50% 28%,var(--night-2) 0,var(--night) 72%);color:#f3f1e4;text-align:center}
+.tool-golir-badminton .gb-title[data-world="1"]{background:radial-gradient(120% 70% at 50% 28%,#5a3f6b 0,#2b2552 72%)}
+.tool-golir-badminton .gb-title[data-world="2"]{background:radial-gradient(120% 70% at 50% 28%,#3b3f48 0,#1a1d24 72%)}
+.tool-golir-badminton .gb-title-friend{margin:0;padding:10px 14px;border-radius:14px;background:var(--paper);border-left:5px solid var(--accent);color:var(--ink);font-size:15px;line-height:1.45;text-align:left}
+.tool-golir-badminton .gb-title-friend b{font-family:var(--font-display)}
+.tool-golir-badminton .gb-title-friend span{display:block;font-size:13px;color:var(--muted)}
+.tool-golir-badminton .gb-title-art{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * .86);place-items:center;width:100%;min-height:150px}
+.tool-golir-badminton .gb-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:24px;transition:transform .18s ease-out}
+.tool-golir-badminton .gb-title-start:hover{transform:translateY(-3px) scale(1.01)}
+.tool-golir-badminton .gb-title-start:active{transform:translateY(2px) scale(.98)}
+.tool-golir-badminton .gb-title-start:focus-visible{outline:3px solid var(--gold);outline-offset:6px}
+.tool-golir-badminton .gb-title-start canvas{display:block}
+.tool-golir-badminton .gb-title-level{display:grid;gap:3px;margin:0;max-width:440px}
+.tool-golir-badminton .gb-title-level span{font-family:var(--font-display);font-size:18px;font-weight:700}
+.tool-golir-badminton .gb-title-level small{font-size:14px;color:#d4d2c6;line-height:1.5}
+.tool-golir-badminton .gb-title-level small b{color:var(--gold)}
+.tool-golir-badminton .gb-title-style{font-style:italic}
+.tool-golir-badminton .gb-modes{display:flex;gap:6px;justify-content:center}
+.tool-golir-badminton .gb-modes button{min-height:40px;padding:4px 16px;border:1.5px solid #ffffff40;border-radius:999px;background:transparent;color:inherit;font-size:15px;font-weight:600}
+.tool-golir-badminton .gb-modes button[aria-checked=true]{border-color:var(--gold);background:var(--gold);color:var(--ink)}
+.tool-golir-badminton .gb-mode-line{margin:0;max-width:400px;font-size:14px;line-height:1.5;color:#d4d2c6}
+.tool-golir-badminton .gb-link{min-height:44px;padding:6px 12px;border:0;border-radius:12px;background:none;color:var(--gold);font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:4px}
+.tool-golir-badminton .gb-link span{margin-left:6px;font-weight:500;color:#d4d2c6;text-decoration:none}
 
-.gb-friend{padding:10px 14px;border-radius:14px;background:var(--paper);border-left:5px solid var(--accent)}
-.gb-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.4}
-.gb-friend p{margin:2px 0 0;font-size:13px;line-height:1.45;color:var(--muted)}
+/* ---- the HUD: a row above the court, never on it ---- */
+.tool-golir-badminton .gb-hud{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;min-height:42px}
+.tool-golir-badminton .gb-hud p{margin:0}
+.tool-golir-badminton .gb-badge{display:flex;gap:6px;align-items:baseline;line-height:1}
+.tool-golir-badminton .gb-badge b{font-family:var(--font-display);font-size:16px}
+.tool-golir-badminton .gb-badge span{padding:1px 7px;border-radius:99px;background:var(--ink);color:#fff;font-size:11px;font-weight:700}
+.tool-golir-badminton .gb-rally{font-size:13px;color:var(--muted)}
+.tool-golir-badminton .gb-rally b{font-family:var(--font-display);font-size:18px;color:var(--ink);font-variant-numeric:tabular-nums}
+.tool-golir-badminton .gb-score{justify-self:end;display:flex;gap:10px;align-items:center;padding:4px 10px;border-radius:12px;background:var(--night);color:#f3f1e4;font-size:13px;font-weight:700;white-space:nowrap}
+.tool-golir-badminton .gb-score span{display:flex;align-items:center;gap:5px}
+.tool-golir-badminton .gb-score b{font-family:var(--font-display);font-size:20px;line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
+.tool-golir-badminton .gb-score i{width:10px;height:10px;border-radius:3px;background:var(--me);box-shadow:0 0 0 1.5px #ffffff55}
+.tool-golir-badminton .gb-boss{display:grid;gap:3px;justify-items:center;min-width:120px}
+.tool-golir-badminton .gb-boss b{font-family:var(--font-display);font-size:13px;line-height:1;color:#8a1c1c}
+.tool-golir-badminton .gb-boss em{display:none;font-style:normal;font-size:11px;font-weight:800;color:#fff;background:#d62828;padding:0 8px;border-radius:99px;line-height:1.6;white-space:nowrap}
+.tool-golir-badminton .gb-boss[data-full="1"] em{display:block;animation:gb-pop .2s ease-out}
+.tool-golir-badminton .gb-boss[data-full="1"] .gb-meter{display:none}
+.tool-golir-badminton .gb-meter{position:relative;display:block;width:120px;height:9px;border:2px solid #8a1c1c;border-radius:99px;background:#fff1e6;overflow:hidden}
+.tool-golir-badminton .gb-meter i{position:absolute;inset:0 auto 0 0;width:var(--fill,0%);background:linear-gradient(90deg,#f2a531,#d62828);transition:width .2s ease-out}
 
-.gb-hud{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:30px}
-.gb-hud p{margin:0}
-.gb-level{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;line-height:1.25}
-.gb-level b{font-family:var(--font-display);font-size:17px;font-weight:800}
-.gb-level span{font-size:13px;font-weight:600;color:var(--muted)}
-.gb-chip{flex:none;padding:4px 10px;border-radius:999px;background:var(--me);color:#fff;font-size:13px;font-weight:800}
-.gb-chip span{display:inline-block}
+/* ---- the court: press anywhere on it or the strip below ---- */
+.tool-golir-badminton .gb-board{display:flex;flex:1;flex-direction:column;gap:6px;min-height:0;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
+.tool-golir-badminton .gb-court{position:relative;flex:1 1 auto;min-height:240px;max-height:calc(var(--stage-w,400px) * 1.28);border-radius:16px;overflow:hidden;background:var(--night);box-shadow:0 2px 0 #1b223814,0 10px 24px #1b22381f}
+.tool-golir-badminton .gb-court canvas{position:absolute;inset:0;display:block}
+.tool-golir-badminton .gb[data-screen=over] .gb-court{flex:1 1 120px;min-height:110px}
+/* danger lives at the edges: match point against you (red all round), the finale's move coming (red top) */
+.tool-golir-badminton .gb-court::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 0 transparent;transition:box-shadow .25s}
+.tool-golir-badminton .gb[data-edge=match] .gb-court::after{box-shadow:inset 0 0 0 4px #e5383b,inset 0 0 34px 8px #e5383b99;animation:gb-glow .6s ease-in-out infinite alternate}
+.tool-golir-badminton .gb[data-edge=special] .gb-court::after{box-shadow:inset 0 5px 0 0 #d62828,inset 0 40px 30px -14px #d62828cc;animation:gb-glow .4s ease-in-out infinite alternate}
+.tool-golir-badminton .gb-call{flex:none;min-height:26px;margin:0;font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.35;text-align:center;color:var(--ink)}
+.tool-golir-badminton .gb-call.gb-in{animation:gb-in .22s ease-out}
+.tool-golir-badminton .gb-strip{flex:1 1 56px;display:flex;justify-content:center;gap:6px;min-height:56px;max-height:150px}
+.tool-golir-badminton .gb-strip span{position:relative;display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:4px;max-width:170px;padding:4px 8px;border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff;font-size:13px;font-weight:700;color:var(--muted);transition:transform .08s ease-out,background .08s}
+.tool-golir-badminton .gb-strip svg{flex:none;width:clamp(20px,6vh,34px);height:clamp(20px,6vh,34px);fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.tool-golir-badminton .gb-strip span[data-new]::before{content:"নতুন";position:absolute;top:-8px;right:6px;padding:0 6px;border-radius:99px;background:var(--gold);color:var(--ink);font-size:10px;line-height:1.6}
+.tool-golir-badminton .gb-strip[data-aim="0"] [data-shot="0"],.tool-golir-badminton .gb-strip[data-aim="1"] [data-shot="1"],.tool-golir-badminton .gb-strip[data-aim="2"] [data-shot="2"]{background:var(--night);border-color:var(--night);color:var(--gold);transform:translateY(1px)}
+@keyframes gb-in{from{opacity:0;transform:translateY(4px)}}
+@keyframes gb-pop{from{transform:scale(.85);opacity:.4}}
+@keyframes gb-glow{to{opacity:.6}}
 
-/* the scoreboard: you, the rally count, them */
-.gb-score{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:6px 12px;border-radius:12px;background:var(--night);color:#f3f1e4}
-.gb-score p{display:flex;align-items:center;gap:8px;margin:0;min-width:0}
-.gb-them{justify-content:flex-end}
-.gb-score b{overflow:hidden;font-size:14px;font-weight:700;white-space:nowrap;text-overflow:ellipsis}
-.gb-score strong{font-family:var(--font-display);font-size:22px;line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
-.gb-shirt{flex:none;width:12px;height:12px;border-radius:3px;box-shadow:0 0 0 1.5px #ffffff55}
-.gb-rally{font-size:12px;color:#c9cbd8}
-.gb-rally b{font-size:15px;color:#fff}
+/* ---- the story ---- */
+.tool-golir-badminton .gb-story{position:relative;display:flex;flex:1;flex-direction:column;min-height:0}
+.tool-golir-badminton .gb-story-panel{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:12px;border:0;border-radius:18px;background:var(--night);color:#f3f1e4;cursor:pointer}
+.tool-golir-badminton .gb-story-art{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * .8);place-items:center;width:100%;min-height:120px}
+.tool-golir-badminton .gb-story-art canvas{display:block;border:3px solid #f3ede1;border-radius:6px}
+.tool-golir-badminton .gb-story-panel p{margin:0;max-width:420px;font-family:var(--font-display);font-size:clamp(18px,5vw,22px);font-weight:700;line-height:1.45}
+.tool-golir-badminton .gb-story-dots{display:flex;gap:6px}
+.tool-golir-badminton .gb-story-dots i{width:8px;height:8px;border-radius:50%;background:#ffffff40}
+.tool-golir-badminton .gb-story-dots i[data-on=true]{background:var(--gold)}
+.tool-golir-badminton .gb-story-skip{position:absolute;right:10px;top:10px;z-index:1;display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border:0;border-radius:99px;background:#f3ede1;color:var(--ink);font-size:13px;font-weight:700;touch-action:none}
+.tool-golir-badminton .gb-story-skip span{width:14px;height:14px;border-radius:50%;background:conic-gradient(var(--accent) 0deg,#1b223833 0deg)}
+.tool-golir-badminton .gb-story-skip[data-holding] span{animation:gb-fill .6s linear forwards}
+@keyframes gb-fill{to{background:conic-gradient(var(--accent) 360deg,#1b223833 360deg)}}
 
-/* the court: press anywhere here; only here does the page stop scrolling under a finger */
-.gb-board{position:relative;width:100%;border-radius:14px;overflow:hidden;background:var(--night);box-shadow:0 6px 18px #1b223833;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
-.gb-board canvas{display:block;width:100%;aspect-ratio:360/400}
-.gb-call{position:absolute;left:8px;right:8px;top:8px;width:fit-content;margin:0 auto;padding:6px 14px;border-radius:999px;background:#141b33e6;color:#fff;font-family:var(--font-display);font-size:16px;font-weight:800;line-height:1.35;text-align:center;pointer-events:none;animation:gb-in .2s ease-out both}
-@keyframes gb-in{from{opacity:0;transform:translateY(-6px)}}
-.gb-sigh{position:absolute;transform:translate(-50%,-100%);margin:0;padding:3px 10px;border-radius:12px 12px 12px 2px;background:#fff7e6;color:#5a3a1a;font-family:var(--font-display);font-size:15px;font-weight:800;pointer-events:none;animation:gb-sigh 1.4s ease-out both}
-@keyframes gb-sigh{0%{opacity:0;transform:translate(-50%,-80%)}15%{opacity:1;transform:translate(-50%,-100%)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-120%)}}
-.gb-hint{position:absolute;left:50%;bottom:3%;transform:translateX(-50%);margin:0;padding:8px 16px;border-radius:999px;background:#141b33d9;color:#fff;font-size:16px;font-weight:700;white-space:nowrap;pointer-events:none;animation:gb-nudge 1.6s ease-in-out infinite}
-@keyframes gb-nudge{50%{transform:translate(-50%,-6px)}}
-.gb-overlay{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;padding:16px;background:#141b33e0;color:#fff;text-align:center;cursor:default}
-.gb-overlay p{margin:0;font-weight:600}
-.gb-overlay .kit-primary{min-width:180px;min-height:56px;font-size:19px}
+/* ---- the level list ---- */
+.tool-golir-badminton .gb-sheet{position:absolute;inset:0;z-index:5;overflow:auto;padding:14px;border-radius:18px;background:#fffcf3;box-shadow:0 10px 40px #1b223840;overscroll-behavior:contain}
+.tool-golir-badminton .gb-sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.tool-golir-badminton .gb-sheet h2{margin:0;font-family:var(--font-display);font-size:22px}
+.tool-golir-badminton .gb-sheet-close{width:44px;height:44px;border:0;border-radius:12px;background:var(--paper);font-size:18px}
+.tool-golir-badminton .gb-sheet .gb-modes{justify-content:flex-start;margin-bottom:6px}
+.tool-golir-badminton .gb-sheet .gb-modes button{border-color:var(--paper-edge);color:var(--ink)}
+.tool-golir-badminton .gb-sheet .gb-modes button[aria-checked=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.tool-golir-badminton .gb-sheet-world h3{margin:12px 0 6px;font-size:15px}
+.tool-golir-badminton .gb-sheet-world h3 small{margin-left:6px;font-size:12px;font-weight:500;color:var(--muted)}
+.tool-golir-badminton .gb-sheet-world ol{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.tool-golir-badminton .gb-sheet-world button{display:grid;grid-template-columns:36px 1fr auto;grid-template-areas:"num name stars" "num teach teach";gap:0 10px;align-items:center;width:100%;padding:8px 10px;border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff;color:var(--ink);text-align:left}
+.tool-golir-badminton .gb-sheet-world button[data-next]{border-color:var(--accent);box-shadow:0 0 0 3px #c2571a33}
+.tool-golir-badminton .gb-sheet-world button[aria-current=true]{background:#fff7e6}
+.tool-golir-badminton .gb-sheet-world button:disabled{opacity:.5}
+.tool-golir-badminton .gb-sheet-num{grid-area:num;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--night);color:#fff;font-size:16px}
+.tool-golir-badminton .gb-sheet-world[data-world="1"] .gb-sheet-num{background:#5a3f6b}
+.tool-golir-badminton .gb-sheet-world[data-world="2"] .gb-sheet-num{background:#8f5a2e}
+.tool-golir-badminton .gb-sheet-world button:disabled .gb-sheet-num{background:#8d8578}
+.tool-golir-badminton .gb-sheet-num svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.2}
+.tool-golir-badminton .gb-sheet-name{grid-area:name;font-family:var(--font-display);font-weight:700;font-size:16px}
+.tool-golir-badminton .gb-sheet-name i,.tool-golir-badminton .gb-sheet-name em{margin-left:6px;padding:1px 7px;border-radius:99px;font-size:11px;font-style:normal;vertical-align:2px}
+.tool-golir-badminton .gb-sheet-name i{background:#ffe1e1;color:#8a1c1c}
+.tool-golir-badminton .gb-sheet-name em{background:var(--accent);color:#fff}
+.tool-golir-badminton .gb-sheet-teach{grid-area:teach;font-size:13px;line-height:1.45;color:var(--muted)}
+.tool-golir-badminton .gb-sheet-stars{grid-area:stars;font-size:15px;color:#d8cfbb}
+.tool-golir-badminton .gb-sheet-stars [data-on=true]{color:#e39b00}
+.tool-golir-badminton .gb-sheet-note{margin:12px 0 0;font-size:13px;color:var(--muted)}
 
-.gb-status{min-height:44px;margin:0;font-size:15px;font-weight:600;line-height:1.45;text-align:center}
+/* ---- the end of a match ---- */
+.tool-golir-badminton .gb-end{flex:none;display:grid;justify-items:center;gap:2px;padding:10px 14px 6px;border-radius:18px;background:var(--paper);text-align:center;touch-action:manipulation;cursor:default}
+.tool-golir-badminton .gb-end p{margin:0}
+.tool-golir-badminton .gb-end>*{max-width:100%;min-width:0}
+.tool-golir-badminton .gb-end-kicker{font-weight:700;color:var(--accent-deep)}
+.tool-golir-badminton .gb-end-stars{margin:0;font-size:36px;line-height:1.1}
+.tool-golir-badminton .gb-end-stars .gb-capped{opacity:.25}
+.tool-golir-badminton .gb-end-lost{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--miss)}
+.tool-golir-badminton .gb-end-score b{font-family:var(--font-display);font-size:clamp(34px,10vw,48px);line-height:1.1;font-variant-numeric:tabular-nums}
+.tool-golir-badminton .gb-end-line{font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.4}
+.tool-golir-badminton .gb-end-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin:6px 0 2px;padding:0;list-style:none}
+.tool-golir-badminton .gb-end-stats li{display:grid;padding:3px 9px;border-radius:10px;background:#fff;font-size:12px;color:var(--muted);line-height:1.3;border-bottom:3px solid transparent}
+.tool-golir-badminton .gb-end-stats li[data-tone=gold]{border-bottom-color:#f2b705}
+.tool-golir-badminton .gb-end-stats li[data-tone=bad]{border-bottom-color:#d9534f}
+.tool-golir-badminton .gb-end-stats b{font-size:15px;color:var(--ink)}
+.tool-golir-badminton .gb-end-near{font-weight:700;color:var(--accent-deep);font-size:14px}
+.tool-golir-badminton .gb-end-best{font-size:13px;color:var(--muted)}
+.tool-golir-badminton .gb-end-choices{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:6px;width:100%;margin:8px 0 0;padding:0;list-style:none}
+.tool-golir-badminton .gb-end-choices[data-count="2"]{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
+.tool-golir-badminton .gb-end-choices button{position:relative;width:100%;min-height:54px;padding:6px 8px;font-size:15px;line-height:1.2}
+.tool-golir-badminton .gb-end-choices kbd{display:inline-grid;place-items:center;width:20px;height:20px;margin-right:5px;border-radius:6px;background:#ffffff40;font:inherit;font-size:12px}
+.tool-golir-badminton .gb-end-choices .kit-secondary kbd{background:#1b223814}
+.tool-golir-badminton .gb-end-choices em{position:absolute;top:-9px;right:6px;padding:0 7px;border-radius:99px;background:var(--gold);color:var(--ink);font-size:10px;font-style:normal;font-weight:700;line-height:1.6}
+.tool-golir-badminton .gb-see{min-height:40px}
 
-/* the big swing button: press to raise the racket, lift to hit */
-.gb-swing{min-height:60px;border:2px solid var(--accent-deep);border-radius:16px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:22px;font-weight:800;box-shadow:0 4px 0 var(--accent-deep);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .08s ease-out}
-.gb-swing:active{transform:translateY(3px);box-shadow:0 1px 0 var(--accent-deep)}
-.gb-swing:disabled{opacity:.5}
+/* ---- the card ---- */
+.tool-golir-badminton .gb-result{scroll-margin-top:12px;margin-top:22px;padding-top:20px;border-top:2px solid var(--ink)}
+.tool-golir-badminton .gb-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,30px);line-height:1.4}
+.tool-golir-badminton .gb-result h2 em{font-style:normal;color:var(--accent)}
+.tool-golir-badminton .gb-result>p{margin:0 0 14px;color:var(--muted)}
+.tool-golir-badminton .gb-result-body{display:grid;gap:20px}
+.tool-golir-badminton .gb-share{display:grid;gap:16px;align-content:start}
+.tool-golir-badminton .gb-name{display:grid;gap:6px;font-weight:600}
+.tool-golir-badminton .gb-name small{font-weight:400;color:var(--muted);font-size:13px}
+.tool-golir-badminton .gb-name input{border:1.5px solid var(--paper-edge);border-radius:12px;font-size:17px}
 
-.gb-prefs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--ink)}
-.gb-pill{min-height:44px;padding:6px 14px;border:1.5px solid currentColor;border-radius:999px;background:transparent;color:inherit;font-size:14px;font-weight:700}
-.gb-pill[aria-pressed=true]{background:var(--ink);color:#fff}
-.gb-best{margin:0 0 0 auto;font-size:13px;color:var(--muted)}
-.gb-best b{color:var(--ink)}
-
-/* a won or lost game */
-.gb-end{display:grid;justify-items:center;gap:6px;padding:12px 14px;border-radius:16px;background:var(--paper);text-align:center}
-.gb-end p{margin:0}
-.gb-end-line{font-family:var(--font-display);font-size:19px;font-weight:800;line-height:1.4}
-.gb-end-note{font-size:14px;line-height:1.45;color:var(--muted)}
-.gb-end-note:empty{display:none}
-.gb-actions{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;width:100%;margin-top:4px}
-.gb-actions:has(> :only-child){grid-template-columns:1fr}
-.tool-golir-badminton .gb-actions button,.tool-golir-badminton .gb-again{min-height:56px;font-size:18px}
-.gb-see{min-height:44px}
-.gb-lost-title{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--accent-deep)}
-.gb-lost-line{font-weight:700;line-height:1.45}
-.gb-again{width:100%}
-
-.gb-drawer{border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff}
-.gb-drawer summary{min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;font-weight:700;cursor:pointer}
-.gb-drawer summary span{font-weight:500;color:var(--muted);font-size:14px}
-.gb-drawer[open]{padding-bottom:12px}
-.gb-drawer .gx-levels{padding:0 10px}
-.gb-stages{margin:0 14px 10px;font-size:13px;line-height:1.5;color:var(--muted)}
-
-.gb-result{scroll-margin-top:12px;margin-top:16px;padding-top:18px;border-top:2px solid var(--paper-edge)}
-.gb-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,32px);line-height:1.4}
-.gb-result h2 em{font-style:normal;color:var(--accent)}
-.gb-result>p{margin:0 0 16px;color:var(--muted)}
-.gb-result-body{display:grid;gap:22px}
-.gb-share{display:grid;gap:18px;align-content:start}
-.gb-name{display:grid;gap:6px;font-weight:600}
-.gb-name small{font-weight:400;color:var(--muted);font-size:13px}
-.gb-name input{border:1.5px solid var(--paper-edge);border-radius:12px;font-size:17px}
-
-.gb-guide h2{font-family:var(--font-display);margin-bottom:12px}
-.gb-guide>p{color:var(--muted);max-width:640px}
-.gb-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.gb-guide li{display:flex;gap:14px;align-items:flex-start}
-.gb-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
-.gb-guide li p{margin:4px 0 0}
-
-@media (max-width:360px){
-  .gb-status{font-size:14px}
-  .gb-level b{font-size:15px}
-  .gb-score{padding:6px 8px;gap:4px}
-  .gb-score b{font-size:13px}
-}
-@media (min-width:720px){.gb-lead{display:block}.gb-page:has(.gb-friend) .gb-lead{display:none}}
-.gb[data-slow=true] .gb-hint,.gb[data-slow=true] .gx-pop,.gb[data-slow=true] .gb-call{animation:none}
-.gb[data-slow=true] .gb-sigh{animation:gb-fade 1.4s linear both}
-@media (prefers-reduced-motion:reduce){
-  .gb-hint,.gb-call,.gb-chip .gx-pop{animation:none}
-  .gb-sigh{animation:gb-fade 1.4s linear both}
-  .gb-swing{transition:none}
-}
-@keyframes gb-fade{0%,80%{opacity:1}100%{opacity:0}}
+@media(max-width:350px){.tool-golir-badminton .gb-end-choices button{font-size:13px;padding:6px 4px}.tool-golir-badminton .gb-end-choices kbd{display:none}.tool-golir-badminton .gb-strip span{font-size:12px;padding:4px}.tool-golir-badminton .gb-strip svg{display:none}.tool-golir-badminton .gb-boss{min-width:96px}.tool-golir-badminton .gb-meter{width:96px}.tool-golir-badminton .gb-modes button{padding:4px 12px}.tool-golir-badminton .gb-score{gap:6px;padding:4px 7px}}
+/* slow mode: steady edges, no pops or pulses */
+.tool-golir-badminton .gb[data-slow] .gb-court::after,.tool-golir-badminton .gb[data-slow] .gb-call,.tool-golir-badminton .gb[data-slow] .gb-boss em{animation:none!important}
+.tool-golir-badminton .gb[data-slow] .gb-title-start,.tool-golir-badminton .gb[data-slow] .gb-strip span{transition:none}
+@media(prefers-reduced-motion:reduce){.tool-golir-badminton .gb-court::after,.tool-golir-badminton .gb-call,.tool-golir-badminton .gb-boss em{animation:none!important}.tool-golir-badminton .gb-title-start{transition:none}.tool-golir-badminton .gb-title-start:hover{transform:none}}

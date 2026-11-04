@@ -1,45 +1,43 @@
-export const title = "Golir Badminton (গলির ব্যাডমিন্টন): match, window, racket, wind and result";
-const over = (v: any) => v.phase === "won" || v.phase === "lost";
+export const title = "গলির ব্যাডমিন্টন after the rewrite: the match, the window, the finger, the breath and the wind";
 const game = (v: any) => {
   if (v.skipped) return "Result skipped by a key";
-  if (over(v)) return v.fresh ? "Result just appeared" : "Result shows";
-  if (v.paused) return v.phase === "ready" ? "Paused before the first serve" : "Paused";
-  return v.phase === "ready" ? "First screen" : "Match in play";
+  if (v.sheet) return "Level list open";
+  if (v.phase === "over") return v.fresh ? "Result just appeared" : "Result shows";
+  if (v.phase === "title") return "First screen";
+  if (v.paused) return "Paused (menu)";
+  return v.breath ? "A breath before the shuttle moves" : "Rally in play";
 };
-const moving = (v: any) => v.phase === "play" && !v.paused && v.inView && v.visible && !v.away;
-const where = (v: any) => {
-  if (!v.visible) return "Tab hidden";
-  if (!v.focused) return moving(v) ? "Away, shuttle moving" : "Away, shuttle frozen";
-  return v.inView ? "On the page" : "Court off screen";
-};
+const where = (v: any) => !v.visible || !v.focused ? "You're away" : "You're on the court";
 export const state = (v: any) => ({
   Game: game(v),
-  You: where(v),
-  Leftovers: [v.cocked ? "racket up" : "", v.wind === "real" && v.sound ? "wind howls" : ""].filter(Boolean).join(", ") || "Nothing left on",
+  Window: where(v),
+  Finger: v.held ? "Finger on the shuttle" : "Nothing held",
+  Wind: v.wind === "live" ? "Wind blowing" : v.wind === "stub" ? "Silent stub" : "No wind",
+  Sound: v.sound ? "Sound on" : "Sound off",
 });
 const labels: Record<string, string> = {
-  YouStart: "you press শুরু করো",
-  YouRaiseRacket: "you press and hold",
-  YouLetGo: "you let go (a swing)",
-  TheShuttleFlies: "the next shuttle flies",
-  TheMatchEnds: "someone reaches five points",
+  YouStart: "you start a match",
+  YouTouch: "you touch as the ring turns gold",
+  YouDecide: "you lift or pull (the shot)",
+  TheBreathEnds: "the breath ends",
+  TheMatchEnds: "someone reaches the points",
+  YouPressAKeyOnTheResult: "you press a key on the result",
   TheResultSettles: "a moment passes",
-  YouPressSpaceOnResult: "you press Space",
-  YouPickALevel: "you pick a level or play again",
-  WindowBlurs: "you click into another window",
-  WindowFocuses: "you come back to the window",
-  TabHides: "you hide the tab",
-  TabShows: "the tab shows again",
+  WindowBlurs: "you leave (another window, or hide the tab)",
+  TabHides: "you leave (another window, or hide the tab)",
+  YouPause: "you press ⏸ or P",
+  WindowFocuses: "you come back",
+  TabShows: "you come back",
   YouResume: "you press চালিয়ে যাও",
-  ScrollAway: "the court scrolls off screen",
-  ScrollBack: "the court scrolls back",
+  OpenTheList: "you open the level list",
+  CloseTheList: "you close the level list",
+  TheLoopRemounts: "the game loop remounts",
   SoundOff: "you turn sound off",
   SoundOn: "you turn sound on",
 };
-export const step = (action: string, from: any) => {
-  if (action === "SoundOff" || action === "SoundOn") return null;
-  if (action === "YouPickALevel" && from.phase === "play") return null;
+export const step = (action: string) => {
+  if (action === "SoundOff" || action === "SoundOn" || action === "TheLoopRemounts") return null;
   return labels[action] ?? action;
 };
-export const group = (v: any) => over(v) ? "done" : v.paused ? "held" : "play";
-export const colors = { play: "teal", held: "yellow", done: "blue" };
+export const group = (v: any) => v.phase === "over" ? "done" : v.paused || v.sheet ? "held" : v.phase === "title" ? "wait" : "play";
+export const colors = { play: "teal", held: "yellow", done: "blue", wait: "tan" };

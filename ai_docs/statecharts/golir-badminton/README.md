@@ -1,6 +1,6 @@
-# গলির ব্যাডমিন্টন: statechart (before the rewrite)
+# গলির ব্যাডমিন্টন: statechart
 
-Model: `Badminton.tla`, `Badminton.cfg` and `view.ts`. It mirrors `tools/golir-badminton/components/badminton-game.tsx`: `begin`, `raise`, `hit`, `keys.down`/`keys.up`, `onPointerDown`/`Up`/`Cancel`, `resume`, `startLevel`/`pickLevel`, `finish`, the `windLoop` in `tick`, the `!looping` effect, the `visibilitychange` handler `hide` and the `SoundToggle` `onChange`. It also mirrors `useGameLoop` in `shared/game-kit.ts`. That is the **working copy**: blur cancels the frame and sets `away`, focus clears it, and each remount of the loop effect starts with `away = false`.
+Before the rewrite — model: `before-fix/Badminton.tla`, `before-fix/Badminton.cfg` and `before-fix/view.ts`. The after-fix run is further down. It mirrors `tools/golir-badminton/components/badminton-game.tsx`: `begin`, `raise`, `hit`, `keys.down`/`keys.up`, `onPointerDown`/`Up`/`Cancel`, `resume`, `startLevel`/`pickLevel`, `finish`, the `windLoop` in `tick`, the `!looping` effect, the `visibilitychange` handler `hide` and the `SoundToggle` `onChange`. It also mirrors `useGameLoop` in `shared/game-kit.ts`. That is the **working copy**: blur cancels the frame and sets `away`, focus clears it, and each remount of the loop effect starts with `away = false`.
 Run: `before-fix/report.md` and `before-fix/chart.mmd`. TLC found 268 states. The chart has 16 states and 42 arrows.
 
 ## Systems modelled
@@ -76,9 +76,121 @@ The live replays ran in Orca (page `golir-badminton#s=12345&t=2&r=5&l=2`, a frie
 
 Screenshots: `.shots/golir-badminton-sc-first.png` (first screen, Pixel 9), `-play.png` (a point in play, the call banner over the court), `-won.png` (3 stars, 5–0), `-card.png` (the share card), `-paused-first.png` (the first screen paused after a hide, headless Chrome).
 
+## After the rewrite (`after-fix/`)
+Model: `Badminton.tla`, `Badminton.cfg` and `view.ts` now mirror the rewritten code: `tools/golir-badminton/lib/session.ts` (ticking, canSwing, wantWind, syncLoops, blur/focus/hide/show, pause/resume, openSheet/closeSheet, setSound, press/lift, goTo, freshResultKey, wake, step) and `tools/golir-badminton/components/game.tsx` (begin, engaged, letGo, away/back, the player's onPause/onResume, touch/decide, finish, the sound effect, the window keys). The spec from before is kept in `before-fix/`.
+
+TLC: 54 states, 260 steps. **Every rule holds:** TypeOK, NoProgressWhileAway, InputReleasedWhenAway, PausedWhenHidden, PausedWhenBlurred, PauseOnlyMidMatch, LoopOnlyWhenMeaningful, LoopComesBack, NoTapPastResult and NoDeadlock, plus the new NeverAStub, ChoiceFreezesPlay, BreathAfterAway (whenever the match moves again after time away, a breath ran first) and NoClickBackSwing (a touch counts only after the breath).
+
+### The fixes
+1. **Wind on blur (bug 1):** the wind loop belongs to the session. `syncLoops` starts a fresh `windLoop()` only while `wantWind` holds (play, menu and list shut, tab visible, window focused, sound on, a rooftop level) and stops it the moment that turns false. Test: `statechart LoopOnlyWhenMeaningful (bug 1)`.
+2. **No pause on blur (bug 2):** the game lives in the shared player, which opens its menu on blur, hide and Escape; the session marks the match stale, and coming back runs a 0.8 s breath with the shuttle hanging where it was. Test: `statechart PausedWhenBlurred (bug 2)`.
+3. **The loop remount reset (bug 3):** the match moves only inside `step()`, gated by `S.step(session)`, whose `focused` starts from `document.hasFocus()` and lives in a ref. Remounting `useGameLoop` changes nothing (`TheLoopRemounts` is a no-op in the model). A press on the game counts as focus. Test: `statechart NoProgressWhileAway (bug 3)`.
+4. **The raised racket (bug 4):** leaving in any way (`away()`) lets a held finger go as the tap it was: the shot is played, and nothing stays held. Test: `statechart InputReleasedWhenAway (bug 4)`.
+5. **A late Space skipping the result (bug 5):** result keys pass `freshResultKey` (a keydown after the screen appeared, no repeat, not under the menu or list), and are handled at `window`. Test: `statechart NoTapPastResult (bug 5)`.
+6. **Paused on the first screen (bug 6):** there is no game overlay; only a match in play goes stale or takes a breath, and the title's start works after any hide. Test: `statechart PauseOnlyMidMatch (bug 6)`.
+- Also: `statechart LoopComesBack`, `statechart ChoiceFreezesPlay`, `statechart NoDoubleResult` in `tools/golir-badminton/tests/session.test.ts`.
+
+### Live checks after the fix (Orca, Pixel 9, rAF swapped for a 60 Hz pump because Orca throttles a background pane)
+- **Blur mid-rally, level 2:** match clock 3.18 → `blur` → the player's menu (চালিয়ে যাও pre-selected), session paused and stale → 2 s later clock still 3.18. চালিয়ে যাও: 120 ms later clock 3.18 with `breath` 42 steps left, then 3.82 after 1.5 s. (Before: the clock jumped and a point was lost on the way back.)
+- **Wind, level 5 (sound counted by wrapping `AudioBufferSourceNode.start/stop`, with audio suspended by the dev server):** loops started 1, stopped 0 during play → after `blur` started 1, stopped 1 → after চালিয়ে যাও started 2, stopped 1 (a fresh loop). (Before: 0 stops on blur.)
+- **নতুন করে শুরু** from the menu: a fresh match at clock 0.22, 0–0, on the play screen.
+- **Old link** `#s=12345&t=2&r=5&l=2&n=রাফি` (the replay link from before): the banner "রাফি তিনতলার আপুকে ৫–২ পয়েন্টে হারিয়েছে।" and level 2 of the new ladder. `&og=1` on a new link shows the finished end screen with the card.
+- Orca pins `document.hidden`, so the hide path is covered by the node tests and the model.
+
+### Chart (after the fix)
+```mermaid
+---
+title: "গলﬂ°°2495¶ßর বﬂ°°2509¶ßযﬂ°°2494¶ßডমﬂ°°2495¶ßনﬂ°°2509¶ßটন after the rewrite: the match, the window, the finger, the breath and the wind"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: First screen
+      s1: Rally in play
+      s2: Level list open
+      s3: Result just appeared
+      s4: Paused (menu)
+      s5: Result shows
+      s6: A breath before the shuttle moves
+      [*] --> s0
+      s0 --> s1: you start a match [when Window is You're on the court]
+      s0 --> s2: you open the level list [when Window is You're on the court]
+      s1 --> s3: someone reaches the points
+      s1 --> s4: you leave (another window, or hide the tab) or you press #9208; or P
+      s2 --> s0: you close the level list [when Window is You're on the court]
+      s2 --> s1: you start a match [when Window is You're on the court]
+      s3 --> s1: you start a match [when Window is You're on the court]
+      s3 --> s5: a moment passes
+      s3 --> s2: you open the level list [when Window is You're on the court]
+      s4 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the court]
+      s5 --> s1: you press a key on the result or you start a match [when Window is You're on the court]
+      s5 --> s2: you open the level list [when Window is You're on the court]
+      s2 --> s3: you close the level list [when Window is You're on the court]
+      s6 --> s1: the breath ends
+      s6 --> s4: you leave (another window, or hide the tab) or you press #9208; or P
+      s2 --> s5: you close the level list [when Window is You're on the court]
+    }
+    --
+    state "Window" as r1 {
+      s7: You're away
+      s8: You're on the court
+      [*] --> s7
+      [*] --> s8
+      s7 --> s8: you come back
+      s8 --> s7: you leave (another window, or hide the tab)
+    }
+    --
+    state "Finger" as r2 {
+      s9: Nothing held
+      s10: Finger on the shuttle
+      [*] --> s9
+      s9 --> s10: you touch as the ring turns gold [when Game is Rally in play and Window is You're on the court]
+      s10 --> s9: you lift or pull (the shot) or someone reaches the points or you leave (another window, or hide the tab) or you press #9208; or P
+    }
+    --
+    state "Wind" as r3 {
+      s11: No wind
+      s12: Wind blowing
+      [*] --> s11
+      s11 --> s12: you start a match [when Game is none of A breath before the shuttle moves, Paused (menu), Rally in play and Window is You're on the court and Finger is Nothing held and Sound is Sound on]
+      s12 --> s11: someone reaches the points [when Game is Rally in play]
+      s12 --> s11: you leave (another window, or hide the tab) or you press #9208; or P
+      s11 --> s12: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Game is Paused (menu) and Window is You're on the court and Finger is Nothing held and Sound is Sound on]
+      s11 --> s12: you press a key on the result [when Game is Result shows and Window is You're on the court and Finger is Nothing held and Sound is Sound on]
+    }
+    --
+    state "Sound" as r4 {
+      s13: Sound off
+      s14: Sound on
+      [*] --> s13
+      [*] --> s14
+    }
+  }
+  class s0 tan
+  class s1 teal
+  class s3 blue
+  class s4 yellow
+  class s5 blue
+  class s6 teal
+  class s10 teal
+  class s12 teal
+```
+
 ## Regenerate
 ```sh
-scripts/statechart.sh ai_docs/statecharts/golir-badminton/Badminton.tla --view ai_docs/statecharts/golir-badminton/view.ts --out ai_docs/statecharts/golir-badminton/after-fix
-rm ai_docs/statecharts/golir-badminton/after-fix/tlc*.out
+scripts/statechart.sh ai_docs/statecharts/golir-badminton/Badminton.tla --view ai_docs/statecharts/golir-badminton/view.ts --out ai_docs/statecharts/golir-badminton/<new-folder>
+# the model before the rewrite:
+scripts/statechart.sh ai_docs/statecharts/golir-badminton/before-fix/Badminton.tla --view ai_docs/statecharts/golir-badminton/before-fix/view.ts --out ai_docs/statecharts/golir-badminton/<another-folder>
 ```
-The chart hides the sound switch, and "you pick a level or play again" during a match. The model and the report keep both.
+The chart hides the sound switch's own arrows and the loop remount (a no-op). The model and the report keep them.

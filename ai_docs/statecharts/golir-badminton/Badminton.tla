@@ -1,114 +1,121 @@
 ---- MODULE Badminton ----
-\* গলির ব্যাডমিন্টন: the match, pause, window and tab, the raised racket, scrolling, the wind loop and the result screen,
-\* mirrored from tools/golir-badminton/components/badminton-game.tsx (begin, raise, hit, keys.down/up, onPointerDown/Up/Cancel,
-\* resume, startLevel/pickLevel, finish, tick's windLoop, the `!looping` effect, the visibilitychange `hide` handler and the
-\* SoundToggle onChange) and from useGameLoop in shared/game-kit.ts (working copy: blur cancels the frame and sets `away`,
-\* focus clears it; every remount of the loop effect starts with `away = false`). Modelled on a wind night (levels 2, 5, 8, 11, 14),
-\* the only nights with a loop. A point that doesn't end the match changes nothing here, so only the match point is an action.
-VARIABLES phase, paused, visible, focused, away, inView, cocked, wind, sound, fresh, skipped
-vars == <<phase, paused, visible, focused, away, inView, cocked, wind, sound, fresh, skipped>>
+\* গলির ব্যাডমিন্টন after the rewrite: the screen, the player's pause menu, the window and tab, the level list, a finger held
+\* on the shuttle, the breath after coming back, the rooftop wind loop, the site-wide sound switch and the result keys.
+\* Mirrored from tools/golir-badminton/lib/session.ts (ticking, canSwing, wantWind, syncLoops, blur/focus/hide/show,
+\* pause/resume, openSheet/closeSheet, setSound, press/lift, goTo, freshResultKey, wake, step) and
+\* tools/golir-badminton/components/game.tsx (begin, engaged, letGo, away/back, the player's onPause/onResume, touch/decide,
+\* finish, the sound effect, the window keys). The match moves only inside step(), which advances it only while ticking and
+\* after the breath; `focused` starts from document.hasFocus() and lives in the session, so remounting useGameLoop (the old
+\* bug 3) changes nothing. Leaving in any way lets a held finger go as the tap it was. The player opens its menu on blur, hide
+\* and the stage scrolling away once the game was touched (starting a match touches it). Modelled on a rooftop (wind) level.
+VARIABLES phase, paused, visible, focused, sheet, sound, wind, held, stale, breath, fresh, skipped
+vars == <<phase, paused, visible, focused, sheet, sound, wind, held, stale, breath, fresh, skipped>>
 
-Phases == {"ready", "play", "won", "lost"}
-Over == phase \in {"won", "lost"}
-\* `looping` in the component: the effect of useGameLoop is mounted.
-LoopingOf(ph, pa, iv) == ph = "play" /\ ~pa /\ iv
-Looping == LoopingOf(phase, paused, inView)
-\* The rAF loop actually steps the match: mounted, tab visible, no blur seen since the mount.
-ClockRuns == Looping /\ visible /\ ~away
-WindSounds == wind = "real" /\ sound
+Phases == {"title", "play", "over"}
+Winds == {"none", "stub", "live"}
+\* session.ts ticking(): the only state in which step() runs at all.
+TickingOf(ph, pz, sh, vi, fo) == ph = "play" /\ ~pz /\ ~sh /\ vi /\ fo
+Ticking == TickingOf(phase, paused, sheet, visible, focused)
+\* step() moves the match only after the breath.
+ClockRuns == Ticking /\ ~breath
+CanSwing == Ticking /\ ~breath
+\* syncLoops: the wind it leaves behind for a state (a fresh loop() each time it turns on, so never a stub).
+WindOf(ph, pz, sh, vi, fo, so) == IF TickingOf(ph, pz, sh, vi, fo) /\ so THEN "live" ELSE "none"
 
-Init == /\ phase = "ready" /\ paused = FALSE /\ visible = TRUE /\ focused = TRUE /\ away = FALSE
-        /\ inView = TRUE /\ cocked = FALSE /\ wind = "none" /\ sound = TRUE /\ fresh = FALSE /\ skipped = FALSE
+Init == /\ phase = "title" /\ paused = FALSE /\ visible = TRUE /\ focused \in BOOLEAN /\ sheet = FALSE
+        /\ sound \in BOOLEAN /\ wind = "none" /\ held = FALSE /\ stale = FALSE /\ breath = FALSE /\ fresh = FALSE /\ skipped = FALSE
 
-\* begin(): from the big button, the court or Space/Enter/↑ on the first screen. The overlay and the disabled button block it while paused.
-YouStart == /\ phase = "ready" /\ ~paused /\ visible /\ focused /\ inView
-            /\ phase' = "play" /\ away' = FALSE
-            /\ UNCHANGED <<paused, visible, focused, inView, cocked, wind, sound, fresh, skipped>>
-\* raise(): press and hold the court, the মারো button, or Space/Enter/↑.
-YouRaiseRacket == /\ phase = "play" /\ ~paused /\ visible /\ focused /\ inView /\ ~cocked
-                  /\ cocked' = TRUE
-                  /\ UNCHANGED <<phase, paused, visible, focused, away, inView, wind, sound, fresh, skipped>>
-\* hit(): pointerup, pointercancel or keyup. They reach the page only while it has focus.
-YouLetGo == /\ cocked /\ visible /\ focused
-            /\ cocked' = FALSE
-            /\ UNCHANGED <<phase, paused, visible, focused, away, inView, wind, sound, fresh, skipped>>
-\* tick(): the first step on a wind night opens the loop (live.wind ??= windLoop()); a stub while sound is off.
-TheShuttleFlies == /\ ClockRuns /\ wind = "none"
-                   /\ wind' = IF sound THEN "real" ELSE "stub"
-                   /\ UNCHANGED <<phase, paused, visible, focused, away, inView, cocked, sound, fresh, skipped>>
-\* step() reaches five points: the "done" event runs finish(): stopWind(), the result. `cocked` is left as it was.
+\* begin(): the shuttle on the title, a level picked in the list, or a choice on the end screen. A press on a window that
+\* has no focus first gives it focus (engaged(), the same as WindowFocuses), so the start itself runs on a focused page.
+YouStart == /\ phase \in {"title", "over"} /\ ~paused /\ visible /\ focused
+            /\ phase' = "play" /\ sheet' = FALSE /\ stale' = FALSE /\ breath' = FALSE /\ held' = FALSE /\ fresh' = FALSE
+            /\ wind' = WindOf("play", FALSE, FALSE, TRUE, TRUE, sound)
+            /\ UNCHANGED <<paused, visible, focused, sound, skipped>>
+\* touch(): a finger or key lands while the match can take a swing; the match holds the shuttle until the touch decides.
+YouTouch == /\ CanSwing /\ ~held
+            /\ held' = TRUE
+            /\ UNCHANGED <<phase, paused, visible, focused, sheet, sound, wind, stale, breath, fresh, skipped>>
+\* decide(): the pull or the lift of the finger (or the match's own 200 ms limit) plays the shot.
+YouDecide == /\ held /\ held' = FALSE
+             /\ UNCHANGED <<phase, paused, visible, focused, sheet, sound, wind, stale, breath, fresh, skipped>>
+\* The breath after coming back runs out (step() counts it down only while ticking).
+TheBreathEnds == /\ Ticking /\ breath /\ breath' = FALSE
+                 /\ UNCHANGED <<phase, paused, visible, focused, sheet, sound, wind, held, stale, fresh, skipped>>
+\* step() → advance(): someone reaches the points → finish() → show("over") (no stepping after; the wind stops).
 TheMatchEnds == /\ ClockRuns
-                /\ phase' \in {"won", "lost"} /\ fresh' = TRUE /\ wind' = "none" /\ away' = FALSE
-                /\ UNCHANGED <<paused, visible, focused, inView, cocked, sound, skipped>>
-\* The result has been on screen long enough to read.
+                /\ phase' = "over" /\ fresh' = TRUE /\ wind' = "none" /\ held' = FALSE
+                /\ UNCHANGED <<paused, visible, focused, sheet, sound, stale, breath, skipped>>
+\* A key on the end screen: freshResultKey takes only a keydown that arrived after the screen appeared, without repeat.
+\* While `fresh`, the key is the swing that was already on its way (or held through the end), and is ignored.
+YouPressAKeyOnTheResult == /\ phase = "over" /\ ~paused /\ ~sheet /\ visible /\ focused
+                           /\ IF fresh THEN UNCHANGED vars
+                              ELSE /\ phase' = "play" /\ skipped' = (skipped \/ fresh) /\ held' = FALSE /\ stale' = FALSE /\ breath' = FALSE
+                                   /\ wind' = WindOf("play", FALSE, FALSE, TRUE, TRUE, sound)
+                                   /\ UNCHANGED <<paused, visible, focused, sheet, sound, fresh>>
 TheResultSettles == /\ fresh /\ fresh' = FALSE
-                    /\ UNCHANGED <<phase, paused, visible, focused, away, inView, cocked, wind, sound, skipped>>
-\* keys.down on the result: Space/Enter/↑ starts the next game at once (won: next level; lost: the same level). No settle check.
-YouPressSpaceOnResult == /\ Over /\ visible /\ focused /\ inView
-                         /\ phase' = "play" /\ skipped' = (skipped \/ fresh) /\ fresh' = FALSE
-                         /\ paused' = FALSE /\ cocked' = FALSE /\ wind' = "none" /\ away' = FALSE
-                         /\ UNCHANGED <<visible, focused, inView, sound>>
-\* pickLevel(): পরের লেভেল, আবার খেলো, আরেকবার, or a level in সব লেভেল, any time.
-YouPickALevel == /\ visible /\ focused
-                 /\ phase' = "play" /\ fresh' = FALSE /\ paused' = FALSE /\ cocked' = FALSE /\ wind' = "none" /\ away' = FALSE
-                 /\ UNCHANGED <<visible, focused, inView, sound, skipped>>
-\* useGameLoop's blur: cancels the frame and sets away, only while its effect is mounted. Nothing in the game hears it.
+                    /\ UNCHANGED <<phase, paused, visible, focused, sheet, sound, wind, held, stale, breath, skipped>>
+\* Leaving (session away(): stale if it was ticking; letGo; syncLoops). The player opens its menu in a match.
 WindowBlurs == /\ visible /\ focused
-               /\ focused' = FALSE /\ away' = Looping
-               /\ UNCHANGED <<phase, paused, visible, inView, cocked, wind, sound, fresh, skipped>>
-WindowFocuses == /\ visible /\ ~focused
-                 /\ focused' = TRUE /\ away' = FALSE
-                 /\ UNCHANGED <<phase, paused, visible, inView, cocked, wind, sound, fresh, skipped>>
-\* hide(): stopWind(), cocked = false, and pause unless the match is done (so also on the first screen).
+               /\ focused' = FALSE /\ paused' = (paused \/ phase = "play") /\ stale' = (stale \/ Ticking) /\ held' = FALSE /\ wind' = "none"
+               /\ UNCHANGED <<phase, visible, sheet, sound, breath, fresh, skipped>>
 TabHides == /\ visible
-            /\ visible' = FALSE /\ focused' = FALSE /\ cocked' = FALSE /\ wind' = "none" /\ away' = FALSE
-            /\ paused' = (paused \/ phase \in {"ready", "play"})
-            /\ UNCHANGED <<phase, inView, sound, fresh, skipped>>
-TabShows == /\ ~visible /\ visible' = TRUE /\ focused' = TRUE
-            /\ UNCHANGED <<phase, paused, away, inView, cocked, wind, sound, fresh, skipped>>
-\* resume(): the চালিয়ে যাও button or any of Space/Enter/↑. The loop effect remounts with away = false.
+            /\ visible' = FALSE /\ focused' = FALSE /\ paused' = (paused \/ phase = "play") /\ stale' = (stale \/ Ticking) /\ held' = FALSE /\ wind' = "none"
+            /\ UNCHANGED <<phase, sheet, sound, breath, fresh, skipped>>
+YouPause == /\ phase = "play" /\ ~paused /\ visible /\ focused
+            /\ paused' = TRUE /\ stale' = (stale \/ Ticking) /\ held' = FALSE /\ wind' = "none"
+            /\ UNCHANGED <<phase, visible, focused, sheet, sound, breath, fresh, skipped>>
+\* Coming back (session back(): wake gives a breath when the match may tick again after time away; syncLoops).
+Wake(ph, pz, sh, vi, fo) == LET t == TickingOf(ph, pz, sh, vi, fo) IN
+                            /\ stale' = (stale /\ ~t) /\ breath' = (breath \/ (stale /\ t))
+                            /\ wind' = WindOf(ph, pz, sh, vi, fo, sound)
+WindowFocuses == /\ visible /\ ~focused
+                 /\ focused' = TRUE /\ Wake(phase, paused, sheet, TRUE, TRUE)
+                 /\ UNCHANGED <<phase, paused, visible, sheet, sound, held, fresh, skipped>>
+TabShows == /\ ~visible
+            /\ visible' = TRUE /\ focused' = TRUE /\ Wake(phase, paused, sheet, TRUE, TRUE)
+            /\ UNCHANGED <<phase, paused, sheet, sound, held, fresh, skipped>>
+\* চালিয়ে যাও (onResume), or নতুন করে শুরু, which is begin() from the menu.
 YouResume == /\ paused /\ visible /\ focused
-             /\ paused' = FALSE /\ away' = FALSE
-             /\ UNCHANGED <<phase, visible, focused, inView, cocked, wind, sound, fresh, skipped>>
-\* The board leaves the screen (useInView): looping goes false, the effect stops the wind. A wheel or trackpad
-\* scrolls a background window too, so these don't need focus.
-ScrollAway == /\ visible /\ inView
-              /\ inView' = FALSE /\ wind' = "none" /\ away' = FALSE
-              /\ UNCHANGED <<phase, paused, visible, focused, cocked, sound, fresh, skipped>>
-\* Back on screen: the loop effect remounts, and its `away` starts false whatever the window's focus.
-ScrollBack == /\ visible /\ ~inView
-              /\ inView' = TRUE /\ away' = FALSE
-              /\ UNCHANGED <<phase, paused, visible, focused, cocked, wind, sound, fresh, skipped>>
-\* The site-wide switch. Off: stopLoops() and live.wind = null. On: live.wind = null, so the next step opens a real loop.
-SoundOff == /\ sound /\ visible /\ focused /\ sound' = FALSE /\ wind' = "none"
-            /\ UNCHANGED <<phase, paused, visible, focused, away, inView, cocked, fresh, skipped>>
-SoundOn == /\ ~sound /\ visible /\ focused /\ sound' = TRUE /\ wind' = "none"
-           /\ UNCHANGED <<phase, paused, visible, focused, away, inView, cocked, fresh, skipped>>
+             /\ paused' = FALSE /\ Wake(phase, FALSE, sheet, visible, focused)
+             /\ UNCHANGED <<phase, visible, focused, sheet, sound, held, fresh, skipped>>
+\* The level list: a choice screen. Opening stops the match and lets a finger go; closing wakes it with a breath.
+\* It opens from the title and the end screen (there is no list button during play; the menu has none either).
+OpenTheList == /\ ~sheet /\ ~paused /\ visible /\ focused /\ phase # "play"
+               /\ sheet' = TRUE /\ stale' = (stale \/ Ticking) /\ held' = FALSE /\ wind' = "none"
+               /\ UNCHANGED <<phase, paused, visible, focused, sound, breath, fresh, skipped>>
+CloseTheList == /\ sheet /\ ~paused /\ visible /\ focused
+                /\ sheet' = FALSE /\ Wake(phase, FALSE, FALSE, visible, focused)
+                /\ UNCHANGED <<phase, paused, visible, focused, sound, held, fresh, skipped>>
+\* useGameLoop's effect remounts (running flips): the session is a ref, so nothing it knows changes.
+TheLoopRemounts == UNCHANGED vars
+\* The site-wide switch (the menu or the desktop bar). Off: the kit stops every loop. On: syncLoops starts a fresh one.
+SoundOff == /\ sound /\ sound' = FALSE /\ wind' = "none"
+            /\ UNCHANGED <<phase, paused, visible, focused, sheet, held, stale, breath, fresh, skipped>>
+SoundOn == /\ ~sound /\ sound' = TRUE /\ wind' = WindOf(phase, paused, sheet, visible, focused, TRUE)
+           /\ UNCHANGED <<phase, paused, visible, focused, sheet, held, stale, breath, fresh, skipped>>
 
-Next == YouStart \/ YouRaiseRacket \/ YouLetGo \/ TheShuttleFlies \/ TheMatchEnds \/ TheResultSettles
-        \/ YouPressSpaceOnResult \/ YouPickALevel \/ WindowBlurs \/ WindowFocuses \/ TabHides \/ TabShows
-        \/ YouResume \/ ScrollAway \/ ScrollBack \/ SoundOff \/ SoundOn
+Next == YouStart \/ YouTouch \/ YouDecide \/ TheBreathEnds \/ TheMatchEnds \/ YouPressAKeyOnTheResult \/ TheResultSettles
+        \/ WindowBlurs \/ TabHides \/ YouPause \/ WindowFocuses \/ TabShows \/ YouResume \/ OpenTheList \/ CloseTheList
+        \/ TheLoopRemounts \/ SoundOff \/ SoundOn
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ phase \in Phases /\ paused \in BOOLEAN /\ visible \in BOOLEAN /\ focused \in BOOLEAN /\ away \in BOOLEAN
-          /\ inView \in BOOLEAN /\ cocked \in BOOLEAN /\ wind \in {"none", "stub", "real"} /\ sound \in BOOLEAN
+TypeOK == /\ phase \in Phases /\ paused \in BOOLEAN /\ visible \in BOOLEAN /\ focused \in BOOLEAN /\ sheet \in BOOLEAN
+          /\ sound \in BOOLEAN /\ wind \in Winds /\ held \in BOOLEAN /\ stale \in BOOLEAN /\ breath \in BOOLEAN
           /\ fresh \in BOOLEAN /\ skipped \in BOOLEAN
 
-\* The reader's rules.
-\* The match clock moves only while you are on the page.
-NoProgressWhileAway == ClockRuns => focused
-\* After you click away or hide the tab, the game doesn't think you are still holding the racket up.
-InputReleasedWhenAway == cocked => focused
-\* A match in play is paused while the tab is hidden, and while another window has focus.
+\* The reader's rules: the eight from before the rewrite, plus the new ones.
+NoProgressWhileAway == ClockRuns => (focused /\ visible /\ ~paused)
+InputReleasedWhenAway == held => (focused /\ visible /\ ~paused /\ ~sheet)
 PausedWhenHidden == (~visible /\ phase = "play") => paused
 PausedWhenBlurred == (~focused /\ phase = "play") => paused
-\* "খেলা থেমে আছে" shows only in a match that has started.
-PauseOnlyMidMatch == paused => phase = "play"
-\* The wind is heard only while the match runs in front of you.
-LoopOnlyWhenMeaningful == WindSounds => (phase = "play" /\ ~paused /\ visible /\ focused)
-\* With sound on, the wind is never stuck as a silent stub.
-LoopComesBack == (sound /\ phase = "play") => wind # "stub"
-\* A key that lands as the result appears doesn't throw the result away.
+PauseOnlyMidMatch == (stale \/ breath) => phase = "play"
+LoopOnlyWhenMeaningful == wind = "live" => (Ticking /\ sound)
+LoopComesBack == (Ticking /\ sound) => wind = "live"
+NeverAStub == wind # "stub"
 NoTapPastResult == ~skipped
+ChoiceFreezesPlay == sheet => ~ClockRuns
+\* Whenever the match moves again after time away, the breath ran first: the click that brings you back is not a swing.
+BreathAfterAway == Ticking => ~stale
+NoClickBackSwing == held => ~breath
 ====
