@@ -1,0 +1,43 @@
+TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)
+Warning: Please run the Java VM which executes TLC with a throughput optimized garbage collector by passing the "-XX:+UseParallelGC" property.
+(Use the -nowarning option to disable this warning.)
+Running breadth-first search Model-Checking with fp 0 and seed 1222164851258465710 with 1 worker on 8 cores with 4096MB heap and 64MB offheap memory [pid: 54606] (Mac OS X 26.5.1 aarch64, Homebrew 17.0.15 x86_64, MSBDiskFPSet, DiskStateQueue).
+Parsing file /Users/jisanmia/Developer/VBangladesh/ai_docs/statecharts/antenna-thik-koro/Antenna.tla
+Semantic processing of module Antenna
+Starting... (2026-11-04 09:01:26)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-11-04 09:01:26.
+Error: Invariant DialStillWhileAway is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ paused = FALSE
+/\ held = FALSE
+/\ phase = "ready"
+/\ visible = TRUE
+/\ sound = TRUE
+/\ hiss = FALSE
+/\ focused = TRUE
+
+State 2: <YouHoldTurn line 14, col 16 to line 18, col 63 of module Antenna>
+/\ paused = FALSE
+/\ held = TRUE
+/\ phase = "search"
+/\ visible = TRUE
+/\ sound = TRUE
+/\ hiss = TRUE
+/\ focused = TRUE
+
+State 3: <WindowBlurs line 21, col 16 to line 21, col 115 of module Antenna>
+/\ paused = FALSE
+/\ held = TRUE
+/\ phase = "search"
+/\ visible = TRUE
+/\ sound = TRUE
+/\ hiss = TRUE
+/\ focused = FALSE
+
+7 states generated, 7 distinct states found, 4 states left on queue.
+The depth of the complete state graph search is 3.
+The average outdegree of the complete state graph is 4 (minimum is 4, the maximum 4 and the 95th percentile is 4).
+Finished in 00s at (2026-11-04 09:01:26)
+
