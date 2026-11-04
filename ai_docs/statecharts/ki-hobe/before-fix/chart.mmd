@@ -1,0 +1,111 @@
+---
+title: "কﬂ°°2496¶ß হবﬂ°°2503¶ß বলﬂ°°2507¶ß তﬂ°°2507¶ß?: the guess, the experiment, the sound, the rest screen and the parent gate"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: rest
+    lg2: done
+    lg3: Breaks NoReadingNeeded or ParentGate or RestOnlyAtBreak or SilentWhenMuted
+    lg4: Breaks NoReadingNeeded or ParentGate or RestOnlyAtBreak or SilentWhenMuted in some cases
+    lg5: Path to the NoProgressWhileAway or NoReadingNeeded or ParentGate or RestOnlyAtBreak or SilentWhenMuted bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Guess what will happen
+      s1: The experiment plays
+      s2: What happened, and why
+      s3: Round done: আব#2494;র খ#2503;ল#2507; / শ#2503;ষ / পর#2503;র ধ#2494;প
+      s4: পর#2496;ক#2509;ষ#2494;গ#2494;র বন#2509;ধ
+      [*] --> s0
+      s0 --> s1: you tap a guess [when Window is You're watching and Rest is not Rest screen up]
+      s1 --> s0: you pick a step in সব ধ#2494;প [when Window is You're watching]
+      s1 --> s2: the experiment ends and the answer shows
+      s2 --> s0: you pick a step in সব ধ#2494;প [when Window is You're watching]
+      s2 --> s3: you tap শ#2503;ষ under the last answer [when Window is You're watching]
+      s3 --> s0: you pick a step in সব ধ#2494;প or you tap আব#2494;র খ#2503;ল#2507; [when Window is You're watching and Rest is not Rest screen up]
+      s3 --> s4: you tap শ#2503;ষ [when Window is You're watching and Rest is not Rest screen up]
+      s4 --> s0: you pick a step in সব ধ#2494;প or you tap আব#2494;র খ#2503;ল#2507; [when Window is You're watching]
+      s3 --> s0: you press Tab and Enter behind the rest screen [when Window is You're watching and Rest is Rest screen up and Gate is not Gate open, parent holding]
+    }
+    --
+    state "Window" as r1 {
+      s5: You're watching
+      s6: You're away
+      [*] --> s5
+      s5 --> s6: you switch to another app or window
+      s6 --> s5: you come back
+    }
+    --
+    state "Sound" as r2 {
+      s7: Sound on
+      s8: Sound off
+      s9: Sound on, a note coming
+      s10: Sound off, a note still coming
+      [*] --> s7
+      s7 --> s8: you turn sound off [when Window is You're watching]
+      s7 --> s9: you tap a guess [when Game is Guess what will happen and Window is You're watching and Rest is not Rest screen up]
+      s8 --> s7: you turn sound on [when Window is You're watching]
+      s9 --> s10: you turn sound off [when Window is You're watching]
+      s9 --> s7: the splash or ring sounds
+      s10 --> s9: you turn sound on [when Window is You're watching]
+      s10 --> s8: the splash or ring sounds
+    }
+    --
+    state "Rest" as r3 {
+      s11: Time left today
+      s12: Today's time used up
+      s13: Rest screen up
+      [*] --> s11
+      s11 --> s12: today's minutes run out
+      s12 --> s13: you tap শ#2503;ষ under the last answer [when Game is What happened, and why and Window is You're watching]
+      s13 --> s11: a parent gives ten more minutes [when Window is You're watching]
+    }
+    --
+    state "Gate" as r4 {
+      s14: Gate closed
+      s15: Gate open, parent holding
+      s16: Gate open, child holding
+      [*] --> s14
+      s14 --> s15: a parent opens বড#2492;দ#2503;র জন#2509;য [when Window is You're watching and Rest is not Rest screen up]
+      s15 --> s14: a parent presses বন#2509;ধ কর#2507; [when Window is You're watching]
+      s15 --> s16: the parent hands the phone back or you pick a step in সব ধ#2494;প [when Window is You're watching]
+      s15 --> s16: you tap a guess [when Game is Guess what will happen and Window is You're watching]
+      s16 --> s14: a parent presses বন#2509;ধ কর#2507; [when Window is You're watching]
+      s15 --> s16: you tap শ#2503;ষ under the last answer [when Game is What happened, and why and Window is You're watching]
+      s15 --> s16: you tap আব#2494;র খ#2503;ল#2507; [when Game is one of Round done: আব#2494;র খ#2503;ল#2507; / শ#2503;ষ / পর#2503;র ধ#2494;প, পর#2496;ক#2509;ষ#2494;গ#2494;র বন#2509;ধ and Window is You're watching]
+      s15 --> s16: you tap শ#2503;ষ [when Game is Round done: আব#2494;র খ#2503;ল#2507; / শ#2503;ষ / পর#2503;র ধ#2494;প and Window is You're watching]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 bugPath
+  class s1 teal
+  class s1 bugPath
+  class s2 teal
+  class s2 bugPath
+  class s3 breaks
+  class s3 bugPath
+  class s4 blue
+  class s5 bugPath
+  class s6 bugPath
+  class s7 bugPath
+  class s9 bugPath
+  class s10 breaks
+  class s10 bugPath
+  class s11 bugPath
+  class s12 bugPath
+  class s13 yellow
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 bugPath
+  class s15 bugPath
+  class s16 breaks
+  class s16 bugPath

@@ -15,7 +15,10 @@ export function soundOn() {
 export function setSoundOn(next: boolean) {
   enabled = next;
   try { localStorage.setItem(KEY, next ? '1' : '0'); } catch { /* private mode: fine */ }
-  if (next) context(); else stopLoops();
+  if (next) { context(); return; }
+  // Off means silent now: loops, notes already scheduled, and a word being read aloud.
+  stopLoops(); silenceScheduled();
+  try { if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel(); } catch { /* no speech */ }
 }
 
 function context() {

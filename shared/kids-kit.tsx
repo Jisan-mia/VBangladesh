@@ -25,21 +25,42 @@ export function ParentNote({ learns, age, together, school }: { slug?: string; l
 
 const WORDS = ['শূন্য', 'এক', 'দুই', 'তিন', 'চার', 'পাঁচ', 'ছয়', 'সাত', 'আট', 'নয়'];
 
-/** A gate a 3–6 year old can't pass: a sum written in words, answered on a pad, opened by a 2-second hold. */
+/**
+ * A gate a 3–6 year old can't pass: a 2-second hold, then a sum written in words, answered on a pad.
+ * Key auto-repeat never counts as a hold; a wrong answer asks a new sum and two wrong answers close the gate;
+ * once open it closes itself after a minute or when the page is left, so a phone handed back is locked again.
+ */
 export function ParentGate({ label = 'বড়দের জন্য', children }: { label?: string; children: ReactNode }) {
   const [stage, setStage] = useState<'closed' | 'ask' | 'open'>('closed');
   const [pair, setPair] = useState<[number, number]>([7, 5]);
   const [answer, setAnswer] = useState('');
+  const misses = useRef(0);
   const hold = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [holding, setHolding] = useState(false);
-  const start = () => { setHolding(true); hold.current = setTimeout(() => { setHolding(false); setPair([3 + Math.floor(Math.random() * 7), 3 + Math.floor(Math.random() * 7)]); setAnswer(''); setStage('ask'); }, 2000); };
-  const stop = () => { setHolding(false); if (hold.current) clearTimeout(hold.current); };
+  // Sums are always 10–18, so the answer is two digits: random taps open it about 1 time in 100.
+  const ask = () => { const a = 3 + Math.floor(Math.random() * 7), b = Math.max(3, 10 - a) + Math.floor(Math.random() * (10 - Math.max(3, 10 - a))); setPair([a, b]); setAnswer(''); };
+  const start = () => {
+    if (hold.current) return;
+    setHolding(true);
+    hold.current = setTimeout(() => { hold.current = null; setHolding(false); misses.current = 0; ask(); setStage('ask'); }, 2000);
+  };
+  const stop = () => { setHolding(false); if (hold.current) { clearTimeout(hold.current); hold.current = null; } };
   useEffect(() => stop, []);
+  useEffect(() => {
+    if (stage !== 'open') return;
+    const close = () => setStage('closed');
+    const timer = setTimeout(close, 60000);
+    const away = () => { if (document.hidden) close(); };
+    document.addEventListener('visibilitychange', away);
+    window.addEventListener('pagehide', close);
+    return () => { clearTimeout(timer); document.removeEventListener('visibilitychange', away); window.removeEventListener('pagehide', close); };
+  }, [stage]);
   const press = (digit: number) => {
-    const next = (answer + digit).slice(-2);
-    setAnswer(next);
-    if (Number(next) === pair[0] + pair[1]) setStage('open');
-    else if (next.length >= 2) setAnswer('');
+    const sum = pair[0] + pair[1], next = answer + digit;
+    if (next.length < String(sum).length) { setAnswer(next); return; }
+    if (Number(next) === sum) { setStage('open'); return; }
+    misses.current += 1;
+    if (misses.current >= 2) setStage('closed'); else ask();
   };
   if (stage === 'open') return <div className="kk-gate-open">{children}<button type="button" className="kk-link" onClick={() => setStage('closed')}>বন্ধ করো</button></div>;
   if (stage === 'ask') return <div className="kk-gate" role="dialog" aria-label="বড়দের জন্য প্রশ্ন">
@@ -49,7 +70,7 @@ export function ParentGate({ label = 'বড়দের জন্য', children
     <button type="button" className="kk-link" onClick={() => setStage('closed')}>থাক</button>
   </div>;
   return <button type="button" className={`kk-gate-button${holding ? ' holding' : ''}`} onPointerDown={start} onPointerUp={stop} onPointerLeave={stop} onPointerCancel={stop}
-    onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); start(); } }} onKeyUp={stop}
+    onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); if (!event.repeat) start(); } }} onKeyUp={stop} onBlur={stop}
     aria-label={`${label}: দুই সেকেন্ড চেপে ধরো`}>{label} <small>চেপে ধরো</small></button>;
 }
 
@@ -102,7 +123,7 @@ export function useKidsSession() {
   const [resting, setResting] = useState(false);
   useEffect(() => {
     const tick = setInterval(() => {
-      if (document.hidden) return;
+      if (document.hidden || !document.hasFocus()) return; // one count per child, not per open tab
       let state = { date: today(), seconds: 0 };
       try { const saved = JSON.parse(read(SESSION_KEY) ?? 'null'); if (saved?.date === state.date) state = saved; } catch { /* fresh day */ }
       state.seconds += 10;
@@ -139,7 +160,22 @@ export function RestScreen({ onExtend }: { onExtend: (minutes: number) => void }
     return () => clearTimeout(timer);
   }, [breath]);
   const choose = (minutes: number) => { write(LIMIT_KEY, String(minutes)); setLimit(minutes); };
-  return <div className="kk-rest" role="dialog" aria-modal="true" aria-label="আজকের খেলা শেষ">
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // A real modal: nothing behind the rest screen hears a key, tap or focus while it is up.
+    const node = box.current;
+    if (!node) return;
+    node.focus();
+    const block = (event: Event) => {
+      if (event.target instanceof Node && node.contains(event.target)) return;
+      event.stopImmediatePropagation(); event.preventDefault();
+      if (event.type === 'focusin') node.focus();
+    };
+    const kinds = ['keydown', 'keyup', 'keypress', 'pointerdown', 'pointerup', 'click', 'focusin'];
+    for (const kind of kinds) window.addEventListener(kind, block, true);
+    return () => { for (const kind of kinds) window.removeEventListener(kind, block, true); };
+  }, []);
+  return <div ref={box} tabIndex={-1} className="kk-rest" role="dialog" aria-modal="true" aria-label="আজকের খেলা শেষ">
     <div className={`kk-balloon${breath >= 5 ? ' away' : ''}`} aria-hidden="true" />
     <p className="kk-rest-cue">{breath >= 5 ? 'বেলুন উড়ে গেল।' : 'বেলুনের সাথে শ্বাস নাও… আস্তে ছাড়ো।'}</p>
     <h2>আজ এটুকুই, কাল আবার।</h2>
@@ -165,8 +201,8 @@ export function useBanglaVoice() {
   return voice;
 }
 
-/** Speaks a short Bangla word or phrase if a Bangla voice exists; otherwise does nothing. Never blocks the game. */
-/** Reads `text` aloud in a Bangla voice. Silent when the site's sound is off, like every other sound. */
+/** Reads `text` aloud in a Bangla voice. Silent when the site's sound is off, like every other sound;
+ * does nothing on phones with no Bangla voice, and never blocks the game. */
 export function speak(text: string) {
   if (typeof speechSynthesis === 'undefined' || !soundOn()) return;
   const voice = speechSynthesis.getVoices().find(item => /^bn[-_]/i.test(item.lang));
