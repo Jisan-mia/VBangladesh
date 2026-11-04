@@ -1,72 +1,178 @@
-# তারের ফাঁকে বেলুন: statechart (before the rewrite)
+# তারের ফাঁকে বেলুন: statechart
 
-Model: `TarerFankeBelun.tla` / `TarerFankeBelun.cfg` / `view.ts`. It mirrors `tools/tarer-fanke-belun/components/balloon-game.tsx`: press, begin, again/choose/primary with `AGAIN_GUARD_MS`, `finish` and its `setTimeout`s, the pop and over handling in `step`, `stopLoops`, the visibilitychange and inView effects, and `SoundToggle onChange={stopLoops}`. It also mirrors `tools/tarer-fanke-belun/lib/game.ts`: `puff` and `stepRun`.
-Run: `before-fix/report.md` and `before-fix/chart.mmd`. TLC found 216 states. The chart has 20 states and 33 arrows.
+Two halves:
+- **before-fix/**: the model of the shipped tap-to-puff game, which found 3 broken rules (3 bugs). `before-fix/notes.md` is that analysis, with its live replays. The old spec is in git history (`TarerFankeBelun.tla` before the Nov 2026 rewrite).
+- **after-fix/**: the model of the rewrite (hold to rise, 3 পাড়া × 4 levels, spare balloons, crows and gusts), where every rule holds.
 
-## Systems modelled
-- **Play phase:** ready → playing → pop → over, or playing → over (level cleared). Street 0 is the endless street. Street 1 is a level that one crossing clears.
-- **Pause and focus:** the window can be on the page, blurred, hidden, or scrolled out of view. Hiding the tab and scrolling the stage away pause the run and stop the loops. Blur does nothing.
-- **Input:** a puff from a tap on the stage or Space, Enter or ↑. Both need the stage on screen. A puff while paused resumes the run.
-- **Sound:** the wire-hum loop (`ear.hum ??= loop("hum")`) starts only inside a puff. `stopLoops()` runs on pop, finish, pause and begin, and on every flip of the sound switch. While sound is off, `loop()` returns a silent stub.
-- **Time:** the result guard (`AGAIN_GUARD_MS`, 400 ms) and the celebration timeouts in `finish()`: 300 + stars × 260 ms after a clear, and 650 ms after a new endless best.
-- **Choices:** আরেকবার / পরের লেভেল (guarded) and the level grid (no guard, open in any phase).
-- Not modelled: the wind loop, which behaves exactly like the hum. Saved stars aren't modelled either: they go through the shared `useLevels`/`recordLevel` (maximum only), and `migrateLevels` runs only while no level store exists. Friend links aren't modelled: `parseCard` checks them.
+## Files
+| File | What |
+|---|---|
+| `TarerFankeBelun.tla`, `.cfg`, `view.ts` | The rewritten game: the screens, the shared player's menu, window focus, the lane on screen, the level list, your finger or Space, the run with a spare balloon, the wire hum and wind loops, the card's chimes. |
+| `before-fix/report.md`, `chart.mmd`, `notes.md` | The old model's run and the bug write-up. |
+| `after-fix/report.md`, `chart.mmd` | Today's spec: 303 states, 1634 steps, all 15 rules hold (14 plus NoDeadlock). |
 
-## Rules (each is an INVARIANT)
-| Rule | In plain words | Result |
-|---|---|---|
-| PausedWhenHidden | Hiding the tab mid-flight pauses the run. | holds |
-| PausedWhenOffScreen | Scrolling the game out of view mid-flight pauses it. | holds |
-| PausedWhenBlurred | Clicking into another window mid-flight pauses it. | **breaks** |
-| LoopOnlyWhenMeaningful | The wire hum plays only while you fly, unpaused, with sound on, never on the result. | holds |
-| LoopComesBack | While you fly with sound on, the hum is playing. | **breaks** (low) |
-| NoCelebrationAfterLeaving | A fanfare or confetti never fires after you've left the result. | **breaks** |
-| NoTapPastResult | A tap already on its way when the balloon pops can't skip the result. | holds (AGAIN_GUARD_MS) |
-| NoDoubleResult | The result fires its sounds once per run. | holds |
-| NoDeadlock | You can always do something. | holds |
+**What the model mirrors:**
+- `tools/tarer-fanke-belun/components/belun-game.tsx`: `begin` (cuts scheduled tones), `finish`, `keepStars` on `E.WIN`, the blur/focus/visibility effect, the IntersectionObserver on the lane, the sound effect, the sheet effect, and `useGamePlayer`'s `onPause`, `onResume`, `onRestart`;
+- `lib/session.ts`: `ticking`, `wantHum`, `wantWind`, `syncLoops` (after every event and every step), `blur`, `hide`, `setInView`, `pause`, `resume` (with its breath), `openSheet`, `pointerDown`, `letGo`, `takeInput` (a tap between two steps still counts once);
+- `lib/step.hot.ts` and `lib/belun.ts`: the first press, a pop, `respawn` (it marks the hold, so a finger held through the pop must lift and press again), the last crossing and the glide (`END`);
+- `shared/game-player-client.tsx`: blur, hide and scrolling the stage away open the menu once you've touched the game; চালিয়ে যাও and নতুন করে শুরু send a focus first; pausing cuts scheduled tones.
+- Abstractions: a level is one crossing and two balloons; `Windy` (a street with gusts) is a constant, set TRUE so the wind loop is checked too.
 
-## Bugs
+## Rules (each holds after the fix)
+| Rule | In plain words | Before | After |
+|---|---|---|---|
+| PausedWhenBlurred | Clicking into another window mid-flight pauses the run. | **broke** | holds |
+| NoCelebrationAfterLeaving | A fanfare never plays after you've left the card. | **broke** | holds |
+| LoopComesBack | While you fly with sound on, the wires hum (and the wind blows on a windy street). | **broke** | holds |
+| PausedWhenHidden | Hiding the tab mid-flight pauses it. | held | holds |
+| StillWhenOffScreen | With the lane scrolled away, nothing on the street moves. | held (as PausedWhenOffScreen) | holds |
+| LoopOnlyWhenMeaningful | The hum plays only while you fly, unpaused, with sound on; the wind only on top of it. | held | holds |
+| NoDoubleResult | A run ends once. | held | holds |
+| InputReleasedWhenAway | After a blur, a hidden tab, the menu or the list, no finger or key is held. | new | holds |
+| ChoiceFreezesPlay | The level list opens only on the title or the card, and nothing moves while it is open. | new | holds |
+| StarsKeptTheMomentYouWin | Stars are saved as the last crossing passes, before the glide and the card, so leaving early never loses them. | new | holds |
+| SpareWaitsForAFreshPress | A balloon (the first or a spare) flies only after a press made while the street was moving. | new | holds |
+| ProgressOnlyWhileTicking | A press taken, a pop, the win or the glide happen only while the street moves. | new | holds |
+| TheClickBackIsNotAPress | The click that brings focus back never lifts the balloon. | new | holds |
 
-### 1. PausedWhenBlurred: "I clicked into another window for a second and came back to ফটাস!"
-- **Path** (report, PausedWhenBlurred): 1 "you tap (puff)", 2 "you click into another window", and the run goes on.
-- **Cause:** there is no `blur` handler, and `useGameLoop` stops only while the tab is hidden. In a real-time game with gravity, that means a fall.
-- **Live replay (Orca):** one puff, then `blur` 100 ms later. Before the blur: playing, y 176, dist 12. After 2 s away: over, y 342, dist 136, `popped: "wire"`. No pause cover appeared, only the result cover.
-- **Fix (shared):** pause on `blur` in `useGameLoop` or the shared player, and stop the loops. The same fix covers bostar-pahar and antenna-thik-koro.
+**PausedWhenOffScreen** is restated as **StillWhenOffScreen**. The first run of the new model found the shared player's hole: on a desktop, the bar's ⟳ (or ▶) under the stage works with the stage scrolled away, so the menu can close while the lane is off screen. The game's own observer (`ticking` needs `inView`) keeps the street still until it is back, which is what the reader cares about. The player hole is reported to the orchestrator (same as ভো-কাট্টা).
 
-### 2. NoCelebrationAfterLeaving: "I pressed আরেকবার right after a new best, and the fanfare and confetti went off over my next run."
-- **Path** (report, NoCelebrationAfterLeaving, shortest): 1 "you tap (puff)", 2 "the last crossing is passed", 3 "you pick যত দূর পারো" (or a level) while the fanfare is still waiting. The everyday path is the same with "you press আরেকবার / পরের লেভেল" after the 400 ms guard and before the timeout.
-- **Cause:** `finish()` calls `window.setTimeout(...)` and never keeps or clears the ids. `begin()` clears the loops but not these timeouts. The guard (400 ms) is shorter than every timeout (650 ms for a best; 820 ms or 1080 ms for 2 or 3 stars).
-- **Live replays:**
-  - Endless street, a first run (a new best): আরেকবার was pressed 432 ms after the result. 177 ms later, on the new run's ready screen, 4 fanfare tones and a confetti canvas fired.
-  - Level 1 cleared with 2 stars: "পরের লেভেল" was pressed at 461 ms. 352 ms later, on level 2's ready screen, `sfx.good` played (2 tones).
-- **Fix (shared):** keep celebration timeouts in a ref and clear them in `begin()`, as bostar-pahar's `timers` does. Better, add a shared `useTimers()` (later, clearAll on reset and unmount) to `shared/game-kit.ts`, so no game can leak one.
+## The three bugs, fixed
+1. **PausedWhenBlurred:** "I clicked into another window for a second and came back to ফটাস!" `session.blur` lets go and `ticking` needs focus; the player opens its menu. Test: `bug 1, PausedWhenBlurred` in `tests/session.test.ts`.
+   - Live (Orca, Pixel 9, level 2, finger held): before the blur y 269.8, dist 1197.7; after 2 s away y 269.8, dist 1197.7, the menu open, `pointer` null. After চালিয়ে যাও, the street is still at 150 ms (the breath), then moves (dist 1258.4 at 950 ms).
+2. **NoCelebrationAfterLeaving:** "I pressed আরেকবার right after a new best, and the fanfare went off over my next run." The component keeps no timers. Stars, the fanfare and the lose tones are delayed `tone()`s, which `begin()` (`silenceScheduled`) and the player's pause cut. Stars are recorded at `E.WIN`. Test: `bug 2, NoCelebrationAfterLeaving` (a source check: no `setTimeout` in the component, `begin` cuts scheduled tones, `keepStars` on `E.WIN`).
+   - Live: a ★★★ win on level 2, then ১ পরের লেভেল 450 ms after the card. In the next 1.5 s, only 4 tones started (the new level's motif) and no confetti canvas was added.
+3. **LoopComesBack:** "After চালিয়ে যাও, or after turning sound back on, the wires stay silent until my next tap." `syncLoops` runs after every event, including the sound switch and resume, and always makes a fresh loop (never `??=`). Test: `bug 3, LoopComesBack`.
+   - Live (counting `AudioScheduledSourceNode.start()` with no argument; the dev server keeps audio muted): flying with the hum on; P opened the menu (hum off); sound off, then on (still paused: hum off); চালিয়ে যাও brought the hum back at once (1 new loop start, no press needed).
 
-### 3. LoopComesBack (low): "After চালিয়ে যাও, or after turning sound back on, the wires stay silent until my next tap."
-- **Path** (report, LoopComesBack): 1 "you tap (puff)", 2 "you turn sound on" (from off). Resuming after a pause does the same.
-- **Cause:** the loops start only inside `press()`'s puff branch. The paused branch returns before it, and the sound switch only stops the loops.
-- **Live replay:** while flying with the hum live (1 loop), the switch went off and on: 0 loops, and the hum came back 602 ms later at the next puff. After scrolling away (paused, 0 loops) and pressing চালিয়ে যাও: 0 loops, and the hum came back 413 ms later at the next puff.
-- **Fix (game):** start the loops in the resume branch too, and use `SoundToggle onChange={on => { stopLoops(); if (on && playing) startLoops(); }}`. The skill's "Sound switch" fix describes the same thing. Low severity, because players puff about twice a second.
+## Also checked live in Orca (Pixel 9)
+- World 1 end to end by an in-page autopilot (shared `ektukhani-slow` was on, so in ধীরে খেলো): levels 1–4 cleared with ★★★, level 1 in 8.1 s of flying, the finale's tangle bar counted down. Level 8 (গোদা কাক) cleared after one pop and a spare, level 12 (রাতের ঝড়) cleared, with 4 gusts ridden.
+- Orca pauses `requestAnimationFrame` in a pane that isn't on screen, and other agents switch tabs, so the long runs used a 16 ms `setTimeout` shim for rAF, with the game code unchanged.
+- 320 px: no sideways scroll on the page, the title or the lane.
 
-## Quality-bar gaps (played in Orca: levels 1–2 and the endless street with a simple autopilot, plus pops)
-1. **Pause:** there is no pause button and no P or Esc. You can pause only by hiding the tab or scrolling away, and blur doesn't pause (bug 1).
-2. **HUD in the middle:** the big outlined score ("২/৮") sits top-centre over the play area. The wind label sits on the stage. Corners and a thin progress bar would keep the middle clear.
-3. **Difficulty step:** our autopilot cleared level 1 (6 crossings) on its first try. On level 2, where the gusts start, it popped at 3/8. Two changes arrive at once: gusts and more crossings. The bar asks for one new idea per level.
-4. **Danger:** a near-wire moment is heard (the hum rises) but not seen. Add an edge glow or a balloon outline flash, so the meaning the sound carries is also visible (§7).
-5. **Celebrations leak** into the next run (bug 2).
-6. **Words above the game:** the H1 and lead sit above the stage and push it down on a phone.
-7. **End screen (good):** the cover shows the stars, the crossings, grazes, a near-miss line ("আর ১টা ঘষা কম হলেই ৩ তারা।") and the friend's score. Keep it.
-8. **Sound (good):** puff, squeak, pop, a climbing streak note and a hum that follows the clearance. There is no stage tune.
-
-Screenshots: `.shots/tarer-fanke-belun-sc-first.png`, `-play.png` (level 2, score over the middle), `-over.png` (popped result cover).
-
-## Live-replay notes
-- Orca throttles requestAnimationFrame in a tab that isn't on screen. The replays used a 16 ms `setTimeout` shim, with the game code unchanged.
-- Orca makes `document.hidden` non-configurable, so hiding was not faked. The scroll-away pause stood in for it, and it held live.
-- Loops were counted by instrumenting `AudioScheduledSourceNode.start()`/`stop()` (a no-argument start is `loop()`). Tones were counted by instrumenting `OscillatorNode.start()` with a `when` argument. Confetti was counted as `<canvas aria-hidden>` elements added to `body`.
+## The chart (after-fix/chart.mmd)
+```mermaid
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  state "Run On the title" as s0 {
+    s1: Window You're on the lane
+    s2: Window Away: another window, a hidden tab or the lane scrolled off
+  }
+  state "Run Waiting for the first press" as s3 {
+    s4: Window You're on the lane
+    s5: Window Away: another window, a hidden tab or the lane scrolled off
+  }
+  state "Run Level list open" as s6 {
+    s7: Window You're on the lane
+    s8: Window Away: another window, a hidden tab or the lane scrolled off
+  }
+  state "Run Paused (menu)" as s9 {
+    s10: Window Away: another window, a hidden tab or the lane scrolled off
+    s11: Window You're on the lane
+  }
+  state "Run Flying" as s12 {
+    s13: Window You're on the lane
+    s14: Window Away: another window, a hidden tab or the lane scrolled off
+  }
+  state "Run Cleared: floating free" as s15 {
+    s16: Window You're on the lane
+    s17: Window Away: another window, a hidden tab or the lane scrolled off
+  }
+  state "Run ফট#2494;স!" as s18 {
+    s19: Window You're on the lane
+    s20: Window Away: another window, a hidden tab or the lane scrolled off
+  }
+  state "Run Card shows" as s21 {
+    s22: Window You're on the lane
+    s23: Window Away: another window, a hidden tab or the lane scrolled off
+  }
+  state "Run A spare balloon waits" as s24 {
+    s25: Window You're on the lane
+    s26: Window Away: another window, a hidden tab or the lane scrolled off
+  }
+  [*] --> s1
+  s1 --> s4: you tap the title balloon
+  s1 --> s2: you hide the tab or you click into another window or you scroll the lane away
+  s1 --> s7: you open সব ল#2503;ভ#2503;ল
+  s4 --> s10: you scroll the lane away
+  s2 --> s1: the tab shows again or you come back to the window or you scroll the lane back
+  s7 --> s1: you close the list
+  s7 --> s4: you pick a level
+  s7 --> s8: you hide the tab or you click into another window or you scroll the lane away or you press pause
+  s4 --> s13: you press: the balloon flies
+  s10 --> s11: the tab shows again or you come back to the window or you scroll the lane back
+  s10 --> s5: you press নত#2497;ন কর#2503; শ#2497;র#2497; or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s8 --> s2: you close the list
+  s8 --> s7: the tab shows again or you come back to the window or you scroll the lane back or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s13 --> s10: you scroll the lane away
+  s13 --> s16: the last crossing is passed (stars kept)
+  s13 --> s19: the balloon touches a wire, a crow or the street
+  s5 --> s4: you scroll the lane back
+  s11 --> s10: you hide the tab or you click into another window or you scroll the lane away
+  s10 --> s14: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s16 --> s10: you scroll the lane away
+  s16 --> s22: the card shows
+  s19 --> s10: you scroll the lane away
+  s19 --> s25: the pop ends
+  s14 --> s13: you scroll the lane back
+  s10 --> s17: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s22 --> s4: you pick পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507;
+  s22 --> s7: you open সব ল#2503;ভ#2503;ল
+  s22 --> s23: you hide the tab or you click into another window or you press pause or you scroll the lane away
+  s10 --> s20: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s25 --> s10: you scroll the lane away
+  s17 --> s16: you scroll the lane back
+  s7 --> s22: you close the list
+  s23 --> s22: the tab shows again or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you come back to the window or you scroll the lane back
+  s23 --> s5: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s20 --> s19: you scroll the lane back
+  s10 --> s26: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s8 --> s5: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s26 --> s25: you scroll the lane back
+  s25 --> s13: you press: the balloon flies
+  s8 --> s23: you close the list
+  s19 --> s22: the pop ends
+  s3 --> s10: you hide the tab or you click into another window or you press pause
+  s6 --> s4: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s9 --> s4: you press নত#2497;ন কর#2503; শ#2497;র#2497; or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s9 --> s13: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s9 --> s16: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s9 --> s19: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s9 --> s25: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s12 --> s10: you hide the tab or you click into another window or you press pause
+  s15 --> s10: you hide the tab or you click into another window or you press pause
+  s18 --> s10: you hide the tab or you click into another window or you press pause
+  s21 --> s4: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s24 --> s10: you hide the tab or you click into another window or you press pause
+  class s1 tan
+  class s2 tan
+  class s4 tan
+  class s5 tan
+  class s10 yellow
+  class s11 yellow
+  class s13 teal
+  class s14 teal
+  class s16 teal
+  class s17 teal
+  class s19 teal
+  class s20 teal
+  class s22 blue
+  class s23 blue
+  class s25 tan
+  class s26 tan
+```
 
 ## Regenerate
 ```sh
 scripts/statechart.sh ai_docs/statecharts/tarer-fanke-belun/TarerFankeBelun.tla --view ai_docs/statecharts/tarer-fanke-belun/view.ts --out ai_docs/statecharts/tarer-fanke-belun/after-fix
 rm ai_docs/statecharts/tarer-fanke-belun/after-fix/tlc*.out
 ```
-The chart shows a pick from সব লেভেল only from the result. The model keeps every pick.
