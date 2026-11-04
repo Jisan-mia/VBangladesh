@@ -10,6 +10,7 @@ The owner wants every check done in Orca's built-in browser. Load the `orca-cli`
 ## Basics
 - **Open your own tab:** `orca tab create --url http://127.0.0.1:3100/<slug> --json` and keep `result.browserPageId`. Pass `--page <id>` on every later command; other agents have tabs too. Close your tab when you're done (`orca tab list --json`, then `orca tab close --index N --json`).
 - **Long autopilots:** Orca pauses `requestAnimationFrame` in a tab that isn't visible, and other agents switch tabs. Open your page in a split pane (`orca tab create --url … --split right --json`) so it keeps running.
+- **Shared storage:** every agent's tab shares 127.0.0.1:3100's localStorage. Never call `localStorage.clear()`; remove only your own game's keys, and save and restore any shared key you change (like `ektukhani-kids-time`).
 - **Phone layout:** `orca exec --page <id> --command 'set device "Pixel 9"' --json` after the page loads. Navigation resets it. Quote the device name.
 - **Read the page:** `orca snapshot --page <id> --json` gives refs like `@e5` for `orca click --element @e5`. Re-snapshot after any change.
 - **Run JS:** `orca eval --page <id> --expression "(async()=>{ … return JSON.stringify(x) })()" --json`; the value is `result.result`. Use it for checks: overflow (`document.documentElement.scrollWidth > innerWidth`), element counts, game state you expose, timings.
