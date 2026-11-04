@@ -1,0 +1,147 @@
+---
+title: "গﬂ°°2507¶ßলকধﬂ°°2494¶ßﬂ°°2433¶ßধﬂ°°2494¶ß: the run, the window, your finger and the card"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks EnterDoesWhatTheButtonSays or InputReleasedWhenAway or NoProgressWhileAway or NoSteeringWithoutAPress or PausedWhenBlurred or StarsMatchYourSpeed
+    lg4: Breaks EnterDoesWhatTheButtonSays or InputReleasedWhenAway or NoProgressWhileAway or NoSteeringWithoutAPress or PausedWhenBlurred or StarsMatchYourSpeed in some cases
+    lg5: Path to the EnterDoesWhatTheButtonSays or InputReleasedWhenAway or NoProgressWhileAway or NoSteeringWithoutAPress or PausedWhenBlurred or StarsMatchYourSpeed bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Waiting at home
+      s1: Walking, clock running
+      s2: At the shop, card shows
+      s3: Paused (থ#2503;ম#2503; আছ#2503;)
+      s4: Standing at a junction, clock running
+      s5: At the shop, graded at the slow par
+      [*] --> s0
+      s0 --> s1: you press an arrow [when Window is You're on the page]
+      s1 --> s0: you pick a level or you press আব#2494;র শ#2497;র#2497; or আব#2494;র খ#2503;ল#2507; or you press আজক#2503;র ধ#2494;#2433;ধ#2494; [when Window is You're on the page]
+      s1 --> s2: the walker reaches the shop [when Speed is not ধ#2496;র#2503; খ#2503;ল#2507; on, after walking at full speed]
+      s1 --> s3: you hide the tab
+      s1 --> s4: the walker stops at a junction
+      s0 --> s1: you swipe [when Window is You're on the page and Finger is Finger or mouse held on the board]
+      s2 --> s0: you pick a level or you press আব#2494;র শ#2497;র#2497; or আব#2494;র খ#2503;ল#2507; or you press আজক#2503;র ধ#2494;#2433;ধ#2494; or you press the card's gold button or you press Enter on the card [when Window is You're on the page]
+      s4 --> s0: you pick a level or you press আব#2494;র শ#2497;র#2497; or আব#2494;র খ#2503;ল#2507; or you press আজক#2503;র ধ#2494;#2433;ধ#2494; [when Window is You're on the page]
+      s4 --> s1: you press an arrow [when Window is You're on the page]
+      s4 --> s3: you hide the tab
+      s1 --> s5: the walker reaches the shop [when Speed is ধ#2496;র#2503; খ#2503;ল#2507; on, after walking at full speed]
+      s5 --> s0: you pick a level or you press আব#2494;র শ#2497;র#2497; or আব#2494;র খ#2503;ল#2507; or you press আজক#2503;র ধ#2494;#2433;ধ#2494; or you press the card's gold button or you press Enter on the card [when Window is You're on the page]
+      s3 --> s0: you pick a level or you press আব#2494;র শ#2497;র#2497; or আব#2494;র খ#2503;ল#2507; or you press আজক#2503;র ধ#2494;#2433;ধ#2494; [when Window is You're on the page]
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s4 --> s1: you swipe [when Window is You're on the page and Finger is Finger or mouse held on the board]
+      s3 --> s4: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s0 --> s1: you move the mouse without pressing [when Window is You're on the page and Finger is Button up, but the game still thinks it's held]
+      s4 --> s1: you move the mouse without pressing [when Window is You're on the page and Finger is Button up, but the game still thinks it's held]
+    }
+    --
+    state "Window" as r1 {
+      s6: You're on the page
+      s7: Another window has focus
+      s8: Tab hidden
+      [*] --> s6
+      s6 --> s7: you click into another window
+      s6 --> s8: you hide the tab
+      s7 --> s6: you come back to the window
+      s7 --> s8: you hide the tab
+      s8 --> s6: the tab shows again
+    }
+    --
+    state "Finger" as r2 {
+      s9: Hands off
+      s10: Finger or mouse held on the board
+      s11: Button up, but the game still thinks it's held
+      [*] --> s9
+      s9 --> s10: you put a finger or the mouse down on the board [when Game is one of Standing at a junction, clock running, Waiting at home, Walking, clock running and Window is You're on the page]
+      s10 --> s9: the phone cancels the touch
+      s10 --> s9: you lift your finger [when Window is You're on the page]
+      s10 --> s11: you let go in the other window [when Window is not You're on the page]
+      s11 --> s9: the phone cancels the touch
+      s11 --> s9: you lift your finger [when Window is You're on the page]
+    }
+    --
+    state "Speed" as r3 {
+      s12: Full speed
+      s13: ধ#2496;র#2503; খ#2503;ল#2507; on
+      s14: ধ#2496;র#2503; খ#2503;ল#2507; on, after walking at full speed
+      [*] --> s12
+      s12 --> s13: you press ধ#2496;র#2503; খ#2503;ল#2507; [when Game is not At the shop, graded at the slow par and Window is You're on the page]
+      s12 --> s14: you press ধ#2496;র#2503; খ#2503;ল#2507; [when Game is not Waiting at home and Window is You're on the page and Card is Card keys as labelled]
+      s13 --> s12: you press ধ#2496;র#2503; খ#2503;ল#2507; [when Window is You're on the page]
+      s14 --> s12: you press ধ#2496;র#2503; খ#2503;ল#2507; [when Window is You're on the page]
+      s14 --> s13: you pick a level or you press আব#2494;র শ#2497;র#2497; or আব#2494;র খ#2503;ল#2507; or you press আজক#2503;র ধ#2494;#2433;ধ#2494; [when Window is You're on the page]
+      s14 --> s13: you press the card's gold button or you press Enter on the card [when Game is one of At the shop, card shows, At the shop, graded at the slow par and Window is You're on the page]
+    }
+    --
+    state "Maze" as r4 {
+      s15: A level
+      s16: Today's maze
+      [*] --> s15
+      s15 --> s16: you press আজক#2503;র ধ#2494;#2433;ধ#2494; [when Window is You're on the page]
+      s16 --> s15: you pick a level [when Window is You're on the page]
+      s16 --> s15: you press the card's gold button [when Game is one of At the shop, card shows, At the shop, graded at the slow par and Window is You're on the page and Card is Card keys as labelled]
+    }
+    --
+    state "Card" as r5 {
+      s17: Card keys as labelled
+      s18: Enter did something the gold button doesn't say
+      [*] --> s17
+      s17 --> s18: you press Enter on the card [when Game is one of At the shop, card shows, At the shop, graded at the slow par and Window is You're on the page and Maze is Today's maze]
+      s18 --> s17: you pick a level or you press an arrow [when Window is You're on the page]
+      s18 --> s17: you swipe [when Window is You're on the page and Finger is Finger or mouse held on the board]
+      s18 --> s17: you move the mouse without pressing [when Window is You're on the page and Finger is Button up, but the game still thinks it's held]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 blue
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 yellow
+  class s3 mayBreak
+  class s4 teal
+  class s4 mayBreak
+  class s5 blue
+  class s5 breaks
+  class s5 bugPath
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 mayBreak
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 breaks
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 mayBreak
+  class s16 bugPath
+  class s17 mayBreak
+  class s17 bugPath
+  class s18 teal
+  class s18 breaks
+  class s18 bugPath

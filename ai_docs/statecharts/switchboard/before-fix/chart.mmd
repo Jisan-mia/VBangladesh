@@ -1,0 +1,89 @@
+---
+title: "সﬂ°°2497¶ßইচবﬂ°°2507¶ßরﬂ°°2509¶ßড: board, pause, hum and levels"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks BoardFrozenWhilePaused or HumComesBack or OpenLevelsAreEarned
+    lg4: Breaks OpenLevelsAreEarned in some cases
+    lg5: Path to the BoardFrozenWhilePaused or HumComesBack or OpenLevelsAreEarned bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  s0: Fresh board
+  s1: Tab hidden
+  s2: Flipping switches, hum plays when sound is on
+  s3: All bulbs lit, stars show
+  s4: Fresh board on a locked level
+  s5: Paused, board as you left it
+  s6: All bulbs lit, level 2 saved though level 1 never was
+  s7: Flipping switches, hum silent though sound is on
+  s8: Paused, but a move was taken back
+  [*] --> s0
+  s0 --> s0: you turn sound off
+  s0 --> s1: you hide the tab
+  s0 --> s2: you press a switch
+  s0 --> s3: you light the last bulb
+  s0 --> s4: you open a friend's link
+  s1 --> s0: the tab shows again
+  s2 --> s0: you start a new board or you press Z to take back or you open a friend's link
+  s2 --> s4: you open a friend's link or you start a new board or you press Z to take back
+  s2 --> s3: you light the last bulb
+  s2 --> s5: you hide the tab
+  s3 --> s0: you start a new board or you open a friend's link
+  s4 --> s0: you start a new board
+  s4 --> s1: you hide the tab
+  s4 --> s2: you press a switch
+  s4 --> s6: you light the last bulb
+  s2 --> s7: you turn sound on
+  s5 --> s5: the tab shows again
+  s1 --> s4: the tab shows again
+  s2 --> s6: you light the last bulb
+  s6 --> s0: you start a new board or you open a friend's link
+  s7 --> s0: you start a new board or you press Z to take back or you open a friend's link
+  s7 --> s4: you open a friend's link or you start a new board or you press Z to take back
+  s7 --> s2: you turn sound off or you press a switch
+  s7 --> s3: you light the last bulb
+  s7 --> s5: you hide the tab
+  s5 --> s0: you start a new board or you open a friend's link
+  s5 --> s4: you open a friend's link or you start a new board
+  s5 --> s7: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s5 --> s8: you press Z to take back
+  s0 --> s6: you light the last bulb
+  s5 --> s2: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s8 --> s0: you start a new board or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you open a friend's link
+  s8 --> s4: you open a friend's link or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you start a new board
+  s7 --> s6: you light the last bulb
+  s8 --> s7: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s8 --> s2: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 yellow
+  class s1 mayBreak
+  class s2 teal
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 blue
+  class s4 teal
+  class s4 bugPath
+  class s5 yellow
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 blue
+  class s6 breaks
+  class s6 bugPath
+  class s7 teal
+  class s7 breaks
+  class s7 bugPath
+  class s8 yellow
+  class s8 breaks
+  class s8 bugPath
