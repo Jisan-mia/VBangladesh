@@ -1,4 +1,132 @@
-# সুডোকু: statechart, before the rewrite
+# সুডোকু: statechart
+
+## After the rewrite (`after-fix/`)
+The spec `Sudoku.tla` now mirrors the rewritten game:
+- `components/sudoku-game.tsx` (handlers and effects);
+- `lib/session.ts`, the phase and clock reducer;
+- `lib/save.ts`, saved grids and your own unlock;
+- `lib/link.ts`.
+
+It runs twice:
+- **Full check:** 3 levels, held keys, and both hint counts, with N = 3 and Full = TRUE. TLC reached 1,670 states (`after-fix/report-full.md`).
+- **Chart run:** N = 2 and Full = FALSE, to fit the chart budget of 500 states. TLC reached 359 states; the chart has 10 states and 16 arrows (`after-fix/report.md`, `after-fix/chart.mmd`). Full = FALSE merges "10 or more hints" into "1–9", and a hidden tab into a blur. After the fix both pairs take the same path.
+
+**All 13 rules hold in both runs, and so does NoDeadlock.** A mutation check put two old behaviours back into a copy of the spec: a friend's level opening the next one, and the result acting on a repeated key. OpenLevelsAreEarned and HeldKeyNeverSkips then broke, so neither rule is vacuous.
+
+| Rule | In plain words | After |
+|---|---|---|
+| ClockStillWhileAway | The clock doesn't run while you're in another tab or window. | holds |
+| PausedWhenHidden, PausedWhenBlurred | Hiding the tab or clicking away pauses a running puzzle. | hold |
+| PausedMeansFrozen | Paused means the clock is stopped. | holds |
+| ChoiceFreezesPlay (new) | While সব লেভেল is open, the clock is stopped. | holds |
+| ResultMeansSolved | The result shows only for a full grid. | holds |
+| ChimesOnlyOnTheResult | Star chimes ring only on the result, never over a new grid. | holds |
+| YourLinkOpens | Your card's link opens your grid for a friend, whatever the hint count. | holds |
+| LevelIsOpen | The level you're on is open, or it's this visit's friend level. | holds |
+| OpenLevelsAreEarned (new) | Only your own unbroken run of cleared levels opens the next level. | holds |
+| WorkNeverLostByOneTap | Switching puzzles never throws a half-done grid away, because every move saves it. | holds |
+| HeldKeyNeverSkips (new) | A key held through the end never skips the result. | holds |
+
+```mermaid
+---
+title: "Sudoku after the rewrite: start card, clock, window, sheet, chimes, saved grids and levels"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Start card, clock still
+      s1: Solving, clock running
+      s2: Paused (থ#2503;ম#2503; আছ#2503;)
+      s3: Paused by the level sheet
+      s4: Result shows, its link opens your grid
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; [when Window is You're on the page]
+      s1 --> s0: you pick a level or আজক#2503;র ধ#2494;#2433;ধ#2494; or a friend's link opens their level
+      s1 --> s2: you click into another window
+      s1 --> s3: you open সব ল#2503;ভ#2503;ল
+      s3 --> s0: you pick a level or আজক#2503;র ধ#2494;#2433;ধ#2494; or a friend's link opens their level [when Window is You're on the page]
+      s3 --> s1: you close the sheet [when Window is You're on the page]
+      s1 --> s4: you write the last digit or a hint fills it [when Work is Your digits on the grid, saved]
+      s4 --> s0: you pick a level or আজক#2503;র ধ#2494;#2433;ধ#2494; or you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; or a friend's link opens their level [when Window is You're on the page]
+      s2 --> s0: you pick a level or আজক#2503;র ধ#2494;#2433;ধ#2494; or a friend's link opens their level [when Window is You're on the page]
+      s2 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+    }
+    --
+    state "Window" as r1 {
+      s5: You're on the page
+      s6: Another window has focus
+      [*] --> s5
+      s5 --> s6: you click into another window
+      s6 --> s5: you come back to the window
+    }
+    --
+    state "Work" as r2 {
+      s7: Nothing written yet
+      s8: Your digits on the grid, saved
+      s9: The solved grid
+      [*] --> s7
+      s7 --> s8: you write a digit or take a hint [when Game is Solving, clock running and Window is You're on the page]
+      s8 --> s7: you pick a level or আজক#2503;র ধ#2494;#2433;ধ#2494; or a friend's link opens their level [when Window is You're on the page]
+      s8 --> s9: you write the last digit or a hint fills it [when Game is Solving, clock running and Window is You're on the page]
+      s9 --> s7: you pick a level or আজক#2503;র ধ#2494;#2433;ধ#2494; or you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; or a friend's link opens their level [when Window is You're on the page]
+    }
+  }
+  class s0 teal
+  class s1 teal
+  class s2 yellow
+  class s3 yellow
+  class s4 blue
+  class s9 blue
+```
+
+### The bugs, fixed, with their tests (`tools/sudoku/tests/rewrite.test.ts`)
+1. **ClockStillWhileAway:** the game pauses on window `blur` and on a hidden tab itself, and through the player's `onPause`. Live in Orca: blur at ০০:২২, and the clock still read ০০:২২ 3.2 s later, with the paper cover over the grid and the menu open. Test: *bug 1 · ClockStillWhileAway*.
+2. **ChimesOnlyOnTheResult:**
+   - the star chimes come from the shared `StarReveal`, which clears its timers on unmount;
+   - the line bells are `tone(…, delay)` on the audio clock, so a pause cuts them;
+   - the line flash has one timer, cleared on `load()` and on unmount.
+
+   Test: *bug 2 · ChimesOnlyOnTheResult*.
+3. **YourLinkOpens:** `h` now takes 0 up to the puzzle's blanks (`/^(0|[1-9]\d?)$/`). Every hint count round-trips. Test: *bug 3 · YourLinkOpens* (it includes the live replay `s=20261104&t=2&h=47`).
+4. **WorkNeverLostByOneTap:**
+   - every move, pause and `pagehide` saves the grid to `ektukhani-sudoku-wip`, keeping the newest 8;
+   - `load()` brings it back as **চালিয়ে যাও ০৩:১২ · ১৪/৪৬ ঘর**.
+
+   Live: level 30 at ২৫/৫১, then level 1, then the sheet and level 30 again showed ২৫/৫১ again. A reload showed **চালিয়ে যাও ০০:২৫ · ১/৪ ঘর**. Test: *bug 4 · WorkNeverLostByOneTap*.
+5. **OpenLevelsAreEarned:**
+   - your own unlock lives in `ektukhani-sudoku-open`. It is migrated once from `unlockedLevel(stars)`, so no old phone loses a level;
+   - after that it rises only by `openAfter(open, cleared)`;
+   - `unlockedLevel` itself is unchanged.
+
+   Live: on a clean phone, solving `#s=3001&t=99&l=3` saved `{"3":3}` with open still at `1`, and the result offered **তোমার লেভেলে ফেরো**. Test: *bug 5 · OpenLevelsAreEarned*.
+- **Minor ones:**
+  - game keys are ignored while paused;
+  - Space or Enter no longer needs the board in view to resume, because the start card and the paused cover take them;
+  - result keys need a fresh press (`!event.repeat`, and arriving 400 ms after the result);
+  - clicked buttons drop focus, so Enter never repeats an erase or an undo. Live: after a clicked undo, Enter left the earlier digit in place.
+
+  Test: *keys*.
+
+### Regenerate
+```sh
+D=ai_docs/statecharts/sudoku
+# the drawn chart: Sudoku.cfg as committed (N = 2, Full = FALSE)
+scripts/statechart.sh $D/Sudoku.tla --view $D/view.ts --out $D/after-fix-new
+# the full check: set CONSTANT N = 3 and CONSTANT Full = TRUE in Sudoku.cfg, run into another folder, then set them back
+rm $D/after-fix-new/tlc*.out
+```
+The `before-fix/` output came from the original spec, which is in git history (before this rewrite).
+
+## Before the rewrite (the original analysis)
 
 Spec `Sudoku.tla` / `Sudoku.cfg`, view `view.ts`, output `before-fix/` (`report.md`, `chart.mmd`).
 It mirrors `tools/sudoku/components/sudoku-game.tsx` (every handler and effect) and `tools/sudoku/lib/game.ts` + `lib/link.ts`.

@@ -1,31 +1,27 @@
 // Levels, the daily puzzle, stars and every move a player makes. Pure: the component only renders this state.
 import { starsFor } from "../../../shared/game-core";
-import { LEVELS } from "./levels";
+import { DAILIES, LEVELS, WORLDS, type DailyKind } from "./levels";
 import { SHAPES, layout, makePuzzle, solveByLogic, type Shape, type Size } from "./sudoku";
 
 export const LEVEL_COUNT = LEVELS.length;
-/** Four tiers of ten. `pace` is the seconds a blank cell may take for three stars. */
-export const TIERS = [
-  { name: "সহজ", from: 1, pace: 5 },
-  { name: "মাঝারি", from: 11, pace: 6 },
-  { name: "কঠিন", from: 21, pace: 8 },
-  { name: "ওস্তাদ", from: 31, pace: 10 },
-] as const;
+/** Four worlds (tiers) of ten. `pace` is the seconds a blank cell may take for three stars. */
+export const TIERS = WORLDS;
 export const tierOf = (level: number) => TIERS.findLast(tier => level >= tier.from) ?? TIERS[0];
+/** 0..3: which world a level belongs to. */
+export const worldOf = (level: number) => Math.max(0, TIERS.indexOf(tierOf(level)));
 
-const DAILY_SIZE: Size = 9, DAILY_EMPTY = 46, DAILY_PACE = 8;
 /** Daily puzzles are seeded by their date, written as 20261012. */
 export const FIRST_DAY = 20260101, LAST_DAY = 20991231;
 
-/** What a puzzle is: a ladder level (1..40) or the daily one for a date. */
-export type Which = { level: number } | { day: number };
+/** What a puzzle is: a ladder level (1..40) or the daily one for a date, at one of three difficulties. */
+export type Which = { level: number } | { day: number; kind: DailyKind };
 export type Puzzle = Which & { seed: number; shape: Shape; puzzle: number[]; solution: number[]; empty: number; par: number };
 
 /** Seconds for three stars: the blank cells times the tier's pace, rounded up to ten seconds, at least half a minute. */
 const parFor = (empty: number, pace: number) => Math.max(30, Math.ceil(empty * pace / 10) * 10);
 
-/** Today's date in Bangladesh (UTC+6), as 20261012. */
-export function todayKey(now = Date.now()) {
+/** The date in Bangladesh (UTC+6) at `now` (ms since 1970), as 20261012. The caller passes the clock in. */
+export function todayKey(now: number) {
   const date = new Date(now + 6 * 3600_000);
   return date.getUTCFullYear() * 10000 + (date.getUTCMonth() + 1) * 100 + date.getUTCDate();
 }
@@ -53,7 +49,12 @@ export function levelPuzzle(level: number) {
   return build(seed, size, empty, tierOf(level).pace, { level });
 }
 
-export const dailyPuzzle = (day: number) => validDay(day) ? build(day, DAILY_SIZE, DAILY_EMPTY, DAILY_PACE, { day }) : null;
+/** The daily for a date. `h` (the default) is seeded by the date itself, as it always was; `e` and `m` salt it. */
+export function dailyPuzzle(day: number, kind: DailyKind = "h") {
+  const spec = DAILIES[kind];
+  if (!validDay(day) || !spec) return null;
+  return build(spec.salt ? day * 10 + spec.salt : day, spec.size as Size, spec.empty, spec.pace, { day, kind });
+}
 
 /** Seconds for two stars. */
 export const twoStarTime = (par: number) => Math.round(par * 2.2 / 10) * 10;
@@ -80,10 +81,11 @@ export function startLevel(stars: Record<number, number>, unlocked: number) {
 // ---- play ----
 
 type Board = { values: number[]; notes: number[] };
-export type Game = Board & { puzzle: Puzzle; history: Board[]; hints: number; hinted: number[] };
+/** `mistakes` counts wrong digits written (undo doesn't hide them, and they cost no star). */
+export type Game = Board & { puzzle: Puzzle; history: Board[]; hints: number; hinted: number[]; mistakes: number };
 
 export const startGame = (puzzle: Puzzle): Game =>
-  ({ puzzle, values: puzzle.puzzle.slice(), notes: new Array(puzzle.puzzle.length).fill(0), history: [], hints: 0, hinted: [] });
+  ({ puzzle, values: puzzle.puzzle.slice(), notes: new Array(puzzle.puzzle.length).fill(0), history: [], hints: 0, hinted: [], mistakes: 0 });
 
 const given = (game: Game, cell: number) => game.puzzle.puzzle[cell] !== 0;
 const step = (game: Game, values: number[], notes: number[]): Game =>
@@ -95,7 +97,8 @@ export function place(game: Game, cell: number, digit: number): Game | null {
   const values = game.values.slice(), notes = game.notes.slice();
   values[cell] = digit; notes[cell] = 0;
   for (const peer of layout(game.puzzle.shape).peers[cell]) notes[peer] &= ~(1 << digit);
-  return step(game, values, notes);
+  const next = step(game, values, notes);
+  return digit === game.puzzle.solution[cell] ? next : { ...next, mistakes: game.mistakes + 1 };
 }
 
 /** Toggles a pencil mark (খসড়া) in an empty cell. */
@@ -158,4 +161,23 @@ export function digitsDone(game: Game) {
   const count = new Array(game.puzzle.shape.n + 1).fill(0);
   game.values.forEach((value, cell) => { if (value && value === game.puzzle.solution[cell]) count[value]++; });
   return count.map(placed => placed === game.puzzle.shape.n);
+}
+
+/** The peers of a cell that hold the same digit: why a wrong digit is wrong, when the grid can show it. */
+export function clashes(game: Game, cell: number) {
+  const value = game.values[cell];
+  if (!value) return [];
+  return layout(game.puzzle.shape).peers[cell].filter(peer => game.values[peer] === value);
+}
+
+/** How many blanks hold their right digit: the progress bar along the board. */
+export const filledRight = (game: Game) =>
+  game.values.reduce((sum, value, cell) => sum + (!game.puzzle.puzzle[cell] && value === game.puzzle.solution[cell] ? 1 : 0), 0);
+
+/** How many of each digit are still to place (index 1..n), for the small count on each pad key. */
+export function digitsLeft(game: Game) {
+  const n = game.puzzle.shape.n, left = new Array(n + 1).fill(n);
+  left[0] = 0;
+  game.values.forEach((value, cell) => { if (value && value === game.puzzle.solution[cell]) left[value]--; });
+  return left;
 }
