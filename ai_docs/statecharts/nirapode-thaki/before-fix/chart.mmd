@@ -1,0 +1,103 @@
+---
+title: "নﬂ°°2495¶ßরﬂ°°2494¶ßপদﬂ°°2503¶ß থﬂ°°2494¶ßকﬂ°°2495¶ß: scene, question, sound, daily limit and links"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: between
+    lg2: rest
+    lg3: gone
+    lg4: Breaks ParentGate
+    lg5: Breaks ParentGate or SceneTileKeepsRound or SilentWhenMuted in some cases
+    lg6: Path to the ParentGate or SceneTileKeepsRound or SilentWhenMuted bug
+  }
+  class lg0 teal
+  class lg1 blue
+  class lg2 yellow
+  class lg3 orange
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: First question
+      s1: First question, আর#2503;কব#2494;র ভ#2494;ব#2507;
+      s2: First question, safe pick found
+      s3: Parent shares the link
+      s4: Left for another page
+      s5: Last question
+      s6: Last question, আর#2503;কব#2494;র ভ#2494;ব#2507;
+      s7: Last question, safe pick found
+      s8: What you learned
+      s9: Rest screen
+      s10: Scene tiles (শ#2503;ষ)
+      [*] --> s0
+      s0 --> s1: you pick a wrong one
+      s0 --> s2: you pick the safe one
+      s0 --> s3: a parent opens the gate and shares the link
+      s0 --> s4: you tap a link around the game
+      s1 --> s0: you tap a scene tile
+      s1 --> s2: you pick the safe one
+      s1 --> s3: a parent opens the gate and shares the link
+      s1 --> s4: you tap a link around the game
+      s2 --> s0: you tap a scene tile
+      s2 --> s5: you press পর#2503;রট#2494;
+      s2 --> s3: a parent opens the gate and shares the link
+      s2 --> s4: you tap a link around the game
+      s5 --> s0: you tap a scene tile
+      s5 --> s6: you pick a wrong one
+      s5 --> s7: you pick the safe one
+      s5 --> s3: a parent opens the gate and shares the link
+      s5 --> s4: you tap a link around the game
+      s6 --> s0: you tap a scene tile
+      s6 --> s7: you pick the safe one
+      s6 --> s3: a parent opens the gate and shares the link
+      s6 --> s4: you tap a link around the game
+      s7 --> s0: you tap a scene tile
+      s7 --> s8: you press পর#2503;রট#2494;
+      s7 --> s9: you press পর#2503;রট#2494;
+      s7 --> s3: a parent opens the gate and shares the link
+      s7 --> s4: you tap a link around the game
+      s8 --> s0: you press আব#2494;র খ#2503;ল#2507; or you tap a scene tile
+      s8 --> s3: a parent opens the gate and shares the link
+      s8 --> s4: you tap a link around the game
+      s8 --> s10: you press শ#2503;ষ
+      s9 --> s8: a parent gives 10 more minutes
+      s10 --> s0: you tap a scene tile
+      s10 --> s3: a parent opens the gate and shares the link
+      s10 --> s4: you tap a link around the game
+    }
+    --
+    state "Sound" as r1 {
+      s11: Sound on
+      s12: Sound off
+      [*] --> s11
+      s11 --> s12: you turn sound off
+      s12 --> s11: you turn sound on
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 bugPath
+  class s2 teal
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 orange
+  class s4 orange
+  class s4 breaks
+  class s4 bugPath
+  class s5 teal
+  class s6 teal
+  class s7 teal
+  class s7 mayBreak
+  class s8 blue
+  class s9 yellow
+  class s10 blue
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
