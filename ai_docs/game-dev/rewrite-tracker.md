@@ -29,7 +29,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | carrom | S08 | analysed | done |
 | pati-buni | S08 | analysed | rewriting |
 | sudoku | S09 | analysed | done |
-| switchboard | S09 | analysed | rewriting |
+| switchboard | S09 | analysed | done |
 | golokdhadha | S09 | analysed | done |
 | ponero-ghor | S10 | analysed | done |
 | chhobi-photao | S10 | analysed | todo |
@@ -37,7 +37,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | konta-nei | S11 | analysed | done |
 | bhul-kothay | S11 | analysed | rewriting |
 | atir-aam | S11 | analysed | rewriting |
-| bhimruler-chak | S12 | analysed | todo |
+| bhimruler-chak | S12 | analysed | rewriting |
 | churir-bazar | S12 | analysed | todo |
 | mukhe-mukhe-hisab | S12 | analysed | todo |
 | chhobir-tukro | S13 | analysed | rewriting |
