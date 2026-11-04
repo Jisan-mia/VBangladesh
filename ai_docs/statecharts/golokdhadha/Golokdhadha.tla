@@ -1,112 +1,137 @@
 ---- MODULE Golokdhadha ----
-\* গোলকধাঁধা: the run, pause and focus, the finger on the board, ধীরে খেলো
-\* and the result card's keys. Mirrored from tools/golokdhadha/components/maze-game.tsx
-\* (go, walkTo, begin, step, finish, the [maze, round] reset effect, the visibilitychange `hide` handler,
-\* resume, keyHandler, onPointerDown/Move/Up/Cancel) and shared/game-kit.ts (useGameLoop stops while hidden,
-\* useLevels.record keeps the higher stars). The sound has no loops: footsteps, bump and the bell are one-shot tones.
-\* Left out to keep the chart under 500 states (both hold in code; see README): the star-chime timeouts, which the
-\* [maze, round] effect clears, and the saved stars, which recordLevel only raises (shared/tests/game-kit.test.ts).
-VARIABLES phase, walking, window, hand, slow, walkedFast, generous, kind, went
-vars == <<phase, walking, window, hand, slow, walkedFast, generous, kind, went>>
+\* গোলকধাঁধা after the rewrite: the screens, the shared player's menu, window focus, the finger on the board, the click that
+\* brings the window back, ধীরে খেলো, the level list and the end screen's keys. Mirrored from
+\* tools/golokdhadha/components/golokdhadha-game.tsx (begin, finish, the blur/focus/visibility effect, the key handler,
+\* onPointerDown/Move/Up, useGamePlayer's onPause/onResume/onRestart), lib/session.ts (ticking, blur, hide, pause, resume,
+\* pointerDown, pointerMoves, openSheet, freshResultKey), lib/choices.ts (endChoices, choiceForKey) and
+\* shared/game-player-client.tsx (blur, hide, Esc and ⏸ open the menu once the game is touched; চালিয়ে যাও and
+\* নতুন করে শুরু send a focus first). The walker's own rules are tested in tests/game.test.ts; here it is "walking or standing".
+\* No sound loops: footsteps, bumps, the bell and the chimes are scheduled one-shot tones the pause cuts.
+EXTENDS Naturals
+VARIABLES screen, walking, menu, window, hand, wake, slow, runSlow, graded, kind, went, sheet, wokeMove, enter, skipped, results
+vars == <<screen, walking, menu, window, hand, wake, slow, runSlow, graded, kind, went, sheet, wokeMove, enter, skipped, results>>
 
-\* useGameLoop runs step() while React's phase is "playing" and the tab is visible; blur does not stop it.
-Running == phase = "playing" /\ window # "hidden"
-\* go()/walkTo()/onPointerDown return while paused or over.
-CanSteer == phase \in {"ready", "playing"} /\ window = "focused"
+\* session.ticking: the play screen, the menu and the list shut, the tab showing, the window focused.
+Ticking == screen = "play" /\ menu = "shut" /\ ~sheet /\ window = "focused"
 
-Init == /\ phase = "ready" /\ walking = FALSE /\ window = "focused" /\ hand = "off"
-        /\ slow = FALSE /\ walkedFast = FALSE /\ generous = FALSE 
-        /\ kind = "level" /\ went = "none"
+Init == /\ screen = "title" /\ walking = FALSE /\ menu = "shut" /\ window = "focused" /\ hand = "off" /\ wake = FALSE
+        /\ slow \in BOOLEAN /\ runSlow = FALSE /\ graded = FALSE /\ kind = "level" /\ went = "none" /\ sheet = FALSE
+        /\ wokeMove = FALSE /\ enter = "up" /\ skipped = FALSE /\ results = 0
 
-\* go(dir) with an open lane: queue the run, begin() starts the clock; a run already going just sets `pending`.
-Walk == /\ walking' = TRUE
-        /\ phase' = "playing"
-        /\ walkedFast' = (walkedFast \/ ~slow)
-        /\ went' = "none"
-\* An arrow key, a pad arrow or a tap on a straight lane.
-YouPressArrow == /\ CanSteer /\ Walk
-                 /\ UNCHANGED <<window, hand, slow, generous, kind>>
-\* onPointerDown: remembers the pointer in `drag`.
-YouPutFingerDown == /\ CanSteer /\ hand = "off" /\ hand' = "down"
-                    /\ UNCHANGED <<phase, walking, window, slow, walkedFast, generous, kind, went>>
-\* onPointerMove past the threshold: go() in the drag's direction.
-YouSwipe == /\ CanSteer /\ hand = "down" /\ Walk
-            /\ UNCHANGED <<window, hand, slow, generous, kind>>
-\* onPointerMove only checks pointerId, never `buttons`, so a plain mouse move steers while `drag` is still set.
-MouseDriftsWithNoButton == /\ CanSteer /\ hand = "ghost" /\ Walk
-                           /\ UNCHANGED <<window, hand, slow, generous, kind>>
-\* onPointerUp on the page clears `drag`.
-YouLiftFinger == /\ hand # "off" /\ window = "focused" /\ hand' = "off"
-                 /\ UNCHANGED <<phase, walking, window, slow, walkedFast, generous, kind, went>>
-\* The button comes up in another window: the page gets no pointerup, and nothing clears `drag` on blur or hide.
+Keep(v) == UNCHANGED v
+
+\* begin(): a fresh walk; the speed is read from ধীরে খেলো here and fixed for the run.
+Begin(k) == /\ screen' = "play" /\ walking' = FALSE /\ runSlow' = slow /\ graded' = FALSE /\ kind' = k /\ sheet' = FALSE
+            /\ hand' = "off" /\ results' = 0
+
+YouTapThePlayArt == /\ screen = "title" /\ ~sheet /\ window = "focused" /\ Begin("level") /\ went' = "none"
+                    /\ Keep(<<menu, window, wake, slow, wokeMove, enter, skipped>>)
+YouPickTodaysMaze == /\ screen \in {"title", "over"} /\ window = "focused" /\ menu = "shut" /\ Begin("daily") /\ went' = "none"
+                     /\ Keep(<<menu, window, wake, slow, wokeMove, enter, skipped>>)
+
+\* An arrow key, a pad press or a swipe: steer() only while ticking.
+YouSwipe == /\ Ticking /\ walking' = TRUE
+            /\ Keep(<<screen, menu, window, hand, wake, slow, runSlow, graded, kind, went, sheet, wokeMove, enter, skipped, results>>)
+\* onPointerDown: pointerDown says "steer" only while ticking (and not as the wake-up click).
+YouPutFingerDown == /\ Ticking /\ hand = "off" /\ ~wake /\ hand' = "down"
+                    /\ Keep(<<screen, walking, menu, window, wake, slow, runSlow, graded, kind, went, sheet, wokeMove, enter, skipped, results>>)
+YouDragAcross == /\ Ticking /\ hand = "down" /\ walking' = TRUE
+                 /\ Keep(<<screen, menu, window, hand, wake, slow, runSlow, graded, kind, went, sheet, wokeMove, enter, skipped, results>>)
+\* pointerMoves needs the pointer that went down here and, for a mouse, a held button: a plain move steers only a ghost hand.
+MouseMovesWithNoButton == /\ Ticking /\ hand = "ghost" /\ walking' = TRUE
+                          /\ Keep(<<screen, menu, window, hand, wake, slow, runSlow, graded, kind, went, sheet, wokeMove, enter, skipped, results>>)
+YouLiftFinger == /\ hand = "down" /\ window = "focused" /\ hand' = "off"
+                 /\ Keep(<<screen, walking, menu, window, wake, slow, runSlow, graded, kind, went, sheet, wokeMove, enter, skipped, results>>)
+\* The button comes up in another window: the page never hears it.
 YouLetGoElsewhere == /\ hand = "down" /\ window # "focused" /\ hand' = "ghost"
-                     /\ UNCHANGED <<phase, walking, window, slow, walkedFast, generous, kind, went>>
-\* onPointerCancel (a touch the phone takes over).
-BrowserCancelsTouch == /\ hand # "off" /\ hand' = "off"
-                       /\ UNCHANGED <<phase, walking, window, slow, walkedFast, generous, kind, went>>
+                     /\ Keep(<<screen, walking, menu, window, wake, slow, runSlow, graded, kind, went, sheet, wokeMove, enter, skipped, results>>)
 
-\* step(): the queue empties at a junction (the clock keeps running).
-WalkerStopsAtJunction == /\ Running /\ walking /\ walking' = FALSE
-                         /\ UNCHANGED <<phase, window, hand, slow, walkedFast, generous, kind, went>>
-\* arrive(exit) → finish(): grade against par for the CURRENT speed, record the stars.
-WalkerReachesShop == /\ Running /\ walking
-                     /\ phase' = "over" /\ walking' = FALSE
-                     /\ walkedFast' = (walkedFast \/ ~slow)
-                     /\ generous' = (slow /\ walkedFast)
-                     /\ UNCHANGED <<window, hand, slow, kind, went>>
+WalkerStopsAtATurn == /\ Ticking /\ walking /\ walking' = FALSE
+                      /\ Keep(<<screen, menu, window, hand, wake, slow, runSlow, graded, kind, went, sheet, wokeMove, enter, skipped, results>>)
+\* finish(): graded with the run's own speed (parOf(game.where, game.mode, game.slow)); recorded once.
+WalkerReachesTheShop == /\ Ticking /\ walking
+                        /\ screen' = "over" /\ walking' = FALSE /\ graded' = runSlow /\ results' = results + 1 /\ hand' = "off"
+                        /\ Keep(<<menu, window, wake, slow, runSlow, kind, went, sheet, wokeMove, enter, skipped>>)
 
-WindowBlurs == /\ window = "focused" /\ window' = "blurred"
-               /\ UNCHANGED <<phase, walking, hand, slow, walkedFast, generous, kind, went>>
-WindowFocuses == /\ window = "blurred" /\ window' = "focused"
-                 /\ UNCHANGED <<phase, walking, hand, slow, walkedFast, generous, kind, went>>
-\* hide(): pauses only a run that is playing.
-TabHides == /\ window # "hidden" /\ window' = "hidden"
-            /\ phase' = IF phase = "playing" THEN "paused" ELSE phase
-            /\ UNCHANGED <<walking, hand, slow, walkedFast, generous, kind, went>>
+\* The player opens its menu on blur, hide, Esc, ⏸ and the game's own P, once the game is touched (any screen but the title).
+Engaged == screen # "title"
+OpensMenu == IF Engaged THEN "open" ELSE menu
+\* session.blur/hide: let go of the finger, and the next click only wakes.
+WindowBlurs == /\ window = "focused" /\ window' = "blurred" /\ hand' = "off" /\ wake' = TRUE /\ menu' = OpensMenu /\ enter' = "up"
+               /\ Keep(<<screen, walking, slow, runSlow, graded, kind, went, sheet, wokeMove, skipped, results>>)
+TabHides == /\ window # "hidden" /\ window' = "hidden" /\ hand' = "off" /\ wake' = TRUE /\ menu' = OpensMenu /\ enter' = "up"
+            /\ Keep(<<screen, walking, slow, runSlow, graded, kind, went, sheet, wokeMove, skipped, results>>)
 TabShows == /\ window = "hidden" /\ window' = "focused"
-            /\ UNCHANGED <<phase, walking, hand, slow, walkedFast, generous, kind, went>>
-\* resume(): the overlay button or Enter/Space.
-YouResume == /\ phase = "paused" /\ window = "focused" /\ phase' = "playing"
-             /\ UNCHANGED <<walking, window, hand, slow, walkedFast, generous, kind, went>>
+            /\ Keep(<<screen, walking, menu, hand, wake, slow, runSlow, graded, kind, went, sheet, wokeMove, enter, skipped, results>>)
+\* Back by keyboard (alt-tab): no click arrives, and a swipe seconds later is a real swipe (the wake window has passed).
+YouComeBackByKeyboard == /\ window = "blurred" /\ window' = "focused" /\ wake' = FALSE
+                         /\ Keep(<<screen, walking, menu, hand, slow, runSlow, graded, kind, went, sheet, wokeMove, enter, skipped, results>>)
+\* Back by clicking on the board: focus, then that pointerdown. With the menu up, the menu takes it; otherwise
+\* pointerDown answers "wake" and nothing moves.
+YouClickBackIn == /\ window = "blurred" /\ window' = "focused" /\ wake' = FALSE
+                  /\ wokeMove' = (wokeMove \/ (menu = "shut" /\ ~wake /\ screen = "play"))
+                  /\ Keep(<<screen, walking, menu, hand, slow, runSlow, graded, kind, went, sheet, enter, skipped, results>>)
+YouPressPause == /\ window = "focused" /\ Engaged /\ menu = "shut" /\ menu' = "open" /\ hand' = "off"
+                 /\ Keep(<<screen, walking, window, wake, slow, runSlow, graded, kind, went, sheet, wokeMove, enter, skipped, results>>)
+\* চালিয়ে যাও: a focus first, then resume; the menu took the click, so nothing is left to wake.
+YouResume == /\ menu = "open" /\ window # "hidden" /\ menu' = "shut" /\ window' = "focused" /\ wake' = FALSE /\ hand' = "off"
+             /\ Keep(<<screen, walking, slow, runSlow, graded, kind, went, sheet, wokeMove, enter, skipped, results>>)
+\* নতুন করে শুরু: the same maze again from home.
+YouRestart == /\ menu = "open" /\ window # "hidden" /\ screen \in {"play", "over"} /\ Begin(kind) /\ menu' = "shut" /\ window' = "focused" /\ wake' = FALSE /\ went' = "none"
+              /\ Keep(<<slow, wokeMove, enter, skipped>>)
+\* ধীরে খেলো in the menu: the setting changes; the running walk keeps the speed it began with.
+YouToggleSlow == /\ menu = "open" /\ slow' = ~slow
+                 /\ Keep(<<screen, walking, menu, window, hand, wake, runSlow, graded, kind, went, sheet, wokeMove, enter, skipped, results>>)
 
-\* The ধীরে খেলো button works in every phase and does not restart the run; `par` follows it at once.
-YouToggleSlow == /\ window = "focused" /\ slow' = ~slow
-                 /\ UNCHANGED <<phase, walking, window, hand, walkedFast, generous, kind, went>>
+\* Holding Enter (or Space) as the walker arrives, and letting go.
+YouHoldEnter == /\ window = "focused" /\ enter = "up" /\ screen = "play" /\ enter' = "held"
+                /\ Keep(<<screen, walking, menu, window, hand, wake, slow, runSlow, graded, kind, went, sheet, wokeMove, skipped, results>>)
+YouReleaseEnter == /\ enter = "held" /\ enter' = "up"
+                   /\ Keep(<<screen, walking, menu, window, hand, wake, slow, runSlow, graded, kind, went, sheet, wokeMove, skipped, results>>)
+\* The held key's auto-repeat on the card: freshResultKey refuses repeats and keys pressed before the card.
+RepeatCounts == FALSE
+HeldEnterRepeats == /\ enter = "held" /\ screen = "over" /\ menu = "shut" /\ ~sheet /\ skipped' = (skipped \/ RepeatCounts)
+                    /\ Keep(<<screen, walking, menu, window, hand, wake, slow, runSlow, graded, kind, went, sheet, wokeMove, enter, results>>)
+\* A fresh Enter or ১ on the card runs choices[0], the marked button's own action (endChoices).
+YouPressEnterOnTheCard == /\ screen = "over" /\ menu = "shut" /\ ~sheet /\ window = "focused" /\ enter = "up"
+                          /\ Begin("level") /\ went' = "asSaid"
+                          /\ Keep(<<menu, window, wake, slow, wokeMove, enter, skipped>>)
+YouPressTheMarkedButton == /\ screen = "over" /\ menu = "shut" /\ ~sheet /\ window = "focused"
+                           /\ Begin("level") /\ went' = "asSaid"
+                           /\ Keep(<<menu, window, wake, slow, wokeMove, enter, skipped>>)
+\* সব লেভেল: a choice screen; nothing runs behind it.
+YouOpenTheList == /\ screen \in {"title", "over"} /\ ~sheet /\ menu = "shut" /\ window = "focused" /\ sheet' = TRUE
+                  /\ Keep(<<screen, walking, menu, window, hand, wake, slow, runSlow, graded, kind, went, wokeMove, enter, skipped, results>>)
+YouPickALevel == /\ sheet /\ menu = "shut" /\ window = "focused" /\ Begin("level") /\ went' = "none"
+                 /\ Keep(<<menu, window, wake, slow, wokeMove, enter, skipped>>)
+YouCloseTheList == /\ sheet /\ sheet' = FALSE
+                   /\ Keep(<<screen, walking, menu, window, hand, wake, slow, runSlow, graded, kind, went, wokeMove, enter, skipped, results>>)
 
-\* The [maze, round] effect: clear the timeouts, a fresh walk and clock, phase "ready".
-Reset(k, w) == /\ phase' = "ready" /\ walking' = FALSE /\ walkedFast' = FALSE /\ generous' = FALSE
-               /\ kind' = k /\ went' = w
-               /\ UNCHANGED <<window, hand, slow>>
-\* আবার শুরু (disabled while ready) or আবার খেলো.
-YouPlayAgain == /\ phase # "ready" /\ window = "focused" /\ Reset(kind, "none")
-\* The আজকের ধাঁধা tool button, or a level from the bar or the level list.
-YouPickDaily == /\ window = "focused" /\ ~(kind = "daily" /\ phase = "ready") /\ Reset("daily", "none")
-YouPickLevel == /\ window = "focused" /\ ~(kind = "level" /\ phase = "ready") /\ Reset("level", "none")
-\* The card's gold button: পরের লেভেল on a level, লেভেলে ফেরো on the daily maze.
-YouPressCardButton == /\ phase = "over" /\ window = "focused" /\ Reset("level", "asSaid")
-\* keyHandler on Enter/Space while over: next level on a level, but `again()` (the same daily maze) on the daily.
-YouPressEnterOnCard == /\ phase = "over" /\ window = "focused"
-                       /\ IF kind = "level" THEN Reset("level", "asSaid") ELSE Reset("daily", "otherwise")
-
-Next == YouPressArrow \/ YouPutFingerDown \/ YouSwipe \/ MouseDriftsWithNoButton \/ YouLiftFinger
-        \/ YouLetGoElsewhere \/ BrowserCancelsTouch \/ WalkerStopsAtJunction \/ WalkerReachesShop
-        \/ WindowBlurs \/ WindowFocuses \/ TabHides \/ TabShows \/ YouResume \/ YouToggleSlow
-        \/ YouPlayAgain \/ YouPickDaily \/ YouPickLevel \/ YouPressCardButton \/ YouPressEnterOnCard
+Next == YouTapThePlayArt \/ YouPickTodaysMaze \/ YouSwipe \/ YouPutFingerDown \/ YouDragAcross \/ MouseMovesWithNoButton
+        \/ YouLiftFinger \/ YouLetGoElsewhere \/ WalkerStopsAtATurn \/ WalkerReachesTheShop
+        \/ WindowBlurs \/ TabHides \/ TabShows \/ YouComeBackByKeyboard \/ YouClickBackIn \/ YouPressPause \/ YouResume \/ YouRestart
+        \/ YouToggleSlow \/ YouHoldEnter \/ YouReleaseEnter \/ HeldEnterRepeats \/ YouPressEnterOnTheCard \/ YouPressTheMarkedButton
+        \/ YouOpenTheList \/ YouPickALevel \/ YouCloseTheList
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ phase \in {"ready", "playing", "paused", "over"} /\ walking \in BOOLEAN
-          /\ window \in {"focused", "blurred", "hidden"} /\ hand \in {"off", "down", "ghost"}
-          /\ slow \in BOOLEAN /\ walkedFast \in BOOLEAN /\ generous \in BOOLEAN
-          /\ kind \in {"level", "daily"} /\ went \in {"none", "asSaid", "otherwise"}
+TypeOK == /\ screen \in {"title", "play", "over"} /\ walking \in BOOLEAN /\ menu \in {"shut", "open"}
+          /\ window \in {"focused", "blurred", "hidden"} /\ hand \in {"off", "down", "ghost"} /\ wake \in BOOLEAN
+          /\ slow \in BOOLEAN /\ runSlow \in BOOLEAN /\ graded \in BOOLEAN /\ kind \in {"level", "daily"}
+          /\ went \in {"none", "asSaid", "otherwise"} /\ sheet \in BOOLEAN /\ wokeMove \in BOOLEAN
+          /\ enter \in {"up", "held"} /\ skipped \in BOOLEAN /\ results \in 0..1
 
 \* The reader's rules.
-NoProgressWhileAway == Running => window = "focused"
-PausedWhenHidden == window = "hidden" => phase # "playing"
-PausedWhenBlurred == window = "blurred" => phase # "playing"
-InputReleasedWhenAway == window # "focused" => hand = "off"
+NoProgressWhileAway == window # "focused" => ~Ticking
+PausedWhenHidden == window = "hidden" /\ screen = "play" => menu = "open"
+PausedWhenBlurred == window = "blurred" /\ screen = "play" => menu = "open"
+InputReleasedWhenAway == window # "focused" \/ menu = "open" => hand = "off"
 NoSteeringWithoutAPress == hand # "ghost"
-WalkerStillUnlessPlaying == walking => phase \in {"playing", "paused"}
-StarsMatchYourSpeed == phase = "over" => ~generous
+ClickBackIsNotAMove == ~wokeMove
+WalkerStillUnlessPlaying == walking => screen = "play"
+StarsMatchYourSpeed == screen = "over" => graded = runSlow
 EnterDoesWhatTheButtonSays == went # "otherwise"
+ResultKeyNeedsFreshPress == ~skipped
+ChoiceFreezesPlay == sheet => ~Ticking
+NoDoubleResult == results <= 1
 ====

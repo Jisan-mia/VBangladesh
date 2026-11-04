@@ -1,0 +1,114 @@
+---
+title: "Golokdhadha after the rewrite: the screens, the menu, the window, your finger and the card"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: start
+    lg1: play
+    lg2: held
+    lg3: done
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  state "Game Title: the maze says খ#2503;ল#2507;" as s0 {
+    state "Window You're on the page" as s1 {
+      s2: Finger Hands off
+    }
+    state "Window Away (another window or a hidden tab)" as s3 {
+      s4: Finger Hands off
+    }
+  }
+  state "Game Standing at a turn" as s5 {
+    state "Window You're on the page" as s6 {
+      s7: Finger Hands off
+      s8: Finger Finger on the board
+    }
+  }
+  state "Game The level list is open" as s9 {
+    state "Window You're on the page" as s10 {
+      s11: Finger Hands off
+    }
+    state "Window Away (another window or a hidden tab)" as s12 {
+      s13: Finger Hands off
+    }
+  }
+  state "Game Paused: the menu is open" as s14 {
+    state "Window Away (another window or a hidden tab)" as s15 {
+      s16: Finger Hands off
+    }
+    state "Window You're on the page" as s17 {
+      s18: Finger Hands off
+    }
+  }
+  state "Game Walking to the next turn" as s19 {
+    state "Window You're on the page" as s20 {
+      s21: Finger Hands off
+      s22: Finger Finger on the board
+    }
+  }
+  state "Game At the shop, the card shows" as s23 {
+    state "Window You're on the page" as s24 {
+      s25: Finger Hands off
+    }
+  }
+  state "Game Card, menu open" as s26 {
+    state "Window Away (another window or a hidden tab)" as s27 {
+      s28: Finger Hands off
+    }
+    state "Window You're on the page" as s29 {
+      s30: Finger Hands off
+    }
+  }
+  [*] --> s2
+  s2 --> s4: you click into another window or you hide the tab
+  s2 --> s7: you pick today's maze or you tap the maze on the title
+  s2 --> s11: you open সব ল#2503;ভ#2503;ল
+  s4 --> s2: you click back into the page or you come back with the keyboard or the tab shows again
+  s7 --> s8: you put a finger on the board
+  s7 --> s21: you swipe or press an arrow
+  s11 --> s2: you close the list
+  s11 --> s7: you pick today's maze or you pick a level
+  s11 --> s13: you click into another window or you hide the tab
+  s16 --> s18: you click back into the page or you come back with the keyboard or the tab shows again
+  s18 --> s16: you click into another window or you hide the tab
+  s8 --> s7: you lift your finger
+  s8 --> s22: you drag across the board or you swipe or press an arrow
+  s13 --> s4: you close the list
+  s13 --> s11: you click back into the page or you come back with the keyboard or the tab shows again
+  s21 --> s7: the walker stops at a turn
+  s21 --> s22: you put a finger on the board
+  s22 --> s8: the walker stops at a turn
+  s22 --> s21: you lift your finger
+  s25 --> s7: you pick today's maze or you press Enter on the card or you press the marked button
+  s25 --> s28: you click into another window or you hide the tab
+  s25 --> s30: you press #9208;, P or Esc
+  s25 --> s11: you open সব ল#2503;ভ#2503;ল
+  s28 --> s30: you click back into the page or you come back with the keyboard or the tab shows again
+  s30 --> s28: you click into another window or you hide the tab
+  s11 --> s25: you close the list
+  s11 --> s28: you click into another window or you hide the tab
+  s11 --> s30: you press #9208;, P or Esc
+  s5 --> s16: you click into another window or you hide the tab
+  s5 --> s18: you press #9208;, P or Esc
+  s14 --> s7: you press নত#2497;ন কর#2503; শ#2497;র#2497; or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s14 --> s21: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s19 --> s16: you click into another window or you hide the tab
+  s19 --> s18: you press #9208;, P or Esc
+  s19 --> s25: the walker reaches the shop
+  s26 --> s7: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s26 --> s25: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s26 --> s11: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  class s2 blue
+  class s4 blue
+  class s7 teal
+  class s8 teal
+  class s13 yellow
+  class s16 yellow
+  class s18 yellow
+  class s21 teal
+  class s22 teal
+  class s25 blue
+  class s28 blue
+  class s30 blue

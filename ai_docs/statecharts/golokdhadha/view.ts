@@ -1,39 +1,42 @@
-export const title = "গোলকধাঁধা: the run, the window, your finger and the card";
-const game = (v: any) => ({
-  ready: "Waiting at home",
-  playing: v.walking ? "Walking, clock running" : "Standing at a junction, clock running",
-  paused: "Paused (থেমে আছে)",
-  over: v.generous ? "At the shop, graded at the slow par" : "At the shop, card shows",
-} as any)[v.phase];
+export const title = "Golokdhadha after the rewrite: the screens, the menu, the window, your finger and the card";
+const game = (v: any) => v.sheet ? "The level list is open" : ({
+  title: "Title: the maze says খেলো",
+  play: v.walking ? "Walking to the next turn" : "Standing at a turn",
+  over: "At the shop, the card shows",
+} as any)[v.screen];
 export const state = (v: any) => ({
-  Game: game(v),
-  Window: v.window === "hidden" ? "Tab hidden" : v.window === "focused" ? "You're on the page" : "Another window has focus",
-  Finger: v.hand === "off" ? "Hands off" : v.hand === "down" ? "Finger or mouse held on the board" : "Button up, but the game still thinks it's held",
-  Speed: v.slow ? (v.walkedFast ? "ধীরে খেলো on, after walking at full speed" : "ধীরে খেলো on") : "Full speed",
-  Maze: v.kind === "daily" ? "Today's maze" : "A level",
-  Card: v.went === "otherwise" ? "Enter did something the gold button doesn't say" : "Card keys as labelled",
+  Game: v.menu === "open" ? (v.screen === "over" ? "Card, menu open" : "Paused: the menu is open") : game(v),
+  Window: v.window === "focused" ? "You're on the page" : "Away (another window or a hidden tab)",
+  Finger: v.hand === "off" ? "Hands off" : v.hand === "down" ? "Finger on the board" : "Button up, but the game thinks it's held",
 });
 export const step = (action: string) => ({
-  YouPressArrow: "you press an arrow",
-  YouPutFingerDown: "you put a finger or the mouse down on the board",
-  YouSwipe: "you swipe",
-  MouseDriftsWithNoButton: "you move the mouse without pressing",
+  YouTapThePlayArt: "you tap the maze on the title",
+  YouPickTodaysMaze: "you pick today's maze",
+  YouSwipe: "you swipe or press an arrow",
+  YouPutFingerDown: "you put a finger on the board",
+  YouDragAcross: "you drag across the board",
+  MouseMovesWithNoButton: "you move the mouse without pressing",
   YouLiftFinger: "you lift your finger",
   YouLetGoElsewhere: "you let go in the other window",
-  BrowserCancelsTouch: "the phone cancels the touch",
-  WalkerStopsAtJunction: "the walker stops at a junction",
-  WalkerReachesShop: "the walker reaches the shop",
+  WalkerStopsAtATurn: "the walker stops at a turn",
+  WalkerReachesTheShop: "the walker reaches the shop",
   WindowBlurs: "you click into another window",
-  WindowFocuses: "you come back to the window",
   TabHides: "you hide the tab",
   TabShows: "the tab shows again",
+  YouComeBackByKeyboard: "you come back with the keyboard",
+  YouClickBackIn: "you click back into the page",
+  YouPressPause: "you press ⏸, P or Esc",
   YouResume: "you press চালিয়ে যাও",
-  YouToggleSlow: "you press ধীরে খেলো",
-  YouPlayAgain: "you press আবার শুরু or আবার খেলো",
-  YouPickDaily: "you press আজকের ধাঁধা",
-  YouPickLevel: "you pick a level",
-  YouPressCardButton: "you press the card's gold button",
-  YouPressEnterOnCard: "you press Enter on the card",
+  YouRestart: "you press নতুন করে শুরু",
+  YouToggleSlow: "you switch ধীরে খেলো",
+  YouHoldEnter: "you hold Enter",
+  YouReleaseEnter: "you let go of Enter",
+  HeldEnterRepeats: "the held Enter repeats on the card",
+  YouPressEnterOnTheCard: "you press Enter on the card",
+  YouPressTheMarkedButton: "you press the marked button",
+  YouOpenTheList: "you open সব লেভেল",
+  YouPickALevel: "you pick a level",
+  YouCloseTheList: "you close the list",
 } as Record<string, string>)[action] ?? action;
-export const group = (v: any) => v.phase === "over" ? "done" : v.phase === "paused" ? "held" : "play";
-export const colors = { play: "teal", held: "yellow", done: "blue" };
+export const group = (v: any) => v.screen === "over" ? "done" : v.menu === "open" || v.sheet ? "held" : v.screen === "title" ? "start" : "play";
+export const colors = { start: "blue", play: "teal", held: "yellow", done: "blue" };
