@@ -21,11 +21,19 @@ export function setSoundOn(next: boolean) {
   try { if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel(); } catch { /* no speech */ }
 }
 
+// On the dev server every sound still runs (so tests can count loops and notes) but nothing plays out loud,
+// because many test tabs run at once. Set localStorage 'ektukhani-dev-sound' = '1' to hear it. Production is unaffected.
+function devSilent() {
+  if (process.env.NODE_ENV !== 'development') return false;
+  try { return localStorage.getItem('ektukhani-dev-sound') !== '1'; } catch { return true; }
+}
+
 function context() {
   if (typeof window === 'undefined' || !soundOn()) return null;
   try {
     audio ??= new AudioContext();
-    if (audio.state === 'suspended') void audio.resume();
+    if (devSilent()) { if (audio.state === 'running') void audio.suspend(); }
+    else if (audio.state === 'suspended') void audio.resume();
     return audio;
   } catch { return null; }
 }
