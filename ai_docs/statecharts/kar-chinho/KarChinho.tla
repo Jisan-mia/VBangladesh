@@ -1,117 +1,126 @@
 ---- MODULE KarChinho ----
-\* কার-চিহ্ন বসাও: the round of words, the 1.1 s advance timer, the kids' daily limit and rest screen,
-\* and the two parent gates (the share-link gate under the game and the gate on the rest screen),
-\* mirrored from tools/kar-chinho/components/kar-game.tsx (Play: tap, finish, start, the level button, the timers)
-\* and shared/kids-kit.tsx (useKidsSession: atBreak / extend; RestScreen; ParentGate; ShareToolLink).
-\* Two words stand in for ten. "holder" is who has the phone: the child plays, a parent passes gates.
-\* A gate's ask stage is folded into one step: a parent holds 2 s and answers the sum; a child holds 2 s and mashes
-\* the pad until the sum comes up (press() accepts any one- or two-digit run that equals it, e.g. "07").
-\* "sound" is the site-wide switch. speak(item.word) runs on every right tap and never reads it; the word is shorter than
-\* the 1.1 s timer, so the phone is speaking exactly while phase = "solved".
-\* Left out: the tab (nothing here runs on a clock; the 1.1 s timer firing in a hidden tab is noted in the README).
+\* কার-চিহ্ন বসাও after the rewrite: the screens, the round of words, the one pending timer (next word / end screen),
+\* the player's pause, going away and coming back, a key held through the last word, the kids' daily limit and rest
+\* screen. The parent gates are KarChinhoGates.tla. Mirrored from:
+\*   tools/kar-chinho/lib/session.ts     begin, tapTile, solved, timerFires/timerMayRun, pause, resume, blur, toTitle,
+\*                                       openLevels, freshKey
+\*   tools/kar-chinho/components/game.tsx begin() asks kids.atBreak(); pick() records the stars at the last tap; the
+\*                                       share gate's key is bumped by any touch outside it; onPause/onResume/onRestart
+\*   shared/kids-kit.tsx                 useKidsSession rests on mount past the limit; ParentGate: a two-digit sum, one
+\*                                       action, 20 s; RestScreen is a real modal
+\* Two words stand in for ten. "holder" is who has the phone. A child's hold and mashing never opens a gate.
+\* No voice anywhere on the site (speak() is a no-op), so the old SilentWhenMuted rule has nothing left to check.
 EXTENDS Naturals
-VARIABLES phase, word, overLimit, resting, holder, shareGate, restGate, begun, lost, sound
-vars == <<phase, word, overLimit, resting, holder, shareGate, restGate, begun, lost, sound>>
-Speaking == phase = "solved"
+VARIABLES screen, word, pending, finished, recorded, begun,      \* the round
+          paused, swallow, held, skipped, moved,                 \* away and back, keys
+          overLimit, resting                                     \* the daily limit
+round == <<screen, word, pending, finished, recorded, begun>>
+away == <<paused, swallow, held, skipped, moved>>
+kids == <<overLimit, resting>>
+vars == <<round, away, kids>>
 
-Words == 1..2
-Gate == {"closed", "parent", "child"}   \* closed, or open and by whom
-\* The RestScreen is position: fixed over the whole page, so while it shows only its own gate can be touched.
-Free == ~resting
+\* RestScreen renders on every screen but play (game.tsx: kids.resting && screen !== 'play') and covers the rest.
+RestShows == resting /\ screen # "play"
+Free == ~RestShows /\ ~paused
 
-Init == /\ phase = "play" /\ word = 1 /\ overLimit = FALSE /\ resting = FALSE
-        /\ holder = "child" /\ shareGate = "closed" /\ restGate = "closed" /\ begun = "inTime" /\ lost = FALSE /\ sound = TRUE
+Init == /\ screen = "title" /\ word = 1 /\ pending = "none" /\ finished = FALSE /\ recorded = FALSE /\ begun = "inTime"
+        /\ paused = FALSE /\ swallow = FALSE /\ held = FALSE /\ skipped = FALSE /\ moved = FALSE
+        /\ overLimit \in BOOLEAN /\ resting = overLimit   \* useKidsSession: past today's limit the page opens resting
 
-\* tap(kar) with the right sign: solved, sfx.good, speak, then later(1100 ms) → finish or nextWord.
-YouTapTheRightSign == /\ phase = "play" /\ Free
-                      /\ phase' = "solved"
-                      /\ UNCHANGED <<word, overLimit, resting, holder, shareGate, restGate, begun, lost, sound>>
-\* The 1.1 s timer → nextWord(next).
-TheNextWordComes == /\ phase = "solved" /\ word = 1
-                    /\ phase' = "play" /\ word' = 2
-                    /\ UNCHANGED <<overLimit, resting, holder, shareGate, restGate, begun, lost, sound>>
-\* The 1.1 s timer → finish(next): record stars, sfx.win, atBreak() (resting = today's limit has passed).
-TheRoundEnds == /\ phase = "solved" /\ word = 2
-                /\ phase' = "end" /\ resting' = overLimit
-                /\ UNCHANGED <<word, overLimit, holder, shareGate, restGate, begun, lost, sound>>
-\* The level button at the top, in any phase: clearTimers(); setPhase('pick').
-\* A pending finish dies with the timers: the last word was solved, but the round is never recorded and atBreak never runs.
-YouTapTheLevelButton == /\ Free /\ phase \in {"play", "solved", "end"}
-                        /\ phase' = "pick" /\ lost' = (phase = "solved" /\ word = 2)
-                        /\ UNCHANGED <<word, overLimit, resting, holder, shareGate, restGate, begun, sound>>
-\* শেষ on the end screen → the level picker.
-YouPressShesh == /\ phase = "end" /\ Free
-                 /\ phase' = "pick"
-                 /\ UNCHANGED <<word, overLimit, resting, holder, shareGate, restGate, begun, lost, sound>>
-\* আবার খেলো on the end screen, or a level in the picker: start(level). No atBreak() here.
-YouStartARound == /\ phase \in {"end", "pick"} /\ Free
-                  /\ phase' = "play" /\ word' = 1 /\ begun' = (IF overLimit THEN "late" ELSE "inTime") /\ lost' = FALSE
-                  /\ UNCHANGED <<overLimit, resting, holder, shareGate, restGate, sound>>
-\* A reload, or opening কার-চিহ্ন from the kids' hub after another game's rest screen: a fresh Play with
-\* resting = false and the first round already on screen. Both gates start closed.
-ThePageOpens == /\ phase' = "play" /\ word' = 1 /\ resting' = FALSE /\ shareGate' = "closed" /\ restGate' = "closed"
-                /\ begun' = (IF overLimit THEN "late" ELSE "inTime") /\ lost' = FALSE
-                /\ UNCHANGED <<overLimit, holder, sound>>
-\* useKidsSession's 10 s tick pushes today's play time past the limit (any phase; the round goes on).
+
+\* begin(): খেলো on the slate, আবার খেলো, Enter on the title. atBreak() first: past the limit, the rest screen instead.
+YouStartARound == /\ screen \in {"title", "end"} /\ Free
+                  /\ IF overLimit
+                     THEN /\ resting' = TRUE /\ UNCHANGED round
+                     ELSE /\ screen' = "play" /\ word' = 1 /\ pending' = "none" /\ finished' = FALSE /\ recorded' = FALSE
+                          /\ resting' = FALSE /\ begun' = (IF overLimit THEN "late" ELSE "inTime")
+                  /\ swallow' = FALSE
+                  /\ UNCHANGED <<paused, held, skipped, moved, overLimit>>
+\* The level list opens from the title or the end screen only; a level from it is begin() too.
+YouOpenTheLevelList == /\ screen \in {"title", "end"} /\ Free /\ screen' = "levels"
+                       /\ UNCHANGED <<word, pending, finished, recorded, begun, away, kids>>
+YouPickALevel == /\ screen = "levels" /\ Free
+                 /\ IF overLimit
+                    THEN /\ resting' = TRUE /\ screen' = "title" /\ UNCHANGED <<word, pending, finished, recorded, begun>>
+                    ELSE /\ screen' = "play" /\ word' = 1 /\ pending' = "none" /\ finished' = FALSE /\ recorded' = FALSE
+                         /\ resting' = FALSE /\ begun' = "inTime"
+                 /\ UNCHANGED <<away, overLimit>>
+
+\* tapTile(): only on play, nothing covering it, no word mid-hop; the first tap after coming back only wakes the game.
+YouTapAWrongSign == /\ screen = "play" /\ Free /\ pending = "none"
+                    /\ swallow' = FALSE
+                    /\ UNCHANGED <<round, paused, held, skipped, moved, kids>>
+\* The right sign: solved(). On the last word the stars are saved and atBreak() runs in this very tap.
+YouTapTheRightSign == /\ screen = "play" /\ Free /\ pending = "none"
+                      /\ IF swallow
+                         THEN /\ swallow' = FALSE /\ UNCHANGED <<pending, finished, recorded, resting>>
+                         ELSE /\ pending' = (IF word = 2 THEN "end" ELSE "next")
+                              /\ finished' = (word = 2) /\ recorded' = (word = 2)
+                              /\ resting' = (IF word = 2 THEN overLimit ELSE resting)
+                              /\ UNCHANGED swallow
+                      /\ UNCHANGED <<screen, word, begun, paused, held, skipped, moved, overLimit>>
+\* timerFires() runs only when timerMayRun(): the menu shut. `moved` would record a step taken under the menu.
+TheNextWordComes == /\ pending = "next" /\ ~paused
+                    /\ pending' = "none" /\ word' = 2 /\ moved' = (moved \/ paused)
+                    /\ UNCHANGED <<screen, finished, recorded, begun, paused, swallow, held, skipped, kids>>
+TheEndScreenComes == /\ pending = "end" /\ ~paused
+                     /\ pending' = "none" /\ screen' = "end" /\ moved' = (moved \/ paused)
+                     /\ UNCHANGED <<word, finished, recorded, begun, paused, swallow, held, skipped, kids>>
+
+\* The player's menu: ⏸, P, Escape, blur or hide (the game's blur handler arms the swallow; held keys are dropped).
+YouGoAway == /\ ~paused /\ paused' = TRUE /\ swallow' = (screen = "play") /\ held' = FALSE
+             /\ UNCHANGED <<round, skipped, moved, kids>>
+YouResume == /\ paused /\ paused' = FALSE /\ swallow' = FALSE
+             /\ UNCHANGED <<round, held, skipped, moved, kids>>
+\* নতুন করে শুরু from the menu, or শেষ on the end screen: back to the slate; the pending timer is cleared.
+YouGoBackToTheTitle == /\ (paused \/ (screen = "end" /\ Free))
+                       /\ screen' = "title" /\ pending' = "none" /\ paused' = FALSE /\ swallow' = FALSE
+                       /\ UNCHANGED <<word, finished, recorded, begun, held, skipped, moved, kids>>
+
+\* Enter or Space held through the last word and auto-repeating on the end screen: freshKey() refuses a repeat.
+YouHoldEnter == /\ screen = "play" /\ ~paused /\ ~held /\ held' = TRUE
+                /\ UNCHANGED <<round, paused, swallow, skipped, moved, kids>>
+TheKeyRepeats == /\ held /\ screen = "end" /\ Free
+                 /\ skipped' = FALSE
+                 /\ UNCHANGED <<round, paused, swallow, held, moved, kids>>
+YouLetGoOfTheKey == /\ held /\ held' = FALSE
+                    /\ UNCHANGED <<round, paused, swallow, skipped, moved, kids>>
+
+\* useKidsSession's tick pushes today's time past the limit, at any moment.
 TimeIsUp == /\ ~overLimit /\ overLimit' = TRUE
-            /\ UNCHANGED <<phase, word, resting, holder, shareGate, restGate, begun, lost, sound>>
+            /\ UNCHANGED <<round, away, resting>>
+\* A reload, or opening the game from the kids' hub: the title, resting if past the limit; both gates closed.
+ThePageOpens == /\ screen' = "title" /\ word' = 1 /\ pending' = "none" /\ finished' = FALSE /\ recorded' = FALSE
+                /\ paused' = FALSE /\ swallow' = FALSE /\ held' = FALSE
+                /\ resting' = overLimit
+                /\ UNCHANGED <<begun, skipped, moved, overLimit>>
 
-\* Who has the phone.
-AParentTakesThePhone == /\ holder = "child" /\ holder' = "parent"
-                        /\ UNCHANGED <<phase, word, overLimit, resting, shareGate, restGate, begun, lost, sound>>
-TheChildTakesItBack == /\ holder = "parent" /\ holder' = "child"
-                       /\ UNCHANGED <<phase, word, overLimit, resting, shareGate, restGate, begun, lost, sound>>
+\* A grown-up's আজ আরও ১০ মিনিট on the rest screen (who can reach it is KarChinhoGates.tla's job).
+TenMoreMinutes == /\ RestShows /\ overLimit' = FALSE /\ resting' = FALSE /\ UNCHANGED <<round, away>>
 
-\* The gate under the game (বড়দের জন্য → ShareToolLink). It stays open until বন্ধ করো or a reload.
-AParentOpensTheShareGate == /\ Free /\ holder = "parent" /\ shareGate = "closed" /\ shareGate' = "parent"
-                            /\ UNCHANGED <<phase, word, overLimit, resting, holder, restGate, begun, lost, sound>>
-TheChildOpensTheShareGate == /\ Free /\ holder = "child" /\ shareGate = "closed" /\ shareGate' = "child"
-                             /\ UNCHANGED <<phase, word, overLimit, resting, holder, restGate, begun, lost, sound>>
-SomeoneClosesTheShareGate == /\ Free /\ shareGate # "closed" /\ shareGate' = "closed"
-                             /\ UNCHANGED <<phase, word, overLimit, resting, holder, restGate, begun, lost, sound>>
-
-\* The gate on the rest screen (আজ আরও ১০ মিনিট, রোজ কতক্ষণ খেলবে). It unmounts with the rest screen.
-AParentOpensTheRestGate == /\ resting /\ holder = "parent" /\ restGate = "closed" /\ restGate' = "parent"
-                           /\ UNCHANGED <<phase, word, overLimit, resting, holder, shareGate, begun, lost, sound>>
-TheChildOpensTheRestGate == /\ resting /\ holder = "child" /\ restGate = "closed" /\ restGate' = "child"
-                            /\ UNCHANGED <<phase, word, overLimit, resting, holder, shareGate, begun, lost, sound>>
-\* onExtend(10) → extend(): seconds -= 600, resting = false; the rest screen and its gate go away.
-SomeoneGivesTenMinutes == /\ resting /\ restGate # "closed"
-                          /\ overLimit' = FALSE /\ resting' = FALSE /\ restGate' = "closed"
-                          /\ UNCHANGED <<phase, word, holder, shareGate, begun, lost, sound>>
-
-\* The 🔊 SoundToggle (setSoundOn). Turning it off cuts no speech already under way, and speak() never asks it.
-SoundOff == /\ Free /\ sound /\ sound' = FALSE
-            /\ UNCHANGED <<phase, word, overLimit, resting, holder, shareGate, restGate, begun, lost>>
-SoundOn == /\ Free /\ ~sound /\ sound' = TRUE
-           /\ UNCHANGED <<phase, word, overLimit, resting, holder, shareGate, restGate, begun, lost>>
-
-Next == SoundOff \/ SoundOn \/ YouTapTheRightSign \/ TheNextWordComes \/ TheRoundEnds \/ YouTapTheLevelButton \/ YouPressShesh \/ YouStartARound
-        \/ ThePageOpens \/ TimeIsUp \/ AParentTakesThePhone \/ TheChildTakesItBack
-        \/ AParentOpensTheShareGate \/ TheChildOpensTheShareGate \/ SomeoneClosesTheShareGate
-        \/ AParentOpensTheRestGate \/ TheChildOpensTheRestGate \/ SomeoneGivesTenMinutes
+Next == YouStartARound \/ YouOpenTheLevelList \/ YouPickALevel \/ YouTapAWrongSign \/ YouTapTheRightSign
+        \/ TheNextWordComes \/ TheEndScreenComes \/ YouGoAway \/ YouResume \/ YouGoBackToTheTitle
+        \/ YouHoldEnter \/ TheKeyRepeats \/ YouLetGoOfTheKey \/ TimeIsUp \/ ThePageOpens
+        \/ TenMoreMinutes
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ phase \in {"play", "solved", "end", "pick"} /\ word \in Words
-          /\ overLimit \in BOOLEAN /\ resting \in BOOLEAN /\ holder \in {"child", "parent"}
-          /\ shareGate \in Gate /\ restGate \in Gate /\ begun \in {"inTime", "late"} /\ lost \in BOOLEAN /\ sound \in BOOLEAN
+TypeOK == /\ screen \in {"title", "play", "end", "levels"} /\ word \in 1..2 /\ pending \in {"none", "next", "end"}
+          /\ finished \in BOOLEAN /\ recorded \in BOOLEAN /\ begun \in {"inTime", "late"}
+          /\ paused \in BOOLEAN /\ swallow \in BOOLEAN /\ held \in BOOLEAN /\ skipped \in BOOLEAN /\ moved \in BOOLEAN
+          /\ overLimit \in BOOLEAN /\ resting \in BOOLEAN
 
-\* The reader's rules.
-\* With sound off, the game never speaks on its own (only a tapped speaker button may).
-SilentWhenMuted == Speaking => sound
+\* ---- the reader's rules ----
 \* The rest screen comes only between rounds, never over a word.
-RestOnlyAtBreak == resting => phase \in {"end", "pick"}
+RestOnlyAtBreak == RestShows => screen # "play"
 \* Once today's time is up, no new round starts without the rest screen first.
 NoNewRoundPastLimit == begun = "inTime"
-\* Every finished round counts: its stars are saved and the daily limit is checked.
-EveryFinishCounts == ~lost
-\* Only a grown-up opens a parent gate.
-GateNeedsAnAdult == shareGate # "child" /\ restGate # "child"
-\* When a parent hands the phone back, every gate they opened is closed again.
-GateClosesWhenTheParentHandsBack == holder = "child" => (shareGate # "parent" /\ restGate # "parent")
-\* While the child has the phone, the share link is behind a closed gate.
-NoShareForKids == holder = "child" => shareGate = "closed"
-\* While the child has the phone, "more time" is behind a closed gate.
-OnlyParentsGiveMoreTime == (holder = "child" /\ resting) => restGate = "closed"
+\* Every finished round counts: once the last word is right, its stars are saved and the limit checked, whatever comes next.
+EveryFinishCounts == finished => recorded
+\* Nothing moves under the pause menu.
+NothingMovesUnderTheMenu == ~moved
+\* The level list is a choice screen: no word is waiting under it.
+ChoiceFreezesPlay == screen = "levels" => pending = "none"
+\* A key held through the last word never starts the next round.
+ResultNeedsFreshPress == ~skipped
 ====

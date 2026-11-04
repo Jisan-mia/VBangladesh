@@ -1,38 +1,34 @@
-export const title = "কার-চিহ্ন বসাও: round, sound, daily limit and parent gates";
-const round = (v: any) => {
-  if (v.phase === "pick") return v.lost ? "Level picker, the finished round was never counted" : "Level picker";
-  if (v.phase === "end") return "End screen (আবার খেলো / শেষ)";
-  const late = v.begun === "late" ? ", started after today's time ran out" : "";
-  if (v.phase === "solved") return (v.word === 1 ? "Right sign, next word in 1.1 s" : "Last sign right, end screen in 1.1 s") + late;
-  return (v.word === 1 ? "First word" : "Last word") + late;
+export const title = "কার-চিহ্ন বসাও: screens, the word timer, pause, the daily limit and keys";
+const screen = (v: any) => {
+  if (v.screen === "title") return "The slate (খেলো)";
+  if (v.screen === "levels") return "The level list";
+  if (v.screen === "end") return "The filled page (আবার খেলো / শেষ)";
+  if (v.pending === "next") return "Right sign, the next word in 1.1 s";
+  if (v.pending === "end") return "Last sign right, stars saved, the page in 1.1 s";
+  return v.word === 1 ? "First word" : "Last word";
 };
-const gate = (g: string) => g === "closed" ? "closed" : g === "parent" ? "opened by a parent" : "opened by the child";
 export const state = (v: any) => ({
-  Round: round(v),
-  Today: v.resting ? "Rest screen (আজ এটুকুই), its gate " + gate(v.restGate) : v.overLimit ? "Today's time is up" : "Time left today",
-  Phone: v.holder === "parent" ? "A parent has the phone" : "The child has the phone",
-  ShareGate: "Share gate " + gate(v.shareGate),
-  Sound: (v.sound ? "Sound on" : "Sound off") + (v.phase === "solved" ? ", the phone says the word" : ""),
+  Round: screen(v),
+  Menu: v.paused ? "Pause menu open, the timer waits" : v.swallow ? "Back from away, the next tap only wakes" : "Playing",
+  Today: v.resting ? (v.screen === "play" ? "Time's up, the rest waits for the page" : "Rest screen") : v.overLimit ? "Today's time is up" : "Time left today",
 });
 export const step = (action: string) => ({
+  YouStartARound: "the child taps খেলো or আবার খেলো",
+  YouOpenTheLevelList: "the child opens the level list",
+  YouPickALevel: "the child picks a level",
+  YouTapAWrongSign: "the child taps a wrong sign",
   YouTapTheRightSign: "the child taps the right sign",
-  TheNextWordComes: "the next word comes (1.1 s)",
-  TheRoundEnds: "the end screen comes (1.1 s)",
-  YouTapTheLevelButton: "the child taps the level button",
-  YouPressShesh: "the child presses শেষ",
-  YouStartARound: "the child presses আবার খেলো or picks a level",
-  ThePageOpens: "the page opens again (reload, or from the kids' hub)",
+  TheNextWordComes: "the next word comes",
+  TheEndScreenComes: "the filled page comes",
+  YouGoAway: "the window blurs, or ⏸ / P / Esc",
+  YouResume: "চালিয়ে যাও",
+  YouGoBackToTheTitle: "নতুন করে শুরু, or শেষ",
+  YouHoldEnter: "the child holds Enter",
+  TheKeyRepeats: "Enter auto-repeats on the page",
+  YouLetGoOfTheKey: "the child lets go of the key",
   TimeIsUp: "today's play time runs out",
-  AParentTakesThePhone: "a parent takes the phone",
-  TheChildTakesItBack: "the child takes the phone back",
-  AParentOpensTheShareGate: "the parent opens বড়দের জন্য",
-  TheChildOpensTheShareGate: "the child holds বড়দের জন্য and mashes the pad",
-  SomeoneClosesTheShareGate: "someone presses বন্ধ করো",
-  AParentOpensTheRestGate: "the parent opens the rest screen's gate",
-  TheChildOpensTheRestGate: "the child holds the rest screen's gate and mashes the pad",
-  SomeoneGivesTenMinutes: "someone taps আজ আরও ১০ মিনিট",
-  SoundOff: "the child turns sound off",
-  SoundOn: "the child turns sound on",
+  ThePageOpens: "the page opens again",
+  TenMoreMinutes: "a grown-up gives আজ আরও ১০ মিনিট",
 } as Record<string, string>)[action] ?? action;
-export const group = (v: any) => v.resting ? "held" : v.phase === "end" || v.phase === "pick" ? "done" : "play";
+export const group = (v: any) => v.resting && v.screen !== "play" ? "held" : v.screen === "play" ? "play" : "done";
 export const colors = { play: "teal", held: "yellow", done: "blue" };
