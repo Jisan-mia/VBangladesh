@@ -1,0 +1,176 @@
+---
+title: "নﬂ°°2494¶ßম শﬂ°°2495¶ßখﬂ°°2495¶ß: round, sound, daily limit and parent gates"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks GateClosesWhenTheParentHandsBack or GateNeedsAnAdult or NoNewRoundPastLimit or NoShareForKids or OnlyParentsGiveMoreTime or SilentWhenMuted
+    lg4: Breaks GateClosesWhenTheParentHandsBack or GateNeedsAnAdult or NoNewRoundPastLimit or NoShareForKids or OnlyParentsGiveMoreTime or SilentWhenMuted in some cases
+    lg5: Path to the GateClosesWhenTheParentHandsBack or GateNeedsAnAdult or NoNewRoundPastLimit or NoShareForKids or OnlyParentsGiveMoreTime or SilentWhenMuted bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Round" as r0 {
+      s0: First picture
+      s1: Right picture, পর#2503;রট#2494; shows
+      s2: Last picture
+      s3: First picture, started after today's time ran out
+      s4: Last picture right, দ#2503;খ#2507; ক#2496; শ#2495;খল#2503; shows
+      s5: Right picture, পর#2503;রট#2494; shows, started after today's time ran out
+      s6: Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ)
+      s7: Last picture, started after today's time ran out
+      s8: খ#2503;ল#2494; শ#2503;ষ, pack tiles
+      s9: Last picture right, দ#2503;খ#2507; ক#2496; শ#2495;খল#2503; shows, started after today's time ran out
+      [*] --> s0
+      s0 --> s1: the child taps the right picture [when Today is one of Time left today, Today's time is up]
+      s0 --> s3: a #35;p= link opens or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level [when Today is Today's time is up]
+      s0 --> s3: the page opens again (reload, or from the kids' hub) [when Today is not Time left today]
+      s1 --> s0: a #35;p= link opens or the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level [when Today is Time left today]
+      s1 --> s2: the child presses পর#2503;রট#2494;
+      s2 --> s0: a #35;p= link opens or the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level [when Today is Time left today]
+      s2 --> s4: the child taps the right picture
+      s3 --> s5: the child taps the right picture
+      s1 --> s3: a #35;p= link opens or the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level [when Today is Today's time is up]
+      s2 --> s3: a #35;p= link opens or the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level [when Today is Today's time is up]
+      s4 --> s0: a #35;p= link opens or the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level [when Today is Time left today]
+      s4 --> s6: the child presses দ#2503;খ#2507; ক#2496; শ#2495;খল#2503;
+      s5 --> s3: a #35;p= link opens or the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level
+      s5 --> s7: the child presses পর#2503;রট#2494;
+      s6 --> s0: a #35;p= link opens [when Today is not Today's time is up]
+      s6 --> s0: the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level [when Today is Time left today]
+      s6 --> s8: the child presses শ#2503;ষ [when Today is one of Time left today, Today's time is up]
+      s7 --> s3: a #35;p= link opens or the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level
+      s7 --> s9: the child taps the right picture
+      s4 --> s3: a #35;p= link opens or the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level [when Today is Today's time is up]
+      s6 --> s3: a #35;p= link opens or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level [when Today is Today's time is up]
+      s6 --> s3: the page opens again (reload, or from the kids' hub) [when Today is not Time left today]
+      s8 --> s0: a #35;p= link opens or the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level [when Today is Time left today]
+      s9 --> s3: a #35;p= link opens or the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level
+      s9 --> s6: the child presses দ#2503;খ#2507; ক#2496; শ#2495;খল#2503;
+      s8 --> s3: a #35;p= link opens or the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level [when Today is Today's time is up]
+    }
+    --
+    state "Today" as r1 {
+      s10: Time left today
+      s11: Today's time is up
+      s12: Rest screen (আজ এট#2497;ক#2497;ই), its gate closed
+      s13: Rest screen (আজ এট#2497;ক#2497;ই), its gate opened by the child
+      s14: Rest screen (আজ এট#2497;ক#2497;ই), its gate opened by a parent
+      [*] --> s10
+      s10 --> s11: today's play time runs out
+      s11 --> s12: the child presses দ#2503;খ#2507; ক#2496; শ#2495;খল#2503; [when Round is one of Last picture right, দ#2503;খ#2507; ক#2496; শ#2495;খল#2503; shows, Last picture right, দ#2503;খ#2507; ক#2496; শ#2495;খল#2503; shows, started after today's time ran out]
+      s12 --> s11: the page opens again (reload, or from the kids' hub)
+      s12 --> s13: the child holds the rest screen's gate and mashes the pad [when Phone is The child has the phone]
+      s13 --> s11: the page opens again (reload, or from the kids' hub)
+      s13 --> s10: someone taps আজ আরও ১০ ম#2495;ন#2495;ট
+      s12 --> s14: the parent opens the rest screen's gate [when Phone is A parent has the phone]
+      s14 --> s11: the page opens again (reload, or from the kids' hub)
+      s14 --> s10: someone taps আজ আরও ১০ ম#2495;ন#2495;ট
+    }
+    --
+    state "Phone" as r2 {
+      s15: The child has the phone
+      s16: A parent has the phone
+      [*] --> s15
+      s15 --> s16: a parent takes the phone
+      s16 --> s15: the child takes the phone back
+    }
+    --
+    state "ShareGate" as r3 {
+      s17: Share gate closed
+      s18: Share gate opened by the child
+      s19: Share gate opened by a parent
+      [*] --> s17
+      s17 --> s18: the child holds বড#2492;দ#2503;র জন#2509;য and mashes the pad [when Today is one of Time left today, Today's time is up and Phone is The child has the phone]
+      s18 --> s17: someone presses বন#2509;ধ কর#2507; [when Today is one of Time left today, Today's time is up]
+      s18 --> s17: the page opens again (reload, or from the kids' hub)
+      s17 --> s19: the parent opens বড#2492;দ#2503;র জন#2509;য [when Today is one of Time left today, Today's time is up and Phone is A parent has the phone]
+      s19 --> s17: someone presses বন#2509;ধ কর#2507; [when Today is one of Time left today, Today's time is up]
+      s19 --> s17: the page opens again (reload, or from the kids' hub)
+    }
+    --
+    state "Sound" as r4 {
+      s20: Sound on
+      s21: Sound off
+      s22: Sound on, the phone says the name
+      s23: Sound off, the phone says the name
+      [*] --> s20
+      s20 --> s21: the child turns sound off [when Today is one of Time left today, Today's time is up]
+      s20 --> s22: the child taps the right picture [when Round is one of First picture, First picture, started after today's time ran out, Last picture, Last picture, started after today's time ran out and Today is one of Time left today, Today's time is up]
+      s21 --> s20: the child turns sound on [when Today is one of Time left today, Today's time is up]
+      s21 --> s23: the child taps the right picture [when Round is one of First picture, First picture, started after today's time ran out, Last picture, Last picture, started after today's time ran out and Today is one of Time left today, Today's time is up]
+      s22 --> s20: a #35;p= link opens or the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level or the spoken name ends
+      s22 --> s20: the child presses পর#2503;রট#2494; [when Round is one of Right picture, পর#2503;রট#2494; shows, Right picture, পর#2503;রট#2494; shows, started after today's time ran out]
+      s22 --> s23: the child turns sound off
+      s23 --> s21: a #35;p= link opens or the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a pack or level or the spoken name ends
+      s23 --> s22: the child turns sound on
+      s23 --> s21: the child presses পর#2503;রট#2494; [when Round is one of Right picture, পর#2503;রট#2494; shows, Right picture, পর#2503;রট#2494; shows, started after today's time ran out]
+      s22 --> s20: the child presses দ#2503;খ#2507; ক#2496; শ#2495;খল#2503; [when Round is one of Last picture right, দ#2503;খ#2507; ক#2496; শ#2495;খল#2503; shows, Last picture right, দ#2503;খ#2507; ক#2496; শ#2495;খল#2503; shows, started after today's time ran out]
+      s23 --> s21: the child presses দ#2503;খ#2507; ক#2496; শ#2495;খল#2503; [when Round is one of Last picture right, দ#2503;খ#2507; ক#2496; শ#2495;খল#2503; shows, Last picture right, দ#2503;খ#2507; ক#2496; শ#2495;খল#2503; shows, started after today's time ran out]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 teal
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 teal
+  class s3 breaks
+  class s3 bugPath
+  class s4 teal
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 teal
+  class s5 breaks
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 teal
+  class s7 breaks
+  class s8 blue
+  class s8 mayBreak
+  class s9 teal
+  class s9 breaks
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 yellow
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 yellow
+  class s13 breaks
+  class s13 bugPath
+  class s14 yellow
+  class s14 mayBreak
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 bugPath
+  class s17 mayBreak
+  class s17 bugPath
+  class s18 breaks
+  class s18 bugPath
+  class s19 mayBreak
+  class s19 bugPath
+  class s20 mayBreak
+  class s20 bugPath
+  class s21 mayBreak
+  class s21 bugPath
+  class s22 teal
+  class s22 mayBreak
+  class s22 bugPath
+  class s23 teal
+  class s23 breaks
+  class s23 bugPath

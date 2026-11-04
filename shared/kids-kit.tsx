@@ -2,7 +2,7 @@
 // The children's section kit (ছোটদের খেলাঘর): parent note, parent gate, "আব্বু-আম্মুকে দেখাও", a gentle daily play limit
 // with a breathing rest screen, and Bangla speech only where the phone really has a Bangla voice. Styles: kids-kit.css.
 // Rules it enforces: nothing about the child leaves the phone, no share or outbound action without the parent gate.
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react';
 import { sfx, soundOn } from './game-sound';
 
 const bnDigits = new Intl.NumberFormat('bn-BD', { useGrouping: false });
@@ -62,7 +62,9 @@ export function ParentGate({ label = 'বড়দের জন্য', children
     misses.current += 1;
     if (misses.current >= 2) setStage('closed'); else ask();
   };
-  if (stage === 'open') return <div className="kk-gate-open">{children}<button type="button" className="kk-link" onClick={() => setStage('closed')}>বন্ধ করো</button></div>;
+  // One grown-up action per opening: after any button or link inside, the gate shuts again.
+  const afterAction = (event: MouseEvent) => { if ((event.target as HTMLElement).closest('button, a')) setTimeout(() => setStage('closed'), 0); };
+  if (stage === 'open') return <div className="kk-gate-open"><div onClickCapture={afterAction}>{children}</div><button type="button" className="kk-link" onClick={() => setStage('closed')}>বন্ধ করো</button></div>;
   if (stage === 'ask') return <div className="kk-gate" role="dialog" aria-label="বড়দের জন্য প্রশ্ন">
     <p>{WORDS[pair[0]]} আর {WORDS[pair[1]]} যোগ করলে কত?</p>
     <p className="kk-gate-answer" aria-live="polite">{answer ? bn(Number(answer)) : '…'}</p>
@@ -119,6 +121,13 @@ export function readLimit() { const saved = Number(read(LIMIT_KEY)); return read
  * Counts visible play time across every kids' tool for today. Call `atBreak()` at the end of a round: it returns true (and the
  * hook shows `resting`) once today's limit has passed, so the child stops at a natural break, never mid-task.
  */
+function pastLimit() {
+  const limit = readLimit();
+  let seconds = 0;
+  try { const saved = JSON.parse(read(SESSION_KEY) ?? 'null'); if (saved?.date === today()) seconds = saved.seconds; } catch { /* none */ }
+  return limit > 0 && seconds >= limit * 60;
+}
+
 export function useKidsSession() {
   const [resting, setResting] = useState(false);
   useEffect(() => {
@@ -132,13 +141,12 @@ export function useKidsSession() {
     return () => clearInterval(tick);
   }, []);
   const atBreak = useCallback(() => {
-    const limit = readLimit();
-    let seconds = 0;
-    try { const saved = JSON.parse(read(SESSION_KEY) ?? 'null'); if (saved?.date === today()) seconds = saved.seconds; } catch { /* none */ }
-    const over = limit > 0 && seconds >= limit * 60;
+    const over = pastLimit();
     setResting(over);
     return over;
   }, []);
+  // Opening a kids' game is a break too: past today's limit, it starts on the rest screen, not a fresh round.
+  useEffect(() => { if (pastLimit()) setResting(true); }, []);
   const extend = useCallback((minutes: number) => {
     let state = { date: today(), seconds: 0 };
     try { const saved = JSON.parse(read(SESSION_KEY) ?? 'null'); if (saved?.date === state.date) state = saved; } catch { /* none */ }
