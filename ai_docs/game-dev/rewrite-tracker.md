@@ -30,7 +30,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | pati-buni | S08 | analysed | todo |
 | sudoku | S09 | analysed | done |
 | switchboard | S09 | analysed | rewriting |
-| golokdhadha | S09 | analysed | rewriting |
+| golokdhadha | S09 | analysed | done |
 | ponero-ghor | S10 | analysed | done |
 | chhobi-photao | S10 | analysed | todo |
 | ghontar-sur | S10 | analysed | todo |
@@ -45,10 +45,10 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | chhip-felo | S13 | analysed | todo |
 | latim | S14 | analysed | todo |
 | nodi-par | S14 | analysed | todo |
-| penalty | S14 | analysed | rewriting |
+| penalty | S14 | analysed | done |
 | golir-badminton | S15 | analysed | rewriting |
-| kagojer-urojahaj | S15 | analysed | todo |
-| marble-sinri | S15 | analysed | todo |
+| kagojer-urojahaj | S15 | analysed | rewriting |
+| marble-sinri | S15 | analysed | rewriting |
 | roshi-tana | S16 | analysed | done |
 | moshar-raat | S16 | analysed | todo |
 | al-dhore-hati | S16 | analysed | todo |
