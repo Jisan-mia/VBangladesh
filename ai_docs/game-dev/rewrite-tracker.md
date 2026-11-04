@@ -25,7 +25,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | vo-katta | S07 | analysed | rewriting |
 | bhangti-nai | S07 | analysed | todo |
 | jam-chharao | S07 | analysed | todo |
-| shobdo-khoja | S08 | analysed | rewriting |
+| shobdo-khoja | S08 | analysed | done |
 | carrom | S08 | analysed | rewriting |
 | pati-buni | S08 | analysed | todo |
 | sudoku | S09 | analysed | done |
