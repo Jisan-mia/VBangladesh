@@ -1,0 +1,59 @@
+---
+title: "Sap Ludu after the rewrite: the race, the computer turn, the pause menu and the end screen"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: held
+  }
+  class lg0 yellow
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Start card (big die)
+      s1: Die rolls, piece walks
+      s2: Computer picks a piece
+      s3: Computer's turn
+      s4: You pick a piece (১ or ২)
+      s5: Your turn
+      s6: End screen (stars, stats)
+      s7: End screen, a key still held
+      [*] --> s0
+      s0 --> s1: you tap the big die [when Playing]
+      s1 --> s2: the piece lands [when Playing]
+      s1 --> s3: the piece lands [when Playing]
+      s1 --> s4: the piece lands [when Playing]
+      s1 --> s5: the piece lands [when Playing]
+      s1 --> s6: your piece gets home [when Playing]
+      s2 --> s1: the computer picks [when Playing]
+      s3 --> s1: the computer rolls [when Playing]
+      s4 --> s1: you pick a piece [when Playing]
+      s5 --> s1: you tap the die [when Playing]
+      s6 --> s1: you press পর#2503;র ল#2503;ভ#2503;ল / আব#2494;র [when Playing]
+      s6 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল / আব#2494;র [when Playing]
+      s6 --> s7: you were holding Space as it ended
+      s1 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Pause menu]
+      s1 --> s7: your piece gets home [when Playing]
+    }
+    --
+    state "Window" as r1 {
+      s8: Playing
+      s9: Away, game paused
+      s10: Pause menu
+      s11: Breath after resume
+      [*] --> s8
+      s8 --> s9: you look away (other window or tab)
+      s9 --> s8: you come back [when Start card (big die)]
+      s8 --> s10: you press P, Esc or #9208; [unless End screen (stars, stats) or End screen, a key still held or Start card (big die)]
+      s9 --> s10: you come back [unless Start card (big die)]
+      s10 --> s8: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Die rolls, piece walks]
+      s10 --> s9: you look away (other window or tab)
+      s10 --> s11: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [unless End screen (stars, stats) or End screen, a key still held]
+      s11 --> s8: the breath ends
+      s11 --> s9: you look away (other window or tab)
+      s11 --> s10: you press P, Esc or #9208;
+      s10 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when End screen (stars, stats) or End screen, a key still held]
+    }
+  }
+  class s9 yellow
+  class s10 yellow
+  class s11 yellow

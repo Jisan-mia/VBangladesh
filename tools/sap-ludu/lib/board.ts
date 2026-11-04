@@ -1,4 +1,5 @@
-// The board: squares 1 to 100 snaking up from the bottom left, our own ladders and snakes, each with an everyday caption. Server-safe.
+// Boards: squares 1..last snaking up from the bottom left, with ladders and snakes that each carry an everyday caption.
+// The classic 10×10 layout below is fixed forever: old links replay on it. Server-safe.
 
 export const SIZE = 10;
 export const LAST = 100;
@@ -34,13 +35,57 @@ export const SNAKES: readonly Jump[] = [
 export const JUMPS: readonly Jump[] = [...LADDERS, ...SNAKES];
 export const isLadder = (id: number) => id >= 0 && id < LADDERS.length;
 
-const jumpAt: number[] = Array(LAST + 1).fill(-1);
-JUMPS.forEach((jump, id) => { jumpAt[jump.from] = id; });
-/** The jump that starts on `square`, or -1. */
-export const jumpFrom = (square: number) => jumpAt[square] ?? -1;
+/** The jump that starts on `square` of the classic board, or -1. */
+export const jumpFrom = (square: number) => CLASSIC.at[square] ?? -1;
 
-/** Column (0 left) and row (0 top) of square 1–100: row by row from the bottom, left to right, then back. */
-export function cellOf(square: number) {
-  const index = square - 1, line = Math.floor(index / SIZE), along = index % SIZE;
-  return { col: line % 2 === 0 ? along : SIZE - 1 - along, row: SIZE - 1 - line };
+/** Column (0 left) and row (0 top) of a classic square 1–100: row by row from the bottom, left to right, then back. */
+export const cellOf = (square: number) => cellAt(CLASSIC, square);
+
+// ---- any board ----
+
+/** A board: `cols` × `rows` squares, ladders first in `jumps`, and `at[square]` = the jump starting there (or -1). */
+export type Board = {
+  cols: number;
+  rows: number;
+  last: number;
+  jumps: readonly Jump[];
+  ladders: number;
+  at: Int16Array;
+};
+
+export function makeBoard(cols: number, rows: number, ladders: readonly Jump[], snakes: readonly Jump[]): Board {
+  const last = cols * rows, jumps = [...ladders, ...snakes], at = new Int16Array(last + 2).fill(-1);
+  jumps.forEach((jump, id) => { at[jump.from] = id; });
+  return { cols, rows, last, jumps, ladders: ladders.length, at };
+}
+
+export const CLASSIC: Board = makeBoard(SIZE, SIZE, LADDERS, SNAKES);
+
+export const boardLadder = (board: Board, id: number) => id >= 0 && id < board.ladders;
+export const boardJumpFrom = (board: Board, square: number) => square >= 1 && square <= board.last ? board.at[square] : -1;
+/** How far a jump moves a piece, in squares. */
+export const span = (board: Board, id: number) => Math.abs(board.jumps[id].to - board.jumps[id].from);
+
+/** Column (0 left) and row (0 top) of square 1..last, snaking up from the bottom left. */
+export function cellAt(board: Board, square: number) {
+  const index = square - 1, line = Math.floor(index / board.cols), along = index % board.cols;
+  return { col: line % 2 === 0 ? along : board.cols - 1 - along, row: board.rows - 1 - line };
+}
+
+/**
+ * What is wrong with a board, or "" when it is sound: one jump per square, no jump from 1 or the last square,
+ * no jump landing on another jump's start, ladders go up and snakes go down, captions are plain.
+ */
+export function boardProblem(board: Board) {
+  const starts = new Set<number>(), ends = new Set<number>();
+  for (const [id, jump] of board.jumps.entries()) {
+    if (starts.has(jump.from)) return `two jumps on ${jump.from}`;
+    starts.add(jump.from); ends.add(jump.to);
+    if (jump.from <= 1 || jump.from >= board.last) return `jump ${id} starts on ${jump.from}`;
+    if (jump.to < 1 || jump.to > board.last) return `jump ${id} ends off the board`;
+    if (boardLadder(board, id) ? jump.to <= jump.from : jump.to >= jump.from) return `jump ${id} goes the wrong way`;
+    if (jump.caption.length < 3 || /[!?।]/.test(jump.caption)) return `jump ${id} caption`;
+  }
+  for (const end of ends) if (starts.has(end)) return `a jump lands on another jump's start (${end})`;
+  return "";
 }

@@ -1,8 +1,10 @@
-// The share card: the board with everyone's pieces where they finished, the winner's rolls, and the snakes and ladders they met.
+// The share card: the board with everyone's pieces where they finished, the place or the winner, the rolls, and the
+// best ladder and worst snake. A level's card uses its world's board and palette.
 import { cardSizes, drawFooterBand, fitText, renderCard, roundedRect, type CardFormat } from "../../../shared/card-canvas";
-import { SIZE } from "./board";
-import { drawBoard, drawPieces, SEATS } from "./draw-board";
-import { biteText, bn, headline, highlights, humanLine, scoreboard, winnerMoves, type Result } from "./result";
+import { PALETTES, paintBoard, paintPieces, SEATS } from "./art";
+import { levelOf } from "./levels";
+import { biteText, bn, headline, highlights, humanLine, ordinal, scoreboard, winnerMoves, type Result } from "./result";
+import { placeOf, starsOf } from "./game";
 
 export const PAPER = "#fff4dc", INK = "#3a2412", ACCENT = "#1f6f5c", DEEP = "#7a1f2b";
 const MUTED = "#7a5a3a";
@@ -17,7 +19,8 @@ export function drawCard(canvas: HTMLCanvasElement, result: Result, format: Card
   canvas.width = width; canvas.height = height;
   const context = canvas.getContext("2d");
   if (!context) throw new Error("এই ব্রাউজারে ছবি বানানো যাচ্ছে না।");
-  const at = layouts[format], { card, game } = result, solo = card.players === 1, seat = SEATS[game.winner];
+  const at = layouts[format], { card, game } = result, solo = card.players === 1, level = card.level ? levelOf(card.level) : null;
+  const board = game.setup.board, palette = PALETTES[level ? level.world : 2], seat = SEATS[game.winner];
 
   context.fillStyle = PAPER; context.fillRect(0, 0, width, height);
   // A soft checker in the corners, like the printed back of a board.
@@ -26,25 +29,30 @@ export function drawCard(canvas: HTMLCanvasElement, result: Result, format: Card
   context.fillStyle = PAPER; roundedRect(context, 40, format === "story" ? 230 : 34, width - 80, height - (format === "story" ? 500 : 140), 40); context.fill();
 
   fitText(context, [{ text: "সাপলুডু", color: DEEP, weight: 800, display: true }], width / 2, at.title, 72, 800, "center");
-  fitText(context, [{ text: solo ? "একা দৌড় · দুই গুটি · ঠিক ১০০-তে" : `এক ফোনে ${bn(card.players)} জন${card.pieces === 2 ? " · দুই গুটি" : ""}`, color: MUTED, weight: 600 }], width / 2, at.sub, 32, 800, "center");
-  fitText(context, [{ text: headline(result), color: solo ? INK : seat.color, weight: 800, display: true }], width / 2, at.head, at.headSize, width - 140, "center");
+  const sub = level ? `লেভেল ${bn(level.id)} · ${level.name}${starsOf(game) ? ` · ${"★".repeat(starsOf(game))}` : ""}`
+    : solo ? "একা দৌড় · দুই গুটি · ঠিক ১০০-তে" : `এক ফোনে ${bn(card.players)} জন${card.pieces === 2 ? " · দুই গুটি" : ""}`;
+  fitText(context, [{ text: sub, color: MUTED, weight: 600 }], width / 2, at.sub, 32, 800, "center");
+  fitText(context, [{ text: headline(result), color: solo || level ? INK : seat.color, weight: 800, display: true }], width / 2, at.head, at.headSize, width - 140, "center");
+  const mine = level ? 0 : game.winner;
   fitText(context, [
     { text: bn(winnerMoves(game)), color: ACCENT, weight: 800, display: true },
-    { text: ` চালে · ${biteText(game.bites[game.winner])}`, color: INK, weight: 700, display: true },
+    { text: ` চালে · ${biteText(game.bites[mine])}`, color: INK, weight: 700, display: true },
   ], width / 2, at.stats, 44, width - 140, "center");
 
-  const size = at.board, cell = size / SIZE, left = (width - size) / 2, top = at.boardTop, frame = 16;
+  // The board keeps its shape: a 5×5 or 7×7 board is as wide as the 10×10 one.
+  const size = at.board, cell = size / board.cols, left = (width - size) / 2, top = at.boardTop, frame = 16;
   context.fillStyle = "#00000022"; roundedRect(context, left - frame, top - frame + 8, size + frame * 2, size + frame * 2, 22); context.fill();
-  context.fillStyle = DEEP; roundedRect(context, left - frame, top - frame, size + frame * 2, size + frame * 2, 22); context.fill();
+  context.fillStyle = palette.frame; roundedRect(context, left - frame, top - frame, size + frame * 2, size + frame * 2, 22); context.fill();
   context.save(); roundedRect(context, left, top, size, size, 8); context.clip();
-  drawBoard(context, cell, left, top);
-  drawPieces(context, game.pos, game.pieces, cell, left, top);
+  paintBoard(context, board, palette, cell, left, top, level?.boss?.jump ?? -1, false);
+  paintPieces(context, board, game.pos, game.pieces, cell, left, top);
   context.restore();
 
-  const first = solo ? highlights(game).join("  ·  ") || "সাপও না, সিঁড়িও না, সোজা দৌড়!" : scoreboard(result);
+  const first = level ? (highlights(game, 0).join("  ·  ") || `${ordinal(placeOf(game))} হয়ে, সাপও না সিঁড়িও না`)
+    : solo ? highlights(game).join("  ·  ") || "সাপও না, সিঁড়িও না, সোজা দৌড়!" : scoreboard(result);
   fitText(context, [{ text: first, color: MUTED, weight: 600 }], width / 2, at.line1, 34, width - 140, "center");
   fitText(context, [{ text: humanLine(result), color: INK, weight: 700, display: true }], width / 2, at.line2, 42, width - 140, "center");
-  drawFooterBand(context, format, solo ? "একই ছক্কায় তুমি কত চালে পারবে?" : "তোমাদের বাসায় কার ভাগ্য ভালো?", site, { band: DEEP, ask: "#ffd43b", site: "#ffffff" });
+  drawFooterBand(context, format, solo || level ? "একই ছক্কায় তুমি কত চালে পারবে?" : "তোমাদের বাসায় কার ভাগ্য ভালো?", site, { band: DEEP, ask: "#ffd43b", site: "#ffffff" });
 }
 
 export const cardBlob = (result: Result, format: CardFormat, site: string) => renderCard(canvas => drawCard(canvas, result, format, site));

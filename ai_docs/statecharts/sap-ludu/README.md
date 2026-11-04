@@ -1,6 +1,109 @@
-# সাপলুডু statechart (before the rewrite)
+# সাপলুডু: statechart
 
-Model: `SapLudu.tla` / `SapLudu.cfg` / `view.ts`. Report and chart: `before-fix/report.md`, `before-fix/chart.mmd`.
+## After the rewrite (2026-11-04)
+Model: `SapLudu.tla` / `SapLudu.cfg` / `view.ts`. It mirrors `tools/sap-ludu/components/ludu-game.tsx` (`tap`, `throwDie`, `pickPiece`, `step` on the `useGameLoop` clock, `settle`, `finish`, `toTitle`, `start`, the window key handler, `onPause` / `onResume` / `onRestart`, `readFriend`), `lib/motion.hot.ts` (`stepMotion`, `paceStep`, `freshPress`), `lib/save.ts` (`openAfter`) and `lib/game.ts` (`starsOf`), plus the menu in `shared/game-player-client.tsx`.
+
+**Full check** (`SapLudu.cfg`, 3 levels): TLC reached 61,968 states (`after-fix/report.md`). **Every rule holds:** TypeOK, PausedWhenAway, NoProgressWhileAway, NothingMovesWhilePaused, BreathBeforeMotion, SheetOffPlay, NoDoubleResult, ResultMatchesPlay, HeldKeyNeverSkipsResult, UnlockByOwnPlay, ReplayIsExact, NoDeadlock.
+**Chart** (`Chart.cfg`: one level, `CONSTRAINT ChartScope`): 140 states, `after-fix/chart.mmd` and `after-fix/chart-report.md`.
+**Mutant:** let the loop run while the window is blurred (`LoopRuns == screen = "play" /\ win # "hidden"`, the old `useGameLoop`) and NoProgressWhileAway and NothingMovesWhilePaused break at once, so the rules have teeth.
+
+What changed in the model:
+- Every timed thing (the die, the walk, the jump, a computer's roll or pick, the breath after resume) runs on the game loop's clock (`stepMotion`, `paceStep`). The loop runs only on the race screen with the menu shut and the window focused, so it freezes on blur, hide, P, Esc and ⏸.
+- Pause is the shared player's menu. চালিয়ে যাও gives a 280 ms breath before anything moves.
+- The end screen takes Space or Enter only as a fresh press (`freshPress`); a key held through the last move does nothing.
+- Stars are recorded once, in `finish()`, at the moment you get home. A level opens only when you clear the level before it while it was open (`openAfter`), so a friend's far level opens nothing in between.
+- The level sheet opens only on the title and end screens.
+
+| Rule | In plain words | Result |
+|---|---|---|
+| PausedWhenAway | Hide the tab or click into another window mid-race, and the pause menu is up. | holds |
+| NoProgressWhileAway | No walk, computer roll or computer pick happens while you're away. | holds |
+| NothingMovesWhilePaused | Nothing moves under the pause menu. | holds |
+| BreathBeforeMotion | After চালিয়ে যাও, nothing moves until the breath is over. | holds |
+| SheetOffPlay | সব লেভেল never covers a race in progress. | holds |
+| NoDoubleResult | The fanfare plays once a race. | holds |
+| ResultMatchesPlay | The stars on the end screen and card are the stars recorded. | holds |
+| HeldKeyNeverSkipsResult | A key held through the last move never leaves the end screen. | holds |
+| UnlockByOwnPlay | Only your own play opens levels. | holds |
+| ReplayIsExact | A friend's link plays their dice; a fresh race takes new ones. | holds |
+
+| Bug | Fix | Node test | Live replay (Orca, after) |
+|---|---|---|---|
+| 1. NoProgressWhileAway | the walk and the computer's turns run only on `useGameLoop` steps (stopped on blur), and the player's menu opens on blur | `bug 1 (NoProgressWhileAway): …` and `a computer's turn runs on the same clock …` | Level ২: tapped the die (walk শুরু → ৭), blur 300 ms later: menu up, game `inert`, 1.8 s later the tray still read "চাপলে চালটা তখনই শেষ হবে" (mid-walk) and the chip still showed ২. After চালিয়ে যাও it landed on ৭. Level ৪: blur while "মিনু আপা চালছে…": 2 s later still waiting, her chip on ৮; after resume she rolled. |
+
+Quality-bar gaps from the first run, closed: a real pause (the player's menu, P, Esc, blur, hide); the start action is the big die; no in-game toggles (চাল দ্রুত করো and কড়ি are gone, a tap still hurries a walk); the piece choice marks সুপারিশ; no label over the board (captions sit in the tray); 12 levels in 3 worlds with named boss snakes; a red edge when a snake head is one roll away.
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: held
+  }
+  class lg0 yellow
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Start card (big die)
+      s1: Die rolls, piece walks
+      s2: Computer picks a piece
+      s3: Computer's turn
+      s4: You pick a piece (১ or ২)
+      s5: Your turn
+      s6: End screen (stars, stats)
+      s7: End screen, a key still held
+      [*] --> s0
+      s0 --> s1: you tap the big die [when Playing]
+      s1 --> s2: the piece lands [when Playing]
+      s1 --> s3: the piece lands [when Playing]
+      s1 --> s4: the piece lands [when Playing]
+      s1 --> s5: the piece lands [when Playing]
+      s1 --> s6: your piece gets home [when Playing]
+      s2 --> s1: the computer picks [when Playing]
+      s3 --> s1: the computer rolls [when Playing]
+      s4 --> s1: you pick a piece [when Playing]
+      s5 --> s1: you tap the die [when Playing]
+      s6 --> s1: you press পর#2503;র ল#2503;ভ#2503;ল / আব#2494;র [when Playing]
+      s6 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল / আব#2494;র [when Playing]
+      s6 --> s7: you were holding Space as it ended
+      s1 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Pause menu]
+      s1 --> s7: your piece gets home [when Playing]
+    }
+    --
+    state "Window" as r1 {
+      s8: Playing
+      s9: Away, game paused
+      s10: Pause menu
+      s11: Breath after resume
+      [*] --> s8
+      s8 --> s9: you look away (other window or tab)
+      s9 --> s8: you come back [when Start card (big die)]
+      s8 --> s10: you press P, Esc or #9208; [unless End screen (stars, stats) or End screen, a key still held or Start card (big die)]
+      s9 --> s10: you come back [unless Start card (big die)]
+      s10 --> s8: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Die rolls, piece walks]
+      s10 --> s9: you look away (other window or tab)
+      s10 --> s11: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [unless End screen (stars, stats) or End screen, a key still held]
+      s11 --> s8: the breath ends
+      s11 --> s9: you look away (other window or tab)
+      s11 --> s10: you press P, Esc or #9208;
+      s10 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when End screen (stars, stats) or End screen, a key still held]
+    }
+  }
+  class s9 yellow
+  class s10 yellow
+  class s11 yellow
+```
+
+## Regenerate
+```sh
+scripts/statechart.sh ai_docs/statecharts/sap-ludu/SapLudu.tla --view ai_docs/statecharts/sap-ludu/view.ts --out ai_docs/statecharts/sap-ludu/after-fix
+scripts/statechart.sh ai_docs/statecharts/sap-ludu/SapLudu.tla --config ai_docs/statecharts/sap-ludu/Chart.cfg --view ai_docs/statecharts/sap-ludu/view.ts --out <new folder>
+# copy its chart.mmd to after-fix/chart.mmd and its report.md to after-fix/chart-report.md, then
+rm ai_docs/statecharts/sap-ludu/after-fix/tlc*.out
+```
+The chart hides letting go of a key, closing the sheet, hiding the tab (it acts as blur), a tap during the walk, the friend's link except from the title, and নতুন করে শুরু except from a walk. The full check keeps all of them.
+
+## Before the rewrite (kept for the record)
+
+Model: `before-fix-model/SapLudu.tla` / `.cfg` / `view.ts`. Report and chart: `before-fix/report.md`, `before-fix/chart.mmd`.
 Code mirrored: `tools/sap-ludu/components/sap-ludu-game.tsx`, `tools/sap-ludu/lib/game.ts`, `shared/game-kit.ts` (`useGameLoop`).
 
 TLC: 54 states, 184 steps. **8 rules hold, 1 breaks.**
@@ -46,8 +149,4 @@ TLC: 54 states, 184 steps. **8 rules hold, 1 breaks.**
 
 Screenshot: `.shots/sap-ludu-result.png` (the result cover after the autopilot run).
 
-## Regenerate
-```sh
-scripts/statechart.sh ai_docs/statecharts/sap-ludu/SapLudu.tla --view ai_docs/statecharts/sap-ludu/view.ts --out ai_docs/statecharts/sap-ludu/after-fix
-```
-The chart hides "you tap again to finish the move" (it repeats "the piece lands") and the friend's link from every state except the first screen.
+The before-fix chart hides "you tap again to finish the move" (it repeats "the piece lands") and the friend's link from every state except the first screen.
