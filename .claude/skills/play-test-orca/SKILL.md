@@ -21,6 +21,7 @@ The owner wants every check done in Orca's built-in browser. Load the `orca-cli`
 - **Real key presses:** `orca keypress --page <id> --key p --json` sends a trusted key. Some games, like tibo.dog, ignore synthetic `KeyboardEvent`s. Ours listen on `window`, so `window.dispatchEvent(new KeyboardEvent('keydown', {key:'ArrowRight', bubbles:true}))` works for holds; send the keyup too.
 - **Clicks and taps:** `orca click --element @eN`, or in eval, `el.click()`. For canvas games, dispatch `PointerEvent('pointerdown'|'pointermove'|'pointerup', {clientX, clientY, pointerId:1, isPrimary:true, bubbles:true})` at coordinates from `getBoundingClientRect()`.
 - **Away and back:** `window.dispatchEvent(new Event('blur'))` and `'focus'`. For hiding, `Object.defineProperty(document, 'hidden', {value:true, configurable:true}); document.dispatchEvent(new Event('visibilitychange'))`.
+- **Silence is required:** on the dev server all game audio is muted by default; the code runs, but its AudioContext stays suspended. Never set `ektukhani-dev-sound`, and never unmute. The owner works beside these tests.
 - **Sound without hearing:** instrument `AudioBufferSourceNode.prototype.start` and `OscillatorNode.prototype.start` to count starts (`this.loop` marks loops) and prove a sound fired or a loop restarted.
 
 ## Play a whole run (autopilot)
