@@ -61,11 +61,11 @@ I replayed these in Orca, in my own tab. The page ran in a src-less iframe with 
 - **RestOnlyAtBreak:** at b51e328, Tab from the rest screen reached সব ধাপ behind it (live: focus went from the rest screen's gate to the "সব ধাপ" summary). **Now:** the rest screen is a real modal, and Enter on the drawer did nothing under it.
 
 ## Checked live and holding
-- **No network, no child data:** no fetch, XHR or beacon after load. Storage holds `ektukhani-levels-dosh-ghater-nouka` only, plus the shared kids-time and sound keys. The ShowParent card shows only today's counts.
+- **No network, no child data:** the game code has no fetch, XHR, beacon, `/api` or share-client (grep), and the shimmed frame logged no fetch, XHR or beacon calls during the replays. Storage holds `ektukhani-levels-dosh-ghater-nouka` only, plus the shared kids-time and sound keys. The ShowParent card shows only today's counts.
 - **RestOnlyAtBreak:** a race finished past the limit shows the rest screen over the end card (`.shots/dosh-ghater-nouka-rest-after-race.png`).
 
 ## Quality-bar gaps (level 1 autoplayed to the end in Orca at 412 px, plus the code)
-1. **First screen:** the চরকি and the glowing first ghat are clear, and a ghost finger appears after 6 s. But the top bar crowds three things into one line (ধাপ title, ধীরে খেলো, sound), and the mode switch sits inside the play area (see "Also found").
+1. **First screen:** the চরকি and the glowing first ghat are clear, and a ghost finger shows on the very first turn and again after 6 s idle. But the top bar crowds three things into one line (ধাপ title, ধীরে খেলো, sound), and the mode switch sits inside the play area (see "Also found").
 2. **Level 1 takes about 25–30 s of pure waiting:** with instant taps, আব্বু's 1 s + 0.8 s + 0.85 s per ghat dominates, so a 10-ghat race is 8–10 turns. For 3–6 year olds that is a lot of watching. A faster আব্বু once the child has heard a number a few times would help.
 3. **Away and back:** the bot doesn't stop (bug 3).
 4. **The camera** shows three ghats around your boat. The overview line on top is the only place the whole river shows, and it's a thin 1-px bar with small labels.
