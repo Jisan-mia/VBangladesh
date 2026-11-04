@@ -1,6 +1,140 @@
-# মার্বেল-সিঁড়ি: statechart (before the rewrite)
+# মার্বেল-সিঁড়ি: statechart
 
-Model: `Marble.tla`, `Marble.cfg` and `view.ts`. It mirrors `tools/marble-sinri/components/marble-game.tsx`: `begin`, `newGame`/`again`, `finish`, `clearedStage` and its `window.setTimeout(sfx.levelUp, 900)`, `tick`, `press`/`lift`/`release`, `keys.down`/`keys.up`, `onBoardDown`/`onUp`, `holdButton`, the `visibilitychange` handler `hide`, the `[view, paused]` hum effect and the `SoundToggle` `onChange`. It also mirrors `useGameLoop` in `shared/game-kit.ts`. That is the **working copy**: blur cancels the frame and sets `away`, focus clears it, and a remount starts with `away = false`.
+## After the rewrite (`after-fix/`)
+The spec `Marble.tla` now mirrors the rewritten game:
+- `components/marble.tsx`: begin, load, pause, resume, the floor list, finishRun, again, the `useGamePlayer` handlers (onPause opens `menu`, onResume closes it), the key, pointer, blur, focus, visibility and hashchange handlers, and the step's `humStep`;
+- `lib/session.ts`, the pure phase machine the component runs (`start`, `pause`, `resume`, `away`, `back`, `finish`, `again`, `reset`, `pick`, `menu`, `cheerMayPlay`, `humStep`);
+- `lib/hands.ts`, what counts as held (`press`, `lift`, `release`, `direction`);
+- `lib/progress.ts`, your own unlock (`afterClear`, `playable`).
+
+It runs twice:
+- **Full check** (`MarbleFull.cfg`: two floors, the hand on a key or finger, a hidden tab, Enter held through the end, পরের তলা): TLC reached 5,298 states (`after-fix/report-full.md`).
+- **Chart run** (`Marble.cfg`, `Full = FALSE`): 134 states; the chart has 12 states and 28 arrows (`after-fix/report.md`, `after-fix/chart.mmd`). The hand, the hum and the celebration are checked as rules but not drawn, because each follows the game phase.
+
+**All 14 rules hold in both runs, and so does NoDeadlock.** A mutation check put the old behaviours back into a copy of the spec: a blur that neither releases nor pauses, a celebration that ignores the menu and the window, `??=` keeping the muted stub. PausedWhenBlurred, InputReleasedWhenAway, MarbleRollsOnlyWhenHeld, LoopOnlyWhenMeaningful, LoopComesBack and NoChimeAfterLeaving then broke, so none of them is vacuous. NoProgressWhileAway holds by construction: the stairs move only inside `moving()`, which needs the window.
+
+| Rule | In plain words | After |
+|---|---|---|
+| NoProgressWhileAway | The stairs move only while you are on the page. | holds |
+| InputReleasedWhenAway | After you click away, the game doesn't think you still hold a side. | holds (was broken) |
+| MarbleRollsOnlyWhenHeld | The marble is pushed sideways only while you really hold a side. | holds (was broken) |
+| PausedWhenHidden, PausedWhenBlurred | Hiding the tab or clicking into another window pauses a rolling floor. | hold (blurred was broken) |
+| MenuFreezesPlay (new) | While the player's pause menu is open, nothing rolls. | holds |
+| ChoiceFreezesPlay (new) | While সব তলা is open, nothing rolls. | holds |
+| LoopOnlyWhenMeaningful | The roll hum is heard only while the marble rolls in front of you. | holds (was broken) |
+| LoopComesBack | With sound on and the stairs moving, the hum plays, even after sound off and on. | holds (was broken) |
+| NoChimeAfterLeaving | A floor's fanfare plays only on its own end screen: not under the pause menu, not after আবার or a new floor. | holds (was broken) |
+| ReplayIsExact (new) | When the friend's floor is on screen, their seed is what you roll down. | holds |
+| HeldKeyNeverSkips (new) | An Enter held from before the end screen never takes its choice. | holds |
+| OpenLevelsAreEarned (new) | Every floor below your unlock is one you cleared yourself. | holds |
+
+```mermaid
+---
+title: "Marble Sinri after the rewrite: floor, menu, list, window and link"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: wait
+    lg1: play
+    lg2: held
+    lg3: done
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Title (গড#2492;#2494;ও)
+      s1: Marble rolling
+      s2: সব তল#2494; open
+      s3: Card shows
+      s4: Paused
+      s5: সব তল#2494; open, floor paused
+      [*] --> s0
+      s0 --> s1: you press গড#2492;#2494;ও (or an arrow, or Space) [when Window is You're on the page and Menu is No menu]
+      s0 --> s2: you open সব তল#2494; [when Window is You're on the page and Menu is No menu]
+      s1 --> s0: a friend's link opens [when Link is No friend's link]
+      s1 --> s3: the floor ends and the card shows
+      s1 --> s4: you click into another window or you press P or #9208;
+      s1 --> s5: you open সব তল#2494;
+      s2 --> s0: you close সব তল#2494; or you pick a floor [when Window is You're on the page and Menu is No menu]
+      s2 --> s0: a friend's link opens [when Link is No friend's link]
+      s3 --> s0: a friend's link opens [when Link is No friend's link]
+      s3 --> s1: you press আব#2494;র [when Window is You're on the page and Menu is No menu]
+      s3 --> s2: you open সব তল#2494; [when Window is You're on the page and Menu is No menu]
+      s4 --> s0: a friend's link opens [when Link is No friend's link]
+      s5 --> s0: you pick a floor [when Window is You're on the page and Menu is No menu]
+      s5 --> s0: a friend's link opens [when Link is No friend's link]
+      s5 --> s1: you close সব তল#2494; [when Window is You're on the page and Menu is No menu]
+      s4 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Menu is Pause menu open]
+      s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Menu is Pause menu open]
+      s2 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Menu is Pause menu open]
+      s2 --> s3: you close সব তল#2494; [when Window is You're on the page and Menu is No menu]
+      s3 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Menu is Pause menu open]
+      s4 --> s1: you tap the board to go on [when Window is You're on the page and Menu is No menu]
+      s5 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Menu is Pause menu open]
+    }
+    --
+    state "Window" as r1 {
+      s6: You're on the page
+      s7: Another window has focus
+      [*] --> s6
+      s6 --> s7: you click into another window
+      s7 --> s6: you come back to the window
+      s7 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Menu is Pause menu open]
+    }
+    --
+    state "Menu" as r2 {
+      s8: No menu
+      s9: Pause menu open
+      [*] --> s8
+      s8 --> s9: you press P or #9208; [when Window is You're on the page]
+      s9 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you press নত#2497;ন কর#2503; শ#2497;র#2497;
+    }
+    --
+    state "Link" as r3 {
+      s10: No friend's link
+      s11: Friend's floor on screen
+      [*] --> s10
+      [*] --> s11
+      s10 --> s11: a friend's link opens
+    }
+  }
+  class s1 teal
+  class s3 blue
+  class s4 yellow
+  class s5 yellow
+```
+
+### The five bugs, fixed, each with a node test and a live replay in Orca
+Live numbers were read from the component's refs through the dev hook `window.__ms`, with `OscillatorNode.prototype.start/stop` and `AudioParam.setValueAtTime` counted. The dev server keeps audio suspended, so sound was proven by counting, never by ear.
+1. **MarbleRollsOnlyWhenHeld, InputReleasedWhenAway** (`tests/session.test.ts` "bug 1"). The blur handler calls `release()` (`lib/hands.ts`) and `away()`. Live: → held 0.25 s (x 191.9, vx 158, 1 side held), blur: 0 sides held, x and the clock unchanged for 2 s. After চালিয়ে যাও with no key down: 0 sides held, the marble rolled 12.2 units on its own momentum and stopped (vx 0).
+2. **LoopOnlyWhenMeaningful** ("bug 2"). The hum follows `humStep` every step and stops on blur. Live: 1 hum stop at the blur, none running while away.
+3. **PausedWhenBlurred** ("bug 3"). Blur pauses through `away()`; focus only clears the flag. Live: phase `paused` after the blur, still `paused` after focus, `playing` only after চালিয়ে যাও, then a 0.5 s breath.
+4. **LoopComesBack** ("bug 4"). No `??=`: a muted start makes a stub, and `humStep` starts a fresh loop once sound is on. Live: sound off in the menu, start: 0 hum loops; sound on, চালিয়ে যাও: 1 hum loop within 1.2 s.
+5. **NoChimeAfterLeaving** ("bug 5"). Every celebration goes through `later()` (cleared on load, begin, again and unmount) and plays only if `cheerMayPlay`: its own run's end screen, the list and the player's menu closed, the window ours. Live: floor 1 at ★★★, the pause menu opened at once: 0 fanfare notes in 2.6 s; the same without the pause: 1.
+
+### Quality-bar gaps, closed
+- **The last floor ends:** 12 floors in 3 worlds, each a fixed number of steps down to a full-width landing. Floor 12, গলির গর্ত, ends in the alley: the marble rolls into the friends' hole and the building is done.
+- **No toasts:** a hurt is an edge pulse, a shake, a "−১" by the chances and its sound. A pick is a small "+১" by the marble. A clear is the end screen. Nothing covers the top centre except a finale's named bar.
+- **Choices are screens:** সব তলা is a numbered, pausing sheet with এটা খেলো. The end screen has numbered choices (১ পরের তলা, marked এটাই ভালো). The marble colours sit on the title, and a newly opened colour is shown and equipped on the end screen.
+- **Danger at the edge:** the red wash under the awning, an orange border on the last chance (steady in ধীরে খেলো), a red pulse on a loss, gust chevrons, and the awning flashing amber before a surge.
+- **The shared player:** `GamePage`, immersive on a phone, P → `requestPause`, and no in-game sound or slow toggles.
+
+## Regenerate
+```sh
+scripts/statechart.sh ai_docs/statecharts/marble-sinri/Marble.tla --view ai_docs/statecharts/marble-sinri/view.ts --out ai_docs/statecharts/marble-sinri/after-fix
+rm ai_docs/statecharts/marble-sinri/after-fix/tlc*.out
+# the full check: copy Marble.tla and view.ts next to MarbleFull.cfg renamed Marble.cfg, and run the same command into a scratch folder
+```
+
+---
+
+# Before the rewrite
+
+The model of the old game was `Marble.tla` before this rewrite (its run is kept in `before-fix/`). It mirrors `tools/marble-sinri/components/marble-game.tsx`: `begin`, `newGame`/`again`, `finish`, `clearedStage` and its `window.setTimeout(sfx.levelUp, 900)`, `tick`, `press`/`lift`/`release`, `keys.down`/`keys.up`, `onBoardDown`/`onUp`, `holdButton`, the `visibilitychange` handler `hide`, the `[view, paused]` hum effect and the `SoundToggle` `onChange`. It also mirrors `useGameLoop` in `shared/game-kit.ts`. That is the **working copy**: blur cancels the frame and sets `away`, focus clears it, and a remount starts with `away = false`.
 Run: `before-fix/report.md` and `before-fix/chart.mmd`. TLC found 336 states. The chart has 18 states and 37 arrows.
 
 ## Systems modelled
@@ -69,8 +203,3 @@ The live replays ran in Orca on `/marble-sinri`. State was read from the compone
 
 Screenshots: `.shots/marble-sinri-sc-first.png` (first screen, Pixel 9), `-play.png` (a hurt toast over the play area), `-over.png` (the result).
 
-## Regenerate
-```sh
-scripts/statechart.sh ai_docs/statecharts/marble-sinri/Marble.tla --view ai_docs/statecharts/marble-sinri/view.ts --out ai_docs/statecharts/marble-sinri/after-fix
-rm ai_docs/statecharts/marble-sinri/after-fix/tlc*.out
-```
