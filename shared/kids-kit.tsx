@@ -181,7 +181,17 @@ export function RestScreen({ onExtend }: { onExtend: (minutes: number) => void }
     };
     const kinds = ['keydown', 'keyup', 'keypress', 'pointerdown', 'pointerup', 'click', 'focusin'];
     for (const kind of kinds) window.addEventListener(kind, block, true);
-    return () => { for (const kind of kinds) window.removeEventListener(kind, block, true); };
+    // Everything else on the page goes inert, so Tab can't even land on it.
+    const quiet: HTMLElement[] = [];
+    for (let at: HTMLElement | null = node; at && at !== document.body; at = at.parentElement) {
+      for (const sibling of Array.from(at.parentElement?.children ?? [])) {
+        if (sibling !== at && sibling instanceof HTMLElement && !sibling.inert) { sibling.inert = true; quiet.push(sibling); }
+      }
+    }
+    return () => {
+      for (const kind of kinds) window.removeEventListener(kind, block, true);
+      for (const sibling of quiet) sibling.inert = false;
+    };
   }, []);
   return <div ref={box} tabIndex={-1} className="kk-rest" role="dialog" aria-modal="true" aria-label="আজকের খেলা শেষ">
     <div className={`kk-balloon${breath >= 5 ? ' away' : ''}`} aria-hidden="true" />
@@ -196,12 +206,23 @@ export function RestScreen({ onExtend }: { onExtend: (minutes: number) => void }
   </div>;
 }
 
-/** True once the phone offers a Bangla voice (bn-BD / bn-IN / bn_BD). Many cheap phones have none: then stay silent, never read Bangla in English. */
+/** A Bangla voice that runs on the phone itself. Online voices send the text to a server, so kids' pages never use them. */
+function banglaVoice() {
+  if (typeof speechSynthesis === 'undefined') return undefined;
+  return speechSynthesis.getVoices().find(item => /^bn[-_]/i.test(item.lang) && item.localService);
+}
+
+// Speech stops the moment the page is hidden, like every other sound.
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', () => { if (document.hidden && typeof speechSynthesis !== 'undefined') speechSynthesis.cancel(); });
+}
+
+/** True once the phone offers an on-device Bangla voice (bn-BD / bn-IN / bn_BD). Many cheap phones have none: then stay silent, never read Bangla in English. */
 export function useBanglaVoice() {
   const [voice, setVoice] = useState(false);
   useEffect(() => {
     if (typeof speechSynthesis === 'undefined') return;
-    const check = () => setVoice(speechSynthesis.getVoices().some(item => /^bn[-_]/i.test(item.lang)));
+    const check = () => setVoice(Boolean(banglaVoice()));
     check();
     speechSynthesis.addEventListener('voiceschanged', check);
     return () => speechSynthesis.removeEventListener('voiceschanged', check);
@@ -213,7 +234,7 @@ export function useBanglaVoice() {
  * does nothing on phones with no Bangla voice, and never blocks the game. */
 export function speak(text: string) {
   if (typeof speechSynthesis === 'undefined' || !soundOn()) return;
-  const voice = speechSynthesis.getVoices().find(item => /^bn[-_]/i.test(item.lang));
+  const voice = banglaVoice();
   if (!voice) return;
   speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
