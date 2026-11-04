@@ -1,0 +1,116 @@
+---
+title: "বﬂ°°2494¶ßইচﬂ°°2503¶ßর নﬂ°°2508¶ßকﬂ°°2494¶ß: race, window, river view, rush sound and friend's river"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: ready
+    lg1: play
+    lg2: held
+    lg3: done
+    lg4: Breaks CalibWaitsWhileAway or PausedWhenBlurred or PausedWhenScrolledAway or ReplayIsExact or ResultStaysABeat in some cases
+    lg5: Path to the CalibWaitsWhileAway or PausedWhenBlurred or PausedWhenScrolledAway or ReplayIsExact or ResultStaysABeat bug
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 yellow
+  class lg3 purple
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Race" as r0 {
+      s0: Ready screen
+      s1: ত#2494;ল ম#2503;ল#2494;ও running
+      s2: Racing
+      s3: Result, first 450 ms
+      s4: Paused
+      s5: Result shows
+      [*] --> s0
+      s0 --> s1: you press ত#2494;ল ম#2503;ল#2494;ও [when Window is You're on the page and River is River on screen]
+      s0 --> s2: you tap শ#2497;র#2497; কর#2507; or the drum [when Window is You're on the page]
+      s1 --> s0: ত#2494;ল ম#2503;ল#2494;ও ends [when Window is not Tab hidden]
+      s2 --> s3: you cross the finish rope
+      s2 --> s4: you hide the tab
+      s2 --> s4: you scroll the river away [when Window is You're on the page and River is River on screen]
+      s2 --> s4: you press থ#2494;ম#2494;ও, P or Esc [when Window is You're on the page]
+      s3 --> s0: you pick a race from সব ব#2494;ইচ or you press আর#2503;কব#2494;র খ#2503;ল#2507; under the card or a friend's link opens [when Window is You're on the page]
+      s3 --> s5: time passes on the result
+      s4 --> s0: you pick a race from সব ব#2494;ইচ or a friend's link opens [when Window is You're on the page]
+      s4 --> s2: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s5 --> s0: you pick a race from সব ব#2494;ইচ or you press আর#2503;কব#2494;র খ#2503;ল#2507; under the card or a friend's link opens [when Window is You're on the page]
+      s5 --> s2: you press আর#2503;কব#2494;র or Space or you tap Space for one more beat [when Window is You're on the page and River is River on screen]
+    }
+    --
+    state "Window" as r1 {
+      s6: You're on the page
+      s7: Another window has focus
+      s8: Tab hidden
+      [*] --> s6
+      s6 --> s7: you click into another window
+      s6 --> s8: you hide the tab
+      s7 --> s6: you come back to the window
+      s7 --> s8: you hide the tab
+      s8 --> s6: the tab shows again
+    }
+    --
+    state "River" as r2 {
+      s9: River on screen
+      s10: River scrolled away
+      [*] --> s9
+      s9 --> s10: you scroll the river away [when Window is You're on the page]
+      s10 --> s9: you scroll back to the river [when Window is You're on the page]
+    }
+    --
+    state "Rush" as r3 {
+      s11: Rush sound off
+      s12: Rush sound on
+      [*] --> s11
+      s11 --> s12: you tap শ#2497;র#2497; কর#2507; or the drum [when Race is Ready screen and Window is You're on the page and Sound is Sound on]
+      s12 --> s11: you cross the finish rope or you hide the tab
+      s12 --> s11: you scroll the river away [when Window is You're on the page and River is River on screen]
+      s12 --> s11: you press থ#2494;ম#2494;ও, P or Esc or you turn sound off [when Window is You're on the page]
+      s11 --> s12: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Race is Paused and Window is You're on the page and Sound is Sound on]
+      s11 --> s12: you turn sound on [when Race is Racing and Window is You're on the page and Sound is Sound off]
+      s11 --> s12: you press আর#2503;কব#2494;র or Space or you tap Space for one more beat [when Race is Result shows and Window is You're on the page and River is River on screen and Sound is Sound on]
+    }
+    --
+    state "Sound" as r4 {
+      s13: Sound on
+      s14: Sound off
+      [*] --> s13
+      s13 --> s14: you turn sound off [when Window is You're on the page]
+      s14 --> s13: you turn sound on [when Window is You're on the page]
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 blue
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 teal
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 purple
+  class s3 bugPath
+  class s4 yellow
+  class s4 mayBreak
+  class s5 purple
+  class s5 bugPath
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 mayBreak
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 teal
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
