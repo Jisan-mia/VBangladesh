@@ -1,0 +1,188 @@
+---
+title: "বডﬂ°°2492¶ßদﬂ°°2503¶ßর জনﬂ°°2509¶ßয: the kids' kit parent gate"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: shut
+    lg1: ask
+    lg2: open
+    lg3: Breaks NoShareForKids or OnlyAGrownUpOpensIt
+    lg4: Path to the NoShareForKids or OnlyAGrownUpOpensIt bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 orange
+  class lg3 breaks
+  class lg4 bugPath
+  state "Gate Button: চ#2503;প#2503; ধর#2507;" as s0 {
+    state "Hands No finger down" as s1 {
+      state "Timer No timer" as s2 {
+        state "Tries #8212;" as s3 {
+          s4: Link Not shared
+          s5: Link A child shared the link
+          s6: Link Link shared
+        }
+      }
+    }
+    state "Hands One finger or key down" as s7 {
+      state "Timer 2 s timer running" as s8 {
+        state "Tries #8212;" as s9 {
+          s10: Link Not shared
+          s11: Link Link shared
+        }
+      }
+      state "Timer No timer" as s12 {
+        state "Tries #8212;" as s13 {
+          s14: Link Not shared
+          s15: Link Link shared
+        }
+      }
+    }
+    state "Hands Two fingers down" as s16 {
+      state "Timer 2 s timer running" as s17 {
+        state "Tries #8212;" as s18 {
+          s19: Link Not shared
+          s20: Link Link shared
+        }
+      }
+      state "Timer No timer" as s21 {
+        state "Tries #8212;" as s22 {
+          s23: Link Not shared
+          s24: Link Link shared
+        }
+      }
+    }
+  }
+  state "Gate Sum in words, number pad" as s25 {
+    state "Hands One finger or key down" as s26 {
+      state "Timer No timer" as s27 {
+        state "Tries No wrong answer yet" as s28 {
+          s29: Link Not shared
+          s30: Link Link shared
+        }
+        state "Tries One wrong answer" as s31 {
+          s32: Link Not shared
+          s33: Link Link shared
+        }
+      }
+    }
+    state "Hands Two fingers down" as s34 {
+      state "Timer No timer" as s35 {
+        state "Tries No wrong answer yet" as s36 {
+          s37: Link Not shared
+          s38: Link Link shared
+        }
+        state "Tries One wrong answer" as s39 {
+          s40: Link Not shared
+          s41: Link Link shared
+        }
+      }
+    }
+  }
+  state "Gate Open, a child got in" as s42 {
+    state "Hands One finger or key down" as s43 {
+      state "Timer No timer" as s44 {
+        state "Tries #8212;" as s45 {
+          s46: Link Not shared
+        }
+      }
+    }
+    state "Hands Two fingers down" as s47 {
+      state "Timer No timer" as s48 {
+        state "Tries #8212;" as s49 {
+          s50: Link Not shared
+        }
+      }
+    }
+  }
+  state "Gate Open for a grown-up" as s51 {
+    state "Hands One finger or key down" as s52 {
+      state "Timer No timer" as s53 {
+        state "Tries #8212;" as s54 {
+          s55: Link Not shared
+        }
+      }
+    }
+    state "Hands Two fingers down" as s56 {
+      state "Timer No timer" as s57 {
+        state "Tries #8212;" as s58 {
+          s59: Link Not shared
+        }
+      }
+    }
+  }
+  [*] --> s4
+  s4 --> s10: a finger or key goes down on the button
+  s10 --> s4: a finger or key comes up
+  s10 --> s29: two seconds pass
+  s10 --> s19: a finger or key goes down on the button
+  s29 --> s4: থ#2494;ক or বন#2509;ধ কর#2507;
+  s29 --> s32: a child taps two digits at random
+  s19 --> s14: a finger or key comes up
+  s19 --> s37: two seconds pass
+  s46 --> s5: someone taps খ#2503;ল#2494;ট#2494;র ল#2495;#2434;ক প#2494;ঠ#2494;ও
+  s14 --> s4: a finger or key comes up
+  s14 --> s19: a finger or key goes down on the button
+  s37 --> s4: থ#2494;ক or বন#2509;ধ কর#2507;
+  s37 --> s40: a child taps two digits at random
+  s32 --> s4: থ#2494;ক or বন#2509;ধ কর#2507;
+  s32 --> s14: a child taps two digits at random
+  s6 --> s11: a finger or key goes down on the button
+  s40 --> s4: থ#2494;ক or বন#2509;ধ কর#2507;
+  s40 --> s23: a child taps two digits at random
+  s11 --> s6: a finger or key comes up
+  s11 --> s30: two seconds pass
+  s11 --> s20: a finger or key goes down on the button
+  s23 --> s14: a finger or key comes up
+  s30 --> s6: থ#2494;ক or বন#2509;ধ কর#2507;
+  s30 --> s33: a child taps two digits at random
+  s20 --> s15: a finger or key comes up
+  s20 --> s38: two seconds pass
+  s15 --> s6: a finger or key comes up
+  s15 --> s20: a finger or key goes down on the button
+  s38 --> s6: থ#2494;ক or বন#2509;ধ কর#2507;
+  s38 --> s41: a child taps two digits at random
+  s33 --> s6: থ#2494;ক or বন#2509;ধ কর#2507;
+  s33 --> s15: a child taps two digits at random
+  s41 --> s6: থ#2494;ক or বন#2509;ধ কর#2507;
+  s41 --> s24: a child taps two digits at random
+  s24 --> s15: a finger or key comes up
+  s42 --> s4: থ#2494;ক or বন#2509;ধ কর#2507;
+  s51 --> s4: থ#2494;ক or বন#2509;ধ কর#2507;
+  s51 --> s6: someone taps খ#2503;ল#2494;ট#2494;র ল#2495;#2434;ক প#2494;ঠ#2494;ও
+  s26 --> s46: a child taps two digits at random
+  s26 --> s55: a grown-up taps the sum
+  s34 --> s50: a child taps two digits at random
+  s34 --> s59: a grown-up taps the sum
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s4 teal
+  class s4 bugPath
+  class s5 teal
+  class s5 breaks
+  class s5 bugPath
+  class s6 teal
+  class s10 teal
+  class s10 bugPath
+  class s11 teal
+  class s14 teal
+  class s15 teal
+  class s19 teal
+  class s20 teal
+  class s23 teal
+  class s24 teal
+  class s29 yellow
+  class s29 bugPath
+  class s30 yellow
+  class s32 yellow
+  class s33 yellow
+  class s37 yellow
+  class s38 yellow
+  class s40 yellow
+  class s41 yellow
+  class s46 orange
+  class s46 breaks
+  class s46 bugPath
+  class s50 orange
+  class s50 breaks
+  class s55 orange
+  class s59 orange

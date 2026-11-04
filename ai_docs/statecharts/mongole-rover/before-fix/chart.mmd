@@ -1,0 +1,94 @@
+---
+title: "মঙﬂ°°2509¶ßগলﬂ°°2503¶ß রﬂ°°2507¶ßভﬂ°°2494¶ßর: the plan, the run, the rest screen and you"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: plan
+    lg1: run
+    lg2: rest
+    lg3: Breaks NoProgressWhileAway or OneTapOneRun in some cases
+    lg4: Path to the NoProgressWhileAway or OneTapOneRun bug
+  }
+  class lg0 teal
+  class lg1 orange
+  class lg2 yellow
+  class lg3 mayBreak
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: No arrows yet
+      s1: Planning
+      s2: Run starting, rover still at the start
+      s3: Rover driving
+      s4: The bad block glows, fix the plan
+      s5: Level won: stars and a Mars fact
+      s6: আজক#2503;র মত#2507; হল#2507;, level grid
+      [*] --> s0
+      s0 --> s1: you add or remove arrows [when Rest is not Rest screen up and You is Here]
+      s1 --> s0: the page reloads or you add or remove arrows or you pick a level [when You is Here]
+      s1 --> s2: you tap চ#2494;ল#2494;ও [when You is Here]
+      s2 --> s0: the page reloads or you pick a level [when You is Here, finger on the চ#2494;ল#2494;ও spot]
+      s2 --> s3: the rover moves a square [when Rest is Time left today or You is Here, finger on the চ#2494;ল#2494;ও spot]
+      s2 --> s1: you tap চ#2494;ল#2494;ও again quickly (or press Enter) [when Rest is Time left today and You is Here, finger on the চ#2494;ল#2494;ও spot]
+      s3 --> s0: the page reloads or you pick a level [when You is Here, finger on the চ#2494;ল#2494;ও spot]
+      s3 --> s1: you tap থ#2494;ম#2494;ও [when You is Here, finger on the চ#2494;ল#2494;ও spot]
+      s3 --> s4: the rover bumps and stops [when Rest is Time left today and You is Here, finger on the চ#2494;ল#2494;ও spot]
+      s4 --> s0: the page reloads or you add or remove arrows or you pick a level [when You is Here]
+      s4 --> s1: you add or remove arrows [when You is Here]
+      s4 --> s2: you tap চ#2494;ল#2494;ও [when You is Here]
+      s3 --> s5: the rover picks up the last rock [when You is Here, finger on the চ#2494;ল#2494;ও spot]
+      s5 --> s6: you press শ#2503;ষ [when Rest is not Rest screen up and You is Here]
+      s5 --> s0: you pick a level or you press আব#2494;র খ#2503;ল#2507; or you press পর#2503;র ল#2503;ভ#2503;ল [when Rest is not Rest screen up and You is Here]
+      s5 --> s0: the page reloads [when You is Here]
+      s6 --> s0: you pick a level or the page reloads [when You is Here]
+    }
+    --
+    state "Rest" as r1 {
+      s7: Time left today
+      s8: Today's minutes are up
+      s9: Rest screen up
+      [*] --> s7
+      s7 --> s8: today's minutes run out [when Game is not The bad block glows, fix the plan and You is not Looking away]
+      s8 --> s9: the page reloads [when You is not Looking away]
+      s9 --> s7: a grown-up gives 10 more minutes [when You is Here]
+      s8 --> s9: the rover picks up the last rock [when Game is Rover driving and You is Here, finger on the চ#2494;ল#2494;ও spot]
+    }
+    --
+    state "You" as r2 {
+      s10: Here
+      s11: Looking away
+      s12: Here, finger on the চ#2494;ল#2494;ও spot
+      [*] --> s10
+      s10 --> s11: you look away
+      s10 --> s12: you tap চ#2494;ল#2494;ও [when Game is one of Planning, The bad block glows, fix the plan and Rest is not Rest screen up]
+      s11 --> s10: you come back [when Game is none of Rover driving, Run starting, rover still at the start]
+      s12 --> s10: the page reloads or you pick a level
+      s12 --> s11: you look away
+      s12 --> s10: you tap চ#2494;ল#2494;ও again quickly (or press Enter) [when Game is Run starting, rover still at the start and Rest is Time left today]
+      s11 --> s12: you come back [when Game is one of Rover driving, Run starting, rover still at the start and Rest is not Rest screen up]
+      s12 --> s10: you tap থ#2494;ম#2494;ও or the rover picks up the last rock [when Game is Rover driving]
+      s12 --> s10: the rover bumps and stops [when Game is Rover driving and Rest is Time left today]
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 orange
+  class s2 bugPath
+  class s3 orange
+  class s3 mayBreak
+  class s3 bugPath
+  class s4 teal
+  class s6 teal
+  class s7 mayBreak
+  class s7 bugPath
+  class s9 yellow
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 orange
+  class s12 bugPath

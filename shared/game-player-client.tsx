@@ -11,6 +11,7 @@
  *   player.immersive    true while the game fills the screen
  *   player.stage        { width, height } of the play area in CSS px (0 × 0 outside a player or before the first measure)
  *   player.requestRestart()          the same as নতুন করে শুরু in the menu
+ *   player.requestPause()            opens the pause menu, the same as the button (use it for the game's own P key)
  *   player.onPause(fn) / onResume(fn) / onRestart(fn)   subscribe; each returns an unsubscribe. The handlers argument does this for you.
  *
  * The same size is on the stage element as CSS variables --stage-w and --stage-h (plus data-immersive), so CSS alone can fit a board:
@@ -37,13 +38,14 @@ export type GamePlayerApi = {
   immersive: boolean;
   stage: { width: number; height: number };
   requestRestart: () => void;
+  requestPause: () => void;
   onPause: Subscribe;
   onResume: Subscribe;
   onRestart: Subscribe;
 };
 
 const none: Subscribe = () => () => {};
-const outside: GamePlayerApi = { paused: false, immersive: false, stage: { width: 0, height: 0 }, requestRestart: () => {}, onPause: none, onResume: none, onRestart: none };
+const outside: GamePlayerApi = { paused: false, immersive: false, stage: { width: 0, height: 0 }, requestRestart: () => {}, requestPause: () => {}, onPause: none, onResume: none, onRestart: none };
 const PlayerContext = createContext<GamePlayerApi>(outside);
 
 /** The player around this game. Pass handlers to subscribe to them; the latest ones are always called, so no stale closures. */
@@ -381,7 +383,7 @@ export function GamePlayer({ slug, name, head, lead, art, steps, guideTitle, kid
     return () => { observer.disconnect(); window.removeEventListener('resize', measure); };
   }, [shape]);
 
-  const api = useMemo<GamePlayerApi>(() => ({ paused: menu !== null, immersive, stage, requestRestart: restart, onPause, onResume, onRestart }), [menu, immersive, stage, restart, onPause, onResume, onRestart]);
+  const api = useMemo<GamePlayerApi>(() => ({ paused: menu !== null, immersive, stage, requestRestart: restart, requestPause: () => openMenu(), onPause, onResume, onRestart }), [menu, immersive, stage, restart, openMenu, onPause, onResume, onRestart]);
   const style = box ? { '--gp-w': `${box.width}px`, '--gp-h': `${box.height}px`, '--gp-rows': box.rows } as CSSProperties : undefined;
   const stageStyle = stage.width ? { '--stage-w': `${stage.width}px`, '--stage-h': `${stage.height}px` } as CSSProperties : undefined;
 

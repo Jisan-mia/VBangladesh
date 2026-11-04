@@ -27,22 +27,22 @@ const WORDS = ['শূন্য', 'এক', 'দুই', 'তিন', 'চার
 
 /**
  * A gate a 3–6 year old can't pass: a 2-second hold, then a sum written in words, answered on a pad.
- * Key auto-repeat never counts as a hold; a wrong answer asks a new sum and two wrong answers close the gate;
+ * Key auto-repeat never counts as a hold; a wrong answer closes the gate and the hold rests for 10 seconds;
  * once open it closes itself after a minute or when the page is left, so a phone handed back is locked again.
  */
 export function ParentGate({ label = 'বড়দের জন্য', children }: { label?: string; children: ReactNode }) {
   const [stage, setStage] = useState<'closed' | 'ask' | 'open'>('closed');
   const [pair, setPair] = useState<[number, number]>([7, 5]);
   const [answer, setAnswer] = useState('');
-  const misses = useRef(0);
+  const lockedUntil = useRef(0);
   const hold = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [holding, setHolding] = useState(false);
   // Sums are always 10–18, so the answer is two digits: random taps open it about 1 time in 100.
   const ask = () => { const a = 3 + Math.floor(Math.random() * 7), b = Math.max(3, 10 - a) + Math.floor(Math.random() * (10 - Math.max(3, 10 - a))); setPair([a, b]); setAnswer(''); };
   const start = () => {
-    if (hold.current) return;
+    if (hold.current || Date.now() < lockedUntil.current) return;
     setHolding(true);
-    hold.current = setTimeout(() => { hold.current = null; setHolding(false); misses.current = 0; ask(); setStage('ask'); }, 2000);
+    hold.current = setTimeout(() => { hold.current = null; setHolding(false); ask(); setStage('ask'); }, 2000);
   };
   const stop = () => { setHolding(false); if (hold.current) { clearTimeout(hold.current); hold.current = null; } };
   useEffect(() => stop, []);
@@ -59,8 +59,8 @@ export function ParentGate({ label = 'বড়দের জন্য', children
     const sum = pair[0] + pair[1], next = answer + digit;
     if (next.length < String(sum).length) { setAnswer(next); return; }
     if (Number(next) === sum) { setStage('open'); return; }
-    misses.current += 1;
-    if (misses.current >= 2) setStage('closed'); else ask();
+    lockedUntil.current = Date.now() + 10000;
+    setStage('closed');
   };
   // One grown-up action per opening: after any button or link inside, the gate shuts again.
   const afterAction = (event: MouseEvent) => { if ((event.target as HTMLElement).closest('button, a')) setTimeout(() => setStage('closed'), 0); };
