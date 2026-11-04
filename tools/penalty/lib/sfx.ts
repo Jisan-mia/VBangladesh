@@ -1,4 +1,4 @@
-// The school field's own sounds, built from the shared kit's blocks (silent when sound is off or audio is missing).
+// The field's own sounds, built from the shared kit's blocks (silent when sound is off or audio is missing).
 import { buzz, hiss, loop, tone } from "../../../shared/game-sound";
 
 /** Boot on leather: a low thump with a short scuff. */
@@ -45,11 +45,30 @@ export function whistle(long = false) {
   if (long) tone(3100, 0.35, 0.04, "sine", trill * 0.035);
 }
 
-/** The crowd holding its breath during the run-up: a murmur that rises in level and pitch until the kick. */
-export function murmur() {
+/**
+ * The crowd under every kick: a murmur whose level and brightness the step sets (0 calm → 1 the breath before a decisive kick).
+ * Made only while sound is on, so it is never a silent stub; the component drops it on pause, the end, a hidden tab and
+ * unmount, and makes a fresh one when sound comes back.
+ */
+export function crowdLoop() {
   const wind = loop("wind", 500);
   return {
-    set(progress: number) { wind.set(0.15 + progress * 0.5); wind.pitch(450 + progress * 900); },
+    swell(level: number) { wind.set(0.08 + level * 0.55); wind.pitch(420 + level * 950); },
     stop: wind.stop,
   };
+}
+export type CrowdLoop = ReturnType<typeof crowdLoop>;
+
+/** The four notes that open each cup (tone's delay, so the player's pause can cut them). */
+const MOTIFS = [[523, 659, 784, 1047], [440, 554, 659, 880], [392, 494, 587, 784], [587, 740, 880, 1175]] as const;
+export function cupMotif(world: number) {
+  MOTIFS[Math.max(0, Math.min(3, world))].forEach((frequency, i) => tone(frequency, 0.18, 0.06, "triangle", 0.5 + i * 0.13));
+}
+
+/** The shot clock's last seconds. */
+export const clockTick = (last: boolean) => tone(last ? 1320 : 990, 0.05, 0.06, "square");
+
+/** A final won: the cup fanfare. */
+export function cupFanfare() {
+  [523, 659, 784, 1047, 784, 1047].forEach((frequency, i) => tone(frequency, i === 5 ? 0.5 : 0.16, 0.09, "triangle", 0.35 + i * 0.11));
 }

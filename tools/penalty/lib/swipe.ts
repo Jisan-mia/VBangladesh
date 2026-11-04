@@ -1,7 +1,7 @@
 // From a finger to a kick. The board is 360×340 units: the bamboo goal near the top, the ball on the chalk spot below.
 // Where the finger ends (measured from the ball) is where the ball goes; a short flick sends it low along the grass.
 // How fast the finger moves is the power, and how the path bows is the curl.
-import type { Shot } from "./match";
+import type { Shot } from "./rules";
 
 export const W = 360, H = 340;
 /** The goal on screen: centre, half width (post to centre), grass line and crossbar. */

@@ -1,36 +1,38 @@
-export const title = "পেনাল্টি কিক: the kicks, the window, your finger and the crowd";
-const stage = (v: any) => ({ aim: "Your kick: aiming", fly: "Ball in the air", after: "Ball landed", ready: "Their whistle", run: "Their run-up" } as any)[v.stage];
+export const title = "Penalty kick: the match, pause, going away, the crowd and the card";
+const stage = (v: any) => ({ aim: "Your kick", fly: "Ball in the air", after: "Ball in the air", ready: "Their run-up", run: "Their run-up", over: "Decided" } as any)[v.stage];
 export const state = (v: any) => ({
-  Match: v.shown === "over" ? (v.finishes > 1 ? "Card shows (finished twice)" : "Card shows") : v.finishes > 0 ? `Match decided ${v.finishes === 1 ? "once" : "twice"}, card not drawn yet` : `${stage(v)}${v.paused ? ", paused" : ""}`,
-  Window: !v.visible ? "Tab hidden" : v.focused ? "You're on the page" : "Another window has focus",
-  Finger: v.pointer ? "Finger on the board" : "Finger off",
-  Crowd: v.hum === "real" ? "Murmur on" : "Murmur off",
-  Space: v.key ? "Space held down" : "Space up",
+  Match: v.phase === "title" ? (v.drawer ? "Match list" : "Title screen") : v.phase === "over" ? (v.drawer ? "Match list" : "Card shows") : v.phase === "paused" ? "Paused (menu open)" : stage(v),
+  Window: v.visible && v.focused ? "You're on the page" : "Away (blurred or hidden)",
+  Crowd: v.hum === "real" ? "Crowd murmuring" : "Crowd quiet",
 });
 export const step = (action: string) => ({
-  YouTouchTheBoard: "you put a finger on the board",
+  YouPressPlay: "you press খেলো",
+  YouTouchTheField: "you touch the field",
   YouSwipeAndShoot: "you swipe and shoot",
   YouLiftWithoutAShot: "you lift without a shot",
+  YouTapASide: "you tap a side",
+  YouHoldSpace: "you hold Space to dive",
+  YouLetGoOfSpace: "you let go of Space",
   BallLands: "the ball lands",
   TheirTurn: "their kicker steps up",
-  MatchDecided: "the match is decided",
-  CardShows: "the card shows",
   RunUpStarts: "their run-up starts",
   TheyKick: "they kick",
+  MatchDecided: "the match is decided",
+  CrowdStep: "the next frame syncs the crowd",
   WindowBlurs: "you click into another window",
   WindowFocuses: "you come back to the window",
   TabHides: "you hide the tab",
   TabShows: "the tab shows again",
+  YouPause: "you press ⏸ or P",
   YouResume: "you press চালিয়ে যাও",
   SoundOff: "you turn sound off",
   SoundOn: "you turn sound on",
   YouOpenMatches: "you open সব ম্যাচ",
-  YouCloseMatches: "you close সব ম্যাচ",
+  YouCloseMatches: "you close the list",
   YouPickAMatch: "you pick a match",
+  YouRestart: "you press নতুন করে শুরু",
   YouPlayAgain: "you press আবার খেলো",
-  YouHoldSpaceToDiveMiddle: "you hold Space to dive to the middle",
-  SpaceRepeatsOnTheCard: "Space, still held, repeats on the card",
-  YouLetGoOfSpace: "you let go of Space",
+  SpaceRepeatsOnTheCard: "Space, still held, repeats on the card (refused)",
 } as Record<string, string>)[action] ?? action;
-export const group = (v: any) => v.shown === "over" ? "done" : v.paused ? "held" : "play";
-export const colors = { play: "teal", held: "yellow", done: "blue" };
+export const group = (v: any) => v.phase === "over" ? "done" : v.phase === "paused" ? "held" : v.phase === "title" ? "wait" : "play";
+export const colors = { wait: "blue", play: "teal", held: "yellow", done: "blue" };
