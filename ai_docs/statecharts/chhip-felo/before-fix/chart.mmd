@@ -1,0 +1,98 @@
+---
+title: "ছﬂ°°2495¶ßপ ফﬂ°°2503¶ßলﬂ°°2507¶ß: the cast, the window, your hand, the fanfare and the levels"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: bug
+    lg4: Breaks FanfareOnlyOnTheResult or InputReleasedWhenAway or LoopOnlyWhenMeaningful or OpenLevelsAreEarned or PausedWhenBlurred
+    lg5: Path to the FanfareOnlyOnTheResult or InputReleasedWhenAway or LoopOnlyWhenMeaningful or OpenLevelsAreEarned or PausedWhenBlurred bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 pink
+  class lg4 breaks
+  class lg5 bugPath
+  s0: Aiming the rod
+  s1: Aiming the rod, you're away
+  s2: Aiming the rod, you're away, Space still held
+  s3: Float in the air
+  s4: Float in the air, you're away
+  s5: Paused (থ#2503;ম#2503; আছ#2503;), you're away
+  s6: Watching the float
+  s7: Result just showed
+  s8: Paused (থ#2503;ম#2503; আছ#2503;)
+  s9: Fish on the line
+  s10: Watching the float, you're away
+  s11: Aiming the rod #183; the last result's fanfare still to go off
+  s12: Fish on the line, you're away, Space still held
+  s13: Result shows
+  s14: Result just showed #183; a level opened that you never cleared
+  s15: Fish on the line, you're away
+  [*] --> s0
+  s0 --> s1: you click into another window
+  s0 --> s0: you open a friend's link or you press and hold
+  s1 --> s0: you come back
+  s0 --> s2: you click into another window
+  s0 --> s3: you let go and the float flies
+  s2 --> s0: you come back
+  s3 --> s4: you click into another window
+  s3 --> s5: you hide the tab
+  s3 --> s6: the float lands
+  s4 --> s3: you come back
+  s5 --> s8: you come back
+  s6 --> s7: the cast ends
+  s6 --> s9: you strike as the float goes under
+  s6 --> s10: you click into another window
+  s6 --> s5: you hide the tab
+  s7 --> s11: you pick a level in সব ল#2503;ভ#2503;ল
+  s8 --> s3: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s9 --> s7: the cast ends or you land the fish
+  s9 --> s12: you click into another window
+  s9 --> s5: you hide the tab
+  s10 --> s6: you come back
+  s7 --> s13: 600 ms pass
+  s12 --> s9: you come back
+  s9 --> s15: you click into another window
+  s9 --> s14: you land the fish
+  s8 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s13 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল
+  s15 --> s9: you come back
+  s8 --> s9: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 teal
+  class s0 bugPath
+  class s1 teal
+  class s2 teal
+  class s2 breaks
+  class s2 bugPath
+  class s3 teal
+  class s3 bugPath
+  class s4 teal
+  class s4 breaks
+  class s4 bugPath
+  class s5 yellow
+  class s6 teal
+  class s6 bugPath
+  class s7 blue
+  class s7 bugPath
+  class s8 yellow
+  class s9 teal
+  class s9 bugPath
+  class s10 teal
+  class s10 breaks
+  class s11 pink
+  class s11 breaks
+  class s11 bugPath
+  class s12 teal
+  class s12 breaks
+  class s12 bugPath
+  class s13 blue
+  class s14 blue
+  class s14 breaks
+  class s14 bugPath
+  class s15 teal
+  class s15 breaks

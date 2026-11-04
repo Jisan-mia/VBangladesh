@@ -1,0 +1,132 @@
+---
+title: "ছবﬂ°°2495¶ßর টﬂ°°2497¶ßকরﬂ°°2507¶ß: round and clock, window, your hand, the cheer and open levels"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks CheerOnlyOnTheResult or ClockStillWhileAway or OpenLevelsAreEarned or PausedWhenBlurred or PieceDroppedWhenAway
+    lg4: Breaks CheerOnlyOnTheResult or ClockStillWhileAway or OpenLevelsAreEarned or PausedWhenBlurred or PieceDroppedWhenAway in some cases
+    lg5: Path to the CheerOnlyOnTheResult or ClockStillWhileAway or OpenLevelsAreEarned or PausedWhenBlurred or PieceDroppedWhenAway bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Pieces in the tray, clock at zero (level 1)
+      s1: Putting pieces in, clock running (level 1)
+      s2: Pieces in the tray, clock at zero (level 2)
+      s3: The painting is whole, result shows (level 1)
+      s4: Paused (থ#2503;ম#2503; আছ#2503;), clock stopped (level 1)
+      s5: Putting pieces in, clock running (level 2)
+      s6: The painting is whole, result shows (level 2)
+      s7: Paused (থ#2503;ম#2503; আছ#2503;), clock stopped (level 2)
+      [*] --> s0
+      s0 --> s1: you pick up a piece and drag it or you tap a piece [when Window is not Tab hidden]
+      s0 --> s2: you open a friend's link [when Window is not Tab hidden]
+      s1 --> s3: the last piece goes in [when Window is You're on the page and Cheer is Nothing waiting]
+      s1 --> s4: you hide the tab
+      s2 --> s0: you open a friend's link or you press পর#2503;র ল#2503;ভ#2503;ল, আব#2494;র খ#2503;ল#2507; or a level in সব ল#2503;ভ#2503;ল [when Window is not Tab hidden]
+      s2 --> s5: you pick up a piece and drag it or you tap a piece [when Window is not Tab hidden]
+      s3 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল, আব#2494;র খ#2503;ল#2507; or a level in সব ল#2503;ভ#2503;ল [when Window is not Tab hidden]
+      s3 --> s2: you press পর#2503;র ল#2503;ভ#2503;ল, আব#2494;র খ#2503;ল#2507; or a level in সব ল#2503;ভ#2503;ল [when Window is not Tab hidden]
+      s5 --> s6: the last piece goes in [when Window is You're on the page and Cheer is Nothing waiting]
+      s5 --> s7: you hide the tab
+      s6 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল, আব#2494;র খ#2503;ল#2507; or a level in সব ল#2503;ভ#2503;ল [when Window is not Tab hidden]
+      s6 --> s2: you press পর#2503;র ল#2503;ভ#2503;ল, আব#2494;র খ#2503;ল#2507; or a level in সব ল#2503;ভ#2503;ল [when Window is not Tab hidden]
+      s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is not Tab hidden]
+      s0 --> s2: you press পর#2503;র ল#2503;ভ#2503;ল, আব#2494;র খ#2503;ল#2507; or a level in সব ল#2503;ভ#2503;ল [when Window is not Tab hidden and Levels is not Only level 1 open]
+      s7 --> s5: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is not Tab hidden]
+    }
+    --
+    state "Window" as r1 {
+      s8: You're on the page
+      s9: Tab hidden
+      s10: Another window has focus
+      [*] --> s8
+      s8 --> s9: you hide the tab
+      s8 --> s10: you click into another window
+      s9 --> s8: you come back to the page
+      s10 --> s8: you come back to the page
+      s10 --> s8: you pick up a piece and drag it [when Game is one of Pieces in the tray, clock at zero (level 1), Pieces in the tray, clock at zero (level 2), Putting pieces in, clock running (level 1), Putting pieces in, clock running (level 2) and Hand is Hands off]
+      s10 --> s8: you tap a piece [when Game is one of Pieces in the tray, clock at zero (level 1), Pieces in the tray, clock at zero (level 2) and Hand is Hands off]
+      s10 --> s9: you hide the tab
+      s10 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Game is one of Paused (থ#2503;ম#2503; আছ#2503;), clock stopped (level 1), Paused (থ#2503;ম#2503; আছ#2503;), clock stopped (level 2) and Hand is Hands off]
+    }
+    --
+    state "Hand" as r2 {
+      s11: Hands off
+      s12: A piece under your finger
+      [*] --> s11
+      s11 --> s12: you pick up a piece and drag it [when Game is one of Pieces in the tray, clock at zero (level 1), Pieces in the tray, clock at zero (level 2), Putting pieces in, clock running (level 1), Putting pieces in, clock running (level 2) and Window is not Tab hidden]
+      s12 --> s11: you drop it in the wrong place [when Window is You're on the page]
+      s12 --> s11: the last piece goes in [when Window is You're on the page and Cheer is Nothing waiting]
+      s12 --> s11: you hide the tab
+    }
+    --
+    state "Cheer" as r3 {
+      s13: Nothing waiting
+      s14: Win sound and confetti still to go off
+      [*] --> s13
+      s13 --> s14: the last piece goes in [when Game is one of Putting pieces in, clock running (level 1), Putting pieces in, clock running (level 2) and Window is You're on the page]
+      s14 --> s13: the win sound and confetti go off
+    }
+    --
+    state "Levels" as r4 {
+      s15: Only level 1 open
+      s16: Level 2 open, earned
+      s17: A level opened that you never earned
+      [*] --> s15
+      s15 --> s16: the last piece goes in [when Game is Putting pieces in, clock running (level 1) and Window is You're on the page]
+      s15 --> s17: the last piece goes in [when Game is Putting pieces in, clock running (level 2) and Window is You're on the page]
+      s17 --> s16: the last piece goes in [when Game is Putting pieces in, clock running (level 1) and Window is You're on the page and Cheer is Nothing waiting]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 teal
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 blue
+  class s3 bugPath
+  class s4 yellow
+  class s4 mayBreak
+  class s5 teal
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 blue
+  class s6 bugPath
+  class s7 yellow
+  class s7 mayBreak
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 teal
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 mayBreak
+  class s16 bugPath
+  class s17 breaks
+  class s17 bugPath
