@@ -108,7 +108,7 @@ export const catalog = [
   { slug: "tarer-fanke-belun", name: "তারের ফাঁকে বেলুন", description: "ঢাকার তারের জটে বেলুন ওড়াও। চেপে ধরলে ওঠে, কাক আর দমকা পেরোও।", category: "গেম", action: "বেলুন ওড়াও" },
   { slug: "paka-kancha", name: "পাকা-কাঁচা", description: "আম দেখে দেখে লুকানো ৪ অঙ্কের কোডটা ৭ বারে ধরো, রোজ নতুন কোড।", category: "গেম", action: "কোডটা ধরো" },
   { slug: "jora-melao", name: "জোড়া মেলাও", description: "মেলার খেলনা উল্টে রাখা, দুটো করে খুলে জোড়া মেলাও। একা বা এক ফোনে দুজনে।", category: "গেম", action: "কার্ড খোলো" },
-  { slug: "chhok-jora", name: "ছক-জোড়া", description: "কাঁথায় ফোঁড় দাও, ঘর জিতে ফুল ফোটাও। দুজনে বা বটের সাথে খেলো।", category: "গেম", action: "খেলা শুরু করো" },
+  { slug: "chhok-jora", name: "ছক-জোড়া", description: "নকশিকাঁথায় ডট-বক্স: ঘর জিতে ফুল ফোটাও। ১২ লেভেল, দুজনেও।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "churui-tarao", name: "চড়ুই তাড়াও", description: "পাকা ধানে চড়ুই নামছে, চেপে হুশ করে তাড়াও। ৪৫ সেকেন্ডে কত ধান বাঁচাবে?", category: "গেম", action: "ধান বাঁচাও" },
   { slug: "handi-bhanga", name: "হাঁড়িভাঙা", description: "লাঠিতে বল ফিরিয়ে মেলার সব হাঁড়ি ভাঙো, বন্ধুকে একই সারি পাঠাও।", category: "গেম", action: "হাঁড়ি ভাঙো" },
   { slug: "peoner-cycle", name: "পিয়নের সাইকেল", description: "ভোরের মেঠো পথে সাইকেলে চিঠি বিলি করো, গরু-ছাগল আর কাদা পাশ কাটিয়ে।", category: "গেম", action: "সাইকেল চালাও" },

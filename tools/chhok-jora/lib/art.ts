@@ -59,3 +59,68 @@ export function borderPath(size: number, inset = 18, wave = 25) {
   run(inset, size - inset, 0, -1, 1, 0);
   return parts.join("") + "Z";
 }
+
+// ---- After the rewrite: one look per world, and one motif pair per world (round for the first side, pointed for the second). ----
+
+export type Look = {
+  cloth: string; ripple: string; thread: string; shine: string; guide: string; hole: string; border: string; heart: string;
+  ink: string; muted: string; highlight: string; players: readonly [string, string]; tints: readonly [string, string];
+  /** The stage behind the cloth, and the zari gold of a জরির ঘর. */
+  ground: string; gold: string;
+};
+export const LOOKS: readonly Look[] = [
+  // উঠোন, সকাল: the cream cloth of before.
+  { ...palette, ground: "#f6ead2", gold: "#c99a1a" },
+  // পুকুরঘাট, দুপুর: a pale green cloth by the water.
+  { cloth: "#eef5ee", ripple: "#d4e6d6", thread: "#28463f", shine: "#6f8f86", guide: "#94b5a6", hole: "#d1e2d5", border: "#2f7d6d", heart: "#f3c548",
+    ink: "#22362f", muted: "#4f6b62", highlight: "#f6d36a", players: ["#c8432f", "#2a5aa8"], tints: ["#c8432f1f", "#2a5aa81f"], ground: "#d6e9de", gold: "#b88a12" },
+  // হারিকেনের রাত: the cloth under a lamp, the night around it.
+  { cloth: "#f4e8d2", ripple: "#e6d4b2", thread: "#2b2440", shine: "#7d7090", guide: "#b3a184", hole: "#e3cfa9", border: "#c48a1c", heart: "#f7d26a",
+    ink: "#2b2440", muted: "#6d5f78", highlight: "#f7d26a", players: ["#c23b2a", "#3a4fb0"], tints: ["#c23b2a1f", "#3a4fb01f"], ground: "#1d2236", gold: "#c9930f" },
+];
+
+const star = (points: number, outer: number, inner: number) => Array.from({ length: points * 2 }, (_, i) => {
+  const angle = -Math.PI / 2 + (i * Math.PI) / points, r = i % 2 ? inner : outer;
+  return `${i ? "L" : "M"}${round(Math.cos(angle) * r)} ${round(Math.sin(angle) * r)}`;
+}).join("") + "Z";
+
+/** Motif outlines per world: [first side, second side]. Shape tells them apart as well as colour. */
+export const MOTIFS: readonly (readonly [string, string])[] = [
+  FLOWERS,
+  [
+    // A plump fish swimming right, with a forked tail.
+    "M-26 0Q-4 -30 30 0Q-4 30 -26 0ZM-24 0L-40 -16L-35 0L-40 16Z",
+    // A নৌকা: two sails over a hull.
+    "M-30 4L2 -36L2 4ZM8 4L8 -26L30 4ZM-38 10L38 10L26 30L-26 30Z",
+  ],
+  [
+    // A full moon.
+    circle(0, 0, 33),
+    // A six-point star.
+    star(6, 40, 20),
+  ],
+];
+/** Where each motif carries its initial: x, y and the disc's radius. */
+export const MARKS: readonly (readonly [readonly [number, number, number], readonly [number, number, number]])[] = [
+  [[0, 0, HEART], [0, 0, HEART]],
+  [[4, 0, 14], [0, 20, 11]],
+  [[0, 0, 17], [0, 0, 15]],
+];
+
+/** The kantha wave round a `width` × `height` cloth: one running line of shallow scallops, inset from the edge. */
+export function borderRect(width: number, height: number, inset = 18, wave = 25) {
+  const parts: string[] = [`M${inset} ${inset}`];
+  const run = (x: number, y: number, length: number, dx: number, dy: number, nx: number, ny: number) => {
+    const count = Math.max(1, Math.round(length / wave)), step = length / count;
+    for (let i = 0; i < count; i++) {
+      const sx = x + dx * step * i, sy = y + dy * step * i;
+      parts.push(`Q${round(sx + dx * step / 2 + nx * 6)} ${round(sy + dy * step / 2 + ny * 6)} ${round(sx + dx * step)} ${round(sy + dy * step)}`);
+    }
+  };
+  const w = width - 2 * inset, h = height - 2 * inset;
+  run(inset, inset, w, 1, 0, 0, 1);
+  run(width - inset, inset, h, 0, 1, -1, 0);
+  run(width - inset, height - inset, w, -1, 0, 0, -1);
+  run(inset, height - inset, h, 0, -1, 1, 0);
+  return parts.join("") + "Z";
+}

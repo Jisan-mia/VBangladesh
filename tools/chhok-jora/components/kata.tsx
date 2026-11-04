@@ -1,11 +1,13 @@
 "use client";
 // কাটাকুটি on a 3×3 patch of the quilt: you sew red cross-stitches (✕), the bot blue running-stitch rings (○).
+// It is its own screen: the quilt is never in play underneath. Its bot marks only while `live` (no menu, not away), and the
+// cheer timers are cleared on a new round and on leaving, so nothing plays after you've moved on.
 import { useEffect, useRef, useState } from "react";
 import { buzz, confetti, hiss, newSeed, sfx, shake, tone, totalStars, useLevels } from "../../../shared/game-kit";
-import { SoundToggle, Stars, StarReveal } from "../../../shared/game-ui";
+import { Stars, StarReveal } from "../../../shared/game-ui";
 import { borderPath, palette } from "../lib/art";
 import { BOTS, botMove, botName, mark, newRound, outcome, starsOf, threeStarGoal, type Bot, type Round } from "../lib/katakuti";
-import { bn } from "../lib/link";
+import { bn } from "../lib/challenge";
 
 const TOOL = "chhok-jora-katakuti";
 const SIZE = 300, CELL = 100;
@@ -17,7 +19,7 @@ const ringSound = () => { hiss(0.14, 0.06, 1800, "bandpass"); tone(900, 0.03, 0.
 
 const cellLabel = (cell: number) => `${["ওপরের", "মাঝের", "নিচের"][Math.floor(cell / 3)]} সারির ${["বাঁ", "মাঝের", "ডান"][cell % 3]} ঘর`;
 
-export function KatakutiGame({ slow, setSlow }: { slow: boolean; setSlow: (next: boolean) => void }) {
+export function Kata({ live, slow, restart, onHome }: { live: boolean; slow: boolean; restart: number; onHome: () => void }) {
   const levels = useLevels(TOOL, BOTS.length);
   const [round, setRound] = useState<Round>(() => newRound(1, 1));
   const [tally, setTally] = useState<[number, number, number]>([0, 0, 0]);
@@ -26,6 +28,8 @@ export function KatakutiGame({ slow, setSlow }: { slow: boolean; setSlow: (next:
   const [beforeStars, setBeforeStars] = useState(0);
   const roundRef = useRef(round);
   roundRef.current = round;
+  const liveRef = useRef(live);
+  liveRef.current = live;
   const finished = useRef<Round | null>(null);
   const opened = useRef(false);
   const timers = useRef<number[]>([]);
@@ -58,19 +62,24 @@ export function KatakutiGame({ slow, setSlow }: { slow: boolean; setSlow: (next:
     fresh(BOTS.find(level => (levels.stars[level] ?? 0) < 3) ?? 3);
   }, [levels.loaded]);
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
+  // The menu or another window: a cheer still waiting is dropped (the stars were recorded when the round ended).
+  useEffect(() => { if (!live) { timers.current.forEach(clearTimeout); timers.current = []; } }, [live]);
+  // নতুন করে শুরু from the player's menu: a fresh round against the same bot.
+  useEffect(() => { if (restart) fresh(roundRef.current.bot); }, [restart]);
 
-  // The bot answers after a short beat, so its stitch can be seen.
+  // The bot answers after a short beat, so its stitch can be seen. Held (menu, away): it waits, and its timer is gone.
   useEffect(() => {
-    if (!botTurn) return;
+    if (!botTurn || !live) return;
     const timer = window.setTimeout(() => {
       const current = roundRef.current;
+      if (!liveRef.current) return;
       const next = current.turn === 1 && !outcome(current.cells).over ? mark(current, botMove(current)) : null;
       if (next) { ringSound(); setRound(next); }
     }, slow ? 900 : 480);
     return () => window.clearTimeout(timer);
-  }, [round, botTurn, slow]);
+  }, [round, botTurn, slow, live]);
 
-  // The end of a round: tally, streak, stars once, then the sound that fits.
+  // The end of a round: tally, streak, stars once (at the moment it ends), then the sound that fits.
   useEffect(() => {
     if (!end.over || finished.current === round) return;
     finished.current = round;
@@ -87,16 +96,16 @@ export function KatakutiGame({ slow, setSlow }: { slow: boolean; setSlow: (next:
       buzz([15, 30, 15]);
     } else if (end.winner === 1) setStreak(0);
     const cheer = 300 + 260 * (stars + 1);
-    if (end.winner === 1) { later(250, sfx.lose); shake(boardRef.current); }
+    if (end.winner === 1) { later(250, sfx.lose); if (!slow) shake(boardRef.current); }
     else if (stars === 3 && had < 3) later(cheer, () => { sfx.levelUp(); confetti({ colors: COLORS }); });
     else if (end.winner === 0) later(cheer, () => { sfx.win(); confetti({ count: 50, colors: COLORS }); });
     else later(cheer, sfx.good);
   }, [round]);
 
   function play(cell: number) {
-    if (botTurn || end.over) return;
+    if (botTurn || end.over || !live) return;
     const next = mark(round, cell);
-    if (!next) { sfx.wrong(); shake(cellRefs.current[cell]); return; }
+    if (!next) { sfx.wrong(); if (!slow) shake(cellRefs.current[cell]); return; }
     crossSound();
     buzz(8);
     setRound(next);
@@ -119,7 +128,13 @@ export function KatakutiGame({ slow, setSlow }: { slow: boolean; setSlow: (next:
     : `${threeStarGoal(bot)} এবার ${bn(earned)}টা।`;
 
   return (
-    <>
+    <div className="cj-kata">
+      <header className="cj-hud">
+        <button type="button" className="cj-badge" onClick={onHome} aria-label="কাটাকুটি থেকে ফিরে যাও, শুরুর পাতায়">
+          <b>কাটাকুটি</b><span>‹ শুরুর পাতা</span>
+        </button>
+        <p className="cj-ktotal" aria-label={`মোট ${bn(total)}টা তারা`}>★ {bn(total)}/{bn(BOTS.length * 3)}</p>
+      </header>
       <div className="cj-bots" role="group" aria-label="কোন বটের সাথে">
         {BOTS.map(level => (
           <button key={level} type="button" aria-pressed={bot === level} onClick={() => chooseBot(level)}>
@@ -129,11 +144,10 @@ export function KatakutiGame({ slow, setSlow }: { slow: boolean; setSlow: (next:
         ))}
       </div>
 
-      <div className="cj-ktally" aria-label="এই বটের সাথে আজকের হিসাব">
+      <div className="cj-ktally" aria-label="এই বটের সাথে এবারের হিসাব">
         <span><b>{bn(tally[0])}</b> তুমি</span>
         <span><b>{bn(tally[1])}</b> বট</span>
         <span><b>{bn(tally[2])}</b> সমান</span>
-        <span className="cj-ktotal">★ {bn(total)}/{bn(BOTS.length * 3)}</span>
       </div>
 
       <div className="cj-kboard" ref={boardRef} data-over={end.over}>
@@ -174,29 +188,23 @@ export function KatakutiGame({ slow, setSlow }: { slow: boolean; setSlow: (next:
       </div>
 
       {end.over ? (
-        <div className="cj-over cj-kover" role="status">
-          <p className="cj-over-score">{verdict}</p>
+        <div className="cj-kover" role="status">
+          <p className="cj-kover-title">{verdict}</p>
           {earned > 0 && <StarReveal count={earned} />}
-          <p className="cj-over-verdict"><span>{near}</span>{streak > 1 && end.winner === 0 && <span> টানা {bn(streak)} দান জিতলে।</span>}</p>
+          <p className="cj-kover-line"><span>{near}</span>{streak > 1 && end.winner === 0 && <span> টানা {bn(streak)} দান জিতলে।</span>}</p>
         </div>
       ) : (
-        <p className="cj-status" role="status" aria-live="polite">{status()}</p>
+        <p className="cj-hint" role="status" aria-live="polite">{status()}</p>
       )}
 
-      <div className="cj-controls cj-kcontrols">
+      <div className="cj-kcontrols">
         {end.over ? <>
           {earned === 3 && nextBot && beforeStars < 3
-            ? <button type="button" className="kit-primary cj-again" onClick={() => chooseBot(nextBot)}>এবার {botName(nextBot)} বট</button>
-            : <button type="button" className="kit-primary cj-again" onClick={again}>আরেক দান</button>}
-          {earned === 3 && nextBot && beforeStars < 3
-            ? <button type="button" className="cj-tool" onClick={again}>আরেক দান</button>
-            : <SoundToggle compact className="cj-sound" />}
-        </> : <>
-          <button type="button" className="cj-tool" onClick={() => fresh(bot)} disabled={!round.moves.length}>নতুন দান</button>
-          <button type="button" className="cj-tool cj-slow" aria-pressed={slow} onClick={() => setSlow(!slow)}>ধীরে খেলো</button>
-          <SoundToggle compact className="cj-sound" />
-        </>}
+            ? <button type="button" className="kit-primary" onClick={() => chooseBot(nextBot)}>এবার {botName(nextBot)} বট</button>
+            : <button type="button" className="kit-primary" onClick={again}>আরেক দান</button>}
+          {earned === 3 && nextBot && beforeStars < 3 && <button type="button" className="kit-secondary" onClick={again}>আরেক দান</button>}
+        </> : <button type="button" className="cj-undo" onClick={() => fresh(bot)} disabled={!round.moves.length}>নতুন দান</button>}
       </div>
-    </>
+    </div>
   );
 }
