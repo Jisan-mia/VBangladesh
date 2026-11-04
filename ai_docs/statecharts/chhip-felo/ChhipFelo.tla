@@ -1,145 +1,158 @@
 ---- MODULE ChhipFelo ----
-\* ছিপ ফেলো: one cast of a fishing trip, pause and window focus, the held finger or Space, the reel hum,
-\* the result fanfare's timer, and a friend's link to a locked level,
-\* mirrored from tools/chhip-felo/components/fishing-game.tsx (handlers and effects) and tools/chhip-felo/lib/game.ts.
-\* Abstractions: a trip is one cast (aim → fly → wait → reel → done; the 2.1 s catch / 1.5 s miss display is folded
-\* into the step that ends the cast); "held" is trip.charging (aim) or trip.holding (reel) or a held Space key;
-\* the clock runs when useGameLoop runs (running = !paused && phase !== "done"; the loop stops while the tab is hidden and,
-\* since the working-tree change to shared/game-kit.ts on 4 Nov 09:36, while the window is blurred). At HEAD (a03ce2a)
-\* the loop ignored blur; drop "/\ focused" from Running to model that version (NoProgressWhileAway then breaks too).
-\* Levels: friendTrip means the trip is a friend's link to a level you haven't opened; skipped means levels opened that
-\* you never cleared (unlockedLevel = 1 + the highest level with stars, capped only by the album's place).
-VARIABLES phase, paused, visible, focused, held, hum, sound, owed, guard, friendTrip, skipped
-vars == <<phase, paused, visible, focused, held, hum, sound, owed, guard, friendTrip, skipped>>
+\* ছিপ ফেলো after the rewrite (Nov 2026): the screens, one cast at a time, the shared player's menu, window focus,
+\* the choice screens (সব লেভেল, the album), your finger or Space, the reel hum, the end screen's scheduled tones,
+\* ধীরে খেলো mid-cast, and a friend's far-ahead level.
+\* Mirrors tools/chhip-felo/components/chhip-felo.tsx (begin, finish, the blur/focus/visibility effect, the sheet effect,
+\* the sound effect, useGamePlayer's onPause/onResume), tools/chhip-felo/lib/session.ts (ticking, wantHum, syncHum, blur,
+\* hide, pause, resume, openSheet, goTo, pointerDown with its wake-up swallow, keyDown), tools/chhip-felo/lib/trip.ts +
+\* step.hot.ts (aim → fly → wait → reel → the catch or miss card; every clock is game time), lib/levels.ts (afterClear) and
+\* shared/game-player-client.tsx (blur, hide and P open the menu once you've touched the game; pausing cuts scheduled tones).
+\* Abstractions: one cast stands for a level's casts (CardEnds either starts the next cast or ends the level); "held" is a
+\* finger on the pond or Space/Enter; the intro story is folded into the title; "owed" is the end screen's scheduled tones.
+VARIABLES screen, phase, paused, visible, focused, sheet, swallow, held, hum, sound, owed, dip, lateNoDip, friendTrip, skipped
+vars == <<screen, phase, paused, visible, focused, sheet, swallow, held, hum, sound, owed, dip, lateNoDip, friendTrip, skipped>>
 
-Phases == {"aim", "fly", "wait", "reel", "done"}
-Live == {"fly", "wait", "reel"}                       \* the phases hide() pauses
-Running == ~paused /\ visible /\ focused /\ phase # "done"   \* useGameLoop steps the trip
-Window == <<visible, focused>>
+Screens == {"title", "play", "over"}
+Phases == {"aim", "fly", "wait", "reel", "card"}
+\* session.ticking: the water moves only on the play screen with the menu and sheets shut, the tab showing and the window focused.
+Running == screen = "play" /\ ~paused /\ ~sheet /\ focused /\ visible
+\* session.wantHum
+WantHum == Running /\ sound /\ phase = "reel"
 
-Init == /\ phase = "aim" /\ paused = FALSE /\ visible = TRUE /\ focused = TRUE
-        /\ held = FALSE /\ hum = FALSE /\ sound \in BOOLEAN
-        /\ owed = "none" /\ guard = FALSE /\ friendTrip = FALSE /\ skipped = FALSE
+Init == /\ screen = "title" /\ phase = "aim" /\ paused = FALSE /\ visible = TRUE /\ focused = TRUE /\ sheet = FALSE
+        /\ swallow = FALSE /\ held = FALSE /\ hum = FALSE /\ sound \in BOOLEAN /\ owed = "none"
+        /\ dip = FALSE /\ lateNoDip = FALSE /\ friendTrip = FALSE /\ skipped = FALSE
 
-\* begin(level, seed): stopHum(), a fresh trip, down = null, setPaused(false). It never clears finish()'s setTimeout.
-Begin(friend) == /\ phase' = "aim" /\ paused' = FALSE /\ held' = FALSE /\ hum' = FALSE /\ guard' = FALSE
-                 /\ owed' = IF owed \in {"soon", "late"} THEN "stale" ELSE owed
-                 /\ friendTrip' = friend
-                 /\ UNCHANGED <<visible, focused, sound, skipped>>
+\* begin(): silenceScheduled() cuts the last result's tones, a fresh trip, goTo("play") lets go, the sheet shuts.
+Begin(friend) == /\ screen' = "play" /\ phase' = "aim" /\ paused' = FALSE /\ sheet' = FALSE /\ swallow' = FALSE
+                 /\ held' = FALSE /\ hum' = FALSE /\ owed' = "none" /\ dip' = FALSE /\ friendTrip' = friend
+                 /\ UNCHANGED <<visible, focused, sound, lateNoDip, skipped>>
 
-\* ---- input: onDown/onUp on the pond and the big button, and Space/Enter on window keydown/keyup ----
-\* press() in aim: trip.charging = true.
-YouHoldToAim == /\ Running /\ focused /\ phase = "aim" /\ ~held
-                /\ held' = TRUE
-                /\ UNCHANGED <<phase, paused, visible, focused, hum, sound, owed, guard, friendTrip, skipped>>
-\* release() in aim: cast() → "fly".
-YouLetGoToCast == /\ focused /\ held /\ phase = "aim"
-                  /\ held' = FALSE /\ phase' = "fly"
-                  /\ UNCHANGED <<paused, visible, focused, hum, sound, owed, guard, friendTrip, skipped>>
-\* press() in wait inside the dip's window: startReel() (holding = true) and "hook" → reelHum().
-YouStrike == /\ Running /\ focused /\ phase = "wait" /\ ~held
+YouStart == /\ screen = "title" /\ ~sheet /\ focused /\ visible /\ Begin(friendTrip)
+
+\* ---- input: pointerDown / keyDown only count while ticking and never as the wake-up tap ----
+YouHoldToAim == /\ Running /\ phase = "aim" /\ ~held /\ ~swallow /\ held' = TRUE
+                /\ UNCHANGED <<screen, phase, paused, visible, focused, sheet, swallow, hum, sound, owed, dip, lateNoDip, friendTrip, skipped>>
+YouLetGoToCast == /\ Running /\ held /\ phase = "aim" /\ held' = FALSE /\ phase' = "fly"
+                  /\ UNCHANGED <<screen, paused, visible, focused, sheet, swallow, hum, sound, owed, dip, lateNoDip, friendTrip, skipped>>
+\* The first pointerdown after coming back: s.swallow, so it only wakes the game.
+YouTapToWake == /\ screen = "play" /\ ~paused /\ focused /\ visible /\ swallow /\ swallow' = FALSE
+                /\ UNCHANGED <<screen, phase, paused, visible, focused, sheet, held, hum, sound, owed, dip, lateNoDip, friendTrip, skipped>>
+\* press() in wait: inside the dip's window it hooks; before the dip it's a miss (early or a nibble).
+YouStrike == /\ Running /\ phase = "wait" /\ dip /\ ~held /\ ~swallow
              /\ phase' = "reel" /\ held' = TRUE /\ hum' = sound
-             /\ UNCHANGED <<paused, visible, focused, sound, owed, guard, friendTrip, skipped>>
-\* press() in wait outside the window: "early" / "nibble" → endCast, the miss line, then next() → "done".
-YouStrikeTooSoon == /\ Running /\ focused /\ phase = "wait" /\ ~held
-                    /\ phase' = "done" /\ owed' = "soon" /\ guard' = TRUE
-                    /\ UNCHANGED <<paused, visible, focused, held, hum, sound, friendTrip, skipped>>
-\* press() / release() in reel: holding on and off.
-YouHoldToReel == /\ Running /\ focused /\ phase = "reel" /\ ~held
-                 /\ held' = TRUE
-                 /\ UNCHANGED <<phase, paused, visible, focused, hum, sound, owed, guard, friendTrip, skipped>>
-YouSlacken == /\ focused /\ held /\ phase = "reel"
-              /\ held' = FALSE
-              /\ UNCHANGED <<phase, paused, visible, focused, hum, sound, owed, guard, friendTrip, skipped>>
+             /\ UNCHANGED <<screen, paused, visible, focused, sheet, swallow, sound, owed, dip, lateNoDip, friendTrip, skipped>>
+YouStrikeTooSoon == /\ Running /\ phase = "wait" /\ ~dip /\ ~held /\ ~swallow /\ phase' = "card"
+                    /\ UNCHANGED <<screen, paused, visible, focused, sheet, swallow, held, hum, sound, owed, dip, lateNoDip, friendTrip, skipped>>
+YouHoldToReel == /\ Running /\ phase = "reel" /\ ~held /\ ~swallow /\ held' = TRUE
+                 /\ UNCHANGED <<screen, phase, paused, visible, focused, sheet, swallow, hum, sound, owed, dip, lateNoDip, friendTrip, skipped>>
+YouSlacken == /\ Running /\ phase = "reel" /\ held /\ held' = FALSE
+              /\ UNCHANGED <<screen, phase, paused, visible, focused, sheet, swallow, hum, sound, owed, dip, lateNoDip, friendTrip, skipped>>
 
-\* ---- time: step() in useGameLoop ----
-FloatLands == /\ Running /\ phase = "fly" /\ phase' = "wait"
-              /\ UNCHANGED <<paused, visible, focused, held, hum, sound, owed, guard, friendTrip, skipped>>
-\* "late": the float stayed under past the window. endCast("late") → stopHum → next() → finish().
-FishTakesTheBait == /\ Running /\ phase = "wait"
-                    /\ phase' = "done" /\ owed' = "soon" /\ guard' = TRUE
-                    /\ UNCHANGED <<paused, visible, focused, held, hum, sound, friendTrip, skipped>>
-\* "snap" (held in the red) or "slip" (slack too long): stopHum, the miss, then the result.
-LineGives == /\ Running /\ phase = "reel"
-             /\ phase' = "done" /\ hum' = FALSE /\ held' = FALSE /\ owed' = "soon" /\ guard' = TRUE
-             /\ UNCHANGED <<paused, visible, focused, sound, friendTrip, skipped>>
-\* progress reaches 1: caught() then finish(): levels.record(level, stars). On a friend's far level that opens every level below it.
-FishLanded == /\ Running /\ phase = "reel"
-              /\ phase' = "done" /\ hum' = FALSE /\ held' = FALSE /\ owed' = "late" /\ guard' = TRUE
-              /\ skipped' = (skipped \/ friendTrip)
-              /\ UNCHANGED <<paused, visible, focused, sound, friendTrip>>
+\* ---- game time: stepTrip, only while ticking ----
+FloatLands == /\ Running /\ phase = "fly" /\ phase' = "wait" /\ dip' = FALSE
+              /\ UNCHANGED <<screen, paused, visible, focused, sheet, swallow, held, hum, sound, owed, lateNoDip, friendTrip, skipped>>
+FloatDips == /\ Running /\ phase = "wait" /\ ~dip /\ dip' = TRUE
+             /\ UNCHANGED <<screen, phase, paused, visible, focused, sheet, swallow, held, hum, sound, owed, lateNoDip, friendTrip, skipped>>
+\* "late": only after the dip, because the window is counted on the same game clock as the bite.
+FishTakesTheBait == /\ Running /\ phase = "wait" /\ phase' = "card"
+                    /\ lateNoDip' = (lateNoDip \/ ~dip)
+                    /\ dip
+                    /\ UNCHANGED <<screen, paused, visible, focused, sheet, swallow, held, hum, sound, owed, dip, friendTrip, skipped>>
+\* A snap, a slip, a leap on a tight line, or the fish landed: the cast ends; syncHum stops the hum.
+CastEnds == /\ Running /\ phase = "reel" /\ phase' = "card" /\ held' = FALSE /\ hum' = FALSE
+            /\ UNCHANGED <<screen, paused, visible, focused, sheet, swallow, sound, owed, dip, lateNoDip, friendTrip, skipped>>
+\* The catch or miss card ends: the next cast...
+NextCast == /\ Running /\ phase = "card" /\ phase' = "aim" /\ held' = FALSE
+            /\ UNCHANGED <<screen, paused, visible, focused, sheet, swallow, hum, sound, owed, dip, lateNoDip, friendTrip, skipped>>
+\* ...or the level ends: finish() records the stars, afterClear keeps a friend's far level from opening the ones before it,
+\* goTo("over") lets go, and the stars and fanfare are scheduled as tones.
+LevelEnds == /\ Running /\ phase = "card" /\ screen' = "over" /\ held' = FALSE /\ owed' = "due"
+             /\ UNCHANGED <<phase, paused, visible, focused, sheet, swallow, hum, sound, dip, lateNoDip, friendTrip, skipped>>
+\* ধীরে খেলো from the menu's switch, mid-cast: only the step's size changes; game time and the bite stay where they are.
+SlowToggles == /\ screen = "play" /\ UNCHANGED vars
 
-\* ---- the result ----
-\* overAt + 600 ms: primary() and again() stop ignoring presses.
-GuardLapses == /\ phase = "done" /\ guard /\ owed # "soon" /\ guard' = FALSE
-               /\ UNCHANGED <<phase, paused, visible, focused, held, hum, sound, owed, friendTrip, skipped>>
-\* finish()'s setTimeout: 250 ms for no stars (sfx.lose, "soon", inside the 600 ms guard),
-\* 950 ms for a cleared level (levelUp + confetti or sfx.good, "late", after the guard). A stale one fires over the new trip.
-FanfarePlays == /\ owed # "none" /\ (owed = "late" => ~guard) /\ owed' = "none"
-                /\ UNCHANGED <<phase, paused, visible, focused, held, hum, sound, guard, friendTrip, skipped>>
-\* primary(): পরের লেভেল / আবার খেলো / Space on the result, ignored for 600 ms.
-YouPlayOn == /\ phase = "done" /\ ~guard /\ focused /\ Begin(FALSE)
-\* The সব লেভেল grid: onPick → begin() at any moment, no 600 ms guard, no question.
-YouPickALevel == /\ focused /\ Begin(FALSE)
-\* readFriend() on mount or hashchange: begin(found.level, found.seed), even for a level this phone hasn't opened.
-YouOpenAFriendsLink == /\ visible /\ ~friendTrip /\ Begin(TRUE)
+\* ---- the end screen and its choices ----
+FanfarePlays == /\ owed = "due" /\ owed' = "none"
+                /\ UNCHANGED <<screen, phase, paused, visible, focused, sheet, swallow, held, hum, sound, dip, lateNoDip, friendTrip, skipped>>
+\* পরের লেভেল / আবার খেলো (a fresh press only), or নতুন করে শুরু.
+YouPlayOn == /\ screen = "over" /\ ~sheet /\ ~paused /\ focused /\ Begin(friendTrip)
+\* সব লেভেল or the album: a choice screen; the sheet effect calls openSheet (let go) and syncHum.
+YouOpenASheet == /\ ~sheet /\ ~paused /\ focused /\ sheet' = TRUE /\ held' = FALSE /\ hum' = FALSE
+                 /\ UNCHANGED <<screen, phase, paused, visible, focused, swallow, sound, owed, dip, lateNoDip, friendTrip, skipped>>
+YouCloseTheSheet == /\ sheet /\ sheet' = FALSE /\ hum' = (screen = "play" /\ ~paused /\ focused /\ visible /\ sound /\ phase = "reel")
+                    /\ UNCHANGED <<screen, phase, paused, visible, focused, swallow, held, sound, owed, dip, lateNoDip, friendTrip, skipped>>
+YouPickALevel == /\ sheet /\ focused /\ Begin(FALSE)
+\* A friend's link (hashchange): silenceScheduled, their water on the title.
+YouOpenAFriendsLink == /\ visible /\ ~friendTrip /\ screen' = "title" /\ phase' = "aim" /\ friendTrip' = TRUE /\ sheet' = FALSE
+                       /\ held' = FALSE /\ hum' = FALSE /\ owed' = "none" /\ swallow' = FALSE /\ dip' = FALSE
+                       /\ UNCHANGED <<paused, visible, focused, sound, lateNoDip, skipped>>
+\* Clearing a friend's level that was beyond your unlock: its stars are kept, nothing in between opens (afterClear).
+FriendLevelCleared == /\ screen = "over" /\ friendTrip /\ UNCHANGED vars
 
-\* ---- away and back ----
-\* The component has no blur listener: no overlay, and a held Space key or finger stays counted (trip.charging / holding).
-\* useGameLoop's own blur listener only freezes the steps; the reel hum keeps sounding. Focus restarts the loop at once.
-WindowBlurs == /\ visible /\ focused /\ focused' = FALSE
-               /\ UNCHANGED <<phase, paused, visible, held, hum, sound, owed, guard, friendTrip, skipped>>
+\* ---- away and back: the player pauses (menu) once you've touched the game, which is always so on the play screen ----
+\* session.blur lets go and arms the wake-up swallow; the player's onPause → session.pause; pausing cuts scheduled tones.
+WindowBlurs == /\ focused /\ focused' = FALSE /\ held' = FALSE /\ hum' = FALSE
+               /\ swallow' = (screen = "play")
+               /\ paused' = (paused \/ screen = "play")
+               /\ owed' = IF screen = "play" THEN "none" ELSE owed
+               /\ UNCHANGED <<screen, phase, visible, sheet, sound, dip, lateNoDip, friendTrip, skipped>>
 WindowFocuses == /\ visible /\ ~focused /\ focused' = TRUE
-                 /\ UNCHANGED <<phase, paused, visible, held, hum, sound, owed, guard, friendTrip, skipped>>
-\* hide(): charging = holding = false, down = null; in fly/wait/reel stopHum() and setPaused(true).
-TabHides == /\ visible
-            /\ visible' = FALSE /\ focused' = FALSE /\ held' = FALSE
-            /\ paused' = (paused \/ phase \in Live)
-            /\ hum' = (hum /\ phase \notin Live)
-            /\ UNCHANGED <<phase, sound, owed, guard, friendTrip, skipped>>
+                 /\ hum' = (screen = "play" /\ ~paused /\ ~sheet /\ sound /\ phase = "reel")
+                 /\ UNCHANGED <<screen, phase, paused, visible, sheet, swallow, held, sound, owed, dip, lateNoDip, friendTrip, skipped>>
+TabHides == /\ visible /\ visible' = FALSE /\ focused' = FALSE /\ held' = FALSE /\ hum' = FALSE
+            /\ swallow' = (screen = "play")
+            /\ paused' = (paused \/ screen = "play")
+            /\ owed' = IF screen = "play" THEN "none" ELSE owed
+            /\ UNCHANGED <<screen, phase, sheet, sound, dip, lateNoDip, friendTrip, skipped>>
 TabShows == /\ ~visible /\ visible' = TRUE /\ focused' = TRUE
-            /\ UNCHANGED <<phase, paused, held, hum, sound, owed, guard, friendTrip, skipped>>
-\* resume(): the overlay's চালিয়ে যাও, a tap on the pond, or Space; reelHum() again in reel.
-YouResume == /\ paused /\ visible /\ focused
-             /\ paused' = FALSE /\ hum' = (hum \/ (phase = "reel" /\ sound))
-             /\ UNCHANGED <<phase, visible, focused, held, sound, owed, guard, friendTrip, skipped>>
+            /\ hum' = (screen = "play" /\ ~paused /\ ~sheet /\ sound /\ phase = "reel")
+            /\ UNCHANGED <<screen, phase, paused, sheet, swallow, held, sound, owed, dip, lateNoDip, friendTrip, skipped>>
+\* The game's own P key calls player.requestPause(): the same menu.
+YouPressP == /\ screen = "play" /\ ~paused /\ ~sheet /\ focused /\ paused' = TRUE /\ held' = FALSE /\ hum' = FALSE /\ owed' = "none"
+             /\ UNCHANGED <<screen, phase, visible, focused, sheet, swallow, sound, dip, lateNoDip, friendTrip, skipped>>
+\* চালিয়ে যাও: session.resume (fresh hands, no swallow: that click was the wake-up), then syncHum.
+YouResume == /\ paused /\ visible /\ focused /\ paused' = FALSE /\ swallow' = FALSE /\ held' = FALSE
+             /\ hum' = (screen = "play" /\ ~sheet /\ sound /\ phase = "reel")
+             /\ UNCHANGED <<screen, phase, visible, focused, sheet, sound, owed, dip, lateNoDip, friendTrip, skipped>>
 
-\* ---- the site-wide switch ----
-\* Off: stopLoops() and hum.current = null. On: reelHum() if reeling and not paused.
+\* ---- the site-wide switch: off stops every loop; on lets syncHum start a fresh one ----
 SoundOff == /\ sound /\ sound' = FALSE /\ hum' = FALSE
-            /\ UNCHANGED <<phase, paused, visible, focused, held, owed, guard, friendTrip, skipped>>
-SoundOn == /\ ~sound /\ visible /\ sound' = TRUE /\ hum' = (hum \/ (phase = "reel" /\ ~paused))
-           /\ UNCHANGED <<phase, paused, visible, focused, held, owed, guard, friendTrip, skipped>>
+            /\ UNCHANGED <<screen, phase, paused, visible, focused, sheet, swallow, held, owed, dip, lateNoDip, friendTrip, skipped>>
+SoundOn == /\ ~sound /\ sound' = TRUE /\ hum' = (Running /\ phase = "reel")
+           /\ UNCHANGED <<screen, phase, paused, visible, focused, sheet, swallow, held, owed, dip, lateNoDip, friendTrip, skipped>>
 
-Next == YouHoldToAim \/ YouLetGoToCast \/ YouStrike \/ YouStrikeTooSoon \/ YouHoldToReel \/ YouSlacken
-        \/ FloatLands \/ FishTakesTheBait \/ LineGives \/ FishLanded
-        \/ GuardLapses \/ FanfarePlays \/ YouPlayOn \/ YouPickALevel \/ YouOpenAFriendsLink
-        \/ WindowBlurs \/ WindowFocuses \/ TabHides \/ TabShows \/ YouResume \/ SoundOff \/ SoundOn
+Next == YouStart \/ YouHoldToAim \/ YouLetGoToCast \/ YouTapToWake \/ YouStrike \/ YouStrikeTooSoon \/ YouHoldToReel \/ YouSlacken
+        \/ FloatLands \/ FloatDips \/ FishTakesTheBait \/ CastEnds \/ NextCast \/ LevelEnds \/ SlowToggles
+        \/ FanfarePlays \/ YouPlayOn \/ YouOpenASheet \/ YouCloseTheSheet \/ YouPickALevel \/ YouOpenAFriendsLink \/ FriendLevelCleared
+        \/ WindowBlurs \/ WindowFocuses \/ TabHides \/ TabShows \/ YouPressP \/ YouResume \/ SoundOff \/ SoundOn
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ phase \in Phases /\ paused \in BOOLEAN /\ visible \in BOOLEAN /\ focused \in BOOLEAN
-          /\ held \in BOOLEAN /\ hum \in BOOLEAN /\ sound \in BOOLEAN /\ owed \in {"none", "soon", "late", "stale"}
-          /\ guard \in BOOLEAN /\ friendTrip \in BOOLEAN /\ skipped \in BOOLEAN
-
-\* TLC stops exploring past a stale fanfare or a skipped level (it still checks the rules there), so the chart stays readable.
-StopAtLeftovers == owed # "stale" /\ ~skipped
+TypeOK == /\ screen \in Screens /\ phase \in Phases /\ paused \in BOOLEAN /\ visible \in BOOLEAN /\ focused \in BOOLEAN
+          /\ sheet \in BOOLEAN /\ swallow \in BOOLEAN /\ held \in BOOLEAN /\ hum \in BOOLEAN /\ sound \in BOOLEAN
+          /\ owed \in {"none", "due"} /\ dip \in BOOLEAN /\ lateNoDip \in BOOLEAN /\ friendTrip \in BOOLEAN /\ skipped \in BOOLEAN
 
 \* ---- the reader's rules ----
 \* The float, the bite and the line don't move while you're in another window or tab.
-NoProgressWhileAway == (phase \in Live /\ ~focused) => ~Running
-\* After you leave the window or tab, no finger or key still counts as held.
-InputReleasedWhenAway == ~focused => ~held
-PausedWhenHidden == (~visible /\ phase \in Live) => paused
-PausedWhenBlurred == (~focused /\ phase \in Live) => paused
-\* The reel hums only while a fish is on the line, the line is moving, and sound is on.
-LoopOnlyWhenMeaningful == hum => (phase = "reel" /\ Running /\ sound)
-\* If a fish is on the line, you're playing and sound is on, the hum plays (also after sound comes back on).
-LoopComesBack == (phase = "reel" /\ Running /\ sound) => hum
-\* Nothing in the trip moves while the pause overlay is up.
+NoProgressWhileAway == (~focused \/ ~visible) => ~Running
+\* After you leave, no finger or Space key still counts as held.
+InputReleasedWhenAway == (~focused \/ ~visible) => ~held
+PausedWhenHidden == (~visible /\ screen = "play") => paused
+PausedWhenBlurred == (~focused /\ screen = "play") => paused
+\* Until the wake-up tap has happened, the game sits on the menu, so the click that brings you back never strikes.
+ClickBackIsNotAMove == (screen = "play" /\ swallow) => paused
+\* The reel hums only while a fish is on the line, the water is moving and sound is on...
+LoopOnlyWhenMeaningful == hum => WantHum
+\* ...and whenever that is so it plays, also after sound comes back on or after চালিয়ে যাও.
+LoopComesBack == WantHum => hum
 PausedMeansFrozen == paused => ~Running
-\* The result's fanfare and confetti belong to the result; they never go off over a new trip.
-FanfareOnlyOnTheResult == owed # "stale"
+\* While সব লেভেল or the album is open, nothing in the pond moves.
+ChoiceFreezesPlay == sheet => ~Running
+\* The end screen's chimes and fanfare belong to it; they never go off over a new level.
+FanfareOnlyOnTheResult == owed = "due" => screen = "over"
 \* Only levels you cleared open the next one; a friend's link lets you play their level, not skip the ones before it.
 OpenLevelsAreEarned == ~skipped
+\* Turning ধীরে খেলো on or off mid-wait never loses a fish that hasn't bitten.
+SlowToggleKeepsTheBite == ~lateNoDip
 ====

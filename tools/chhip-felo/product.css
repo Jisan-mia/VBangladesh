@@ -1,121 +1,188 @@
-.tool-chhip-felo{--accent:#1f6f5c;--accent-deep:#134a3d;--ink:#17302a;--muted:#4d6660;--water:#4f8f78;--water-deep:#2d6a5b;--float:#d6352b;--bamboo:#d4ac55;--basket:#b9853f;--sand:#f4ead2;--sand-edge:#e3d4ad;--gold:#ffd166}
-.tool-chhip-felo .cf-page{color:var(--ink)}
+.tool-chhip-felo{--accent:#1f6f5c;--accent-deep:#14493d;--ink:#17302a;--muted:#4d6660;--paper:#f6f1e3;--paper-edge:#dcd3bb;--good:#2f8f4e;--danger:#d6352b;--gold:#e39b00}
+.tool-chhip-felo .cf-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* hero: one short line, so the pond and its button land on the first phone screen */
-.cf-hero{padding:10px 0 4px}
-.cf-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(20px,5.6vw,40px);line-height:1.3;font-weight:700;letter-spacing:0}
-.cf-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+/* the play column fills the player's stage: the HUD row, the pond as big as fits, one line of words */
+.tool-chhip-felo .gp-game{min-height:100%}
+.tool-chhip-felo .cf-wrap{width:100%;max-width:560px;min-width:0}
+.tool-chhip-felo .cf{position:relative;display:flex;flex-direction:column;gap:6px;height:var(--stage-h,auto);min-height:540px;color:var(--ink)}
+.tool-chhip-felo .cf[data-world="0"]{--water:#2d6a5b;--deep:#163d33}
+.tool-chhip-felo .cf[data-world="1"]{--water:#55785a;--deep:#2d4a30}
+.tool-chhip-felo .cf[data-world="2"]{--water:#2c5a7a;--deep:#163049}
+.tool-chhip-felo .cf[data-world="3"]{--water:#36605f;--deep:#1a3433}
 
-.cf{display:grid;gap:8px;max-width:480px}
+/* ---- title ---- */
+.tool-chhip-felo .cf-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:0;padding:12px;border-radius:18px;background:radial-gradient(120% 70% at 50% 30%,#fffcf2 0,var(--paper) 72%);text-align:center}
+.tool-chhip-felo .cf-title-friend{margin:0;padding:10px 14px;border-radius:14px;background:#e3efe4;font-size:15px;line-height:1.45}
+.tool-chhip-felo .cf-title-friend b{font-family:var(--font-display)}
+.tool-chhip-felo .cf-title-friend span{display:block;font-size:13px;color:var(--muted)}
+.tool-chhip-felo .cf-title-art{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * .86);place-items:center;width:100%;min-height:160px;padding-bottom:16px}
+.tool-chhip-felo .cf-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:22px;filter:drop-shadow(0 14px 18px #17302a40);transition:transform .18s ease-out;animation:cf-bob 3.6s ease-in-out infinite}
+.tool-chhip-felo .cf-title-start:hover{transform:translateY(-3px) scale(1.01)}
+.tool-chhip-felo .cf-title-start:active{transform:translateY(2px) scale(.99)}
+.tool-chhip-felo .cf-title-start:focus-visible{outline:3px solid var(--accent);outline-offset:6px}
+.tool-chhip-felo .cf-title-start canvas{display:block;border-radius:22px}
+.tool-chhip-felo .cf-title-start[data-slow]{animation:none;transition:none}
+@keyframes cf-bob{50%{transform:translateY(-4px)}}
+.tool-chhip-felo .cf-title-level{display:grid;gap:2px;margin:0;max-width:440px}
+.tool-chhip-felo .cf-title-level span{font-family:var(--font-display);font-size:18px;font-weight:700}
+.tool-chhip-felo .cf-title-level small{font-size:14px;color:var(--muted);line-height:1.5}
+.tool-chhip-felo .cf-modes{display:flex;gap:6px;justify-content:center}
+.tool-chhip-felo .cf-modes button{min-height:40px;padding:4px 16px;border:1.5px solid var(--paper-edge);border-radius:999px;background:#fff;color:var(--ink);font-size:15px;font-weight:600}
+.tool-chhip-felo .cf-modes button[aria-checked=true]{border-color:var(--accent-deep);background:var(--accent-deep);color:#fff}
+.tool-chhip-felo .cf-mode-line{margin:0;max-width:400px;font-size:14px;line-height:1.5;color:var(--muted)}
+.tool-chhip-felo .cf-title-links{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin:0}
+.tool-chhip-felo .cf-title-links button{min-height:44px;padding:6px 12px;border:0;border-radius:12px;background:none;color:var(--accent-deep);font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:4px}
+.tool-chhip-felo .cf-title-links span{margin-left:6px;font-weight:500;color:var(--muted);text-decoration:none}
 
-.cf-friend{padding:10px 14px;border-radius:14px;background:var(--sand);border-left:5px solid var(--float)}
-.cf-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.4}
-.cf-friend p{margin:2px 0 0;font-size:13px;line-height:1.45;color:var(--muted)}
+/* ---- the HUD: corners only, the pond stays clear ---- */
+.tool-chhip-felo .cf-hud{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;min-height:42px}
+.tool-chhip-felo .cf-hud p{margin:0}
+.tool-chhip-felo .cf-hud-left{display:grid;gap:4px;justify-items:start}
+.tool-chhip-felo .cf-badge{display:flex;gap:6px;align-items:baseline;line-height:1}
+.tool-chhip-felo .cf-badge b{font-family:var(--font-display);font-size:15px}
+.tool-chhip-felo .cf-badge span{padding:1px 7px;border-radius:99px;background:var(--ink);color:#fff;font-size:11px;font-weight:700}
+/* a spare bait: a little worm on a hook shape; a lost one is only its outline (shape, not only colour) */
+.tool-chhip-felo .cf-baits{display:flex;gap:6px;height:14px;align-items:center;padding-left:2px}
+.tool-chhip-felo .cf-baits i{width:9px;height:13px;border:2px solid #a0522d;border-top:0;border-radius:0 0 6px 6px;background:transparent;transition:background .2s,opacity .2s}
+.tool-chhip-felo .cf-baits i[data-on=true]{background:#d9825b}
+.tool-chhip-felo .cf-baits i[data-on=false]{opacity:.35}
+.tool-chhip-felo .cf-roster{display:flex;gap:5px;margin:0;padding:0;list-style:none}
+.tool-chhip-felo .cf-roster li{width:14px;height:14px;border:2px solid var(--muted);border-radius:50%;background:transparent;transition:background .2s}
+.tool-chhip-felo .cf-roster li[data-done=true]{background:var(--accent);border-color:var(--accent-deep);animation:cf-pop .3s ease-out}
+.tool-chhip-felo .cf-boss{display:grid;gap:3px;justify-items:center;min-width:120px}
+.tool-chhip-felo .cf-boss b{font-family:var(--font-display);font-size:14px;line-height:1;color:#8a4b00;white-space:nowrap}
+.tool-chhip-felo .cf-boss span{display:flex;gap:3px}
+.tool-chhip-felo .cf-boss i{width:22px;height:9px;border:2px solid #8a4b00;border-radius:3px;background:#fff3dc;transition:background .25s}
+.tool-chhip-felo .cf-boss i[data-on=true]{background:linear-gradient(90deg,#f2a531,#e4574a)}
+.tool-chhip-felo .cf-hud-right{display:grid;gap:3px;justify-items:end}
+.tool-chhip-felo .cf-weight b{display:inline-block;font-family:var(--font-display);font-size:17px;line-height:1}
+.tool-chhip-felo .cf-count{font-size:12px;font-weight:600;color:var(--muted);line-height:1}
 
-/* level, casts, basket */
-.cf-hud{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px}
-.cf-hud p{margin:0}
-.cf-level{display:grid;line-height:1.25;min-width:0}
-.cf-level b{font-family:var(--font-display);font-size:17px;font-weight:800}
-.cf-level span{font-size:12.5px;font-weight:600;color:var(--muted)}
-.cf-casts{display:flex;gap:4px;margin:0;padding:0;list-style:none}
-.cf-casts li{width:12px;height:12px;border-radius:50%;border:2px solid var(--muted);box-sizing:border-box}
-.cf-casts li[data-r=now]{border-color:var(--float);box-shadow:0 0 0 2px #d6352b33}
-.cf-casts li[data-r=fish]{border-color:var(--accent);background:var(--accent)}
-.cf-casts li[data-r=miss]{border-style:dashed;opacity:.5}
-.cf-basket{display:flex;align-items:center;gap:6px;min-height:40px;padding:4px 10px 4px 8px;border-radius:12px;background:var(--sand);font-family:var(--font-display);font-size:16px;font-weight:800;white-space:nowrap}
-.cf-basket b{display:inline-block}
-.cf-basket-ico{width:20px;height:16px;border-radius:2px 2px 10px 10px;background:repeating-linear-gradient(0deg,var(--basket) 0 3px,#8a5c26 3px 4.5px)}
+/* ---- the pond: press anywhere here; danger lights the edge, never the middle ---- */
+.tool-chhip-felo .cf-pond{position:relative;flex:1;min-height:320px;overflow:hidden;border-radius:16px;background:var(--deep);box-shadow:0 8px 22px #17302a33;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
+.tool-chhip-felo .cf-canvas{position:absolute;inset:0;display:block}
+.tool-chhip-felo .cf-pond::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 0 transparent;transition:box-shadow .15s}
+.tool-chhip-felo .cf-pond[data-edge=snap]::after{box-shadow:inset 0 0 0 4px #e4574a,inset 0 0 40px 10px #e4574aa8;animation:cf-glow .35s ease-in-out infinite alternate}
+.tool-chhip-felo .cf-pond[data-edge=lost]::after{box-shadow:inset 0 0 0 4px #e4574a,inset 0 0 60px 14px #e4574acc}
+.tool-chhip-felo .cf-pond[data-edge=last]::after{box-shadow:inset 0 0 0 2px #e4574a99}
+.tool-chhip-felo .cf-pond[data-edge=slack]::after{box-shadow:inset 0 0 0 3px #5aa7d6,inset 0 0 34px 6px #5aa7d680}
+.tool-chhip-felo .cf-pond[data-edge=surge-left]::after{box-shadow:inset 6px 0 0 0 #ffb547,inset 40px 0 30px -12px #ffb547aa}
+.tool-chhip-felo .cf-pond[data-edge=surge-right]::after{box-shadow:inset -6px 0 0 0 #ffb547,inset -40px 0 30px -12px #ffb547aa}
+.tool-chhip-felo .cf-pond[data-edge=jump]::after{box-shadow:inset 0 6px 0 0 #ffd166,inset 0 40px 30px -12px #ffd166aa}
+.tool-chhip-felo .cf-pond[data-edge=rush]::after{box-shadow:inset 0 -6px 0 0 #7cc4f0,inset 0 -40px 30px -12px #7cc4f0aa}
+@keyframes cf-glow{to{box-shadow:inset 0 0 0 4px #e4574a,inset 0 0 56px 14px #e4574add}}
+/* the edge pointers, each with its own shape and word */
+.tool-chhip-felo .cf-arrow{position:absolute;z-index:1;display:none;padding:3px 9px;border-radius:99px;color:#fff;font-size:12px;font-weight:800;pointer-events:none}
+.tool-chhip-felo .cf-arrow[data-side=left]{left:8px;top:42%}
+.tool-chhip-felo .cf-arrow[data-side=right]{right:44px;top:42%}
+.tool-chhip-felo .cf-arrow[data-side=bottom]{left:50%;bottom:14px;transform:translateX(-50%)}
+.tool-chhip-felo .cf-arrow[data-side=top]{left:50%;top:10px;transform:translateX(-50%)}
+.tool-chhip-felo .cf-pond[data-edge=surge-left] .cf-arrow[data-side=left],.tool-chhip-felo .cf-pond[data-edge=surge-right] .cf-arrow[data-side=right]{display:block;background:#9a5b00;animation:cf-pop .2s ease-out}
+.tool-chhip-felo .cf-pond[data-edge=jump] .cf-arrow[data-side=top]{display:block;background:#8a6a00;animation:cf-pop .2s ease-out}
+.tool-chhip-felo .cf-pond[data-edge=rush] .cf-arrow[data-side=bottom]{display:block;background:#1b4f72;animation:cf-pop .2s ease-out}
+.tool-chhip-felo .cf-pond[data-edge=surge-left] .cf-arrow[data-side=left]::after,.tool-chhip-felo .cf-pond[data-edge=surge-right] .cf-arrow[data-side=right]::after{content:"ঘাই আসছে · ঢিল দাও"}
+.tool-chhip-felo .cf-pond[data-edge=jump] .cf-arrow[data-side=top]::after{content:"↑ লাফ আসছে · ঢিল দাও"}
+.tool-chhip-felo .cf-pond[data-edge=rush] .cf-arrow[data-side=bottom]::after{content:"↓ ছুটে আসছে · চেপে ধরো"}
+/* before the first cast: the level's one new thing at the top, the hand at the bottom */
+.tool-chhip-felo .cf-intro{position:absolute;left:50%;top:10px;z-index:1;display:grid;gap:1px;width:max-content;max-width:calc(100% - 24px);margin:0;padding:7px 14px;border-radius:14px;background:#fffbf0f0;box-shadow:0 4px 14px #0a1e1a40;text-align:center;transform:translateX(-50%);pointer-events:none;animation:cf-in .3s ease-out}
+.tool-chhip-felo .cf-intro b{font-family:var(--font-display);font-size:16px}
+.tool-chhip-felo .cf-intro span{font-size:13px;line-height:1.45;color:var(--muted)}
+.tool-chhip-felo .cf-hint{position:absolute;left:50%;bottom:76px;z-index:1;display:grid;justify-items:center;gap:2px;width:max-content;max-width:calc(100% - 24px);margin:0;padding:8px 14px 7px;border-radius:14px;background:#0a1e1ad9;color:#fff;font-size:14px;font-weight:700;line-height:1.4;text-align:center;transform:translateX(-50%);pointer-events:none}
+.tool-chhip-felo .cf-hint small{font-size:11px;font-weight:500;opacity:.75}
+.tool-chhip-felo .cf-finger{width:26px;height:26px;border:3px solid #fff;border-radius:50%;animation:cf-press 1.6s ease-in-out infinite}
+@keyframes cf-press{30%{transform:scale(.72);background:#ffffff55}75%{transform:scale(.72);background:#ffffff55}90%{transform:scale(1);background:transparent}}
+@keyframes cf-pop{from{transform:scale(.85);opacity:.4}}
+@keyframes cf-in{from{opacity:0;transform:translateX(-50%) translateY(-6px)}}
+.tool-chhip-felo .cf-status{display:flex;flex:none;align-items:center;justify-content:center;height:44px;overflow:hidden;margin:0;padding:2px 10px;border-radius:12px;background:#fff;font-size:15px;font-weight:600;line-height:1.35;text-align:center}
+.tool-chhip-felo .cf-status:empty{background:none}
+.tool-chhip-felo .cf-status.cf-miss{background:#fde7e2;color:#7a1e12}
 
-/* the pond: one canvas, the finger works anywhere on it */
-.cf-stage-wrap{position:relative}
-.cf-stage{position:relative;overflow:hidden;border-radius:16px;box-shadow:0 5px 0 var(--accent-deep);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;cursor:pointer}
-.cf-stage canvas{display:block;width:100%;aspect-ratio:360/320}
-.cf-stage.gx-shake{animation:gx-shake .2s ease-out}
+/* ---- the end of a level: slides up over the pond ---- */
+.tool-chhip-felo .cf-end{position:absolute;left:8px;right:8px;bottom:8px;z-index:2;display:grid;justify-items:center;gap:2px;max-height:calc(100% - 16px);overflow:auto;padding:12px 14px 8px;border-radius:18px;background:#fffbf1f7;box-shadow:0 10px 30px #0a1e1a66;text-align:center;animation:cf-up .32s cubic-bezier(.2,.9,.3,1.05)}
+@keyframes cf-up{from{transform:translateY(40px);opacity:0}}
+.tool-chhip-felo .cf-end[data-slow]{animation:none}
+.tool-chhip-felo .cf-end p{margin:0}
+.tool-chhip-felo .cf-end-kicker{font-weight:700;color:var(--accent-deep)}
+.tool-chhip-felo .cf-end-stars{margin:0;font-size:38px;line-height:1.1}
+.tool-chhip-felo .cf-end-stars .cf-capped{opacity:.25}
+.tool-chhip-felo .cf-end-out{font-family:var(--font-display);font-size:20px;font-weight:700;color:var(--danger)}
+.tool-chhip-felo .cf-end-count b{font-family:var(--font-display);font-size:clamp(30px,9vw,42px);line-height:1.15;font-variant-numeric:tabular-nums}
+.tool-chhip-felo .cf-end-line{font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.4}
+.tool-chhip-felo .cf-end-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin:6px 0 2px;padding:0;list-style:none}
+.tool-chhip-felo .cf-end-stats li{display:grid;padding:4px 9px;border-radius:10px;background:#fff;font-size:12px;color:var(--muted);line-height:1.3}
+.tool-chhip-felo .cf-end-stats b{font-size:15px;color:var(--ink)}
+.tool-chhip-felo .cf-end-near{font-weight:700;color:var(--accent-deep);font-size:14px}
+.tool-chhip-felo .cf-end-best{font-size:13px;color:var(--muted)}
+.tool-chhip-felo .cf-end-choices{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:6px;width:100%;margin:8px 0 0;padding:0;list-style:none}
+.tool-chhip-felo .cf-end-choices button{position:relative;width:100%;min-height:54px;padding:6px 8px;font-size:15px;line-height:1.2}
+.tool-chhip-felo .cf-end-choices kbd{display:inline-grid;place-items:center;width:20px;height:20px;margin-right:5px;border-radius:6px;background:#ffffff40;font:inherit;font-size:12px}
+.tool-chhip-felo .cf-end-choices .kit-secondary kbd{background:#17302a14}
+.tool-chhip-felo .cf-end-choices em{position:absolute;top:-9px;right:6px;padding:0 7px;border-radius:99px;background:#ffd166;color:var(--ink);font-size:10px;font-style:normal;font-weight:700;line-height:1.6}
+.tool-chhip-felo .cf-end-card{min-height:40px}
 
-/* "ধরা পড়ল!": the fish held up, then it drops into the basket at the bottom right */
-.cf-catch{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:2px;background:radial-gradient(circle at 50% 48%,#fff8e4f2 0 38%,#fff8e400 70%);pointer-events:none;animation:cf-basket var(--show,2.1s) ease-in both}
-.cf-catch p{margin:0}
-.cf-catch-head{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--float);line-height:1.2}
-.cf-catch-name{font-size:17px;color:var(--ink)}
-.cf-catch-name b{font-family:var(--font-display);font-size:21px}
-.cf-catch-tag{padding:2px 10px;border-radius:999px;background:var(--accent);color:#fff;font-size:13px;font-weight:700}
-.cf-catch-tag[data-rare]{background:#b8860b}
-.cf-catch .cf-pic{animation:cf-hold .5s cubic-bezier(.3,1.6,.5,1) both}
-@keyframes cf-hold{from{transform:scale(.4) rotate(-12deg);opacity:0}to{transform:rotate(-6deg)}}
-@keyframes cf-basket{0%{opacity:0}8%{opacity:1}72%{transform:none;opacity:1}100%{transform:translate(38%,44%) scale(.1);opacity:0}}
+/* ---- the story ---- */
+.tool-chhip-felo .cf-story{position:relative;display:flex;flex:1;flex-direction:column;min-height:0}
+.tool-chhip-felo .cf-story-panel{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:12px;border:0;border-radius:18px;background:#fffdf6;box-shadow:inset 0 0 0 3px var(--ink);color:var(--ink);cursor:pointer}
+.tool-chhip-felo .cf-story-art{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * .66);place-items:center;width:100%;min-height:120px}
+.tool-chhip-felo .cf-story-art canvas{display:block;border:3px solid var(--ink);border-radius:6px}
+.tool-chhip-felo .cf-story-panel p{margin:0;max-width:420px;font-family:var(--font-display);font-size:clamp(18px,5vw,22px);font-weight:700;line-height:1.45}
+.tool-chhip-felo .cf-story-dots{display:flex;gap:6px}
+.tool-chhip-felo .cf-story-dots i{width:8px;height:8px;border-radius:50%;background:var(--paper-edge)}
+.tool-chhip-felo .cf-story-dots i[data-on=true]{background:var(--ink)}
+.tool-chhip-felo .cf-story-skip{position:absolute;right:10px;top:10px;z-index:1;display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border:0;border-radius:99px;background:var(--ink);color:#fff;font-size:13px;font-weight:700;touch-action:none}
+.tool-chhip-felo .cf-story-skip span{width:14px;height:14px;border-radius:50%;background:conic-gradient(#ffd166 0deg,#ffffff33 0deg)}
+.tool-chhip-felo .cf-story-skip[data-holding] span{animation:cf-fill .6s linear forwards}
+@keyframes cf-fill{to{background:conic-gradient(#ffd166 360deg,#ffffff33 360deg)}}
 
-.cf-overlay{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;padding:16px;border-radius:16px;background:#10302ae6;color:#fff;text-align:center}
-.cf-overlay p{margin:0;font-weight:600}
-.cf-overlay .kit-primary{min-width:180px;min-height:56px;font-size:19px}
+/* ---- choice screens: the level list and the album ---- */
+.tool-chhip-felo .cf-sheet{position:absolute;inset:0;z-index:5;overflow:auto;padding:14px;border-radius:18px;background:#fffbf2;box-shadow:0 10px 40px #17302a40;overscroll-behavior:contain}
+.tool-chhip-felo .cf-sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.tool-chhip-felo .cf-sheet h2{margin:0;font-family:var(--font-display);font-size:22px}
+.tool-chhip-felo .cf-sheet h2 small{font-size:15px;color:var(--muted)}
+.tool-chhip-felo .cf-sheet-close{width:44px;height:44px;border:0;border-radius:12px;background:#ece5d2;font-size:18px}
+.tool-chhip-felo .cf-sheet .cf-modes{justify-content:flex-start;margin-bottom:6px}
+.tool-chhip-felo .cf-sheet-world h3{margin:12px 0 6px;font-size:14px;color:var(--muted)}
+.tool-chhip-felo .cf-sheet-world ol{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.tool-chhip-felo .cf-sheet-world button{display:grid;grid-template-columns:36px 1fr auto;grid-template-areas:"num name stars" "num teach teach";gap:0 10px;align-items:center;width:100%;padding:8px 10px;border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff;color:var(--ink);text-align:left}
+.tool-chhip-felo .cf-sheet-world button[data-next]{border-color:var(--accent);box-shadow:0 0 0 3px #1f6f5c33}
+.tool-chhip-felo .cf-sheet-world button[aria-current=true]{background:#eef6ef}
+.tool-chhip-felo .cf-sheet-world button:disabled{opacity:.5}
+.tool-chhip-felo .cf-sheet-num{grid-area:num;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#2d6a5b;color:#fff;font-size:16px}
+.tool-chhip-felo .cf-sheet-world[data-world="1"] .cf-sheet-num{background:#6b7a3a}
+.tool-chhip-felo .cf-sheet-world[data-world="2"] .cf-sheet-num{background:#2c5a7a}
+.tool-chhip-felo .cf-sheet-world[data-world="3"] .cf-sheet-num{background:#3f5f5e}
+.tool-chhip-felo .cf-sheet-world button:disabled .cf-sheet-num{background:#8b8f8a}
+.tool-chhip-felo .cf-sheet-num svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.2}
+.tool-chhip-felo .cf-sheet-name{grid-area:name;font-family:var(--font-display);font-weight:700;font-size:16px}
+.tool-chhip-felo .cf-sheet-name i,.tool-chhip-felo .cf-sheet-name em{margin-left:6px;padding:1px 7px;border-radius:99px;font-size:11px;font-style:normal;vertical-align:2px}
+.tool-chhip-felo .cf-sheet-name i{background:#fff0d6;color:#8a4b00}
+.tool-chhip-felo .cf-sheet-name em{background:var(--accent);color:#fff}
+.tool-chhip-felo .cf-sheet-teach{grid-area:teach;font-size:13px;line-height:1.45;color:var(--muted)}
+.tool-chhip-felo .cf-sheet-stars{grid-area:stars;font-size:15px;color:#d6cdc0}
+.tool-chhip-felo .cf-sheet-stars [data-on=true]{color:var(--gold)}
+.tool-chhip-felo .cf-sheet-note{margin:12px 0 0;font-size:13px;color:var(--muted)}
+.tool-chhip-felo .cf-album{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin:0;padding:0;list-style:none}
+.tool-chhip-felo .cf-album li{display:grid;justify-items:center;gap:2px;padding:8px 6px;border-radius:12px;background:#fff;text-align:center;line-height:1.35}
+.tool-chhip-felo .cf-album li:not([data-known]){background:#f1ece0}
+.tool-chhip-felo .cf-album b{font-family:var(--font-display);font-size:15px}
+.tool-chhip-felo .cf-album small{font-size:12px;color:var(--muted)}
+.tool-chhip-felo .cf-album .cf-album-trait{color:#8a4b00;font-weight:700}
+.tool-chhip-felo .cf-album .cf-note{font-size:11px}
+.tool-chhip-felo .cf-album-bosses{margin:16px 0 8px;font-size:15px}
+.tool-chhip-felo .cf-pic{display:block}
 
-.cf-status{min-height:44px;margin:0;font-size:15px;font-weight:600;line-height:1.45;text-align:center}
-.cf-status.cf-miss{color:#a3271f}
-.cf-news{margin:0;padding:6px 12px;border-radius:12px;background:var(--gold);font-weight:700;text-align:center}
+/* ---- result card ---- */
+.tool-chhip-felo .cf-result{scroll-margin-top:12px;margin-top:22px;padding-top:20px;border-top:2px solid var(--ink)}
+.tool-chhip-felo .cf-result h2{margin:0 0 14px;font-family:var(--font-display);font-size:clamp(22px,5vw,30px);line-height:1.4}
+.tool-chhip-felo .cf-result h2 em{font-style:normal;color:var(--accent)}
+.tool-chhip-felo .cf-result-body{display:grid;gap:20px}
+.tool-chhip-felo .cf-share{display:grid;gap:16px;align-content:start}
+.tool-chhip-felo .cf-name{display:grid;gap:6px;font-weight:600}
+.tool-chhip-felo .cf-name small{font-weight:400;color:var(--muted);font-size:13px}
+.tool-chhip-felo .cf-name input{border:1.5px solid var(--paper-edge);border-radius:12px;font-size:17px}
+.tool-chhip-felo .kit-chips button[aria-pressed=true]{border-color:var(--accent-deep);background:var(--accent-deep)}
 
-/* the one big button: hold, release, strike, reel */
-.cf-action{display:block;width:100%;min-height:64px;border:0;border-radius:16px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:21px;font-weight:800;box-shadow:inset 0 -5px 0 #0004;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;cursor:pointer;transition:transform .08s ease-out,background .12s ease-out}
-.cf-action[data-phase=wait]{background:var(--float)}
-.cf-action[data-held]{transform:scale(.97);box-shadow:inset 0 -2px 0 #0004;background:var(--accent-deep)}
-.cf-action:disabled{opacity:.6;cursor:default}
-.cf-action:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-
-.cf-prefs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--ink)}
-.cf-pill{min-height:44px;padding:6px 14px;border:1.5px solid currentColor;border-radius:999px;background:transparent;color:inherit;font-size:14px;font-weight:700}
-.cf-pill[aria-pressed=true]{background:var(--ink);color:#fff}
-
-/* trip over */
-.cf-clear{display:grid;justify-items:center;gap:6px;padding:12px 14px;border-radius:16px;background:var(--sand);text-align:center}
-.cf-clear p{margin:0}
-.cf-clear-line{font-family:var(--font-display);font-size:19px;font-weight:800;line-height:1.4}
-.cf-clear-note{font-size:14px;line-height:1.45;color:var(--muted)}
-.cf-gate{font-size:14px;font-weight:700;line-height:1.45}
-.cf-actions{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;width:100%;margin-top:4px}
-.cf-actions:has(> :only-child){grid-template-columns:1fr}
-.tool-chhip-felo .cf-actions button{min-height:56px;font-size:18px}
-
-/* drawers: the album and the levels */
-.cf-drawer{border:1.5px solid var(--sand-edge);border-radius:14px;background:#fff}
-.cf-drawer summary{min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;font-weight:700;cursor:pointer}
-.cf-drawer summary span{font-weight:500;color:var(--muted);font-size:14px}
-.cf-drawer[open]{padding-bottom:12px}
-.cf-drawer .gx-levels{padding:0 10px}
-.cf-worlds{margin:0 14px 10px;font-size:13px;line-height:1.5;color:var(--muted)}
-.cf-album{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin:0;padding:0 10px;list-style:none}
-.cf-album li{display:grid;justify-items:center;align-content:start;gap:2px;padding:8px 6px;border-radius:12px;background:#eef3ef;text-align:center}
-.cf-album li[data-known]{background:var(--sand)}
-.cf-album b{font-family:var(--font-display);font-size:16px}
-.cf-album small{font-size:12px;line-height:1.4;color:var(--muted)}
-.cf-album .cf-note{color:var(--ink)}
-
-.cf-result{scroll-margin-top:12px;margin-top:16px;padding-top:18px;border-top:2px solid var(--sand-edge)}
-.cf-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,32px);line-height:1.4}
-.cf-result h2 em{font-style:normal;color:var(--float)}
-.cf-result>p{margin:0 0 16px;color:var(--muted)}
-.cf-result-body{display:grid;gap:22px}
-.cf-share{display:grid;gap:18px;align-content:start}
-.cf-name{display:grid;gap:6px;font-weight:600}
-.cf-name small{font-weight:400;color:var(--muted);font-size:13px}
-.cf-name input{border:1.5px solid var(--sand-edge);border-radius:12px;font-size:17px}
-
-.cf-guide h2{font-family:var(--font-display);margin-bottom:12px}
-.cf-guide>p{color:var(--muted);max-width:640px}
-.cf-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.cf-guide li{display:flex;gap:14px;align-items:flex-start}
-.cf-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--gold);color:var(--ink);font-weight:700}
-.cf-guide li p{margin:4px 0 0}
-
-@media (max-width:360px){
-  .cf-level b{font-size:15px}
-  .cf-casts li{width:10px;height:10px}
-  .cf-basket{font-size:14px;padding-inline:6px}
-  .cf-status{font-size:14px}
-}
-@media (min-width:720px){.cf-lead{display:block}.cf-page:has(.cf-friend) .cf-lead{display:none}}
-.cf[data-slow=true] .cf-catch{animation-name:cf-fade}
-.cf[data-slow=true] .cf-catch .cf-pic{animation:none}
-@keyframes cf-fade{0%,85%{opacity:1}100%{opacity:0}}
-@media (prefers-reduced-motion:reduce){
-  .cf-catch{animation-name:cf-fade}
-  .cf-catch .cf-pic,.cf-action{animation:none;transition:none}
-}
+@media(max-width:350px){.tool-chhip-felo .cf-hud{gap:4px}.tool-chhip-felo .cf-boss{min-width:0}.tool-chhip-felo .cf-boss b{font-size:12px}.tool-chhip-felo .cf-boss i{width:16px}.tool-chhip-felo .cf-hint{font-size:13px}.tool-chhip-felo .cf-status{font-size:14px}}
+.tool-chhip-felo .cf[data-slow] .cf-pond::after,.tool-chhip-felo .cf[data-slow] .cf-arrow,.tool-chhip-felo .cf[data-slow] .cf-finger,.tool-chhip-felo .cf[data-slow] .cf-roster li,.tool-chhip-felo .cf[data-slow] .cf-intro{animation:none!important}
+@media(prefers-reduced-motion:reduce){.tool-chhip-felo .cf-pond::after,.tool-chhip-felo .cf-finger,.tool-chhip-felo .cf-title-start,.tool-chhip-felo .cf-end,.tool-chhip-felo .cf-roster li{animation:none!important}.tool-chhip-felo .cf-title-start:hover{transform:none}}
+@media(max-width:430px){.tool-chhip-felo .cf-end-choices{grid-template-columns:1.25fr 1fr 1fr;gap:5px}.tool-chhip-felo .cf-end-choices button{padding:6px 4px;font-size:14px;white-space:nowrap}.tool-chhip-felo .cf-end-choices kbd{display:none}}

@@ -1,52 +1,56 @@
-export const title = "ছিপ ফেলো: the cast, the window, your hand, the fanfare and the levels";
-const game = (v: any) => v.phase === "done" ? (v.guard ? "Result just showed" : "Result shows") : v.paused ? "Paused (থেমে আছে)" : ({
-  aim: "Aiming the rod", fly: "Float in the air", wait: "Watching the float", reel: "Fish on the line",
-} as any)[v.phase];
-// One flat label: what the game shows, where you are, and anything left over that you'd notice.
-export const state = (v: any) => {
-  let label = game(v);
-  // A hidden tab and another window act the same except in the live phases, where the game label already differs (Paused or not).
-  if (v.phase !== "done" && !v.focused) label += v.held ? ", you're away, Space still held" : ", you're away";
-  if (v.skipped) label += " · a level opened that you never cleared";
-  else if (v.owed === "stale") label += " · the last result's fanfare still to go off";
-  return label;
+export const title = "Chhip Felo after the rewrite: the screens, the cast, the window, your hand, the hum and the end screen";
+const where = (v: any) => !v.visible ? "Away: a hidden tab" : !v.focused ? "Away: another window" : "You're on the pond";
+const game = (v: any) => {
+  if (v.sheet) return "A choice screen is open";
+  if (v.screen === "title") return "On the title";
+  if (v.screen === "over") return v.owed === "due" ? "End screen, chimes still to come" : "End screen";
+  if (v.paused) return "Paused (menu)";
+  return ({ aim: "Aiming the rod", fly: "Float in the air", wait: v.dip ? "The float is under" : "Watching the float", reel: "Fish on the line", card: "Catch or miss card" } as any)[v.phase];
 };
+export const state = (v: any) => ({ Game: game(v), Window: where(v) });
 const words: Record<string, string> = {
+  YouStart: "you tap the title float",
   YouHoldToAim: "you press and hold",
   YouLetGoToCast: "you let go and the float flies",
-  YouStrike: "you strike as the float goes under",
-  YouStrikeTooSoon: "the cast ends",
+  YouTapToWake: "your first tap back only wakes the game",
+  YouStrike: "you strike on the dip",
+  YouStrikeTooSoon: "you strike too soon",
   YouHoldToReel: "you hold to reel",
-  YouSlacken: "you let the line slacken",
+  YouSlacken: "you lift to give line",
   FloatLands: "the float lands",
-  FishTakesTheBait: "the cast ends",
-  LineGives: "the cast ends",
-  FishLanded: "you land the fish",
-  GuardLapses: "600 ms pass",
-  FanfarePlays: "the fanfare goes off",
-  YouPlayOn: "you press পরের লেভেল",
-  YouPickALevel: "you pick a level in সব লেভেল",
+  FloatDips: "the float goes under",
+  FishTakesTheBait: "you're too late",
+  CastEnds: "the fish is landed or gets away",
+  NextCast: "the card ends: the next cast",
+  LevelEnds: "the card ends: the level is over",
+  SlowToggles: "you switch slow mode",
+  FanfarePlays: "the stars chime",
+  YouPlayOn: "you press Next level",
+  YouOpenASheet: "you open the level list or the album",
+  YouCloseTheSheet: "you close it",
+  YouPickALevel: "you pick a level",
   YouOpenAFriendsLink: "you open a friend's link",
+  FriendLevelCleared: "you clear a friend's far level",
   WindowBlurs: "you click into another window",
   WindowFocuses: "you come back",
   TabHides: "you hide the tab",
   TabShows: "you come back",
-  YouResume: "you press চালিয়ে যাও",
+  YouPressP: "you press P",
+  YouResume: "you press Resume",
   SoundOff: "you turn sound off",
   SoundOn: "you turn sound on",
 };
 export const step = (action: string, from: any, to: any) => {
-  // Hidden from the chart (the report still checks them): sound switches (the hum rules hold), picking a level
-  // except on the result, a friend's link except at the start, and window moves on the result.
-  if (action === "SoundOff" || action === "SoundOn") return null;
-  if (action === "YouPickALevel" && !(from.phase === "done" && from.owed !== "none" && from.owed !== "stale")) return null;
-  if (action === "YouOpenAFriendsLink" && !(from.phase === "aim" && !from.held && from.owed === "none" && !from.skipped)) return null;
-  if (["WindowBlurs", "WindowFocuses", "TabHides", "TabShows"].includes(action) && (from.phase === "done" || from.skipped || from.owed === "stale")) return null;
-  if (action === "FanfarePlays" && from.owed !== "stale") return null;
-  // Hiding the tab is drawn only from a live phase you're watching; blurring only while not paused.
-  if (action === "TabHides" && (!from.focused || from.paused || from.phase === "aim")) return null;
+  // Hidden from the chart (the report still checks them): the sound switch, ধীরে খেলো, a friend's link, a cleared friend
+  // level, the sheet except from the title and the end screen, hiding the tab (it acts like another window), and
+  // window moves outside the play screen.
+  if (["SoundOff", "SoundOn", "SlowToggles", "YouOpenAFriendsLink", "FriendLevelCleared", "TabHides", "TabShows"].includes(action)) return null;
+  if ((action === "YouOpenASheet" || action === "YouCloseTheSheet" || action === "YouPickALevel") && from.screen === "play") return null;
+  if ((action === "WindowBlurs" || action === "WindowFocuses") && (from.screen !== "play" || from.sheet)) return null;
   if (action === "WindowBlurs" && from.paused) return null;
+  if (action === "YouPressP" && from.phase !== "reel") return null;
+  if (action === "FanfarePlays" && from.sheet) return null;
   return words[action] ?? action;
 };
-export const group = (v: any) => v.phase === "done" ? "done" : v.paused ? "held" : v.skipped || v.owed === "stale" ? "bug" : "play";
-export const colors = { play: "teal", held: "yellow", done: "blue", bug: "pink" };
+export const group = (v: any) => v.screen === "over" ? "done" : v.paused || v.sheet ? "held" : v.screen === "title" ? "wait" : "play";
+export const colors = { play: "teal", held: "yellow", done: "blue", wait: "tan" };

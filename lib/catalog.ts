@@ -135,7 +135,7 @@ export const catalog = [
   { slug: "mukhe-mukhe-hisab", name: "মুখে মুখে হিসাব", description: "এক মিনিটে যত পারো যোগ-বিয়োগ-গুণ আর বাজারের হিসাব মেলাও, ৩০টা লেভেল।", category: "গেম", action: "হিসাব শুরু করো" },
   { slug: "chhobir-tukro", name: "ছবির টুকরো", description: "নদী, নৌকা, তালগাছের আঁকা ছবি টুকরো করে কাটা। জোড়া লাগাও, তারা নাও।", category: "গেম", action: "টুকরো জোড়াও" },
   { slug: "sat-chara", name: "সাত চাড়া", description: "বল পেছনে টেনে ছাড়ো, তিন বলে সাতটা চাড়াই ফেলো।", category: "গেম", action: "চাড়া ফেলো" },
-  { slug: "chhip-felo", name: "ছিপ ফেলো", description: "বাঁশের ছিপে মাছ ধরো, ফাতনা পুরো ডুবলে টান দাও। ২০টা মাছের অ্যালবাম ভরাও।", category: "গেম", action: "ছিপ ফেলো" },
+  { slug: "chhip-felo", name: "ছিপ ফেলো", description: "বাঁশের ছিপে চার জায়গায় মাছ ধরো, শেষে নামকরা বড় মাছ।", category: "গেম", action: "ছিপ ফেলো" },
   { slug: "latim", name: "লাটিম", description: "নিচে টেনে লাটিম ছোড়ো, টোকায় সামলাও। দেখো কত সেকেন্ড ঘোরে।", category: "গেম", action: "লাটিম ছোড়ো" },
   { slug: "nodi-par", name: "নদী পার", description: "নৌকা, ভেলা, কচুরিপানায় লাফিয়ে নদী পার হও, পথে আম তোলো।", category: "গেম", action: "নদী পার হও" },
   { slug: "penalty", name: "পেনাল্টি কিক", description: "টেনে শট নাও, ঝোঁক দেখে ঝাঁপ দাও। পাড়া থেকে জাতীয়, ৪ কাপে ১২টা ম্যাচ।", category: "গেম", action: "গোল দাও" },
