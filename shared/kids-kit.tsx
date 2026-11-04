@@ -3,7 +3,7 @@
 // with a breathing rest screen, and Bangla speech only where the phone really has a Bangla voice. Styles: kids-kit.css.
 // Rules it enforces: nothing about the child leaves the phone, no share or outbound action without the parent gate.
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { sfx } from './game-sound';
+import { sfx, soundOn } from './game-sound';
 
 const bnDigits = new Intl.NumberFormat('bn-BD', { useGrouping: false });
 export const bn = (value: number) => bnDigits.format(value);
@@ -166,8 +166,9 @@ export function useBanglaVoice() {
 }
 
 /** Speaks a short Bangla word or phrase if a Bangla voice exists; otherwise does nothing. Never blocks the game. */
+/** Reads `text` aloud in a Bangla voice. Silent when the site's sound is off, like every other sound. */
 export function speak(text: string) {
-  if (typeof speechSynthesis === 'undefined') return;
+  if (typeof speechSynthesis === 'undefined' || !soundOn()) return;
   const voice = speechSynthesis.getVoices().find(item => /^bn[-_]/i.test(item.lang));
   if (!voice) return;
   speechSynthesis.cancel();
