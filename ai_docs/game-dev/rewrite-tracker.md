@@ -52,7 +52,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | roshi-tana | S16 | todo | todo |
 | moshar-raat | S16 | todo | todo |
 | al-dhore-hati | S16 | todo | todo |
-| o-te-ojogor | S17 | todo | todo |
+| o-te-ojogor | S17 | analysed | rewriting |
 | kar-chinho | S17 | todo | todo |
 | nam-shikhi | S17 | todo | todo |
 | sourojogot | S18 | todo | todo |
