@@ -85,7 +85,7 @@ ONLY:
 - switch the imports in one edit;
 - check `curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3100/carrom` after each big change.
 
-Don't edit `shared/`, `lib/`, `components/` or other tools. Many agents are working right now. Put shared needs in your report. Never `git add` or commit.
+Don't edit `shared/`, `lib/`, `components/` or other tools. Many agents are working right now. Put shared needs in your report. Never `git add` or commit. Keep scratch files (autopilots, helpers) in a private subfolder named after your slug, because other agents share the scratchpad.
 
 ## Verify (required)
 - `node --import tsx --no-warnings --test tools/{SLUG}/tests/*.test.ts` and `npx tsc --noEmit`, clean for your files. Run `npm run lint:games` (look only at your files).

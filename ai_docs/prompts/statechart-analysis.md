@@ -30,7 +30,7 @@ The owner wants every game rebuilt to the bar of tibo.dog, a browser game whose 
    - the regenerate command.
 
 ## Scope
-Write ONLY inside `ai_docs/statecharts/<your slugs>/` and `.shots/`. **Do not change any code.** The rewrite agents fix things later from your README. Never `git add` or commit. Close your Orca tabs when done.
+Write ONLY inside `ai_docs/statecharts/<your slugs>/` and `.shots/`. **Do not change any code.** The rewrite agents fix things later from your README. Never `git add` or commit. Keep scratch files (autopilots, helpers) in a private subfolder named after your slug, because other agents share the scratchpad. Close your Orca tabs when done.
 
 ## Report back (≤200 words)
 One block per game:
