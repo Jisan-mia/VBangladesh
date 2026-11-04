@@ -28,7 +28,7 @@ const WORDS = ['শূন্য', 'এক', 'দুই', 'তিন', 'চার
 /**
  * A gate a 3–6 year old can't pass: a 2-second hold, then a sum written in words, answered on a pad.
  * Key auto-repeat never counts as a hold; a wrong answer closes the gate and the hold rests for 10 seconds;
- * once open it closes itself after a minute or when the page is left, so a phone handed back is locked again.
+ * once open it closes itself after 20 seconds or when the page is left, so a phone handed back is locked again.
  */
 export function ParentGate({ label = 'বড়দের জন্য', children }: { label?: string; children: ReactNode }) {
   const [stage, setStage] = useState<'closed' | 'ask' | 'open'>('closed');
@@ -49,7 +49,7 @@ export function ParentGate({ label = 'বড়দের জন্য', children
   useEffect(() => {
     if (stage !== 'open') return;
     const close = () => setStage('closed');
-    const timer = setTimeout(close, 60000);
+    const timer = setTimeout(close, 20000);
     const away = () => { if (document.hidden) close(); };
     document.addEventListener('visibilitychange', away);
     window.addEventListener('pagehide', close);
@@ -107,7 +107,7 @@ export function ShowParent({ open, onClose, children, picture }: { open: boolean
 
 /** The "আব্বু-আম্মুকে দেখাও" button the child sees at the end of a round, in place of any share button. */
 export function ShowParentButton({ onClick }: { onClick: () => void }) {
-  return <button type="button" className="kit-primary kk-show-button" onClick={() => { sfx.pop(); onClick(); }}>আব্বু-আম্মুকে দেখাও</button>;
+  return <button type="button" className="kit-primary kk-show-button" onClick={() => { sfx.pop(); onClick(); }}><svg className="kk-show-icon" viewBox="0 0 32 32" aria-hidden="true"><circle cx="11" cy="9" r="4" /><circle cx="22" cy="12" r="3" /><path d="M4 27c0-6 3-10 7-10s7 4 7 10zM16 27c0-5 2.5-8 6-8s6 3 6 8z" /></svg>আব্বু-আম্মুকে দেখাও</button>;
 }
 
 const SESSION_KEY = 'ektukhani-kids-time';
