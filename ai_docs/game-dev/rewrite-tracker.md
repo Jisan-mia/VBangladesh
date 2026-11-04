@@ -32,7 +32,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | switchboard | S09 | analysed | done |
 | golokdhadha | S09 | analysed | done |
 | ponero-ghor | S10 | analysed | done |
-| chhobi-photao | S10 | analysed | rewriting |
+| chhobi-photao | S10 | analysed | done |
 | ghontar-sur | S10 | analysed | rewriting |
 | konta-nei | S11 | analysed | done |
 | bhul-kothay | S11 | analysed | done |
@@ -55,7 +55,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | o-te-ojogor | S17 | analysed | done |
 | kar-chinho | S17 | analysed | done |
 | nam-shikhi | S17 | analysed | done |
-| sourojogot | S18 | analysed | todo |
+| sourojogot | S18 | analysed | rewriting |
 | dosh-ghater-nouka | S18 | analysed | todo |
 | golper-mor | S18 | analysed | todo |
 | juktoborno | S19 | analysed | rewriting |
