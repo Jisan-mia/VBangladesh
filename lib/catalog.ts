@@ -119,7 +119,7 @@ export const catalog = [
   { slug: "bhangti-nai", name: "ভাংতি নাই!", description: "দোকানে দশজন খদ্দের, সবার হাতে বড় নোট। ঝটপট হিসাব করে ঠিক ভাংতি ফেরত দাও।", category: "গেম", action: "দোকান খোলো" },
   { slug: "jam-chharao", name: "জ্যাম ছাড়াও", description: "জ্যামে আটকা সবুজ CNG। রিকশা, বাস, ট্রাক সরিয়ে পথ করে দাও, ৪০টা জ্যাম পার করো।", category: "গেম", action: "খেলে দেখো" },
   { slug: "shobdo-khoja", name: "শব্দ খোঁজা", description: "অক্ষরের গ্রিডে লুকানো ফুল, মাছ বা নদীর নাম খুঁজে কাটো, ৩২টা লেভেল।", category: "গেম", action: "শব্দ খোঁজো" },
-  { slug: "carrom", name: "ক্যারম", description: "স্ট্রাইকার টেনে ছাড়ো, গুটি ঢোকাও। একা দশ চাল, নয়তো দুজনে এক ফোনে।", category: "গেম", action: "ক্যারম খেলো" },
+  { slug: "carrom", name: "ক্যারম", description: "স্ট্রাইকার টেনে ছাড়ো, গুটি ঢোকাও। ১৫টা বোর্ড একা, নয়তো দুজনে এক ফোনে।", category: "গেম", action: "ক্যারম খেলো" },
   { slug: "pati-buni", name: "পাটি বুনি", description: "বেতের ফালি বসিয়ে সারি ভরাও, নিজের শীতলপাটি বোনো।", category: "গেম", action: "পাটি বোনো" },
   { slug: "sudoku", name: "সুডোকু বাংলায়", description: "ঘর চাপো, বাংলা অঙ্ক বসাও। ৪×৪ থেকে ৯×৯, ৪০ লেভেল আর রোজ নতুন ধাঁধা।", category: "গেম", action: "সুডোকু খেলো" },
   { slug: "switchboard", name: "সুইচবোর্ড", description: "কাঠের বোর্ডে সুইচ চাপো, সব বাতি জ্বালাও কারেন্ট থাকতে থাকতে। ৩০টা লেভেল।", category: "গেম", action: "বাতি জ্বালাও" },

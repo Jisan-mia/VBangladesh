@@ -1,0 +1,98 @@
+---
+title: "Carrom after the rewrite: board, window, hand and hum, boards"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Start card
+      s1: Aiming
+      s2: Start card, সব ব#2507;র#2509;ড open
+      s3: Paused (থ#2503;ম#2503; আছ#2503;)
+      s4: Paused by সব ব#2507;র#2509;ড
+      s5: Discs rolling
+      s6: End slip
+      s7: End slip, fanfare queued
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; [when Window is Board on screen]
+      s0 --> s2: you open সব ব#2507;র#2509;ড [when Window is Board on screen]
+      s1 --> s0: you open a friend's board-2 link [when Hand is one of Hands off, Hands off, sound off and Boards is not Only a friend's board 2 cleared, board 2 still shut]
+      s1 --> s3: you click into another window
+      s1 --> s4: you open সব ব#2507;র#2509;ড
+      s2 --> s0: you close সব ব#2507;র#2509;ড or you pick a board [when Window is Board on screen]
+      s2 --> s0: you open a friend's board-2 link [when Window is Board on screen and Boards is not Only a friend's board 2 cleared, board 2 still shut]
+      s4 --> s0: you pick a board [when Window is Board on screen]
+      s4 --> s1: you close সব ব#2507;র#2509;ড [when Window is Board on screen]
+      s4 --> s0: you open a friend's board-2 link [when Window is Board on screen and Boards is not Only a friend's board 2 cleared, board 2 still shut]
+      s1 --> s5: you let go and the striker flies [when Hand is one of Pulling, hum playing, Pulling, sound off]
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is Board on screen]
+      s3 --> s0: you open a friend's board-2 link [when Window is Board on screen and Boards is not Only a friend's board 2 cleared, board 2 still shut]
+      s3 --> s4: you open সব ব#2507;র#2509;ড [when Window is Board on screen]
+      s5 --> s1: the discs stop
+      s5 --> s0: you open a friend's board-2 link [when Boards is not Only a friend's board 2 cleared, board 2 still shut]
+      s5 --> s6: the discs stop and the strikes run out
+      s5 --> s7: the discs stop and the board is cleared
+      s5 --> s3: you click into another window
+      s5 --> s4: you open সব ব#2507;র#2509;ড
+      s6 --> s0: you press পর#2503;র ব#2507;র#2509;ড or আব#2494;র খ#2503;ল#2507; [when Window is Board on screen]
+      s6 --> s0: you open a friend's board-2 link [when Window is Board on screen and Boards is not Only a friend's board 2 cleared, board 2 still shut]
+      s7 --> s6: the fanfare plays
+      s7 --> s0: you press পর#2503;র ব#2507;র#2509;ড or আব#2494;র খ#2503;ল#2507; [when Window is Board on screen]
+      s7 --> s0: you open a friend's board-2 link [when Window is Board on screen and Boards is Board 2 opened by clearing board 1]
+      s4 --> s5: you close সব ব#2507;র#2509;ড [when Window is Board on screen]
+      s3 --> s5: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is Board on screen]
+      s5 --> s7: the discs stop and the strikes run out [when Boards is not Board 1 open]
+    }
+    --
+    state "Window" as r1 {
+      s8: Board on screen
+      s9: Another window has focus
+      [*] --> s8
+      s8 --> s9: you click into another window
+      s9 --> s8: you come back to the window
+    }
+    --
+    state "Hand" as r2 {
+      s10: Hands off
+      s11: Hands off, sound off
+      s12: Pulling, hum playing
+      s13: Pulling, sound off
+      [*] --> s10
+      s10 --> s11: you turn sound off [when Window is Board on screen]
+      s10 --> s12: you pull back or hold ম#2494;র#2507; [when Game is Aiming and Window is Board on screen]
+      s11 --> s10: you turn sound on [when Window is Board on screen]
+      s11 --> s13: you pull back or hold ম#2494;র#2507; [when Game is Aiming and Window is Board on screen]
+      s12 --> s10: you click into another window or you open সব ব#2507;র#2509;ড or you let go and the striker flies
+      s12 --> s13: you turn sound off
+      s13 --> s12: you turn sound on
+      s13 --> s11: you click into another window or you open সব ব#2507;র#2509;ড or you let go and the striker flies
+    }
+    --
+    state "Boards" as r3 {
+      s14: Board 1 open
+      s15: Board 2 opened by clearing board 1
+      s16: Only a friend's board 2 cleared, board 2 still shut
+      [*] --> s14
+      s14 --> s15: the discs stop and the board is cleared [when Game is Discs rolling and Window is Board on screen and Hand is one of Hands off, Hands off, sound off]
+      s14 --> s16: the discs stop and the board is cleared [when Game is Discs rolling and Window is Board on screen and Hand is one of Hands off, Hands off, sound off]
+      s16 --> s15: the discs stop and the board is cleared [when Game is Discs rolling and Window is Board on screen and Hand is one of Hands off, Hands off, sound off]
+    }
+  }
+  class s0 teal
+  class s1 teal
+  class s2 teal
+  class s3 yellow
+  class s4 yellow
+  class s5 teal
+  class s6 blue
+  class s7 blue
+  class s12 teal
+  class s13 teal

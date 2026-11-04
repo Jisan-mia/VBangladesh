@@ -1,4 +1,163 @@
-# ক্যারম: statechart (before the rewrite)
+# ক্যারম: statechart
+
+## After the rewrite (`after-fix/`)
+The spec `Carrom.tla` now mirrors the rewritten game:
+- `lib/session.ts`: the screens, what the hand holds, the hum's rule, the slip's keys and the fanfare;
+- `lib/save.ts`: your own open boards;
+- `components/carrom-game.tsx`: the blur, focus, visibility and stage effects, the strike, the end;
+- `components/sound.ts`: the hum is replaced whenever the sound switch has flipped since it was made.
+
+It runs twice:
+- **Full check:** `CarromFull.cfg`, with Full = TRUE (hidden tab, scroll and the held key modelled on their own). TLC reached 3,242 states (`after-fix/report-full.md`).
+- **Chart run:** `Carrom.cfg`, with Full = FALSE, to fit the 500-state chart budget. A hidden tab and a scroll away merge into a blur (all three take the same Away step), and the held key merges into the pull. TLC reached 470 states; the chart has 17 states and 41 arrows (`after-fix/report.md`, `after-fix/chart.mmd`).
+
+**All 14 rules hold in both runs, and so does NoDeadlock.** A mutation check put two old behaviours back into copies of the spec. With "clearing any board opens the next", UnlockOnlyByClearing broke in 5 steps. With "a scroll away doesn't pause or let go", PausedWhenScrolledAway and InputReleasedWhenAway broke. So none of these rules is vacuous.
+
+| Rule | In plain words | After |
+|---|---|---|
+| PausedWhenHidden, PausedWhenBlurred, PausedWhenScrolledAway (new) | Hiding the tab, clicking away or scrolling the board off screen pauses play, mid-roll included. | hold |
+| InputReleasedWhenAway | Nothing counts as held unless play is live, so a scroll can't strand a held Space (bug 1). | holds |
+| LoopOnlyWhenMeaningful | The hum plays only while you pull or hold and the board answers (bug 2). | holds |
+| LoopComesBack | If you're pulling with sound on, the hum plays. Turning sound back on brings it back. | holds |
+| NoHumOffThePlay | No hum on the start card, the pause or the slip. | holds |
+| ShotFixedOnceFired | The striker's size (the difficulty) changes only on the start card, never mid-strike (bug 4). | holds |
+| ChoiceFreezesPlay (new) | While সব বোর্ড is open, nothing moves. | holds |
+| UnlockOnlyByClearing | Your boards open only by clearing the one before. A friend's board 2 opens nothing for good (bug 5). | holds |
+| LevelIsPlayable (new) | The board you're on is open, or it's this visit's friend board. | holds |
+| CheerOnlyOnItsResult (new) | The fanfare is queued only on its own slip; loading a board drops it. | holds |
+| HeldKeyIsStale (new) | A key held through the end stays stale until released, and the slip leaves only on a fresh press. | holds |
+
+```mermaid
+---
+title: "Carrom after the rewrite: board, window, hand and hum, boards"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Start card
+      s1: Aiming
+      s2: Start card, সব ব#2507;র#2509;ড open
+      s3: Paused (থ#2503;ম#2503; আছ#2503;)
+      s4: Paused by সব ব#2507;র#2509;ড
+      s5: Discs rolling
+      s6: End slip
+      s7: End slip, fanfare queued
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; [when Window is Board on screen]
+      s0 --> s2: you open সব ব#2507;র#2509;ড [when Window is Board on screen]
+      s1 --> s0: you open a friend's board-2 link [when Hand is one of Hands off, Hands off, sound off and Boards is not Only a friend's board 2 cleared, board 2 still shut]
+      s1 --> s3: you click into another window
+      s1 --> s4: you open সব ব#2507;র#2509;ড
+      s2 --> s0: you close সব ব#2507;র#2509;ড or you pick a board [when Window is Board on screen]
+      s2 --> s0: you open a friend's board-2 link [when Window is Board on screen and Boards is not Only a friend's board 2 cleared, board 2 still shut]
+      s4 --> s0: you pick a board [when Window is Board on screen]
+      s4 --> s1: you close সব ব#2507;র#2509;ড [when Window is Board on screen]
+      s4 --> s0: you open a friend's board-2 link [when Window is Board on screen and Boards is not Only a friend's board 2 cleared, board 2 still shut]
+      s1 --> s5: you let go and the striker flies [when Hand is one of Pulling, hum playing, Pulling, sound off]
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is Board on screen]
+      s3 --> s0: you open a friend's board-2 link [when Window is Board on screen and Boards is not Only a friend's board 2 cleared, board 2 still shut]
+      s3 --> s4: you open সব ব#2507;র#2509;ড [when Window is Board on screen]
+      s5 --> s1: the discs stop
+      s5 --> s0: you open a friend's board-2 link [when Boards is not Only a friend's board 2 cleared, board 2 still shut]
+      s5 --> s6: the discs stop and the strikes run out
+      s5 --> s7: the discs stop and the board is cleared
+      s5 --> s3: you click into another window
+      s5 --> s4: you open সব ব#2507;র#2509;ড
+      s6 --> s0: you press পর#2503;র ব#2507;র#2509;ড or আব#2494;র খ#2503;ল#2507; [when Window is Board on screen]
+      s6 --> s0: you open a friend's board-2 link [when Window is Board on screen and Boards is not Only a friend's board 2 cleared, board 2 still shut]
+      s7 --> s6: the fanfare plays
+      s7 --> s0: you press পর#2503;র ব#2507;র#2509;ড or আব#2494;র খ#2503;ল#2507; [when Window is Board on screen]
+      s7 --> s0: you open a friend's board-2 link [when Window is Board on screen and Boards is Board 2 opened by clearing board 1]
+      s4 --> s5: you close সব ব#2507;র#2509;ড [when Window is Board on screen]
+      s3 --> s5: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is Board on screen]
+      s5 --> s7: the discs stop and the strikes run out [when Boards is not Board 1 open]
+    }
+    --
+    state "Window" as r1 {
+      s8: Board on screen
+      s9: Another window has focus
+      [*] --> s8
+      s8 --> s9: you click into another window
+      s9 --> s8: you come back to the window
+    }
+    --
+    state "Hand" as r2 {
+      s10: Hands off
+      s11: Hands off, sound off
+      s12: Pulling, hum playing
+      s13: Pulling, sound off
+      [*] --> s10
+      s10 --> s11: you turn sound off [when Window is Board on screen]
+      s10 --> s12: you pull back or hold ম#2494;র#2507; [when Game is Aiming and Window is Board on screen]
+      s11 --> s10: you turn sound on [when Window is Board on screen]
+      s11 --> s13: you pull back or hold ম#2494;র#2507; [when Game is Aiming and Window is Board on screen]
+      s12 --> s10: you click into another window or you open সব ব#2507;র#2509;ড or you let go and the striker flies
+      s12 --> s13: you turn sound off
+      s13 --> s12: you turn sound on
+      s13 --> s11: you click into another window or you open সব ব#2507;র#2509;ড or you let go and the striker flies
+    }
+    --
+    state "Boards" as r3 {
+      s14: Board 1 open
+      s15: Board 2 opened by clearing board 1
+      s16: Only a friend's board 2 cleared, board 2 still shut
+      [*] --> s14
+      s14 --> s15: the discs stop and the board is cleared [when Game is Discs rolling and Window is Board on screen and Hand is one of Hands off, Hands off, sound off]
+      s14 --> s16: the discs stop and the board is cleared [when Game is Discs rolling and Window is Board on screen and Hand is one of Hands off, Hands off, sound off]
+      s16 --> s15: the discs stop and the board is cleared [when Game is Discs rolling and Window is Board on screen and Hand is one of Hands off, Hands off, sound off]
+    }
+  }
+  class s0 teal
+  class s1 teal
+  class s2 teal
+  class s3 yellow
+  class s4 yellow
+  class s5 teal
+  class s6 blue
+  class s7 blue
+  class s12 teal
+  class s13 teal
+```
+
+### The five bugs, fixed
+Each line gives the fix and its node test.
+
+1. **Space stuck when the board scrolls away.** A held key always ends on its own keyup, wherever focus went. Leaving the view lets go and pauses. Test: `bug 1 KeysOnlyWhileBoardShows…` (`tests/session.test.ts`).
+2. **The hum drones with the board off screen.** The hum follows `humWanted` (live play and something held) on every step, and every pause or away calls `letGo()`. Tests: `bug 2 LoopOnlyWhenMeaningful…` and `LoopComesBack…`.
+3. **Discs roll while another window has focus.** Our own blur pauses the session. The player's menu sends the same blur, and the discs step only while `live()`. Test: `bug 3 PausedWhenBlurred…`.
+4. **বড় স্ট্রাইকার resizes a rolling striker.** The toggle is gone. The difficulty sets the striker's size when the game is made, and it can be changed only on the start card. Test: `bug 4 ShotFixedOnceFired…`.
+5. **A friend's board link opens every board.** Your own open boards live in `ektukhani-carrom-open`, migrated once from the unbroken run of cleared boards, and `openAfter` opens only past the frontier. Test: `bug 5 UnlockOnlyByClearing…`.
+
+### Live checks in Orca (after the fix)
+`window.__carrom` (dev only) exposes the game, the session and `aimAt(plan)` for an autopilot.
+- **Bugs 1 and 2:**
+  - Hold Space on board 1: hold is `key` and one hum oscillator is live.
+  - `scrollTo(0, 3000)`: inView is false, the phase is `paused`, hold is `none`, and no hum is live.
+  - The keyup that follows: strikes stays 0. Scroll back and press চালিয়ে যাও: the board plays.
+- **Bug 3:** strike on board 1, then window `blur` 150 ms later. 1.5 s on, no disc has moved more than 1 mm and the phase is `paused`. After focus and চালিয়ে যাও, the strike finishes: `clear`, 1 strike.
+- **Bug 5:** clear storage and open `/carrom#s=7110&t=7&c=10&n=রাফি`. The autopilot clears মতিন চাচার বোর্ড in 5 strikes ("রাফির চেয়ে ২ চাল কম!"). Stars are `{"10":3}` and your open boards stay at 1. Reload without the link: সব বোর্ড offers only board 1.
+- **World 1, end to end:** the autopilot clears boards 1–5 with ★★★, and মন্টু ভাইয়ের বোর্ড in 5 strikes.
+
+## Regenerate
+```sh
+scripts/statechart.sh ai_docs/statecharts/carrom/Carrom.tla --view ai_docs/statecharts/carrom/view.ts --out ai_docs/statecharts/carrom/after-fix
+scripts/statechart.sh ai_docs/statecharts/carrom/Carrom.tla --config ai_docs/statecharts/carrom/CarromFull.cfg --view ai_docs/statecharts/carrom/view.ts --out /tmp/carrom-full
+rm ai_docs/statecharts/carrom/after-fix/tlc.out
+```
+
+---
+
+# Before the rewrite (`before-fix/`)
+The spec described here was replaced by the after-fix one above; it is in git history at `e8c5f5a`, and its results stay in `before-fix/`.
 
 Spec `Carrom.tla`, config `Carrom.cfg` and view `view.ts`, mirrored from `tools/carrom/components/carrom-game.tsx`, `shared/game-kit.ts` (`useGameLoop`, `useLevels`), `shared/game-sound.ts` (`loop`, `setSoundOn`), `shared/game-ui.tsx` (`SoundToggle`) and `shared/game-core.ts`. Results are in `before-fix/report.md` and `before-fix/chart.mmd`: 492 states, 21 chart states, 60 arrows.
 
@@ -134,7 +293,7 @@ Screenshots:
 - `.shots/carrom-first.png`: the first screen at 390 × 844, with মারো cut off at the bottom.
 - `.shots/carrom-result.png`: the slip after ten straight strikes, 0 points.
 
-## Regenerate
+## Regenerate (before the rewrite)
 ```sh
 scripts/statechart.sh ai_docs/statecharts/carrom/Carrom.tla --view ai_docs/statecharts/carrom/view.ts --out ai_docs/statecharts/carrom/after-fix
 rm ai_docs/statecharts/carrom/after-fix/tlc.out

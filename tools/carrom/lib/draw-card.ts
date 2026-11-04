@@ -1,9 +1,12 @@
 import { possessive } from "../../../shared/bangla";
 import { cardSizes, drawFooterBand, fitText, renderCard, type CardFormat, type Segment } from "../../../shared/card-canvas";
-import { paintBoard, paintDisc, palette } from "./art";
-import { bn, duoLine, humanLine, piecesLine, playerName, starsOf, LEVELS, SIDE_OF, type Shared } from "./link";
-import { CENTRE, COIN_R, RAIL, TOTAL } from "./physics";
-import { formation, PER_SIDE, QUEEN_POINTS, STRIKES } from "./rules";
+import { paintBoard, paintDisc, LOOKS } from "./art";
+import { bn, duoLine, handWord, humanLine, levelLine, oldBoardStars, piecesLine, playerName, starsForStrikes, SIDE_OF, type Shared } from "./link";
+import { CENTRE, COIN_R, PER_SIDE, RAIL, TOTAL } from "./table";
+import { formation, QUEEN_POINTS, STRIKES } from "./game";
+import { LEVELS, OLD_BOARDS, WORLDS } from "./levels";
+
+const palette = { ink: "#2a1a10", red: "#b8322a", accent: "#1f6b4a" };
 
 /**
  * The board seen from above with the pieces you pocketed set back into the opening flower, so the card reads
@@ -23,10 +26,11 @@ export function drawCard(canvas: HTMLCanvasElement, card: Shared, format: CardFo
   for (let k = 0; k < 9; k++) { c.beginPath(); c.arc(width / 2, story ? 1030 : 700, 420 + k * 70, 0, Math.PI * 2); c.lineWidth = 2; c.strokeStyle = "#e9d6b6"; c.stroke(); }
 
   const top = story ? 300 : 62;
+  if (card.mode === "level") { drawLevelCard(c, card, format, width, height, top, footer, site); return; }
   const duo = card.mode === "duo";
   // A board (level) game names the board and shows its stars beside the label.
-  const level = card.mode === "solo" ? card.level ?? 0 : 0, earned = level ? starsOf(card.points, level) : 0;
-  const label: Segment[] = [{ text: duo ? "ক্যারম · দুজনে এক বোর্ড" : level ? `ক্যারম · বোর্ড ${bn(level)} · ${LEVELS[level - 1].name}` : `ক্যারম · ${bn(STRIKES)} চাল`, color: palette.accent, weight: 700, display: true }];
+  const level = card.mode === "solo" ? card.level ?? 0 : 0, earned = level ? oldBoardStars(card.points, level) : 0;
+  const label: Segment[] = [{ text: duo ? "ক্যারম · দুজনে এক বোর্ড" : level ? `ক্যারম · ${OLD_BOARDS[level - 1].name}` : `ক্যারম · ${bn(STRIKES)} চাল`, color: palette.accent, weight: 700, display: true }];
   if (earned) label.push({ text: "  ", color: palette.ink }, ...[0, 1, 2].map(star => ({ text: "★", color: star < earned ? "#e0a020" : "#c9b89a", weight: 700 })));
   fitText(c, label, 84, top + 44, 42, 900);
   const head: Segment[] = duo
@@ -72,6 +76,47 @@ export function drawCard(canvas: HTMLCanvasElement, card: Shared, format: CardFo
   const line = duo ? duoLine(card.points) : humanLine(card.points);
   fitText(c, [{ text: line, color: palette.ink, weight: 600 }], width / 2, footer - (story ? 70 : 40), story ? 46 : 40, 960, "center");
   drawFooterBand(c, format, duo ? "তোমাদের বোর্ডে কে জিতবে?" : "তুমি কয়টা পারবে?", site, { band: palette.ink, ask: "#f2c46b", site: "#ffffff" });
+}
+
+/** A board from the ladder: its name and stars, "৪ চালে সাফ", and the board as it started, every white set back in place. */
+function drawLevelCard(c: CanvasRenderingContext2D, card: Extract<Shared, { mode: "level" }>, format: CardFormat, width: number, height: number, top: number, footer: number, site: string) {
+  const story = format === "story", spec = LEVELS[card.level - 1], stars = starsForStrikes(spec, card.strikes), look = LOOKS[spec.world];
+  const label: Segment[] = [{ text: `ক্যারম · ${WORLDS[spec.world].name} · বোর্ড ${bn(card.level)}`, color: palette.accent, weight: 700, display: true }, { text: "  ", color: palette.ink }];
+  for (let star = 0; star < 3; star++) label.push({ text: "★", color: star < stars ? "#e0a020" : "#c9b89a", weight: 700 });
+  fitText(c, label, 84, top + 44, 42, 900);
+  fitText(c, [
+    ...(card.name ? [{ text: `${card.name} `, color: palette.ink, weight: 800, display: true }] : []),
+    { text: `${bn(card.strikes)} চালে`, color: palette.red, weight: 800, display: true },
+    { text: " সাফ", color: palette.ink, weight: 800, display: true },
+  ], 84, top + 150, 104, 912);
+  const whites = spec.pattern ? PER_SIDE : spec.whites?.length ?? 0, need = spec.need ?? whites;
+  fitText(c, [{ text: `“${spec.name}” · ${bn(need)}টা সাদা${spec.needQueen ? ", কুইন কভার" : ""}${card.hand ? ` · ${handWord(card.hand)}` : ""}`, color: "#6b4f38", weight: 600 }], 86, top + 222, 44, 912);
+
+  const size = story ? 960 : 840, bx = (width - size) / 2, by = story ? 580 : 318, k = size / TOTAL;
+  c.save();
+  c.translate(bx, by); c.scale(k, k);
+  c.fillStyle = "rgba(60,30,8,.25)";
+  c.beginPath(); c.roundRect(10, 18, TOTAL, TOTAL, 22); c.fill();
+  paintBoard(c, look);
+  c.translate(RAIL, RAIL);
+  const r = COIN_R * 1.15;
+  if (spec.pattern) formation().forEach(spot => paintDisc(c, spot.side === 2 ? "queen" : spot.side === 0 ? "white" : "black", spot.x, spot.y, r));
+  else {
+    spec.blacks?.forEach(([x, y]) => paintDisc(c, "black", x, y, r));
+    spec.whites?.forEach(([x, y]) => paintDisc(c, "white", x, y, r));
+    if (spec.queen) paintDisc(c, "queen", spec.queen[0], spec.queen[1], r);
+  }
+  // The stamp: সাফ, in the world's paint, slightly askew.
+  c.translate(CENTRE, CENTRE + 180);
+  c.rotate(-0.12);
+  c.strokeStyle = palette.red; c.lineWidth = 9;
+  c.beginPath(); c.roundRect(-150, -62, 300, 124, 18); c.stroke();
+  c.fillStyle = palette.red; c.font = '800 96px "Display", "Bangla"'; c.textAlign = "center"; c.textBaseline = "middle";
+  c.fillText("সাফ", 0, 6);
+  c.restore();
+
+  fitText(c, [{ text: levelLine(spec, true, stars, 0), color: palette.ink, weight: 600 }], width / 2, footer - (story ? 70 : 40), story ? 46 : 40, 960, "center");
+  drawFooterBand(c, format, "তুমি কয় চালে পারবে?", site, { band: palette.ink, ask: "#f2c46b", site: "#ffffff" });
 }
 
 const possessiveOther = (card: Extract<Shared, { mode: "duo" }>) => card.other ? possessive(card.other) : SIDE_OF[(1 - card.winner) as 0 | 1];
