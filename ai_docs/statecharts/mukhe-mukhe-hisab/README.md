@@ -1,4 +1,127 @@
-# মুখে মুখে হিসাব: statechart (before the rewrite)
+# মুখে মুখে হিসাব: statechart
+
+## After the rewrite (`after-fix/`)
+The spec mirrors `tools/mukhe-mukhe-hisab/lib/session.ts` (one round as a reducer: ready → opening → play ⇄ lesson → over, with `why` = away or sheet, and two pausable clocks), `lib/game.ts` (sums dealt lazily by `sumAt`), `lib/save.ts` (your own open level) and `components/hisab-play.tsx` (the listeners, `finalize`, the key handler). TLC reaches 335 states and 1506 steps; the chart draws 15 states and 35 arrows. Regenerated from scratch for this README: the chart is byte-for-byte `after-fix/chart.mmd`.
+
+| Rule | Says | Result |
+|---|---|---|
+| ClockStillWhileAway | The 60 seconds never run while you are in another window or tab. | holds |
+| PausedWhenHidden | Hiding the tab mid-round pauses it. | holds |
+| PauseKeepsYourTime | A pause, even hidden twice, keeps every second you had. | holds |
+| SumsOutlastTheClock | The round never runs out of sums before the clock does. | holds |
+| LevelPickerFreezesPlay | While সব লেভেল is open, nothing counts down, and coming back from another window doesn't restart it. | holds |
+| OnlyResumeEndsAPause | Only চালিয়ে যাও (or closing the sheet) ends the pause it belongs to. | holds |
+| NoCheerAfterYouMoveOn | The win sound and confetti play only on that round's result. | holds |
+| ResultNeedsFreshPress | A key held through the end never skips the result. | holds |
+| LinkOpensOnlyItsLevel | A friend's link opens its own level, not the levels before it. | holds |
+| SavedUnlockIsEarned | Level 2 opens only after you clear level 1 yourself. | holds |
+| UnlockNeverShrinks, TypeOK, NoDeadlock | Unlocked levels never close; no stuck state. | holds |
+
+### The bugs, fixed
+1. **SumsOutlastTheClock (the crash after sum 120).** `makeQuestions` dealt 120 sums and the 121st answer read `questions[120].answer`. Sums now come from `sumAt(deck, index)`, which deals more from the same seeded stream when the round gets there; the first 120 of every level and seed are unchanged (pinned by a checksum), so old links replay. Test `bug 3 · SumsOutlastTheClock` answers every 16 ms frame for a whole minute on levels 1, 10, 14 and 30 and gets 7 times the old 120.
+   - **Live (headless Chrome, real rAF, `scratchpad/mukhe-mukhe-hisab/fastbot.mjs`):** a bot answering correctly every frame for 70 s: level 1 **3584** answers, level 14 **3501**, level 30 **3481**, no console error, the end screen showed. Level 7 with a wrong answer every 9th: 171 answers, 152 right, no error. The old game broke at answer 120.
+2. **ClockStillWhileAway.** The game listens to `blur` and the player's `onPause`; both run `pauseFor("away")`, which banks the clocks. Test `bug 1`. Live (Orca, Pixel 9): clock ৫৯, blur, 3 s later ৫৮, a second blur and `visibilitychange`, 5 s after the first ৫৮ (the old game read ৫৪), the sum hidden behind the cash box (চালিয়ে যাও), then a 0.6 s breath and ৫৭ a second later.
+3. **PauseKeepsYourTime.** `pause` banks time only while a clock runs, so a second hide while paused changes nothing. Test `bug 2` (waits of 8 s and 62 s; the old game ended the round at ০সে.).
+4. **LinkOpensOnlyItsLevel and SavedUnlockIsEarned.** Your own open level has its own key (`ektukhani-mukhe-mukhe-hisab-open`, migrated once from the old rule); a friend's far-ahead level records its stars and opens nothing between. Test `bug 4`. Live (Orca, empty storage): opened `#s=777&t=0&l=3&r=0`: সব লেভেল shows only levels 1 and 3 open; played level 3 to ৩ তারা; storage `{"3":3}` and open key `1` (the old game opened level 4).
+5. **The card ticked sums you got wrong.** The link carries `k`, how the first six sums went; the card draws a tick, a cross with the right answer, or nothing. Old links draw no marks. Test `the card marks each of the first six sums as it really went`. Live: a round with one miss drew ✓ ✓ ✓ ✗ and two blank rows.
+6. **Hiding while paused, the sheet, and the focus-back tap.** The sheet outranks an away-pause; answers count only after the breath (`at < s.since`). Tests `LevelPickerFreezesPlay`, `P pauses through the player's menu; Enter needs a fresh press…`.
+
+Quality-bar gaps closed: the player's pause menu (P, Esc, ⏸, blur and hide) that covers the sum; numbered answers 1–4 on screen and on the keys (real key presses checked in Orca); the cash box is the start action and the biggest thing on the screen; amber edge for the last 10 s, red for the last 5; a miss shows the right answer and how, and the clock holds; three named finales with a boss bar; the end screen counts up real stats and shows the sums you missed.
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Cash box shut (শ#2497;র#2497; কর#2507;)
+      s1: Drawer sliding open
+      s2: Paused, the cash box covers the sum
+      s3: Paused by সব ল#2503;ভ#2503;ল, sum covered
+      s4: A sum is up, the clock runs, time left
+      s5: A miss: the right answer and how, clock held
+      s6: End screen and card
+      s7: A sum is up, the clock runs, no time left
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; [when Window is You're on the page]
+      s1 --> s2: you click into another window or you hide the tab
+      s1 --> s3: you open সব ল#2503;ভ#2503;ল
+      s1 --> s4: the drawer is open
+      s3 --> s1: you close সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s4 --> s5: you answer wrong
+      s4 --> s6: a miss takes the last seconds
+      s4 --> s2: you click into another window or you hide the tab
+      s4 --> s3: you open সব ল#2503;ভ#2503;ল
+      s5 --> s4: the how-line has shown
+      s5 --> s2: you click into another window or you hide the tab
+      s5 --> s3: you open সব ল#2503;ভ#2503;ল
+      s2 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s2 --> s3: you open সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s6 --> s0: you pick a level or you press a fresh key [when Window is You're on the page]
+      s6 --> s0: you open a friend's link to level 3 [when Window is You're on the page and Levels is one of Level 1 cleared, level 2 open, Your own levels]
+      s7 --> s6: time runs out
+      s7 --> s6: time runs out, level 1 cleared [when Levels is one of Friend's link#59; only its own level open, Your own levels]
+      s7 --> s2: you click into another window or you hide the tab
+      s7 --> s3: you open সব ল#2503;ভ#2503;ল
+      s3 --> s4: you close সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s3 --> s5: you close সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s2 --> s4: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s3 --> s7: you close সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s2 --> s5: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s2 --> s7: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+    }
+    --
+    state "Window" as r1 {
+      s8: You're on the page
+      s9: Another window has focus
+      s10: Tab hidden
+      [*] --> s8
+      s8 --> s9: you click into another window
+      s8 --> s10: you hide the tab
+      s9 --> s8: you come back to the window
+      s9 --> s10: you hide the tab
+      s10 --> s8: the tab shows again
+    }
+    --
+    state "Levels" as r2 {
+      s11: Your own levels
+      s12: Friend's link#59; only its own level open
+      s13: Level 1 cleared, level 2 open
+      s14: Friend's link#59; level 1 cleared
+      [*] --> s11
+      s11 --> s12: you open a friend's link to level 3 [when Game is one of Cash box shut (শ#2497;র#2497; কর#2507;), End screen and card and Window is You're on the page]
+      s11 --> s13: time runs out, level 1 cleared [when Game is A sum is up, the clock runs, no time left and Window is You're on the page]
+      s13 --> s14: you open a friend's link to level 3 [when Game is one of Cash box shut (শ#2497;র#2497; কর#2507;), End screen and card and Window is You're on the page]
+      s12 --> s14: time runs out, level 1 cleared [when Game is A sum is up, the clock runs, no time left and Window is You're on the page]
+    }
+  }
+  class s0 tan
+  class s1 teal
+  class s2 yellow
+  class s3 yellow
+  class s4 teal
+  class s5 teal
+  class s6 blue
+  class s7 teal
+```
+
+To regenerate:
+```sh
+scripts/statechart.sh ai_docs/statecharts/mukhe-mukhe-hisab/Hisab.tla --view ai_docs/statecharts/mukhe-mukhe-hisab/view.ts --out <a new folder>
+```
+
+---
+
+# Before the rewrite (kept for the record)
 
 Model: `Hisab.tla`, `Hisab.cfg` and `view.ts`, mirrored from `tools/mukhe-mukhe-hisab/components/hisab-game.tsx`, plus `shared/game-core.ts` (`recordLevel`, `unlockedLevel`) and `shared/game-kit.ts` (`useLevels`).
 Output: `before-fix/report.md` and `before-fix/chart.mmd`. TLC reached 468 states, and the chart draws 19 states and 41 arrows.

@@ -1,0 +1,86 @@
+---
+title: "মﬂ°°2497¶ßখﬂ°°2503¶ß মﬂ°°2497¶ßখﬂ°°2503¶ß হﬂ°°2495¶ßসﬂ°°2494¶ßব (after the rewrite): round, clocks, pause, sheet, keys and levels"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Cash box shut (শ#2497;র#2497; কর#2507;)
+      s1: Drawer sliding open
+      s2: Paused, the cash box covers the sum
+      s3: Paused by সব ল#2503;ভ#2503;ল, sum covered
+      s4: A sum is up, the clock runs, time left
+      s5: A miss: the right answer and how, clock held
+      s6: End screen and card
+      s7: A sum is up, the clock runs, no time left
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; [when Window is You're on the page]
+      s1 --> s2: you click into another window or you hide the tab
+      s1 --> s3: you open সব ল#2503;ভ#2503;ল
+      s1 --> s4: the drawer is open
+      s3 --> s1: you close সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s4 --> s5: you answer wrong
+      s4 --> s6: a miss takes the last seconds
+      s4 --> s2: you click into another window or you hide the tab
+      s4 --> s3: you open সব ল#2503;ভ#2503;ল
+      s5 --> s4: the how-line has shown
+      s5 --> s2: you click into another window or you hide the tab
+      s5 --> s3: you open সব ল#2503;ভ#2503;ল
+      s2 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s2 --> s3: you open সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s6 --> s0: you pick a level or you press a fresh key [when Window is You're on the page]
+      s6 --> s0: you open a friend's link to level 3 [when Window is You're on the page and Levels is one of Level 1 cleared, level 2 open, Your own levels]
+      s7 --> s6: time runs out
+      s7 --> s6: time runs out, level 1 cleared [when Levels is one of Friend's link#59; only its own level open, Your own levels]
+      s7 --> s2: you click into another window or you hide the tab
+      s7 --> s3: you open সব ল#2503;ভ#2503;ল
+      s3 --> s4: you close সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s3 --> s5: you close সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s2 --> s4: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s3 --> s7: you close সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s2 --> s5: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s2 --> s7: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+    }
+    --
+    state "Window" as r1 {
+      s8: You're on the page
+      s9: Another window has focus
+      s10: Tab hidden
+      [*] --> s8
+      s8 --> s9: you click into another window
+      s8 --> s10: you hide the tab
+      s9 --> s8: you come back to the window
+      s9 --> s10: you hide the tab
+      s10 --> s8: the tab shows again
+    }
+    --
+    state "Levels" as r2 {
+      s11: Your own levels
+      s12: Friend's link#59; only its own level open
+      s13: Level 1 cleared, level 2 open
+      s14: Friend's link#59; level 1 cleared
+      [*] --> s11
+      s11 --> s12: you open a friend's link to level 3 [when Game is one of Cash box shut (শ#2497;র#2497; কর#2507;), End screen and card and Window is You're on the page]
+      s11 --> s13: time runs out, level 1 cleared [when Game is A sum is up, the clock runs, no time left and Window is You're on the page]
+      s13 --> s14: you open a friend's link to level 3 [when Game is one of Cash box shut (শ#2497;র#2497; কর#2507;), End screen and card and Window is You're on the page]
+      s12 --> s14: time runs out, level 1 cleared [when Game is A sum is up, the clock runs, no time left and Window is You're on the page]
+    }
+  }
+  class s0 tan
+  class s1 teal
+  class s2 yellow
+  class s3 yellow
+  class s4 teal
+  class s5 teal
+  class s6 blue
+  class s7 teal
