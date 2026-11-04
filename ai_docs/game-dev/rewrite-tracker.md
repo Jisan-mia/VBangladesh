@@ -13,8 +13,8 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | chor-police | S03 | analysed | done |
 | bostar-pahar | S03 | analysed | done |
 | tarer-fanke-belun | S03 | analysed | done |
-| paka-kancha | S04 | analysed | todo |
-| jora-melao | S04 | analysed | todo |
+| paka-kancha | S04 | analysed | rewriting |
+| jora-melao | S04 | analysed | rewriting |
 | chhok-jora | S04 | analysed | done |
 | churui-tarao | S05 | analysed | rewriting |
 | handi-bhanga | S05 | analysed | rewriting |
@@ -36,8 +36,8 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | ghontar-sur | S10 | analysed | todo |
 | konta-nei | S11 | analysed | done |
 | bhul-kothay | S11 | analysed | done |
-| atir-aam | S11 | analysed | rewriting |
-| bhimruler-chak | S12 | analysed | rewriting |
+| atir-aam | S11 | analysed | done |
+| bhimruler-chak | S12 | analysed | done |
 | churir-bazar | S12 | analysed | todo |
 | mukhe-mukhe-hisab | S12 | analysed | rewriting |
 | chhobir-tukro | S13 | analysed | done |
