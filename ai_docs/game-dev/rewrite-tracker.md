@@ -4,13 +4,13 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 
 | game | group | statechart | rewrite |
 |---|---|---|---|
-| kalbaishakhi-aam | S01 | analysed | todo |
+| kalbaishakhi-aam | S01 | analysed | rewriting |
 | dudh-uthlano | S01 | analysed | todo |
 | jhalmuri-sap | S01 | analysed | rewriting |
 | danguli | S02 | analysed | todo |
 | sir-ghurlei-thamo | S02 | analysed | todo |
 | deri-hoye-gelo | S02 | analysed | todo |
-| chor-police | S03 | analysed | rewriting |
+| chor-police | S03 | analysed | done |
 | bostar-pahar | S03 | analysed | todo |
 | tarer-fanke-belun | S03 | analysed | todo |
 | paka-kancha | S04 | analysed | todo |
@@ -19,16 +19,16 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | churui-tarao | S05 | analysed | todo |
 | handi-bhanga | S05 | analysed | todo |
 | peoner-cycle | S05 | analysed | todo |
-| sap-ludu | S06 | analysed | todo |
-| baghbandi | S06 | analysed | todo |
+| sap-ludu | S06 | analysed | rewriting |
+| baghbandi | S06 | analysed | rewriting |
 | baicher-nouka | S06 | analysed | todo |
 | vo-katta | S07 | analysed | todo |
 | bhangti-nai | S07 | analysed | todo |
 | jam-chharao | S07 | analysed | todo |
-| shobdo-khoja | S08 | analysed | todo |
-| carrom | S08 | analysed | todo |
+| shobdo-khoja | S08 | analysed | rewriting |
+| carrom | S08 | analysed | rewriting |
 | pati-buni | S08 | analysed | todo |
-| sudoku | S09 | analysed | rewriting |
+| sudoku | S09 | analysed | done |
 | switchboard | S09 | analysed | todo |
 | golokdhadha | S09 | analysed | todo |
 | ponero-ghor | S10 | analysed | todo |
