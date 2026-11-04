@@ -1,35 +1,43 @@
-export const title = "চড়ুই তাড়াও: afternoon, window, level list, cheer and link";
-const game = (v: any) => ({ ready: "Waiting for your first tap", playing: "Sparrows landing", paused: "Paused", over: "Card shows" } as any)[v.phase];
+export const title = "Churui Tarao after the rewrite: the afternoon, the list, the window and a link";
+const game = (v: any) => v.picking ? (v.phase === "paused" ? "সব ক্ষেত open, afternoon paused" : "সব ক্ষেত open")
+  : v.phase === "playing" && v.boss === "here" ? "Boss bird at the grain, dusk waits"
+  : ({ title: "Title (মাঠে নামো)", playing: v.eating ? "Birds pecking (rustle)" : "Afternoon on, grass clear", paused: "Paused", over: v.outcome === "lost" ? "Card shows: all grain gone" : "Card shows: dusk, field passed" } as any)[v.phase];
+const link = (v: any) => v.link === "none" ? "No friend's link"
+  : v.link === "other" ? "Friend's link, another ক্ষেত picked"
+  : v.seed === "theirs" ? "Friend's afternoon, their seed" : "Friend's afternoon, your own seed";
 export const state = (v: any) => ({
   Game: game(v),
-  Window: v.win === "hidden" ? "Tab hidden" : v.win === "away" ? "Another window has focus" : "You're on the page",
-  Levels: v.picker ? "সব লেভেল open" : "সব লেভেল closed",
-  Cheer: v.fanfare ? "Cheer still to come" : "No cheer waiting",
-  Grain: v.ateAway ? "Grain was eaten while you were away" : "Grain only eaten while you watched",
-  Link: v.link === "none" ? "No friend's link" : v.lvl === "theirs" ? (v.seed === "theirs" ? "On the friend's field" : "Friend's level, a fresh field") : "Friend's link, another level",
+  Window: !v.visible ? "Tab hidden" : v.focused ? "You're on the page" : "Another window has focus",
+  Link: link(v),
 });
-const where = (to: any) => to.link === "none" ? "" : to.lvl === "theirs" ? " (the friend's level)" : " (another level)";
-export const step = (action: string, from: any, to: any) => {
-  if (action === "RoundEnds") return to.fanfare && !from.fanfare ? "dusk falls and the field is passed" : from.fanfare ? "dusk falls" : "dusk falls or the grain runs out, not passed";
-  if (action === "YouPickLevel" || action === "YouGoNext" || action === "FriendLinkOpens") return labels[action] + where(to);
-  return labels[action] ?? action;
-};
-const labels: Record<string, string> = {
-  YouStart: "you tap the field",
-  SparrowsEat: "a sparrow nibbles",
-  FanfarePlays: "the cheer plays",
-  YouPause: "you press থামাও",
-  YouResume: "you press চালিয়ে যাও",
-  TabHides: "you hide the tab",
-  TabShows: "the tab shows again",
+export const step = (action: string, _from: any, to: any) => ({
+  YouStart: "you press মাঠে নামো",
+  ABirdLands: "a bird lands at the grain",
+  TheGrassClears: "the last bird at the grain is shooed",
+  TheBossArrives: "the boss bird flies in",
+  YouChaseTheBossOff: "you clap the boss off for good",
+  YouTapTheField: "you tap the field",
   WindowBlurs: "you click into another window",
   WindowFocuses: "you come back to the window",
-  YouOpenLevels: "you open সব লেভেল",
-  YouCloseLevels: "you close সব লেভেল",
-  YouPickLevel: "you pick a level",
-  YouGoNext: "you press পরের লেভেল",
+  TabHides: "you hide the tab",
+  TabShows: "the tab shows again",
+  YouPause: "you press P or ⏸",
+  YouResume: "you press চালিয়ে যাও",
+  YouOpenTheList: "you open সব ক্ষেত",
+  YouCloseTheList: "you close সব ক্ষেত",
+  YouPickAField: "you pick a ক্ষেত",
+  DuskFalls: "dusk falls, the field is passed",
+  TheGrainIsGone: "the last grain is eaten",
+  CheerFires: "the celebration timer fires",
   YouPlayAgain: "you press আবার খেলো",
+  YouGoOn: "you press পরের ক্ষেত",
+  YouRestart: "you press নতুন করে শুরু",
   FriendLinkOpens: "a friend's link opens",
-};
-export const group = (v: any) => v.phase === "over" ? "done" : v.phase === "paused" ? "held" : "play";
-export const colors = { play: "teal", held: "yellow", done: "blue" };
+  YouHoldEnter: "you hold Enter",
+  EnterRepeats: "Enter repeats",
+  YouLetGoOfEnter: "you let go of Enter",
+  SoundOff: "you turn sound off",
+  SoundOn: "you turn sound on",
+} as Record<string, string>)[action] ?? (to ? action : action);
+export const group = (v: any) => v.phase === "over" ? "done" : v.phase === "paused" || v.picking ? "held" : v.phase === "title" ? "wait" : "play";
+export const colors = { wait: "blue", play: "teal", held: "yellow", done: "blue" };
