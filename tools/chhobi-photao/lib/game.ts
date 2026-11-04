@@ -4,8 +4,6 @@ import { cluesOf, sameClue, solveByLines, type Clues } from "./nonogram";
 import { PICTURES, type Picture } from "./pictures";
 
 export const LEVEL_COUNT = PICTURES.length;
-export const WORLDS = ["উঠান", "পুকুরপাড়", "নদী আর শহর"] as const;
-export const worldOf = (level: number) => Math.min(WORLDS.length - 1, Math.floor((level - 1) / 10));
 export const isLevel = (level: number) => Number.isInteger(level) && level >= 1 && level <= LEVEL_COUNT;
 /** A fixed seed per level, so a challenge link names exactly one picture. */
 export const levelSeed = (level: number) => 70_000 + level * 13;
@@ -57,15 +55,6 @@ export function paint(game: Game, indices: readonly number[], to: Mark, record =
   }
   if (!changed) return null;
   return { ...game, cells, wrong, history: record ? [...game.history, game.cells].slice(-HISTORY) : game.history };
-}
-
-/** The cells a straight stroke covers, from where it started to the cell under the finger, along the start's row or column. */
-export function strokeCells(size: number, start: number, current: number, axis: "row" | "col") {
-  const startRow = Math.floor(start / size), startCol = start % size, row = Math.floor(current / size), col = current % size;
-  const out: number[] = [];
-  if (axis === "row") for (let step = Math.min(startCol, col); step <= Math.max(startCol, col); step++) out.push(startRow * size + step);
-  else for (let step = Math.min(startRow, row); step <= Math.max(startRow, row); step++) out.push(step * size + startCol);
-  return out;
 }
 
 export function undo(game: Game): Game {
@@ -130,25 +119,4 @@ export function shortBy(mistakeCount: number, hinted: boolean) {
   if (earned === 3) return 0;
   if (earned === 1) return mistakeCount - TWO_STAR_MISTAKES;
   return hinted ? 0 : mistakeCount;
-}
-
-/** The furthest open level not yet three-starred, so nobody replays what they've mastered. */
-export function startLevel(stars: Record<number, number>, unlocked: number) {
-  for (let level = unlocked; level >= 1; level--) if ((stars[level] ?? 0) < 3) return level;
-  return unlocked;
-}
-
-/**
- * Cell and clue sizes for a board `width` px wide: the clue column fits the longest row clue, cells share the rest (1px gaps), at most 56px.
- * A few rounds, because the clue font follows the cell size.
- */
-export function boardLayout(width: number, size: number, rowClues: number, colClues: number) {
-  let font = 15, clueW = 0, cell = 0;
-  for (let round = 0; round < 3; round++) {
-    clueW = Math.ceil(rowClues * font * 0.82 + 10);
-    cell = Math.max(18, Math.min(56, Math.floor((width - clueW - (size - 1)) / size)));
-    font = Math.max(11, Math.min(18, Math.round(cell * 0.46)));
-  }
-  clueW = Math.ceil(rowClues * font * 0.82 + 10);
-  return { cell, clueW, clueH: Math.ceil(colClues * font * 1.18 + 8), font };
 }

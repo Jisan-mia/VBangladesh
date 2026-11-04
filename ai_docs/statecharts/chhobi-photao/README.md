@@ -1,6 +1,12 @@
-# ছবি ফোটাও statechart (before the rewrite)
+# ছবি ফোটাও statechart
 
-Spec: `Chhobi.tla` / `Chhobi.cfg` / `view.ts`, mirrored from `tools/chhobi-photao/components/picture-game.tsx` and `tools/chhobi-photao/lib/game.ts`. TLC: 320 states, 1680 steps. Chart: `before-fix/chart.mmd` (9 states, 36 arrows). Report: `before-fix/report.md`.
+The first half is the model **before** the rewrite (its bugs and their live replays). The second half, **After the rewrite**, is the model of the new code: every rule holds. The old spec is kept in `before-fix/Chhobi.tla`.
+
+---
+
+## Before the rewrite
+
+Spec (kept in `before-fix/`): `Chhobi.tla` / `Chhobi.cfg` / `view.ts`, mirrored from the old `picture-game.tsx` and `tools/chhobi-photao/lib/game.ts`. TLC: 320 states, 1680 steps. Chart: `before-fix/chart.mmd` (9 states, 36 arrows). Report: `before-fix/report.md`.
 
 ## Systems modelled
 - **Play phase:** blank picture (clock not started) → filling in → solved. Each paint may or may not solve the picture.
@@ -60,9 +66,125 @@ Replays ran in Orca (my own tab) by reading the real React state (`PictureGame` 
 7. **Ending:** the clear screen reveals the picture with a ripple, gives its name, a line, time and mistakes, then the card. Good. But the time can include time spent away (bug 1). Screenshot: `.shots/chhobi-photao-solved.png`.
 8. **Sound:** the stitch swish, the ✕ tick, a rising combo per line, and the reveal run are all meaningful. No loop. Every sound also shows on screen.
 
-## Regenerate
+
+---
+
+## After the rewrite
+
+Spec: `Chhobi.tla` / `Chhobi.cfg` / `view.ts`, mirrored from `tools/chhobi-photao/components/photao-game.tsx`, `components/board.tsx`, `lib/session.ts`, `lib/play.ts` and `lib/progress.ts`. Report: `after-fix/report.md` (TLC, 2 levels, mistakes counted to 3: **6,336 states, every rule holds**). The chart is drawn from the smaller model (1 level, mistakes counted to 1: 252 states), because the chart budget is 500 states: `after-fix/chart.mmd` (report: `after-fix/chart-report.md`).
+
+### What changed in the model
+- The clock **waits for the first stitch** (`armed`), runs exactly while playing, and a pause before the first stitch resumes with the clock still waiting.
+- The shared player owns pause (the blur, the hidden tab, Esc, ⏸). The game also listens to blur, pagehide and visibilitychange itself, so it is safe outside a player.
+- সব লেভেল is a **choice moment**: it pauses (`why = sheet`), and an away pause on top of it never closes it. It also opens from the pause menu through `onLevels`.
+- A stitch that contradicts the picture is **refused** (the cell stays as it was), counts one mistake for that cell, and ends the stroke.
+- Your own unlock lives in `ektukhani-unlock-chhobi-photao` (migrated once). A friend's far-ahead level is a visit: it records stars and opens nothing between.
+
+### Rules (all hold)
+| Rule | Plain words |
+|---|---|
+| ClockStillWhileAway | The clock counts only while you are on the page. |
+| PausedWhenHidden, PausedWhenBlurred | A round is never "playing" while its tab is hidden or the window is blurred. |
+| InputReleasedWhenAway | No drag counts as held while you are away, paused, in the sheet, or on the result. |
+| PausedMeansFrozen | Paused means the clock is stopped and no stroke is held. |
+| ClockMeansPlaying, ClockWaitsForTheFirstStitch | The clock runs exactly while playing after the first stitch. |
+| ChoiceFreezesPlay | While the sheet is open, nothing advances. |
+| CheerOnlyOnTheResult | The bloom sound and confetti never fire after you have moved on. |
+| OpenLevelsAreEarned, UnlockNeverShrinks, LevelIsPlayable | Only your own clears open levels; a friend's level never opens the ones before it. |
+| StarsNeverDrop, ResultMatchesPlay | Recorded stars only go up, and are at least what this round earned. |
+| TypeOK, NoDeadlock | |
+
+### The three old bugs, fixed, replayed live (Pixel 9 emulation in Orca, level 3)
+1. **ClockStillWhileAway** (was: 1.0 s → 6.0 s after 5 s away). Now: tapped a cell, clock **1003 ms**, blur, 4 s away, clock **1003 ms**, `paused/away`. The first press on the board after coming back **only resumed** (0 cells filled), then the clock went on to 2505 ms. Node test: `bug 1, ClockStillWhileAway / PausedWhenBlurred`.
+2. **InputReleasedWhenAway** (was: a buttonless `pointermove` after blur filled 4 more cells). Now: pointerdown on the first cell (1 cell), blur, a mouse `pointermove` with `buttons: 0` over the last cell of the row: **0 more cells**. The board releases on blur, on the player's pause, on lost capture, and on a mouse move with no button. Node test: `bug 2, InputReleasedWhenAway`.
+3. **ChoiceFreezesPlay** (was: 4 s in a drawer cost 4 s). Now: opened the sheet mid-round, waited 3.5 s: phase `paused/sheet`, clock moved **0 ms**. Node test: `bug 3, ChoiceFreezesPlay`.
+
+New rules found while writing the model, each with a node test: a wrong stitch is refused and counts once per cell (`a wrong stitch is refused…`), stitches never clear locked নানির ফোঁড় (`নানির ফোঁড়: locked…`), and a held Enter never skips the result (`a result key needs a fresh press…`, replayed live: a repeating Enter left level 26 on its result, a fresh Enter went on to 27).
+
+### Chart (after-fix, from the small model)
+```mermaid
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: start
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  s0: Title
+  s1: Blank cloth, clock waiting
+  s2: Title, levels sheet open
+  s3: Picture bloomed, end screen
+  s4: Paused, clock stopped
+  s5: Paused by the levels sheet, clock stopped
+  s6: Stitching, clock counting
+  s7: Stitching, clock counting, dragging
+  s8: Stitching, clock counting, 1 mistake
+  s9: Stitching, clock counting, dragging, 1 mistake
+  [*] --> s0
+  s0 --> s1: you press ফ#2507;ট#2494;ও
+  s0 --> s2: you open সব ল#2503;ভ#2503;ল
+  s1 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s1 --> s3: you stitch the last cell
+  s1 --> s4: you hide the tab or you click into another window
+  s1 --> s5: you open সব ল#2503;ভ#2503;ল
+  s1 --> s6: you stitch a cell by tap, key or hint
+  s1 --> s7: you press a cell and drag
+  s1 --> s8: you stitch a wrong cell: the thread snaps
+  s2 --> s0: you close the sheet
+  s3 --> s1: you press আব#2494;র খ#2503;ল#2507;
+  s3 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s5 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s5 --> s1: you close the sheet
+  s6 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s6 --> s3: you stitch the last cell
+  s6 --> s7: you press a cell and drag
+  s6 --> s8: you stitch a wrong cell: the thread snaps
+  s6 --> s4: you hide the tab or you click into another window
+  s6 --> s5: you open সব ল#2503;ভ#2503;ল
+  s7 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s7 --> s3: you stitch the last cell
+  s7 --> s6: you let go
+  s7 --> s8: you stitch a wrong cell: the thread snaps
+  s7 --> s4: you hide the tab or you click into another window
+  s7 --> s5: you open সব ল#2503;ভ#2503;ল
+  s8 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s8 --> s3: you stitch the last cell
+  s8 --> s4: you hide the tab or you click into another window
+  s8 --> s5: you open সব ল#2503;ভ#2503;ল
+  s8 --> s9: you press a cell and drag
+  s4 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s4 --> s5: you open সব ল#2503;ভ#2503;ল
+  s5 --> s6: you close the sheet
+  s5 --> s8: you close the sheet
+  s9 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s9 --> s8: you let go or you stitch a wrong cell: the thread snaps
+  s9 --> s3: you stitch the last cell
+  s9 --> s4: you hide the tab or you click into another window
+  s9 --> s5: you open সব ল#2503;ভ#2503;ল
+  s4 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s4 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  class s0 tan
+  class s1 teal
+  class s2 tan
+  class s3 blue
+  class s4 yellow
+  class s5 yellow
+  class s6 teal
+  class s7 teal
+  class s8 teal
+  class s9 teal
+```
+
+### Regenerate
 ```sh
+# the rules, full model (Count = 2, Cap = 3)
 scripts/statechart.sh ai_docs/statecharts/chhobi-photao/Chhobi.tla --view ai_docs/statecharts/chhobi-photao/view.ts --out ai_docs/statecharts/chhobi-photao/after-fix
+# the chart: copy the spec and view to a scratch folder, set Count = 1 and Cap = 1 in its Chhobi.cfg, run the same command there
 rm ai_docs/statecharts/chhobi-photao/after-fix/tlc.out
 ```
-The chart hides these steps: the celebration timers (they stay on "solved"); friend links and level picks (the same reset as শুরু থেকে); and শুরু থেকে itself from a picture that isn't solved yet.
+The chart hides: the celebration timers (they stay on the end screen), friend links, and level picks (the same reset as নতুন করে শুরু).
