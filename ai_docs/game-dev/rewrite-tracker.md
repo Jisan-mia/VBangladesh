@@ -6,11 +6,11 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 |---|---|---|---|
 | kalbaishakhi-aam | S01 | analysed | todo |
 | dudh-uthlano | S01 | analysed | todo |
-| jhalmuri-sap | S01 | analysed | todo |
-| danguli | S02 | analysing | todo |
-| sir-ghurlei-thamo | S02 | analysing | todo |
-| deri-hoye-gelo | S02 | analysing | todo |
-| chor-police | S03 | analysed | todo |
+| jhalmuri-sap | S01 | analysed | rewriting |
+| danguli | S02 | analysed | todo |
+| sir-ghurlei-thamo | S02 | analysed | todo |
+| deri-hoye-gelo | S02 | analysed | todo |
+| chor-police | S03 | analysed | rewriting |
 | bostar-pahar | S03 | analysed | todo |
 | tarer-fanke-belun | S03 | analysed | todo |
 | paka-kancha | S04 | analysed | todo |
@@ -28,7 +28,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | shobdo-khoja | S08 | analysed | todo |
 | carrom | S08 | analysed | todo |
 | pati-buni | S08 | analysed | todo |
-| sudoku | S09 | analysed | todo |
+| sudoku | S09 | analysed | rewriting |
 | switchboard | S09 | analysed | todo |
 | golokdhadha | S09 | analysed | todo |
 | ponero-ghor | S10 | analysed | todo |
@@ -78,4 +78,4 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | ammur-number | S24 | todo | todo |
 | sur-banai | S25 | todo | todo |
 | borno-likhi | S25 | todo | todo |
-| antenna-thik-koro | S25 | analysed | todo |
+| antenna-thik-koro | S25 | analysed | rewriting |
