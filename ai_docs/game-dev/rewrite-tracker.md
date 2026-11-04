@@ -35,13 +35,13 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | chhobi-photao | S10 | analysed | todo |
 | ghontar-sur | S10 | analysed | todo |
 | konta-nei | S11 | analysed | done |
-| bhul-kothay | S11 | analysed | rewriting |
+| bhul-kothay | S11 | analysed | done |
 | atir-aam | S11 | analysed | rewriting |
 | bhimruler-chak | S12 | analysed | rewriting |
 | churir-bazar | S12 | analysed | todo |
 | mukhe-mukhe-hisab | S12 | analysed | todo |
 | chhobir-tukro | S13 | analysed | done |
-| sat-chara | S13 | analysed | todo |
+| sat-chara | S13 | analysed | rewriting |
 | chhip-felo | S13 | analysed | rewriting |
 | latim | S14 | analysed | todo |
 | nodi-par | S14 | analysed | todo |
