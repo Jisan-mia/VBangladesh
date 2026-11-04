@@ -1,0 +1,150 @@
+---
+title: "কﬂ°°2494¶ßলবﬂ°°2504¶ßশﬂ°°2494¶ßখﬂ°°2496¶ß আম: storm, window, hand, wind, celebration and link"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: wait
+    lg1: play
+    lg2: held
+    lg3: done
+    lg4: Breaks CelebrationOnItsOwnCard or InputReleasedWhenAway or PausedWhenBlurred or ReplayIsExact or WindComesBack or WindOnlyInTheStorm in some cases
+    lg5: Path to the CelebrationOnItsOwnCard or InputReleasedWhenAway or PausedWhenBlurred or ReplayIsExact or WindComesBack or WindOnlyInTheStorm bug
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Ready screen
+      s1: Storm falling
+      s2: Paused
+      s3: Card shows
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; or আব#2494;র খ#2503;ল#2507; [when Window is You're on the page]
+      s0 --> s1: you hold #8592; / #8594; [when Window is You're on the page and Hand is Hands off]
+      s1 --> s2: you hide the tab
+      s1 --> s2: you press থ#2494;ম#2494;ও or P [when Window is You're on the page]
+      s1 --> s0: you pick another storm from সব ঝড#2492; [when Window is You're on the page]
+      s1 --> s3: the storm ends and the card shows
+      s1 --> s0: you pick the friend's storm from সব ঝড#2492; [when Window is You're on the page and Link is not No friend's link]
+      s2 --> s0: you pick another storm from সব ঝড#2492; [when Window is You're on the page]
+      s2 --> s0: a friend's link opens [when Window is not Tab hidden and Link is No friend's link]
+      s2 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s3 --> s0: you pick another storm from সব ঝড#2492; [when Window is You're on the page]
+      s3 --> s1: you press শ#2497;র#2497; কর#2507; or আব#2494;র খ#2503;ল#2507; [when Window is You're on the page]
+      s3 --> s0: a friend's link opens [when Window is not Tab hidden and Link is No friend's link]
+      s2 --> s0: you pick the friend's storm from সব ঝড#2492; [when Window is You're on the page and Link is not No friend's link]
+      s3 --> s0: you pick the friend's storm from সব ঝড#2492; [when Window is You're on the page and Link is not No friend's link]
+    }
+    --
+    state "Window" as r1 {
+      s4: You're on the page
+      s5: Tab hidden
+      s6: Another window has focus
+      [*] --> s4
+      s4 --> s5: you hide the tab
+      s4 --> s6: you click into another window
+      s5 --> s4: the tab shows again
+      s6 --> s4: you come back to the window
+      s6 --> s5: you hide the tab
+    }
+    --
+    state "Hand" as r2 {
+      s7: Hands off
+      s8: Holding #8592; / #8594; or a side
+      [*] --> s7
+      s7 --> s8: you hold #8592; / #8594; [when Game is one of Ready screen, Storm falling and Window is You're on the page]
+      s8 --> s7: you let go [when Window is You're on the page]
+      s8 --> s7: you hide the tab
+      s8 --> s7: you press থ#2494;ম#2494;ও or P [when Game is Storm falling and Window is You're on the page]
+      s8 --> s7: the storm ends and the card shows [when Game is Storm falling]
+      s8 --> s7: you press শ#2497;র#2497; কর#2507; or আব#2494;র খ#2503;ল#2507; [when Game is Ready screen and Window is You're on the page and Link is not Bar says friend's storm, your own storm falls]
+    }
+    --
+    state "Wind" as r3 {
+      s9: Wind quiet
+      s10: Wind blowing
+      [*] --> s9
+      s9 --> s10: you press শ#2497;র#2497; কর#2507; or আব#2494;র খ#2503;ল#2507; [when Game is one of Card shows, Ready screen and Window is You're on the page and Sound is Sound on]
+      s9 --> s10: you hold #8592; / #8594; [when Game is Ready screen and Window is You're on the page and Hand is Hands off and Sound is Sound on and Link is not Bar says friend's storm, your own storm falls]
+      s10 --> s9: you hide the tab
+      s10 --> s9: you press থ#2494;ম#2494;ও or P [when Game is Storm falling and Window is You're on the page]
+      s10 --> s9: you turn sound off [when Window is You're on the page]
+      s10 --> s9: the storm ends and the card shows [when Game is Storm falling]
+      s9 --> s10: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Game is Paused and Window is You're on the page and Hand is Hands off and Sound is Sound on]
+    }
+    --
+    state "Sound" as r4 {
+      s11: Sound on
+      s12: Sound off
+      [*] --> s11
+      s11 --> s12: you turn sound off [when Window is You're on the page]
+      s12 --> s11: you turn sound on [when Window is You're on the page]
+    }
+    --
+    state "Celebration" as r5 {
+      s13: Nothing queued
+      s14: Stars or confetti queued
+      [*] --> s13
+      s13 --> s14: the storm ends and the card shows [when Game is Storm falling and Window is not Tab hidden]
+      s14 --> s13: the stars or confetti play
+    }
+    --
+    state "Link" as r6 {
+      s15: No friend's link
+      s16: Friend's storm, their seed
+      s17: Another storm picked
+      s18: Bar says friend's storm, your own storm falls
+      [*] --> s15
+      [*] --> s16
+      s15 --> s16: a friend's link opens [when Game is not Storm falling and Window is not Tab hidden]
+      s16 --> s17: you pick another storm from সব ঝড#2492; [when Window is You're on the page]
+      s15 --> s18: a friend's link opens [when Game is Storm falling and Window is not Tab hidden]
+      s17 --> s16: you pick the friend's storm from সব ঝড#2492; [when Window is You're on the page]
+      s18 --> s17: you pick another storm from সব ঝড#2492; [when Window is You're on the page]
+      s18 --> s16: you pick the friend's storm from সব ঝড#2492; [when Window is You're on the page]
+      s18 --> s16: you press শ#2497;র#2497; কর#2507; or আব#2494;র খ#2503;ল#2507; [when Game is Card shows and Window is You're on the page and Hand is Hands off and Wind is Wind quiet]
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 blue
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 yellow
+  class s2 mayBreak
+  class s3 blue
+  class s3 bugPath
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 mayBreak
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 mayBreak
+  class s17 mayBreak
+  class s18 mayBreak
+  class s18 bugPath

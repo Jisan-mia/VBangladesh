@@ -1,0 +1,128 @@
+---
+title: "ঝﬂ°°2494¶ßলমﬂ°°2497¶ßডﬂ°°2492¶ßﬂ°°2495¶ß সﬂ°°2494¶ßপ: run, window, board, card guard, celebration and link"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: wait
+    lg1: play
+    lg2: held
+    lg3: done
+    lg4: Breaks CelebrationOnItsOwnCard or PausedWhenBlurred or PausedWhenScrolledAway in some cases
+    lg5: Path to the CelebrationOnItsOwnCard or PausedWhenBlurred or PausedWhenScrolledAway bug
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Ready screen
+      s1: Snake moving
+      s2: Paused
+      s3: Card shows
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; or swipe [when Window is You're on the page]
+      s1 --> s0: you pick another level or ক#2509;ল#2494;স#2495;ক [when Window is You're on the page]
+      s1 --> s0: a friend's link opens [when Link is No friend's link]
+      s1 --> s2: you scroll the board away [when Board is Board on screen]
+      s1 --> s2: you hide the tab
+      s1 --> s2: you press P or the pause button [when Window is You're on the page]
+      s1 --> s3: the snake crashes or the run ends with stars or a record [when Guard is Card buttons ready]
+      s2 --> s0: you pick another level or ক#2509;ল#2494;স#2495;ক [when Window is You're on the page]
+      s2 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s2 --> s0: a friend's link opens [when Window is not Tab hidden and Link is No friend's link]
+      s3 --> s0: you pick another level or ক#2509;ল#2494;স#2495;ক [when Window is You're on the page]
+      s3 --> s0: a friend's link opens [when Window is not Tab hidden and Link is No friend's link]
+      s1 --> s0: you pick the friend's level [when Window is You're on the page and Link is not No friend's link]
+      s3 --> s1: you press আর#2503;কব#2494;র or পর#2503;র ল#2503;ভ#2503;ল [when Window is You're on the page and Guard is Card buttons ready]
+      s2 --> s0: you pick the friend's level [when Window is You're on the page and Link is not No friend's link]
+      s3 --> s0: you pick the friend's level [when Window is You're on the page and Link is not No friend's link]
+      s3 --> s1: you press আব#2494;র খ#2503;ল#2507; on the friend's level [when Window is You're on the page and Guard is Card buttons ready and Link is not No friend's link]
+    }
+    --
+    state "Window" as r1 {
+      s4: You're on the page
+      s5: Tab hidden
+      s6: Another window has focus
+      [*] --> s4
+      s4 --> s5: you hide the tab
+      s4 --> s6: you click into another window
+      s5 --> s4: the tab shows again
+      s6 --> s4: you come back to the window
+      s6 --> s5: you hide the tab
+    }
+    --
+    state "Board" as r2 {
+      s7: Board on screen
+      s8: Board scrolled away
+      [*] --> s7
+      s7 --> s8: you scroll the board away [when Window is not Tab hidden]
+      s8 --> s7: you pick another level or ক#2509;ল#2494;স#2495;ক [when Window is You're on the page]
+      s8 --> s7: you scroll back to the board [when Window is not Tab hidden]
+      s8 --> s7: you pick the friend's level [when Window is You're on the page and Link is not No friend's link]
+    }
+    --
+    state "Guard" as r3 {
+      s9: Card buttons ready
+      s10: Card buttons wait 0.7 s
+      [*] --> s9
+      s9 --> s10: the snake crashes or the run ends with stars or a record [when Game is Snake moving and Window is not Tab hidden]
+      s10 --> s9: 0.7 s pass
+    }
+    --
+    state "Celebration" as r4 {
+      s11: Nothing queued
+      s12: Stars or confetti queued
+      [*] --> s11
+      s11 --> s12: the run ends with stars or a record [when Game is Snake moving and Window is not Tab hidden and Guard is Card buttons ready]
+      s12 --> s11: the stars or confetti play [when Guard is Card buttons ready]
+      s12 --> s11: the snake crashes [when Game is Snake moving and Window is not Tab hidden and Guard is Card buttons ready]
+    }
+    --
+    state "Link" as r5 {
+      s13: No friend's link
+      s14: Friend's ঠ#2507;ঙ#2494; on the board
+      s15: Another level picked
+      [*] --> s13
+      s13 --> s14: a friend's link opens [when Window is not Tab hidden]
+      s14 --> s15: you pick another level or ক#2509;ল#2494;স#2495;ক [when Window is You're on the page]
+      s15 --> s14: you pick the friend's level [when Window is You're on the page]
+      s14 --> s15: you press আর#2503;কব#2494;র or পর#2503;র ল#2503;ভ#2503;ল [when Game is Card shows and Window is You're on the page and Guard is Card buttons ready]
+      s15 --> s14: you press আব#2494;র খ#2503;ল#2507; on the friend's level [when Game is Card shows and Window is You're on the page and Guard is Card buttons ready]
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 blue
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 yellow
+  class s2 mayBreak
+  class s3 blue
+  class s3 bugPath
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 mayBreak
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s15 mayBreak

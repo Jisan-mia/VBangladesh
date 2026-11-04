@@ -1,0 +1,130 @@
+---
+title: "ছক-জﬂ°°2507¶ßডﬂ°°2492¶ßﬂ°°2494¶ß: the quilt, the tab, the finger and কﬂ°°2494¶ßটﬂ°°2494¶ßকﬂ°°2497¶ßটﬂ°°2495¶ß"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks GhostOnlyUnderAFinger or InputReleasedWhenAway or NoCheerAfterMovingOn or ResultStaysABeat in some cases
+    lg4: Path to the BotsWaitWhileHidden or GhostOnlyUnderAFinger or InputReleasedWhenAway or NoCheerAfterMovingOn or ResultStaysABeat bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 mayBreak
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Quilt" as r0 {
+      s0: Fresh quilt
+      s1: Bot's turn
+      s2: Quilt just finished
+      s3: Your turn
+      s4: Result on screen
+      s5: Paused
+      [*] --> s0
+      s0 --> s2: you press Enter on the last gap [when Screen is Quilt on screen and Tab is Tab showing and Finger is not Finger on the cloth]
+      s1 --> s0: you pick a quilt mode
+      s1 --> s3: the bot sews a stitch
+      s1 --> s2: the bot sews the last box [when Screen is Quilt on screen]
+      s1 --> s5: you hide the tab
+      s0 --> s1: you sew a stitch [when Screen is Quilt on screen and Tab is Tab showing and Finger is Finger on the cloth]
+      s0 --> s2: you sew the last box [when Screen is Quilt on screen and Tab is Tab showing and Finger is Finger on the cloth]
+      s2 --> s4: a moment passes
+      s2 --> s0: you press আর#2503;কব#2494;র or Enter [when Tab is Tab showing and Finger is No finger and Cheer is Cheer on its way]
+      s3 --> s0: you pick a quilt mode [when Finger is not Finger on the cloth]
+      s3 --> s2: you press Enter on the last gap [when Screen is Quilt on screen and Finger is not Finger on the cloth]
+      s3 --> s5: you hide the tab
+      s4 --> s0: you press আর#2503;কব#2494;র or Enter [when Tab is Tab showing]
+      s3 --> s1: you sew a stitch [when Screen is Quilt on screen and Finger is Finger on the cloth]
+      s3 --> s2: you sew the last box [when Screen is Quilt on screen and Finger is Finger on the cloth]
+      s5 --> s0: you pick a quilt mode [when Tab is Tab showing]
+      s5 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you open ক#2494;ট#2494;ক#2497;ট#2495; [when Screen is Quilt on screen and Tab is Tab showing]
+      s5 --> s3: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you open ক#2494;ট#2494;ক#2497;ট#2495; [when Screen is Quilt on screen and Tab is Tab showing]
+    }
+    --
+    state "Screen" as r1 {
+      s6: Quilt on screen
+      s7: ক#2494;ট#2494;ক#2497;ট#2495;, your turn
+      s8: ক#2494;ট#2494;ক#2497;ট#2495;, bot's turn
+      s9: ক#2494;ট#2494;ক#2497;ট#2495; round over
+      [*] --> s6
+      s6 --> s7: you open ক#2494;ট#2494;ক#2497;ট#2495; [when Quilt is none of Quilt just finished, Result on screen and Tab is Tab showing and Finger is not Finger on the cloth]
+      s7 --> s6: you pick a quilt mode [when Tab is Tab showing]
+      s7 --> s8: you mark a cell [when Tab is Tab showing]
+      s7 --> s9: you mark a cell [when Tab is Tab showing]
+      s8 --> s7: the ক#2494;ট#2494;ক#2497;ট#2495; bot marks
+      s8 --> s9: the ক#2494;ট#2494;ক#2497;ট#2495; bot marks
+      s8 --> s6: you pick a quilt mode [when Tab is Tab showing]
+      s9 --> s7: you press আর#2503;ক দ#2494;ন [when Tab is Tab showing]
+      s9 --> s8: you press আর#2503;ক দ#2494;ন [when Tab is Tab showing]
+      s9 --> s6: you pick a quilt mode [when Tab is Tab showing]
+    }
+    --
+    state "Tab" as r2 {
+      s10: Tab showing
+      s11: Tab hidden
+      [*] --> s10
+      s10 --> s11: you hide the tab
+      s11 --> s10: the tab shows again
+    }
+    --
+    state "Finger" as r3 {
+      s12: No finger
+      s13: Finger on the cloth
+      s14: Page still thinks a finger is down
+      [*] --> s12
+      s12 --> s13: you touch the cloth [when Quilt is one of Fresh quilt, Your turn and Screen is Quilt on screen and Tab is Tab showing]
+      s13 --> s12: you sew a stitch or you sew the last box
+      s13 --> s14: you hide the tab
+      s14 --> s13: you touch the cloth [when Quilt is one of Fresh quilt, Your turn and Screen is Quilt on screen and Tab is Tab showing]
+    }
+    --
+    state "Cheer" as r4 {
+      s15: Quiet
+      s16: Cheer on its way
+      [*] --> s15
+      s15 --> s16: you press Enter on the last gap [when Quilt is one of Fresh quilt, Your turn and Screen is Quilt on screen and Tab is Tab showing and Finger is not Finger on the cloth]
+      s15 --> s16: the bot sews the last box [when Quilt is Bot's turn and Screen is Quilt on screen and Tab is Tab showing and Finger is not Finger on the cloth]
+      s15 --> s16: you sew the last box [when Quilt is one of Fresh quilt, Your turn and Screen is Quilt on screen and Tab is Tab showing and Finger is Finger on the cloth]
+      s16 --> s15: the cheer plays
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s2 blue
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 teal
+  class s3 mayBreak
+  class s4 blue
+  class s4 mayBreak
+  class s5 yellow
+  class s5 mayBreak
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 teal
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 mayBreak
+  class s16 bugPath

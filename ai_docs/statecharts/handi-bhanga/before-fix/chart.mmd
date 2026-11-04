@@ -1,0 +1,147 @@
+---
+title: "হﬂ°°2494¶ßﬂ°°2433¶ßডﬂ°°2492¶ßﬂ°°2495¶ßভﬂ°°2494¶ßঙﬂ°°2494¶ß: round, window, hands, level list and cheer"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks ChoiceFreezesPlay or InputReleasedWhenAway or NoProgressWhileAway or PausedWhenBlurred or PausedWhenOffScreen
+    lg4: Breaks ChoiceFreezesPlay or InputReleasedWhenAway or NoProgressWhileAway or PausedWhenBlurred or PausedWhenOffScreen in some cases
+    lg5: Path to the ChoiceFreezesPlay or InputReleasedWhenAway or NoProgressWhileAway or PausedWhenBlurred or PausedWhenOffScreen bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Waiting for your first throw
+      s1: Ball in the air
+      s2: Card shows
+      s3: Paused
+      s4: Ball on the stick
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; or the চ#2494;প#2507; pad [when Window is one of Stall scrolled away, You're on the stall]
+      s1 --> s2: the round ends with no stars or the round ends with stars
+      s1 --> s3: you scroll the stall away [when Window is You're on the stall]
+      s1 --> s3: you press #9208; [when Window is not Another window has focus]
+      s1 --> s3: you hide the tab
+      s1 --> s4: the ball falls, a chance is lost
+      s2 --> s0: you pick a level or press পর#2503;র ল#2503;ভ#2503;ল [when Window is one of Stall scrolled away, You're on the stall]
+      s2 --> s4: you press আব#2494;র খ#2503;ল#2507; [when Window is one of Stall scrolled away, You're on the stall]
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the stall]
+      s1 --> s0: you pick a level or press পর#2503;র ল#2503;ভ#2503;ল [when Window is not Another window has focus and Levels is সব ল#2503;ভ#2503;ল open]
+      s4 --> s1: you throw the ball [when Window is not Another window has focus]
+      s4 --> s3: you scroll the stall away [when Window is You're on the stall]
+      s4 --> s3: you press #9208; [when Window is not Another window has focus]
+      s4 --> s3: you hide the tab
+      s3 --> s0: you pick a level or press পর#2503;র ল#2503;ভ#2503;ল [when Window is one of Stall scrolled away, You're on the stall and Levels is সব ল#2503;ভ#2503;ল open]
+      s3 --> s4: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the stall]
+      s4 --> s0: you pick a level or press পর#2503;র ল#2503;ভ#2503;ল [when Window is not Another window has focus and Levels is সব ল#2503;ভ#2503;ল open]
+    }
+    --
+    state "Window" as r1 {
+      s5: You're on the stall
+      s6: Stall scrolled away
+      s7: Another window has focus
+      s8: Tab hidden
+      [*] --> s5
+      s5 --> s6: you scroll the stall away
+      s5 --> s7: you click into another window
+      s5 --> s8: you hide the tab
+      s6 --> s5: you scroll back
+      s6 --> s7: you click into another window
+      s6 --> s8: you hide the tab
+      s7 --> s5: you come back to the window
+      s7 --> s8: you hide the tab
+      s8 --> s5: the tab shows again
+      s7 --> s6: you come back to the window
+      s8 --> s6: the tab shows again
+    }
+    --
+    state "Keys" as r2 {
+      s9: Keys up
+      s10: Holding #8592; or #8594;
+      [*] --> s9
+      s9 --> s10: you hold #8592; or #8594; [when Window is one of Stall scrolled away, You're on the stall]
+      s10 --> s9: you let go of the key or you click into another window or you hide the tab
+    }
+    --
+    state "Finger" as r3 {
+      s11: Finger up
+      s12: Finger or mouse down on the stall
+      [*] --> s11
+      s11 --> s12: you press on the stall [when Game is none of Card shows, Paused and Window is one of Stall scrolled away, You're on the stall and Cheer is No cheer waiting]
+      s12 --> s11: you lift your finger [when Window is one of Stall scrolled away, You're on the stall]
+    }
+    --
+    state "Levels" as r4 {
+      s13: সব ল#2503;ভ#2503;ল closed
+      s14: সব ল#2503;ভ#2503;ল open
+      [*] --> s13
+      s13 --> s14: you open সব ল#2503;ভ#2503;ল [when Window is one of Stall scrolled away, You're on the stall]
+      s14 --> s13: you close সব ল#2503;ভ#2503;ল [when Window is one of Stall scrolled away, You're on the stall]
+    }
+    --
+    state "Cheer" as r5 {
+      s15: No cheer waiting
+      s16: Cheer still to come
+      [*] --> s15
+      s15 --> s16: the round ends with stars [when Game is Ball in the air and Window is not Tab hidden]
+      s16 --> s15: you pick a level or press পর#2503;র ল#2503;ভ#2503;ল or you press আব#2494;র খ#2503;ল#2507; [when Window is one of Stall scrolled away, You're on the stall]
+      s16 --> s15: the cheer plays
+    }
+    --
+    state "Chances" as r6 {
+      s17: Every ball fell while you watched
+      s18: A ball fell while you were away
+      [*] --> s17
+      s17 --> s18: the round ends with no stars or the round ends with stars or the ball falls, a chance is lost [when Game is Ball in the air and Window is Another window has focus and Keys is Keys up and Cheer is No cheer waiting]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 blue
+  class s2 mayBreak
+  class s3 yellow
+  class s3 mayBreak
+  class s4 teal
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 blue
+  class s16 mayBreak
+  class s17 mayBreak
+  class s17 bugPath
+  class s18 breaks
+  class s18 bugPath

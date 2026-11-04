@@ -1,0 +1,158 @@
+---
+title: "পﬂ°°2495¶ßযﬂ°°2492¶ßনﬂ°°2503¶ßর সﬂ°°2494¶ßইকﬂ°°2503¶ßল: ride, window, route list, cheer, link and card"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks ChoiceFreezesPlay or CompareOnlySameRoad or NoFanfareAfterMovingOn or NoProgressWhileAway or PausedWhenBlurred or PausedWhenOffScreen or RouteMatchesRide
+    lg4: Breaks ChoiceFreezesPlay or CompareOnlySameRoad or NoFanfareAfterMovingOn or NoProgressWhileAway or PausedWhenBlurred or PausedWhenOffScreen or RouteMatchesRide in some cases
+    lg5: Path to the ChoiceFreezesPlay or CompareOnlySameRoad or NoFanfareAfterMovingOn or NoProgressWhileAway or PausedWhenBlurred or PausedWhenOffScreen or RouteMatchesRide bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Waiting at the start
+      s1: Riding
+      s2: Bumped, result shows
+      s3: Paused
+      [*] --> s0
+      s0 --> s1: you tap the road or a lane button [when Window is one of Road scrolled away, You're on the road]
+      s1 --> s2: you bump before the goal or you bump past a star mark
+      s1 --> s3: you scroll the road away [when Window is You're on the road]
+      s1 --> s3: you press থ#2494;ম#2494;ও [when Window is not Another window has focus]
+      s1 --> s3: you hide the tab
+      s2 --> s0: you press পর#2503;র র#2497;ট or you press আর#2503;কব#2494;র খ#2503;ল#2507; on the card [when Window is one of Road scrolled away, You're on the road]
+      s2 --> s1: you press আব#2494;র খ#2503;ল#2507; [when Window is one of Road scrolled away, You're on the road]
+      s2 --> s0: a friend's link opens [when Window is one of Road scrolled away, You're on the road and Route is not On the friend's route and Card is not Card compares with the friend (same road)]
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is one of Road scrolled away, You're on the road]
+      s3 --> s0: a friend's link opens [when Window is one of Road scrolled away, You're on the road and Route is one of No friend's link, On another route]
+      s1 --> s0: you pick a route [when Window is not Another window has focus and Routes is সব র#2497;ট open]
+      s2 --> s0: you pick a route [when Window is one of Road scrolled away, You're on the road and Routes is সব র#2497;ট open]
+      s3 --> s0: you pick a route [when Window is one of Road scrolled away, You're on the road and Routes is সব র#2497;ট open]
+    }
+    --
+    state "Window" as r1 {
+      s4: You're on the road
+      s5: Road scrolled away
+      s6: Another window has focus
+      s7: Tab hidden
+      [*] --> s4
+      s4 --> s5: you scroll the road away
+      s4 --> s6: you click into another window
+      s4 --> s7: you hide the tab
+      s5 --> s4: you scroll back
+      s5 --> s6: you click into another window
+      s5 --> s7: you hide the tab
+      s6 --> s4: you come back to the window
+      s6 --> s7: you hide the tab
+      s7 --> s4: the tab shows again
+      s6 --> s5: you come back to the window
+      s7 --> s5: the tab shows again
+      s5 --> s4: you pick a route [when Routes is সব র#2497;ট open]
+      s5 --> s4: you press পর#2503;র র#2497;ট [when Game is Bumped, result shows and Route is not Label says the friend's route, you ride another and Card is not No result card]
+      s5 --> s4: you press আর#2503;কব#2494;র খ#2503;ল#2507; on the card [when Game is one of Bumped, result shows, Waiting at the start and Route is not Label says the friend's route, you ride another and Card is not No result card]
+    }
+    --
+    state "Routes" as r2 {
+      s8: সব র#2497;ট closed
+      s9: সব র#2497;ট open
+      [*] --> s8
+      s8 --> s9: you open সব র#2497;ট [when Window is one of Road scrolled away, You're on the road]
+      s9 --> s8: you close সব র#2497;ট [when Window is one of Road scrolled away, You're on the road]
+    }
+    --
+    state "Cheer" as r3 {
+      s10: No chimes waiting
+      s11: Chimes still to come
+      [*] --> s10
+      s10 --> s11: you bump past a star mark [when Game is Riding and Window is not Tab hidden and Card is No result card]
+      s11 --> s10: you press আব#2494;র খ#2503;ল#2507; [when Game is Bumped, result shows and Window is one of Road scrolled away, You're on the road and Card is not No result card]
+      s11 --> s10: the chimes play
+      s11 --> s10: you tap the road or a lane button [when Game is Waiting at the start and Window is one of Road scrolled away, You're on the road]
+    }
+    --
+    state "Route" as r4 {
+      s12: No friend's link
+      s13: On the friend's route
+      s14: Label says the friend's route, you ride another
+      s15: On another route
+      [*] --> s12
+      s12 --> s13: a friend's link opens [when Game is not Riding and Window is one of Road scrolled away, You're on the road]
+      s12 --> s14: a friend's link opens [when Game is Riding and Window is one of Road scrolled away, You're on the road and Cheer is No chimes waiting and Card is No result card]
+      s14 --> s13: you bump before the goal or you bump past a star mark [when Game is Riding and Window is not Tab hidden]
+      s13 --> s15: you pick a route [when Window is one of Road scrolled away, You're on the road and Routes is সব র#2497;ট open]
+      s13 --> s15: you press পর#2503;র র#2497;ট [when Game is Bumped, result shows and Window is one of Road scrolled away, You're on the road and Card is not No result card]
+      s14 --> s15: you pick a route [when Window is one of Road scrolled away, You're on the road and Routes is সব র#2497;ট open]
+      s15 --> s13: a friend's link opens [when Game is not Riding and Window is one of Road scrolled away, You're on the road]
+      s15 --> s14: a friend's link opens [when Game is Riding and Window is one of Road scrolled away, You're on the road and Cheer is No chimes waiting and Card is No result card]
+    }
+    --
+    state "Card" as r5 {
+      s16: No result card
+      s17: Card, no comparison
+      s18: Card compares with the friend (a different road)
+      s19: Card compares with the friend (same road)
+      [*] --> s16
+      s16 --> s17: you bump before the goal or you bump past a star mark [when Game is Riding and Window is not Tab hidden and Cheer is No chimes waiting and Route is No friend's link]
+      s17 --> s16: you press পর#2503;র র#2497;ট or you press আব#2494;র খ#2503;ল#2507; [when Game is Bumped, result shows and Window is one of Road scrolled away, You're on the road]
+      s17 --> s18: a friend's link opens [when Window is one of Road scrolled away, You're on the road]
+      s16 --> s18: you bump before the goal or you bump past a star mark [when Game is Riding and Window is not Tab hidden and Cheer is No chimes waiting and Route is one of Label says the friend's route, you ride another, On another route]
+      s16 --> s19: you bump before the goal or you bump past a star mark [when Game is Riding and Window is not Tab hidden and Cheer is No chimes waiting and Route is On the friend's route]
+      s18 --> s16: you press আব#2494;র খ#2503;ল#2507; or you press পর#2503;র র#2497;ট [when Game is Bumped, result shows and Window is one of Road scrolled away, You're on the road]
+      s17 --> s16: you pick a route [when Window is one of Road scrolled away, You're on the road and Routes is সব র#2497;ট open]
+      s19 --> s16: you press আব#2494;র খ#2503;ল#2507; or you press পর#2503;র র#2497;ট [when Game is Bumped, result shows and Window is one of Road scrolled away, You're on the road]
+      s18 --> s16: you tap the road or a lane button [when Game is Waiting at the start and Window is one of Road scrolled away, You're on the road]
+      s17 --> s16: you tap the road or a lane button [when Game is Waiting at the start and Window is one of Road scrolled away, You're on the road]
+      s18 --> s16: you pick a route [when Window is one of Road scrolled away, You're on the road and Routes is সব র#2497;ট open]
+      s19 --> s16: you pick a route [when Window is one of Road scrolled away, You're on the road and Routes is সব র#2497;ট open]
+      s19 --> s16: you tap the road or a lane button [when Game is Waiting at the start and Window is one of Road scrolled away, You're on the road]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 blue
+  class s2 bugPath
+  class s3 yellow
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 mayBreak
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 breaks
+  class s14 bugPath
+  class s15 mayBreak
+  class s16 mayBreak
+  class s16 bugPath
+  class s17 mayBreak
+  class s17 bugPath
+  class s18 breaks
+  class s18 bugPath
+  class s19 mayBreak
