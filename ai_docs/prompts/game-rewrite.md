@@ -56,6 +56,7 @@ Then build it.
 
 ## Known shared patterns (from the statechart runs; fix them in your game)
 - **Never set `location.hash` or push history** (it fires popstate, which the player reads as Back and closes full screen). Update the address with `history.replaceState(history.state, '', url)`.
+- **Pass `onLevels` to `useGamePlayer`** to get সব লেভেল in the pause menu; it opens your own pausing level list.
 - **The game's own P key calls `player.requestPause()`,** so there is one pause menu, the player's.
 - **Pause on window blur, not only on a hidden tab.** The player broadcasts the pause; make sure your loop, clock and spawns stop.
 - **Release held keys and drags on blur**, and ignore game keys while paused.

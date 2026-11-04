@@ -13,6 +13,8 @@
  *   player.requestRestart()          the same as নতুন করে শুরু in the menu
  *   player.requestPause()            opens the pause menu, the same as the button (use it for the game's own P key)
  *   player.onPause(fn) / onResume(fn) / onRestart(fn)   subscribe; each returns an unsubscribe. The handlers argument does this for you.
+ *   onLevels            pass it and the pause menu shows সব লেভেল; the menu closes, play resumes, then your handler opens
+ *                       the game's own level list (which pauses play itself).
  *
  * The same size is on the stage element as CSS variables --stage-w and --stage-h (plus data-immersive), so CSS alone can fit a board:
  *   .gp-stage .my-board { width: min(100%, calc((var(--stage-h, 100svh) - 220px) * .75)); }
@@ -42,27 +44,29 @@ export type GamePlayerApi = {
   onPause: Subscribe;
   onResume: Subscribe;
   onRestart: Subscribe;
+  onLevels: Subscribe;
 };
 
 const none: Subscribe = () => () => {};
-const outside: GamePlayerApi = { paused: false, immersive: false, stage: { width: 0, height: 0 }, requestRestart: () => {}, requestPause: () => {}, onPause: none, onResume: none, onRestart: none };
+const outside: GamePlayerApi = { paused: false, immersive: false, stage: { width: 0, height: 0 }, requestRestart: () => {}, requestPause: () => {}, onPause: none, onResume: none, onRestart: none, onLevels: none };
 const PlayerContext = createContext<GamePlayerApi>(outside);
 
 /** The player around this game. Pass handlers to subscribe to them; the latest ones are always called, so no stale closures. */
-export function useGamePlayer(handlers?: { onPause?: Handler; onResume?: Handler; onRestart?: Handler }): GamePlayerApi {
+export function useGamePlayer(handlers?: { onPause?: Handler; onResume?: Handler; onRestart?: Handler; onLevels?: Handler }): GamePlayerApi {
   const player = useContext(PlayerContext);
   const latest = useRef(handlers);
   latest.current = handlers;
-  const wants = [Boolean(handlers?.onPause), Boolean(handlers?.onResume), Boolean(handlers?.onRestart)] as const;
-  const { onPause, onResume, onRestart } = player;
+  const wants = [Boolean(handlers?.onPause), Boolean(handlers?.onResume), Boolean(handlers?.onRestart), Boolean(handlers?.onLevels)] as const;
+  const { onPause, onResume, onRestart, onLevels } = player;
   useEffect(() => {
     const off = [
       wants[0] ? onPause(() => latest.current?.onPause?.()) : null,
       wants[1] ? onResume(() => latest.current?.onResume?.()) : null,
       wants[2] ? onRestart(() => latest.current?.onRestart?.()) : null,
+      wants[3] ? onLevels(() => latest.current?.onLevels?.()) : null,
     ];
     return () => off.forEach(stop => stop?.());
-  }, [onPause, onResume, onRestart, wants[0], wants[1], wants[2]]);
+  }, [onPause, onResume, onRestart, onLevels, wants[0], wants[1], wants[2], wants[3]]);
   return player;
 }
 
@@ -85,6 +89,7 @@ const paths: Record<string, ReactNode> = {
   slow: <><circle cx="10" cy="12" r="5.5" /><path d="M10 12a2 2 0 1 0 2-2M2.5 18h15a3 3 0 0 0 3-3v-4m0 0-1.2-3m1.2 3 1.8-2.4" /></>,
   exit: <><path d="M14 4h5v16h-5" /><path d="M10 8l-4 4 4 4M6 12h9" /></>,
   back: <path d="M15 5l-7 7 7 7" />,
+  levels: <><rect x="4" y="4" width="6.5" height="6.5" rx="1.5" /><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5" /><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5" /><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5" /></>,
 };
 const Icon = ({ name }: { name: keyof typeof paths }) => <svg className="gp-icon" viewBox="0 0 24 24" aria-hidden="true">{paths[name]}</svg>;
 
@@ -133,15 +138,18 @@ export function GamePlayer({ slug, name, head, lead, art, steps, guideTitle, kid
   const phone = useRef(false);
   // The finger or mouse button held on the game, so a pause can cancel it (the game never sees its pointerup under the menu).
   const held = useRef<{ target: Element; id: number; type: string } | null>(null);
-  const handlers = useRef({ pause: new Set<Handler>(), resume: new Set<Handler>(), restart: new Set<Handler>() });
+  const handlers = useRef({ pause: new Set<Handler>(), resume: new Set<Handler>(), restart: new Set<Handler>(), levels: new Set<Handler>() });
+  const [hasLevels, setHasLevels] = useState(false);
 
-  const subscribe = (kind: 'pause' | 'resume' | 'restart'): Subscribe => handler => {
+  const subscribe = (kind: 'pause' | 'resume' | 'restart' | 'levels'): Subscribe => handler => {
     handlers.current[kind].add(handler);
-    return () => { handlers.current[kind].delete(handler); };
+    if (kind === 'levels') setHasLevels(true);
+    return () => { handlers.current[kind].delete(handler); if (kind === 'levels') setHasLevels(handlers.current.levels.size > 0); };
   };
   const [onPause] = useState(() => subscribe('pause'));
   const [onResume] = useState(() => subscribe('resume'));
   const [onRestart] = useState(() => subscribe('restart'));
+  const [onLevels] = useState(() => subscribe('levels'));
 
   /** Fire an event the player itself must not react to. */
   const quietly = (fire: () => void) => { synthetic.current = true; try { fire(); } finally { synthetic.current = false; } };
@@ -386,7 +394,7 @@ export function GamePlayer({ slug, name, head, lead, art, steps, guideTitle, kid
     return () => { observer.disconnect(); window.removeEventListener('resize', measure); };
   }, [shape]);
 
-  const api = useMemo<GamePlayerApi>(() => ({ paused: menu !== null, immersive, stage, requestRestart: restart, requestPause: () => openMenu(), onPause, onResume, onRestart }), [menu, immersive, stage, restart, openMenu, onPause, onResume, onRestart]);
+  const api = useMemo<GamePlayerApi>(() => ({ paused: menu !== null, immersive, stage, requestRestart: restart, requestPause: () => openMenu(), onPause, onResume, onRestart, onLevels }), [menu, immersive, stage, restart, openMenu, onPause, onResume, onRestart, onLevels]);
   const style = box ? { '--gp-w': `${box.width}px`, '--gp-h': `${box.height}px`, '--gp-rows': box.rows } as CSSProperties : undefined;
   const stageStyle = stage.width ? { '--stage-w': `${stage.width}px`, '--stage-h': `${stage.height}px` } as CSSProperties : undefined;
 
@@ -415,6 +423,7 @@ export function GamePlayer({ slug, name, head, lead, art, steps, guideTitle, kid
                     <h2 id="gp-menu-title">থেমে আছে</h2>
                     <button type="button" className="gp-resume" data-first onClick={resume}><Icon name="play" />চালিয়ে যাও</button>
                     <button type="button" onClick={restart}><Icon name="restart" />নতুন করে শুরু</button>
+                    {hasLevels && <button type="button" onClick={() => { resume(); handlers.current.levels.forEach(handler => handler()); }}><Icon name="levels" />সব লেভেল</button>}
                     <button type="button" onClick={() => setMenu('howto')}><Icon name="help" />কীভাবে খেলবে</button>
                     <button type="button" role="switch" aria-checked={sound} onClick={() => { setSound(!sound); if (!sound) sfx.tap(); }}>
                       <Icon name={sound ? 'soundOn' : 'soundOff'} />শব্দ<span className="gp-state">{sound ? 'চালু' : 'বন্ধ'}</span>

@@ -93,7 +93,9 @@ player.paused;          // true while the menu is open
 player.immersive;       // true while the game fills the screen
 player.stage;           // { width, height } of the play area in CSS px (0 × 0 outside a player or before it's measured)
 player.requestRestart(); // the same as নতুন করে শুরু
-player.requestPause();   // opens the pause menu, the same as the button (use it for the game's own P key)
+player.requestPause();
+// useGamePlayer({ onLevels: () => openMyLevelList() }) adds সব লেভেল to the pause menu (it resumes, then calls you)
+   // opens the pause menu, the same as the button (use it for the game's own P key)
 player.onPause(fn) / onResume(fn) / onRestart(fn) // manual subscriptions; each returns an unsubscribe
 ```
 
