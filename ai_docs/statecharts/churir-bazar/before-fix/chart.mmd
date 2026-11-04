@@ -1,0 +1,137 @@
+---
+title: "চﬂ°°2497¶ßডﬂ°°2492¶ßﬂ°°2495¶ßর বﬂ°°2494¶ßজﬂ°°2494¶ßর: tray, pause, window, drag, rattle and cheer"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks InputReleasedWhenAway or NoCheerAfterYouMoveOn or RattleWhileShaking in some cases
+    lg4: Path to the InputReleasedWhenAway or NoCheerAfterYouMoveOn or RattleWhileShaking bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 mayBreak
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Tray" as r0 {
+      s0: Waiting for your first swap
+      s1: Bangles lifting and falling
+      s2: Last move's bangles falling
+      s3: Out of moves
+      s4: Tray still, your move
+      s5: No swap left, চ#2497;ড#2492;#2495; ঝ#2494;#2433;ক#2494;ও shows
+      s6: Level cleared, card shows
+      s7: Paused
+      s8: Tray shaking
+      [*] --> s0
+      s0 --> s1: you swap two bangles [when Window is You're on the page and Pointer is Pointer free]
+      s0 --> s2: you swap two bangles [when Window is You're on the page and Pointer is Pointer free]
+      s1 --> s4: the tray settles
+      s1 --> s5: no swap is left
+      s1 --> s7: you hide the tab
+      s2 --> s3: the moves run out [when Window is not Tab hidden]
+      s2 --> s6: the goals are met [when Window is not Tab hidden]
+      s0 --> s1: the pointer moves across the tray [when Window is You're on the page and Pointer is A bangle is being dragged]
+      s0 --> s2: the pointer moves across the tray [when Window is You're on the page and Pointer is A bangle is being dragged]
+      s3 --> s0: you start a level or open a friend's link [when Window is You're on the page]
+      s4 --> s1: you swap two bangles [when Window is You're on the page and Pointer is Pointer free]
+      s4 --> s2: you swap two bangles [when Window is You're on the page and Pointer is Pointer free]
+      s4 --> s7: you hide the tab
+      s5 --> s8: you press চ#2497;ড#2492;#2495; ঝ#2494;#2433;ক#2494;ও [when Window is You're on the page]
+      s5 --> s7: you hide the tab
+      s6 --> s0: you start a level or open a friend's link [when Window is You're on the page]
+      s8 --> s4: the shake ends
+      s8 --> s7: you hide the tab
+      s4 --> s1: the pointer moves across the tray [when Window is You're on the page and Pointer is A bangle is being dragged]
+      s4 --> s2: the pointer moves across the tray [when Window is You're on the page and Pointer is A bangle is being dragged]
+      s7 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page and Pointer is Pointer free]
+      s7 --> s4: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s7 --> s5: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page and Pointer is Pointer free]
+      s7 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page and Pointer is Pointer free]
+    }
+    --
+    state "Window" as r1 {
+      s9: You're on the page
+      s10: Another window has focus
+      s11: Tab hidden
+      [*] --> s9
+      s9 --> s10: you click into another window
+      s9 --> s11: you hide the tab
+      s10 --> s9: you come back to the window
+      s10 --> s11: you hide the tab
+      s11 --> s9: the tab shows again
+    }
+    --
+    state "Pointer" as r2 {
+      s12: Pointer free
+      s13: A bangle is being dragged
+      [*] --> s12
+      s12 --> s13: you press on a bangle [when Tray is one of Tray still, your move, Waiting for your first swap and Window is You're on the page and Sound is not Sound on, rattle playing]
+      s13 --> s12: you let go or the pointer moves across the tray [when Window is You're on the page]
+    }
+    --
+    state "Sound" as r3 {
+      s14: Sound on, no rattle
+      s15: Sound off
+      s16: Sound on, rattle playing
+      [*] --> s14
+      s14 --> s15: you turn sound off [when Window is You're on the page]
+      s15 --> s14: you turn sound on [when Window is You're on the page]
+      s14 --> s16: you press চ#2497;ড#2492;#2495; ঝ#2494;#2433;ক#2494;ও [when Tray is No swap left, চ#2497;ড#2492;#2495; ঝ#2494;#2433;ক#2494;ও shows and Window is You're on the page and Pointer is Pointer free]
+      s16 --> s14: the shake ends or you hide the tab
+      s16 --> s15: you turn sound off [when Window is You're on the page]
+    }
+    --
+    state "Cheer" as r4 {
+      s17: Nothing to come
+      s18: End sound and confetti still to come
+      [*] --> s17
+      s17 --> s18: the moves run out or the goals are met [when Tray is Last move's bangles falling and Window is not Tab hidden and Pointer is Pointer free and Sound is not Sound on, rattle playing]
+      s18 --> s17: the end sound and confetti play
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 teal
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 blue
+  class s4 teal
+  class s4 mayBreak
+  class s5 teal
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 blue
+  class s6 bugPath
+  class s7 yellow
+  class s7 mayBreak
+  class s8 teal
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 teal
+  class s16 mayBreak
+  class s17 mayBreak
+  class s17 bugPath
+  class s18 mayBreak
+  class s18 bugPath
