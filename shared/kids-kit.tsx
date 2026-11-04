@@ -171,26 +171,39 @@ export function RestScreen({ onExtend }: { onExtend: (minutes: number) => void }
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
     // A real modal: nothing behind the rest screen hears a key, tap or focus while it is up.
+    // It holds the page only while it is actually on screen: inside a game player's hidden stage (a phone's launch
+    // card shows instead) it must not freeze the খেলো button that brings it into view.
     const node = box.current;
     if (!node) return;
-    node.focus();
+    const shown = () => node.getClientRects().length > 0;
     const block = (event: Event) => {
+      if (!shown()) return;
       if (event.target instanceof Node && node.contains(event.target)) return;
       event.stopImmediatePropagation(); event.preventDefault();
       if (event.type === 'focusin') node.focus();
     };
     const kinds = ['keydown', 'keyup', 'keypress', 'pointerdown', 'pointerup', 'click', 'focusin'];
     for (const kind of kinds) window.addEventListener(kind, block, true);
-    // Everything else on the page goes inert, so Tab can't even land on it.
-    const quiet: HTMLElement[] = [];
-    for (let at: HTMLElement | null = node; at && at !== document.body; at = at.parentElement) {
-      for (const sibling of Array.from(at.parentElement?.children ?? [])) {
-        if (sibling !== at && sibling instanceof HTMLElement && !sibling.inert) { sibling.inert = true; quiet.push(sibling); }
+    // Everything else on the page goes inert while it shows, so Tab can't even land on it.
+    let quiet: HTMLElement[] = [];
+    const hold = () => {
+      if (quiet.length) return;
+      node.focus();
+      for (let at: HTMLElement | null = node; at && at !== document.body; at = at.parentElement) {
+        for (const sibling of Array.from(at.parentElement?.children ?? [])) {
+          if (sibling !== at && sibling instanceof HTMLElement && !sibling.inert) { sibling.inert = true; quiet.push(sibling); }
+        }
       }
-    }
+    };
+    const release = () => { for (const sibling of quiet) sibling.inert = false; quiet = []; };
+    const sync = () => { if (shown()) hold(); else release(); };
+    sync();
+    const watch = new ResizeObserver(sync);
+    watch.observe(node);
     return () => {
+      watch.disconnect();
       for (const kind of kinds) window.removeEventListener(kind, block, true);
-      for (const sibling of quiet) sibling.inert = false;
+      release();
     };
   }, []);
   return <div ref={box} tabIndex={-1} className="kk-rest" role="dialog" aria-modal="true" aria-label="আজকের খেলা শেষ">
