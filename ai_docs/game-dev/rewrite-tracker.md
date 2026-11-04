@@ -12,7 +12,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | deri-hoye-gelo | S02 | analysed | todo |
 | chor-police | S03 | analysed | done |
 | bostar-pahar | S03 | analysed | done |
-| tarer-fanke-belun | S03 | analysed | rewriting |
+| tarer-fanke-belun | S03 | analysed | done |
 | paka-kancha | S04 | analysed | todo |
 | jora-melao | S04 | analysed | todo |
 | chhok-jora | S04 | analysed | rewriting |
@@ -27,7 +27,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | jam-chharao | S07 | analysed | todo |
 | shobdo-khoja | S08 | analysed | done |
 | carrom | S08 | analysed | done |
-| pati-buni | S08 | analysed | rewriting |
+| pati-buni | S08 | analysed | done |
 | sudoku | S09 | analysed | done |
 | switchboard | S09 | analysed | done |
 | golokdhadha | S09 | analysed | done |
