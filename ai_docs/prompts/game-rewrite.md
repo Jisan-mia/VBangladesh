@@ -77,6 +77,8 @@ Then build it.
     - `RestScreen` is a real modal that blocks input behind it;
     - the daily timer counts only the focused tab.
   - Hide `SpeakButton` when sound is off, or make it turn sound on.
+  - Call `atBreak()` when a round starts as well as when it ends. The kit already opens on the rest screen past the limit, and an open gate shuts after one action.
+  - Nothing a child types (a name, a word) ever leaves the phone: no `/api/share` and no link carrying it. A share bar on a kids' page sits behind `ParentGate` and sends only the tool's address.
 - **ধীরে খেলো must not make stars easier to earn,** unless the design says so explicitly.
 
 ## Scope
