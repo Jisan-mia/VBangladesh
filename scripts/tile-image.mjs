@@ -29,6 +29,9 @@ if (unknown.length) { console.error('not in the catalog:', unknown.join(', ')); 
  * The cards put a headline on top, so the crop aims at the art below it.
  */
 const overrides = {
+  // The start screens: the brass থালা and the TV are the game's own art.
+  'chor-police': { select: '.cp-start', zoom: 0.78, focus: [0.5, 0.15] },
+  'antenna-thik-koro': { select: '.at-title-start' },
   // The board is mostly empty before play; the share card has the snake and the ঠোঙা.
   'jhalmuri-sap': { preview: [0.05, 0.1, 0.9] },
   'chhok-jora': { preview: [0.14, 0.2, 0.72] },
