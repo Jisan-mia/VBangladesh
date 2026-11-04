@@ -91,6 +91,8 @@ ONLY:
 - `ai_docs/game-dev/rewrites/{SLUG}.md`;
 - `.shots/`.
 
+**The dev server's audio is muted on purpose** (the owner works beside the tests): never set `ektukhani-dev-sound` or resume an AudioContext; prove sound by counting node starts.
+
 **Keep the dev build compiling at every save.** One compile error in any tool makes the dev server return 500 on every route and blocks every other agent:
 - write new modules as new files;
 - keep old exports until the component switches over;
