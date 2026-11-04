@@ -9,6 +9,49 @@ export const palette = {
   tongue: "#d63a2a", ink: "#2a1d14", chilli: "#c0391b", mustard: "#e7a91f", gold: "#f4c534",
 };
 
+/** One palette per world: the board, its print or tiles, the tin fence, and the bolts or bulbs along it. */
+export type WorldPalette = { board: string; boardAlt: string; marks: string; tin: string; tinLight: string; tinDark: string; bolt: string; trim: string; night: boolean; snakeHot: string };
+export const worldPalettes: Record<"paper" | "station" | "fair", WorldPalette> = {
+  // ঠোঙার মাঠ: newsprint on a tin tray.
+  paper: { board: palette.paper, boardAlt: palette.paperAlt, marks: "#0000000c", tin: palette.tin, tinLight: palette.tinLight, tinDark: palette.tinDark, bolt: palette.rust, trim: "#4d565b", night: false, snakeHot: "#e2683b" },
+  // ইস্টিশন: grey platform tiles, green-painted tin, a yellow edge line.
+  station: { board: "#dddcd4", boardAlt: "#d3d2c9", marks: "#0000001a", tin: "#4f8a64", tinLight: "#7db18b", tinDark: "#336247", bolt: "#e8b730", trim: "#28473a", night: false, snakeHot: "#e2683b" },
+  // রাতের মেলা: an indigo night, purple tin, warm bulbs along the fence.
+  fair: { board: "#2c2f5f", boardAlt: "#323668", marks: "#ffffff0d", tin: "#8a5fae", tinLight: "#b48bd3", tinDark: "#5d3e7c", bolt: "#ffd36b", trim: "#2a1b3d", night: true, snakeHot: "#ff7a4a" },
+};
+
+/** A পাতিকাক: black with a grey neck, side on, facing right (the board mirrors it to face left). */
+export function drawCrow(c: CanvasRenderingContext2D, x: number, y: number, r: number) {
+  c.lineJoin = "round"; c.lineCap = "round";
+  c.fillStyle = "#18171c";
+  c.beginPath(); c.moveTo(x - r * 0.95, y - r * 0.05); c.lineTo(x - r * 0.35, y - r * 0.2); c.lineTo(x - r * 0.4, y + r * 0.25); c.closePath(); c.fill();
+  c.beginPath(); c.ellipse(x - r * 0.05, y + r * 0.08, r * 0.62, r * 0.42, -0.15, 0, TAU); c.fill();
+  c.fillStyle = "#6f6d75";
+  c.beginPath(); c.ellipse(x + r * 0.38, y - r * 0.2, r * 0.32, r * 0.3, 0, 0, TAU); c.fill();
+  c.fillStyle = "#18171c";
+  c.beginPath(); c.arc(x + r * 0.52, y - r * 0.36, r * 0.27, 0, TAU); c.fill();
+  c.fillStyle = "#3b3a40";
+  c.beginPath(); c.moveTo(x + r * 0.74, y - r * 0.42); c.lineTo(x + r * 1.08, y - r * 0.3); c.lineTo(x + r * 0.74, y - r * 0.24); c.closePath(); c.fill();
+  c.fillStyle = "#f5f0e0";
+  c.beginPath(); c.arc(x + r * 0.56, y - r * 0.42, r * 0.09, 0, TAU); c.fill();
+  c.strokeStyle = "#3b3a40"; c.lineWidth = Math.max(1.2, r * 0.1);
+  c.beginPath(); c.moveTo(x - r * 0.1, y + r * 0.45); c.lineTo(x - r * 0.15, y + r * 0.8); c.moveTo(x + r * 0.15, y + r * 0.45); c.lineTo(x + r * 0.15, y + r * 0.8); c.stroke();
+}
+
+/** A clay pipe mouth seen from above: a dark hole in a rim, with three arrows round it so the pair reads as a pair, not as food. */
+export function drawPipe(c: CanvasRenderingContext2D, x: number, y: number, r: number) {
+  c.fillStyle = "#a65f37"; c.beginPath(); c.arc(x, y, r * 0.92, 0, TAU); c.fill();
+  c.strokeStyle = "#6e3a1d"; c.lineWidth = Math.max(1.5, r * 0.12); c.stroke();
+  const hole = c.createRadialGradient(x, y + r * 0.1, r * 0.05, x, y, r * 0.66);
+  hole.addColorStop(0, "#050302"); hole.addColorStop(1, "#3a2414");
+  c.fillStyle = hole; c.beginPath(); c.arc(x, y, r * 0.64, 0, TAU); c.fill();
+  c.strokeStyle = "#f4d39b"; c.lineWidth = Math.max(1.2, r * 0.09);
+  for (let i = 0; i < 3; i++) {
+    const a = i * TAU / 3 - Math.PI / 2;
+    c.beginPath(); c.arc(x, y, r * 0.79, a, a + 0.9); c.stroke();
+  }
+}
+
 const TAU = Math.PI * 2;
 // Module constants, so the per-frame head drawing allocates nothing.
 const SIDES = [-1, 1] as const;

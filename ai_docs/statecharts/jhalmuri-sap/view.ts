@@ -1,32 +1,19 @@
-export const title = "ঝালমুড়ি সাপ: run, window, board, card guard, celebration and link";
-const game = (v: any) => ({ ready: "Ready screen", playing: "Snake moving", paused: "Paused", over: "Card shows" } as any)[v.phase];
-const link = (v: any) => !v.friend ? "No friend's link" : v.on !== "theirs" ? "Another level picked" : v.seed === "theirs" ? "Friend's ঠোঙা on the board" : "Friend's level, other ঠোঙা";
+export const title = "Jhalmuri Sap: the run, the story, pause, going away, the card and held keys";
 export const state = (v: any) => ({
-  Game: game(v),
-  Window: !v.visible ? "Tab hidden" : v.focused ? "You're on the page" : "Another window has focus",
-  Board: v.inView ? "Board on screen" : "Board scrolled away",
-  Guard: v.guard ? "Card buttons wait 0.7 s" : "Card buttons ready",
-  Celebration: v.cheer ? "Stars or confetti queued" : "Nothing queued",
-  Link: link(v),
+  Game: ({ title: "Title screen", story: "Story plays", playing: "Snake moving", paused: "Paused (player's menu)", over: "Card shows" } as any)[v.phase],
+  Away: ({ "": "You're on the game", blur: "Another window has focus", hide: "Tab hidden", scroll: "Stage scrolled away" } as any)[v.away],
+  Card: v.cheer ? "Celebration queued" : v.guard ? "Card buttons wait 0.7 s" : "Card buttons ready",
+  Keys: v.held ? "A key is held down" : "No key held",
 });
 export const step = (action: string, from: any, to: any) => {
-  if (action === "YouPlayAgain") return to.on === "theirs" ? "you press আবার খেলো on the friend's level" : "you press আরেকবার or পরের লেভেল";
-  if (action === "RunEnds") return to.cheer ? "the run ends with stars or a record" : "the snake crashes";
-  if (action === "YouPickLevel") return to.on === "theirs" ? "you pick the friend's level" : "you pick another level or ক্লাসিক";
+  if (action === "GoAway") return to.away === "blur" ? "you click into another window" : to.away === "hide" ? "you hide the tab" : "you scroll the stage away";
+  if (action === "RunEnds") return to.cheer ? "the run ends with a celebration" : "the run ends";
   return ({
-    YouStart: "you press শুরু করো or swipe",
-    YouPause: "you press P or the pause button",
-    YouResume: "you press চালিয়ে যাও",
-    GuardLifts: "0.7 s pass",
-    CheerPlays: "the stars or confetti play",
-    FriendLinkOpens: "a friend's link opens",
-    WindowBlurs: "you click into another window",
-    WindowFocuses: "you come back to the window",
-    TabHides: "you hide the tab",
-    TabShows: "the tab shows again",
-    YouScrollAway: "you scroll the board away",
-    YouScrollBack: "you scroll back to the board",
+    YouStart: "you press খেলো", StoryEnds: "the story ends or you hold to skip", YouPause: "you press ⏸ or Escape", YouResume: "you press চালিয়ে যাও",
+    YouHoldKey: "you hold a key down", YouLetGo: "you let go", GuardLifts: "0.7 s pass", CheerPlays: "the confetti plays",
+    YouPlayAgain: "you press আবার খেলো (or a fresh Enter)", HeldKeyRepeats: "the held key repeats on the card",
+    YouReset: "you press নতুন করে শুরু or pick a level", ComeBack: "you come back",
   } as Record<string, string>)[action] ?? action;
 };
-export const group = (v: any) => v.phase === "over" ? "done" : v.phase === "paused" ? "held" : v.phase === "ready" ? "wait" : "play";
+export const group = (v: any) => v.phase === "over" ? "done" : v.phase === "paused" ? "held" : v.phase === "title" ? "wait" : "play";
 export const colors = { wait: "blue", play: "teal", held: "yellow", done: "blue" };

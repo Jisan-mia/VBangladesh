@@ -1,61 +1,243 @@
-# ঝালমুড়ি সাপ: statechart (before the rewrite)
+# ঝালমুড়ি সাপ: statechart
 
-Model: `Snake.tla` / `Snake.cfg`, view `view.ts`, output `before-fix/` (`report.md`, `chart.mmd`).
-Mirrors `tools/jhalmuri-sap/components/snake-game.tsx` (`start`, `pause`, `resume`, `restart`, `choose`, `press`, `side`, `finish`, `tick`, the `visibilitychange`, `hashchange` and in-view effects, the keydown handler) and `shared/game-kit.ts` (`useGameLoop` at commit a5fb4f1: stops on a hidden tab, not on blur).
-TLC: 264 states, 1210 steps. The chart draws 16 states and 36 arrows as parallel regions.
+The game was rewritten on 2026-11-04 (design: `ai_docs/game-dev/rewrites/jhalmuri-sap.md`). The model now has two parts, so each chart stays readable:
 
-**Note, code in flux:** while this ran, another agent wrapped the page in the new shared game player (`shared/game-player*.tsx`, `useGamePlayer({ onPause, onResume, onRestart })` added to `snake-game.tsx` at 09:23) and changed `useGameLoop` to stop on blur (09:36). The model is of the game's own handlers; the live replays below ran between 09:29 and 09:34 against what the dev server served then. Re-run the model once the player lands: it should fix bug 1 if its blur pause reaches `pause()`, and bug 2 only if it also pauses a run that *starts* while the stage is already off-screen (see the fix note).
+| Spec | What it covers | Mirrors | TLC |
+|---|---|---|---|
+| `Snake.tla` / `Snake.cfg`, view `view.ts` | the title, the first-run story, the snake, the player's pause, going away (blur, hide, scroll), the end screen's 0.7 s guard and celebration, a key held through the crash | `tools/jhalmuri-sap/lib/session.ts`, `components/snake-game.tsx`, `shared/game-player-client.tsx`, `useGameLoop` | 84 states, 347 steps |
+| `SnakeLevels.tla` / `SnakeLevels.cfg`, view `view-levels.ts` | the level list, a friend's link, this game's own unlock | `lib/progress.ts`, `lib/session.ts` (`pick`, `reset`), `choose`, the hashchange effect, `finish` | 100 states, 455 steps |
 
-## Systems modelled
-| Region | Values | Code |
-|---|---|---|
-| Game | Ready screen, Snake moving, Paused, Card shows | `phaseRef`, `go()` |
-| Window | on the page, another window has focus, tab hidden | `visibilitychange` → `pause()`; **no `blur` listener** |
-| Board | on screen, scrolled away | `useInView(board)` (IntersectionObserver, threshold 0.15) → `pause()` only when it *changes* to false |
-| Guard | card buttons wait 0.7 s, ready | `setRestartReady(false)` + `setTimeout(…, 700)` in `finish()` |
-| Celebration | queued, nothing queued | the `window.setTimeout` in `finish()` (0.15–1.1 s, never cleared) |
-| Link | none, friend's ঠোঙা on the board, friend's level with another ঠোঙা, another level | `hashchange` → `readFriend()`, `restart()`, `choose()` |
+- `before-fix/` is the run on the code before the rewrite. Its spec is in git, at commit a6ee28b.
+- `after-fix/` and `after-fix-levels/` are runs on the rewritten code. **Every rule holds.**
 
-Turns are discrete (swipe, key, tap), so nothing is ever "held"; the snake moves on its own every step. Left out: the snake's rules and level ladder (pure, covered by `tests/snake.test.ts`, `tests/levels.test.ts`), sound (no loops, only one-shots), stars and best (`recordLevel` keeps the max). Timing fact built into the model: a run can't end within 0.7 s of the previous crash (the fastest crash after a start is about 0.6 s of moves, plus picking and starting), so the old card's 0.7 s timer, which is never cleared either, has always fired before a new card appears. An earlier run without that fact flagged a stale guard; it can't happen at human speed, so it is not a bug.
+## Rules (plain words), all holding after the fix
+**Snake.tla**
+- **PausedWhenHidden**, **PausedWhenBlurred**, **PausedWhenScrolledAway:** neither the snake nor the story moves while the tab is hidden, another window has focus, or the stage is scrolled off the screen. Starting, resuming and আবার খেলো are refused there too.
+- **CelebrationOnItsOwnCard:** confetti, the clear chime or the win sound play only while their own run's card shows.
+- **ResultNeedsFreshPress:** a key held through the crash never starts the next run.
+- **InputReleasedWhenAway:** after a blur or hide, no key or swipe counts as held.
+- **StoryOnlyOnce:** the story plays on the first run only.
 
-## Rules (plain words)
-- **PausedWhenHidden** (holds): the snake never moves while the tab is hidden.
-- **PausedWhenBlurred** (breaks): the snake never moves while another window has focus.
-- **PausedWhenScrolledAway** (breaks): the snake never moves while the board is scrolled off the screen.
-- **CelebrationOnItsOwnCard** (breaks): the stars' notes, confetti or win sound only play while their own card shows.
-- **ReplayIsExact** (holds): when the friend's level is picked, the friend's ঠোঙা is on the board.
+**SnakeLevels.tla**
+- **ChoiceFreezesPlay:** the level list opens only on the title or the card, and nothing runs under it.
+- **ReplayIsExact:** the friend's level carries the friend's ঠোঙা.
+- **FriendClearOpensNothingBetween:** clearing a friend's far-ahead level opens no level in between.
+- **OnlyPlayableLevels:** you only play levels that are open, have stars, or are the friend's level.
+- **UnlockNeverShrinks** (a temporal property).
 
-## Bugs
-### 1. PausedWhenBlurred: "I clicked into another window and when I came back the snake had already crashed."
-Shared bug (kalbaishakhi, dudh; same family as antenna's DialStillWhileAway).
-- Path (report): ready → শুরু করো → you click into another window.
-- Live replay (Orca, own tab): level 1, শুরু করো at head (5, 11) → `blur` → 3 s later: **11 moves, head (5, 0), crashed into the top fence**, card "ঝাল লেগে গেল!", while the window was still away.
-- Fix (shared): pause on `window` `blur` like on hide (`window.addEventListener("blur", pause)` next to the `visibilitychange` listener), or let the shared player's blur pause call `pause()`.
+As a check of the model, swapping in the shared `unlockedLevel` rule breaks **FriendClearOpensNothingBetween** in 3 steps: a friend's link opens → খেলো → you clear it → "Levels 1–3 open".
 
-### 2. PausedWhenScrolledAway: "I scrolled down to the buttons, pressed আরেকবার, and the snake ran and crashed off-screen."
-Game-specific (the in-view effect only reacts to a *change*; a run started while the board is already off-screen never pauses).
-- Path (report): you scroll the board away → you press শুরু করো → Snake moving, board scrolled away. The live path uses the card's আরেকবার, which sits just under the board.
-- Live replay: crash, wait 0.8 s, scroll so **9%** of the board shows (under the 15% threshold) and the controls sit at the top of the screen → press আরেকবার → `playing`, still 9% visible → 1.5 s later 2 moves → **4.1 s later crashed (11 moves)** with no pause. The turn buttons that replace আরেকবার are on screen, so a player steers blind.
-- Fix: in `start()`, `resume()` and `restart()`, refuse to run (or pause straight away) when `boardInView` is false, and scroll the board into view first (`board.current.scrollIntoView({ block: "center" })`), as `choose()` already does.
+## The bugs, and how each was fixed
+| # | Bug (the reader's sentence) | Fix | Node test | Live check after the fix (Orca, own tab) |
+|---|---|---|---|---|
+| 1 | **PausedWhenBlurred:** "I clicked into another window and when I came back the snake had already crashed." | The player's blur pause calls `onPause` → `session.pause()`. `useGameLoop` stops frames on blur. The game also keeps its own `focused` flag, so nothing restarts while you're away. | `session.test.ts` › bug 1, PausedWhenBlurred | Pixel 9, immersive, level 5: moves 3 → blur → the menu opens, `inert` → moves 3 after 2.5 s → চালিয়ে যাও → still 3 at +450 ms (the 0.6 s breath) → 7 at +1.35 s. |
+| 2 | **PausedWhenScrolledAway:** "I scrolled down, pressed আরেকবার, and the snake ran and crashed off-screen." | `session.start()` and `again()` refuse when the stage isn't in view (`useInView` on the game, 35%). The player pauses a running snake on scroll-away. Keys act only while the stage is in view. `scrollIntoView` is gone. | `session.test.ts` › bug 2, PausedWhenScrolledAway | Desktop, scrolled 1,461 px past the stage: ArrowUp, Enter and Space all leave it on the title (`inView=false`). Scrolled back: ArrowUp starts the run. |
+| 3 | **CelebrationOnItsOwnCard:** "I pressed পরের লেভেল as soon as it lit up, and the clear chime played over my new run." | Every timer goes through `later()` and is cleared in `deal()` (reset, পরের লেভেল, আবার খেলো, a level pick, a link) and on unmount. The callback also checks `cheerMayPlay(session, run)`. Scheduled notes use `tone()`'s delay, so the player's pause cuts them. | `session.test.ts` › bug 3, CelebrationOnItsOwnCard | Level 1 cleared with ★★★ (gold forced), পরের লেভেল at +760 ms: 0 oscillators and no confetti between +900 and +1,500 ms. The control run stays on the card: 5 notes and confetti at +989 ms. |
+| 4 | **ResultNeedsFreshPress** (shared pattern): a held Space or Enter could restart from the card once the guard lifted. | `again()` takes a key only if `!repeat` and it was pressed after the card appeared. Enter and Space are handled at `window` with `preventDefault`, and buttons blur after a click. | `session.test.ts` › result keys need a fresh press | No live check: the rule is in `again()`. |
+| 5 | **Friend link opens levels in between** (shared pattern) | The game keeps its own unlock in `ektukhani-unlock-jhalmuri-sap`. It is migrated once from `unlockedLevel`, and `afterClear` raises it only for a level that was already open. পরের লেভেল appears only when the next level is playable. | `session.test.ts` › friend links…, UnlockNeverShrinks | Unlock 5, a link to level 9 (`s=777&t=150&l=9&g=0`), cleared ★★★: the stars are saved, the unlock stays at 6, and the card says "রিমার চেয়ে ৯০ বেশি!" |
 
-### 3. CelebrationOnItsOwnCard: "I pressed পরের লেভেল as soon as it lit up, and the clear chime played over my new run."
-Shared pattern (kalbaishakhi, dudh).
-- Path (report): শুরু করো → the run ends with stars → you pick another level or ক্লাসিক (celebration still queued). The more common path in play: the card's buttons unlock at 0.7 s, the celebration fires at 1.1 s, so any press of আবার খেলো / পরের লেভেল in between carries it into the next run.
-- Live replay: level 1 cleared (5 bites, 59 moves, 1 star) at +0 ms → পরের লেভেল at **+764 ms** (enabled) → level 2 playing → at **+1101 ms** two oscillators (`sfx.good`) during level 2's run. With three stars or a new classic best it is `sfx.levelUp`/`sfx.win` plus confetti.
-- Fix: keep both timer ids (the celebration and the 0.7 s guard) and clear them in `reset()`; or raise the guard to 1.2 s so the celebration always plays on its own card.
+**Quality-bar gaps closed (see the design):**
+- the ঠোঙা start art;
+- the 3-panel story with hold to skip;
+- the level list as a numbered choice screen with "এটা খেলো";
+- the HUD in the board's corners, with the floats moved to the score;
+- the orange danger rim;
+- named finales, world palettes, the shaker signature and world motifs;
+- counted-up end stats.
 
-## Quality-bar gaps (played end to end in Orca; `.shots/jhalmuri-sap-ready.png`, `-play.png`, `-card.png`; the bot cleared levels 1 and 2 with ★★★ on level 2, 150 points)
-1. **First screen:** before the player wrapper, the start action was a plain শুরু করো in a note on the board; the mode chips (লেভেল / ক্লাসিক) don't say what each changes ("যত খুশি লম্বা হও" shows only once chosen).
-2. **Story:** the bar names ঝালমুড়ি সাপ for an optional 2–4 panel intro (the ঝালমুড়িওয়ালা, the ঠোঙা); there is none.
-3. **Choices:** the level list is a collapsed `<details>` ("সব লেভেল"), unnumbered beyond the digits, no one-line effect per level (walls from level 3 are only in the paragraph), no default marked.
-4. **Pause:** the game's own pause is "থেমে আছে। তৈরি হলে চাপো।" + চালিয়ে যাও only; the shared player's menu is being added. Blur and a run started off-screen don't pause (bugs 1, 2).
-5. **Danger:** nothing at the edge when the head is one cell from a wall or the tail; the crash is the first warning.
-6. **HUD:** score, খাওয়া and সোনালি sit in a row above the board (good); the `+১০` / `গতি` floats appear at the head, in the middle of the play area (small, but the bar says no labels over play).
-7. **Sound:** three one-shots plus the combo climb; no signature tune and nothing changes between levels or speeds.
-8. **End:** good: real stats, stars, the line about chillies, near-miss, friend compare, card and seeded link; the 0.7 s guard against crash taps works (but see bug 3).
+## Chart: the run (`after-fix/chart.mmd`)
+```mermaid
+---
+title: "Jhalmuri Sap: the run, the story, pause, going away, the card and held keys"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: wait
+    lg1: play
+    lg2: held
+    lg3: done
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Title screen
+      s1: Story plays
+      s2: Paused (player's menu)
+      s3: Snake moving
+      s4: Card shows
+      [*] --> s0
+      s0 --> s1: you press খ#2503;ল#2507; [when Away is You're on the game and Keys is No key held]
+      s1 --> s2: you press #9208; or Escape or you click into another window or you hide the tab or you scroll the stage away
+      s1 --> s3: the story ends or you hold to skip
+      s2 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Away is You're on the game and Keys is No key held]
+      s2 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497; or pick a level
+      s3 --> s2: you press #9208; or Escape or you click into another window or you hide the tab or you scroll the stage away
+      s3 --> s4: the run ends or the run ends with a celebration
+      s2 --> s3: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Away is You're on the game]
+      s4 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497; or pick a level
+      s4 --> s3: you press আব#2494;র খ#2503;ল#2507; (or a fresh Enter) [when Away is You're on the game and Card is not Card buttons wait 0.7 s]
+      s0 --> s3: you press খ#2503;ল#2507; [when Away is You're on the game]
+    }
+    --
+    state "Away" as r1 {
+      s5: You're on the game
+      s6: Another window has focus
+      s7: Tab hidden
+      s8: Stage scrolled away
+      [*] --> s5
+      s5 --> s6: you click into another window
+      s5 --> s7: you hide the tab
+      s5 --> s8: you scroll the stage away
+      s6 --> s5: you come back
+      s7 --> s5: you come back
+      s8 --> s5: you come back
+    }
+    --
+    state "Card" as r2 {
+      s9: Card buttons ready
+      s10: Card buttons wait 0.7 s
+      s11: Celebration queued
+      [*] --> s9
+      s9 --> s10: the run ends [when Game is Snake moving and Away is You're on the game]
+      s9 --> s11: the run ends with a celebration [when Game is Snake moving and Away is You're on the game]
+      s10 --> s9: 0.7 s pass or you press নত#2497;ন কর#2503; শ#2497;র#2497; or pick a level
+      s11 --> s10: the confetti plays
+      s11 --> s9: you press নত#2497;ন কর#2503; শ#2497;র#2497; or pick a level or the confetti plays
+      s11 --> s9: you press আব#2494;র খ#2503;ল#2507; (or a fresh Enter) [when Away is You're on the game]
+    }
+    --
+    state "Keys" as r3 {
+      s12: No key held
+      s13: A key is held down
+      [*] --> s12
+      s12 --> s13: you hold a key down [when Game is Snake moving and Away is You're on the game and Card is Card buttons ready]
+      s13 --> s12: you let go
+      s13 --> s12: you click into another window or you hide the tab [when Away is You're on the game]
+    }
+  }
+  class s0 blue
+  class s1 teal
+  class s2 yellow
+  class s3 teal
+  class s4 blue
+  class s10 blue
+  class s11 blue
+```
+
+## Chart: levels, links and the unlock (`after-fix-levels/chart.mmd`)
+```mermaid
+---
+title: "Jhalmuri Sap: the level list, a friend's link and the unlock"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+  }
+  class lg0 teal
+  state "Game Title or level list" as s0 {
+    state "Level Your own level" as s1 {
+      s2: Unlock Only level 1 open
+      s3: Unlock Levels 1#8211;2 open
+      s4: Unlock Levels 1#8211;3 open
+    }
+    state "Level Friend's level, friend's ঠ#2507;ঙ#2494;" as s5 {
+      s6: Unlock Only level 1 open
+      s7: Unlock Levels 1#8211;2 open
+      s8: Unlock Levels 1#8211;3 open
+    }
+  }
+  state "Game Snake moving" as s9 {
+    state "Level Your own level" as s10 {
+      s11: Unlock Only level 1 open
+      s12: Unlock Levels 1#8211;2 open
+      s13: Unlock Levels 1#8211;3 open
+    }
+    state "Level Friend's level, friend's ঠ#2507;ঙ#2494;" as s14 {
+      s15: Unlock Only level 1 open
+      s16: Unlock Levels 1#8211;2 open
+      s17: Unlock Levels 1#8211;3 open
+    }
+  }
+  state "Game Card (or level list)" as s18 {
+    state "Level Your own level" as s19 {
+      s20: Unlock Only level 1 open
+      s21: Unlock Levels 1#8211;2 open
+      s22: Unlock Levels 1#8211;3 open
+    }
+    state "Level Friend's level, friend's ঠ#2507;ঙ#2494;" as s23 {
+      s24: Unlock Only level 1 open
+      s25: Unlock Levels 1#8211;2 open
+      s26: Unlock Levels 1#8211;3 open
+    }
+  }
+  [*] --> s2
+  s2 --> s11: you press খ#2503;ল#2507;
+  s2 --> s6: a friend's link opens or you pick the friend's level
+  s11 --> s6: a friend's link opens
+  s11 --> s20: the snake crashes
+  s11 --> s21: you clear your furthest level
+  s6 --> s2: you pick a level
+  s6 --> s15: you press খ#2503;ল#2507;
+  s20 --> s2: you pick a level
+  s20 --> s11: you press আব#2494;র খ#2503;ল#2507;
+  s20 --> s6: a friend's link opens or you pick the friend's level
+  s21 --> s12: you press আব#2494;র খ#2503;ল#2507; or you press পর#2503;র ল#2503;ভ#2503;ল
+  s21 --> s3: you pick a level
+  s21 --> s7: a friend's link opens or you pick the friend's level
+  s15 --> s24: you clear the friend's level or the snake crashes
+  s12 --> s21: you clear a level or the snake crashes
+  s12 --> s7: a friend's link opens
+  s3 --> s12: you press খ#2503;ল#2507;
+  s3 --> s7: a friend's link opens or you pick the friend's level
+  s12 --> s22: you clear your furthest level
+  s24 --> s6: you pick the friend's level
+  s24 --> s2: you pick a level
+  s24 --> s15: you press আব#2494;র খ#2503;ল#2507;
+  s24 --> s11: you press পর#2503;র ল#2503;ভ#2503;ল
+  s7 --> s3: you pick a level
+  s7 --> s16: you press খ#2503;ল#2507;
+  s22 --> s13: you press পর#2503;র ল#2503;ভ#2503;ল or you press আব#2494;র খ#2503;ল#2507;
+  s22 --> s4: you pick a level
+  s22 --> s8: a friend's link opens or you pick the friend's level
+  s20 --> s15: you press পর#2503;র ল#2503;ভ#2503;ল
+  s21 --> s16: you press পর#2503;র ল#2503;ভ#2503;ল
+  s16 --> s25: you clear the friend's level or the snake crashes
+  s13 --> s8: a friend's link opens
+  s13 --> s22: you clear a level or the snake crashes
+  s4 --> s13: you press খ#2503;ল#2507;
+  s4 --> s8: a friend's link opens or you pick the friend's level
+  s25 --> s7: you pick the friend's level
+  s25 --> s3: you pick a level
+  s25 --> s16: you press আব#2494;র খ#2503;ল#2507;
+  s25 --> s12: you press পর#2503;র ল#2503;ভ#2503;ল
+  s8 --> s4: you pick a level
+  s8 --> s17: you press খ#2503;ল#2507;
+  s22 --> s17: you press পর#2503;র ল#2503;ভ#2503;ল
+  s17 --> s26: the snake crashes or you clear the friend's level
+  s26 --> s8: you pick the friend's level
+  s26 --> s4: you pick a level
+  s26 --> s17: you press আব#2494;র খ#2503;ল#2507;
+  s26 --> s13: you press পর#2503;র ল#2503;ভ#2503;ল
+  class s11 teal
+  class s12 teal
+  class s13 teal
+  class s15 teal
+  class s16 teal
+  class s17 teal
+```
+
+## Live checks
+- The dev build exposes `window.__jhalmuri = { game(), session }` (never in production). An autopilot reads it and presses arrow keys.
+- With the autopilot, levels 1–4, 6, 7, 8, 10 and 11 were cleared, and 12 crashed into its tail, in Orca at 412 × 620.
+- Screenshots are in `.shots/jhalmuri-sap-*.png`.
+- Orca pins `document.hidden` to false, so the hide path was checked in node (`session.test.ts`) and through the player's soft-hide notes.
 
 ## Regenerate
 ```sh
 scripts/statechart.sh ai_docs/statecharts/jhalmuri-sap/Snake.tla --view ai_docs/statecharts/jhalmuri-sap/view.ts --out ai_docs/statecharts/jhalmuri-sap/<new-folder>
+scripts/statechart.sh ai_docs/statecharts/jhalmuri-sap/SnakeLevels.tla --view ai_docs/statecharts/jhalmuri-sap/view-levels.ts --out ai_docs/statecharts/jhalmuri-sap/<new-folder>
 ```
-After the fix, update the spec to the fixed code (including the shared player) and run into `after-fix/`; every rule must hold.

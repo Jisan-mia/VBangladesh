@@ -1,92 +1,80 @@
 ---- MODULE Snake ----
-\* ঝালমুড়ি সাপ: the run, pause on a hidden tab or a scrolled-away board, window focus, the 0.7 s guard
-\* against crash taps, the delayed celebration, the level list and a friend's link.
-\* Mirrored from tools/jhalmuri-sap/components/snake-game.tsx (start, pause, resume, restart, choose, press,
-\* side, finish, tick, the visibilitychange, hashchange and in-view effects, the keydown handler) and
-\* shared/game-kit.ts (useGameLoop stops frames while the tab is hidden, never on blur). Turns are discrete
-\* (a swipe, a key, a tap), so nothing is ever held; the snake moves by itself every step.
-VARIABLES phase, visible, focused, inView, guard, cheer, friend, on, seed
-vars == <<phase, visible, focused, inView, guard, cheer, friend, on, seed>>
+\* ঝালমুড়ি সাপ after the rewrite, part 1: the run. The title, the first-run story, the snake, the player's pause, going away
+\* (blur, hide, scroll), the end screen's 0.7 s guard and celebration, and a key held through the crash.
+\* Part 2 (SnakeLevels.tla) has the level list, a friend's link and the unlock.
+\* Mirrored from tools/jhalmuri-sap/lib/session.ts (start, storyDone, pause, resume, finish, again, reset, cheerMayPlay) and
+\* tools/jhalmuri-sap/components/snake-game.tsx (deal() clears every timer; the blur, focus, visibilitychange and in-view
+\* effects; the keydown handler), with the shared player (shared/game-player-client.tsx: blur, hide, scroll-away, Escape and ⏸
+\* call onPause; চালিয়ে যাও calls onResume; নতুন করে শুরু calls onRestart) and useGameLoop (no frames while blurred or hidden).
+VARIABLES phase, from, away, guard, cheer, held, skipped, seen
+vars == <<phase, from, away, guard, cheer, held, skipped, seen>>
 
-Phases == {"ready", "playing", "paused", "over"}
-\* guard: the 0.7 s restartReady timer is still pending (it is never cleared). on: the level picked ("theirs" = the friend's level).
-\* seed: whose ঠোঙা is on the board ("theirs" = the friend's seed).
-\* Keys act only while the board is in view (boardInView); a click on a visible button acts regardless.
-CanAct == visible /\ focused
+Phases == {"title", "story", "playing", "paused", "over"}
+Live == {"playing", "story"}
+\* away: "" on the game, or why not (one at a time is enough for every rule).
+CanPlay == away = ""
 
-Init == /\ phase = "ready" /\ visible = TRUE /\ focused = TRUE /\ inView = TRUE
-        /\ guard = FALSE /\ cheer = FALSE
-        /\ friend = FALSE /\ on = "mine" /\ seed = "fresh"
+Init == /\ phase = "title" /\ from = "playing" /\ away = "" /\ guard = FALSE /\ cheer = FALSE
+        /\ held = FALSE /\ skipped = FALSE /\ seen = FALSE
 
-\* শুরু করো, Space, an arrow, a swipe or a tap on the board: start().
-YouStart == /\ phase = "ready" /\ CanAct /\ phase' = "playing"
-            /\ UNCHANGED <<visible, focused, inView, guard, cheer, friend, on, seed>>
-\* P, Esc, Space or the pause button.
-YouPause == /\ phase = "playing" /\ CanAct /\ phase' = "paused"
-            /\ UNCHANGED <<visible, focused, inView, guard, cheer, friend, on, seed>>
-\* P, Esc, Space, চালিয়ে যাও, an arrow or a tap: resume() (0.6 s breath first).
-YouResume == /\ phase = "paused" /\ CanAct /\ phase' = "playing"
-             /\ UNCHANGED <<visible, focused, inView, guard, cheer, friend, on, seed>>
-\* tick() → step(): a crash or the level's last bite → finish(): the card shows, restartReady = false for 0.7 s,
-\* and a celebration (confetti, sfx.good or sfx.win) may be queued for 0.15–1.1 s later (never cleared).
-\* tick() runs on every frame while the tab is visible, focused or not.
-\* Timing fact: a run can't end within 0.7 s of the last crash (the fastest crash after a start is ~0.6 s of moves,
-\* plus picking a level and starting), so the old card's 0.7 s timer has always fired by then.
-RunEnds == /\ phase = "playing" /\ visible /\ ~guard
+\* খেলো, Enter, an arrow or a swipe: session.start(), refused while away or off-screen; the story only the first time.
+YouStart == /\ phase = "title" /\ CanPlay
+            /\ phase' = IF seen THEN "playing" ELSE "story"
+            /\ UNCHANGED <<from, away, guard, cheer, held, skipped, seen>>
+\* The third panel ends, a tap past it, or a 0.6 s hold: storyDone().
+StoryEnds == /\ phase = "story" /\ CanPlay /\ phase' = "playing" /\ seen' = TRUE
+             /\ UNCHANGED <<from, away, guard, cheer, held, skipped>>
+\* Escape, ⏸ or P: the player's menu → onPause → session.pause().
+YouPause == /\ phase \in Live /\ phase' = "paused" /\ from' = phase
+            /\ UNCHANGED <<away, guard, cheer, held, skipped, seen>>
+\* চালিয়ে যাও → onResume → session.resume(), only when the game can be seen.
+YouResume == /\ phase = "paused" /\ CanPlay /\ phase' = from
+             /\ UNCHANGED <<from, away, guard, cheer, held, skipped, seen>>
+YouHoldKey == /\ phase = "playing" /\ ~held /\ held' = TRUE
+              /\ UNCHANGED <<phase, from, away, guard, cheer, skipped, seen>>
+YouLetGo == /\ held /\ held' = FALSE
+            /\ UNCHANGED <<phase, from, away, guard, cheer, skipped, seen>>
+\* tick() → step() ends the run (frames run only while you're on the game): finish(), the 0.7 s guard, maybe a celebration.
+RunEnds == /\ phase = "playing" /\ CanPlay
            /\ phase' = "over" /\ guard' = TRUE /\ cheer' \in BOOLEAN
-           /\ UNCHANGED <<visible, focused, inView, friend, on, seed>>
-\* The 0.7 s timer: setRestartReady(true).
+           /\ UNCHANGED <<from, away, held, skipped, seen>>
 GuardLifts == /\ guard /\ guard' = FALSE
-              /\ UNCHANGED <<phase, visible, focused, inView, cheer, friend, on, seed>>
-\* The 1.1 s timer fires (after the 0.7 s one).
-CheerPlays == /\ cheer /\ ~guard /\ cheer' = FALSE
-              /\ UNCHANGED <<phase, visible, focused, inView, guard, friend, on, seed>>
-\* আবার খেলো / পরের লেভেল / আরেকবার or Space on the card: restart(), only once restartReady.
-YouPlayAgain(which) == /\ phase = "over" /\ ~guard /\ visible /\ focused /\ (which = "theirs" => friend)
-                       /\ phase' = "playing" /\ on' = which
-                       /\ seed' = IF friend /\ which = "theirs" THEN "theirs" ELSE "fresh"
-                       /\ UNCHANGED <<visible, focused, inView, guard, cheer, friend>>
-\* LevelGrid, the লেভেল/ক্লাসিক buttons or the card's link: choose() → reset() and the ready screen, from any screen.
-YouPickLevel(which) == /\ visible /\ focused /\ (which = "theirs" => friend)
-                       /\ phase' = "ready" /\ on' = which /\ inView' = TRUE
-                       /\ seed' = IF friend /\ which = "theirs" THEN "theirs" ELSE "fresh"
-                       /\ UNCHANGED <<visible, focused, guard, cheer, friend>>
-\* hashchange with a valid link: reset(friend's seed, friend's level) and the ready screen.
-FriendLinkOpens == /\ ~friend /\ visible
-                   /\ friend' = TRUE /\ on' = "theirs" /\ seed' = "theirs" /\ phase' = "ready"
-                   /\ UNCHANGED <<visible, focused, inView, guard, cheer>>
-\* There is no blur listener.
-WindowBlurs == /\ visible /\ focused /\ focused' = FALSE
-               /\ UNCHANGED <<phase, visible, inView, guard, cheer, friend, on, seed>>
-WindowFocuses == /\ visible /\ ~focused /\ focused' = TRUE
-                 /\ UNCHANGED <<phase, visible, inView, guard, cheer, friend, on, seed>>
-\* visibilitychange → hidden: pause().
-TabHides == /\ visible /\ visible' = FALSE /\ focused' = FALSE
-            /\ phase' = IF phase = "playing" THEN "paused" ELSE phase
-            /\ UNCHANGED <<inView, guard, cheer, friend, on, seed>>
-TabShows == /\ ~visible /\ visible' = TRUE /\ focused' = TRUE
-            /\ UNCHANGED <<phase, inView, guard, cheer, friend, on, seed>>
-\* useInView(board) turns false → pause().
-YouScrollAway == /\ visible /\ inView /\ inView' = FALSE
-                 /\ phase' = IF phase = "playing" THEN "paused" ELSE phase
-                 /\ UNCHANGED <<visible, focused, guard, cheer, friend, on, seed>>
-YouScrollBack == /\ visible /\ ~inView /\ inView' = TRUE
-                 /\ UNCHANGED <<phase, visible, focused, guard, cheer, friend, on, seed>>
+              /\ UNCHANGED <<phase, from, away, cheer, held, skipped, seen>>
+\* The 1 s celebration timer fires; cheerMayPlay() checks it is still this run's card.
+CheerPlays == /\ cheer /\ cheer' = FALSE
+              /\ UNCHANGED <<phase, from, away, guard, held, skipped, seen>>
+\* আবার খেলো / পরের লেভেল or a fresh Enter after the guard: session.again(), then deal() clears the old run's timers.
+YouPlayAgain == /\ phase = "over" /\ ~guard /\ CanPlay
+                /\ phase' = "playing" /\ cheer' = FALSE
+                /\ UNCHANGED <<from, away, guard, held, skipped, seen>>
+\* The key held through the crash repeats on the card: again() refuses a repeat or a press from before the card appeared.
+HeldKeyRepeats == /\ phase = "over" /\ held
+                  /\ UNCHANGED vars
+\* নতুন করে শুরু, a level picked or a friend's link: reset() → deal() → the title, timers cleared.
+YouReset == /\ phase \in {"paused", "over", "title"} /\ phase' = "title" /\ guard' = FALSE /\ cheer' = FALSE
+            /\ UNCHANGED <<from, away, held, skipped, seen>>
+\* Going away: the player's blur, hide and scroll-away pause (the game drops a held key and a swipe on blur and hide).
+GoAway(why) == /\ away = "" /\ away' = why
+               /\ IF phase \in Live THEN phase' = "paused" /\ from' = phase ELSE UNCHANGED <<phase, from>>
+               /\ held' = IF why = "scroll" THEN held ELSE FALSE
+               /\ UNCHANGED <<guard, cheer, skipped, seen>>
+ComeBack == /\ away # "" /\ away' = ""
+            /\ UNCHANGED <<phase, from, guard, cheer, held, skipped, seen>>
 
-Next == YouStart \/ YouPause \/ YouResume \/ RunEnds \/ GuardLifts \/ CheerPlays
-        \/ YouPlayAgain("theirs") \/ YouPlayAgain("mine") \/ YouPickLevel("theirs") \/ YouPickLevel("mine")
-        \/ FriendLinkOpens \/ WindowBlurs \/ WindowFocuses \/ TabHides \/ TabShows \/ YouScrollAway \/ YouScrollBack
+Next == YouStart \/ StoryEnds \/ YouPause \/ YouResume \/ YouHoldKey \/ YouLetGo \/ RunEnds \/ GuardLifts \/ CheerPlays
+        \/ YouPlayAgain \/ HeldKeyRepeats \/ YouReset \/ GoAway("blur") \/ GoAway("hide") \/ GoAway("scroll") \/ ComeBack
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ phase \in Phases /\ visible \in BOOLEAN /\ focused \in BOOLEAN /\ inView \in BOOLEAN
-          /\ guard \in BOOLEAN /\ cheer \in BOOLEAN /\ friend \in BOOLEAN
-          /\ on \in {"theirs", "mine"} /\ seed \in {"theirs", "fresh"}
+TypeOK == /\ phase \in Phases /\ from \in Live /\ away \in {"", "blur", "hide", "scroll"}
+          /\ guard \in BOOLEAN /\ cheer \in BOOLEAN /\ held \in BOOLEAN /\ skipped \in BOOLEAN /\ seen \in BOOLEAN
 
 \* The reader's rules.
-PausedWhenHidden == phase = "playing" => visible
-PausedWhenBlurred == phase = "playing" => focused
-PausedWhenScrolledAway == phase = "playing" => inView
+PausedWhenHidden == phase \in Live => away # "hide"
+PausedWhenBlurred == phase \in Live => away # "blur"
+PausedWhenScrolledAway == phase \in Live => away # "scroll"
 CelebrationOnItsOwnCard == cheer => phase = "over"
-ReplayIsExact == (friend /\ on = "theirs") => seed = "theirs"
+ResultNeedsFreshPress == ~skipped
+InputReleasedWhenAway == away \in {"blur", "hide"} => ~held
+StoryOnlyOnce == phase = "story" => ~seen
 ====

@@ -1,8 +1,9 @@
 // Challenge links and preview text. Server-safe: the share routes load this file, so it imports only pure game-core.
 import { challengeHash, readChallenge } from "../../../shared/game-core";
 import { chilliesIn, levelOf, levelStars, LEVEL_COUNT } from "./levels";
+import { POINTS } from "./rules";
 
-export const POINTS = 10;
+export { POINTS };
 // A full board holds 192 cells, so 189 bites at most (a quarter of them golden): no real run gets near 3000.
 export const MAX_SCORE = 3000;
 
