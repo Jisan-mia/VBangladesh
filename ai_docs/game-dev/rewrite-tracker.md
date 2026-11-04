@@ -15,7 +15,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | tarer-fanke-belun | S03 | analysed | rewriting |
 | paka-kancha | S04 | analysed | todo |
 | jora-melao | S04 | analysed | todo |
-| chhok-jora | S04 | analysed | todo |
+| chhok-jora | S04 | analysed | rewriting |
 | churui-tarao | S05 | analysed | todo |
 | handi-bhanga | S05 | analysed | todo |
 | peoner-cycle | S05 | analysed | todo |
@@ -34,7 +34,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | ponero-ghor | S10 | analysed | done |
 | chhobi-photao | S10 | analysed | todo |
 | ghontar-sur | S10 | analysed | todo |
-| konta-nei | S11 | analysed | rewriting |
+| konta-nei | S11 | analysed | done |
 | bhul-kothay | S11 | analysed | rewriting |
 | atir-aam | S11 | analysed | todo |
 | bhimruler-chak | S12 | analysed | todo |
@@ -50,11 +50,11 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | kagojer-urojahaj | S15 | analysed | rewriting |
 | marble-sinri | S15 | analysed | rewriting |
 | roshi-tana | S16 | analysed | done |
-| moshar-raat | S16 | analysed | todo |
+| moshar-raat | S16 | analysed | rewriting |
 | al-dhore-hati | S16 | analysed | todo |
 | o-te-ojogor | S17 | analysed | done |
 | kar-chinho | S17 | analysed | done |
-| nam-shikhi | S17 | analysed | rewriting |
+| nam-shikhi | S17 | analysed | done |
 | sourojogot | S18 | analysed | todo |
 | dosh-ghater-nouka | S18 | analysed | todo |
 | golper-mor | S18 | analysed | todo |
