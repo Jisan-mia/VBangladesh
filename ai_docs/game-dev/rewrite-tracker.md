@@ -7,7 +7,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | kalbaishakhi-aam | S01 | analysed | done |
 | dudh-uthlano | S01 | analysed | todo |
 | jhalmuri-sap | S01 | analysed | done |
-| danguli | S02 | analysed | todo |
+| danguli | S02 | analysed | rewriting |
 | sir-ghurlei-thamo | S02 | analysed | todo |
 | deri-hoye-gelo | S02 | analysed | todo |
 | chor-police | S03 | analysed | done |
@@ -46,7 +46,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | latim | S14 | analysed | todo |
 | nodi-par | S14 | analysed | todo |
 | penalty | S14 | analysed | done |
-| golir-badminton | S15 | analysed | rewriting |
+| golir-badminton | S15 | analysed | done |
 | kagojer-urojahaj | S15 | analysed | rewriting |
 | marble-sinri | S15 | analysed | done |
 | roshi-tana | S16 | analysed | done |
