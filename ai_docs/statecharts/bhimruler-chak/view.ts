@@ -1,44 +1,38 @@
-export const title = "ভিমরুলের চাক: round, clock, window, finger and levels";
-const games: Record<string, string> = {
-  ready: "Waiting for your first tap",
-  friendBoard: "Friend's orchard, clock not started",
-  running: "Playing, clock running",
-  paused: "Paused, clock stopped",
-  won: "Orchard cleared, card shows",
-  lost: "Hit a nest",
-};
-const progress = (v: any) =>
-  v.link === 0 ? "No friend link; levels open as you clear them"
-  : v.c1 ? "Friend's link; level 1 cleared"
-  : v.unl >= 2 ? "Friend's level cleared; levels 2–3 saved open, level 1 never cleared"
-  : "Friend's link; levels 2–3 open, level 1 not cleared";
+export const title = "Bhimruler Chak (after the rewrite): the orchard, what holds it, your finger, the hornets";
+// Regions as the player sees them: the orchard, the window and menu, the finger on a bush, the hornets' hum.
 export const state = (v: any) => ({
-  Game: games[v.game],
-  Window: v.win === "hidden" ? "Tab hidden" : v.win === "away" ? "Another window has focus" : "You're on the page",
-  Finger: v.press ? "Finger held on a bush" : "Hands off",
-  Levels: progress(v),
+  Orchard: v.screen === "title" ? (v.linked ? "Friend's orchard on the start card" : "Start card")
+    : v.screen === "over" ? (v.won ? "Orchard cleared, stars show" : "The swarm: round over")
+    : v.sheet ? "সব লেভেল open, orchard held"
+    : v.stings ? "Playing, the hornets are awake" : "Playing, clock running",
+  Window: v.away ? "You're away, menu up" : v.menu ? "Pause menu" : v.guard ? "Just came back (the next tap only wakes)" : "You're on the page",
+  Finger: v.hold ? "Finger held on a bush" : "Hands off",
+  Hum: v.hum === "real" ? "Hornets humming" : v.sound ? "Quiet" : "Sound off",
 });
-// Hidden to keep the chart readable: opening a link mid-round, and starting a level mid-round (both reset the round like
-// the arrows from "Waiting for your first tap" and the end states do).
-const midRound = (v: any) => ["running", "paused", "friendBoard"].includes(v.game);
-export const step = (action: string, from: any, to: any) =>
-  (action === "YouOpenAFriendLink" && from.game !== "ready") || (action === "YouStartALevel" && midRound(from)) ? null
-  : action === "YouClearTheLastBush" && progress(from) !== progress(to)
-  ? (to.c1 && !from.c1 ? "you clear level 1" : "you clear level 2 or 3 before level 1")
-  : ({
-  YouOpenAFriendLink: "you open a friend's link to level 3",
-  YouMakeAMove: "you clear a bush, tie a গামছা or take a hint",
+// Merged: every way to a fresh start card (নতুন করে শুরু, a picked level, choice ১, a friend's link) is "you start a new orchard".
+export const step = (action: string) => ({
+  YouEnter: "you press বাগানে ঢোকো",
+  YouClearABush: "you clear a bush or tie a গামছা",
+  YouStepOnANest: "you tap a nest",
   YouClearTheLastBush: "you clear the last safe bush",
-  YouHitANest: "you tap a nest",
-  YouTouchAndHold: "you press and hold a bush",
+  YouPressAndHold: "you press and hold a bush",
   YouLiftYourFinger: "you lift your finger",
-  TheLongPressTies: "the long press ties a গামছা",
-  WindowBlurs: "you click into another window",
-  WindowFocuses: "you come back to the window",
-  TabHides: "you hide the tab",
-  TabShows: "the tab shows again",
+  TheLongPressFires: "the long press runs out",
+  YouLeave: "you click away or hide the tab",
+  YouComeBack: "you come back",
+  YouOpenTheMenu: "you press ⏸ or P",
   YouResume: "you press চালিয়ে যাও",
-  YouStartALevel: "you start a level",
+  YouRestart: "you start a new orchard",
+  GuardPasses: "a moment passes",
+  ResultGuardPasses: "a moment passes",
+  YouOpenTheSheet: "you open সব লেভেল",
+  YouCloseTheSheet: "you close সব লেভেল",
+  YouPickALevel: "you start a new orchard",
+  YouGoOn: "you start a new orchard",
+  FriendLinkOpens: "you open a friend's link",
+  SoundOff: "you turn sound off",
+  SoundOn: "you turn sound on",
+  ChimesPlay: "the star chimes play",
 } as Record<string, string>)[action] ?? action;
-export const group = (v: any) => (v.game === "won" || v.game === "lost" ? "done" : v.game === "paused" ? "held" : "play");
-export const colors = { play: "teal", held: "yellow", done: "blue" };
+export const group = (v: any) => v.screen === "over" ? "done" : v.away || v.menu || v.sheet ? "held" : v.screen === "title" ? "start" : "play";
+export const colors = { play: "teal", held: "yellow", done: "blue", start: "purple" };

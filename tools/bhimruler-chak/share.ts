@@ -1,7 +1,7 @@
 import type { ToolShare } from "../../shared/share-types";
-import { parseShared, previewTitle, sharedHash } from "./lib/link";
+import { parseShared, previewTitle, sharedHash } from "./lib/challenge";
 
-// No tally: a link only re-opens one orchard (rebuilt from seed, level and first cell) with the friend's own time.
+// No tally: a link only re-opens one orchard (rebuilt from its level and seed; an old link also names the first bush) with the friend's own time.
 export const share: ToolShare = {
   normalize(state) {
     const shared = parseShared(state);

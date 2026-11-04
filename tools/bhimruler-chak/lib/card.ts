@@ -1,13 +1,11 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, type CardFormat } from "../../../shared/card-canvas";
 import { cleanName } from "../../../shared/game-core";
-import { humanLine, levelLabel, sharedStars, sizeLabel, timeText, type Shared } from "./link";
+import { artFor, FIXED } from "./art";
+import { humanLine, levelLabel, sharedStars, sizeLabel, timeText, type Shared } from "./challenge";
+import { isFinale, levelName, worldOf } from "./levels";
 
-/** Morning over an orchard: pale sky, grass, leaf green, ripe mango, a red-and-white checked গামছা. */
-export const palette = {
-  sky: "#fdf3cf", grass: "#8cc461", grassDeep: "#6aa84f", leaf: "#2f6b2a", leafLight: "#3f8a36", bark: "#7a4b26",
-  mango: "#f2b632", mangoBlush: "#e07b28", nest: "#c99a5b", nestLine: "#8a6232", gamchha: "#c8322b",
-  ink: "#24301c", muted: "#5b6b46", star: "#f2a900", starOff: "#d9d2b0", band: "#2f6b2a", ask: "#ffe08a",
-};
+/** The orchard in its world's light (lib/art.ts): sky, grass, leaf green, ripe mango, a red-and-white checked গামছা. */
+let palette = { ...artFor(1), ...FIXED };
 
 function blob(c: CanvasRenderingContext2D, x: number, y: number, rx: number, ry: number, fill: string, turn = 0) {
   c.beginPath(); c.ellipse(x, y, rx, ry, turn, 0, Math.PI * 2); c.fillStyle = fill; c.fill();
@@ -86,13 +84,26 @@ export function drawOrchard(c: CanvasRenderingContext2D, cx: number, top: number
   for (let i = 1; i < 4; i++) { c.beginPath(); c.moveTo(bx - s * 0.17 + i * s * 0.01, by - s * 0.07 + i * s * 0.028); c.lineTo(bx + s * 0.19 - i * s * 0.012, by - s * 0.07 + i * s * 0.028); c.stroke(); }
 }
 
+/** A finale's stamp: a tilted red seal with the finale's name. */
+function stamp(c: CanvasRenderingContext2D, x: number, y: number, label: string) {
+  c.save(); c.translate(x, y); c.rotate(-0.16);
+  c.strokeStyle = FIXED.danger; c.lineWidth = 6; c.globalAlpha = 0.9;
+  c.beginPath(); c.roundRect(-150, -46, 300, 92, 18); c.stroke();
+  fitText(c, [{ text: label, color: FIXED.danger, weight: 800, display: true }], 0, 14, 40, 270, "center");
+  c.restore();
+}
+
 export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: CardFormat, site: string) {
   const { width, height } = cardSizes[format];
   canvas.width = width; canvas.height = height;
   const c = canvas.getContext("2d");
   if (!c) throw new Error("এই ব্রাউজারে ছবি বানানো যাচ্ছে না।");
   const story = format === "story", cx = width / 2, top = story ? 250 : 0, stars = sharedStars(shared);
-  c.fillStyle = palette.sky; c.fillRect(0, 0, width, height);
+  palette = { ...artFor(shared.legacy ? 1 : worldOf(shared.level)), ...FIXED };
+  const dusk = !shared.legacy && worldOf(shared.level) === 3;
+  const sky = c.createLinearGradient(0, 0, 0, height);
+  sky.addColorStop(0, dusk ? "#3b2f55" : palette.sky); sky.addColorStop(0.6, dusk ? palette.sky : palette.sky);
+  c.fillStyle = sky; c.fillRect(0, 0, width, height);
   // The canopy reaches 0.24·s above the scene's top, so the scene starts below the stars.
   const s = story ? 680 : 560, sceneTop = top + 310 + s * 0.24, groundY = sceneTop + s * 1.0;
   c.fillStyle = palette.grass; c.fillRect(0, groundY - 30, width, height - groundY + 30);
@@ -100,18 +111,20 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
   for (let x = 20; x < width; x += 46) { c.beginPath(); c.moveTo(x, groundY - 30); c.lineTo(x + 8, groundY - 52); c.lineTo(x + 16, groundY - 30); c.fill(); }
 
   const name = cleanName(shared.name);
-  fitText(c, [{ text: `ভিমরুলের চাক · ${levelLabel(shared.level)}`, color: palette.muted, weight: 700, display: true }], cx, top + 100, 40, 940, "center");
+  const ink = dusk ? "#2a2238" : palette.ink, finale = !shared.legacy && isFinale(shared.level);
+  fitText(c, [{ text: `ভিমরুলের চাক · ${finale ? levelName(shared.level) : levelLabel(shared.level, shared.legacy)}`, color: dusk ? "#fbeedd" : palette.muted, weight: 700, display: true }], cx, top + 100, 40, 940, "center");
   fitText(c, [
-    { text: name ? `${name} ` : "", color: palette.ink, weight: 800, display: true },
-    { text: `${timeText(shared.seconds)}ে`, color: palette.gamchha, weight: 800, display: true },
-    { text: name ? " বাগান সাফ করেছে" : " বাগান সাফ করলাম", color: palette.ink, weight: 800, display: true },
+    { text: name ? `${name} ` : "", color: dusk ? "#fbeedd" : ink, weight: 800, display: true },
+    { text: `${timeText(shared.seconds)}ে`, color: dusk ? "#ffc27a" : palette.gamchha, weight: 800, display: true },
+    { text: name ? " বাগান সাফ করেছে" : " বাগান সাফ করলাম", color: dusk ? "#fbeedd" : ink, weight: 800, display: true },
   ], cx, top + 196, 72, 980, "center");
   for (let i = 0; i < 3; i++) star(c, cx + (i - 1) * 84, top + 266, 32, i < stars ? palette.star : palette.starOff);
 
   drawOrchard(c, cx + s * 0.04, sceneTop, s);
+  if (finale) stamp(c, cx - s * 0.36, sceneTop + s * 0.12, levelName(shared.level));
   const after = groundY + (story ? 70 : 40);
-  fitText(c, [{ text: humanLine(stars, shared.hints), color: palette.ink, weight: 800, display: true }], cx, after + 40, story ? 54 : 46, 940, "center");
-  fitText(c, [{ text: sizeLabel(shared.level), color: palette.ink, weight: 600 }], cx, after + (story ? 112 : 98), story ? 36 : 32, 900, "center");
+  fitText(c, [{ text: humanLine(stars, shared.hints, shared.stings), color: ink, weight: 800, display: true }], cx, after + 40, story ? 54 : 46, 940, "center");
+  fitText(c, [{ text: sizeLabel(shared.level, shared.legacy), color: ink, weight: 600 }], cx, after + (story ? 112 : 98), story ? 36 : 32, 900, "center");
   drawFooterBand(c, format, "তুমি কত সময়ে পারবে?", site, { band: palette.band, ask: palette.ask, site: "#ffffff" });
 }
 
