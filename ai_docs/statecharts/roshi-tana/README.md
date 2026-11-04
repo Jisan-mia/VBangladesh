@@ -1,9 +1,9 @@
-# রশি টানাটানি: statechart (before the rewrite)
+# রশি টানাটানি: statechart
 
-Model: `Roshi.tla`, `Roshi.cfg`, `view.ts`. Report and chart: `before-fix/report.md`, `before-fix/chart.mmd`.
+Before the rewrite — model: `before-fix/Roshi.tla`, `before-fix/Roshi.cfg`, `before-fix/view.ts`. Report and chart: `before-fix/report.md`, `before-fix/chart.mmd`. The after-fix run is further down.
 Code mirrored: `tools/roshi-tana/components/roshi-game.tsx`, `tools/roshi-tana/lib/rope.ts` (update, resume), `tools/roshi-tana/lib/sound.ts` (crowd), `shared/game-kit.ts` (useGameLoop), `shared/game-sound.ts` (loop, setSoundOn), `shared/game-ui.tsx` (SoundToggle).
 
-TLC: 288 states. 4 rules break and 6 hold (counting NoDeadlock and the StarsNeverDrop property).
+Before the rewrite, TLC: 288 states. 4 rules broke and 6 held (counting NoDeadlock and the StarsNeverDrop property).
 
 ## Systems modelled
 - **Play phase:** ready (the drum waits for a tap) → play (count-in, then pulling) → over (the card). `results` counts how many times the round ended.
@@ -62,9 +62,123 @@ TLC: 288 states. 4 rules break and 6 hold (counting NoDeadlock and the StarsNeve
 
 Screenshots: `.shots/roshi-tana-ready.png` (the ready field and drum), `.shots/roshi-tana-over.png` (the 3★ card after a 9-beat win).
 
+## After the rewrite (`after-fix/`)
+Model: `Roshi.tla`, `Roshi.cfg`, `view.ts` now mirror the rewritten code: `tools/roshi-tana/lib/session.ts` (ticking, canTap, wantCrowd, syncLoops, the events, `tick`, `wake`) and `tools/roshi-tana/components/game.tsx` (begin, step, finish, wakeUp, the player's onPause/onResume, the sound effect). The spec and view from before are kept in `before-fix/`.
+
+TLC: 180 states, 652 steps. **Every rule holds:** TypeOK, PausedWhenHidden, PausedWhenBlurred, NoProgressWhileAway, OffScreenMeansPaused, LoopOnlyWhenMeaningful, LoopComesBack, NeverAStub, ChoiceFreezesPlay, FreshCountInOnReturn, NoDoubleResult, NoDeadlock and the StarsNeverDrop property.
+
+New rules beyond the first run:
+- **NeverAStub:** the crowd is only ever started by `syncLoops` when sound is on, so a silent stub is never kept.
+- **ChoiceFreezesPlay:** while the level list is open, the match doesn't tick.
+- **FreshCountInOnReturn:** whenever the match ticks again after time away (blur, hide, the menu, the list), the clock was re-based and a fresh ৩-২-১ ran. So the click that brings focus back can't be a pull.
+
+### The fixes
+1. **The clock is the step.** Match time moves only in `step()` through `S.tick()`, and `step()` runs only while `ticking()` (play screen, menu shut, list shut, tab visible, window focused). One step never moves the clock more than 100 ms, so even a frozen tab with no blur can't burst. On the way back, `S.wake()` re-bases the clock where it stopped and `resume()` runs a fresh count-in. Drum strokes whose moment has passed are dropped, not fired late. The player's menu opens on blur (P calls `requestPause()` too).
+2. **The crowd follows the session.** `syncLoops` starts a fresh `crowd()` when `wantCrowd` turns true (including sound coming back on) and stops it when it turns false. There is no `??=`, and no loop is ever made while muted.
+3. **The level list is a choice screen** (`openSheet` stops ticking), and the invalid-link `hashchange` now clears the friend banner.
+
+### Node tests (`tools/roshi-tana/tests/session.test.ts`)
+- `statechart PausedWhenBlurred / NoProgressWhileAway: six seconds in another window, and not one beat goes by`
+- `statechart NoProgressWhileAway: a hidden tab and the player's menu freeze the match the same way` (45 s away decides nothing)
+- `statechart NoProgressWhileAway: even with no blur at all (a frozen tab), one step never plays more than 100 ms`
+- `statechart: the click that brings focus back is not a move, and a tap while away is ignored`
+- `statechart LoopOnlyWhenMeaningful: the crowd stops while away, in the menu, on the level list and on the card`
+- `statechart LoopComesBack: start with sound off, turn it on mid-match, and a fresh crowd starts`
+- `statechart ChoiceFreezesPlay: the level list freezes the clock and comes back with a count-in`
+- `statechart NoDoubleResult: a match ends once, and nothing steps after the card shows`
+- `result keys need a fresh press: a Space held through the win doesn't skip the card`
+- `the clock re-bases on return: a tap right on the next pulling beat after the count-in is judged right on`
+
+### Live replays after the fix (Orca, Pixel 9, sound on)
+- **Blur, level 2, autopilot tapping:** at match time 4648 ms, beats 4, their pulls 1, rope x 0.411. Then `blur`, and the player's menu opens. Six seconds later: beats 4, clock 4648 ms, 0 drum strokes, crowd stopped. Then `focus` and চালিয়ে যাও, and 150 ms later: **beats 4, their pulls 1, x 0.411, 0 strokes fired**, the next pulls from beat 11 after a fresh ৩-২-১, and the crowd back. (Before: beats 3 → 11, bot 0 → 4, x 0 → −0.174, 9 strokes at once.)
+- **Sound off, start, sound on:** with sound off, a match starts with 0 looping sources. P opens the player's menu; turning শব্দ on there and pressing চালিয়ে যাও starts **1 fresh crowd loop** (`session.crowd` true). (Before: loops stayed at the stub.)
+
+### Chart (after the fix)
+```mermaid
+---
+title: "রশﬂ°°2495¶ß টﬂ°°2494¶ßনﬂ°°2494¶ßটﬂ°°2494¶ßনﬂ°°2495¶ß after the rewrite: the match, the window, the list, the clock and the crowd"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  state "At the same time" as all {
+    state "Match" as r0 {
+      s0: Title drum waiting
+      s1: Pulling on the beat
+      s2: Card shows
+      s3: Level list open
+      s4: Paused (menu)
+      [*] --> s0
+      s0 --> s1: you tap the drum to start [when Window is You're on the field]
+      s1 --> s2: the ribbon reaches their line or the ribbon reaches our line
+      s1 --> s3: you open the level list
+      s1 --> s4: you hide the tab or you click into another window or you scroll the stage away or you press #9208; or P
+      s2 --> s1: you tap the drum to start [when Window is You're on the field]
+      s3 --> s1: you close the level list [when Window is You're on the field]
+      s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও (a fresh ৩-২-১) [when Window is You're on the field]
+    }
+    --
+    state "Window" as r1 {
+      s5: You're on the field
+      s6: Tab hidden
+      s7: Another window has focus
+      s8: Stage scrolled away
+      [*] --> s5
+      s5 --> s6: you hide the tab
+      s5 --> s7: you click into another window
+      s5 --> s8: you scroll the stage away
+      s6 --> s5: the tab shows again
+      s7 --> s5: you come back to the window
+      s7 --> s6: you hide the tab
+      s8 --> s5: you scroll the stage back
+      s8 --> s6: you hide the tab
+      s8 --> s7: you click into another window
+      s6 --> s8: the tab shows again
+      s7 --> s8: you come back to the window
+    }
+    --
+    state "Crowd" as r2 {
+      s9: No crowd
+      s10: Crowd playing
+      [*] --> s9
+      s9 --> s10: you tap the drum to start [when Match is one of Card shows, Title drum waiting and Window is You're on the field and Sound is Sound on]
+      s9 --> s10: you turn sound on [when Match is Pulling on the beat and Window is You're on the field and Sound is Sound off]
+      s10 --> s9: you turn sound off or the ribbon reaches their line or the ribbon reaches our line or you open the level list or you hide the tab or you click into another window or you scroll the stage away or you press #9208; or P
+      s9 --> s10: you close the level list [when Match is Level list open and Window is You're on the field and Sound is Sound on]
+      s9 --> s10: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও (a fresh ৩-২-১) [when Match is Paused (menu) and Window is You're on the field and Sound is Sound on]
+    }
+    --
+    state "Sound" as r3 {
+      s11: Sound off
+      s12: Sound on
+      [*] --> s11
+      [*] --> s12
+      s11 --> s12: you turn sound on
+      s12 --> s11: you turn sound off
+    }
+  }
+  class s0 tan
+  class s1 teal
+  class s2 blue
+  class s3 yellow
+  class s4 yellow
+  class s10 teal
+```
+
 ## Regenerate
 ```sh
 scripts/statechart.sh ai_docs/statecharts/roshi-tana/Roshi.tla --view ai_docs/statecharts/roshi-tana/view.ts --out ai_docs/statecharts/roshi-tana/<new-folder>
+# the model before the rewrite:
+scripts/statechart.sh ai_docs/statecharts/roshi-tana/before-fix/Roshi.tla --view ai_docs/statecharts/roshi-tana/before-fix/view.ts --out ai_docs/statecharts/roshi-tana/<another-folder>
 ```
 The chart hides "you pick a level". It is in the model and the rule checks.
 

@@ -1,7 +1,8 @@
+// The old rules (lib/rope.ts before the rewrite), kept only so tests prove the old ladder replays exactly.
 // The tug-of-war rules: a beat clock, tap judging and the rope's slide. Pure (no DOM): the page and the tests step the same code.
 // Time is in ms on the match clock, where beat k falls at k × period. Taps are judged by their own timestamp against that
 // clock, never by which frame they landed in, so a slow phone that drops frames still judges a tap fairly.
-import { makeRng, starsFor } from "../../../shared/game-core";
+import { makeRng, starsFor } from "../../../../shared/game-core";
 import { teamOf, DUO_BPM } from "./teams";
 
 /** Beats of "৩ ২ ১" before pulls count (at the start and after a pause). */

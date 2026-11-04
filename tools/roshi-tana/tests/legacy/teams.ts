@@ -1,3 +1,4 @@
+// The old ladder (lib/teams.ts before the rewrite), kept only for the exact-replay test.
 // The sports-day ladder: ten made-up teams from ক্লাস থ্রি to the হেডস্যার's own. Each one is a level.
 // Each step adds one small thing: a quicker drum, a team that hits the beat more often, a slightly heavier team.
 
