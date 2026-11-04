@@ -1,3 +1,4 @@
+// The game's rules before the rewrite (git: tools/bostar-pahar/lib/game.ts at ea2e710), kept only so tests can prove old links replay exactly.
 // The rules: a sack swings on the crane's rope, a tap drops it straight down, and it must sit on the sack below.
 // Pure and seeded: the same seed gives the same swings on every phone. Units are one sack width and seconds.
 import { makeRng, pick, starsFor, type LevelStars } from "../../../shared/game-core";

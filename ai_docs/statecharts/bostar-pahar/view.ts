@@ -1,36 +1,33 @@
-export const title = "বস্তার পাহাড়: the run, the window, the drop key and the result";
+export const title = "Bostar Pahar: the screen, the menu and the window";
 const game = (v: any) => {
-  if (v.phase === "over") return v.fresh ? "Result just appeared" : "Result";
-  if (v.paused) return "Paused";
-  return ({ ready: "Sack swinging", swing: "Sack swinging", drop: "Sack dropping or landing", settle: "Sack dropping or landing", fall: "Pile tipping over" } as any)[v.phase];
+  if (v.screen === "title") return "Title: the sack says খেলো";
+  if (v.screen === "over") return "End screen";
+  return ({ swing: "Sack swinging", drop: "Sack dropping", end: "Pile toppling or truck leaving" } as any)[v.phase];
 };
 export const state = (v: any) => ({
   Game: game(v),
-  Window: v.here === "page" ? "On the page" : v.here === "blurred" ? "Another window has focus" : "Tab hidden",
-  Key: v.held ? "Holding Space" : "Key up",
-  Chimes: v.chimes ? "Star chimes waiting" : "No chimes waiting",
-  Truck: v.sacks > 0 ? "Truck full (stars won)" : "Truck not full yet",
-  Drops: v.repeatDrop ? "A sack dropped on key repeat" : "Every drop was a press",
-  Result: v.skipped ? "Result skipped by a stray press" : "Result seen",
+  Menu: v.paused ? "Menu open, game paused" : v.guard ? "Just resumed (taps only wake)" : "Menu shut",
+  Window: v.here === "page" ? "On the page" : "Away (another window or a hidden tab)",
 });
-const steps: Record<string, string | null> = {
+const steps: Record<string, string> = {
   YouPressKey: "you press Space",
   KeyRepeats: "the held key repeats",
   YouReleaseKey: "you let go of Space",
-  YouTap: "you tap",
-  YouPlayAgain: "you press আবার খেলো / পরের ঘাট",
-  YouTogglePause: "you press থামাও / চালাও (or P)",
-  SackSits: "the sack sits on the pile",
-  SackSlips: "the sack slips off",
-  NextSack: "the next sack comes",
-  PileFalls: "the result shows",
-  MomentPasses: "a moment passes",
-  ChimesPlay: "the star chimes play",
-  WindowBlurs: "you click into another window",
-  WindowFocuses: "you come back to the window",
-  TabHides: "you hide the tab",
-  TabShows: "the tab shows again",
+  YouTap: "you tap the scene",
+  YouPickChoice: "you press পরের লেভেল or আবার খেলো",
+  YouOpenTheMenu: "you press P, ⏸ or Esc",
+  YouResume: "you press চালিয়ে যাও",
+  GuardPasses: "a quarter second passes",
+  SackLands: "the sack lands",
+  RoundEnds: "the end screen shows",
+  MomentPasses: "half a second passes",
+  ChimesEnd: "the chimes end",
+  SoundToggles: "you switch sound",
+  WindowBlurs: "you click into another window or hide the tab",
+  WindowFocuses: "you come back",
+  TabHides: "you click into another window or hide the tab",
+  TabShows: "you come back",
 };
-export const step = (action: string) => (action in steps ? steps[action] : action);
-export const group = (v: any) => v.phase === "over" ? "done" : v.paused ? "held" : "play";
-export const colors = { play: "teal", held: "yellow", done: "blue" };
+export const step = (action: string) => steps[action] ?? action;
+export const group = (v: any) => v.screen === "over" ? "done" : v.paused ? "held" : v.screen === "title" ? "start" : "play";
+export const colors = { start: "blue", play: "teal", held: "yellow", done: "blue" };

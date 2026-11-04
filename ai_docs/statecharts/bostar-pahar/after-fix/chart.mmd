@@ -1,0 +1,48 @@
+---
+title: "Bostar Pahar: the screen, the menu and the window"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: start
+    lg1: done
+  }
+  class lg0 blue
+  class lg1 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Title: the sack says খ#2503;ল#2507;
+      s1: Sack swinging
+      s2: Sack dropping
+      s3: Pile toppling or truck leaving
+      s4: End screen
+      [*] --> s0
+      s0 --> s1: you press Space [when Window is On the page]
+      s1 --> s2: you tap the scene or you press Space [when Menu is Menu shut and Window is On the page]
+      s2 --> s1: the sack lands [when Menu is not Menu open, game paused and Window is On the page]
+      s2 --> s3: the sack lands [when Menu is not Menu open, game paused and Window is On the page]
+      s3 --> s4: the end screen shows [when Menu is not Menu open, game paused and Window is On the page]
+      s4 --> s1: you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; or you press Space [when Menu is not Menu open, game paused and Window is On the page]
+    }
+    --
+    state "Menu" as r1 {
+      s5: Menu shut
+      s6: Menu open, game paused
+      s7: Just resumed (taps only wake)
+      [*] --> s5
+      s5 --> s6: you click into another window or hide the tab or you press P, #9208; or Esc [when Game is not Title: the sack says খ#2503;ল#2507; and Window is On the page]
+      s6 --> s7: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is On the page]
+      s7 --> s5: a quarter second passes
+      s7 --> s6: you click into another window or hide the tab or you press P, #9208; or Esc
+    }
+    --
+    state "Window" as r2 {
+      s8: On the page
+      s9: Away (another window or a hidden tab)
+      [*] --> s8
+      s8 --> s9: you click into another window or hide the tab
+      s9 --> s8: you come back
+    }
+  }
+  class s0 blue
+  class s4 blue

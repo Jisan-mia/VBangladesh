@@ -1,90 +1,110 @@
 ---- MODULE BostarPahar ----
-\* বস্তার পাহাড় as it is today: the run, pause, the window, the drop key (and its auto-repeat),
-\* the result and the star chimes that play after it.
-\* Mirrors tools/bostar-pahar/components/bostar-game.tsx (press, start/play/again/proceed, finish and its timers,
-\* the keydown effect, the visibilitychange effect, the pause button, useGameLoop) and tools/bostar-pahar/lib/game.ts
-\* (tap, step, land). The shared loop (shared/game-kit.ts useGameLoop) stops only while the tab is hidden.
-\* Abstractions: one sack fills the truck (sacks 0..1), "fresh" = the result appeared a moment ago (under ~0.4 s),
-\* "held" = Space/Enter/↓ is physically down, so the browser sends repeat keydowns while the page has focus.
+\* বস্তার পাহাড় after the rewrite: the screen, the shared player's menu, the window, the drop key (and its auto-repeat),
+\* the wake-up guard after চালিয়ে যাও, the result's key guard, the wind loop and the star chimes.
+\* Mirrors tools/bostar-pahar/components/crane-game.tsx (begin, finish, the keydown/keyup effect, onStage, the blur/focus/
+\* visibility effect, the sound effect, useGamePlayer's onPause/onResume), tools/bostar-pahar/lib/session.ts (ticking,
+\* canDrop, keyDown, keyUp, freshResultKey, wantWind, syncLoops, blur, hide, pause, resume) and lib/step.hot.ts (tap, land,
+\* the end of a round). shared/game-player-client.tsx: blur and hide open the menu once you've touched the game; the menu
+\* stops keydown reaching the game; pausing cuts scheduled tones (silenceScheduled).
+\* Abstractions: the level is a gusty one (so the wind loop is in play); "fresh" = the end screen appeared under 450 ms ago;
+\* "guard" = চালিয়ে যাও was pressed under 250 ms ago; "held" = Space/Enter/↓ is physically down.
 EXTENDS Naturals
-VARIABLES phase, sacks, paused, here, held, fresh, chimes, skipped, repeatDrop, cheers
-vars == <<phase, sacks, paused, here, held, fresh, chimes, skipped, repeatDrop, cheers>>
+VARIABLES screen, phase, paused, here, held, fresh, guard, sound, wind, chimes, cheers, repeatDrop, skipped, wakeDrop
+vars == <<screen, phase, paused, here, held, fresh, guard, sound, wind, chimes, cheers, repeatDrop, skipped, wakeDrop>>
 
-Phases == {"ready", "swing", "drop", "settle", "fall", "over"}
-Active == {"swing", "drop", "settle", "fall"}       \* the phases the visibility handler pauses
-Running == ~paused /\ here # "hidden"                  \* rAF runs; blur does not stop it
+Ticking == screen = "play" /\ ~paused /\ here = "page"
+\* syncLoops runs after every event: the wind plays exactly when wantWind holds in the state the event leaves.
+WindNext == wind' = (screen' = "play" /\ ~paused' /\ here' = "page" /\ sound' /\ phase' # "end")
 
-Init == /\ phase = "ready" /\ sacks = 0 /\ paused = FALSE /\ here = "page" /\ held = FALSE
-        /\ fresh = FALSE /\ chimes = FALSE /\ skipped = FALSE /\ repeatDrop = FALSE /\ cheers = 0
+Init == /\ screen = "title" /\ phase = "swing" /\ paused = FALSE /\ here = "page" /\ held = FALSE /\ fresh = FALSE
+        /\ guard = FALSE /\ sound = TRUE /\ wind = FALSE /\ chimes = FALSE /\ cheers = 0
+        /\ repeatDrop = FALSE /\ skipped = FALSE /\ wakeDrop = FALSE
 
-\* start(): a new run; clears the chime timers and the pause.
-\* byKey: the press came from the keyboard, which lands on the result at once; a finger lands elsewhere, because
-\* the result pushes the buttons to a new spot (checked live).
-Restart(byKey) == /\ phase' = "ready" /\ sacks' = 0 /\ paused' = FALSE /\ chimes' = FALSE /\ cheers' = 0
-                  /\ skipped' = (skipped \/ (fresh /\ byKey)) /\ fresh' = FALSE
-\* press(): a paused game resumes; otherwise tap() drops the sack while it swings.
-Press(byRepeat) ==
-  IF phase = "over" THEN Restart(TRUE) /\ UNCHANGED <<repeatDrop>>  \* the key handler calls proceed()
-  ELSE IF paused THEN paused' = FALSE /\ UNCHANGED <<phase, sacks, chimes, skipped, fresh, cheers, repeatDrop>>
-  ELSE IF phase \in {"ready", "swing"} THEN /\ phase' = "drop" /\ repeatDrop' = (repeatDrop \/ byRepeat)
-                                            /\ UNCHANGED <<sacks, paused, chimes, skipped, fresh, cheers>>
-  ELSE UNCHANGED <<phase, sacks, paused, chimes, skipped, fresh, cheers, repeatDrop>>
+\* begin(): a fresh round; silenceScheduled cuts any chimes still queued.
+Begin == /\ screen' = "play" /\ phase' = "swing" /\ fresh' = FALSE /\ chimes' = FALSE /\ cheers' = 0
 
-\* keydown Space/Enter/↓ (no event.repeat check).
-YouPressKey == /\ here = "page" /\ ~held /\ held' = TRUE /\ Press(FALSE) /\ UNCHANGED <<here>>
-\* The browser's auto-repeat keydown while the key stays down and the page has focus.
-KeyRepeats == /\ here = "page" /\ held /\ Press(TRUE) /\ UNCHANGED <<here, held>>
+\* keydown Space/Enter/↓ at window. The menu's capture listener stops it while paused.
+\* session.keyDown: a drop only from a fresh press (no repeat, not already held) while ticking and not in the wake-up guard.
+YouPressKey == /\ here = "page" /\ ~paused /\ ~held /\ held' = TRUE
+               /\ IF screen = "play" THEN
+                    /\ phase' = IF phase = "swing" /\ ~guard THEN "drop" ELSE phase
+                    /\ wakeDrop' = (wakeDrop \/ (guard /\ phase = "swing" /\ phase' = "drop"))
+                    /\ UNCHANGED <<screen, fresh, chimes, cheers, skipped>>
+                  ELSE IF screen = "title" THEN Begin /\ UNCHANGED <<skipped, wakeDrop>>
+                  \* the end screen: freshResultKey needs the 450 ms to have passed
+                  ELSE IF ~fresh THEN Begin /\ skipped' = (skipped \/ fresh) /\ UNCHANGED wakeDrop
+                  ELSE UNCHANGED <<screen, phase, fresh, chimes, cheers, skipped, wakeDrop>>
+               /\ UNCHANGED <<paused, here, guard, sound, repeatDrop>> /\ WindNext
+\* The browser's auto-repeat keydown while the key stays down: keyDown sees repeat (and held), so it never drops;
+\* freshResultKey refuses repeats.
+KeyRepeats == /\ here = "page" /\ ~paused /\ held
+              /\ LET drops == FALSE IN
+                 /\ phase' = IF drops THEN "drop" ELSE phase
+                 /\ repeatDrop' = (repeatDrop \/ drops)
+              /\ UNCHANGED <<screen, paused, here, held, fresh, guard, sound, chimes, cheers, skipped, wakeDrop>> /\ WindNext
 YouReleaseKey == /\ held /\ held' = FALSE
-                 /\ UNCHANGED <<phase, sacks, paused, here, fresh, chimes, skipped, repeatDrop, cheers>>
-\* pointerdown on the stage or the বস্তা ফেলো button (both ignore the result screen).
-YouTap == /\ here = "page" /\ phase # "over" /\ Press(FALSE) /\ UNCHANGED <<here, held>>
-\* পরের ঘাট / আবার খেলো / আরেকবার on the result: play() at once, no guard.
-YouPlayAgain == /\ here = "page" /\ phase = "over" /\ Restart(FALSE) /\ UNCHANGED <<here, held, repeatDrop>>
-\* থামাও/চালাও (shown after the first drop) or P/Esc (any time before the result).
-YouTogglePause == /\ here = "page" /\ phase # "over" /\ paused' = ~paused
-                  /\ UNCHANGED <<phase, sacks, here, held, fresh, chimes, skipped, repeatDrop, cheers>>
-\* step(): the drop lands (sits or slips), the next sack comes, the slipped sack falls and the result shows.
-SackSits == /\ Running /\ phase = "drop" /\ phase' = "settle" /\ sacks' = 1
-            /\ UNCHANGED <<paused, here, held, fresh, chimes, skipped, repeatDrop, cheers>>
-SackSlips == /\ Running /\ phase = "drop" /\ phase' = "fall"
-             /\ UNCHANGED <<sacks, paused, here, held, fresh, chimes, skipped, repeatDrop, cheers>>
-NextSack == /\ Running /\ phase = "settle" /\ phase' = "swing"
-            /\ UNCHANGED <<sacks, paused, here, held, fresh, chimes, skipped, repeatDrop, cheers>>
-\* finish(): best, record, and setTimeout star chimes / fanfare when stars were won.
-PileFalls == /\ Running /\ phase = "fall" /\ phase' = "over" /\ fresh' = TRUE /\ chimes' = (sacks > 0)
-             /\ cheers' = cheers + 1
-             /\ UNCHANGED <<sacks, paused, here, held, skipped, repeatDrop>>
+                 /\ UNCHANGED <<screen, phase, paused, here, fresh, guard, sound, wind, chimes, cheers, repeatDrop, skipped, wakeDrop>>
+\* pointerdown on the scene: canDrop needs ticking and the wake-up guard passed.
+YouTap == /\ screen = "play" /\ here = "page" /\ ~paused
+          /\ phase' = IF phase = "swing" /\ ~guard THEN "drop" ELSE phase
+          /\ wakeDrop' = (wakeDrop \/ (guard /\ phase = "swing" /\ phase' = "drop"))
+          /\ UNCHANGED <<screen, paused, here, held, fresh, guard, sound, chimes, cheers, repeatDrop, skipped>> /\ WindNext
+\* A click on পরের লেভেল / আবার খেলো / সব লেভেল's pick (buttons blur after a click).
+YouPickChoice == /\ screen = "over" /\ here = "page" /\ ~paused /\ Begin
+                 /\ UNCHANGED <<paused, here, held, guard, sound, repeatDrop, skipped, wakeDrop>> /\ WindNext
+\* P, ⏸ or Esc: the player's menu (pause cuts scheduled tones and lets go of every key).
+YouOpenTheMenu == /\ screen # "title" /\ ~paused /\ paused' = TRUE /\ held' = FALSE /\ chimes' = FALSE
+                  /\ UNCHANGED <<screen, phase, here, fresh, guard, sound, cheers, repeatDrop, skipped, wakeDrop>> /\ WindNext
+\* চালিয়ে যাও: resume() starts the wake-up guard.
+YouResume == /\ paused /\ here = "page" /\ paused' = FALSE /\ guard' = TRUE /\ held' = FALSE
+             /\ UNCHANGED <<screen, phase, here, fresh, sound, chimes, cheers, repeatDrop, skipped, wakeDrop>> /\ WindNext
+GuardPasses == /\ guard /\ guard' = FALSE
+               /\ UNCHANGED <<screen, phase, paused, here, held, fresh, sound, wind, chimes, cheers, repeatDrop, skipped, wakeDrop>>
+\* step(): only while ticking (useGameLoop stops on blur and hide; step() returns unless session.ticking).
+SackLands == /\ Ticking /\ phase = "drop" /\ phase' \in {"swing", "end"}
+             /\ UNCHANGED <<screen, paused, here, held, fresh, guard, sound, chimes, cheers, repeatDrop, skipped, wakeDrop>> /\ WindNext
+\* finish(): once per round; star chimes are scheduled tones.
+RoundEnds == /\ Ticking /\ phase = "end" /\ screen' = "over" /\ fresh' = TRUE /\ chimes' = TRUE /\ cheers' = cheers + 1
+             /\ UNCHANGED <<phase, paused, here, held, guard, sound, repeatDrop, skipped, wakeDrop>> /\ WindNext
 MomentPasses == /\ fresh /\ fresh' = FALSE
-                /\ UNCHANGED <<phase, sacks, paused, here, held, chimes, skipped, repeatDrop, cheers>>
-ChimesPlay == /\ chimes /\ chimes' = FALSE
-              /\ UNCHANGED <<phase, sacks, paused, here, held, fresh, skipped, repeatDrop, cheers>>
-\* No blur handler: the run goes on. Repeat keydowns stop going to the page.
+                /\ UNCHANGED <<screen, phase, paused, here, held, guard, sound, wind, chimes, cheers, repeatDrop, skipped, wakeDrop>>
+ChimesEnd == /\ chimes /\ chimes' = FALSE
+             /\ UNCHANGED <<screen, phase, paused, here, held, fresh, guard, sound, wind, cheers, repeatDrop, skipped, wakeDrop>>
+\* The site-wide switch: off cuts scheduled chimes too; the sound effect runs syncLoops at once.
+SoundToggles == /\ sound' = ~sound /\ chimes' = (chimes /\ sound')
+                /\ UNCHANGED <<screen, phase, paused, here, held, fresh, guard, cheers, repeatDrop, skipped, wakeDrop>> /\ WindNext
+\* blur: session.blur lets go of the key; the player opens its menu (the game has been touched once it left the title).
 WindowBlurs == /\ here = "page" /\ here' = "blurred" /\ held' = FALSE
-               /\ UNCHANGED <<phase, sacks, paused, fresh, chimes, skipped, repeatDrop, cheers>>
+               /\ paused' = (paused \/ screen # "title") /\ chimes' = (chimes /\ ~paused')
+               /\ UNCHANGED <<screen, phase, fresh, guard, sound, cheers, repeatDrop, skipped, wakeDrop>> /\ WindNext
 WindowFocuses == /\ here = "blurred" /\ here' = "page"
-                 /\ UNCHANGED <<phase, sacks, paused, held, fresh, chimes, skipped, repeatDrop, cheers>>
-\* visibilitychange → hidden: pause only in the Active phases; rAF stops.
+                 /\ UNCHANGED <<screen, phase, paused, held, fresh, guard, sound, chimes, cheers, repeatDrop, skipped, wakeDrop>> /\ WindNext
 TabHides == /\ here # "hidden" /\ here' = "hidden" /\ held' = FALSE
-            /\ paused' = (paused \/ phase \in Active)
-            /\ UNCHANGED <<phase, sacks, fresh, chimes, skipped, repeatDrop, cheers>>
+            /\ paused' = (paused \/ screen # "title") /\ chimes' = (chimes /\ ~paused')
+            /\ UNCHANGED <<screen, phase, fresh, guard, sound, cheers, repeatDrop, skipped, wakeDrop>> /\ WindNext
 TabShows == /\ here = "hidden" /\ here' = "page"
-            /\ UNCHANGED <<phase, sacks, paused, held, fresh, chimes, skipped, repeatDrop, cheers>>
+            /\ UNCHANGED <<screen, phase, paused, held, fresh, guard, sound, chimes, cheers, repeatDrop, skipped, wakeDrop>> /\ WindNext
 
-Next == YouPressKey \/ KeyRepeats \/ YouReleaseKey \/ YouTap \/ YouPlayAgain \/ YouTogglePause
-        \/ SackSits \/ SackSlips \/ NextSack \/ PileFalls \/ MomentPasses \/ ChimesPlay
+Next == YouPressKey \/ KeyRepeats \/ YouReleaseKey \/ YouTap \/ YouPickChoice \/ YouOpenTheMenu \/ YouResume \/ GuardPasses
+        \/ SackLands \/ RoundEnds \/ MomentPasses \/ ChimesEnd \/ SoundToggles
         \/ WindowBlurs \/ WindowFocuses \/ TabHides \/ TabShows
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ phase \in Phases /\ sacks \in 0..1 /\ paused \in BOOLEAN /\ here \in {"page", "blurred", "hidden"}
-          /\ held \in BOOLEAN /\ fresh \in BOOLEAN /\ chimes \in BOOLEAN /\ skipped \in BOOLEAN
-          /\ repeatDrop \in BOOLEAN /\ cheers \in 0..2
+TypeOK == /\ screen \in {"title", "play", "over"} /\ phase \in {"swing", "drop", "end"} /\ paused \in BOOLEAN
+          /\ here \in {"page", "blurred", "hidden"} /\ held \in BOOLEAN /\ fresh \in BOOLEAN /\ guard \in BOOLEAN
+          /\ sound \in BOOLEAN /\ wind \in BOOLEAN /\ chimes \in BOOLEAN /\ cheers \in 0..1
+          /\ repeatDrop \in BOOLEAN /\ skipped \in BOOLEAN /\ wakeDrop \in BOOLEAN
 
 \* The reader's rules.
-PausedWhenHidden == (here = "hidden" /\ phase \in Active) => paused
-PausedWhenBlurred == (here = "blurred" /\ phase \in Active) => paused
+PausedWhenHidden == (here = "hidden" /\ screen = "play") => paused
+PausedWhenBlurred == (here = "blurred" /\ screen = "play") => paused
 EveryDropIsATap == ~repeatDrop
 NoTapPastResult == ~skipped
-NoChimeAfterLeaving == chimes => phase = "over"
+FocusClickIsNotADrop == ~wakeDrop
+InputReleasedWhenAway == (here # "page" \/ paused) => ~held
+LoopOnlyWhenMeaningful == wind => (Ticking /\ sound /\ phase # "end")
+LoopComesBack == (Ticking /\ sound /\ phase # "end") => wind
+NoChimeAfterLeaving == chimes => (screen = "over" /\ ~paused)
 NoDoubleResult == cheers <= 1
 ====

@@ -39,7 +39,7 @@ function ear(c: CanvasRenderingContext2D, x: number, y: number, dx: number, dy: 
 }
 
 /** A sack lying flat, centred on (x, y): a woven rice sack with a printed panel, or a jute one with a stitched mouth. */
-export function drawSack(c: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, kind: number) {
+export function drawSack(c: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, kind: number, label = "") {
   const look = SACKS[kind] ?? SACKS[0];
   const l = x - w / 2, r = x + w / 2, t = y - h / 2, b = y + h / 2, e = h * 0.2;
   c.lineJoin = "round"; c.lineCap = "round";
@@ -72,9 +72,9 @@ export function drawSack(c: CanvasRenderingContext2D, x: number, y: number, w: n
     for (let index = 0; index < 6; index++) { const yy = t + h * (0.16 + index * 0.13); c.moveTo(r - w * 0.1, yy); c.lineTo(r - w * 0.05, yy + h * 0.06); }
     c.stroke();
   }
-  c.font = `800 ${Math.round(h * 0.34)}px "Display", "Bangla", sans-serif`;
+  c.font = `800 ${Math.round(h * (label ? 0.3 : 0.34))}px "Display", "Bangla", sans-serif`;
   c.textAlign = "center"; c.textBaseline = "middle"; c.fillStyle = look.ink;
-  c.fillText(look.label, x, y + h * 0.04);
+  c.fillText(label || look.label, x, y + h * 0.04);
   c.textBaseline = "alphabetic";
   c.strokeStyle = look.edge; c.lineWidth = Math.max(1, w * 0.024);
   sackPath(c, x, y, w, h); c.stroke();
@@ -174,6 +174,9 @@ export const WORKERS: Worker[] = [
   { lungi: "#5b4a2e", check: "#a78f60", top: "#2f8a6e", vest: false, gamchha: "shoulder", moustache: true },
 ];
 
+/** Where the lungi's checks run, from waist to hem (module scope: drawWorker runs every frame). */
+const CHECK_ROWS = [0.3, 0.6, 0.85];
+
 function limb(c: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number, x3: number, y3: number) {
   c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.lineTo(x3, y3); c.stroke();
 }
@@ -193,7 +196,7 @@ export function drawWorker(c: CanvasRenderingContext2D, x: number, feet: number,
   c.beginPath(); c.moveTo(x - 0.1 * s, waist); c.lineTo(x + 0.1 * s, waist); c.lineTo(x + 0.12 * s, f - 0.06 * s); c.lineTo(x - 0.12 * s, f - 0.06 * s); c.closePath(); c.fill();
   c.strokeStyle = look.check; c.lineWidth = Math.max(1, 0.012 * s);
   c.beginPath();
-  for (const row of [0.3, 0.6, 0.85]) { const yy = waist + (f - 0.06 * s - waist) * row; c.moveTo(x - 0.11 * s, yy); c.lineTo(x + 0.11 * s, yy); }
+  for (let index = 0; index < CHECK_ROWS.length; index++) { const row = CHECK_ROWS[index], yy = waist + (f - 0.06 * s - waist) * row; c.moveTo(x - 0.11 * s, yy); c.lineTo(x + 0.11 * s, yy); }
   c.moveTo(x - 0.035 * s, waist); c.lineTo(x - 0.04 * s, f - 0.06 * s); c.moveTo(x + 0.045 * s, waist); c.lineTo(x + 0.05 * s, f - 0.06 * s);
   c.stroke();
   // Torso: a white vest, or a shirt with a collar.
@@ -344,4 +347,74 @@ export function drawCloud(c: CanvasRenderingContext2D, x: number, y: number, s: 
   c.arc(x + s * 0.74, y - s * 0.1, s * 0.15, 0, Math.PI * 2);
   c.fill();
   c.beginPath(); c.roundRect(x + s * 0.1, y - s * 0.14, s * 0.8, s * 0.14, s * 0.07); c.fill();
+}
+
+/* ---------- the three worlds ---------- */
+
+/** One palette per world: afternoon at Sadarghat, a Meghna dusk, the ferry ghat at night. */
+export type Look = {
+  /** Sky colour by altitude above the ghat (px of camera rise), low to high. */
+  sky: readonly (readonly [number, number, number, number])[];
+  glow: string; sun: string; sunHalo: string; moon: boolean;
+  water: string; waterLight: string; bank: string; bankDark: string;
+  /** Painted over the ground, the truck and the sacks (source-atop), or "" for none. */
+  tint: string;
+  cloud: string;
+  birds: boolean;
+};
+export const LOOKS: readonly Look[] = [
+  { sky: [[0, 0xcf, 0xe8, 0xf3], [600, 0xa6, 0xd4, 0xec], [2000, 0x82, 0xc0, 0xe5], [5000, 0x5f, 0xa8, 0xdc]], glow: "rgba(255,217,176,0.75)", sun: PAL.sun, sunHalo: "rgba(255,243,214,0.55)", moon: false,
+    water: PAL.water, waterLight: PAL.waterLight, bank: PAL.bank, bankDark: PAL.bankDark, tint: "", cloud: "rgba(255,255,255,0.92)", birds: true },
+  { sky: [[0, 0xff, 0xc9, 0x96], [600, 0xf4, 0xa1, 0x74], [2000, 0xc0, 0x6c, 0x7e], [5000, 0x4d, 0x40, 0x72]], glow: "rgba(255,160,96,0.8)", sun: "#ffb36b", sunHalo: "rgba(255,196,128,0.6)", moon: false,
+    water: "#4f6f93", waterLight: "#f2b98a", bank: "#3b5536", bankDark: "#2b3f2a", tint: "rgba(255,120,60,0.12)", cloud: "rgba(255,214,190,0.9)", birds: true },
+  { sky: [[0, 0x2e, 0x3d, 0x68], [600, 0x22, 0x2e, 0x52], [2000, 0x17, 0x1f, 0x3c], [5000, 0x0b, 0x10, 0x26]], glow: "rgba(120,150,220,0.35)", sun: "#f4f1dc", sunHalo: "rgba(244,241,220,0.25)", moon: true,
+    water: "#1d3557", waterLight: "#6c8fc7", bank: "#16262a", bankDark: "#0f1b1f", tint: "rgba(16,26,64,0.42)", cloud: "rgba(120,134,170,0.55)", birds: false },
+];
+
+/** The look's sky as 41 colour strings, one per 125 px of rise, built once. */
+export function skyTable(look: Look) {
+  const stops = look.sky;
+  return Array.from({ length: 41 }, (_, index) => {
+    const altitude = index * 125;
+    const at = stops.findIndex(stop => stop[0] >= altitude);
+    const [a, b] = at <= 0 ? [stops[0], stops[0]] : [stops[at - 1], stops[at]];
+    const k = b[0] === a[0] ? 0 : (altitude - a[0]) / (b[0] - a[0]);
+    const mix = (i: number) => Math.round(a[i] + (b[i] - a[i]) * k).toString(16).padStart(2, "0");
+    return `#${mix(1)}${mix(2)}${mix(3)}`;
+  });
+}
+
+/** Paints `color` over whatever is already drawn, keeping its shape (night and dusk light). */
+export function tintOver(c: CanvasRenderingContext2D, width: number, height: number, color: string) {
+  if (!color) return;
+  c.save(); c.globalCompositeOperation = "source-atop"; c.fillStyle = color; c.fillRect(0, 0, width, height); c.restore();
+}
+
+/** A হারিকেন (hurricane lamp), `s` pixels tall, its base at (x, y). */
+export function drawLantern(c: CanvasRenderingContext2D, x: number, y: number, s: number) {
+  c.fillStyle = "#3a2f25"; c.fillRect(x - s * 0.28, y - s * 0.12, s * 0.56, s * 0.12);
+  c.fillStyle = "rgba(255,214,120,0.95)"; c.beginPath(); c.ellipse(x, y - s * 0.42, s * 0.22, s * 0.3, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = "#fff4c2"; c.beginPath(); c.ellipse(x, y - s * 0.4, s * 0.07, s * 0.14, 0, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = "#3a2f25"; c.lineWidth = Math.max(1, s * 0.06);
+  c.beginPath(); c.moveTo(x - s * 0.24, y - s * 0.12); c.lineTo(x - s * 0.24, y - s * 0.74); c.lineTo(x + s * 0.24, y - s * 0.74); c.lineTo(x + s * 0.24, y - s * 0.12); c.stroke();
+  c.beginPath(); c.arc(x, y - s * 0.8, s * 0.16, Math.PI, 0); c.stroke();
+}
+
+/** A ghat lamp post with its glow, `s` pixels tall, standing at (x, y). */
+export function drawLampPost(c: CanvasRenderingContext2D, x: number, y: number, s: number) {
+  const glow = c.createRadialGradient(x, y - s, 0, x, y - s, s * 0.7);
+  glow.addColorStop(0, "rgba(255,220,140,0.55)"); glow.addColorStop(1, "rgba(255,220,140,0)");
+  c.fillStyle = glow; c.beginPath(); c.arc(x, y - s, s * 0.7, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = "#2b2f36"; c.lineWidth = Math.max(1.5, s * 0.05);
+  c.beginPath(); c.moveTo(x, y); c.lineTo(x, y - s); c.lineTo(x + s * 0.12, y - s); c.stroke();
+  c.fillStyle = "#ffe7a8"; c.beginPath(); c.arc(x + s * 0.12, y - s + s * 0.05, s * 0.06, 0, Math.PI * 2); c.fill();
+}
+
+/** A steel pontoon the truck stands on, its deck at `deck`, centred on cx, `u` pixels per sack width. */
+export function drawPontoon(c: CanvasRenderingContext2D, cx: number, deck: number, u: number) {
+  c.fillStyle = "#59636b"; c.fillRect(cx - 2.6 * u, deck, 5.6 * u, 0.42 * u);
+  c.fillStyle = "#3d454b"; c.fillRect(cx - 2.6 * u, deck + 0.3 * u, 5.6 * u, 0.12 * u);
+  c.fillStyle = "#c8323a"; c.fillRect(cx - 2.6 * u, deck, 5.6 * u, 0.06 * u);
+  c.fillStyle = "#2b3136";
+  for (let x = cx - 2.3 * u; x < cx + 2.9 * u; x += 0.9 * u) { c.beginPath(); c.arc(x, deck + 0.18 * u, 0.06 * u, 0, Math.PI * 2); c.fill(); }
 }

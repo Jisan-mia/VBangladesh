@@ -1,5 +1,5 @@
 import type { ToolShare } from "../../shared/share-types";
-import { cardHash, parseCard, previewTitle } from "./lib/result";
+import { cardHash, parseCard, previewTitle } from "./lib/link";
 
 export const share: ToolShare = {
   normalize(state) {
