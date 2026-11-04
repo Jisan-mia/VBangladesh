@@ -1,0 +1,197 @@
+---
+title: "বরﬂ°°2509¶ßণ লﬂ°°2495¶ßখﬂ°°2495¶ß: the set, the finger, the keyboard, mute, rest and the parent gate"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: card
+    lg2: rest
+    lg3: out
+    lg4: Breaks EnterWritesTheStroke or FocusStaysOnTheBoard or InputReleasedWhenAway or NoReadingNeeded or NoWayOutWithoutGate
+    lg5: Breaks FocusStaysOnTheBoard or InputReleasedWhenAway or NoReadingNeeded in some cases
+    lg6: Path to the EnterWritesTheStroke or FocusStaysOnTheBoard or InputReleasedWhenAway or NoReadingNeeded or NoWayOutWithoutGate bug
+  }
+  class lg0 teal
+  class lg1 blue
+  class lg2 yellow
+  class lg3 pink
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Set" as r0 {
+      s0: Opens on the rest screen
+      s1: Tracing a letter
+      s2: Left for an adult tool
+      s3: Letter done: পর#2503;রট#2494;
+      s4: Tracing the set's last letter
+      s5: Last letter done: শ#2503;ষ
+      s6: Rest screen
+      s7: End card
+      s8: আজক#2503;র ল#2503;খ#2494; শ#2503;ষ
+      [*] --> s0
+      [*] --> s1
+      s0 --> s1: a grown-up gives 10 more minutes
+      s1 --> s2: you tap a card under the game [when Finger is Hands off and Keys is Nothing focused and Sound is Sound on and Gate is Gate shut]
+      s1 --> s3: you press Enter on the board [when Finger is one of Finger on the board, Hands off and Keys is one of Board focused, Board focused, Enter clicked a button and Gate is Gate shut]
+      s1 --> s3: you trace a stroke [when Finger is Finger on the board and Keys is one of Board focused, Board focused, Enter clicked a button, Focus fell to the page, Focus fell to the page, Enter clicked a button and Gate is Gate shut]
+      s3 --> s1: you start a set or you tap পর#2503;রট#2494; or you tap আব#2494;র ল#2495;খ#2495; [when Finger is Hands off and Sound is not Sound on, speaking]
+      s3 --> s4: you tap পর#2503;রট#2494; [when Finger is Hands off and Sound is not Sound on, speaking]
+      s3 --> s1: you press Enter on পর#2503;রট#2494; [when Finger is one of Finger on the board, Hands off and Keys is one of পর#2503;রট#2494; focused, পর#2503;রট#2494; focused, Enter clicked a button and Sound is not Sound on, speaking]
+      s3 --> s4: you press Enter on পর#2503;রট#2494; [when Finger is one of Finger on the board, Hands off and Keys is one of পর#2503;রট#2494; focused, পর#2503;রট#2494; focused, Enter clicked a button and Sound is not Sound on, speaking]
+      s4 --> s1: you start a set [when Finger is Hands off]
+      s4 --> s5: you press Enter on the board [when Finger is one of Finger on the board, Hands off and Keys is one of Board focused, Board focused, Enter clicked a button]
+      s4 --> s5: you trace a stroke [when Finger is Finger on the board and Keys is one of Board focused, Board focused, Enter clicked a button, Focus fell to the page, Focus fell to the page, Enter clicked a button]
+      s5 --> s1: you start a set [when Finger is Hands off and Sound is not Sound on, speaking]
+      s5 --> s4: you tap আব#2494;র ল#2495;খ#2495; [when Finger is Hands off and Sound is not Sound on, speaking]
+      s5 --> s6: you tap পর#2503;রট#2494; [when Finger is Hands off and Sound is not Sound on, speaking]
+      s5 --> s7: you tap পর#2503;রট#2494; [when Finger is Hands off and Sound is not Sound on, speaking]
+      s5 --> s6: you press Enter on পর#2503;রট#2494; [when Finger is one of Finger on the board, Hands off and Keys is one of পর#2503;রট#2494; focused, পর#2503;রট#2494; focused, Enter clicked a button and Sound is not Sound on, speaking]
+      s5 --> s7: you press Enter on পর#2503;রট#2494; [when Finger is one of Finger on the board, Hands off and Keys is one of পর#2503;রট#2494; focused, পর#2503;রট#2494; focused, Enter clicked a button and Sound is not Sound on, speaking]
+      s6 --> s7: a grown-up gives 10 more minutes
+      s7 --> s1: you start a set [when Finger is Hands off]
+      s7 --> s8: you press শ#2503;ষ [when Finger is one of Finger on the board, Hands off]
+      s8 --> s1: you start a set [when Finger is Hands off]
+    }
+    --
+    state "Finger" as r1 {
+      s9: Hands off
+      s10: In another window
+      s11: Finger on the board
+      s12: Finger counted on the board, you're away
+      [*] --> s9
+      s9 --> s10: you click into another window [when Sound is not Sound on, speaking and Gate is Gate shut]
+      s9 --> s11: you touch the board [when Set is one of Tracing a letter, Tracing the set's last letter and Keys is none of পর#2503;রট#2494; focused, পর#2503;রট#2494; focused, Enter clicked a button and Sound is not Sound on, speaking and Gate is Gate shut]
+      s10 --> s9: you come back to the window
+      s11 --> s9: you lift your finger [when Sound is not Sound on, speaking]
+      s11 --> s12: you click into another window [when Sound is not Sound on, speaking]
+      s12 --> s11: you come back to the window
+    }
+    --
+    state "Keys" as r2 {
+      s13: Nothing focused
+      s14: Sound toggle focused
+      s15: Board focused
+      s16: Sound toggle focused, Enter clicked a button
+      s17: Board focused, Enter clicked a button
+      s18: Nothing focused, Enter clicked a button
+      s19: পর#2503;রট#2494; focused
+      s20: Focus fell to the page
+      s21: পর#2503;রট#2494; focused, Enter clicked a button
+      s22: Focus fell to the page, Enter clicked a button
+      [*] --> s13
+      s13 --> s14: you tap the speaker [when Set is none of Left for an adult tool, Opens on the rest screen, Rest screen and Finger is Hands off and Gate is Gate shut]
+      s13 --> s15: you Tab to the board or you touch the board [when Set is one of Tracing a letter, Tracing the set's last letter and Finger is Hands off and Gate is Gate shut]
+      s14 --> s15: you Tab to the board or you touch the board [when Set is one of Tracing a letter, Tracing the set's last letter and Finger is Hands off]
+      s14 --> s13: you start a set [when Finger is Hands off]
+      s14 --> s16: you press Enter to write [when Set is one of Tracing a letter, Tracing the set's last letter and Finger is Hands off]
+      s15 --> s13: you start a set [when Finger is Hands off and Sound is not Sound on, speaking]
+      s15 --> s14: you tap the speaker [when Finger is Hands off]
+      s16 --> s17: you Tab to the board or you touch the board [when Set is one of Tracing a letter, Tracing the set's last letter and Finger is Hands off]
+      s16 --> s18: you start a set [when Finger is Hands off]
+      s15 --> s13: you tap পর#2503;রট#2494; or you tap আব#2494;র ল#2495;খ#2495; [when Set is one of Last letter done: শ#2503;ষ, Letter done: পর#2503;রট#2494; and Finger is Hands off and Sound is not Sound on, speaking]
+      s15 --> s19: you Tab to পর#2503;রট#2494; [when Set is one of Last letter done: শ#2503;ষ, Letter done: পর#2503;রট#2494; and Finger is one of Finger on the board, Hands off and Sound is not Sound on, speaking]
+      s14 --> s13: you tap পর#2503;রট#2494; or you tap আব#2494;র ল#2495;খ#2495; [when Set is one of Last letter done: শ#2503;ষ, Letter done: পর#2503;রট#2494; and Finger is Hands off]
+      s14 --> s19: you Tab to পর#2503;রট#2494; [when Set is one of Last letter done: শ#2503;ষ, Letter done: পর#2503;রট#2494; and Finger is Hands off]
+      s17 --> s16: you tap the speaker [when Finger is Hands off]
+      s17 --> s18: you start a set [when Finger is Hands off and Sound is not Sound on, speaking]
+      s18 --> s16: you tap the speaker [when Set is not Rest screen and Finger is Hands off]
+      s18 --> s17: you Tab to the board or you touch the board [when Set is one of Tracing a letter, Tracing the set's last letter and Finger is Hands off]
+      s19 --> s13: you start a set or you tap পর#2503;রট#2494; or you tap আব#2494;র ল#2495;খ#2495; [when Finger is Hands off]
+      s19 --> s14: you tap the speaker [when Finger is Hands off]
+      s19 --> s20: you press Enter on পর#2503;রট#2494; [when Finger is one of Finger on the board, Hands off]
+      s17 --> s18: you tap পর#2503;রট#2494; or you tap আব#2494;র ল#2495;খ#2495; [when Set is one of Last letter done: শ#2503;ষ, Letter done: পর#2503;রট#2494; and Finger is Hands off and Sound is not Sound on, speaking]
+      s17 --> s21: you Tab to পর#2503;রট#2494; [when Set is one of Last letter done: শ#2503;ষ, Letter done: পর#2503;রট#2494; and Finger is one of Finger on the board, Hands off and Sound is not Sound on, speaking]
+      s16 --> s18: you tap পর#2503;রট#2494; or you tap আব#2494;র ল#2495;খ#2495; [when Set is one of Last letter done: শ#2503;ষ, Letter done: পর#2503;রট#2494; and Finger is Hands off]
+      s16 --> s21: you Tab to পর#2503;রট#2494; [when Set is one of Last letter done: শ#2503;ষ, Letter done: পর#2503;রট#2494; and Finger is Hands off]
+      s20 --> s15: you Tab to the board [when Set is one of Tracing a letter, Tracing the set's last letter and Finger is one of Finger on the board, Hands off and Sound is not Sound on, speaking]
+      s20 --> s13: you start a set [when Set is not Rest screen and Finger is Hands off and Sound is not Sound on, speaking]
+      s20 --> s15: you touch the board [when Set is one of Tracing a letter, Tracing the set's last letter and Finger is Hands off and Sound is not Sound on, speaking]
+      s20 --> s14: you tap the speaker [when Set is not Rest screen and Finger is Hands off and Sound is not Sound on, speaking]
+      s21 --> s18: you start a set or you tap পর#2503;রট#2494; or you tap আব#2494;র ল#2495;খ#2495; [when Finger is Hands off]
+      s21 --> s16: you tap the speaker [when Finger is Hands off]
+      s21 --> s22: you press Enter on পর#2503;রট#2494; [when Finger is one of Finger on the board, Hands off]
+      s20 --> s19: you Tab to পর#2503;রট#2494; [when Set is one of Last letter done: শ#2503;ষ, Letter done: পর#2503;রট#2494; and Finger is one of Finger on the board, Hands off and Sound is not Sound on, speaking]
+      s20 --> s13: you tap পর#2503;রট#2494; or you tap আব#2494;র ল#2495;খ#2495; [when Set is one of Last letter done: শ#2503;ষ, Letter done: পর#2503;রট#2494; and Finger is Hands off and Sound is not Sound on, speaking]
+      s22 --> s16: you tap the speaker [when Set is not Rest screen and Finger is Hands off and Sound is not Sound on, speaking]
+      s22 --> s17: you Tab to the board [when Set is one of Tracing a letter, Tracing the set's last letter and Finger is one of Finger on the board, Hands off and Sound is not Sound on, speaking]
+      s22 --> s18: you start a set [when Set is not Rest screen and Finger is Hands off and Sound is not Sound on, speaking]
+      s22 --> s17: you touch the board [when Set is one of Tracing a letter, Tracing the set's last letter and Finger is Hands off and Sound is not Sound on, speaking]
+      s22 --> s21: you Tab to পর#2503;রট#2494; [when Set is one of Last letter done: শ#2503;ষ, Letter done: পর#2503;রট#2494; and Finger is one of Finger on the board, Hands off and Sound is not Sound on, speaking]
+      s22 --> s18: you tap পর#2503;রট#2494; or you tap আব#2494;র ল#2495;খ#2495; [when Set is one of Last letter done: শ#2503;ষ, Letter done: পর#2503;রট#2494; and Finger is Hands off and Sound is not Sound on, speaking]
+    }
+    --
+    state "Sound" as r3 {
+      s23: Sound on
+      s24: Sound off
+      s25: Sound on, speaking
+      [*] --> s23
+      s23 --> s24: you tap the speaker [when Set is none of Left for an adult tool, Opens on the rest screen, Rest screen and Finger is Hands off and Gate is Gate shut]
+      s24 --> s23: you tap the speaker [when Set is not Rest screen and Finger is Hands off]
+      s24 --> s23: you press Enter to write [when Set is not Rest screen and Finger is Hands off and Keys is one of Sound toggle focused, Sound toggle focused, Enter clicked a button]
+      s23 --> s25: you press Enter on the board [when Set is one of Tracing a letter, Tracing the set's last letter and Finger is one of Finger on the board, Hands off and Keys is one of Board focused, Board focused, Enter clicked a button and Gate is Gate shut]
+      s23 --> s25: you trace a stroke [when Set is one of Tracing a letter, Tracing the set's last letter and Finger is Finger on the board and Keys is one of Board focused, Board focused, Enter clicked a button, Focus fell to the page, Focus fell to the page, Enter clicked a button and Gate is Gate shut]
+      s25 --> s24: you tap the speaker [when Finger is Hands off and Keys is one of Board focused, Board focused, Enter clicked a button]
+      s25 --> s23: the voice finishes
+      s23 --> s24: you press Enter to write [when Set is none of Left for an adult tool, Opens on the rest screen, Rest screen and Finger is Hands off and Keys is one of Sound toggle focused, Sound toggle focused, Enter clicked a button and Gate is Gate shut]
+    }
+    --
+    state "Gate" as r4 {
+      s26: Gate shut
+      s27: Holding the gate
+      s28: Gate asks the sum
+      [*] --> s26
+      s26 --> s27: you hold বড#2492;দ#2503;র জন#2509;য [when Set is Tracing a letter and Finger is Hands off and Keys is Nothing focused and Sound is Sound on]
+      s27 --> s26: you let go
+      s27 --> s28: two seconds pass
+      s28 --> s26: the gate closes
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 yellow
+  class s1 teal
+  class s1 bugPath
+  class s2 pink
+  class s2 breaks
+  class s2 bugPath
+  class s3 blue
+  class s3 breaks
+  class s3 bugPath
+  class s4 teal
+  class s5 blue
+  class s5 breaks
+  class s6 yellow
+  class s6 breaks
+  class s7 blue
+  class s7 breaks
+  class s8 blue
+  class s8 breaks
+  class s9 bugPath
+  class s11 bugPath
+  class s12 breaks
+  class s12 bugPath
+  class s13 bugPath
+  class s14 bugPath
+  class s15 bugPath
+  class s16 breaks
+  class s16 bugPath
+  class s17 breaks
+  class s18 breaks
+  class s19 blue
+  class s19 breaks
+  class s19 bugPath
+  class s20 mayBreak
+  class s20 bugPath
+  class s21 blue
+  class s21 breaks
+  class s22 breaks
+  class s23 bugPath
+  class s24 bugPath
+  class s25 blue
+  class s25 breaks
+  class s25 bugPath
+  class s26 bugPath
+  class s27 teal
+  class s28 teal
