@@ -1,7 +1,7 @@
 import type { ToolShare } from "../../shared/share-types";
-import { parseShared, previewTitle, sharedHash } from "./lib/link";
+import { parseShared, previewTitle, sharedHash } from "./lib/challenge";
 
-// No tally: a link only re-opens one level (its seed rebuilds the same pile) with the friend's own ball count.
+// No tally: a link only re-opens one pile (its seed rebuilds the same stones) with the friend's own ball count.
 export const share: ToolShare = {
   normalize(state) {
     const shared = parseShared(state);
