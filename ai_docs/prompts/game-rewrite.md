@@ -71,7 +71,12 @@ Then build it.
   - Record the stars and check `atBreak()` at the moment the round is won, not inside a delay timer that a quick tap can cancel.
   - The end buttons (আবার খেলো, শেষ) are pictures at least 96 px.
   - `GamePage` gives the kids-only header and rails; nothing in the child's view links to grown-up pages.
-  - `speak()` is now silent when sound is off.
+  - The kit now handles these, so don't duplicate them:
+    - `speak()` is silent when sound is off, and sound-off cuts speech and scheduled notes;
+    - `ParentGate` resists banging and auto-repeat, and closes itself;
+    - `RestScreen` is a real modal that blocks input behind it;
+    - the daily timer counts only the focused tab.
+  - Hide `SpeakButton` when sound is off, or make it turn sound on.
 - **ধীরে খেলো must not make stars easier to earn,** unless the design says so explicitly.
 
 ## Scope
