@@ -1,5 +1,6 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, roundedRect, type CardFormat } from "../../../shared/card-canvas";
-import { palette, PILE_OFFSETS, SEED, SEED_FACE, SEED_SHINE, TIGER_EYES, TIGER_STONE, TIGER_STRIPES } from "./art";
+import { palette, PILE_OFFSETS, SEED, SEED_FACE, SEED_SHINE, TIGER_EYES, TIGER_STONE, TIGER_STRIPES, YARDS, type Yard } from "./art";
+import { ladderLevel, worldOf } from "./levels";
 import { winStars, BOARD, GOAT, LINES, POINTS, spot, type Game } from "./game";
 import { bn, cardNames, detail, headline, humanLine, type Shared } from "./link";
 
@@ -13,26 +14,26 @@ function seed(c: CanvasRenderingContext2D) {
 }
 
 /** The final position at any size: the same clay, scratched lines, seeds and striped stones as the live board. */
-export function drawYard(c: CanvasRenderingContext2D, game: Game, x: number, y: number, size: number) {
+export function drawYard(c: CanvasRenderingContext2D, game: Game, x: number, y: number, size: number, yard: Yard = YARDS[1]) {
   shapes ??= { stone: new Path2D(TIGER_STONE), stripes: new Path2D(TIGER_STRIPES), seed: new Path2D(SEED), face: new Path2D(SEED_FACE), shine: new Path2D(SEED_SHINE) };
   c.save();
   c.translate(x, y);
   c.scale(size / BOARD, size / BOARD);
   c.save();
   c.shadowColor = "rgba(59,38,20,0.3)"; c.shadowBlur = 24; c.shadowOffsetY = 10;
-  c.fillStyle = palette.clay; roundedRect(c, 0, 0, BOARD, BOARD, 18); c.fill();
+  c.fillStyle = yard.clay; roundedRect(c, 0, 0, BOARD, BOARD, 18); c.fill();
   c.restore();
   c.lineCap = "round"; c.lineJoin = "round";
-  c.strokeStyle = palette.claySwirl; c.lineWidth = 5;
+  c.strokeStyle = yard.claySwirl; c.lineWidth = 5;
   c.stroke(new Path2D("M24 120Q70 40 170 26M330 474Q430 460 478 380M20 330Q30 420 120 470M380 24Q460 40 478 140"));
   for (const [from, to] of LINES) {
     const [x1, y1] = spot(from), [x2, y2] = spot(to);
-    c.strokeStyle = palette.grooveLight; c.lineWidth = 4;
+    c.strokeStyle = yard.grooveLight; c.lineWidth = 4;
     c.beginPath(); c.moveTo(x1 + 1.6, y1 + 1.8); c.lineTo(x2 + 1.6, y2 + 1.8); c.stroke();
-    c.strokeStyle = palette.groove; c.lineWidth = 4.5;
+    c.strokeStyle = yard.groove; c.lineWidth = 4.5;
     c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke();
   }
-  c.fillStyle = palette.pit;
+  c.fillStyle = yard.pit;
   for (let at = 0; at < POINTS; at++) { const [px, py] = spot(at); c.beginPath(); c.arc(px, py, 7, 0, Math.PI * 2); c.fill(); }
 
   game.goats.forEach((count, at) => {
@@ -68,7 +69,7 @@ export function drawYard(c: CanvasRenderingContext2D, game: Game, x: number, y: 
 function kicker({ mode, name, other, game }: Shared) {
   const [goats, tigers] = cardNames(mode, name, other);
   if (mode === 0 && !(goats && tigers)) return "বাঘবন্দি · দুজনে এক ফোনে";
-  const stars = winStars(game), level = mode === 0 ? "" : ` · লেভেল ${bn(game.level)}${stars ? ` ${"★".repeat(stars)}${"☆".repeat(3 - stars)}` : ""}`;
+  const stars = winStars(game), level = mode === 0 ? "" : ` · লেভেল ${bn(ladderLevel(game.level))}${stars ? ` ${"★".repeat(stars)}${"☆".repeat(3 - stars)}` : ""}`;
   return `বাঘবন্দি${level} · ${goats || "ছাগল"} ছাগল, ${tigers || "বাঘ"} বাঘ`;
 }
 
@@ -95,7 +96,8 @@ export function drawCard(canvas: HTMLCanvasElement, data: Shared, format: CardFo
   fitText(c, [{ text: headline(game), color, weight: 800, display: true }], cx, story ? 448 : 200, story ? 100 : 88, 960, "center");
   fitText(c, [{ text: detail(game), color: palette.ink, weight: 600 }], cx, story ? 526 : 268, story ? 46 : 42, 940, "center");
   const size = story ? 880 : 760;
-  drawYard(c, game, cx - size / 2, story ? 585 : 310, size);
+  // The yard on its world's clay: উঠোন for levels 5–8 and two people, the dusk clay for 9–12.
+  drawYard(c, game, cx - size / 2, story ? 585 : 310, size, YARDS[data.mode === 0 ? 1 : worldOf(ladderLevel(game.level)) - 1]);
   fitText(c, [{ text: humanLine(game), color: palette.ink, weight: 700, display: true }], cx, story ? 1548 : 1150, story ? 58 : 52, 940, "center");
   if (story) fitText(c, [{ text: "চালগুলো মিলিয়ে দেখা ফল", color: palette.muted, weight: 600 }], cx, 1608, 34, 900, "center");
   drawFooterBand(c, format, "তুমি বাঘ হয়ে পারবে?", site, { band: palette.ink, ask: "#f2b33d", site: "#ffffff" });

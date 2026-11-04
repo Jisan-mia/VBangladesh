@@ -1,37 +1,42 @@
-export const title = "বাঘবন্দি: game, bot, window and friend's link";
+export const title = "Baghbandi (after the rewrite): the game, the bot's beat, the pause menu, the window and the level sheet";
 const game = (v: any) => {
-  if (v.stage === "friend") return "Friend's card shows";
-  if (v.stage === "over") return "Game over, result shows";
-  if (v.paused) return "Paused";
-  if (v.turn === "bot") return v.stage === "ready" ? "Bot opens (you're the tiger)" : "Bot is thinking";
-  return v.stage === "ready" ? "Your first move" : "Your move";
+  if (v.screen === "title") return v.friend && v.lv === 3 ? "Start card, friend's level" : "Start card";
+  if (v.screen === "over") return v.fresh ? "Result, just shown" : "Result";
+  if (v.sheet) return "Level sheet open, play held";
+  return v.turn === "bot" ? "Bot's turn, it moves a beat later" : "Your move";
 };
 export const state = (v: any) => ({
   Game: game(v),
-  Window: v.win === "hidden" ? "Tab hidden" : v.win === "away" ? "Another window has focus" : "You're on the page",
+  Window: v.menu ? (v.win === "on" ? "Pause menu" : "Away, pause menu up") : v.win === "on" ? (v.guard ? "Just came back" : "You're on the page") : "Away (another window or tab)",
 });
-const calm = (v: any) => v.stage === "ready" && v.turn === "you" && !v.paused;
-export const step = (action: string, from: any) => {
-  // Resets that every state has: drawn only from the first screen (and the result, for another game).
-  if (action === "YouPickMode" && !calm(from)) return null;
-  if (action === "FriendLinkOpens" && !calm(from)) return null;
-  if (action === "YouPlayAgain" && from.stage !== "over") return null;
-  return label(action);
-};
-const label = (action: string) => ({
+const steps: Record<string, string | null> = {
+  YouPickSide: "you pick বাঘ, ছাগল or দুজনে",
+  YouPickLevel: "you step to another level",
+  YouStart: "you press শুরু করো",
   YouMove: "you move a piece",
   BotMoves: "the bot moves",
-  Celebrate: null,
   YouTakeBack: "you press ফিরিয়ে আনো",
-  YouPickMode: "you pick ছাগল হবো, বাঘ হবো or দুজনে",
-  YouTakeTheChallenge: "you take the friend's challenge",
-  YouPlayAgain: "you start another game",
-  FriendLinkOpens: "a friend's link opens",
-  TabHides: "you hide the tab",
-  TabShows: "the tab shows again",
-  WindowBlurs: "you click into another window",
-  WindowFocuses: "you come back to the window",
+  YouReopen: "you take back a lost lesson's last move",
+  GuardEnds: null,
+  ResultSettles: "a moment passes",
+  YouGoOn: "you press পরের লেভেল / আবার খেলো (or a fresh Enter)",
+  YouOpenSheet: "you open সব লেভেল",
+  YouCloseSheet: "you close the sheet",
+  YouPickFromSheet: "you pick a level from the sheet",
+  WindowBlurs: "you look away (other window or tab)",
+  TabHides: "you look away (other window or tab)",
+  WindowFocuses: "you come back",
+  TabShows: "you come back",
+  YouPause: "you press ⏸, P or Escape",
   YouResume: "you press চালিয়ে যাও",
-} as Record<string, string | null>)[action] ?? action;
-export const group = (v: any) => v.stage === "over" || v.stage === "friend" ? "done" : v.paused ? "held" : v.turn === "bot" ? "bot" : "play";
-export const colors = { play: "teal", bot: "orange", held: "yellow", done: "blue" };
+  YouRestart: null,
+  FriendLinkOpens: "a friend's link opens",
+};
+export const step = (action: string, from: any) => {
+  // Shown where they matter: looking away from play, the friend's link and side picks from the start card only.
+  if ((action === "WindowBlurs" || action === "TabHides" || action === "YouPause") && from.screen !== "play") return null;
+  if ((action === "FriendLinkOpens" || action === "YouPickLevel") && from.screen !== "title") return null;
+  return action in steps ? steps[action] : action;
+};
+export const group = (v: any) => v.screen === "over" ? "done" : v.screen === "title" ? "start" : v.sheet || v.menu || v.win !== "on" ? "held" : v.turn === "bot" ? "bot" : "play";
+export const colors = { play: "teal", bot: "orange", held: "yellow", done: "blue", start: "purple" };
