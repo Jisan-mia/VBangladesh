@@ -5,16 +5,20 @@ import * as A from "./art";
 import { SCENE_H, SCENE_W, type Can, type Item, type Look, type Shape } from "./shapes";
 
 type Rng = () => number;
-export type World = 0 | 1 | 2;
+/** The sky: 0 morning, 1 noon, 2 evening (the three the old game used), 3 dusk (new, appended so old pictures never change). */
+export type World = 0 | 1 | 2 | 3;
 
 const SKIES = [
   ["#bfe0ee", "#cde7f1", "#dbeff4", "#e8f5f4"],
   ["#86c6e6", "#9fd3ec", "#b9dff1", "#d2ebf4"],
   ["#f0a07a", "#f5b78a", "#f8cc9f", "#fbe0bb"],
+  ["#6d5a9c", "#9a6fa8", "#c98aa6", "#eab0a4"],
 ] as const;
+/** Three suns only: their list is also the colour change a sun may take, and old pictures depend on it. Dusk has its own. */
 const SUNS = ["#ffd36b", "#ffe14d", "#ff9a52"];
-const FAR_TREES = ["#7fae7a", "#6aa55e", "#8c8f62"];
-const WATER = [["#7fbcd2", "#8ec6d8", "#a0cfdd"], ["#5aaed0", "#6db9d6", "#86c6de"], ["#9a9cc4", "#a9aacb", "#bcb8d2"]] as const;
+const DUSK_SUN = "#ff7a5c";
+const FAR_TREES = ["#7fae7a", "#6aa55e", "#8c8f62", "#5e6b62"];
+const WATER = [["#7fbcd2", "#8ec6d8", "#a0cfdd"], ["#5aaed0", "#6db9d6", "#86c6de"], ["#9a9cc4", "#a9aacb", "#bcb8d2"], ["#7d76a8", "#8f86b2", "#a497bc"]] as const;
 
 const choose = <T,>(rng: Rng, list: readonly T[]) => list[pick(rng, list.length)];
 const jitter = (rng: Rng, by: number) => Math.round((rng() * 2 - 1) * by * 10) / 10;
@@ -28,7 +32,7 @@ const item = (id: string, name: string, x: number, y: number, draw: (look: Look)
 const scenery = (id: string, draw: (look: Look) => Shape[]): Item => ({ id, name: "", x: 0, y: 0, draw, look: {} });
 
 function sky(rng: Rng, world: World, bottom: number, left: boolean) {
-  const sunColor = SUNS[world], x = (at: number) => left ? at : SCENE_W - at;
+  const sunColor = world === 3 ? DUSK_SUN : SUNS[world], x = (at: number) => left ? at : SCENE_W - at;
   const birds = 3 + pick(rng, 2);
   return {
     back: [scenery("sky", A.bands(SCENE_W, 0, bottom, SKIES[world]))],

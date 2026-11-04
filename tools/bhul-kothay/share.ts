@@ -1,7 +1,7 @@
 import type { ToolShare } from "../../shared/share-types";
-import { parseShared, previewTitle, sharedHash } from "./lib/link";
+import { parseShared, previewTitle, sharedHash } from "./lib/challenge";
 
-// No tally: a link only names one level and the friend's own time.
+// No tally: a link only names one level, its pictures and the friend's own time.
 export const share: ToolShare = {
   normalize(state) {
     const shared = parseShared(state);

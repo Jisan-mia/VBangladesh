@@ -70,7 +70,7 @@ export const signboard = (name: string, w = 124) => (look: Look) => [
   line(d`M${-w / 2 + 12} -24 L${-w / 2 + 18} -34`), line(d`M${w / 2 - 12} -24 L${w / 2 - 18} -34`),
   rect(-w / 2, -25, w, 25, look.color!, { rx: 3 }),
   rect(-w / 2 + 3, -22, w - 6, 19, "none", { stroke: "#ffffff", sw: 0.8, rx: 2, op: 0.6 }),
-  text(0, -12, name, 12.5, w - 14, "#ffffff"),
+  text(0, -12, look.label ?? name, 12.5, w - 14, "#ffffff"),
 ];
 
 type Fruit = (x: number, y: number, color: string) => Shape[];
@@ -298,7 +298,7 @@ export const cauliflower = () => [
 ];
 
 /** A small cardboard price card on a stick: "৳৪০". */
-export const priceCard = (label: string) => (look: Look) => [line("M0 0 L0 -10", WOOD_DARK, 1.4), rect(-11, -24, 22, 14, look.color!, { rx: 1.5 }), text(0, -16.5, label, 9, 19, INK)];
+export const priceCard = (label: string) => (look: Look) => [line("M0 0 L0 -10", WOOD_DARK, 1.4), rect(-11, -24, 22, 14, look.color!, { rx: 1.5 }), text(0, -16.5, look.label ?? label, 9, 19, INK)];
 
 /** A hurricane lantern (হারিকেন) hanging from a hook. */
 export const lantern = (look: Look) => [
@@ -499,7 +499,7 @@ export const kolshi = (look: Look) => [
 export const steps = (w: number) => () => [0, 1, 2, 3].map(index => rect(-w / 2 + index * 6, -10 - index * 9, w - index * 12, 10, index % 2 ? "#b8573e" : "#c76a4d", { sw: 0.8 }));
 
 /** The ghat's name on a post. */
-export const postSign = (name: string) => (look: Look) => [rect(-1.6, -36, 3.2, 36, WOOD_DARK), rect(-30, -50, 60, 16, look.color!, { rx: 2 }), text(0, -42, name, 9.5, 54, "#ffffff")];
+export const postSign = (name: string) => (look: Look) => [rect(-1.6, -36, 3.2, 36, WOOD_DARK), rect(-30, -50, 60, 16, look.color!, { rx: 2 }), text(0, -42, look.label ?? name, 9.5, 54, "#ffffff")];
 
 // ——— the rickshaw lane ———
 
