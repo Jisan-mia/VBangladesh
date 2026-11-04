@@ -353,3 +353,27 @@ export function svgDocument(id: string, size = 400) {
 
 export const bodyDocument = (scale = 5) =>
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 200" width="${120 * scale}" height="${200 * scale}">${BODY}</svg>`;
+
+/** উঁকি: a leafy bush across the bottom of the 100×100 box, with a scalloped top and rounded corners; `top` is where its
+ * leaves start (the picture shows above it). */
+export function bushMarkup(top = 52) {
+  const scallops = (y: number, count: number, from: number, to: number) => {
+    const width = (to - from) / count;
+    let edge = `M${from} ${y}`;
+    for (let i = 0; i < count; i++) edge += `a${width / 2} ${(width / 2) * 0.85} 0 0 1 ${width} 0`;
+    return edge;
+  };
+  const back = `${scallops(top + 10, 5, 2, 98)}V86a12 12 0 0 1-12 12H14A12 12 0 0 1 2 86z`;
+  const front = `${scallops(top + 22, 4, 2, 98)}V86a12 12 0 0 1-12 12H14A12 12 0 0 1 2 86z`;
+  const dots = [[18, 24], [42, 30], [66, 22], [84, 32], [30, 38], [56, 40], [78, 44]]
+    .filter(([, dy]) => top + dy < 94).map(([x, dy]) => `<circle cx="${x}" cy="${top + dy}" r="2" fill="#f8bbd0"/>`).join("");
+  return `<path d="${back}" fill="#4f9a3a" ${o}/><path d="${front}" fill="#69b34c"/>${dots}`;
+}
+
+/** How far down the bush starts for each picture, so its top (a head, a crown, ears) peeks out. Default 52. */
+export const PEEK: Record<string, number> = {
+  cat: 40, dog: 42, cow: 44, goat: 44, duck: 46, hen: 46, elephant: 46, tiger: 44, monkey: 42, deer: 40, camel: 40, penguin: 44, dolphin: 48, doyel: 46,
+  mango: 50, jackfruit: 46, banana: 50, guava: 50, lychee: 50, pineapple: 42, papaya: 50, watermelon: 54, coconut: 50, apple: 50,
+  potato: 54, tomato: 52, brinjal: 48, carrot: 44, lau: 50, korola: 50, dheros: 48, pumpkin: 52, cauliflower: 50, morich: 48,
+  shapla: 50, ilish: 50, amgach: 52, flag: 50,
+};
