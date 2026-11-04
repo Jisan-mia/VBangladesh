@@ -1,0 +1,60 @@
+---
+title: "Sir ghurlei thamo: the class, the window, the menu, the chit and its hum"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  s0: Title
+  s1: Ready
+  s2: Level list on the title
+  s3: Passing the chit
+  s4: Friend's link waiting
+  s5: Level list, class frozen
+  s6: Paused
+  s7: Result
+  s8: Teacher looking, chit moving
+  s9: Chit still
+  s10: Back, a breath first
+  s11: Level list over the result
+  s12: Result, away
+  [*] --> s0
+  s0 --> s1: you press Enter or you choose a class
+  s1 --> s3: you press the chit or you press Enter
+  s1 --> s6: you press P or #9208; or you hide the tab or you click into another window
+  s3 --> s7: the chit reaches the last bench
+  s3 --> s8: the teacher turns
+  s3 --> s4: you open a friend's link in this tab
+  s3 --> s5: you open সব ল#2503;ভ#2503;ল
+  s3 --> s6: you press P or #9208; or you hide the tab or you click into another window
+  s3 --> s9: you let go or you press the chit or you press Enter
+  s5 --> s10: you close the list
+  s6 --> s10: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s6 --> s5: you open সব ল#2503;ভ#2503;ল
+  s7 --> s11: you open সব ল#2503;ভ#2503;ল
+  s7 --> s0: you open a friend's link in this tab or you hide the tab or you click into another window or you press P or #9208; or you choose a class or you press Enter
+  s7 --> s1: you press Enter or you choose a class
+  s8 --> s4: you open a friend's link in this tab
+  s8 --> s9: you let go or the teacher catches the chit or you press the chit or you press Enter
+  s9 --> s3: you press Enter or you press the chit
+  s9 --> s6: you hide the tab or you click into another window or you press P or #9208;
+  s9 --> s4: you open a friend's link in this tab
+  s11 --> s1: you choose a class
+  s10 --> s9: half a second passes
+  class s1 teal
+  class s2 yellow
+  class s3 teal
+  class s4 teal
+  class s5 yellow
+  class s6 yellow
+  class s7 blue
+  class s8 teal
+  class s9 teal
+  class s10 teal
+  class s11 blue
+  class s12 blue

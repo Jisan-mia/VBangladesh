@@ -1,32 +1,106 @@
-# স্যার ঘুরলেই থামো: statechart before the rewrite
+# স্যার ঘুরলেই থামো: statechart
 
-The model is `Chit.tla` with `Chit.cfg` and `view.ts`. It mirrors `tools/sir-ghurlei-thamo/components/chit-game.tsx` and `tools/sir-ghurlei-thamo/lib/game.ts` as they are on `games-to-the-bar`. The report and chart are in `before-fix/`. No code was changed.
+Two runs of the same model. `before-fix/` is the old game: six of nine rules broke. `after-fix/` is the rewrite: all 13 rules hold (TLC reached 376 states and 2,284 steps).
 
-TLC reached 456 states. Six of the nine rules break. The chart (`before-fix/chart.mmd`) draws 12 states and 22 arrows. It hides arrows that repeat ones already drawn (the teacher turning back, coming back to the window from the "still" states, and the resets).
+- Model: `Chit.tla` with `Chit.cfg` and `view.ts` (the rewrite). The old spec is kept in `before-fix/`.
+- It mirrors `tools/sir-ghurlei-thamo/lib/session.ts`, `lib/step.hot.ts` and `components/class-game.tsx`, with `useGamePlayer` from `shared/game-player-client.tsx`.
+- Charts: `before-fix/chart.mmd` (12 states, 22 arrows) and `after-fix/chart.mmd` (13 states, 22 arrows).
 
-## Systems modelled
-- **Play phase:** ready → playing → over (the result). The chit reaching the last bench is one step; the bench count is left out.
-- **The teacher:** at the board or facing the class. A held chit under a look is caught: the scolding, then back to the board. In one-tap mode the catch also lets go of the chit.
-- **Pause and focus:** the tab hidden or shown (it pauses and lets go), the window focused or blurred (it lets go in hold mode only), and চালিয়ে যাও.
-- **Input:** Enter as the pass key (Space and ↓ act the same during play, but only Enter acts on the result), its keyup, the keyboard's auto-repeat, and hold mode against one-tap mode (চেপে না ধরে খেলো).
-- **Sound:** the chit's `loop("hum")`, made inside `press()`, against the site-wide switch (`setSoundOn` and `SoundToggle onChange={stopHum}`).
-- **Time:** the setTimeout in `finish()` that plays the win sound or `levelUp` with confetti (or `good`) 300 + 260 ms × stars later.
-- **Links:** a friend's link read once on mount, and one that arrives later by hashchange.
-- **Left out:** `needRelease` after a catch (it only stops the chit until you lift, and no rule reads it), slow mode, saved stars (`recordLevel` keeps the max; the migration runs once because it only writes when the levels key is missing), and the class grid (it calls the same `reset()` as আবার খেলো).
+## After the rewrite
 
-## Rules
-| Rule | In plain words | Result |
+```mermaid
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  s0: Title
+  s1: Ready
+  s2: Level list on the title
+  s3: Passing the chit
+  s4: Friend's link waiting
+  s5: Level list, class frozen
+  s6: Paused
+  s7: Result
+  s8: Teacher looking, chit moving
+  s9: Chit still
+  s10: Back, a breath first
+  s11: Level list over the result
+  s12: Result, away
+  [*] --> s0
+  s0 --> s1: you press Enter or you choose a class
+  s1 --> s3: you press the chit or you press Enter
+  s1 --> s6: you press P or ⏸ or you hide the tab or you click into another window
+  s3 --> s7: the chit reaches the last bench
+  s3 --> s8: the teacher turns
+  s3 --> s4: you open a friend's link in this tab
+  s3 --> s5: you open সব লেভেল
+  s3 --> s6: you press P or ⏸ or you hide the tab or you click into another window
+  s3 --> s9: you let go or you press the chit or you press Enter
+  s5 --> s10: you close the list
+  s6 --> s10: you press চালিয়ে যাও
+  s6 --> s5: you open সব লেভেল
+  s7 --> s11: you open সব লেভেল
+  s7 --> s0: you open a friend's link in this tab or you hide the tab or you click into another window or you press P or ⏸ or you choose a class or you press Enter
+  s7 --> s1: you press Enter or you choose a class
+  s8 --> s4: you open a friend's link in this tab
+  s8 --> s9: you let go or the teacher catches the chit or you press the chit or you press Enter
+  s9 --> s3: you press Enter or you press the chit
+  s9 --> s6: you hide the tab or you click into another window or you press P or ⏸
+  s9 --> s4: you open a friend's link in this tab
+  s11 --> s1: you choose a class
+  s10 --> s9: half a second passes
+  class s1 teal
+  class s2 yellow
+  class s3 teal
+  class s4 teal
+  class s5 yellow
+  class s6 yellow
+  class s7 blue
+  class s8 teal
+  class s9 teal
+  class s10 teal
+  class s11 blue
+  class s12 blue
+
+```
+
+The chart hides the arrows that repeat ones already drawn: the window and tab coming back, the teacher turning back, the star chimes ending, one-tap against hold mode, and the sound switch.
+
+### Systems modelled
+- **Screens:** title, class (ready, playing), result. The story's panels are left out (one screen with no rules).
+- **The player's menu and the level list:** both freeze play. The menu opens on P, ⏸, Escape, blur and hide. The list opens from the menu's সব লেভেল, the title or the result.
+- **Focus:** tab visible or hidden, window focused or blurred, and the 0.5 s breath after coming back.
+- **The teacher:** at the board or facing the class. A held chit under a look is caught: the scolding, then back to the board. In one-tap mode the catch lets go of the chit. (The second watcher, the lights, the sleepers, the glasses and the duster are more routines on this track; their rules are replayed in `tests/game.test.ts`.)
+- **Input:** Enter (and its auto-repeat), a pointer press on the chit, hold mode against one-tap mode.
+- **Sound:** the hum is set from the state after every event (`syncHum`), so it is a fresh loop each time. The site-wide switch sits in the player's menu.
+- **Time:** the star chimes scheduled at the result. There is no timer left to outlive the class: `silenceScheduled()` runs on every new class, on the player's pause, on a friend's link and on unmount.
+- **Links:** a friend's link pasted into this tab (hashchange).
+
+### Rules (all hold in `after-fix/`)
+| Rule | In plain words | Test that replays it |
 |---|---|---|
-| PausedWhenHidden | Hide the tab mid-class and the class pauses. | holds |
-| PausedWhenBlurred | Click into another window mid-class and the class pauses. | **breaks** |
-| InputReleasedWhenAway | Once you leave the page, the chit isn't held. | **breaks** (one-tap mode) |
-| LoopOnlyWhenMeaningful | The hum plays only in a running class with sound on. | holds |
-| LoopComesBack | While the chit is held in a running class with sound on, the hum is there. | **breaks** |
-| ResultStaysUntilYouChoose | The result stays until you make a fresh choice. | **breaks** |
-| NoDoubleResult | A class ends once. | holds |
-| CelebrationOnlyOnResult | The win sound and confetti play only on the result. | **breaks** |
-| FriendLinkOpensTheirClass | A friend's link opened in this tab opens their class. | **breaks** |
+| PausedWhenHidden | Hide the tab mid-class and the class pauses. | `session.test.ts` "hide, the player's menu and the level list…" |
+| PausedWhenBlurred | Click into another window mid-class and the class pauses. | "statechart PausedWhenBlurred…" |
+| InputReleasedWhenAway | Once you leave the page, open the menu or the list, the chit isn't held (one-tap too). | "statechart InputReleasedWhenAway…" |
+| ClickThatBringsFocusBackIsNotAMove | The press that brings focus back is ignored; the class waits for a fresh press. | "the click that brings focus back is not a move" |
+| ChoiceFreezesPlay | While the menu or the level list is open, nothing in the class advances. | "hide, the player's menu and the level list…" |
+| LoopOnlyWhenMeaningful | The hum plays only in a running class with sound on. | "statechart LoopOnlyWhenMeaningful / LoopComesBack…" |
+| LoopComesBack | In a running class with sound on, the hum is there, and turning sound back on restores it. | same |
+| ResultStaysUntilYouChoose | A held Enter never leaves the result; only a fresh press or a button does. | "statechart ResultStaysUntilYouChoose…" |
+| NoDoubleResult | A class ends once. | `game.test.ts` "the chit stops at the last bench…" |
+| CelebrationOnlyOnResult | The star chimes and the confetti belong to the result, never the next class. | "statechart CelebrationOnlyOnResult…" |
+| FriendLinkOpensTheirClass | A friend's link never sits unopened: a running class gets it at the next pause, blur, hide, list or new class. | "statechart FriendLinkOpensTheirClass…" |
+| OneNewClassAtATime | On the title there is no link waiting. | (model only) |
 
+Mutation check: breaking the spec the way the old code was broken makes TLC report the rule. Sound-on that doesn't restart the hum breaks LoopComesBack; blur that doesn't pause breaks PausedWhenBlurred; one-tap blur that keeps the hold breaks InputReleasedWhenAway.
+
+### Bugs the model found in the first rewrite draft
+- **FriendLinkOpensTheirClass (game):** a link that arrived mid-class waited for a pause, but opening the level list (which freezes play without the player's pause) left it waiting, and picking a level from that list then showed the old list over the friend's title. Fixed: the list takes a waiting link when it opens, and `begin()` closes the list before it opens the link.
+- **CelebrationOnlyOnResult (game):** opening a friend's class from the result left the star chimes queued. Fixed: `takeLink` calls `silenceScheduled()`.
+
+## Bugs in the old game, and how each is replayed now
 ## Bugs
 
 ### 1. PausedWhenBlurred: "I looked at another window and the clock kept counting; in one-tap mode the teacher caught my chit" (shared)
@@ -60,21 +134,29 @@ TLC reached 456 states. Six of the nine rules break. The chart (`before-fix/char
 - **Live replay:** on `/sir-ghurlei-thamo` (class 1), set the hash to `#s=777&t=300&c=0&n=rafi`. 0.8 s later there was no banner and the page still showed `ক্লাস ১ · ধীরে ধীরে লেখা`. After a reload the banner appeared (`rafi ৩০.০ সেকেন্ডে…`) on `ক্লাস ৫ · রোজকার ক্লাস`.
 - **Fix:** listen for `hashchange` like ডাংগুলি and দেরি হয়ে গেল do. Ignore in-page anchors (`#result`), and don't take over a class that's under way.
 
-## Quality-bar gaps (from a play in Orca)
-1. **Pause:** there's no pause control at all: no button, no P or Esc. Only hiding the tab pauses. Blur doesn't (bug 1).
-2. **Leaving the result:** holding Enter skips it, and the confetti lands on the next class (bugs 2 and 3).
-3. **Danger:** the teacher's turn shows only as a status line under the stage, footsteps and the drawing. There's no edge glow as the turn starts, which is when a held chit is in danger.
-4. **First screen:** the big ধরে রাখো button and the classroom art are strong. The H1 and lead above the HUD push the stage down on a phone.
-5. **Choices:** the class grid is hidden in a `<details>` with no numbering. পরের ক্লাস is the primary button after a clear, which is right.
-6. **Pacing:** classes 1–5 each add one thing (a cough, a dropped chalk, a peek). From class 6 up, several numbers change at once (turn speed, peeks, look length, writing length), and the last class isn't a named "boss" moment.
-7. **Sound:** chalk, footsteps, cough, chalk drop, the climbing hum, the catch, and a note per bench are good and meaningful. The hum goes silent after the switch (bug 4).
-8. **Ending (good):** the result shows the time, stars, catches, the near miss, this class's best and the friend comparison. The card is personal.
+### Live replays after the fix (Orca, Pixel 9 emulation, a virtual frame clock because Orca stops animation frames in a background tab)
+1. **PausedWhenBlurred:** a blur mid-class opened the menu; 3 s later the clock read the same `৩.৮৭` and the teacher was on the same segment. After চালিয়ে যাও a 0.5 s breath, then the class went on from `৩.৮৭`.
+2. **InputReleasedWhenAway (one-tap):** one tap, the chit at bench `0.42` after `০.৬৫` s. Blur: held false. After 8 s away: same position, same clock, same segment, 0 catches. Back in the class the chit still waited; a fresh tap moved it. (Old: bench 1 → 4, caught at 4.8 s.)
+3. **ResultStaysUntilYouChoose:** on the result of level 1, five `keydown Enter` with `repeat: true` changed nothing; one fresh `Enter` opened level 2.
+4. **CelebrationOnlyOnResult:** no timer is left in the component (a source check in `session.test.ts`); pressing পরের লেভেল at once starts the class with no confetti or chimes.
+5. **LoopComesBack:** sawtooth starts counted: 2 with the class running. Sound off then on in the menu: still 2 (muted, no stub). চালিয়ে যাও: 3, one fresh hum, `session.hum` true, the chit moving.
+6. **FriendLinkOpensTheirClass:** with a class running, the link `#s=777&t=300&c=0&l=3&v=2&n=rafi` (with the player's Back handling) opened the title for level 3 with `rafi ৩০.০ সেকেন্ডে…` and `rafi-এর নিজের ফোনের সময়`. `#result` changed nothing.
+7. **Pause and levels:** P opened the menu (সব লেভেল is in it); সব লেভেল opened the list over a frozen class (clock `২.০৫` before and after 2 s); key `2` started level 2.
 
-Screenshot: `.shots/sir-ghurlei-thamo-first-screen.png` (phone first screen: the HUD, the classroom, ধরে রাখো).
+## Quality-bar gaps (from the play before the rewrite) and what closed them
+1. **Pause:** the player's menu (P, ⏸, Escape, blur, hide) now exists and the game has no controls of its own.
+2. **Leaving the result:** fresh keys only (`!event.repeat` and a keydown after the screen appeared), no confetti timer.
+3. **Danger:** the classroom's edge glows orange as a turn starts (stronger as the look nears) and red while someone looks; the pass button says the same in words ("ছাড়ো!", "নড়বে না"). In ধীরে খেলো the edges are steady borders.
+4. **First screen:** the folded chit is the start button; the H1 and lead live in the player's launch card, not above the HUD.
+5. **Choices:** the level list is a choice screen (numbered, the next level marked, play frozen behind it). The result has numbered choices with পরের লেভেল marked এটাই ভালো.
+6. **Pacing:** 12 levels, each adding exactly one thing (asserted in `levels.test.ts`), and a named finale at 4, 8 and 12.
+7. **Sound:** the hum comes back; the bell, chalk, footsteps, cough, squeak, duster, snore, corridor, power cut and tube light are new, each with a visible twin.
+8. **Ending:** the result counts its time up, then real stats; the card names the level.
 
 ## Regenerate
 ```sh
-scripts/statechart.sh ai_docs/statecharts/sir-ghurlei-thamo/Chit.tla --view ai_docs/statecharts/sir-ghurlei-thamo/view.ts --out ai_docs/statecharts/sir-ghurlei-thamo/before-fix
-rm ai_docs/statecharts/sir-ghurlei-thamo/before-fix/tlc*.out
+scripts/statechart.sh ai_docs/statecharts/sir-ghurlei-thamo/Chit.tla --view ai_docs/statecharts/sir-ghurlei-thamo/view.ts --out ai_docs/statecharts/sir-ghurlei-thamo/after-fix
+rm -f ai_docs/statecharts/sir-ghurlei-thamo/after-fix/tlc*.out
+# the old model, for comparison
+scripts/statechart.sh ai_docs/statecharts/sir-ghurlei-thamo/before-fix/Chit.tla --view ai_docs/statecharts/sir-ghurlei-thamo/before-fix/view.ts --out ai_docs/statecharts/sir-ghurlei-thamo/before-fix-rerun
 ```
-After the fixes, update the spec to the new code and run into a fresh `after-fix/`. Every rule must hold there.
