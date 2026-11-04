@@ -1,6 +1,6 @@
 # Statechart analysis prompt (orchestration template)
 
-Fill `{SLUGS}`, then send one agent per group (model: opus). Many run at once.
+Fill `{SLUGS}`, then send one agent per group (model: sonnet, effort: high). Many run at once.
 
 ---
 

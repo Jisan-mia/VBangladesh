@@ -1,6 +1,6 @@
 # Game rewrite prompt (orchestration template)
 
-Fill `{SLUG}` and `{NAME}`, then send one agent per game (model: opus, effort: high). Many run at once.
+Fill `{SLUG}` and `{NAME}`, then send one agent per game (model: sonnet, effort: high; the orchestrator stays on opus). Many run at once.
 
 ---
 
