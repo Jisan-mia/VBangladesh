@@ -1,5 +1,6 @@
 import type { ToolShare } from "../../shared/share-types";
-import { parseShared, previewTitle, sharedHash } from "./lib/link";
+import { parseShared, sharedHash } from "./lib/challenge";
+import { previewTitle } from "./lib/lines";
 
 // No tally: a link only re-opens one night (its seed replays the same mosquitoes) with the friend's own count.
 export const share: ToolShare = {

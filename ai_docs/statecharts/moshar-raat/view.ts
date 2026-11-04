@@ -1,29 +1,41 @@
-export const title = "মশার রাত: the night, the window and the whine";
-const night = (v: any) =>
-  v.phase === "ready" ? "Lights on, waiting" : v.phase === "won" ? "Dawn: card shows" : v.phase === "lost" ? "Woken up: card shows" : v.paused ? "Paused" : "Mosquitoes flying";
+export const title = "Moshar Raat after the rewrite: the night, the list, the window and a link";
+const game = (v: any) => v.picking ? (v.phase === "paused" ? "সব রাত open, night paused" : "সব রাত open")
+  : ({ title: "Title (রাত শুরু)", playing: v.flying ? "Mosquitoes flying (পিন-পিন)" : "Night on, air clear", paused: "Paused", over: "Card shows" } as any)[v.phase];
+const link = (v: any) => v.link === "none" ? "No friend's link"
+  : v.link === "other" ? "Friend's link, another night picked"
+  : v.seed === "theirs" ? "Friend's night, their seed" : "Friend's night, your own seed";
 export const state = (v: any) => ({
-  Night: night(v),
-  Window: !v.visible ? "Tab hidden" : !v.focused ? "Another window has focus" : v.inView ? "You're on the room" : "Room scrolled away",
-  Whine: v.whine === "live" ? "পিন-পিন playing" : v.whine === "stub" ? "Whine silent (made while muted)" : "No whine",
-  Sound: v.sound ? "Sound on" : "Sound off",
+  Game: game(v),
+  Window: !v.visible ? "Tab hidden" : v.focused ? "You're on the page" : "Another window has focus",
+  Link: link(v),
 });
-const STEPS: Record<string, string | null> = {
-  YouStart: "you tap শুরু করো",
-  MosquitoesFly: "a mosquito flies near",
-  DawnComes: "dawn comes",
-  ThirdBite: "the third bite wakes the sleeper",
+export const step = (action: string, _from: any, to: any) => ({
+  YouStart: "you press রাত শুরু",
+  AMosquitoArrives: "a mosquito flies in",
+  TheAirClears: "the last one in the air is zapped or bites",
+  YouHoldAnArrow: "you hold an arrow",
+  YouLetGo: "you let go",
+  YouTapTheRoom: "you tap the room",
   WindowBlurs: "you click into another window",
   WindowFocuses: "you come back to the window",
   TabHides: "you hide the tab",
   TabShows: "the tab shows again",
-  ScrollAway: "you scroll the room away",
-  ScrollBack: "you scroll the room back",
+  YouPause: "you press P or ⏸",
   YouResume: "you press চালিয়ে যাও",
+  YouOpenTheList: "you open সব রাত",
+  YouCloseTheList: "you close সব রাত",
+  YouPickANight: "you pick a night",
+  NightEnds: "dawn comes, or the sleeper wakes",
+  CheerFires: "the celebration timer fires",
+  YouPlayAgain: "you press আবার খেলো",
+  YouGoOn: "you press পরের রাত",
+  YouRestart: "you press নতুন করে শুরু",
+  FriendLinkOpens: "a friend's link opens",
+  YouHoldEnter: "you hold Enter",
+  EnterRepeats: "Enter repeats",
+  YouLetGoOfEnter: "you let go of Enter",
   SoundOff: "you turn sound off",
   SoundOn: "you turn sound on",
-  YouPlayAgain: "you press আবার খেলো",
-  YouPickANight: null,
-};
-export const step = (action: string) => action in STEPS ? STEPS[action] : action;
-export const group = (v: any) => v.phase === "won" || v.phase === "lost" ? "done" : v.paused ? "held" : v.phase === "ready" ? "wait" : "play";
-export const colors = { play: "teal", held: "yellow", done: "blue", wait: "tan" };
+} as Record<string, string>)[action] ?? (to ? action : action);
+export const group = (v: any) => v.phase === "over" ? "done" : v.phase === "paused" || v.picking ? "held" : v.phase === "title" ? "wait" : "play";
+export const colors = { wait: "blue", play: "teal", held: "yellow", done: "blue" };
