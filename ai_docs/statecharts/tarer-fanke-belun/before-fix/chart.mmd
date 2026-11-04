@@ -1,0 +1,135 @@
+---
+title: "তﬂ°°2494¶ßরﬂ°°2503¶ßর ফﬂ°°2494¶ßﬂ°°2433¶ßকﬂ°°2503¶ß বﬂ°°2503¶ßলﬂ°°2497¶ßন: the run, the window, the wire hum and the celebration"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks LoopComesBack or NoCelebrationAfterLeaving or PausedWhenBlurred in some cases
+    lg4: Path to the LoopComesBack or NoCelebrationAfterLeaving or PausedWhenBlurred bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 mayBreak
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Waiting for the first puff
+      s1: Flying
+      s2: Level cleared (just now)
+      s3: Paused
+      s4: ফট#2494;স!
+      s5: Level cleared
+      s6: Popped, result shows (just now)
+      s7: Popped, result shows
+      [*] --> s0
+      s0 --> s1: you tap (puff) [when Window is On the page]
+      s1 --> s3: you hide the tab
+      s1 --> s3: you scroll the game out of view [when Window is On the page]
+      s1 --> s4: the balloon touches a wire or the street
+      s1 --> s2: the last crossing is passed [when Street is A level]
+      s2 --> s5: a moment passes
+      s2 --> s0: you pick যত দ#2498;র প#2494;র#2507; or you pick a level [when Window is On the page]
+      s4 --> s6: the result shows [when Window is not Tab hidden]
+      s4 --> s6: the result shows a new best [when Street is যত দ#2498;র প#2494;র#2507; and Window is not Tab hidden]
+      s5 --> s0: you pick যত দ#2498;র প#2494;র#2507; or you pick a level or you press আর#2503;কব#2494;র / পর#2503;র ল#2503;ভ#2503;ল [when Window is On the page]
+      s6 --> s0: you pick যত দ#2498;র প#2494;র#2507; or you pick a level [when Window is On the page]
+      s6 --> s7: a moment passes
+      s3 --> s1: you tap (puff) [when Window is On the page]
+      s7 --> s0: you pick যত দ#2498;র প#2494;র#2507; or you press আর#2503;কব#2494;র / পর#2503;র ল#2503;ভ#2503;ল or you pick a level [when Window is On the page]
+    }
+    --
+    state "Street" as r1 {
+      s8: যত দ#2498;র প#2494;র#2507;
+      s9: A level
+      [*] --> s8
+      [*] --> s9
+      s9 --> s8: you pick যত দ#2498;র প#2494;র#2507; [when Game is one of Level cleared, Level cleared (just now), Popped, result shows, Popped, result shows (just now) and Window is On the page and Hum is Wire hum off]
+      s8 --> s9: you pick a level [when Game is one of Popped, result shows, Popped, result shows (just now) and Window is On the page and Hum is Wire hum off]
+    }
+    --
+    state "Window" as r2 {
+      s10: On the page
+      s11: Another window has focus
+      s12: Tab hidden
+      s13: Scrolled away
+      [*] --> s10
+      s10 --> s11: you click into another window
+      s10 --> s12: you hide the tab
+      s10 --> s13: you scroll the game out of view
+      s11 --> s10: you come back to the window
+      s11 --> s12: you hide the tab
+      s12 --> s10: the tab shows again
+      s13 --> s10: you scroll back
+      s13 --> s12: you hide the tab
+    }
+    --
+    state "Hum" as r3 {
+      s14: Wire hum off
+      s15: Wire hum on
+      [*] --> s14
+      s14 --> s15: you tap (puff) [when Game is one of Flying, Waiting for the first puff and Window is On the page and Sound is Sound on]
+      s15 --> s14: you turn sound off or you scroll the game out of view [when Window is On the page]
+      s15 --> s14: you hide the tab or the balloon touches a wire or the street
+      s15 --> s14: the last crossing is passed [when Street is A level]
+    }
+    --
+    state "Sound" as r4 {
+      s16: Sound off
+      s17: Sound on
+      [*] --> s16
+      [*] --> s17
+      s16 --> s17: you turn sound on [when Window is On the page]
+      s17 --> s16: you turn sound off [when Window is On the page]
+    }
+    --
+    state "Celebration" as r5 {
+      s18: Nothing waiting
+      s19: Fanfare waiting to fire
+      [*] --> s18
+      s18 --> s19: the last crossing is passed [when Game is Flying and Street is A level and Window is one of Another window has focus, On the page]
+      s19 --> s18: the fanfare and confetti fire
+      s18 --> s19: the result shows a new best [when Game is ফট#2494;স! and Street is যত দ#2498;র প#2494;র#2507; and Window is not Tab hidden and Hum is Wire hum off]
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 blue
+  class s2 bugPath
+  class s3 yellow
+  class s3 mayBreak
+  class s4 teal
+  class s4 mayBreak
+  class s5 blue
+  class s6 blue
+  class s7 blue
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s13 mayBreak
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 teal
+  class s15 mayBreak
+  class s16 mayBreak
+  class s16 bugPath
+  class s17 mayBreak
+  class s17 bugPath
+  class s18 mayBreak
+  class s18 bugPath
+  class s19 mayBreak
+  class s19 bugPath
