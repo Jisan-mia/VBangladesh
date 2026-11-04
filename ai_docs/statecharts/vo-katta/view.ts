@@ -1,33 +1,34 @@
 export const title = "ভো-কাট্টা: the evening, the window, your hand and the wind";
 const evening = (v: any) =>
-  v.phase === "ready" ? "Waiting on the roof" : v.phase === "over" ? "Card shows" : v.phase === "paused" ? "Paused" : "Flying kites";
+  v.sheet ? "Level list open" : v.phase === "title" ? "On the title" : v.phase === "over" ? "Card shows" : v.paused ? "Paused (menu)" : v.phase === "ready" ? "Waiting for the first touch" : v.hooked ? "In a প্যাঁচ" : "Flying";
 export const state = (v: any) => ({
   Evening: evening(v),
-  Window: !v.visible ? "Tab hidden" : !v.focused ? "Another window has focus" : v.inView ? "You're on the sky" : "Sky scrolled away",
-  Hand: v.held ? "Holding টান or a key" : "Hands off",
-  Sound: v.wind ? "Wind playing" : v.sound ? "Sound on, no wind" : "Sound off",
+  Window: !v.visible || !v.focused || !v.inView ? "Away: another window, a hidden tab or the sky scrolled off" : "You're on the sky",
 });
 const STEPS: Record<string, string | null> = {
-  YouStart: "you tap শুরু করো",
-  YouHold: "you hold টান, a key or drag the sky",
-  YouLetGo: "you let go",
+  YouTapTheKite: "you tap the title kite",
+  YouTouchTheSky: "you put a finger on the sky",
+  YouLetGo: null,
+  StringsCross: "the strings cross",
+  YouCutOne: "you cut one (ভো-কাট্টা!)",
+  TheyCutYours: "they cut yours",
   WindowBlurs: "you click into another window",
   WindowFocuses: "you come back to the window",
   TabHides: "you hide the tab",
   TabShows: "the tab shows again",
   ScrollAway: "you scroll the sky away",
   ScrollBack: "you scroll the sky back",
-  YouPause: "you press pause",
+  YouOpenTheMenu: "you press pause",
   YouResume: "you press চালিয়ে যাও",
-  RoundEnds: "the round's clock runs out",
-  NextRoofStarts: "the next roof starts",
-  LastRoundEnds: "the last round ends and the card shows",
-  FanfareFires: null,
+  YouRestart: "you press নতুন করে শুরু",
+  YouOpenTheList: "you open সব লেভেল",
+  YouCloseTheList: "you close the list",
+  YouPickALevel: "you pick a level",
+  YouPlayOn: "you pick পরের লেভেল or আবার খেলো",
+  ChimesEnd: null,
   SoundOff: null,
   SoundOn: null,
-  PlayAgain: "you press আবার খেলো",
-  YouPickALevel: null,
 };
 export const step = (action: string) => action in STEPS ? STEPS[action] : action;
-export const group = (v: any) => v.phase === "over" ? "done" : v.phase === "paused" ? "held" : v.phase === "ready" ? "wait" : "play";
+export const group = (v: any) => v.phase === "over" ? "done" : v.paused || v.sheet ? "held" : v.phase === "title" || v.phase === "ready" ? "wait" : "play";
 export const colors = { play: "teal", held: "yellow", done: "blue", wait: "tan" };

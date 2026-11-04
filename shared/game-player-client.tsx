@@ -197,6 +197,9 @@ export function GamePlayer({ slug, name, head, lead, art, steps, guideTitle, kid
     setMenu(null);
     if (!paused.current) return;
     paused.current = false;
+    // Resuming from the bar with the stage scrolled away would play unseen: bring the stage back into view first.
+    const box = stageRef.current?.getBoundingClientRect();
+    if (box && !nav.current.immersive && (box.top < 0 || box.bottom > innerHeight)) stageRef.current?.scrollIntoView({ block: 'nearest' });
     softShow();
     quietly(() => window.dispatchEvent(new Event('focus')));
     handlers.current.resume.forEach(handler => handler());
