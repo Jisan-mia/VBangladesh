@@ -8,7 +8,8 @@ import { soundOn, setSoundOn } from './game-sound';
 
 /**
  * Runs `step(dtSeconds)` at a fixed 60 steps a second while `running` is true, and `draw()` once per animation frame.
- * Stops when the tab is hidden (no catch-up burst on return), so a phone in a pocket never plays on its own.
+ * Stops when the tab is hidden or the window loses focus (no catch-up burst on return), so a phone in a pocket, or a
+ * click into another window, never plays on its own. The game player's pause sends the same blur, and focus on resume.
  */
 export function useGameLoop(step: (dt: number) => void, draw: () => void, running: boolean) {
   const stepRef = useRef(step), drawRef = useRef(draw);
@@ -24,13 +25,23 @@ export function useGameLoop(step: (dt: number) => void, draw: () => void, runnin
       drawRef.current();
       frame = requestAnimationFrame(tick);
     };
-    const visibility = () => {
+    let away = false;
+    const restart = () => {
       cancelAnimationFrame(frame);
-      if (!document.hidden) { last = performance.now(); carry = 0; frame = requestAnimationFrame(tick); }
+      if (!document.hidden && !away) { last = performance.now(); carry = 0; frame = requestAnimationFrame(tick); }
     };
+    const blur = () => { away = true; cancelAnimationFrame(frame); drawRef.current(); };
+    const focus = () => { away = false; restart(); };
     frame = requestAnimationFrame(tick);
-    document.addEventListener('visibilitychange', visibility);
-    return () => { cancelAnimationFrame(frame); document.removeEventListener('visibilitychange', visibility); };
+    document.addEventListener('visibilitychange', restart);
+    window.addEventListener('blur', blur);
+    window.addEventListener('focus', focus);
+    return () => {
+      cancelAnimationFrame(frame);
+      document.removeEventListener('visibilitychange', restart);
+      window.removeEventListener('blur', blur);
+      window.removeEventListener('focus', focus);
+    };
   }, [running]);
 }
 
@@ -49,14 +60,23 @@ export function fitCanvas(canvas: HTMLCanvasElement, width: number, height: numb
 const read = (key: string) => { try { return localStorage.getItem(key); } catch { return null; } };
 const write = (key: string, value: string) => { try { localStorage.setItem(key, value); } catch { /* private mode: fine */ } };
 
+// Every useSlowMode and useSound on the page hears a change made by any other (the game player's menu, a game's own toggle).
+const SETTINGS_EVENT = 'ektukhani-settings';
+const announce = () => window.dispatchEvent(new Event(SETTINGS_EVENT));
+
 /** The visible "ধীরে খেলো" toggle: on by default when the phone asks for reduced motion; remembered across games. */
 export function useSlowMode() {
   const [slow, setSlow] = useState(false);
   useEffect(() => {
-    const saved = read('ektukhani-slow');
-    setSlow(saved === null ? matchMedia('(prefers-reduced-motion: reduce)').matches : saved === '1');
+    const sync = () => {
+      const saved = read('ektukhani-slow');
+      setSlow(saved === null ? matchMedia('(prefers-reduced-motion: reduce)').matches : saved === '1');
+    };
+    sync();
+    window.addEventListener(SETTINGS_EVENT, sync);
+    return () => window.removeEventListener(SETTINGS_EVENT, sync);
   }, []);
-  const change = useCallback((next: boolean) => { setSlow(next); write('ektukhani-slow', next ? '1' : '0'); }, []);
+  const change = useCallback((next: boolean) => { setSlow(next); write('ektukhani-slow', next ? '1' : '0'); announce(); }, []);
   return [slow, change] as const;
 }
 
@@ -77,8 +97,13 @@ export function useBest(slug: string, higherIsBetter = true) {
 /** The site-wide sound switch (on by default). Every game's toggle shares it. */
 export function useSound() {
   const [on, setOn] = useState(true);
-  useEffect(() => { setOn(soundOn()); }, []);
-  const change = useCallback((next: boolean) => { setSoundOn(next); setOn(next); }, []);
+  useEffect(() => {
+    const sync = () => setOn(soundOn());
+    sync();
+    window.addEventListener(SETTINGS_EVENT, sync);
+    return () => window.removeEventListener(SETTINGS_EVENT, sync);
+  }, []);
+  const change = useCallback((next: boolean) => { setSoundOn(next); setOn(next); announce(); }, []);
   return [on, change] as const;
 }
 

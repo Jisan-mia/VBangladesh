@@ -43,6 +43,32 @@ export function tone(frequency: number, length = 0.12, volume = 0.12, wave: Wave
   oscillator.connect(gain).connect(a.destination);
   oscillator.start(start);
   oscillator.stop(start + length + 0.03);
+  track(oscillator, gain);
+}
+
+// Notes already handed to the audio clock (a drumroll's later beats, a fanfare's tail), so a pause can cut them.
+const scheduled = new Set<{ source: AudioScheduledSourceNode; gain: GainNode }>();
+function track(source: AudioScheduledSourceNode, gain: GainNode) {
+  const entry = { source, gain };
+  scheduled.add(entry);
+  source.onended = () => { scheduled.delete(entry); };
+}
+
+/**
+ * Cuts every tone() and hiss() still sounding or waiting to start, with a 20 ms fade so nothing clicks. Loops are left to
+ * their owners. The game player calls this when it pauses; a game can call it too (for example when a round is abandoned).
+ */
+export function silenceScheduled() {
+  if (!audio) return;
+  const now = audio.currentTime;
+  for (const entry of scheduled) {
+    try {
+      entry.gain.gain.cancelScheduledValues(now);
+      entry.gain.gain.setTargetAtTime(0, now, 0.006);
+      entry.source.stop(now + 0.03);
+    } catch { /* already stopped */ }
+  }
+  scheduled.clear();
 }
 
 function noise(a: AudioContext) {
@@ -67,6 +93,7 @@ export function hiss(length = 0.2, volume = 0.18, filterHz = 1200, type: BiquadF
   source.connect(filter).connect(gain).connect(a.destination);
   source.start(start);
   source.stop(start + length + 0.03);
+  track(source, gain);
 }
 
 const loops = new Set<() => void>();

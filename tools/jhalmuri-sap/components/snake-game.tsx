@@ -6,6 +6,7 @@ import { possessive } from "../../../shared/bangla";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
 import { cleanName, confetti, fitCanvas, hiss, newSeed, sfx, tone, totalStars, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
 import { LevelGrid, SoundToggle } from "../../../shared/game-ui";
+import { useGamePlayer } from "../../../shared/game-player-client";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
 import { drawFood, drawHead, drawTin, palette } from "../lib/art";
 import { cardBlob, drawCard } from "../lib/draw-card";
@@ -132,6 +133,8 @@ export function SnakeGame() {
     sfx.tap();
   }
   const friendFits = (forLevel: number) => Boolean(friend) && (friend!.level ?? 0) === forLevel;
+  // The player's menu pauses and resumes the snake; নতুন করে শুরু deals a fresh ঠোঙা on the same level.
+  useGamePlayer({ onPause: pause, onResume: resume, onRestart: () => { reset(friendFits(levelRef.current) ? friend!.seed : newSeed()); setResult(null); go("ready"); } });
 
   /** Picks a level or the classic game from the menu: back to the ready screen, board in view. */
   function choose(nextLevel: number) {

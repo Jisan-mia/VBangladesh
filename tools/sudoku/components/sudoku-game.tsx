@@ -7,6 +7,7 @@ import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-
 import { confetti, hiss, sfx, tone, useBest, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
 import { LevelGrid, SoundToggle, Stars } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
+import { useGamePlayer } from "../../../shared/game-player-client";
 import { cardBlob, drawCard } from "../lib/draw-card";
 import {
   dailyPuzzle, digitsDone, erase, giveHint, isSolved, isWrong, levelPuzzle, nextStar, newlyDone, place, startGame, startLevel,
@@ -99,6 +100,12 @@ export function SudokuGame() {
     setSelected(fresh.values.indexOf(0));
   }
   const goTo = (next: number) => { if (next >= 1 && next <= LEVEL_COUNT) load(levelPuzzle(next)); };
+  // The player's menu stops the clock and starts it again; নতুন করে শুরু clears this same puzzle.
+  useGamePlayer({
+    onPause: () => setPhase(current => { if (current !== "playing") return current; stopClock(); return "paused"; }),
+    onResume: () => { if (phase === "paused") resume(); },
+    onRestart: () => load(puzzle),
+  });
 
   useEffect(() => {
     setMounted(true);

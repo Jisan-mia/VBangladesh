@@ -6,6 +6,7 @@ import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-
 import { confetti, fitCanvas, newSeed, sfx, shake, totalStars, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
 import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
+import { useGamePlayer } from "../../../shared/game-player-client";
 import { drawBasket, drawFruit, drawPicture, drawScene, fruitFont } from "../lib/art";
 import { cardBlob, cardFontSample, drawCard } from "../lib/draw-card";
 import {
@@ -300,6 +301,12 @@ export function OjogorGame() {
   }
 
   const retry = () => startLevel(level, rival ? seed : newSeed(), true);
+  // The player's menu holds the falling letters; নতুন করে শুরু replays this level from its start screen.
+  useGamePlayer({
+    onPause: () => { if (live.phase === "play") { live.paused = true; setPaused(true); } },
+    onResume: () => { if (live.paused) resume(); },
+    onRestart: () => startLevel(level, rival ? seed : newSeed()),
+  });
   const nextLevel = () => startLevel(level < LEVEL_COUNT ? level + 1 : level);
   const steer = (x: number) => { if (live.phase === "play" && !live.paused) aim(live.game, x); };
   const hold = () => aim(live.game, live.game.basketX);
