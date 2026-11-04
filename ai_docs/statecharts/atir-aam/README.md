@@ -1,4 +1,109 @@
-# আঁটি থেকে আম statechart (before the rewrite)
+# আঁটি থেকে আম statechart
+
+## After the rewrite (`after-fix/`)
+The spec now mirrors `tools/atir-aam/components/garden-game.tsx` (swipe, undo, pick, finish, the player's onPause/onResume, the blur/focus/visibility listeners), `lib/session.ts` (live, canSwipe and its 250 ms breath, press, syncLoops/wantWind, cheerOf, newsOf) and `lib/rules.ts` (move, takeBack, pickOffer). TLC reaches 390 states. The chart draws 12 states and 24 arrows. A finger on the bed, the chord fading and the sound switch are checked by the rules but hidden from the drawing, because they change nothing it shows. The level is a gust level (where the wind loop plays); on a calm level the wind can never start, which `tests/session.test.ts` checks. A key held through the end moved to that test file too (`ResultNeedsFreshPress`), to keep the chart inside its 500-state budget.
+
+| Rule | Says | Result |
+|---|---|---|
+| CheerOncePerRun | The পাকা আম confetti and fanfare come once a run, however often you take it back and grow it again. | holds |
+| CelebrationMatchesBoard | The new-stage line and the grow chord only celebrate a stage that's on the bed. | holds |
+| NoDoubleResult | A run is saved once. | holds |
+| InputReleasedWhenAway | Away or under the menu, no finger counts as on the bed. | holds |
+| NothingMovesWhenItShouldnt | No swipe moves the plates while away, under the menu, choosing, or in the breath after চালিয়ে যাও. | holds |
+| WindOnlyWhenMeaningful | The wind loop plays only while a gust level is played with sound on. | holds |
+| WindComesBack | While a gust level is played with sound on, the wind plays (sound on or চালিয়ে যাও brings it back). | holds |
+| ChoiceFreezesPlay | While মালির থলে is open, nothing in the garden moves. | holds |
+| ResultNeedsFreshPress (node test) | A key held through the last swipe never picks a choice on the end screen. | holds |
+
+### The two bugs, fixed
+1. **CheerOncePerRun.** `Game.peak` is the run's biggest stage, and `takeBack()` keeps it. `cheerOf(before, after, best)` cheers only when a swipe raises the peak past this phone's best. Test: `bug 1 · CheerOncePerRun` (tests/session.test.ts). It grows a পাকা আম on level 15, takes it back, and grows it again with the same swipe: the first grow cheers, the redo doesn't.
+2. **CelebrationMatchesBoard.** The new-stage line is derived from the game (`newsOf`: the swipe that raised the peak), so the restored board after ফেরত নাও has none. `undo()` calls `silenceScheduled()` (cutting the grow chord) and settles the scene (no burst). The pending confetti timer is gone: confetti fires at once, in the same swipe. Test: `bug 2 · CelebrationMatchesBoard`.
+
+**Live replay (Orca, Pixel 9, level 15, new code).** The autopilot played 68 swipes to a board where the next swipe (→) grows a পাকা আম. Oscillator starts were counted.
+- → grows it: top 7, line "নতুন ধাপ: পাকা আম…", **11 oscillators** (the chord and the fanfare).
+- ফেরত 50 ms later: top 6, peak 7, line back to "দুটো কাঁচা আম মেলালে পাকা আম।", 1 oscillator (ফেরত's own note).
+- → again: top 7, line "দুটো পাকা আম মেলালে আমের ঝুড়ি", **2 oscillators** (the merge only): no chord, no fanfare.
+- Confetti was 0 throughout, because this session's shared ধীরে খেলো was on, and confetti is skipped there by design.
+
+### Other checks, live in Orca (Pixel 9)
+- Gust level 13. Wind loop sources: 1 on while playing. Window blur opened the player's menu and stopped the wind (1 on, 1 off). Swipes and arrow keys under the menu moved nothing. চালিয়ে যাও brought the wind back (2 on). A swipe 20 ms after resuming was ignored, and one 400 ms later counted. A finger travelling 10 px moved nothing; at 30 px it moved. P opened the player's menu. নতুন করে শুরু restarted at 0 moves with one wind loop running (3 on, 2 off).
+- Every season-1 level, played by the autopilot from পরের লেভেল to পরের লেভেল: all cleared, the stars saved (`{"1":3,…,"8":1}`), and the own open level went to 9.
+- Samples from later seasons: 11, 13, 16, 18, 19 and 24. They showed the gust edges, the crow's shadow, chip and countdown, the hail line, and the danger edge.
+- খোলা বাগান: মালির থলে opened at মুকুল with three numbered cards, exact before → after and one marked এটা ভালো হবে. An arrow key under it moved nothing, and key 2 picked. The run ended at আমের ঝুড়ি with 2690 points. An Enter pressed as the end screen appeared did nothing. The best score and best stage were saved, and the card rendered.
+- Hidden tabs: Orca pins `document.hidden`. The hide path uses the same `S.hide` and the player's pause as blur; `PausedWhenHidden` is covered by the node test and the model.
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: done
+    lg1: wait
+  }
+  class lg0 blue
+  class lg1 tan
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Title: the plate says খ#2503;ল#2507;
+      s1: Swiping, no প#2494;ক#2494; আম yet
+      s2: প#2494;ক#2494; আম just grown, line showing
+      s3: ম#2494;ল#2495;র থল#2503; open, the bed waits
+      s4: End screen and card
+      s5: Swiping, প#2494;ক#2494; আম on the bed
+      s6: Swiping, প#2494;ক#2494; আম taken back
+      [*] --> s0
+      s0 --> s1: you tap the plate, পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; [when Window is On the page]
+      s1 --> s2: you swipe two ক#2494;#2433;চ#2494; আম into a প#2494;ক#2494; আম [when Menu is Menu shut and Window is On the page]
+      s1 --> s3: a new stage opens ম#2494;ল#2495;র থল#2503; [when Menu is Menu shut and Window is On the page]
+      s1 --> s4: the run ends [when Menu is not Menu open, bed paused and Window is On the page]
+      s2 --> s5: you swipe [when Menu is Menu shut and Window is On the page]
+      s2 --> s3: a new stage opens ম#2494;ল#2495;র থল#2503; [when Menu is Menu shut and Window is On the page]
+      s2 --> s4: the run ends [when Menu is not Menu open, bed paused and Window is On the page]
+      s2 --> s6: you press ফ#2503;রত [when Menu is not Menu open, bed paused and Window is On the page]
+      s3 --> s1: you pick a card [when Menu is not Menu open, bed paused and Window is On the page]
+      s4 --> s1: you tap the plate, পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; [when Menu is not Menu open, bed paused and Window is On the page]
+      s5 --> s3: a new stage opens ম#2494;ল#2495;র থল#2503; [when Menu is Menu shut and Window is On the page]
+      s5 --> s4: the run ends [when Menu is not Menu open, bed paused and Window is On the page]
+      s3 --> s5: you pick a card [when Menu is not Menu open, bed paused and Window is On the page]
+      s6 --> s5: you swipe two ক#2494;#2433;চ#2494; আম into a প#2494;ক#2494; আম [when Menu is Menu shut and Window is On the page]
+      s6 --> s3: a new stage opens ম#2494;ল#2495;র থল#2503; [when Menu is Menu shut and Window is On the page]
+      s6 --> s4: the run ends [when Menu is not Menu open, bed paused and Window is On the page]
+      s5 --> s6: you press ফ#2503;রত [when Menu is not Menu open, bed paused and Window is On the page]
+      s3 --> s6: you pick a card [when Menu is not Menu open, bed paused and Window is On the page]
+    }
+    --
+    state "Menu" as r1 {
+      s7: Menu shut
+      s8: Menu open, bed paused
+      s9: Just resumed (a swipe only wakes it)
+      [*] --> s7
+      s7 --> s8: you press P, #9208;, Esc or সব ল#2503;ভ#2503;ল or you click into another window or hide the tab [when Game is not Title: the plate says খ#2503;ল#2507; and Window is On the page]
+      s8 --> s9: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is On the page]
+      s9 --> s7: a quarter second passes
+      s9 --> s8: you press P, #9208;, Esc or সব ল#2503;ভ#2503;ল or you click into another window or hide the tab
+    }
+    --
+    state "Window" as r2 {
+      s10: On the page
+      s11: Away (another window or a hidden tab)
+      [*] --> s10
+      s10 --> s11: you click into another window or hide the tab
+      s11 --> s10: you come back
+    }
+  }
+  class s0 tan
+  class s4 blue
+```
+
+## Regenerate
+```sh
+scripts/statechart.sh ai_docs/statecharts/atir-aam/AtirAam.tla --view ai_docs/statecharts/atir-aam/view.ts --out ai_docs/statecharts/atir-aam/<new-folder>
+rm ai_docs/statecharts/atir-aam/<new-folder>/tlc*.out
+```
+
+---
+
+## Before the rewrite (`before-fix/`)
+The spec then mirrored `components/mango-game.tsx` and `lib/game.ts` (both replaced). What follows is that run, kept as it was.
 
 Spec: `AtirAam.tla` / `AtirAam.cfg` / `view.ts`, mirrored from `tools/atir-aam/components/mango-game.tsx` and `tools/atir-aam/lib/game.ts`. Output: `before-fix/report.md` and `before-fix/chart.mmd`. TLC reached 262 states. The chart draws 21 states and 35 arrows. It hides one step, "you start a fresh plot" (আরেকবার, আবার খেলো, পরের লেভেল, the mode buttons, the level arrows or list, a friend's link), because that step resets from every state.
 
@@ -63,9 +168,3 @@ Not modelled:
 8. **Pacing in level mode:** the targets climb one stage every 1–2 levels across 24 levels, with stones (9–16) and a 5×5 plot (17–24) as the only new ideas. There's no named finale at 8, 16 or 24.
 
 Screenshots: `.shots/atir-aam-first-screen.png` (phone, fresh garden), `.shots/atir-aam-undone-toast.png` (two কাঁচা আম after the undo), `.shots/atir-aam-free-over.png` (the end of the free run), `.shots/atir-aam-level-over.png` (level 1 cleared).
-
-## Regenerate
-```sh
-scripts/statechart.sh ai_docs/statecharts/atir-aam/AtirAam.tla --view ai_docs/statecharts/atir-aam/view.ts --out ai_docs/statecharts/atir-aam/<new-folder>
-rm ai_docs/statecharts/atir-aam/<new-folder>/tlc*.out
-```

@@ -1,5 +1,6 @@
 import type { ToolShare } from "../../shared/share-types";
-import { parseShared, previewTitle, sharedHash } from "./lib/link";
+import { parseShared, sharedHash } from "./lib/challenge";
+import { previewTitle } from "./lib/words";
 
 // No tally: a link only re-opens one run, after replaying its moves.
 export const share: ToolShare = {

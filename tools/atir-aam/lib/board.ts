@@ -10,12 +10,20 @@ export const POINTS = [0, 0, 2, 5, 12, 25, 50, 100, 200, 500] as const;
 
 /** A cell: 0 empty, STONE a পাথর nothing passes, 1..9 a stage. */
 export const STONE = -1;
+/** An আগাছা: it slides like a plate, never grows, and two that meet are pulled out together. */
+export const WEED = -2;
+/** A কাক sitting on a plate: nothing passes it, like a stone, until it flies off. */
+export const CROW = -3;
+/** Cells nothing slides through. */
+export const blocks = (cell: number) => cell === STONE || cell === CROW;
 /** 0 up, 1 down, 2 left, 3 right. */
 export type Dir = 0 | 1 | 2 | 3;
 export const DIRS: readonly Dir[] = [0, 1, 2, 3];
 
 export type Path = { from: number; to: number; merged: boolean };
-export type Slide = { cells: number[]; paths: Path[]; grown: Array<{ cell: number; stage: number }>; points: number };
+export type Slide = { cells: number[]; paths: Path[]; grown: Array<{ cell: number; stage: number }>; points: number; pulled: number[] };
+/** Points for pulling out a pair of weeds. */
+export const WEED_POINTS = 4;
 
 /** The cells of each line, starting from the edge the tiles slide toward. */
 function lines(size: number, dir: Dir) {
@@ -36,20 +44,33 @@ function lines(size: number, dir: Dir) {
  * Null when nothing moves (that swipe costs no move and spawns nothing).
  */
 export function slide(cells: readonly number[], size: number, dir: Dir): Slide | null {
-  const next = cells.slice(), paths: Path[] = [], grown: Slide["grown"] = [];
+  const next = cells.slice(), paths: Path[] = [], grown: Slide["grown"] = [], pulled: number[] = [];
   let points = 0, moved = false;
   for (const line of lines(size, dir)) {
     let start = 0;
     while (start < line.length) {
-      if (cells[line[start]] === STONE) { start++; continue; }
+      if (blocks(cells[line[start]])) { start++; continue; }
       let end = start;
-      while (end < line.length && cells[line[end]] !== STONE) end++;
+      while (end < line.length && !blocks(cells[line[end]])) end++;
       // one run: line[start..end)
       let write = start, open = -1; // `open`: index in line of a tile that may still grow this slide
       for (let read = start; read < end; read++) {
         const from = line[read], stage = cells[from];
         if (!stage) continue;
-        if (open >= 0 && next[line[open]] === stage && stage < TOP) {
+        if (stage === WEED && open >= 0 && next[line[open]] === WEED) {
+          // two weeds meet: both come out, and the slot is free for whatever slides in next
+          const to = line[open];
+          next[to] = 0;
+          paths.push({ from, to, merged: true });
+          for (const path of paths) if (path.to === to && !path.merged) path.merged = true;
+          pulled.push(to);
+          points += WEED_POINTS;
+          write = open;
+          open = -1;
+          moved = true;
+          continue;
+        }
+        if (open >= 0 && next[line[open]] === stage && stage > 0 && stage < TOP) {
           const to = line[open];
           next[to] = stage + 1;
           paths.push({ from, to, merged: true });
@@ -72,7 +93,7 @@ export function slide(cells: readonly number[], size: number, dir: Dir): Slide |
     }
   }
   if (!moved) return null;
-  return { cells: next, paths, grown, points };
+  return { cells: next, paths, grown, points, pulled };
 }
 
 export const canMove = (cells: readonly number[], size: number) => DIRS.some(dir => slide(cells, size, dir) !== null);

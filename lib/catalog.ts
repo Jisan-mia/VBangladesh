@@ -129,7 +129,7 @@ export const catalog = [
   { slug: "ghontar-sur", name: "ঘণ্টার সুর", description: "চার কলসির সুর শোনো, একই ক্রমে বাজাও। প্রতিবার একটা সুর বাড়ে।", category: "গেম", action: "সুর বাজাও" },
   { slug: "konta-nei", name: "কোনটা নেই?", description: "মুদি দোকানের তাক দেখে রাখো, মামা একটা সরাবে। বলো তো, কোনটা নেই?", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "bhul-kothay", name: "ভুল কোথায়?", description: "দুটো প্রায় একই ছবি, বাজার থেকে লোডশেডিংয়ের রাত। কোথায় আলাদা, চাপ দাও।", category: "গেম", action: "অমিল খোঁজো" },
-  { slug: "atir-aam", name: "আঁটি থেকে আম", description: "দুটো একই রকম মেলাও, আঁটি থেকে চারা, গাছ, আম, শেষে পুরো বাগান।", category: "গেম", action: "খেলা শুরু করো" },
+  { slug: "atir-aam", name: "আঁটি থেকে আম", description: "দুটো এক রকম মেলাও: আঁটি থেকে চারা, আম, শেষে বাগান। তিন মৌসুমে বৃষ্টি, শিল, কাক।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "bhimruler-chak", name: "ভিমরুলের চাক", description: "সংখ্যা দেখে লুকানো চাক খোঁজো, গামছা বাঁধো, বাকি ঝোপ সাফ করো।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "churir-bazar", name: "চুড়ির বাজার", description: "কাচের চুড়ি বদলে এক রঙের তিনটা মেলাও, ৪০টা লেভেল।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "mukhe-mukhe-hisab", name: "মুখে মুখে হিসাব", description: "এক মিনিটে যত পারো যোগ-বিয়োগ-গুণ আর বাজারের হিসাব মেলাও, ৩০টা লেভেল।", category: "গেম", action: "হিসাব শুরু করো" },
