@@ -5,7 +5,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | game | group | statechart | rewrite |
 |---|---|---|---|
 | kalbaishakhi-aam | S01 | analysed | done |
-| dudh-uthlano | S01 | analysed | todo |
+| dudh-uthlano | S01 | analysed | rewriting |
 | jhalmuri-sap | S01 | analysed | done |
 | danguli | S02 | analysed | done |
 | sir-ghurlei-thamo | S02 | analysed | done |
@@ -38,7 +38,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | bhul-kothay | S11 | analysed | done |
 | atir-aam | S11 | analysed | done |
 | bhimruler-chak | S12 | analysed | done |
-| churir-bazar | S12 | analysed | todo |
+| churir-bazar | S12 | analysed | rewriting |
 | mukhe-mukhe-hisab | S12 | analysed | done |
 | chhobir-tukro | S13 | analysed | done |
 | sat-chara | S13 | analysed | done |
@@ -58,9 +58,9 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | sourojogot | S18 | analysed | todo |
 | dosh-ghater-nouka | S18 | analysed | todo |
 | golper-mor | S18 | analysed | todo |
-| juktoborno | S19 | analysed | todo |
-| ghori-dekhi | S19 | analysed | todo |
-| moner-rong | S19 | analysed | todo |
+| juktoborno | S19 | analysed | rewriting |
+| ghori-dekhi | S19 | analysed | rewriting |
+| moner-rong | S19 | analysed | rewriting |
 | sat-tukro | S20 | analysed | todo |
 | nirapode-thaki | S20 | analysed | todo |
 | gune-dekhi | S20 | analysed | todo |
