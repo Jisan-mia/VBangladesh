@@ -1,26 +1,22 @@
-export const title = "শব্দ খোঁজা: round, window, finger and levels";
-const struck = (v: any) => v.found ? ", 1 of 2 struck" : "";
-const game = (v: any) => ({
-  ready: "Grid waiting, clock stopped",
-  playing: `Hunting, clock running${struck(v)}`,
-  paused: `Pause card, clock stopped${struck(v)}`,
-  over: "All words struck, card shows",
-} as any)[v.phase];
-const levels = (v: any) => {
-  const c: number[] = v.cleared ?? [];
-  if (!c.length) return v.friend ? "Nothing cleared, friend's level 2 open" : "Nothing cleared";
-  if (c.includes(1)) return "Level 1 cleared, level 2 open";
-  return "Only level 2 cleared, level 2 open for good";
+export const title = "Shobdo khoja after the rewrite: page, pen, window, choices and levels";
+const game = (v: any) => {
+  if (v.ask) return "Ask card: এই পাতা ছেড়ে যাবে? (clock stopped)";
+  if (v.sheet) return v.phase === "paused" ? "সব লেভেল open, clock stopped" : "সব লেভেল open, nothing started";
+  if (v.phase === "ready") return "Start card, grid hidden";
+  if (v.phase === "playing") return v.press === "none" ? "Hunting, clock running" : "Hunting, pen on the grid";
+  if (v.phase === "paused") return "Paused (থেমে আছে), pen lifted";
+  return "All words struck, result shows";
 };
+const levels = (v: any) => (v.open ?? 1) > 1 ? "Level 2 open by your own clear" : "Only level 1 open (a friend's level only visits)";
 export const state = (v: any) => ({
   Game: game(v),
-  Window: !v.visible ? "Tab hidden" : v.focused ? "You're on the page" : "Another window has focus",
-  Finger: v.press === "none" ? "Finger off the grid" : v.press === "down" ? "Finger on a letter" : "Dragging a stroke",
+  Window: !v.visible ? "Tab hidden" : v.focused ? "You're on the page" : "Away (another window or tab)",
   Levels: levels(v),
 });
-export const step = (action: string, _from: any, to: any) => action === "YouLetGoOnAWord" && to.phase === "over" ? `you strike the last word of level ${to.stage}` : ({
+const LABELS: Record<string, string | null> = {
+  YouPressStart: "you press খোঁজা শুরু",
   YouTouchALetter: "you touch a letter",
-  YouDrag: "you drag across letters",
+  YouDrag: null,
   YouLetGoOnAWord: "you let go on a listed word",
   YouLetGoElsewhere: "you let go without a word",
   WindowBlurs: "you click into another window",
@@ -28,11 +24,19 @@ export const step = (action: string, _from: any, to: any) => action === "YouLetG
   TabHides: "you hide the tab",
   TabShows: "the tab shows again",
   YouResume: "you press চালিয়ে যাও",
-  FanfarePlays: null,
-  YouPlayAgain: "you press আবার খেলো",
-  YouGoToNextLevel: "you press পরের লেভেল",
+  FanfareEnds: null,
+  YouOpenTheSheet: "you open সব লেভেল",
+  YouCloseTheSheet: "you close the sheet",
   YouPickALevel: "you pick a level",
-  FriendLinkOpens: "you open a friend's level-2 link",
-} as Record<string, string | null>)[action] ?? action;
+  YouStay: "you press এখানেই থাকো",
+  YouLeave: "you press ছেড়ে যাও",
+  YouGoToNextLevel: "you press পরের লেভেল",
+  YouPlayAgain: "you press আবার খেলো",
+  FriendLinkOpens: null,
+};
+export const step = (action: string, from: any, to: any) => {
+  if (action === "YouLetGoOnAWord" && to.phase === "over") return to.open > from.open ? "you strike the last word, the next level opens" : "you strike the last word";
+  return action in LABELS ? LABELS[action] : action;
+};
 export const group = (v: any) => v.phase === "over" ? "done" : v.phase === "paused" ? "held" : "play";
 export const colors = { play: "teal", held: "yellow", done: "blue" };

@@ -7,9 +7,8 @@ import {
   clusters, demoWord, directions, dragLine, findAll, generate, joinConjuncts, lineBetween, nextHint, totalTime, wordAt,
   CELLS, HINT_SECONDS, SIZE, WORDS, type Level,
 } from "../lib/grid";
-import { band, bannerNote, caption, clock, compareLine, detail, feat, humanLine, kicker, nearLine, parseShared, previewTitle, sharedHash, spoken, spokenIn, MAX_TIME, type Shared } from "../lib/link";
+import { band, bannerNote, caption, clock, compareLine, detail, feat, humanLine, kicker, parseShared, previewTitle, sharedHash, spoken, spokenIn, MAX_TIME, type Shared } from "../lib/link";
 import { PACKS, packById } from "../lib/packs";
-import { secondsShort, stageAt, stageStars, STAGE_COUNT, STAGES, TUTORIAL_SEED } from "../lib/stages";
 
 const contains = (outer: readonly string[], inner: readonly string[]) =>
   outer.length >= inner.length && outer.some((_, start) => inner.every((letter, k) => outer[start + k] === letter));
@@ -232,7 +231,7 @@ test("share normalize rejects hostile and out-of-range links, caps the rest", ()
   assert.equal(parseShared(long)!.name, "রাফি আহমেদ চৌধুরী সা", "control and direction marks gone, 20 code points at most");
   assert.equal(share.normalize("s=303&t=24&p=phul&l=0&h=1"), "s=303&t=24&p=phul&l=0&h=1", "five seconds plus one hint is the floor");
   assert.equal(share.normalize("s=303&t=1e3&p=phul&l=0&h=0"), "s=303&t=1000&p=phul&l=0&h=0", "odd number forms come back plain");
-  assert.equal(share.preview("junk").title, "শব্দ খোঁজা: অক্ষরের ভিড়ে লুকানো ছয়টা বাংলা শব্দ");
+  assert.equal(share.preview("junk").title, "শব্দ খোঁজা: অক্ষরের ভিড়ে লুকানো বাংলা শব্দ");
   assert.equal(share.tally, undefined);
 });
 
@@ -248,7 +247,7 @@ test("content meets the SEO limits and speaks তুমি", () => {
   assert.ok(site.title.length <= 45, String(site.title.length));
   assert.ok(site.description.length >= 120 && site.description.length <= 160, String(site.description.length));
   assert.ok(site.headline && site.headline !== site.title);
-  assert.ok(site.faq.length >= 5);
+  assert.ok(site.faq.length >= 6);
   assert.ok(site.steps.length >= 3);
   assert.match(site.privacy.join(" "), /নাম/);
   assert.match(site.privacy.join(" "), /সময়/);
@@ -259,46 +258,15 @@ test("content meets the SEO limits and speaks তুমি", () => {
   assert.match(site.faq.map(item => item.question).join(" "), /ইন্টারনেট/);
 });
 
-test("levels: the eight packs three times, সহজ then কঠিন then a quicker কঠিন, every grid buildable", () => {
-  assert.equal(STAGE_COUNT, 24);
-  assert.deepEqual(stageAt(1), { pack: "phul", level: 0, three: 60, two: 120 }, "level 1 is the ফুল teaching grid's pack");
-  assert.equal(stageAt(0), null);
-  assert.equal(stageAt(25), null);
-  for (const pack of PACKS) assert.equal(STAGES.filter(stage => stage.pack === pack.id).length, 3, pack.id);
-  STAGES.forEach((stage, index) => {
-    assert.ok(stage.three < stage.two, `level ${index + 1}: three stars is quicker than two`);
-    if (index >= 8) assert.equal(stage.level, 1, "after the first eight, words also run backwards");
-    if (index >= 16) assert.ok(stage.three < STAGES[index - 8].three, "the third round asks for a quicker clock than the second");
-  });
-  // A level is a fresh seed each play: any seed must build, for every level.
-  generate(TUTORIAL_SEED, "phul", 0);
-  for (const [index, stage] of STAGES.entries()) for (let seed = 1; seed <= 60; seed++) {
-    const puzzle = generate(seed * 7919 + index, stage.pack, stage.level);
-    assert.ok(puzzle.words.every(word => findAll(puzzle.grid, word.letters).length === 1));
-  }
-});
-
-test("level stars come from the time, with an exact near miss", () => {
-  assert.deepEqual([45, 60, 61, 120, 121, 900].map(time => stageStars(1, time)), [3, 3, 2, 2, 1, 1]);
-  assert.equal(stageStars(9, 90), 3);
-  assert.equal(stageStars(0, 30), 0, "a free grid earns no stars");
-  assert.equal(secondsShort(1, 72), 12);
-  assert.equal(secondsShort(1, 150), 30);
-  assert.equal(secondsShort(1, 50), 0);
-  assert.equal(nearLine(1, 72), "আর ১২ সেকেন্ড কম লাগলে ৩ তারা।");
-  assert.equal(nearLine(17, 200), "আর ১ মিনিট কম লাগলে ২ তারা।");
-  assert.equal(nearLine(1, 40), "");
-});
-
-test("level links carry the level; old links still open as free grids; forged levels are refused", () => {
+test("old level links (v) still open the same classic grid; forged ones are refused", () => {
   const level: Shared = { seed: 4821, pack: "mach", level: 1, demo: false, hints: 0, time: 80, name: "", stage: 10 };
   const hash = sharedHash(level);
   assert.equal(hash, "s=4821&t=80&p=mach&l=1&h=0&v=10");
   assert.deepEqual(parseShared(hash), level);
   assert.equal(share.normalize(hash), hash);
-  assert.match(kicker(level), /লেভেল ১০ · মাছ ★★★$/);
+  assert.match(kicker(level), /^শব্দ খোঁজা · মাছ · কঠিন$/, "an old level number is not shown: the ladder has new numbers");
   assert.equal(parseShared("s=303&t=75&p=phul&l=0&h=1&d=1")!.stage, undefined, "a link from before levels has no level");
-  assert.ok(parseShared("s=303&t=75&p=phul&l=0&h=1&d=1&v=1"), "level 1 may carry the teaching grid");
+  assert.ok(parseShared("s=303&t=75&p=phul&l=0&h=1&d=1&v=1"), "old level 1 may carry the teaching grid");
   const forged = ["s=5&t=80&p=phul&l=1&h=0&v=10", "s=5&t=80&p=mach&l=0&h=0&v=10", "s=5&t=80&p=phul&l=0&h=0&v=0", "s=5&t=80&p=phul&l=0&h=0&v=25",
     "s=5&t=80&p=mach&l=1&h=0&d=1&v=10", "s=5&t=80&p=phul&l=0&h=0&v=x", "s=5&t=80&p=phul&l=0&h=0&v=1.0"];
   for (const state of forged) assert.equal(share.normalize(state), null, state);

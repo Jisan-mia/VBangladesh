@@ -10,8 +10,8 @@ export const share: ToolShare = {
   preview(state) {
     const shared = parseShared(state);
     return {
-      title: shared ? previewTitle(shared) : "শব্দ খোঁজা: অক্ষরের ভিড়ে লুকানো ছয়টা বাংলা শব্দ",
-      description: "ফুল, মাছ, পিঠা, পাখি, নদী। একই গ্রিডে লুকানো ছয়টা শব্দ খুঁজে কাটো, দেখো কত সময়ে পারো। ফ্রি, অ্যাকাউন্ট লাগে না।",
+      title: shared ? previewTitle(shared) : "শব্দ খোঁজা: অক্ষরের ভিড়ে লুকানো বাংলা শব্দ",
+      description: "ফুল, মাছ, পিঠা, পাখি, নদী: আটটা প্যাকে ৩২টা লেভেল। একই গ্রিডে লুকানো শব্দ খুঁজে কাটো, দেখো কত সময়ে পারো। ফ্রি, অ্যাকাউন্ট লাগে না।",
     };
   },
 };
