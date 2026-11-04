@@ -42,7 +42,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | mukhe-mukhe-hisab | S12 | analysed | rewriting |
 | chhobir-tukro | S13 | analysed | done |
 | sat-chara | S13 | analysed | rewriting |
-| chhip-felo | S13 | analysed | rewriting |
+| chhip-felo | S13 | analysed | done |
 | latim | S14 | analysed | todo |
 | nodi-par | S14 | analysed | todo |
 | penalty | S14 | analysed | done |
