@@ -58,7 +58,7 @@ Then build it.
 - **Pause on window blur, not only on a hidden tab.** The player broadcasts the pause; make sure your loop, clock and spawns stop.
 - **Release held keys and drags on blur**, and ignore game keys while paused.
 - **Clear celebration and star-chime timeouts** on reset, next level and unmount.
-- **Bring sound loops back** when sound turns on or play resumes (`SoundToggle onChange`, or check `soundOn()` in the step).
+- **Bring sound loops back** when sound turns on or play resumes (`SoundToggle onChange`, or check `soundOn()` in the step). Don't restore a loop with `??=`: a loop created while muted is a silent stub, so replace it when sound comes back.
 - **Friend links:**
   - `shared/game-core.ts` `unlockedLevel` opens everything below the highest recorded level, on purpose, because migrations rely on it.
   - When a player clears a friend's far-ahead level, don't let that open the levels in between; record the stars, but keep your own unlock rule.
