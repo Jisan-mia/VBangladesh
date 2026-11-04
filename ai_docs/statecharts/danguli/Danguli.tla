@@ -1,114 +1,191 @@
 ---- MODULE Danguli ----
-\* ডাংগুলি as it is today: the round of hits (one here, three in the game), pause, tab and window focus, the play key
-\* (Space, Enter or ↑) and the keyboard's auto-repeat, the star-chime timers, the level grid and the friend's field.
-\* Mirrored from tools/danguli/components/danguli-game.tsx (press, sync, finish, start, play, again, proceed, the
-\* visibilitychange, keydown and hashchange effects) and tools/danguli/lib/game.ts (tap, step, next), with useGameLoop
-\* from shared/game-kit.ts. Left out: saved stars (recordLevel in shared/game-core.ts keeps the max, so they never drop),
-\* the name and card format, slow mode (it only scales time), and the canvas tap (the same press() with no key held).
+\* ডাংগুলি after the rewrite: the screen and the hit, the player's pause menu, the window and tab, the level list, a held play
+\* key and its auto-repeat, the breath after coming back, the wind loop, the site-wide sound switch, the star chimes, the result
+\* keys and the friend's link reopening the first screen. Mirrored from tools/danguli/lib/session.ts (ticking, canTap, wantWind, syncLoops, blur/focus/hide/
+\* show, pause/resume, openSheet/closeSheet, setSound, keyDown/keyUp, goTo, freshResultKey, wake, step), tools/danguli/lib/
+\* challenge.ts (seedFor) and tools/danguli/components/game.tsx (begin, again, show, engaged, away/back, the player's onPause/
+\* onResume/onRestart/onLevels, tap, onDown, finish, readLink, pickLevel, the sound effect, the window keys). The round moves only
+\* inside step(), which advances it only while ticking and after the breath; `focused` starts from document.hasFocus() and lives
+\* in the session, so remounting useGameLoop changes nothing. Leaving in any way lets go of a held key. The player opens its menu
+\* on blur and hide once the game was touched. One hit, not three (a hit changes nothing the rules look at); a windy level (the
+\* চর), because only those have a loop; the intro story is part of the first screen.
 EXTENDS Naturals
 
-HITS == 1   \* the game has 3; at 2 TLC finds the same breaks in 504 states, too many to draw
+VARIABLES phase, ball, paused, visible, focused, sheet, sound, wind, key, stale, breath, fresh, skipped, byItself,
+          results, chimes
+vars == <<phase, ball, paused, visible, focused, sheet, sound, wind, key, stale, breath, fresh, skipped, byItself,
+          results, chimes>>
 
-VARIABLES phase, hit, paused, visible, focused, key, results, chimes, link, level, field
-vars == <<phase, hit, paused, visible, focused, key, results, chimes, link, level, field>>
+Phases == {"title", "play", "over"}
+Balls == {"aim", "pop", "fly", "rest"}
+Winds == {"none", "stub", "live"}
 
-Phases == {"aim", "pop", "fly", "rest", "over"}
-InPlay == {"pop", "fly", "rest"}                  \* the phases where step() moves the কাঠি
-\* key: "up"; "down" after a fresh press; "swung" or "skipped" once the keyboard's auto-repeat has played a hit or
-\* left the result by itself while the key is still held. It goes back to "up" when you let go.
-Held == {"down", "swung", "skipped"}
-\* useGameLoop runs while !paused && !over and stops itself while the tab is hidden. Focus plays no part.
-Running == ~paused /\ visible /\ phase # "over"
+\* session.ts ticking(): the only state in which step() runs at all.
+TickingOf(ph, pz, sh, vi, fo) == ph = "play" /\ ~pz /\ ~sh /\ vi /\ fo
+Ticking == TickingOf(phase, paused, sheet, visible, focused)
+\* step() moves the round only after the breath; taps count only then (canTap).
+ClockRuns == Ticking /\ ~breath
+CanTap == Ticking /\ ~breath
+\* syncLoops: the wind it leaves behind for a state (a fresh loop() each time it turns on, so never a stub).
+WindOf(ph, pz, sh, vi, fo, so) == IF TickingOf(ph, pz, sh, vi, fo) /\ so THEN "live" ELSE "none"
+\* session.keyDown(s, repeat): a repeat never acts; a fresh press acts only while taps count.
+KeyDownActs(repeat) == ~repeat /\ CanTap
+\* session.freshResultKey(s, event): not a repeat, and the keydown arrived after the screen appeared (`fresh` is the moment
+\* when only keys already on their way, or held through the end, can land), and neither the menu nor the list is open.
+ResultKeyActs(repeat) == phase = "over" /\ ~paused /\ ~sheet /\ ~repeat /\ ~fresh
 
-\* start(seed, level): a fresh field, the star timers cleared, unpaused.
-Fresh(f, l) == /\ phase' = "aim" /\ hit' = 0 /\ paused' = FALSE /\ results' = 0 /\ chimes' = FALSE
-               /\ field' = f /\ level' = l
+\* Starting unfocused or muted is reached by WindowBlurs and SoundOff.
+Init == /\ phase = "title" /\ ball = "aim" /\ paused = FALSE /\ visible = TRUE /\ focused = TRUE /\ sheet = FALSE
+        /\ sound = TRUE /\ wind = "none" /\ key = "up" /\ stale = FALSE /\ breath = FALSE /\ fresh = FALSE
+        /\ skipped = FALSE /\ byItself = FALSE /\ results = 0 /\ chimes = FALSE
 
-\* rest -> next(): the next hit, or the result. sync() calls finish() on the change to "over"; finish() sets the chimes.
-NextHit == IF hit + 1 >= HITS
-           THEN /\ phase' = "over" /\ hit' = hit /\ results' = results + 1 /\ chimes' = TRUE
-           ELSE /\ phase' = "aim" /\ hit' = hit + 1 /\ UNCHANGED <<results, chimes>>
+\* begin(): a fresh round on the play screen: the star timers cut (silenceScheduled), the list shut, the wind decided afresh.
+\* A press on a window without focus first gives it focus (engaged(), the same as WindowFocuses), so a start runs focused.
+Begin == /\ phase' = "play" /\ ball' = "aim" /\ sheet' = FALSE /\ stale' = FALSE /\ breath' = FALSE /\ fresh' = FALSE
+               /\ results' = 0 /\ chimes' = FALSE
+               /\ wind' = WindOf("play", FALSE, FALSE, TRUE, TRUE, sound)
+CanBegin == ~paused /\ ~sheet /\ visible /\ focused
+\* finish(): the result screen (the wind stops, the star chimes are set, a key already on its way is still `fresh`).
+Finish == /\ phase' = "over" /\ ball' = ball /\ results' = results + 1 /\ chimes' = TRUE /\ fresh' = TRUE /\ wind' = "none"
+          /\ UNCHANGED <<sheet, stale, breath>>
 
-\* What one press does: press() (unpause first, else tap()), or proceed() on the result.
-\* proceed(): a won level goes to the next (a new seed); otherwise again(): the friend's seed only while they are the rival.
-Act == \/ /\ paused /\ phase # "over" /\ paused' = FALSE
-          /\ UNCHANGED <<phase, hit, results, chimes, level, field>>
-       \/ /\ ~paused /\ phase = "aim" /\ phase' = "pop"
-          /\ UNCHANGED <<hit, paused, results, chimes, level, field>>
-       \/ /\ ~paused /\ phase = "pop" /\ phase' \in {"fly", "rest"}   \* a hit flies; a swing on the rise is a whiff
-          /\ UNCHANGED <<hit, paused, results, chimes, level, field>>
-       \/ /\ ~paused /\ phase = "rest" /\ NextHit /\ UNCHANGED <<paused, level, field>>
-       \/ /\ phase = "over"
-          /\ \/ /\ level = 1 /\ Fresh("mine", 2)
-             \/ Fresh(IF link /\ field = "friend" THEN "friend" ELSE "mine", level)
+\* The title's খেলো (button, Enter or Space).
+YouStart == /\ phase = "title" /\ CanBegin /\ Begin
+            /\ UNCHANGED <<paused, visible, focused, sound, key, skipped, byItself>>
+\* The end screen's buttons (আবার খেলো, পরের লেভেল): another round. Which field it plays is DanguliLink.tla's question.
+YouPlayAgain == /\ phase = "over" /\ ~paused /\ visible /\ focused /\ Begin
+                /\ UNCHANGED <<paused, visible, focused, sound, key, skipped, byItself>>
+\* A key on the end screen (1, Enter, Space, R): freshResultKey takes only a non-repeating keydown after the screen appeared.
+\* While `fresh`, a key is the one already on its way (or held through the end), and is ignored.
+YouPressAKeyOnTheResult == /\ phase = "over" /\ ~paused /\ ~sheet /\ visible /\ focused
+                           /\ IF ResultKeyActs(FALSE) THEN /\ Begin
+                                                          /\ UNCHANGED <<paused, visible, focused, sound, key, skipped, byItself>>
+                              ELSE UNCHANGED vars
+TheResultSettles == /\ fresh /\ fresh' = FALSE
+                    /\ UNCHANGED <<phase, ball, paused, visible, focused, sheet, sound, wind, key, stale, breath, skipped, byItself, results, chimes>>
 
-\* keydown on the window; a fresh press needs the page to have focus.
-YouPressPlayKey == /\ focused /\ key = "up" /\ key' = "down" /\ Act
-                   /\ UNCHANGED <<visible, focused, link>>
-\* The keyboard repeats a held key. onKey never looks at event.repeat, so each repeat acts like a press.
-KeyRepeats == /\ focused /\ key \in Held /\ Act
-              /\ key' = IF phase = "over" THEN "skipped"
-                        ELSE IF key = "down" /\ phase \in {"pop", "rest"} THEN "swung" ELSE key
-              /\ UNCHANGED <<visible, focused, link>>
-YouLetGo == /\ key \in Held /\ key' = "up"
-            /\ UNCHANGED <<phase, hit, paused, visible, focused, results, chimes, link, level, field>>
-\* P or Esc (or the থামাও button) toggles pause, except on the result.
-YouTogglePause == /\ focused /\ phase # "over" /\ paused' = ~paused
-                  /\ UNCHANGED <<phase, hit, visible, focused, key, results, chimes, link, level, field>>
+\* tap(): a finger or a fresh key press, when taps count: flick, then strike or swing at air, or skip the rest.
+TapEffect == \/ /\ ball = "aim" /\ ball' = "pop" /\ UNCHANGED <<phase, results, chimes, fresh, wind, sheet, stale, breath>>
+             \/ /\ ball = "pop" /\ ball' \in {"fly", "rest"} /\ UNCHANGED <<phase, results, chimes, fresh, wind, sheet, stale, breath>>
+             \/ /\ ball = "rest" /\ Finish
+YouTapTheField == /\ CanTap /\ TapEffect
+                  /\ UNCHANGED <<paused, visible, focused, sound, key, skipped, byItself>>
+\* The press that brings an unfocused window back: engaged() focuses and wakes the round, and it is never a tap.
+YouClickAnUnfocusedWindow == /\ phase = "play" /\ visible /\ ~focused /\ ~paused /\ ~sheet
+                             /\ focused' = TRUE /\ stale' = FALSE /\ breath' = (breath \/ stale)
+                             /\ wind' = WindOf("play", FALSE, FALSE, TRUE, TRUE, sound)
+                             /\ UNCHANGED <<phase, ball, paused, visible, sheet, sound, key, fresh, skipped, byItself, results, chimes>>
+\* keydown of Space, Enter or ↑ in play. A fresh press acts when taps count; the key counts as held either way.
+YouPressAPlayKey == /\ phase = "play" /\ ~paused /\ ~sheet /\ visible /\ focused /\ key = "up" /\ key' = "down"
+                    /\ IF KeyDownActs(FALSE) THEN TapEffect
+                       ELSE UNCHANGED <<phase, ball, results, chimes, fresh, wind, sheet, stale, breath>>
+                    /\ UNCHANGED <<paused, visible, focused, sound, skipped, byItself>>
+\* keyup. The keyboard's auto-repeat of a held key arrives as keydown with repeat: it never acts, in play or on the result.
+YouLetGo == /\ key = "down" /\ key' = "up"
+            /\ UNCHANGED <<phase, ball, paused, visible, focused, sheet, sound, wind, stale, breath, fresh, skipped, byItself, results, chimes>>
+TheKeyRepeats == /\ key = "down"
+                 /\ byItself' = (byItself \/ KeyDownActs(TRUE))
+                 /\ skipped' = (skipped \/ ResultKeyActs(TRUE))
+                 /\ UNCHANGED <<phase, ball, paused, visible, focused, sheet, sound, wind, key, stale, breath, fresh, results, chimes>>
 
-\* The game loop: step() and sync().
-KathiFalls == /\ Running /\ phase = "pop" /\ phase' = "rest"      \* it lands untouched: a miss
-              /\ UNCHANGED <<hit, paused, visible, focused, key, results, chimes, link, level, field>>
-ShotSettles == /\ Running /\ phase = "fly" /\ phase' = "rest"
-               /\ UNCHANGED <<hit, paused, visible, focused, key, results, chimes, link, level, field>>
-RestEnds == /\ Running /\ phase = "rest" /\ NextHit
-            /\ UNCHANGED <<paused, visible, focused, key, link, level, field>>
-\* The star chimes and confetti that finish() set with setTimeout play.
-ChimesPlay == /\ chimes /\ chimes' = FALSE
-              /\ UNCHANGED <<phase, hit, paused, visible, focused, key, results, link, level, field>>
+\* step(): the clock runs only while ticking and past the breath.
+TheKathiLands == /\ ClockRuns /\ ball = "pop" /\ ball' = "rest"
+                 /\ UNCHANGED <<phase, paused, visible, focused, sheet, sound, wind, key, stale, breath, fresh, skipped, byItself, results, chimes>>
+TheShotSettles == /\ ClockRuns /\ ball = "fly" /\ ball' = "rest"
+                  /\ UNCHANGED <<phase, paused, visible, focused, sheet, sound, wind, key, stale, breath, fresh, skipped, byItself, results, chimes>>
+TheRestEnds == /\ ClockRuns /\ ball = "rest" /\ Finish
+               /\ UNCHANGED <<paused, visible, focused, sound, key, skipped, byItself>>
+\* The breath after coming back runs out (step() counts it down only while ticking).
+TheBreathEnds == /\ Ticking /\ breath /\ breath' = FALSE
+                 /\ UNCHANGED <<phase, ball, paused, visible, focused, sheet, sound, wind, key, stale, fresh, skipped, byItself, results, chimes>>
+\* The star chimes (scheduled tones) play out.
+TheChimesPlay == /\ chimes /\ chimes' = FALSE
+                 /\ UNCHANGED <<phase, ball, paused, visible, focused, sheet, sound, wind, key, stale, breath, fresh, skipped, byItself, results>>
 
-\* Focus. A key held when focus leaves is let go somewhere else, so its keyup never reaches the page.
-WindowBlurs == /\ focused /\ focused' = FALSE /\ key' = "up"
-               /\ UNCHANGED <<phase, hit, paused, visible, results, chimes, link, level, field>>
-WindowFocuses == /\ visible /\ ~focused /\ focused' = TRUE
-                 /\ UNCHANGED <<phase, hit, paused, visible, key, results, chimes, link, level, field>>
-\* visibilitychange: pauses only while the কাঠি is up (pop, fly, rest).
-TabHides == /\ visible /\ visible' = FALSE /\ focused' = FALSE /\ key' = "up"
-            /\ paused' = (paused \/ phase \in InPlay)
-            /\ UNCHANGED <<phase, hit, results, chimes, link, level, field>>
-TabShows == /\ ~visible /\ visible' = TRUE /\ focused' = TRUE
-            /\ UNCHANGED <<phase, hit, paused, key, results, chimes, link, level, field>>
+\* Leaving (session away(): stale if it was ticking; a held key lets go; syncLoops). The player opens its menu in a round.
+WindowBlurs == /\ visible /\ focused
+               /\ focused' = FALSE /\ paused' = (paused \/ phase = "play") /\ stale' = (stale \/ Ticking) /\ key' = "up" /\ wind' = "none"
+               /\ UNCHANGED <<phase, ball, visible, sheet, sound, breath, fresh, skipped, byItself, results, chimes>>
+TabHides == /\ visible
+            /\ visible' = FALSE /\ focused' = FALSE /\ paused' = (paused \/ phase = "play") /\ stale' = (stale \/ Ticking) /\ key' = "up" /\ wind' = "none"
+            /\ UNCHANGED <<phase, ball, sheet, sound, breath, fresh, skipped, byItself, results, chimes>>
+\* ⏸ or P: the player's menu (it cuts scheduled tones, so pending chimes stop).
+YouPause == /\ ~paused /\ visible /\ focused
+            /\ paused' = TRUE /\ stale' = (stale \/ Ticking) /\ key' = "up" /\ wind' = "none" /\ chimes' = FALSE
+            /\ UNCHANGED <<phase, ball, visible, focused, sheet, sound, breath, fresh, skipped, byItself, results>>
+\* Coming back (session back(): wake gives a breath when the round may tick again after time away; syncLoops).
+Wake(ph, pz, sh, vi, fo) == LET t == TickingOf(ph, pz, sh, vi, fo) IN
+                            /\ stale' = (stale /\ ~t) /\ breath' = (breath \/ (stale /\ t))
+                            /\ wind' = WindOf(ph, pz, sh, vi, fo, sound)
+WindowFocuses == /\ visible /\ ~focused
+                 /\ focused' = TRUE /\ Wake(phase, paused, sheet, TRUE, TRUE)
+                 /\ UNCHANGED <<phase, ball, paused, visible, sheet, sound, key, fresh, skipped, byItself, results, chimes>>
+TabShows == /\ ~visible
+            /\ visible' = TRUE /\ focused' = TRUE /\ Wake(phase, paused, sheet, TRUE, TRUE)
+            /\ UNCHANGED <<phase, ball, paused, sheet, sound, key, fresh, skipped, byItself, results, chimes>>
+\* চালিয়ে যাও (onResume).
+YouResume == /\ paused /\ visible /\ focused
+             /\ paused' = FALSE /\ Wake(phase, FALSE, sheet, visible, focused)
+             /\ UNCHANGED <<phase, ball, visible, focused, sheet, sound, key, fresh, skipped, byItself, results, chimes>>
+\* নতুন করে শুরু (onRestart): resume, then begin(again(run)) on the same level.
+YouRestart == /\ paused /\ phase \in {"play", "over"} /\ visible /\ focused
+              /\ paused' = FALSE /\ Begin
+              /\ UNCHANGED <<visible, focused, sound, key, skipped, byItself>>
 
-\* The level grid: play(next) always draws a new seed, even for the friend's own level.
-YouPickLevel == /\ focused /\ key = "up" /\ \E l \in {1, 2} : Fresh("mine", l)
-                /\ UNCHANGED <<visible, focused, key, link>>
-\* hashchange with a real challenge: the friend's field at their level (level 1 here).
-FriendLinkOpens == /\ focused /\ key = "up" /\ link' = TRUE /\ Fresh("friend", 1)
-                   /\ UNCHANGED <<visible, focused, key>>
-\* "নতুন মাঠে খেলো": the link is cleared and a new field drawn.
-YouPlayNewField == /\ focused /\ phase = "over" /\ link /\ link' = FALSE /\ Fresh("mine", level)
-                   /\ UNCHANGED <<visible, focused, key>>
+\* The level list: a choice screen. Opening stops the round and lets a held key go; closing wakes it with a breath. It opens
+\* from the first screen and the end screen, and from the menu's সব লেভেল (which resumes first, then opens).
+OpenTheList == /\ ~sheet /\ ~paused /\ visible /\ focused /\ phase # "play"
+               /\ sheet' = TRUE /\ key' = "up" /\ wind' = "none"
+               /\ UNCHANGED <<phase, ball, paused, visible, focused, sound, stale, breath, fresh, skipped, byItself, results, chimes>>
+OpenTheListFromTheMenu == /\ paused /\ ~sheet /\ visible /\ focused
+                          /\ paused' = FALSE /\ sheet' = TRUE /\ key' = "up" /\ wind' = "none"
+                          /\ stale' = (stale \/ phase = "play") /\ breath' = (breath \/ (stale /\ phase = "play"))
+                          /\ UNCHANGED <<phase, ball, visible, focused, sound, fresh, skipped, byItself, results, chimes>>
+CloseTheList == /\ sheet /\ ~paused /\ visible /\ focused
+                /\ sheet' = FALSE /\ Wake(phase, FALSE, FALSE, visible, focused)
+                /\ UNCHANGED <<phase, ball, paused, visible, focused, sound, key, fresh, skipped, byItself, results, chimes>>
+\* pickLevel(): a level from the list begins a fresh round (the list shuts).
+YouPickALevel == /\ sheet /\ ~paused /\ visible /\ focused /\ Begin
+                 /\ UNCHANGED <<paused, visible, focused, sound, key, skipped, byItself>>
 
-Init == /\ phase = "aim" /\ hit = 0 /\ paused = FALSE /\ visible = TRUE /\ focused = TRUE
-        /\ key = "up" /\ results = 0 /\ chimes = FALSE
-        /\ link \in BOOLEAN /\ level = 1 /\ field = (IF link THEN "friend" ELSE "mine")
+\* hashchange with a real challenge: the page goes back to the first screen (show("title") resets the breath, stops the wind and
+\* cuts the star chimes). The friend's field itself is DanguliLink.tla.
+FriendLinkOpens == /\ phase' = "title" /\ ball' = "aim"
+                   /\ stale' = FALSE /\ breath' = FALSE /\ wind' = "none" /\ chimes' = FALSE /\ fresh' = FALSE
+                   /\ UNCHANGED <<paused, visible, focused, sheet, sound, key, skipped, byItself, results>>
 
-Next == YouPressPlayKey \/ KeyRepeats \/ YouLetGo \/ YouTogglePause \/ KathiFalls \/ ShotSettles \/ RestEnds \/ ChimesPlay
-        \/ WindowBlurs \/ WindowFocuses \/ TabHides \/ TabShows \/ YouPickLevel \/ FriendLinkOpens \/ YouPlayNewField
+\* The site-wide switch. Off: the kit stops every loop and cuts queued notes. On: syncLoops starts a fresh one.
+SoundOff == /\ sound /\ sound' = FALSE /\ wind' = "none" /\ chimes' = FALSE
+            /\ UNCHANGED <<phase, ball, paused, visible, focused, sheet, key, stale, breath, fresh, skipped, byItself, results>>
+SoundOn == /\ ~sound /\ sound' = TRUE /\ wind' = WindOf(phase, paused, sheet, visible, focused, TRUE)
+           /\ UNCHANGED <<phase, ball, paused, visible, focused, sheet, key, stale, breath, fresh, skipped, byItself, results, chimes>>
+
+Next == YouStart \/ YouPlayAgain \/ YouPressAKeyOnTheResult \/ TheResultSettles
+        \/ YouTapTheField \/ YouClickAnUnfocusedWindow \/ YouPressAPlayKey \/ YouLetGo \/ TheKeyRepeats
+        \/ TheKathiLands \/ TheShotSettles \/ TheRestEnds \/ TheBreathEnds \/ TheChimesPlay
+        \/ WindowBlurs \/ TabHides \/ YouPause \/ WindowFocuses \/ TabShows \/ YouResume \/ YouRestart
+        \/ OpenTheList \/ OpenTheListFromTheMenu \/ CloseTheList \/ YouPickALevel \/ FriendLinkOpens \/ SoundOff \/ SoundOn
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ phase \in Phases /\ hit \in 0..(HITS - 1) /\ paused \in BOOLEAN /\ visible \in BOOLEAN /\ focused \in BOOLEAN
-          /\ key \in {"up"} \cup Held /\ results \in 0..1 /\ chimes \in BOOLEAN
-          /\ link \in BOOLEAN /\ level \in {1, 2} /\ field \in {"mine", "friend"}
+TypeOK == /\ phase \in Phases /\ ball \in Balls /\ paused \in BOOLEAN /\ visible \in BOOLEAN /\ focused \in BOOLEAN /\ sheet \in BOOLEAN
+          /\ sound \in BOOLEAN /\ wind \in Winds /\ key \in {"up", "down"} /\ stale \in BOOLEAN /\ breath \in BOOLEAN
+          /\ fresh \in BOOLEAN /\ skipped \in BOOLEAN /\ byItself \in BOOLEAN /\ results \in 0..1 /\ chimes \in BOOLEAN
 
-\* The reader's rules.
-PausedWhenHidden == (~visible /\ phase \in InPlay) => paused
-PausedWhenBlurred == (~focused /\ phase \in InPlay) => paused
-InputReleasedWhenAway == ~focused => key = "up"
-HeldKeyActsOnce == key # "swung"
-ResultStaysUntilYouChoose == key # "skipped"
+\* The reader's rules: seven of the eight from before the rewrite (ReplayIsExact is DanguliLink.tla), plus the shared ones.
+PausedWhenHidden == (~visible /\ phase = "play") => paused
+PausedWhenBlurred == (~focused /\ phase = "play") => paused
+InputReleasedWhenAway == key = "down" => (focused /\ visible /\ ~paused /\ ~sheet)
+HeldKeyActsOnce == ~byItself
+ResultStaysUntilYouChoose == ~skipped
 NoDoubleResult == results <= 1
 CelebrationOnlyOnResult == chimes => phase = "over"
-ReplayIsExact == (link /\ level = 1) => field = "friend"
+NoProgressWhileAway == ClockRuns => (focused /\ visible /\ ~paused)
+PauseOnlyMidRound == (stale \/ breath) => phase = "play"
+LoopOnlyWhenMeaningful == wind = "live" => (Ticking /\ sound)
+LoopComesBack == (Ticking /\ sound) => wind = "live"
+NeverAStub == wind # "stub"
+ChoiceFreezesPlay == sheet => ~ClockRuns
+\* Whenever the round moves again after time away, the breath ran first.
+BreathAfterAway == Ticking => ~stale
 ====
