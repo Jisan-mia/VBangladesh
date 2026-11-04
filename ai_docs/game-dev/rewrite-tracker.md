@@ -15,10 +15,10 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | tarer-fanke-belun | S03 | analysed | done |
 | paka-kancha | S04 | analysed | todo |
 | jora-melao | S04 | analysed | todo |
-| chhok-jora | S04 | analysed | rewriting |
+| chhok-jora | S04 | analysed | done |
 | churui-tarao | S05 | analysed | rewriting |
 | handi-bhanga | S05 | analysed | rewriting |
-| peoner-cycle | S05 | analysed | todo |
+| peoner-cycle | S05 | analysed | rewriting |
 | sap-ludu | S06 | analysed | done |
 | baghbandi | S06 | analysed | done |
 | baicher-nouka | S06 | analysed | todo |
