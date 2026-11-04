@@ -2,8 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { challengeHash, makeRng, pick } from "../../../shared/game-core";
 import { site } from "../content";
-import { act, BABU, CHOR, DAKAT, DEFAULT_POINTS, MAX_ROUNDS, POLICE, cleanPlayer, dative, dealFor, deals, nameOf, newPlay, roundPoints, standings, suspects, totals, type Game, type Play, type Role } from "../lib/game";
-import { friendBanner, gameHash, humanLine, parseGame, previewTitle, recordLine, roundNews, scoreLine, versusLine } from "../lib/result";
+import { cues } from "../lib/cues";
+import { act, BABU, CHOR, DAKAT, DEFAULT_POINTS, GUARD_MS, MAX_ROUNDS, POLICE, ROUND_CHOICES, cleanPlayer, dative, dealFor, deals, isFinale, nameOf, newPlay, restore, roundPoints, saveOf, standings, suspects, totals, type Action, type Game, type Play, type Role, type Saved } from "../lib/game";
+import { evenings } from "../lib/levels";
+import { eveningStats, friendBanner, gameHash, humanLine, parseGame, previewTitle, recordLine, roundNews, scoreLine, versusLine } from "../lib/result";
 import { share } from "../share";
 
 const game = (overrides: Partial<Game> = {}): Game => ({ seed: 48213, names: ["আম্মু", "ভাইয়া", "আপু", "আমি"], points: [...DEFAULT_POINTS], caught: [], occasion: "eid", ...overrides });
@@ -51,51 +53,176 @@ test("names: cleaned, capped at 16, commas gone, defaults and Bangla dative", ()
   assert.equal(dative("Rafi"), "Rafi-কে");
 });
 
-test("the flow can't skip a peek, can't accuse বাবু or পুলিশ, and ends at the round limit", () => {
-  let play: Play = newPlay(game(), 2);
-  play = act(play, { type: "start" });
+// A clock that always moves past the tap guard, so the flow tests read like a family playing at a normal pace.
+let clock = 0;
+const step = (play: Play, action: Action, gap = 2000) => act(play, action, clock += gap);
+/** One full hand-out: each player taps a chit, holds it open, and presses দেখেছি. */
+function handOut(play: Play) {
+  for (let turn = 0; turn < 4; turn++) play = step(step(step(play, { type: "pick", slot: 0 }), { type: "saw" }), { type: "done" });
+  return play;
+}
+/** Plays a round to the reveal, the police naming `which` (0 or 1) of the two suspects. */
+function round(play: Play, which: number) {
+  play = step(handOut(play), { type: "call" });
+  const pair = suspects(dealFor(play.game.seed, play.game.caught.length));
+  return step(step(play, { type: "accuse", seat: pair[which] }), { type: "open" });
+}
+
+test("the flow: a tap on a chit is the hand-off, nobody moves on before seeing, the police only names a suspect", () => {
+  let play: Play = step(newPlay(game(), 2), { type: "start" });
   assert.equal(play.phase, "pass");
-  play = act(play, { type: "ready" });
-  assert.equal(act(play, { type: "done" }).phase, "peek", "nobody moves on before seeing their chit");
-  play = act(act(play, { type: "saw" }), { type: "done" });
+  assert.equal(step(play, { type: "pick", slot: 4 }), play, "there are only four chits");
+  play = step(play, { type: "pick", slot: 2 });
+  assert.deepEqual([play.phase, play.turn, play.slot], ["peek", 0, 2]);
+  assert.equal(step(play, { type: "done" }).phase, "peek", "nobody moves on before seeing their chit");
+  play = step(step(play, { type: "saw" }), { type: "done" });
   assert.deepEqual([play.phase, play.turn], ["pass", 1]);
-  for (let turn = 1; turn < 4; turn++) play = act(act(act(play, { type: "ready" }), { type: "saw" }), { type: "done" });
+  assert.equal(step(play, { type: "pick", slot: 3 }), play, "the second player picks from three");
+  for (let turn = 1; turn < 4; turn++) play = step(step(step(play, { type: "pick", slot: 0 }), { type: "saw" }), { type: "done" });
   assert.equal(play.phase, "call");
-  play = act(play, { type: "call" });
+  play = step(play, { type: "call" });
   const roles = dealFor(play.game.seed, 0);
-  assert.equal(act(play, { type: "guess", seat: roles.indexOf(POLICE) }).phase, "guess");
-  assert.equal(act(play, { type: "guess", seat: roles.indexOf(BABU) }).phase, "guess");
-  play = act(play, { type: "guess", seat: roles.indexOf(CHOR) });
+  assert.equal(step(play, { type: "accuse", seat: roles.indexOf(POLICE) }), play);
+  assert.equal(step(play, { type: "accuse", seat: roles.indexOf(BABU) }), play);
+  play = step(play, { type: "accuse", seat: roles.indexOf(CHOR) });
+  assert.deepEqual([play.phase, play.accused, play.game.caught], ["roll", roles.indexOf(CHOR), []], "the drum rolls before anything is scored");
+  play = step(play, { type: "open" });
   assert.deepEqual([play.phase, play.game.caught], ["reveal", [true]]);
-  const paused = act(play, { type: "pause" });
-  assert.equal(paused.phase, "setup");
-  assert.equal(act(paused, { type: "start" }).phase, "pass", "resume goes on to the next round");
-  play = act(play, { type: "next" });
+  play = step(play, { type: "next" });
   assert.equal(play.phase, "pass");
-  assert.equal(act(play, { type: "again", seed: 9 }).game.caught.length, 0);
-  assert.equal(act(play, { type: "guess", seat: 0 }), play, "actions out of turn change nothing");
+  assert.equal(step(play, { type: "accuse", seat: 0 }), play, "actions out of turn change nothing");
 });
 
-test("headless evenings: scripted guesses through many rounds end sanely", () => {
-  for (let seed = 1; seed <= 200; seed++) {
-    const rng = makeRng(seed * 31);
-    let play = act(newPlay(game({ seed }), 10), { type: "start" });
-    let steps = 0;
-    while (play.phase !== "over" && steps++ < 500) {
-      if (play.phase === "pass") play = act(play, { type: "ready" });
-      else if (play.phase === "peek") play = act(act(play, { type: "saw" }), { type: "done" });
-      else if (play.phase === "call") play = act(play, { type: "call" });
-      else if (play.phase === "guess") { const pair = suspects(dealFor(play.game.seed, play.game.caught.length)); play = act(play, { type: "guess", seat: pair[pick(rng, 2)] }); }
-      else if (play.phase === "reveal") play = act(play, { type: "next" });
-    }
-    assert.equal(play.phase, "over");
-    assert.equal(play.game.caught.length, 10);
-    const scores = totals(play.game);
-    assert.equal(scores.reduce((a, b) => a + b, 0), 10 * 2300);
-    assert.ok(scores.every(score => score >= 0 && score <= 10 * 1000));
-    const more = act(play, { type: "more" });
-    assert.deepEqual([more.phase, more.limit], ["pass", 15]);
+test("a tap that lands inside a screen's guard is dropped; programmed steps are not", () => {
+  const start = act(newPlay(game(), 5), { type: "start" }, 10_000);
+  assert.equal(act(start, { type: "pick", slot: 0 }, 10_000 + GUARD_MS.pass - 1), start, "a double tap on চিরকুট তোলো doesn't pick a chit");
+  const peek = act(start, { type: "pick", slot: 0 }, 10_000 + GUARD_MS.pass);
+  assert.equal(peek.phase, "peek");
+  assert.equal(act(peek, { type: "saw" }, peek.since + 1).seen, true, "holding the chit open is never blocked");
+  assert.equal(act(peek, { type: "breath" }, 99_000).since, 99_000, "coming back from the menu restarts the guard");
+});
+
+test("bug 1 (NoTapPastResult): a second Enter as the scorecard appears never wipes the evening", () => {
+  let play = step(newPlay(game(), 5), { type: "start" });
+  play = round(play, 0);
+  // You press এখানেই শেষ করো, then Enter lands 700 ms later (the live replay's timing) and again at once.
+  const over = act(play, { type: "end" }, clock += 2000);
+  assert.deepEqual([over.phase, over.done], ["over", true]);
+  assert.equal(act(over, { type: "again", seed: 9 }, over.since + 700), over, "inside the scorecard's 1.2 s guard");
+  assert.equal(act(over, { type: "again", seed: 9 }, over.since), over);
+  assert.equal(act(over, { type: "more" }, over.since + 300), over);
+  // The same for ফল দেখো at the limit.
+  let full = step(newPlay(game(), 1), { type: "start" });
+  full = round(full, 1);
+  const last = act(full, { type: "next" }, clock += 2000);
+  assert.equal(last.phase, "over");
+  assert.equal(act(last, { type: "again", seed: 9 }, last.since + 949), last);
+  // Even a deliberate আরেক সন্ধ্যা goes to the title screen first, names and points kept; starting is a second tap.
+  const again = act(last, { type: "again", seed: 9 }, last.since + GUARD_MS.over);
+  assert.deepEqual([again.phase, again.game.caught, again.game.names], ["setup", [], last.game.names]);
+});
+
+test("bug 2 (FinishedStaysFinished): an evening ended early stays finished after a reload", () => {
+  let play = step(newPlay(game(), 5), { type: "start" });
+  play = round(play, 0);
+  const over = step(play, { type: "end" });
+  const saved = JSON.parse(JSON.stringify(saveOf(over, gameHash(over.game)))) as Saved;
+  assert.equal(saved.d, 1);
+  const back = restore(saved, hash => parseGame(hash, 0), 777);
+  assert.deepEqual([back.phase, back.game.caught, back.game.seed, back.game.names], ["setup", [], 777, over.game.names], "only names and points come back");
+  // An evening really in progress still comes back to continue.
+  const midway = restore(saveOf(play, gameHash(play.game)), hash => parseGame(hash, 0), 777);
+  assert.deepEqual([midway.phase, midway.game.caught.length, midway.limit], ["setup", 1, 5]);
+  assert.equal(step(midway, { type: "start" }).phase, "pass");
+  // Old saves (no `d`) still load; junk and hostile saves start fresh.
+  const old = restore({ h: gameHash(play.game), l: 5 }, hash => parseGame(hash, 0), 1);
+  assert.equal(old.game.caught.length, 1);
+  assert.equal(restore({ h: gameHash(play.game), l: 1 }, hash => parseGame(hash, 0), 1).game.caught.length, 0, "every round played: finished");
+  for (const junk of [null, {}, { h: "s=x" }, { h: gameHash(play.game), l: -4 }, { h: "s=1&t=99&g=1", l: 5 }] as Saved[]) {
+    const fresh = restore(junk, hash => parseGame(hash, 0), 5);
+    assert.equal(fresh.phase, "setup");
+    assert.ok(fresh.limit >= 1 && fresh.limit <= MAX_ROUNDS);
   }
+});
+
+test("bug 3 (DrumStopsWithRound): leaving the drumroll by any way but the reveal cuts the drum", () => {
+  let play = step(handOut(step(newPlay(game(), 5), { type: "start" })), { type: "call" });
+  const pair = suspects(dealFor(play.game.seed, 0));
+  const roll = step(play, { type: "accuse", seat: pair[0] });
+  assert.deepEqual(cues(play, roll), ["drum"]);
+  const reset = step(roll, { type: "reset", seed: 3 });
+  assert.ok(cues(roll, reset).includes("hush"), "নতুন করে শুরু during the drum");
+  const opened = step(roll, { type: "open" });
+  assert.ok(!cues(roll, opened).includes("hush"), "the reveal lets the last beat land");
+  assert.ok(cues(roll, opened).some(cue => cue === "caught" || cue === "missed"));
+  // The pause menu cuts scheduled notes itself (silenceScheduled in the player), and the roll timer is an effect keyed on paused.
+  play = roll;
+  assert.equal(step(play, { type: "breath" }).phase, "roll", "resuming keeps the roll; the component drums it again from the first beat");
+});
+
+test("the fanfare plays once per scorecard, and the evening's start has its clink", () => {
+  const setup = newPlay(game(), 1), start = step(setup, { type: "start" });
+  assert.deepEqual(cues(setup, start), ["clink"]);
+  const over = step(round(start, 0), { type: "next" });
+  assert.equal(over.phase, "over");
+  assert.deepEqual(cues(round(start, 0), over), ["fanfare"]);
+  assert.deepEqual(cues(over, step(over, { type: "breath" })), [], "nothing on the same screen");
+  const more = step(over, { type: "more" });
+  assert.deepEqual([more.phase, more.limit, more.done], ["pass", 6, false]);
+});
+
+test("the finale: the last round of every evening is শেষ দান", () => {
+  for (const evening of evenings) {
+    let play = step(newPlay(game(), evening.rounds), { type: "start" });
+    for (let r = 0; r < evening.rounds - 1; r++) { assert.equal(isFinale(play), false); play = step(round(play, r % 2), { type: "next" }); }
+    assert.equal(isFinale(play), true, `${evening.name}: round ${evening.rounds}`);
+    play = round(play, 0);
+    assert.equal(isFinale(play), true, "still the finale on its reveal");
+    assert.equal(step(play, { type: "next" }).phase, "over");
+  }
+  assert.equal(evenings.filter(item => item.recommended).length, 1, "one evening is marked সুপারিশ");
+  assert.deepEqual([...ROUND_CHOICES], [5, 10, 15], "the old round choices are unchanged");
+});
+
+/** A headless family: the police names the real thief with probability `sharp`. Returns the finished evening. */
+function family(seed: number, rounds: number, sharp: number) {
+  const rng = makeRng(seed * 7919 + 13);
+  let play = step(newPlay(game({ seed }), rounds), { type: "start" });
+  while (play.phase !== "over") {
+    const roles = dealFor(play.game.seed, play.game.caught.length);
+    const pair = suspects(roles), right = pair.indexOf(roles.indexOf(CHOR));
+    play = step(round(play, rng() < sharp ? right : 1 - right), { type: "next" });
+  }
+  return play;
+}
+
+test("headless evenings: fair seats, conserved points, and a finale that still matters", () => {
+  for (const evening of evenings) for (const sharp of [0.5, 0.65]) {
+    const wins = [0, 0, 0, 0];
+    let turned = 0;
+    const runs = 1500;
+    for (let seed = 1; seed <= runs; seed++) {
+      const play = family(seed, evening.rounds, sharp);
+      assert.equal(play.game.caught.length, evening.rounds);
+      assert.equal(totals(play.game).reduce((a, b) => a + b, 0), evening.rounds * 2300, "a swap never creates or loses points");
+      wins[standings(play.game)[0].seat]++;
+      const before = standings({ ...play.game, caught: play.game.caught.slice(0, -1) });
+      if (before[0].seat !== standings(play.game)[0].seat || before[0].total === before[1].total) turned++;
+    }
+    for (const count of wins) assert.ok(count > runs * 0.19 && count < runs * 0.31, `${evening.name} @${sharp}: every seat wins about a quarter (${wins})`);
+    const share = turned / runs, target = evening.rounds === 5 ? 0.28 : evening.rounds === 10 ? 0.17 : 0.13;
+    assert.ok(share >= target, `${evening.name} @${sharp}: the last round can still change the winner (${share.toFixed(2)} ≥ ${target})`);
+  }
+});
+
+test("end-screen stats are real: catches, escapes, the most-often বাবু and the best police", () => {
+  const evening = game({ caught: [true, false, true, true, false] });
+  const stats = eveningStats(evening), all = deals(evening.seed, 5);
+  assert.deepEqual([stats.rounds, stats.caught, stats.escaped], [5, 3, 2]);
+  const babu = [0, 0, 0, 0];
+  all.forEach(roles => babu[roles.indexOf(BABU)]++);
+  if (stats.babu) assert.equal(stats.babu.times, Math.max(...babu));
+  assert.equal(eveningStats(game({ caught: [false] })).police, null, "nobody caught anyone: no best police");
 });
 
 test("card lines: tie, close, one round, every catch, no catch, a runaway", () => {
@@ -179,7 +306,7 @@ test("content meets the SEO limits and says what a link carries", () => {
   const description = [...site.description].length;
   assert.ok(description >= 120 && description <= 160, `description ${description}`);
   assert.ok(site.headline && site.headline !== site.title);
-  assert.ok(site.faq.length >= 5);
+  assert.ok(site.faq.length >= 6);
   assert.ok(site.steps.length >= 3 && site.privacy.some(line => line.includes("লিংক")));
   assert.ok(!/টাকা জিত|বাজি ধর|জুয়া/.test(JSON.stringify(site)), "no stakes copy");
 });
