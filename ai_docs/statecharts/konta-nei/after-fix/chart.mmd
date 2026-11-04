@@ -1,0 +1,83 @@
+---
+title: "কﬂ°°2507¶ßনটﬂ°°2494¶ß নﬂ°°2503¶ßই? after the rewrite: shelf, window, hum and level list"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Shutter down (ঝ#2494;#2433;প ত#2507;ল#2507;)
+      s1: Shutter rolling up
+      s2: Looking at the shelf
+      s3: Paused, shutter down over the shelf
+      s4: Paused by সব ল#2503;ভ#2503;ল
+      s5: Eyes closing, ম#2494;ম#2494; takes one
+      s6: ক#2507;নট#2494; ন#2503;ই? pictures
+      s7: Answer shown, things go back
+      s8: Eyes closing before a shelf
+      s9: Cash memo
+      [*] --> s0
+      s0 --> s1: you tap the shutter [when You're on the page]
+      s1 --> s2: the shutter is up
+      s1 --> s3: you hide the tab or click into another window
+      s1 --> s4: you open সব ল#2503;ভ#2503;ল
+      s2 --> s5: the look time runs out or you press মন#2503; আছ#2503;
+      s2 --> s3: you hide the tab or click into another window
+      s2 --> s4: you open সব ল#2503;ভ#2503;ল
+      s4 --> s0: you pick a level [when You're on the page]
+      s4 --> s1: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+      s5 --> s6: the eyes open on the question
+      s5 --> s3: you hide the tab or click into another window
+      s5 --> s4: you open সব ল#2503;ভ#2503;ল
+      s4 --> s2: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You're on the page]
+      s3 --> s4: you open সব ল#2503;ভ#2503;ল [when You're on the page]
+      s6 --> s3: you hide the tab or click into another window
+      s6 --> s4: you open সব ল#2503;ভ#2503;ল
+      s6 --> s7: you pick the answer
+      s4 --> s5: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+      s3 --> s2: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You're on the page]
+      s4 --> s6: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+      s3 --> s5: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You're on the page]
+      s7 --> s8: পর#2503;র ত#2494;ক, or the reveal moves on
+      s7 --> s3: you hide the tab or click into another window
+      s7 --> s4: you open সব ল#2503;ভ#2503;ল
+      s3 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You're on the page]
+      s8 --> s3: you hide the tab or click into another window
+      s8 --> s4: you open সব ল#2503;ভ#2503;ল
+      s8 --> s2: the eyes open on the next shelf
+      s4 --> s7: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+      s4 --> s8: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+      s3 --> s7: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You're on the page]
+      s3 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You're on the page]
+      s7 --> s9: পর#2503;র ত#2494;ক, or the reveal moves on
+      s9 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; or you pick a level [when You're on the page]
+    }
+    --
+    state "Window" as r1 {
+      s10: You're on the page
+      s11: Away: tab hidden or another window
+      [*] --> s10
+      s10 --> s11: you hide the tab or click into another window
+      s11 --> s10: you come back
+    }
+  }
+  class s0 tan
+  class s1 teal
+  class s2 teal
+  class s3 yellow
+  class s4 yellow
+  class s5 teal
+  class s6 teal
+  class s7 teal
+  class s8 teal
+  class s9 blue

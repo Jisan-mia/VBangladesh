@@ -1,38 +1,40 @@
-export const title = "কোনটা নেই?: shelf, window, hum and level list";
+export const title = "কোনটা নেই? after the rewrite: shelf, window, hum and level list";
 const game = (v: any) => {
-  if (v.paused) return v.phase === "ask" ? "Paused on the question" : "Paused while looking";
-  if (v.blink === "toAsk") return "Eyes closing, মামা takes one";
-  if (v.blink === "toNextShelf" || v.blink === "toNewLevel") return "Eyes closing before a shelf";
-  return ({ ready: "Shutter down", look: "Looking at the shelf", ask: "কোনটা নেই? choices", reveal: "Answer shown", over: "Level card" } as any)[v.phase];
+  if (v.why === "sheet") return "Paused by সব লেভেল";
+  if (v.why === "away") return "Paused, shutter down over the shelf";
+  return ({
+    ready: "Shutter down (ঝাঁপ তোলো)", opening: "Shutter rolling up", look: "Looking at the shelf",
+    closing: "Eyes closing, মামা takes one", ask: "কোনটা নেই? pictures", reveal: "Answer shown, things go back",
+    blink: "Eyes closing before a shelf", over: "Cash memo",
+  } as any)[v.phase];
 };
 export const state = (v: any) => ({
   Game: game(v),
-  Window: !v.visible ? "Tab hidden" : v.focused ? "You're on the page" : "Another window has focus",
-  Hum: v.hum ? "Hum on" : "Hum off",
-  Sound: v.sound ? "Sound on" : "Sound off",
-  Clock: v.overcharged ? "Away time charged" : "Fair clock",
-  Levels: v.drawer ? "Level list open" : "Level list shut",
+  Window: v.visible && v.focused ? "You're on the page" : "Away: tab hidden or another window",
 });
 const steps: Record<string, string | null> = {
-  YouStart: "you press শুরু করো",
-  LookTimeEnds: "the look time runs out",
-  EyesOpenOnTheGap: "the eyes open on the shelf with a gap",
-  YouAnswer: "you pick an answer",
-  YouTapNextShelf: "you press পরের তাক",
-  YouPlayOn: "you press আবার খেলো or পরের লেভেল",
-  EyesOpenOnAShelf: "the eyes open on a new shelf",
-  YouPickALevel: null,
-  TabHides: "you hide the tab",
-  TabShows: "the tab shows again",
-  WindowBlurs: "you click into another window",
-  WindowFocuses: "you come back to the window",
+  YouStart: "you tap the shutter",
+  ShutterUp: "the shutter is up",
+  LookTimeEnds: "the look time runs out or you press মনে আছে",
+  YouRemember: "the look time runs out or you press মনে আছে",
+  EyesOpenOnTheGap: "the eyes open on the question",
+  YouAnswer: "you pick the answer",
+  RevealEnds: "পরের তাক, or the reveal moves on",
+  EyesOpenOnAShelf: "the eyes open on the next shelf",
+  YouPlayOn: "you press পরের লেভেল or আবার খেলো",
+  YouPickALevel: "you pick a level",
+  TabHides: "you hide the tab or click into another window",
+  TabShows: "you come back",
+  WindowBlurs: "you hide the tab or click into another window",
+  WindowFocuses: "you come back",
   YouResume: "you press চালিয়ে যাও",
-  SoundOff: "you turn sound off",
-  SoundOn: "you turn sound on",
-  YouOpenTheLevels: "you open সব লেভেল",
-  YouCloseTheLevels: "you close সব লেভেল",
+  YouOpenTheSheet: "you open সব লেভেল",
+  YouCloseTheSheet: "you close সব লেভেল",
+  SoundOff: null, SoundOn: null,
+  YouHoldEnter: null, EnterRepeats: null, YouLetGo: null,
 };
-// The level arrows / drawer pick (a reset to the shutter from every state) is hidden; see README.
+// The sound switch and a held Enter are checked by the rules (HumOnlyWhileLooking, HumComesBack, ResultNeedsFreshPress)
+// but change nothing drawn here, so their steps are hidden; see README.
 export const step = (action: string) => (action in steps ? steps[action] : action);
-export const group = (v: any) => v.phase === "over" ? "done" : v.paused ? "held" : v.phase === "ready" ? "wait" : "play";
+export const group = (v: any) => v.phase === "over" ? "done" : v.why !== "none" ? "held" : v.phase === "ready" ? "wait" : "play";
 export const colors = { play: "teal", held: "yellow", done: "blue", wait: "tan" };

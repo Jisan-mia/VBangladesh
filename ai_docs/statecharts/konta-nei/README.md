@@ -1,6 +1,115 @@
-# কোনটা নেই? statechart (before the rewrite)
+# কোনটা নেই? statechart
 
-Spec: `KontaNei.tla` / `KontaNei.cfg` / `view.ts`, mirrored from `tools/konta-nei/components/konta-game.tsx` and `shared/game-sound.ts`. Output: `before-fix/report.md` and `before-fix/chart.mmd`. TLC reached 444 states. The chart draws 20 states and 31 arrows. It hides one step, "you pick a level" (the ‹ › arrows or a level from the list), because that step resets to "Shutter down" from every state.
+## After the rewrite (`after-fix/`)
+The spec now mirrors `tools/konta-nei/lib/session.ts` (one pausable phase clock: ready → opening → look → closing → ask → reveal → blink → … → over, with `why` = away or sheet) and `components/shop-game.tsx` (the listeners, `syncHum` after every commit and on the sound switch, `finalize`, the key handler). TLC reaches 232 states; the chart draws 12 states and 37 arrows. The sound switch and a held Enter are checked by the rules but hidden from the drawing, because they change nothing it shows.
+
+| Rule | Says | Result |
+|---|---|---|
+| PausedWhenHidden | When the tab is hidden, the look time, the eyelids, the reveal's pause and the answer clock are stopped. | holds |
+| PausedWhenBlurred | When you click into another window, they stop too. | holds |
+| AwayTimeNeverCharged | The answer clock runs only while you are on the page. | holds |
+| NothingUnderThePause | Paused, nothing counts and no pick is taken (the shutter covers the shelf and the pictures). | holds |
+| HumOnlyWhileLooking | The hum plays only while the shelf shows and its time counts: never on the question, the blink, paused, hidden or muted. | holds |
+| HumComesBack | While a look counts down with sound on, the hum plays (turning sound back on restores it). | holds |
+| LevelPickerFreezesPlay | While সব লেভেল is open, nothing counts down. | holds |
+| NoDoubleResult | A level is saved once. | holds |
+| MemoMeansSaved | The cash memo shows only after the last shelf was answered and saved. | holds |
+| ResultNeedsFreshPress | A key held through the end never skips the memo. | holds |
+
+### The five bugs, fixed
+1. **PausedWhenHidden:** the blink after পরের তাক is a phase on the paused clock, so a hidden tab freezes it. Test `bug 1 · PausedWhenHidden` (rewrite.test.ts). Live (Orca, Pixel 9): answered, পরের তাক, blur 50 ms later → phase `blink`, shutter down; 3 s later still `blink`, lids frozen at 0.03.
+2. **PausedWhenBlurred:** the game listens to `blur` and the player's `onPause`; both run `pauseFor("away")`. Test `bug 2 · PausedWhenBlurred`. Live: look at ৪ → blur → the player's menu up, shutter down, 4 s later still ৪; চালিয়ে যাও → ৪, then ৩ after 1.2 s (the 0.6 s breath, nothing lost or gained).
+3. **AwayTimeNeverCharged:** `pause` banks the clock only while it runs, and a second hide changes nothing. Test `bug 3 · AwayTimeNeverCharged` (hide → show → hide → resume → answer costs the same ms as answering straight away).
+4. **HumOnlyWhileLooking:** the hum follows `session.looking` (phase `look` and running), never the raw phase; the eyes closing is its own phase. Test `bug 4 · HumOnlyWhileLooking`. Live (sawtooth oscillators counted): look 1 → মনে আছে → eyes closing → menu, sound off, sound on, resume → 0; on the question 0.
+5. **LevelPickerFreezesPlay:** opening সব লেভেল runs `pause("sheet")`, which an away-resume cannot end. Test `bug 5 · LevelPickerFreezesPlay`. Live: look at ৪, open the sheet, hum 1 → 0, 3 s later still ৪; close → hum 1, ৪.
+
+The quality-bar gaps are closed too: the player's pause menu, a pause that covers the shelf and the pictures, the player fills the stage (no text above the play area), the shutter as the start action, the amber edge in the last 3 s, named finales with a boss bar and two things gone, a world ident, and the cash memo with real stats. Old links replay exactly (`lib/legacy.ts`, pinned by a checksum test).
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Shutter down (ঝ#2494;#2433;প ত#2507;ল#2507;)
+      s1: Shutter rolling up
+      s2: Looking at the shelf
+      s3: Paused, shutter down over the shelf
+      s4: Paused by সব ল#2503;ভ#2503;ল
+      s5: Eyes closing, ম#2494;ম#2494; takes one
+      s6: ক#2507;নট#2494; ন#2503;ই? pictures
+      s7: Answer shown, things go back
+      s8: Eyes closing before a shelf
+      s9: Cash memo
+      [*] --> s0
+      s0 --> s1: you tap the shutter [when You're on the page]
+      s1 --> s2: the shutter is up
+      s1 --> s3: you hide the tab or click into another window
+      s1 --> s4: you open সব ল#2503;ভ#2503;ল
+      s2 --> s5: the look time runs out or you press মন#2503; আছ#2503;
+      s2 --> s3: you hide the tab or click into another window
+      s2 --> s4: you open সব ল#2503;ভ#2503;ল
+      s4 --> s0: you pick a level [when You're on the page]
+      s4 --> s1: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+      s5 --> s6: the eyes open on the question
+      s5 --> s3: you hide the tab or click into another window
+      s5 --> s4: you open সব ল#2503;ভ#2503;ল
+      s4 --> s2: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You're on the page]
+      s3 --> s4: you open সব ল#2503;ভ#2503;ল [when You're on the page]
+      s6 --> s3: you hide the tab or click into another window
+      s6 --> s4: you open সব ল#2503;ভ#2503;ল
+      s6 --> s7: you pick the answer
+      s4 --> s5: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+      s3 --> s2: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You're on the page]
+      s4 --> s6: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+      s3 --> s5: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You're on the page]
+      s7 --> s8: পর#2503;র ত#2494;ক, or the reveal moves on
+      s7 --> s3: you hide the tab or click into another window
+      s7 --> s4: you open সব ল#2503;ভ#2503;ল
+      s3 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You're on the page]
+      s8 --> s3: you hide the tab or click into another window
+      s8 --> s4: you open সব ল#2503;ভ#2503;ল
+      s8 --> s2: the eyes open on the next shelf
+      s4 --> s7: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+      s4 --> s8: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+      s3 --> s7: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You're on the page]
+      s3 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You're on the page]
+      s7 --> s9: পর#2503;র ত#2494;ক, or the reveal moves on
+      s9 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; or you pick a level [when You're on the page]
+    }
+    --
+    state "Window" as r1 {
+      s10: You're on the page
+      s11: Away: tab hidden or another window
+      [*] --> s10
+      s10 --> s11: you hide the tab or click into another window
+      s11 --> s10: you come back
+    }
+  }
+  class s0 tan
+  class s1 teal
+  class s2 teal
+  class s3 yellow
+  class s4 yellow
+  class s5 teal
+  class s6 teal
+  class s7 teal
+  class s8 teal
+  class s9 blue
+```
+
+## Before the rewrite (`before-fix/`)
+Spec (then): `KontaNei.tla` / `KontaNei.cfg` / `view.ts`, mirrored from `tools/konta-nei/components/konta-game.tsx` and `shared/game-sound.ts`. Output: `before-fix/report.md` and `before-fix/chart.mmd`. TLC reached 444 states. The chart draws 20 states and 31 arrows. It hides one step, "you pick a level" (the ‹ › arrows or a level from the list), because that step resets to "Shutter down" from every state.
 
 ## Systems modelled
 - **Play phase:** shutter down (ready) → looking → eyes closing → কোনটা নেই? choices → answer shown → … → level card. The model has 2 shelves per level (the game has 3). The last answer leads to the card and the save.
@@ -83,6 +192,7 @@ Not modelled: held input (the game has none; answers are single taps or keys 1�
 Screenshots: `.shots/konta-nei-first-screen.png` (shutter and start), `.shots/konta-nei-look.png` (looking), `.shots/konta-nei-ask.png` (the gap, মামা turned), `.shots/konta-nei-reveal.png` (the right slot ringed), `.shots/konta-nei-over.png` (3 ✓ pips after the level). The card's text was read from the DOM, because Orca's phone screenshot after a scroll came out blank.
 
 ## Regenerate
+The spec in this folder is the after-fix one; the before-fix spec is in git history.
 ```sh
 scripts/statechart.sh ai_docs/statecharts/konta-nei/KontaNei.tla --view ai_docs/statecharts/konta-nei/view.ts --out ai_docs/statecharts/konta-nei/<new-folder>
 rm ai_docs/statecharts/konta-nei/<new-folder>/tlc*.out

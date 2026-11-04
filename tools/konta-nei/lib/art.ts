@@ -1,4 +1,5 @@
 // Drawing: the 20 goods, the shelf, the shopkeeper and his counter. Plain Canvas 2D paths, used by the game and the card.
+// The game pre-renders the shop (drawBack) and one sprite per thing (drawSprite) and moves those bitmaps (draw.hot.ts).
 import { BODY_FONT } from "../../../shared/card-canvas";
 import { itemName, type ItemId } from "./items";
 
@@ -11,6 +12,13 @@ export const palette = {
   awning: "#c8402e", star: "#f2b51c", good: "#2f9e5b", bad: "#d4553f",
   walls: ["#3d6e70", "#34507a", "#6b3e3a"],
 };
+
+/** One palette per shop: the wall behind the shelf, and the awning's two stripes. */
+export const WORLD_ART = [
+  { wall: "#3d6e70", awning: "#c8402e", stripe: "#f5efe0", glow: "#ffd166" },
+  { wall: "#34507a", awning: "#2e7d4f", stripe: "#f5efe0", glow: "#ffd166" },
+  { wall: "#6b3e3a", awning: "#e0a21b", stripe: "#fff4d6", glow: "#ffe08a" },
+] as const;
 
 function rr(c: C, x: number, y: number, w: number, h: number, r: number) {
   c.moveTo(x + r, y);
@@ -231,20 +239,24 @@ export type ShelfView = {
   mark?: { slot: number; good: boolean } | null;
   /** a "?" tag in this empty place (the card) */
   ask?: number | null;
+  /** "?" tags in these empty places (the card of a finale, where two went) */
+  asks?: readonly number[];
+  /** no name tags under the things */
+  plain?: boolean;
 };
 
-function awning(c: C, width: number, height: number) {
-  const stripe = width / 12;
+function awning(c: C, width: number, height: number, world = 0) {
+  const stripe = width / 12, art = WORLD_ART[world] ?? WORLD_ART[0];
   for (let i = 0; i < 12; i++) {
     c.beginPath();
     c.moveTo(i * stripe, 0); c.lineTo((i + 1) * stripe, 0); c.lineTo((i + 1) * stripe, height - stripe / 2);
     c.arc((i + 0.5) * stripe, height - stripe / 2, stripe / 2, 0, Math.PI);
     c.closePath();
-    c.fillStyle = i % 2 ? "#f5efe0" : palette.awning; c.fill();
+    c.fillStyle = i % 2 ? art.stripe : art.awning; c.fill();
   }
 }
 
-function tag(c: C, text: string, cx: number, top: number, height: number, maxWidth: number, color = INK) {
+export function tag(c: C, text: string, cx: number, top: number, height: number, maxWidth: number, color = INK) {
   const size = Math.max(10, Math.round(height * 0.62));
   c.font = `700 ${size}px ${BODY_FONT}`;
   const width = Math.min(maxWidth, c.measureText(text).width + size * 0.9);
@@ -280,10 +292,10 @@ export function drawKeeper(c: C, cx: number, bottom: number, size: number, facin
   c.restore();
 }
 
-/** The whole shop front in a `width` × `height` box at the top-left corner. */
-export function drawShelf(c: C, width: number, height: number, view: ShelfView) {
-  const g = shelfGeometry(width, height, view.base);
-  c.fillStyle = palette.walls[view.world] ?? palette.walls[0];
+/** The shop without its goods: wall, planks, awning, the মামা and his counter. Pre-rendered once per size and pose. */
+export function drawBack(c: C, width: number, height: number, base: number, world: number, keeper: "front" | "back") {
+  const g = shelfGeometry(width, height, base);
+  c.fillStyle = (WORLD_ART[world] ?? WORLD_ART[0]).wall;
   c.fillRect(0, 0, width, height);
   // planks with a lighter top edge
   for (let row = 0; row < g.planks; row++) {
@@ -292,30 +304,10 @@ export function drawShelf(c: C, width: number, height: number, view: ShelfView) 
     c.fillStyle = "#b67a47"; c.fillRect(0, top, width, Math.max(2, g.plank * 0.18));
     c.fillStyle = "#00000026"; c.fillRect(0, top + g.plank, width, 3);
   }
-  awning(c, width, g.awning);
-
-  const slots = slotsFor(view.items.length, width, height, view.base), tagHeight = g.plank * 0.74;
-  view.items.forEach((id, index) => {
-    const slot = slots[index];
-    if (view.mark?.slot === index) {
-      c.beginPath(); rr(c, slot.cx - slot.width * 0.46, slot.floor - g.itemSize * 1.08, slot.width * 0.92, g.itemSize * 1.08 + g.plank * 0.96, 10);
-      c.fillStyle = view.mark.good ? "#2f9e5b33" : "#d4553f33"; c.fill();
-      c.lineWidth = 3.5; c.strokeStyle = view.mark.good ? "#7fe0a4" : "#ffb199"; c.stroke();
-    }
-    if (id) {
-      drawItem(c, id, slot.cx, slot.floor, g.itemSize);
-      tag(c, itemName(id), slot.cx, slot.floor + g.plank * 0.18, tagHeight, slot.width * 0.96);
-    } else if (view.ask === index) {
-      tag(c, "?", slot.cx, slot.floor + g.plank * 0.18, tagHeight, slot.width * 0.5, palette.awning);
-      c.font = `800 ${Math.round(g.itemSize * 0.7)}px ${BODY_FONT}`;
-      c.fillStyle = "#ffffffcc"; c.textAlign = "center"; c.textBaseline = "alphabetic";
-      c.fillText("?", slot.cx, slot.floor - g.itemSize * 0.2);
-    }
-  });
-
+  awning(c, width, g.awning, world);
   // the counter: the মামা stands behind it, only his head and shoulders above it, never in front of the goods
-  const counterTop = height - g.counter * 0.32, keeper = (g.counter * 0.68 - 4) / 0.79;
-  drawKeeper(c, width * 0.17, counterTop + keeper * 0.2, keeper, view.keeper);
+  const counterTop = height - g.counter * 0.32, size = (g.counter * 0.68 - 4) / 0.79;
+  drawKeeper(c, width * 0.17, counterTop + size * 0.2, size, keeper);
   c.fillStyle = palette.woodDark; c.fillRect(0, counterTop, width, height - counterTop);
   c.fillStyle = "#8a5a33"; c.fillRect(0, counterTop, width, Math.max(3, g.counter * 0.06));
   const box = g.counter * 0.42;
@@ -323,4 +315,47 @@ export function drawShelf(c: C, width: number, height: number, view: ShelfView) 
   shape(c, "#5a3a22", () => rr(c, width * 0.8 - box * 0.7, counterTop - box * 0.62, box * 1.4, box * 0.62, 4));
   c.beginPath(); c.rect(width * 0.8 - box * 0.25, counterTop - box * 0.5, box * 0.5, box * 0.1); c.fillStyle = "#d8b25a"; c.fill();
   shape(c, "#2f6fd1", () => rr(c, width * 0.56, counterTop - box * 0.24, box * 0.9, box * 0.24, 2));
+}
+
+/** A sprite's box for a shelf: one column wide, the thing plus its tag tall, standing on `floor` px from its top. */
+export function spriteBox(width: number, height: number, base: number) {
+  const g = shelfGeometry(width, height, base);
+  const floor = Math.ceil(g.itemSize * 1.08) + 2;
+  return { w: Math.ceil(g.cell), h: Math.ceil(floor + g.plank), floor };
+}
+
+/** One thing and its name tag, drawn into a sprite whose box comes from spriteBox. */
+export function drawSprite(c: C, id: ItemId, width: number, height: number, base: number, plain: boolean) {
+  const g = shelfGeometry(width, height, base), box = spriteBox(width, height, base);
+  drawItem(c, id, box.w / 2, box.floor, g.itemSize);
+  if (!plain) tag(c, itemName(id), box.w / 2, box.floor + g.plank * 0.18, g.plank * 0.74, g.cell * 0.96);
+}
+
+/** A ring round one place: green for a thing you found, red-orange for one you missed. */
+export function drawRing(c: C, cx: number, floor: number, width: number, height: number, base: number, good: boolean) {
+  const g = shelfGeometry(width, height, base), cell = g.cell;
+  c.beginPath(); rr(c, cx - cell * 0.46, floor - g.itemSize * 1.08, cell * 0.92, g.itemSize * 1.08 + g.plank * 0.96, 10);
+  c.fillStyle = good ? "#2f9e5b33" : "#d4553f33"; c.fill();
+  c.lineWidth = 3.5; c.strokeStyle = good ? "#7fe0a4" : "#ffb199"; c.stroke();
+}
+
+/** The whole shop front in a `width` × `height` box at the top-left corner (the card, and anything drawn once). */
+export function drawShelf(c: C, width: number, height: number, view: ShelfView) {
+  const g = shelfGeometry(width, height, view.base);
+  drawBack(c, width, height, view.base, view.world, view.keeper);
+  const slots = slotsFor(view.items.length, width, height, view.base), tagHeight = g.plank * 0.74;
+  const asks = view.asks ?? (view.ask !== null && view.ask !== undefined ? [view.ask] : []);
+  view.items.forEach((id, index) => {
+    const slot = slots[index];
+    if (view.mark?.slot === index) drawRing(c, slot.cx, slot.floor, width, height, view.base, view.mark.good);
+    if (id) {
+      drawItem(c, id, slot.cx, slot.floor, g.itemSize);
+      if (!view.plain) tag(c, itemName(id), slot.cx, slot.floor + g.plank * 0.18, tagHeight, slot.width * 0.96);
+    } else if (asks.includes(index)) {
+      tag(c, "?", slot.cx, slot.floor + g.plank * 0.18, tagHeight, slot.width * 0.5, palette.awning);
+      c.font = `800 ${Math.round(g.itemSize * 0.7)}px ${BODY_FONT}`;
+      c.fillStyle = "#ffffffcc"; c.textAlign = "center"; c.textBaseline = "alphabetic";
+      c.fillText("?", slot.cx, slot.floor - g.itemSize * 0.2);
+    }
+  });
 }
