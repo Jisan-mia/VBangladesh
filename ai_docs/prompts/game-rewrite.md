@@ -74,6 +74,12 @@ ONLY:
 - `ai_docs/game-dev/rewrites/{SLUG}.md`;
 - `.shots/`.
 
+**Keep the dev build compiling at every save.** One compile error in any tool makes the dev server return 500 on every route and blocks every other agent:
+- write new modules as new files;
+- keep old exports until the component switches over;
+- switch the imports in one edit;
+- check `curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:3100/carrom` after each big change.
+
 Don't edit `shared/`, `lib/`, `components/` or other tools. Many agents are working right now. Put shared needs in your report. Never `git add` or commit.
 
 ## Verify (required)
