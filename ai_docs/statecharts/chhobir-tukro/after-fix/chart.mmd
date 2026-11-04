@@ -1,0 +1,59 @@
+---
+title: "ছবﬂ°°2495¶ßর টﬂ°°2497¶ßকরﬂ°°2507¶ß after the rewrite: the round and its clock, the window, your hand, the sheet and open levels"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: start
+    lg1: play
+    lg2: held
+    lg3: done
+  }
+  class lg0 tan
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: The title: the box lid and খ#2503;ল#2507;
+      s1: Putting pieces in, clock running
+      s2: সব ল#2503;ভ#2503;ল open, clock stopped
+      s3: The picture is whole, result shows
+      s4: Paused (the player's menu), clock stopped
+      [*] --> s0
+      s0 --> s1: you press খ#2503;ল#2507; [when Window is You're on the page]
+      s0 --> s2: you open সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s1 --> s3: the last piece goes in
+      s1 --> s4: you click into another window
+      s1 --> s2: you open সব ল#2503;ভ#2503;ল
+      s2 --> s0: you close সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s3 --> s2: you open সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s3 --> s1: you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; [when Window is You're on the page]
+      s2 --> s1: you close সব ল#2503;ভ#2503;ল or you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; [when Window is You're on the page]
+      s2 --> s3: you close সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও (or tap once) [when Window is You're on the page]
+      s4 --> s2: you open সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+    }
+    --
+    state "Window" as r1 {
+      s5: You're on the page
+      s6: Tab hidden
+      s7: Another window has focus
+      [*] --> s5
+      s5 --> s7: you click into another window
+      s7 --> s5: you come back to the page
+    }
+    --
+    state "Hand" as r2 {
+      s8: Hands off
+      s9: A piece under your finger
+      [*] --> s8
+      s8 --> s9: you pick up a piece [when Game is Putting pieces in, clock running and Window is You're on the page]
+      s9 --> s8: you drop it in the wrong place or the last piece goes in or you click into another window or you open সব ল#2503;ভ#2503;ল
+    }
+  }
+  class s0 tan
+  class s1 teal
+  class s3 blue
+  class s4 yellow
+  class s9 teal

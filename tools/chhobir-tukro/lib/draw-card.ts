@@ -1,8 +1,9 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, roundedRect, type CardFormat } from "../../../shared/card-canvas";
 import { cleanName } from "../../../shared/game-core";
-import { levelSeed, makePuzzle, pieceCount, starsFor, worldOf } from "./game";
+import { makePuzzle, pieceCount, starsFor } from "./game";
+import { isFinale } from "./levels";
 import { cardLine, levelLabel, paintingName, type Shared } from "./link";
-import { drawPainting, paintingOf } from "./painting";
+import { drawPainting, paintingFor } from "./painting";
 import { tracePiece } from "./pieces";
 
 export const palette = { table: "#2c3e3a", grain: "#30433c", paper: "#fbf4e4", ink: "#f8efdc", muted: "#cbd9cf", star: "#f2b52c", starOff: "#53675e", band: "#1a2623", ask: "#ffd98a" };
@@ -32,7 +33,7 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
   const side = story ? 900 : 760, x = cx - side / 2, y = top + (story ? 360 : 330), mat = 22;
   c.fillStyle = "rgba(0,0,0,0.3)"; roundedRect(c, x - mat + 10, y - mat + 14, side + mat * 2, side + mat * 2, 14); c.fill();
   c.fillStyle = palette.paper; roundedRect(c, x - mat, y - mat, side + mat * 2, side + mat * 2, 14); c.fill();
-  drawPainting(c, paintingOf(levelSeed(shared.level), worldOf(shared.level)), x, y, side);
+  drawPainting(c, paintingFor(shared.level), x, y, side);
   const puzzle = makePuzzle(shared.level), cell = side / puzzle.n;
   c.save();
   c.beginPath(); c.rect(x, y, side, side); c.clip();
@@ -41,6 +42,13 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
   for (let id = 0; id < puzzle.n ** 2; id++) tracePiece(c, puzzle.edges, puzzle.n, id, x + (id % puzzle.n) * cell, y + Math.floor(id / puzzle.n) * cell, cell);
   c.stroke();
   c.restore();
+  if (isFinale(shared.level)) {
+    // A finale's stamp: a tilted red seal in the painting's corner.
+    c.save(); c.translate(x + side - 110, y + 100); c.rotate(-0.18);
+    c.strokeStyle = "#c8452c"; c.lineWidth = 6; roundedRect(c, -96, -40, 192, 80, 12); c.stroke();
+    fitText(c, [{ text: "শেষ ছবি", color: "#c8452c", weight: 800, display: true }], 0, 14, 40, 170, "center");
+    c.restore();
+  }
   fitText(c, [{ text: `‘${paintingName(shared.level)}’`, color: palette.muted, weight: 600 }], cx, y + side + mat + 54, 34, 900, "center");
   drawFooterBand(c, format, "তুমি কত সময়ে পারবে?", site, { band: palette.band, ask: palette.ask, site: "#ffffff" });
 }

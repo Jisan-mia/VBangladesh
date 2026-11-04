@@ -1,98 +1,164 @@
-.tool-chhobir-tukro{--accent:#c26a2e;--accent-deep:#8a4318;--ink:#2f2a22;--muted:#6b5f50;--paper:#f6eedd;--paper-deep:#eadfc6;--line:#dccfb4;--miss:#c2412d}
-.tool-chhobir-tukro .ct-page{color:var(--ink)}
+.tool-chhobir-tukro{--accent:#c26a2e;--accent-deep:#8a4318}
+.tool-chhobir-tukro .ct-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* hero: two short lines, so the board and the tray land on the first phone screen */
-.ct-hero{padding:10px 0 6px}
-.ct-hero-kicker{display:block;font-size:13px;font-weight:600;line-height:1.5;color:var(--accent-deep)}
-.ct-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,6vw,42px);line-height:1.25;font-weight:700;letter-spacing:0}
-.ct-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
-@media (min-width:720px){.ct-lead{display:block}}
+/* One look per world (lib/art.ts LOOKS): a cream card at dawn, warm card at sunset, deep blue under the moon. */
+.ct{--paper:#f6eedd;--ink:#2f2a22;--muted:#6b5f50;--card:#fffaf0;--line:#dccfb4;--tint:#c26a2e;--tint-deep:#8a4318;--star:#f2a900;--frame:#8a6a44}
+.ct[data-world="1"]{--paper:#f6e3cc;--ink:#2e1f17;--muted:#77553f;--line:#e0c09c;--tint:#b4411f;--tint-deep:#7a2a12;--frame:#7a3f22}
+.ct[data-world="2"]{--paper:#141c33;--ink:#eef1fb;--muted:#aab4d6;--card:#1f2a48;--line:#2f3b62;--tint:#f2c45a;--tint-deep:#c7962a;--star:#f7c948;--frame:#0d1428}
 
-.ct{display:grid;gap:8px;max-width:460px}
+/* The game fills the stage: HUD, the table (board and tray, as big as fits), one bar. Nothing scrolls while playing. */
+.tool-chhobir-tukro .gp-stage{overflow:hidden}
+.tool-chhobir-tukro .gp-game{height:100%}
+.ct{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:6px;width:100%;max-width:620px;height:min(92svh,900px);margin-inline:auto;padding:6px 8px 8px;border-radius:16px;background:var(--paper);color:var(--ink);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:background .3s ease-out}
+.gp-stage .ct{height:100%}
 
-.ct-friend{padding:10px 14px;border-radius:14px;background:var(--paper);border-left:5px solid var(--accent)}
-.ct-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.4}
-.ct-friend p{margin:2px 0 0;font-size:13px;line-height:1.45;color:var(--muted)}
+/* ---- HUD: level top-left, the finale's named bar top-centre, the clock and stars top-right ---- */
+.ct-hud{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;min-height:48px}
+.ct-badge{grid-column:1;display:flex;align-items:center;gap:8px;min-width:0;max-width:100%;padding:4px 10px 4px 4px;border:0;border-radius:14px;background:color-mix(in srgb,var(--tint) 14%,transparent);color:var(--ink);text-align:left;cursor:pointer}
+.ct-badge b{display:grid;place-items:center;flex:none;min-width:38px;height:38px;padding:0 4px;border-radius:11px;background:var(--tint-deep);box-shadow:inset 0 -3px 0 #0003;color:#fff;font-family:var(--font-display);font-size:19px;font-weight:800}
+.ct-badge span{display:grid;min-width:0;font-size:14px;font-weight:700;line-height:1.25;white-space:nowrap}
+.ct-badge small{overflow:hidden;font-size:12px;font-weight:500;color:var(--muted);text-overflow:ellipsis}
+.ct-boss{grid-column:2;justify-self:center;display:grid;gap:4px;width:100%;max-width:200px;margin:0;font-size:12px;font-weight:700;line-height:1.3;text-align:center}
+.ct-boss span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.ct-boss b{color:var(--tint);font-variant-numeric:tabular-nums}
+.ct-boss i{display:block;height:7px;overflow:hidden;border-radius:4px;background:color-mix(in srgb,var(--ink) 16%,transparent)}
+.ct-boss em{display:block;height:100%;background:linear-gradient(90deg,var(--tint-deep),var(--tint));transform-origin:left;transition:transform .3s ease-out}
+.ct-clock{grid-column:3;display:grid;justify-items:end;margin:0}
+.ct-clock>b{font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums;transition:color .2s ease-out}
+.ct-clock>b[data-danger]{color:#e0610e}
+.ct-track{display:flex;align-items:center;gap:1px;margin:0;font-size:15px;line-height:1}
+.ct-track i{font-style:normal;color:color-mix(in srgb,var(--muted) 45%,transparent)}
+.ct-track i[data-on]{color:var(--star)}
+.ct-track i[data-fell]{animation:ct-fall .7s ease-in both}
+.ct-track small{margin-left:4px;font-size:12px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.ct-rival{font-size:12px;font-weight:700;color:var(--muted)}
+@keyframes ct-fall{0%{color:var(--star);transform:none}60%{color:#e85d04;transform:translateY(8px) rotate(30deg)}100%{transform:none}}
 
-.ct-hud{display:flex;align-items:center;gap:10px}
-.ct-hud p{margin:0}
-.ct-thumb{flex:none;width:44px;height:44px;border-radius:7px;box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--line)}
-.ct-hud-text{flex:1;min-width:0}
-.ct-level{font-family:var(--font-display);font-weight:700;font-size:16px;line-height:1.3}
-.ct-sub{font-size:13px;font-weight:600;color:var(--muted);line-height:1.35}
-.ct-clock{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--muted)}
+/* ---- the table: one canvas, the board on top and the tray under it ---- */
+.ct-play{position:relative;min-height:0;border-radius:12px;transition:box-shadow .3s ease-out}
+/* about to lose a star: the edge glows, never a popup in the middle (a steady border in slow mode) */
+.ct-play[data-danger]{box-shadow:0 0 0 3px #f28c28,0 0 22px 4px #f28c2880;animation:ct-warn .9s ease-in-out infinite alternate}
+.ct[data-calm] .ct-play[data-danger]{animation:none;box-shadow:0 0 0 3px #f28c28}
+@keyframes ct-warn{to{box-shadow:0 0 0 3px #f28c28,0 0 8px 1px #f28c2855}}
+.ct-progress{position:absolute;top:-4px;left:12%;right:12%;z-index:1;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--ink) 14%,transparent);pointer-events:none}
+.ct-progress i{display:block;height:100%;background:var(--tint);transform-origin:left;transition:transform .3s ease-out}
+.ct-play[data-finale] .ct-progress{display:none}
+.ct-table{position:absolute;inset:0}
+.ct-canvas{position:absolute;left:0;top:0;display:block;touch-action:none;cursor:grab}
+.ct-canvas:active{cursor:grabbing}
+.ct-board-keys{position:absolute;border-radius:4px;outline:0;pointer-events:none}
+.ct-board-keys:focus-visible{outline:3px solid #f2a900;outline-offset:3px}
+.ct-slot-key{position:absolute;padding:0;border:0;border-radius:10px;background:none;pointer-events:none}
+.ct-slot-key:focus-visible{outline:3px solid #f2a900;outline-offset:-3px}
+.ct-peek{position:absolute;left:50%;top:0;z-index:2;width:min(100%,70cqh,460px);aspect-ratio:1;border-radius:8px;box-shadow:0 0 0 6px var(--frame),0 12px 30px #0006;transform:translateX(-50%);animation:ct-fade .15s ease-out;pointer-events:none}
+.ct-play{container-type:size}
 
-/* the play area: board on top, tray below; only here does the page stop scrolling under a finger */
-.ct-stage{position:relative;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;overflow:hidden;cursor:grab}
-.ct-board{position:absolute;left:0;top:0;border-radius:6px;overflow:hidden;box-shadow:0 0 0 2px #8a6a44,0 3px 0 2px #c9b48c}
-.ct-board:focus-visible{outline:3px solid #f2a900;outline-offset:3px}
-.ct-board canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
-.ct-final{opacity:0;transition:opacity .8s ease-out}
-.ct-final[data-on]{opacity:1}
-.ct-flash{position:absolute;border-radius:8px;pointer-events:none;animation:ct-settle .55s ease-out forwards}
-.ct-miss{animation-name:ct-miss}
-.ct-cursor{position:absolute;box-sizing:border-box;border:3px solid #1d2b53;border-radius:6px;pointer-events:none}
-@keyframes ct-settle{0%{background:#fff6c880;box-shadow:inset 0 0 0 3px #ffe9a0}100%{background:#fff6c800;box-shadow:inset 0 0 0 3px #ffe9a000}}
-@keyframes ct-miss{0%,40%{background:#c2412d40;box-shadow:inset 0 0 0 3px var(--miss)}100%{background:#c2412d00;box-shadow:inset 0 0 0 3px #c2412d00}}
+/* ---- under the table: the box picture (hold to peek), one line of help, ঘোরাও ---- */
+.ct-bar{display:grid;grid-template-columns:56px minmax(0,1fr) auto;align-items:center;gap:8px;min-height:56px}
+.ct-lid{width:56px;height:56px;padding:3px;border:2px solid var(--frame);border-radius:10px;background:var(--card);cursor:pointer;touch-action:none}
+.ct-lid canvas{display:block;width:100%;height:100%;border-radius:6px}
+.ct-lid[aria-pressed=true]{outline:3px solid var(--tint);outline-offset:1px}
+.ct-status{margin:0;font-size:14px;font-weight:600;line-height:1.4;color:var(--muted);text-wrap:balance}
+.ct-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:96px;min-height:56px;padding:4px 12px;border:1.5px solid var(--tint);border-radius:14px;background:#fff;color:#2a2420;font-size:16px;font-weight:700;white-space:nowrap;box-shadow:0 3px 0 var(--tint-deep);transition:transform .08s ease-out}
+.ct-tool:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--tint-deep)}
+.ct-tool:disabled{opacity:.45}
+.ct-tool svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 
-.ct-tray{position:absolute;left:0;right:0;display:grid}
-.ct-tray span{margin:3px;border-radius:10px;background:var(--paper);box-shadow:inset 0 1px 3px #0000001f;transition:background-color .15s ease-out}
-.ct-tray span.on{background:color-mix(in srgb,var(--accent) 22%,var(--paper));box-shadow:inset 0 0 0 2px var(--accent)}
-.ct-piece{position:absolute;left:0;top:0;z-index:2;will-change:transform;pointer-events:none}
-.ct-piece *{pointer-events:none}
-.ct-drag{z-index:5}
-.ct-shake{width:100%;height:100%}
-.ct-turn{display:block;width:100%;height:100%;padding:0;border:0;border-radius:14px;background:none;transition:transform .2s cubic-bezier(.2,.8,.3,1)}
-.ct-turn:focus-visible{outline:3px solid #f2a900;outline-offset:-14%}
-.ct-turn canvas{display:block;width:100%;height:100%}
-.ct-drag .ct-turn{transition:transform .12s ease-out}
+/* ---- the end: a cardboard slip over the tray; the finished painting stays in view ---- */
+.ct-end{position:absolute;left:8px;right:8px;bottom:8px;z-index:3;display:grid;gap:8px;padding:12px 14px;border:2px solid var(--frame);border-radius:16px;background:#fffaf0;color:#2a2420;box-shadow:0 -6px 22px #0000002e;animation:ct-rise .35s cubic-bezier(.2,1.2,.4,1) both}
+.ct[data-calm] .ct-end{animation:none}
+.ct-end-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ct-end h2{margin:0;font-family:var(--font-display);font-size:21px;line-height:1.3}
+.ct-end .gx-stars{font-size:30px;line-height:1}
+.ct-stats{display:grid;grid-template-columns:repeat(var(--cols,3),minmax(0,1fr));gap:6px;margin:0}
+.ct-stats[data-count="4"]{--cols:4}
+.ct-stats div{display:grid;justify-items:center;padding:6px 2px;border-radius:10px;background:#f3ecdc}
+.ct-stats dt{font-size:12px;color:#6b5f50}
+.ct-stats dd{margin:0;font-family:var(--font-display);font-size:21px;font-weight:800;font-variant-numeric:tabular-nums}
+.ct-end-line{margin:0;font-weight:600;line-height:1.45}
+.ct-end-note{margin:0;font-weight:700;color:#8a4318}
+.ct-end-actions{display:grid;grid-template-columns:1fr 1.35fr;gap:8px}
+.tool-chhobir-tukro .ct-end-actions button{min-height:54px;font-size:18px}
+.ct-end-actions kbd{margin-left:8px;padding:1px 5px;border:1px solid #ffffff80;border-radius:5px;font-size:11px;font-family:inherit;opacity:.8}
+@media(hover:none){.ct-end-actions kbd{display:none}}
+.ct-see{justify-self:center;color:#2a2420}
+@keyframes ct-rise{from{opacity:0;transform:translateY(24px)}}
+@keyframes ct-fade{from{opacity:0}}
 
-.ct-veil{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:12px;padding:16px;border:0;border-radius:10px;background:#f6eeddde;color:var(--ink);font:inherit;cursor:pointer;z-index:8}
-.ct-veil-text{font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.3;text-align:center}
-.ct-veil-go{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:0 32px;font-size:18px}
+/* ---- title: the box lid is the start button ---- */
+.ct-title{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px;overflow:auto;border-radius:16px;background:var(--paper);text-align:center;animation:ct-fade .2s ease-out}
+.ct-start{display:grid;justify-items:center;padding:0;border:0;background:none;color:inherit;cursor:pointer;touch-action:manipulation}
+.ct-start-art{display:block;width:min(100%,420px,calc(var(--stage-h,90svh) * .5));aspect-ratio:1}
+.ct-start span{margin-top:-34px;padding:8px 54px;border:3px dashed #f6d58a;border-radius:18px;background:var(--tint-deep);color:#fff;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.3;box-shadow:0 6px 0 #0000004d,0 16px 26px -14px #000;transition:transform .08s ease-out}
+.ct-start:active span{transform:translateY(4px) scale(.98)}
+.ct-start:focus-visible span{outline:3px solid var(--ink);outline-offset:3px}
+.ct-pick{display:flex;align-items:center;gap:10px}
+.ct-pick b{font-family:var(--font-display);font-size:18px;white-space:nowrap}
+.ct-pick button{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:#2a2420}
+.ct-pick button:disabled{opacity:.35}
+.ct-pick svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.ct-line{max-width:36ch;margin:0;font-size:15px;line-height:1.5}
+.ct-line span{display:block;margin-top:2px;font-size:14px;color:var(--muted)}
+.ct-tag{display:inline-block;margin-right:6px;padding:1px 9px;border-radius:999px;background:#2f7d4a;color:#fff;font-size:12px;font-style:normal;font-weight:800;vertical-align:2px}
+.ct-tag-finale{background:#c8452c}
+.ct-calm{margin:0;padding:3px 10px;border-radius:999px;background:var(--card);color:var(--muted);font-size:13px}
+.tool-chhobir-tukro .ct-all{min-height:40px;font-weight:600;color:var(--ink)}
+.ct-friend{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;max-width:340px;padding:8px 12px;border-radius:14px;background:#fff;color:#2a2420;text-align:left}
+.ct-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 14px #2a242033;transform:rotate(-4deg)}
+.ct-friend h2{margin:0;font-family:var(--font-display);font-size:15px;line-height:1.35}
+.ct-friend p{margin:0;font-size:13px;line-height:1.4;color:#6b5f50}
 
-.ct-more{margin:-2px 0 0;font-size:13px;color:var(--muted);text-align:center}
-.ct-status{min-height:24px;margin:0;font-size:15px;font-weight:600;line-height:1.45;text-align:center}
-.ct-tools{display:flex;gap:8px}
-.ct-tool,.ct-slow{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:50px;padding:6px 10px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);font:inherit;font-size:15px;font-weight:600;white-space:nowrap;cursor:pointer}
-.ct-tool:disabled{opacity:.45;cursor:default}
-.ct-prefs{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
-.ct-slow{flex:none;min-height:44px;border-radius:999px;font-size:14px}
-.ct-slow[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+/* ---- the story: three picture-book panels, tap for the next, hold to skip ---- */
+.ct-story{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;border-radius:16px;background:var(--paper);cursor:pointer;touch-action:none}
+.ct-panel{display:block;width:min(100%,380px,calc(var(--stage-h,90svh) * .52));aspect-ratio:1;border-radius:18px;box-shadow:0 0 0 4px #fff,0 0 0 6px var(--ink),0 14px 30px -12px #0006;transform:rotate(-1deg)}
+.ct-caption{max-width:30ch;margin:6px 0 0;font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.45;text-align:center;animation:ct-fade .3s ease-out}
+.ct-dots{display:flex;gap:6px;margin:0}
+.ct-dots i{width:8px;height:8px;border-radius:50%;background:color-mix(in srgb,var(--ink) 22%,transparent)}
+.ct-dots i[data-on]{background:var(--tint)}
+.ct-skip{position:absolute;right:14px;bottom:12px;display:flex;align-items:center;gap:6px;margin:0;font-size:12px;font-weight:700;color:var(--muted)}
+.ct-skip span{width:28px;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--ink) 18%,transparent)}
+.ct-skip[data-holding] span{background:linear-gradient(90deg,var(--tint) 0 0) no-repeat 0 0/0 100%,color-mix(in srgb,var(--ink) 18%,transparent);animation:ct-hold .6s linear forwards}
+@keyframes ct-hold{to{background-size:100% 100%,auto}}
 
-.ct-clear{display:grid;justify-items:center;gap:6px;padding:12px;border-radius:16px;background:var(--paper);text-align:center}
-.ct-clear p{margin:0}
-.ct-clear .gx-reveal{font-size:42px}
-.ct-clear-line{font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.4}
-.ct-clear-note{font-size:14px;color:var(--muted)}
-.ct-clear-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
-.ct-clear-actions>:only-child{grid-column:1/-1}
-.ct-clear-actions button{min-height:52px}
-.ct-see{font-size:14px}
+/* ---- সব লেভেল: a choice moment over the table ---- */
+.ct-sheet{position:absolute;inset:0;z-index:6;overflow:auto;overscroll-behavior:contain;padding:8px;border-radius:16px;background:color-mix(in srgb,#000 35%,transparent);animation:ct-fade .15s ease-out}
+.ct-sheet-card{display:grid;gap:12px;padding:14px;border-radius:16px;background:#fffaf0;color:#2a2420}
+.ct-sheet header{position:relative;padding-right:48px}
+.ct-sheet h2{margin:0;font-family:var(--font-display);font-size:22px}
+.ct-sheet header p{margin:2px 0 0;font-size:14px;color:#6b5f50}
+.ct-sheet-close{position:absolute;top:-4px;right:-4px;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:12px;background:#f3ecdc;color:#2a2420}
+.ct-sheet-close svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round}
+.ct-world h3{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin:0 0 8px;font-family:var(--font-display);font-size:17px}
+.ct-world h3 span{font-family:var(--font-bengali);font-size:13px;font-weight:500;color:#6b5f50}
+.ct-world h3 i{width:14px;height:14px;border-radius:4px;background:#e9c98a;box-shadow:inset 0 0 0 2px #8a6a44}
+.ct-world[data-world="1"] h3 i{background:#e8875e;box-shadow:inset 0 0 0 2px #7a3f22}
+.ct-world[data-world="2"] h3 i{background:#1f2a44;box-shadow:inset 0 0 0 2px #f2c45a}
+.ct-world ol{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0;padding:0;list-style:none}
+.ct-world button{position:relative;display:grid;justify-items:center;align-content:center;gap:2px;width:100%;min-height:56px;padding:4px 2px;border:1.5px solid #dccfb4;border-radius:12px;background:#fff;color:#2a2420}
+.ct-world button b{font-family:var(--font-display);font-size:18px;line-height:1}
+.ct-world button b svg{width:18px;height:18px;fill:none;stroke:#6b5f50;stroke-width:2}
+.ct-world button:disabled{background:#f3ecdc;opacity:.7}
+.ct-world button[aria-current=true]{border-color:#2a2420;box-shadow:inset 0 0 0 1.5px #2a2420}
+.ct-world button[data-finale]{border-style:dashed;border-color:#c8452c}
+.ct-world button[data-next]{border-color:#c26a2e;background:#fff3cf}
+.ct-world button em{position:absolute;top:-8px;left:50%;padding:0 5px;border-radius:999px;background:#c26a2e;color:#fff;font-size:10px;font-style:normal;font-weight:800;white-space:nowrap;transform:translateX(-50%)}
+.ct-mini{display:flex;font-size:11px;line-height:1}
+.ct-mini i{font-style:normal;color:#d5c9b4}.ct-mini i[data-on]{color:#f2a900}
 
-.ct-drawer{border:1.5px solid var(--line);border-radius:14px;background:#fff}
-.ct-drawer summary{display:flex;justify-content:space-between;align-items:center;min-height:48px;padding:0 14px;font-weight:700;cursor:pointer}
-.ct-drawer summary span{color:var(--muted);font-weight:600}
-.ct-drawer .gx-levels{padding:4px 12px 14px}
-.ct-drawer .gx-levels button{border-color:var(--line);color:var(--ink)}
-.ct-drawer .gx-levels button[aria-current="true"]{background:var(--accent-deep);border-color:var(--accent-deep);color:#fff}
+/* ---- the card: a panel over the stage, scrolling inside it ---- */
+.ct-cardpanel{position:absolute;inset:0;z-index:7;display:grid;align-content:start;gap:14px;overflow:auto;overscroll-behavior:contain;padding:14px;border-radius:16px;background:#fffaf0;color:#2a2420;user-select:text;-webkit-user-select:text}
+.ct-cardpanel-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ct-cardpanel h2{margin:0;font-family:var(--font-display);font-size:20px;line-height:1.35}
+.ct-cardpanel h2 em{font-style:normal;color:#c26a2e}
+.ct-cardpanel>p{margin:0;color:#6b5f50}
+.ct-share{display:grid;gap:16px}
+.ct-name{display:grid;gap:6px;font-weight:600}
+.ct-name small{font-size:13px;font-weight:400;color:#6b5f50}
+.ct-name input{border:1.5px solid #dccfb4;border-radius:12px;font-size:17px}
 
-.ct-result{display:grid;gap:8px;margin-top:10px;scroll-margin-top:72px}
-.ct-result h2{margin:0;font-family:var(--font-display);font-size:22px;line-height:1.35}
-.ct-result h2 em{font-style:normal;color:var(--accent-deep)}
-.ct-result>p{margin:0;color:var(--muted)}
-.ct-result-body{display:grid;gap:12px}
-.ct-result canvas{display:block;width:100%;height:auto;border-radius:12px}
-.ct-share{display:grid;gap:10px}
-.ct-name{display:grid;gap:4px;font-weight:600}
-.ct-name small{color:var(--muted);font-weight:500}
-.ct-name input{min-height:46px;padding:8px 12px;border:1.5px solid var(--line);border-radius:12px;font:inherit;width:100%;box-sizing:border-box}
-
-.ct-guide ol{display:grid;gap:10px;margin:12px 0 0;padding:0;list-style:none}
-.ct-guide li{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:start}
-.ct-guide li span{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--accent-deep);color:#fff;font-weight:700}
-.ct-guide li p{margin:4px 0 0}
-.ct-guide h2{font-family:var(--font-display)}
-
-.ct[data-slow=true] .ct-turn,.ct[data-slow=true] .ct-final,.ct[data-slow=true] .ct-tray span{transition:none}
-@media (prefers-reduced-motion:reduce){.ct-turn,.ct-final,.ct-tray span{transition:none}}
+@media(max-width:360px){
+  .ct-badge small{display:none}
+  .ct-tool{min-width:0;font-size:14px;padding-inline:8px}
+  .ct-stats dd{font-size:18px}
+}
+@media(prefers-reduced-motion:reduce){.ct-end,.ct-track i[data-fell]{animation:none}}

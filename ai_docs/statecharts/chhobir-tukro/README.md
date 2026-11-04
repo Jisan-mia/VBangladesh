@@ -1,4 +1,77 @@
-# ছবির টুকরো: statechart, before the rewrite
+# ছবির টুকরো: statechart
+
+## After the rewrite (`after-fix/`)
+The spec `Jigsaw.tla` now mirrors the rewritten game: `components/tukro-game.tsx` (start, load, pauseFor/resumeFrom/wake, onDrop/solved, the sheet, the blur, pagehide and visibilitychange listeners, the link boot), `components/table.tsx` (the canvas table's pointer input and cancel), `lib/session.ts`, `lib/progress.ts` and `lib/play.ts`. The view hides the hidden tab (it takes the blur's path), a friend's link and নতুন করে শুরু (both go to the title), a level from the sheet (it acts like আবার খেলো) and the result's timers. TLC checks all of them.
+
+TLC: 417 states, 1735 steps. The chart has 10 states and 16 arrows. **All 12 rules hold** (`after-fix/report.md`). New since before-fix: UnlockNeverShrinks, ChoiceFreezesPlay (the sheet pauses play), LevelIsPlayable (the level on screen is open, has stars, or is the friend's visit).
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  state "Game" as r0 {
+    s0: The title, the box lid and খেলো
+    s1: Putting pieces in, clock running
+    s2: সব লেভেল open, clock stopped
+    s3: The picture is whole, result shows
+    s4: Paused (the player's menu), clock stopped
+    [*] --> s0
+    s0 --> s1: you press খেলো
+    s0 --> s2: you open সব লেভেল
+    s1 --> s3: the last piece goes in
+    s1 --> s4: you click into another window
+    s1 --> s2: you open সব লেভেল
+    s2 --> s0: you close সব লেভেল
+    s3 --> s2: you open সব লেভেল
+    s3 --> s1: you press পরের লেভেল or আবার খেলো
+    s2 --> s1: you close সব লেভেল or pick a level
+    s2 --> s3: you close সব লেভেল
+    s4 --> s1: you press চালিয়ে যাও (or tap once)
+    s4 --> s2: you open সব লেভেল
+  }
+  state "Window" as r1 {
+    s5: You're on the page
+    s7: Another window has focus
+    [*] --> s5
+    s5 --> s7: you click into another window
+    s7 --> s5: you come back to the page
+  }
+  state "Hand" as r2 {
+    s8: Hands off
+    s9: A piece under your finger
+    [*] --> s8
+    s8 --> s9: you pick up a piece
+    s9 --> s8: you drop it, or click into another window, or open সব লেভেল
+  }
+```
+
+### The bugs, fixed
+| Bug | Fix | Node test (`tests/rewrite.test.ts`) | Live replay (Orca) |
+|---|---|---|---|
+| 1. ClockStillWhileAway / PausedWhenBlurred | The game listens for `blur`, `pagehide` and `visibilitychange`, and the player's `onPause`; all go through `session.pause("away")`, which banks the clock. Only চালিয়ে যাও (or the first press after coming back, which only resumes) starts it again. | `bug 1, ClockStillWhileAway / PausedWhenBlurred: …` | Pixel 9, level 1: a synthetic `blur` opened the player's menu, the phase went `playing → paused/away`, and the clock read `০:৩০` before and `০:৩০` 3 s later. The সব লেভেল sheet held the clock at `০:১৬` for 2.2 s. P opened the player's menu. |
+| 2. PieceDroppedWhenAway | `table.cancel()` runs on blur, the player's pause, `pointercancel` and lost capture. A mouse move with `buttons === 0` cancels too. The piece glides back to its slot. | `bug 2, PieceDroppedWhenAway: …` | Pixel 9: a mouse drag with six moves held piece 3 (`held() = 3`). After `blur`, `held() = -1`. After `focus`, a buttonless move far away carried nothing. |
+| 3. CheerOnlyOnTheResult | Every celebration timeout goes in one list, cleared by `load()` (every new table) and on unmount. The fanfare is scheduled on the audio clock at the win, so the player's pause cuts it. A drop on a finished table returns `none`, so a second finish can't happen. | `bug 3, CheerOnlyOnTheResult: …` | Desktop: on the last drop of level 1, `OscillatorNode.start` counted 8 (the thock plus the whole fanfare). 100 ms later I opened সব লেভেল and picked level 2. The next 2 s added 9 starts (the scatter on level 2), no confetti canvas, and no end screen. |
+| 4. OpenLevelsAreEarned | The game keeps its own unlock, `ektukhani-unlock-chhobir-tukro`. It is migrated once from the shared rule and raised only by clearing a level that was already open. A friend's level is a visit. | `bug 4, OpenLevelsAreEarned: …` and `saved progress migrates once: …` | Clean storage, then `#s=71185&t=40&l=5&n=Rafi`. The banner read "Rafi ১৬ টুকরোর ছবি ৪০ সেকেন্ডে জোড়া লাগিয়েছে।" I solved it in 7 s ("Rafi-এর চেয়ে ৩৩ সেকেন্ড আগে!", primary button "তোমার লেভেলে ফেরো"). Storage held `{"5":3}` and unlock `1`. After a reload without the hash, the title opened on লেভেল ১, and the sheet listed open levels **১, ৫** only (before: ১–৬). |
+| Minor: double finish | `dropPiece` refuses a placed piece or a finished table. | `bug 3, …` | — |
+| Minor: clock vs result rounding | `session.seconds` is the one rounding for the HUD and the result. | `result keys need a fresh press …` | — |
+| Found in the rewrite: a frozen scatter | rAF's timestamp can be earlier than the kick that asked for it. A negative `dt` stopped the frame loop with the pieces still waiting at home (seen in headless Chrome). `stepAnim` now asks for another frame instead. | `a frame stamped before the kick …` | headless Chrome: the scatter wait timers stayed at `[60,100,140,180]` before the fix and drained after it. |
+
+Shared patterns closed as well:
+- P calls `player.requestPause()`.
+- Result keys need a fresh press 0.4 s after the result appears (`session.resultKey`).
+- Enter and Space on buttons, the board and the tray do their own job, and clicked buttons drop focus.
+- The sheet pauses play.
+- The first press after coming back only resumes (`wake()`).
+
+### Regenerate
+```sh
+scripts/statechart.sh ai_docs/statecharts/chhobir-tukro/Jigsaw.tla --view ai_docs/statecharts/chhobir-tukro/view.ts --out ai_docs/statecharts/chhobir-tukro/after-fix
+rm ai_docs/statecharts/chhobir-tukro/after-fix/tlc*.out
+```
+The before-fix spec is in git history (`Jigsaw.tla` before this rewrite); its outputs stay in `before-fix/`.
+
+---
+
+# Before the rewrite
 
 Spec `Jigsaw.tla` / `Jigsaw.cfg`, view `view.ts`, output `before-fix/` (`report.md`, `chart.mmd`).
 It mirrors `tools/chhobir-tukro/components/jigsaw-game.tsx` (`wake`, `finish`, `settle`, `onDown`/`onMove`/`onUp`/`onCancel`, `goLevel`, the `visibilitychange` handler `hide`, `readFriend`, the window keydown handler), plus `tools/chhobir-tukro/lib/game.ts` and `unlockedLevel` in `shared/game-core.ts`.

@@ -1,5 +1,6 @@
 // Game rules: the 30 levels, how a seed cuts and shuffles the pieces, the tray, where a drop lands, and stars. Pure and server-safe (share.ts reaches it through link.ts).
 import { makeRng, pick, starsFor as starsBetween } from "../../../shared/game-core";
+import { infoOf, isFinale, presetOf } from "./levels";
 
 export const LEVEL_COUNT = 30;
 /** Ten paintings each at dawn, at sunset and under the moon. */
@@ -23,7 +24,7 @@ export function planOf(level: number): { n: number; rotate: boolean } {
 }
 export const pieceCount = (level: number) => planOf(level).n ** 2;
 /** How strongly the finished painting shows through the empty board: a clear guide at dawn, a faint one by moonlight. */
-export const ghostOf = (level: number) => [0.34, 0.22, 0.2][worldOf(level)];
+export const ghostOf = (level: number) => infoOf(level).ghost;
 /** The empty board under the pieces: warm card by day, deep blue at night so the moonlit ghost still shows. */
 export const boardOf = (level: number) => (worldOf(level) === 2 ? { fill: "#202c44", line: "rgba(255,255,255,0.2)" } : { fill: "#efe3c8", line: "rgba(90,60,30,0.3)" });
 
@@ -60,10 +61,21 @@ export function makePuzzle(level: number, seed = levelSeed(level)): Puzzle {
  */
 export type Table = { placed: boolean[]; slots: number[]; queue: number[]; turns: number[] };
 
-export function startTable(puzzle: Puzzle, slotCount: number): Table {
-  const count = puzzle.n ** 2, slots = puzzle.order.slice(0, slotCount);
+/** The pieces a level starts with already in: the four corners first, then the middle, then by tray order. */
+export function presetIds(puzzle: Puzzle, count: number) {
+  const n = puzzle.n, last = n * n - 1, wanted = [0, n - 1, last - n + 1, last, Math.floor(last / 2), ...puzzle.order];
+  const ids: number[] = [];
+  for (const id of wanted) if (ids.length < count && !ids.includes(id)) ids.push(id);
+  return ids;
+}
+
+export function startTable(puzzle: Puzzle, slotCount: number, preset = presetOf(puzzle.level)): Table {
+  const count = puzzle.n ** 2, already = presetIds(puzzle, Math.min(count - 1, Math.max(0, preset)));
+  const waiting = puzzle.order.filter(id => !already.includes(id)), slots = waiting.slice(0, slotCount);
   while (slots.length < slotCount) slots.push(-1);
-  return { placed: Array(count).fill(false), slots, queue: puzzle.order.slice(slotCount), turns: puzzle.turns.slice() };
+  const placed: boolean[] = Array(count).fill(false), turns = puzzle.turns.slice();
+  for (const id of already) { placed[id] = true; turns[id] = 0; }
+  return { placed, slots, queue: waiting.slice(slotCount), turns };
 }
 
 /** The tray resized (a phone turned sideways): the same pieces in the same order, refilled or trimmed to the new slot count. */
@@ -117,10 +129,30 @@ export function cellAt(n: number, x: number, y: number, size: number) {
   return Math.floor(y / (size / n)) * n + Math.floor(x / (size / n));
 }
 
-/** Seconds that still earn 3 stars: about 2.5 a piece at dawn, 4 by moonlight, plus 1.5 when pieces come turned. */
+/** The pieces the player places: all of them, less the ones a level starts with. */
+export const toPlace = (level: number) => pieceCount(level) - presetOf(level);
+
+/**
+ * Seconds that still earn 3 stars: 2.5 a placed piece at dawn, 2.6 at sunset, 3.2 by moonlight (the look-alike sky), plus 1
+ * when pieces come turned. A fainter picture on the board gives a little more time; a finale (none at all) a fifth more.
+ * Tuned with the bots in tests/bot.ts.
+ */
 export function parFor(level: number) {
-  const perPiece = [2.5, 3.5, 4.2][worldOf(level)] + (planOf(level).rotate ? 1.5 : 0);
-  return Math.round(pieceCount(level) * perPiece);
+  const perPiece = [2.5, 2.6, 3.2][worldOf(level)] + (planOf(level).rotate ? 1 : 0);
+  const fade = isFinale(level) ? 1.2 : 1 + Math.max(0, 0.3 - infoOf(level).ghost) * 0.7;
+  return Math.round(toPlace(level) * perPiece * fade);
+}
+
+/** A piece on the frame: at least one flat side. */
+export const isEdge = (n: number, id: number) => id < n || id >= n * (n - 1) || id % n === 0 || id % n === n - 1;
+/** Every frame piece is in. */
+export const frameDone = (table: Table, n: number) => table.placed.every((placed, id) => placed || !isEdge(n, id));
+
+/** Whether piece `id`, turned `turns` quarter turns clockwise, has the same knobs and blanks as cell `cell`'s outline. */
+export function fitsCut(edges: Edges, n: number, id: number, turns: number, cell: number) {
+  const mine = sidesOf(edges, n, id), there = sidesOf(edges, n, cell), r = ((turns % 4) + 4) % 4;
+  for (let side = 0; side < 4; side++) if (mine[side] !== there[(side + r) % 4]) return false;
+  return true;
 }
 
 /** 3 stars within par, 2 within twice par, 1 for any finished painting. */
@@ -133,7 +165,7 @@ export function shortBy(level: number, seconds: number) {
   return { stars: earned + 1, seconds: seconds - parFor(level) * (earned === 1 ? 2 : 1) };
 }
 
-/** The furthest open level not yet three-starred, so nobody replays what they've mastered. */
+/** The furthest open level not yet three-starred, so nobody replays what they've mastered (the old start rule; lib/progress.ts recommends now). */
 export function startLevel(stars: Record<number, number>, unlocked: number) {
   for (let level = unlocked; level >= 1; level--) if ((stars[level] ?? 0) < 3) return level;
   return unlocked;
