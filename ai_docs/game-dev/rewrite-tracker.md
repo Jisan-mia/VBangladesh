@@ -41,7 +41,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | churir-bazar | S12 | analysed | todo |
 | mukhe-mukhe-hisab | S12 | analysed | done |
 | chhobir-tukro | S13 | analysed | done |
-| sat-chara | S13 | analysed | rewriting |
+| sat-chara | S13 | analysed | done |
 | chhip-felo | S13 | analysed | done |
 | latim | S14 | analysed | rewriting |
 | nodi-par | S14 | analysed | rewriting |
@@ -51,7 +51,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | marble-sinri | S15 | analysed | done |
 | roshi-tana | S16 | analysed | done |
 | moshar-raat | S16 | analysed | done |
-| al-dhore-hati | S16 | analysed | todo |
+| al-dhore-hati | S16 | analysed | rewriting |
 | o-te-ojogor | S17 | analysed | done |
 | kar-chinho | S17 | analysed | done |
 | nam-shikhi | S17 | analysed | done |
