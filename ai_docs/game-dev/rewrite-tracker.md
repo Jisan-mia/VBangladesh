@@ -16,7 +16,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | paka-kancha | S04 | analysed | rewriting |
 | jora-melao | S04 | analysed | rewriting |
 | chhok-jora | S04 | analysed | done |
-| churui-tarao | S05 | analysed | rewriting |
+| churui-tarao | S05 | analysed | done |
 | handi-bhanga | S05 | analysed | rewriting |
 | peoner-cycle | S05 | analysed | rewriting |
 | sap-ludu | S06 | analysed | done |
@@ -44,7 +44,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | sat-chara | S13 | analysed | rewriting |
 | chhip-felo | S13 | analysed | done |
 | latim | S14 | analysed | rewriting |
-| nodi-par | S14 | analysed | todo |
+| nodi-par | S14 | analysed | rewriting |
 | penalty | S14 | analysed | done |
 | golir-badminton | S15 | analysed | done |
 | kagojer-urojahaj | S15 | analysed | done |
