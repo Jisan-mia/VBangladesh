@@ -63,6 +63,8 @@ Then build it.
   - `shared/game-core.ts` `unlockedLevel` opens everything below the highest recorded level, on purpose, because migrations rely on it.
   - When a player clears a friend's far-ahead level, don't let that open the levels in between; record the stars, but keep your own unlock rule.
   - Never change `unlockedLevel` itself.
+- **The click that brings focus back is not a move.** After blur or pause, the first pointerdown only resumes (or the pause menu takes it); it never hops, picks a side or knocks the piece.
+- **Opening a level list or any drawer pauses play,** and so does every choice screen.
 - **Result keys need a fresh press.** A key held through the end of a round (Space, Enter) must not skip the result or start the next run. Accept result-screen keys only from a keydown that arrives after the screen appears, with `!e.repeat`.
 - **Enter and Space go to the game, not to the last focused button.** Blur the button after a click, or handle the game keys at `window` with `preventDefault`, so one Enter never wipes a board or undoes a move.
 - **Kids' games:**

@@ -1,0 +1,537 @@
+---
+title: "পﬂ°°2503¶ßনﬂ°°2494¶ßলﬂ°°2509¶ßটﬂ°°2495¶ß কﬂ°°2495¶ßক: the kicks, the window, your finger and the crowd"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks InputReleasedWhenAway or LevelPickerFreezesPlay or MurmurComesBack or MurmurOnlyInTheRunUp or NoDoubleResult or PausedWhenBlurred
+    lg4: Breaks LevelPickerFreezesPlay or MurmurComesBack in some cases
+    lg5: Path to the CardNeedsAFreshPress or InputReleasedWhenAway or LevelPickerFreezesPlay or MurmurComesBack or MurmurOnlyInTheRunUp or NoDoubleResult or PausedWhenBlurred bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "Match Your kick: aiming" as s0 {
+    state "Window You're on the page" as s1 {
+      state "Finger Finger off" as s2 {
+        state "Crowd Murmur off" as s3 {
+          s4: Space Space up
+          s5: Space Space held down
+        }
+      }
+      state "Finger Finger on the board" as s6 {
+        state "Crowd Murmur off" as s7 {
+          s8: Space Space up
+          s9: Space Space held down
+        }
+      }
+    }
+    state "Window Tab hidden" as s10 {
+      state "Finger Finger off" as s11 {
+        state "Crowd Murmur off" as s12 {
+          s13: Space Space up
+        }
+      }
+    }
+    state "Window Another window has focus" as s14 {
+      state "Finger Finger off" as s15 {
+        state "Crowd Murmur off" as s16 {
+          s17: Space Space up
+        }
+      }
+      state "Finger Finger on the board" as s18 {
+        state "Crowd Murmur off" as s19 {
+          s20: Space Space up
+        }
+      }
+    }
+  }
+  state "Match Ball in the air" as s21 {
+    state "Window You're on the page" as s22 {
+      state "Finger Finger off" as s23 {
+        state "Crowd Murmur off" as s24 {
+          s25: Space Space up
+          s26: Space Space held down
+        }
+      }
+    }
+    state "Window Another window has focus" as s27 {
+      state "Finger Finger off" as s28 {
+        state "Crowd Murmur off" as s29 {
+          s30: Space Space up
+        }
+      }
+    }
+  }
+  state "Match Ball landed" as s31 {
+    state "Window You're on the page" as s32 {
+      state "Finger Finger off" as s33 {
+        state "Crowd Murmur off" as s34 {
+          s35: Space Space up
+          s36: Space Space held down
+        }
+      }
+    }
+    state "Window Another window has focus" as s37 {
+      state "Finger Finger off" as s38 {
+        state "Crowd Murmur off" as s39 {
+          s40: Space Space up
+        }
+      }
+    }
+  }
+  state "Match Ball in the air, paused" as s41 {
+    state "Window Tab hidden" as s42 {
+      state "Finger Finger off" as s43 {
+        state "Crowd Murmur off" as s44 {
+          s45: Space Space up
+        }
+      }
+    }
+    state "Window You're on the page" as s46 {
+      state "Finger Finger off" as s47 {
+        state "Crowd Murmur off" as s48 {
+          s49: Space Space up
+        }
+      }
+    }
+    state "Window Another window has focus" as s50 {
+      state "Finger Finger off" as s51 {
+        state "Crowd Murmur off" as s52 {
+          s53: Space Space up
+        }
+      }
+    }
+  }
+  state "Match Their whistle" as s54 {
+    state "Window You're on the page" as s55 {
+      state "Finger Finger off" as s56 {
+        state "Crowd Murmur off" as s57 {
+          s58: Space Space up
+          s59: Space Space held down
+        }
+      }
+    }
+    state "Window Another window has focus" as s60 {
+      state "Finger Finger off" as s61 {
+        state "Crowd Murmur off" as s62 {
+          s63: Space Space up
+        }
+      }
+    }
+  }
+  state "Match Ball landed, paused" as s64 {
+    state "Window Tab hidden" as s65 {
+      state "Finger Finger off" as s66 {
+        state "Crowd Murmur off" as s67 {
+          s68: Space Space up
+        }
+      }
+    }
+    state "Window You're on the page" as s69 {
+      state "Finger Finger off" as s70 {
+        state "Crowd Murmur off" as s71 {
+          s72: Space Space up
+        }
+      }
+    }
+    state "Window Another window has focus" as s73 {
+      state "Finger Finger off" as s74 {
+        state "Crowd Murmur off" as s75 {
+          s76: Space Space up
+        }
+      }
+    }
+  }
+  state "Match Their run-up" as s77 {
+    state "Window You're on the page" as s78 {
+      state "Finger Finger off" as s79 {
+        state "Crowd Murmur on" as s80 {
+          s81: Space Space up
+          s82: Space Space held down
+        }
+        state "Crowd Murmur off" as s83 {
+          s84: Space Space up
+          s85: Space Space held down
+        }
+      }
+    }
+    state "Window Another window has focus" as s86 {
+      state "Finger Finger off" as s87 {
+        state "Crowd Murmur on" as s88 {
+          s89: Space Space up
+        }
+        state "Crowd Murmur off" as s90 {
+          s91: Space Space up
+        }
+      }
+    }
+  }
+  state "Match Their whistle, paused" as s92 {
+    state "Window Tab hidden" as s93 {
+      state "Finger Finger off" as s94 {
+        state "Crowd Murmur off" as s95 {
+          s96: Space Space up
+        }
+      }
+    }
+    state "Window You're on the page" as s97 {
+      state "Finger Finger off" as s98 {
+        state "Crowd Murmur off" as s99 {
+          s100: Space Space up
+        }
+      }
+    }
+    state "Window Another window has focus" as s101 {
+      state "Finger Finger off" as s102 {
+        state "Crowd Murmur off" as s103 {
+          s104: Space Space up
+        }
+      }
+    }
+  }
+  state "Match Their run-up, paused" as s105 {
+    state "Window Tab hidden" as s106 {
+      state "Finger Finger off" as s107 {
+        state "Crowd Murmur off" as s108 {
+          s109: Space Space up
+        }
+      }
+    }
+    state "Window You're on the page" as s110 {
+      state "Finger Finger off" as s111 {
+        state "Crowd Murmur off" as s112 {
+          s113: Space Space up
+        }
+      }
+    }
+    state "Window Another window has focus" as s114 {
+      state "Finger Finger off" as s115 {
+        state "Crowd Murmur off" as s116 {
+          s117: Space Space up
+        }
+      }
+    }
+  }
+  state "Match Match decided once, card not drawn yet" as s118 {
+    state "Window You're on the page" as s119 {
+      state "Finger Finger off" as s120 {
+        state "Crowd Murmur off" as s121 {
+          s122: Space Space up
+          s123: Space Space held down
+        }
+      }
+    }
+    state "Window Another window has focus" as s124 {
+      state "Finger Finger off" as s125 {
+        state "Crowd Murmur off" as s126 {
+          s127: Space Space up
+        }
+      }
+    }
+    state "Window Tab hidden" as s128 {
+      state "Finger Finger off" as s129 {
+        state "Crowd Murmur off" as s130 {
+          s131: Space Space up
+        }
+      }
+    }
+  }
+  state "Match Card shows" as s132 {
+    state "Window You're on the page" as s133 {
+      state "Finger Finger off" as s134 {
+        state "Crowd Murmur off" as s135 {
+          s136: Space Space up
+          s137: Space Space held down
+        }
+      }
+    }
+    state "Window Tab hidden" as s138 {
+      state "Finger Finger off" as s139 {
+        state "Crowd Murmur off" as s140 {
+          s141: Space Space up
+        }
+      }
+    }
+    state "Window Another window has focus" as s142 {
+      state "Finger Finger off" as s143 {
+        state "Crowd Murmur off" as s144 {
+          s145: Space Space up
+        }
+      }
+    }
+  }
+  state "Match Match decided twice, card not drawn yet" as s146 {
+    state "Window You're on the page" as s147 {
+      state "Finger Finger off" as s148 {
+        state "Crowd Murmur off" as s149 {
+          s150: Space Space up
+          s151: Space Space held down
+        }
+      }
+    }
+    state "Window Another window has focus" as s152 {
+      state "Finger Finger off" as s153 {
+        state "Crowd Murmur off" as s154 {
+          s155: Space Space up
+        }
+      }
+    }
+    state "Window Tab hidden" as s156 {
+      state "Finger Finger off" as s157 {
+        state "Crowd Murmur off" as s158 {
+          s159: Space Space up
+        }
+      }
+    }
+  }
+  state "Match Card shows (finished twice)" as s160 {
+    state "Window You're on the page" as s161 {
+      state "Finger Finger off" as s162 {
+        state "Crowd Murmur off" as s163 {
+          s164: Space Space up
+          s165: Space Space held down
+        }
+      }
+    }
+    state "Window Tab hidden" as s166 {
+      state "Finger Finger off" as s167 {
+        state "Crowd Murmur off" as s168 {
+          s169: Space Space up
+        }
+      }
+    }
+    state "Window Another window has focus" as s170 {
+      state "Finger Finger off" as s171 {
+        state "Crowd Murmur off" as s172 {
+          s173: Space Space up
+        }
+      }
+    }
+  }
+  [*] --> s4
+  s4 --> s4: you open সব ম#2509;য#2494;চ
+  s4 --> s8: you put a finger on the board
+  s13 --> s4: the tab shows again
+  s17 --> s4: you come back to the window
+  s8 --> s4: you lift without a shot or you pick a match
+  s8 --> s25: you swipe and shoot
+  s25 --> s35: the ball lands
+  s20 --> s8: you come back to the window
+  s30 --> s25: you come back to the window
+  s35 --> s58: their kicker steps up
+  s25 --> s4: you pick a match
+  s45 --> s49: the tab shows again
+  s40 --> s35: you come back to the window
+  s35 --> s4: you pick a match
+  s58 --> s59: you hold Space to dive to the middle
+  s58 --> s81: their run-up starts
+  s68 --> s72: the tab shows again
+  s49 --> s25: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s49 --> s45: you hide the tab
+  s49 --> s53: you click into another window
+  s58 --> s84: their run-up starts
+  s63 --> s58: you come back to the window
+  s59 --> s58: you let go of Space
+  s59 --> s82: their run-up starts
+  s58 --> s4: you pick a match
+  s81 --> s84: you turn sound off
+  s81 --> s25: they kick
+  s81 --> s82: you hold Space to dive to the middle
+  s96 --> s100: the tab shows again
+  s53 --> s45: you hide the tab
+  s53 --> s49: you come back to the window
+  s72 --> s35: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s72 --> s68: you hide the tab
+  s72 --> s76: you click into another window
+  s49 --> s4: you pick a match
+  s59 --> s85: their run-up starts
+  s84 --> s25: they kick
+  s84 --> s85: you hold Space to dive to the middle
+  s84 --> s84: you turn sound on
+  s89 --> s81: you come back to the window
+  s59 --> s5: you pick a match
+  s82 --> s81: you let go of Space
+  s82 --> s85: you turn sound off
+  s82 --> s26: they kick
+  s81 --> s4: you pick a match
+  s109 --> s113: the tab shows again
+  s76 --> s68: you hide the tab
+  s76 --> s72: you come back to the window
+  s72 --> s4: you pick a match
+  s100 --> s58: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s100 --> s96: you hide the tab
+  s100 --> s104: you click into another window
+  s91 --> s84: you come back to the window
+  s85 --> s84: you let go of Space
+  s85 --> s26: they kick
+  s84 --> s4: you pick a match
+  s35 --> s122: the match is decided
+  s5 --> s4: you let go of Space
+  s5 --> s9: you put a finger on the board
+  s26 --> s25: you let go of Space
+  s26 --> s36: the ball lands
+  s82 --> s5: you pick a match
+  s104 --> s96: you hide the tab
+  s104 --> s100: you come back to the window
+  s100 --> s4: you pick a match
+  s113 --> s81: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s113 --> s109: you hide the tab
+  s113 --> s117: you click into another window
+  s85 --> s5: you pick a match
+  s113 --> s84: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s36 --> s35: you let go of Space
+  s36 --> s123: the match is decided
+  s122 --> s136: the card shows
+  s122 --> s150: the match is decided
+  s26 --> s5: you pick a match
+  s9 --> s8: you let go of Space
+  s9 --> s5: you lift without a shot or you pick a match
+  s9 --> s26: you swipe and shoot
+  s117 --> s109: you hide the tab
+  s117 --> s113: you come back to the window
+  s113 --> s4: you pick a match
+  s127 --> s122: you come back to the window
+  s127 --> s131: you hide the tab
+  s127 --> s145: the card shows
+  s136 --> s4: you press আব#2494;র খ#2503;ল#2507; or you pick a match
+  s123 --> s122: you let go of Space
+  s123 --> s137: the card shows
+  s123 --> s151: the match is decided
+  s150 --> s164: the card shows
+  s36 --> s5: you pick a match
+  s122 --> s4: you pick a match
+  s131 --> s141: the card shows
+  s131 --> s122: the tab shows again
+  s141 --> s136: the tab shows again
+  s145 --> s136: you come back to the window
+  s145 --> s141: you hide the tab
+  s155 --> s150: you come back to the window
+  s155 --> s159: you hide the tab
+  s155 --> s173: the card shows
+  s137 --> s5: Space, still held, repeats on the card or you press আব#2494;র খ#2503;ল#2507; or you pick a match
+  s137 --> s136: you let go of Space
+  s164 --> s4: you press আব#2494;র খ#2503;ল#2507; or you pick a match
+  s151 --> s150: you let go of Space
+  s151 --> s165: the card shows
+  s36 --> s59: their kicker steps up
+  s123 --> s5: you pick a match
+  s150 --> s4: you pick a match
+  s159 --> s169: the card shows
+  s159 --> s150: the tab shows again
+  s169 --> s164: the tab shows again
+  s173 --> s164: you come back to the window
+  s173 --> s169: you hide the tab
+  s165 --> s5: Space, still held, repeats on the card or you press আব#2494;র খ#2503;ল#2507; or you pick a match
+  s165 --> s164: you let go of Space
+  s151 --> s5: you pick a match
+  s21 --> s45: you hide the tab
+  s31 --> s68: you hide the tab
+  s54 --> s96: you hide the tab
+  s77 --> s109: you hide the tab
+  s1 --> s13: you hide the tab
+  s14 --> s13: you hide the tab
+  s22 --> s30: you click into another window
+  s32 --> s40: you click into another window
+  s55 --> s63: you click into another window
+  s119 --> s127: you click into another window
+  s119 --> s131: you hide the tab
+  s133 --> s141: you hide the tab
+  s133 --> s145: you click into another window
+  s147 --> s155: you click into another window
+  s147 --> s159: you hide the tab
+  s161 --> s169: you hide the tab
+  s161 --> s173: you click into another window
+  s2 --> s17: you click into another window
+  s6 --> s20: you click into another window
+  s80 --> s89: you click into another window
+  s83 --> s91: you click into another window
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s4 teal
+  class s4 bugPath
+  class s5 teal
+  class s5 bugPath
+  class s8 teal
+  class s8 bugPath
+  class s9 teal
+  class s13 teal
+  class s17 teal
+  class s20 teal
+  class s20 breaks
+  class s20 bugPath
+  class s25 teal
+  class s25 bugPath
+  class s26 teal
+  class s26 bugPath
+  class s30 teal
+  class s35 teal
+  class s35 bugPath
+  class s36 teal
+  class s36 bugPath
+  class s40 teal
+  class s45 yellow
+  class s49 yellow
+  class s53 yellow
+  class s58 teal
+  class s58 mayBreak
+  class s58 bugPath
+  class s59 teal
+  class s59 mayBreak
+  class s63 teal
+  class s63 breaks
+  class s63 bugPath
+  class s68 yellow
+  class s72 yellow
+  class s76 yellow
+  class s81 teal
+  class s81 mayBreak
+  class s81 bugPath
+  class s82 teal
+  class s82 mayBreak
+  class s82 bugPath
+  class s84 teal
+  class s84 mayBreak
+  class s84 bugPath
+  class s85 teal
+  class s85 mayBreak
+  class s89 teal
+  class s89 breaks
+  class s89 bugPath
+  class s91 teal
+  class s91 breaks
+  class s96 yellow
+  class s100 yellow
+  class s104 yellow
+  class s109 yellow
+  class s113 yellow
+  class s117 yellow
+  class s122 bugPath
+  class s123 teal
+  class s123 bugPath
+  class s131 yellow
+  class s136 blue
+  class s137 blue
+  class s137 bugPath
+  class s141 blue
+  class s145 blue
+  class s150 breaks
+  class s150 bugPath
+  class s151 teal
+  class s151 breaks
+  class s155 breaks
+  class s159 yellow
+  class s159 breaks
+  class s164 blue
+  class s164 breaks
+  class s165 blue
+  class s165 breaks
+  class s169 blue
+  class s169 breaks
+  class s173 blue
+  class s173 breaks

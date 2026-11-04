@@ -1,0 +1,390 @@
+---
+title: "নদﬂ°°2496¶ß পﬂ°°2494¶ßর: the crossing, the window, the water and the river you're on"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks CheerOnlyOnTheCard or LevelPickerFreezesPlay or PausedWhenBlurred or SavedUnderTheRiverCrossed or ShownRiverIsTheOneCrossed or WaterOnlyWhileCrossing
+    lg4: Breaks CheerOnlyOnTheCard or LevelPickerFreezesPlay in some cases
+    lg5: Path to the CardNeedsAFreshPress or CheerOnlyOnTheCard or LevelPickerFreezesPlay or PausedWhenBlurred or SavedUnderTheRiverCrossed or ShownRiverIsTheOneCrossed or WaterOnlyWhileCrossing bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "River Ready card" as s0 {
+    state "Which Page names your river" as s1 {
+      state "Window You're on the page" as s2 {
+        state "Water Water sound off" as s3 {
+          s4: Space Space up
+          s5: Space Space held down
+        }
+      }
+      state "Window Tab hidden" as s6 {
+        state "Water Water sound off" as s7 {
+          s8: Space Space up
+        }
+      }
+      state "Window Another window has focus" as s9 {
+        state "Water Water sound off" as s10 {
+          s11: Space Space up
+        }
+      }
+    }
+    state "Which Page names another river" as s12 {
+      state "Window You're on the page" as s13 {
+        state "Water Water sound off" as s14 {
+          s15: Space Space up
+          s16: Space Space held down
+        }
+      }
+      state "Window Tab hidden" as s17 {
+        state "Water Water sound off" as s18 {
+          s19: Space Space up
+        }
+      }
+      state "Window Another window has focus" as s20 {
+        state "Water Water sound off" as s21 {
+          s22: Space Space up
+        }
+      }
+    }
+  }
+  state "River Crossing" as s23 {
+    state "Which Page names your river" as s24 {
+      state "Window You're on the page" as s25 {
+        state "Water Water sound on" as s26 {
+          s27: Space Space up
+          s28: Space Space held down
+        }
+        state "Water Water sound off" as s29 {
+          s30: Space Space up
+          s31: Space Space held down
+        }
+      }
+      state "Window Another window has focus" as s32 {
+        state "Water Water sound on" as s33 {
+          s34: Space Space up
+        }
+        state "Water Water sound off" as s35 {
+          s36: Space Space up
+        }
+      }
+    }
+    state "Which Page names another river" as s37 {
+      state "Window You're on the page" as s38 {
+        state "Water Water sound on" as s39 {
+          s40: Space Space up
+          s41: Space Space held down
+        }
+        state "Water Water sound off" as s42 {
+          s43: Space Space up
+          s44: Space Space held down
+        }
+      }
+      state "Window Another window has focus" as s45 {
+        state "Water Water sound on" as s46 {
+          s47: Space Space up
+        }
+        state "Water Water sound off" as s48 {
+          s49: Space Space up
+        }
+      }
+    }
+  }
+  state "River Across: card shows" as s50 {
+    state "Which Page names your river" as s51 {
+      state "Window You're on the page" as s52 {
+        state "Water Water sound off" as s53 {
+          s54: Space Space up
+          s55: Space Space held down
+        }
+      }
+      state "Window Tab hidden" as s56 {
+        state "Water Water sound off" as s57 {
+          s58: Space Space up
+        }
+      }
+      state "Window Another window has focus" as s59 {
+        state "Water Water sound off" as s60 {
+          s61: Space Space up
+        }
+      }
+    }
+    state "Which Page names another river" as s62 {
+      state "Window You're on the page" as s63 {
+        state "Water Water sound off" as s64 {
+          s65: Space Space up
+          s66: Space Space held down
+        }
+      }
+      state "Window Tab hidden" as s67 {
+        state "Water Water sound off" as s68 {
+          s69: Space Space up
+        }
+      }
+      state "Window Another window has focus" as s70 {
+        state "Water Water sound off" as s71 {
+          s72: Space Space up
+        }
+      }
+    }
+  }
+  state "River Paused (খ#2503;ল#2494; থ#2503;ম#2503; আছ#2503;)" as s73 {
+    state "Which Page names your river" as s74 {
+      state "Window Tab hidden" as s75 {
+        state "Water Water sound off" as s76 {
+          s77: Space Space up
+        }
+      }
+      state "Window You're on the page" as s78 {
+        state "Water Water sound off" as s79 {
+          s80: Space Space up
+          s81: Space Space held down
+        }
+      }
+      state "Window Another window has focus" as s82 {
+        state "Water Water sound off" as s83 {
+          s84: Space Space up
+        }
+      }
+    }
+    state "Which Page names another river" as s85 {
+      state "Window Tab hidden" as s86 {
+        state "Water Water sound off" as s87 {
+          s88: Space Space up
+        }
+      }
+      state "Window You're on the page" as s89 {
+        state "Water Water sound off" as s90 {
+          s91: Space Space up
+          s92: Space Space held down
+        }
+      }
+      state "Window Another window has focus" as s93 {
+        state "Water Water sound off" as s94 {
+          s95: Space Space up
+        }
+      }
+    }
+  }
+  [*] --> s4
+  s4 --> s27: you start the crossing
+  s4 --> s4: you open সব নদ#2496;
+  s27 --> s54: you reach the far ghat
+  s27 --> s80: you press থ#2494;ম#2494;ও
+  s27 --> s30: you turn sound off
+  s27 --> s28: you hold Space for the last hop
+  s27 --> s40: a friend's link opens in this tab
+  s4 --> s30: you start the crossing
+  s8 --> s4: the tab shows again
+  s11 --> s4: you come back to the window
+  s11 --> s8: you hide the tab
+  s54 --> s27: you press আব#2494;র খ#2503;ল#2507;
+  s54 --> s4: you pick a river
+  s54 --> s15: a friend's link opens in this tab
+  s77 --> s80: the tab shows again
+  s80 --> s27: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you start the crossing
+  s80 --> s15: a friend's link opens in this tab
+  s30 --> s27: you turn sound on
+  s30 --> s54: you reach the far ghat
+  s30 --> s80: you press থ#2494;ম#2494;ও
+  s30 --> s31: you hold Space for the last hop
+  s30 --> s43: a friend's link opens in this tab
+  s34 --> s27: you come back to the window
+  s34 --> s47: a friend's link opens in this tab
+  s28 --> s27: you let go of Space
+  s28 --> s55: you reach the far ghat
+  s28 --> s81: you press থ#2494;ম#2494;ও
+  s28 --> s31: you turn sound off
+  s28 --> s41: a friend's link opens in this tab
+  s27 --> s4: you pick a river
+  s40 --> s65: you reach the far ghat
+  s40 --> s91: you press থ#2494;ম#2494;ও
+  s40 --> s43: you turn sound off
+  s40 --> s41: you hold Space for the last hop
+  s54 --> s30: you press আব#2494;র খ#2503;ল#2507;
+  s58 --> s54: the tab shows again
+  s61 --> s54: you come back to the window
+  s61 --> s58: you hide the tab
+  s61 --> s22: a friend's link opens in this tab
+  s55 --> s54: you let go of Space
+  s55 --> s28: Space, still held, repeats on the card or you press আব#2494;র খ#2503;ল#2507;
+  s55 --> s5: you pick a river
+  s55 --> s16: a friend's link opens in this tab
+  s65 --> s4: you pick a river
+  s65 --> s27: you press আব#2494;র খ#2503;ল#2507;
+  s80 --> s30: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you start the crossing
+  s84 --> s77: you hide the tab
+  s84 --> s80: you come back to the window
+  s84 --> s22: a friend's link opens in this tab
+  s81 --> s80: you let go of Space
+  s81 --> s28: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you start the crossing
+  s81 --> s16: a friend's link opens in this tab
+  s80 --> s4: you pick a river
+  s88 --> s91: the tab shows again
+  s91 --> s40: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s91 --> s27: you start the crossing
+  s36 --> s30: you come back to the window
+  s36 --> s49: a friend's link opens in this tab
+  s31 --> s30: you let go of Space
+  s31 --> s28: you turn sound on
+  s31 --> s55: you reach the far ghat
+  s31 --> s81: you press থ#2494;ম#2494;ও
+  s31 --> s44: a friend's link opens in this tab
+  s30 --> s4: you pick a river
+  s43 --> s40: you turn sound on
+  s43 --> s65: you reach the far ghat
+  s43 --> s91: you press থ#2494;ম#2494;ও
+  s43 --> s44: you hold Space for the last hop
+  s28 --> s5: you pick a river
+  s47 --> s40: you come back to the window
+  s41 --> s40: you let go of Space
+  s41 --> s66: you reach the far ghat
+  s41 --> s92: you press থ#2494;ম#2494;ও
+  s41 --> s44: you turn sound off
+  s40 --> s4: you pick a river
+  s15 --> s27: you start the crossing
+  s55 --> s31: Space, still held, repeats on the card or you press আব#2494;র খ#2503;ল#2507;
+  s65 --> s30: you press আব#2494;র খ#2503;ল#2507;
+  s69 --> s65: the tab shows again
+  s72 --> s65: you come back to the window
+  s72 --> s69: you hide the tab
+  s66 --> s65: you let go of Space
+  s66 --> s5: you pick a river
+  s66 --> s28: Space, still held, repeats on the card or you press আব#2494;র খ#2503;ল#2507;
+  s81 --> s31: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you start the crossing
+  s81 --> s5: you pick a river
+  s91 --> s43: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s91 --> s30: you start the crossing
+  s95 --> s88: you hide the tab
+  s95 --> s91: you come back to the window
+  s92 --> s91: you let go of Space
+  s92 --> s41: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s92 --> s28: you start the crossing
+  s91 --> s4: you pick a river
+  s31 --> s5: you pick a river
+  s49 --> s43: you come back to the window
+  s44 --> s43: you let go of Space
+  s44 --> s41: you turn sound on
+  s44 --> s66: you reach the far ghat
+  s44 --> s92: you press থ#2494;ম#2494;ও
+  s43 --> s4: you pick a river
+  s41 --> s5: you pick a river
+  s5 --> s4: you let go of Space
+  s5 --> s28: you start the crossing
+  s15 --> s30: you start the crossing
+  s19 --> s15: the tab shows again
+  s22 --> s15: you come back to the window
+  s22 --> s19: you hide the tab
+  s16 --> s28: you start the crossing
+  s16 --> s15: you let go of Space
+  s15 --> s4: you pick a river
+  s66 --> s31: Space, still held, repeats on the card or you press আব#2494;র খ#2503;ল#2507;
+  s92 --> s44: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s92 --> s31: you start the crossing
+  s92 --> s5: you pick a river
+  s44 --> s5: you pick a river
+  s5 --> s31: you start the crossing
+  s16 --> s31: you start the crossing
+  s16 --> s5: you pick a river
+  s24 --> s77: you hide the tab
+  s37 --> s88: you hide the tab
+  s2 --> s8: you hide the tab
+  s2 --> s11: you click into another window
+  s52 --> s58: you hide the tab
+  s52 --> s61: you click into another window
+  s78 --> s77: you hide the tab
+  s78 --> s84: you click into another window
+  s63 --> s69: you hide the tab
+  s63 --> s72: you click into another window
+  s89 --> s88: you hide the tab
+  s89 --> s95: you click into another window
+  s13 --> s19: you hide the tab
+  s13 --> s22: you click into another window
+  s26 --> s34: you click into another window
+  s29 --> s36: you click into another window
+  s39 --> s47: you click into another window
+  s42 --> s49: you click into another window
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s4 teal
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 teal
+  class s5 mayBreak
+  class s8 teal
+  class s8 mayBreak
+  class s11 teal
+  class s11 mayBreak
+  class s15 teal
+  class s15 mayBreak
+  class s16 teal
+  class s16 mayBreak
+  class s19 teal
+  class s19 mayBreak
+  class s22 teal
+  class s22 mayBreak
+  class s27 teal
+  class s27 mayBreak
+  class s27 bugPath
+  class s28 teal
+  class s28 mayBreak
+  class s28 bugPath
+  class s30 teal
+  class s30 mayBreak
+  class s31 teal
+  class s31 mayBreak
+  class s34 teal
+  class s34 breaks
+  class s34 bugPath
+  class s36 teal
+  class s36 breaks
+  class s40 teal
+  class s40 breaks
+  class s40 bugPath
+  class s41 teal
+  class s41 breaks
+  class s43 teal
+  class s43 breaks
+  class s44 teal
+  class s44 breaks
+  class s47 teal
+  class s47 breaks
+  class s49 teal
+  class s49 breaks
+  class s54 blue
+  class s54 bugPath
+  class s55 blue
+  class s55 bugPath
+  class s58 blue
+  class s61 blue
+  class s65 blue
+  class s65 breaks
+  class s65 bugPath
+  class s66 blue
+  class s66 breaks
+  class s69 blue
+  class s69 breaks
+  class s72 blue
+  class s72 breaks
+  class s77 yellow
+  class s77 mayBreak
+  class s80 yellow
+  class s80 mayBreak
+  class s81 yellow
+  class s81 mayBreak
+  class s84 yellow
+  class s84 mayBreak
+  class s88 yellow
+  class s88 breaks
+  class s91 yellow
+  class s91 breaks
+  class s92 yellow
+  class s92 breaks
+  class s95 yellow
+  class s95 breaks
