@@ -25,30 +25,9 @@ export function EnglishWord({ entry }: { entry: Entry }) {
   return <b className="ab-word" lang="en">{before}<span>{letter}</span>{after}</b>;
 }
 
-// Only on-device voices: a network voice would send the word off the phone.
-const englishVoice = () => typeof speechSynthesis === "undefined" ? undefined
-  : speechSynthesis.getVoices().find(voice => /^en[-_](GB|IN|US)/i.test(voice.lang) && voice.localService) ?? speechSynthesis.getVoices().find(voice => /^en[-_]/i.test(voice.lang) && voice.localService);
+// No voices on the site: phone text-to-speech sounds poor, so the word is shown, never spoken.
+/** Does nothing: the site uses no spoken voice. */
+export function sayEnglish(_word: string) { /* no voice */ }
 
-/** Says an English word if the phone has an English voice; otherwise does nothing. */
-export function sayEnglish(word: string) {
-  const voice = englishVoice();
-  if (!voice) return;
-  speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(word);
-  utterance.voice = voice; utterance.lang = voice.lang; utterance.rate = 0.8;
-  speechSynthesis.speak(utterance);
-}
-
-/** A speaker button that only appears when an English voice exists. */
-export function SayEnglish({ word }: { word: string }) {
-  const [voice, setVoice] = useState(false);
-  useEffect(() => {
-    if (typeof speechSynthesis === "undefined") return;
-    const check = () => setVoice(Boolean(englishVoice()));
-    check();
-    speechSynthesis.addEventListener("voiceschanged", check);
-    return () => speechSynthesis.removeEventListener("voiceschanged", check);
-  }, []);
-  if (!voice) return null;
-  return <button type="button" className="kk-speak" onClick={() => sayEnglish(word)} aria-label={`শোনো: ${word}`}><span aria-hidden="true">🔈</span></button>;
-}
+/** Renders nothing: the site uses no spoken voice. */
+export function SayEnglish(_props: { word: string }) { return null; }

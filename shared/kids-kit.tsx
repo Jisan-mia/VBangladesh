@@ -206,45 +206,14 @@ export function RestScreen({ onExtend }: { onExtend: (minutes: number) => void }
   </div>;
 }
 
-/** A Bangla voice that runs on the phone itself. Online voices send the text to a server, so kids' pages never use them. */
-function banglaVoice() {
-  if (typeof speechSynthesis === 'undefined') return undefined;
-  return speechSynthesis.getVoices().find(item => /^bn[-_]/i.test(item.lang) && item.localService);
-}
+// No voices on the site: phone text-to-speech reads Bangla badly, so every cue is a picture, a sound effect or text instead.
+// These stay exported so older game code keeps compiling; they do nothing.
 
-// Speech stops the moment the page is hidden, like every other sound.
-if (typeof document !== 'undefined') {
-  document.addEventListener('visibilitychange', () => { if (document.hidden && typeof speechSynthesis !== 'undefined') speechSynthesis.cancel(); });
-}
+/** Always false: the site uses no spoken voice. */
+export function useBanglaVoice() { return false; }
 
-/** True once the phone offers an on-device Bangla voice (bn-BD / bn-IN / bn_BD). Many cheap phones have none: then stay silent, never read Bangla in English. */
-export function useBanglaVoice() {
-  const [voice, setVoice] = useState(false);
-  useEffect(() => {
-    if (typeof speechSynthesis === 'undefined') return;
-    const check = () => setVoice(Boolean(banglaVoice()));
-    check();
-    speechSynthesis.addEventListener('voiceschanged', check);
-    return () => speechSynthesis.removeEventListener('voiceschanged', check);
-  }, []);
-  return voice;
-}
+/** Does nothing: the site uses no spoken voice. */
+export function speak(_text: string) { /* no voice */ }
 
-/** Reads `text` aloud in a Bangla voice. Silent when the site's sound is off, like every other sound;
- * does nothing on phones with no Bangla voice, and never blocks the game. */
-export function speak(text: string) {
-  if (typeof speechSynthesis === 'undefined' || !soundOn()) return;
-  const voice = banglaVoice();
-  if (!voice) return;
-  speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.voice = voice; utterance.lang = voice.lang; utterance.rate = 0.85;
-  speechSynthesis.speak(utterance);
-}
-
-/** A speaker button that only appears when a Bangla voice exists. */
-export function SpeakButton({ text, label = 'শোনো' }: { text: string; label?: string }) {
-  const voice = useBanglaVoice();
-  if (!voice) return null;
-  return <button type="button" className="kk-speak" onClick={() => speak(text)} aria-label={`${label}: ${text}`}><span aria-hidden="true">🔈</span></button>;
-}
+/** Renders nothing: the site uses no spoken voice. */
+export function SpeakButton(_props: { text: string; label?: string }) { return null; }

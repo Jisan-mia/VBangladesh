@@ -73,13 +73,12 @@ Then build it.
   - The end buttons (আবার খেলো, শেষ) are pictures at least 96 px.
   - `GamePage` gives the kids-only header and rails; nothing in the child's view links to grown-up pages.
   - The kit now handles these, so don't duplicate them:
-    - `speak()` is silent when sound is off, and sound-off cuts speech and scheduled notes;
+    - sound-off cuts scheduled notes;
     - `ParentGate` resists banging and auto-repeat, and closes itself;
     - `RestScreen` is a real modal that blocks input behind it;
     - the daily timer counts only the focused tab.
-  - Hide `SpeakButton` when sound is off, or make it turn sound on.
   - Call `atBreak()` when a round starts as well as when it ends. The kit already opens on the rest screen past the limit, and an open gate shuts after one action.
-  - `speak()` uses only on-device Bangla voices (`localService`) and stops on hide. With no such voice, every spoken cue also has a picture, so a 4-year-old never has to read.
+  - **No voice anywhere (the owner's call: phone text-to-speech reads Bangla badly).** `speak()` and `SpeakButton` are now no-ops; remove their calls and any `speechSynthesis` use from your game. Carry every cue with pictures, motion and sound effects, so a 4-year-old never has to read or listen to words.
   - A won round is recorded even if the child taps the next round during the finish timer.
   - Nothing a child types (a name, a word) ever leaves the phone: no `/api/share` and no link carrying it. A share bar on a kids' page sits behind `ParentGate` and sends only the tool's address.
 - **ধীরে খেলো must not make stars easier to earn,** unless the design says so explicitly.
