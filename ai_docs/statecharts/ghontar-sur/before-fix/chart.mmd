@@ -1,0 +1,103 @@
+---
+title: "Ghontar sur (pot memory): run, tune, pause and links"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: start
+    lg1: play
+    lg2: held
+    lg3: done
+    lg4: Breaks ChoiceFreezesPlay or EveryClearIsShown or NoProgressWhileAway or PausedMeansSilent or PausedWhenBlurred or ReplayIsExact
+    lg5: Breaks PausedWhenBlurred in some cases
+    lg6: Path to the ChoiceFreezesPlay or EveryClearIsShown or NoProgressWhileAway or PausedMeansSilent or PausedWhenBlurred or ReplayIsExact bug
+  }
+  class lg0 teal
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  s0: Ready to start
+  s1: The tune plays
+  s2: Friend's tune ready, from level ১
+  s3: The tune plays, you're away
+  s4: The tune plays, level list open
+  s5: Paused
+  s6: Your turn
+  s7: Level done, clear screen coming
+  s8: Result shows
+  s9: Level clear screen
+  s10: Paused, clear screen skipped
+  s11: Paused on the clear screen
+  s12: Paused, but the tune plays
+  [*] --> s0
+  s0 --> s1: you press শ#2497;র#2497; কর#2507; or আর#2503;কব#2494;র
+  s0 --> s2: a friend's link opens
+  s0 --> s0: you open সব ল#2503;ভ#2503;ল
+  s1 --> s3: you click into another window
+  s1 --> s4: you open সব ল#2503;ভ#2503;ল
+  s1 --> s5: you hide the tab
+  s1 --> s6: the tune ends
+  s2 --> s0: a friend's link opens
+  s2 --> s1: you press শ#2497;র#2497; কর#2507; or আর#2503;কব#2494;র
+  s0 --> s4: you press শ#2497;র#2497; কর#2507; or আর#2503;কব#2494;র
+  s3 --> s1: you come back
+  s3 --> s5: you hide the tab
+  s3 --> s6: the tune ends
+  s4 --> s1: you close সব ল#2503;ভ#2503;ল
+  s4 --> s3: you click into another window
+  s4 --> s5: you hide the tab
+  s4 --> s6: the tune ends
+  s6 --> s7: you finish a level's last tune
+  s6 --> s1: you repeat the tune or slip once
+  s6 --> s8: you slip the third time
+  s6 --> s5: you hide the tab
+  s2 --> s4: you press শ#2497;র#2497; কর#2507; or আর#2503;কব#2494;র
+  s7 --> s9: the clear screen shows
+  s7 --> s10: you hide the tab
+  s5 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s8 --> s1: you press শ#2497;র#2497; কর#2507; or আর#2503;কব#2494;র
+  s9 --> s1: you press পর#2503;র ল#2503;ভ#2503;ল
+  s9 --> s11: you hide the tab
+  s8 --> s4: you press শ#2497;র#2497; কর#2507; or আর#2503;কব#2494;র
+  s11 --> s11: you come back
+  s10 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s11 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s11 --> s12: you press পর#2503;র ল#2503;ভ#2503;ল
+  s12 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s12 --> s5: you hide the tab or the tune ends
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 teal
+  class s2 breaks
+  class s2 bugPath
+  class s3 teal
+  class s3 breaks
+  class s3 bugPath
+  class s4 teal
+  class s4 breaks
+  class s4 bugPath
+  class s5 yellow
+  class s6 teal
+  class s6 bugPath
+  class s7 teal
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 blue
+  class s9 teal
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 yellow
+  class s10 breaks
+  class s10 bugPath
+  class s11 yellow
+  class s11 bugPath
+  class s12 yellow
+  class s12 breaks
+  class s12 bugPath

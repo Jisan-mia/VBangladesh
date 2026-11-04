@@ -31,9 +31,9 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | sudoku | S09 | analysed | todo |
 | switchboard | S09 | analysed | todo |
 | golokdhadha | S09 | analysed | todo |
-| ponero-ghor | S10 | analysing | todo |
-| chhobi-photao | S10 | analysing | todo |
-| ghontar-sur | S10 | analysing | todo |
+| ponero-ghor | S10 | analysed | todo |
+| chhobi-photao | S10 | analysed | todo |
+| ghontar-sur | S10 | analysed | todo |
 | konta-nei | S11 | analysed | todo |
 | bhul-kothay | S11 | analysed | todo |
 | atir-aam | S11 | analysed | todo |
