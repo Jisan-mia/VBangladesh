@@ -1,7 +1,8 @@
+// The original game's rules (tools/pati-buni/lib/weave.ts before the rewrite), kept bit for bit so a test can pin খোলা পাটি to them.
 // Rules for পাটি বুনি: an 8×14 mat frame, six cane strips of 2 to 4 cells from a seeded bundle, simple wall kicks, and full rows that weave and roll away.
 import { makeRng, pick } from "../../../shared/game-core";
 import { possessive } from "../../../shared/bangla";
-import { bn, MAT_ROWS, ROW_POINTS } from "./link";
+import { bn, MAT_ROWS, ROW_POINTS } from "../lib/link";
 
 export const COLS = 8;
 export const ROWS = 14;

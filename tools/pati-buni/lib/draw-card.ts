@@ -1,9 +1,17 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, wrapText, BODY_FONT, type CardFormat, type Segment } from "../../../shared/card-canvas";
 import { drawMat, palette } from "./art";
-import { bn, MAT_ROWS, type Shared } from "./link";
-import { humanLine, matName } from "./weave";
+import { isFinale, levelOf } from "./levels";
+import { bn, humanLine, matName, MAT_ROWS, type Shared } from "./link";
 
-export type CardData = Pick<Shared, "score" | "rows" | "pattern" | "name">;
+export type CardData = Pick<Shared, "score" | "rows" | "pattern" | "name" | "level"> & { stars?: number };
+
+/** The line under the points: a পাটি's own words, or খোলা পাটি's named mat. */
+export function cardLine(data: CardData) {
+  if (!data.level) return humanLine(data.rows);
+  const row = levelOf(data.level);
+  if (!data.stars) return `${row.name}: ${bn(data.rows)}/${bn(row.goal)} সারি বোনা হয়েছিল।`;
+  return isFinale(data.level) ? `${row.name} পুরো হলো, ${bn(data.rows)} সারিতে।` : `${row.name} বোনা হলো, ${bn(data.rows)} সারিতে।`;
+}
 
 const GREEN = "#4f7a28";
 const RED_BROWN = "#7c2f14";
@@ -43,7 +51,8 @@ export function drawCard(canvas: HTMLCanvasElement, data: CardData, format: Card
   drawMat(c, data.pattern, data.rows, -matWidth / 2, (-cell * MAT_ROWS) / 2, cell, MAT_ROWS);
   c.restore();
 
-  const points = bn(data.score), line = humanLine(data.rows), mat = matName(data.rows);
+  const points = bn(data.score), line = cardLine(data);
+  const mat = data.level ? `পাটি ${bn(data.level)}${data.stars ? " " + "★".repeat(data.stars) : ""}` : matName(data.rows);
   // The milestone mat, as a little tag above the points.
   if (mat) {
     const tagX = story ? width / 2 : 805, tagY = story ? 1350 : 300;
