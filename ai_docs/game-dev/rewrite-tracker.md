@@ -20,7 +20,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | handi-bhanga | S05 | analysed | todo |
 | peoner-cycle | S05 | analysed | todo |
 | sap-ludu | S06 | analysed | rewriting |
-| baghbandi | S06 | analysed | rewriting |
+| baghbandi | S06 | analysed | done |
 | baicher-nouka | S06 | analysed | todo |
 | vo-katta | S07 | analysed | rewriting |
 | bhangti-nai | S07 | analysed | todo |
@@ -34,7 +34,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | ponero-ghor | S10 | analysed | rewriting |
 | chhobi-photao | S10 | analysed | todo |
 | ghontar-sur | S10 | analysed | todo |
-| konta-nei | S11 | analysed | todo |
+| konta-nei | S11 | analysed | rewriting |
 | bhul-kothay | S11 | analysed | todo |
 | atir-aam | S11 | analysed | todo |
 | bhimruler-chak | S12 | analysed | todo |
