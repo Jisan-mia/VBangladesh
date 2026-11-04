@@ -1,7 +1,8 @@
 // Challenge links and every line of result text. Server-safe: share.ts loads this.
 import { possessive } from "../../../shared/bangla";
 import { cleanName } from "../../../shared/game-core";
-import { encodeMoves, replay, sizeOf, starsOf, MAX_LINK_MOVES, type Game } from "./game";
+import { encodeMoves, hintCap, parOf, replay, shortBy, sizeOf, starsOf, MAX_LINK_MOVES, type Game } from "./game";
+import { infoOf, isFinale, worldOf, WORLDS } from "./levels";
 
 const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
 export const bn = (value: number) => digits.format(value);
@@ -57,6 +58,40 @@ export const humanLine = (count: number, level: number, helped: number) => helpe
 
 /** The level-clear line: one concrete picture of the solved plate. */
 export const clearLine = (level: number) => `১ থেকে ${bn(sizeOf(level) ** 2 - 1)}, সব ঘুঁটি জায়গামতো।`;
+
+/** The finished plate, said exactly: on ৩×৩ against the true shortest; on a picture level, the picture it became. */
+export function solvedLine(level: number, count: number, helped: number) {
+  const info = infoOf(level), world = worldOf(level);
+  const what = info.look === "digits" ? clearLine(level) : `${world.thing} জোড়া লেগেছে, ${bn(sizeOf(level) ** 2 - 1)}টা ঘুঁটিই জায়গামতো।`;
+  if (sizeOf(level) !== 3) return what;
+  return `${what} ${count <= parOf(level) && !helped ? "এর চেয়ে কম চালে হয় না।" : `সবচেয়ে কম লাগে ${bn(parOf(level))} চাল।`}`;
+}
+
+/** The first clear of a world's finale: the world is done. */
+export function finaleLine(level: number) {
+  const world = worldOf(level), plates = world.to - world.from + 1, next = WORLDS[WORLDS.indexOf(world) + 1];
+  return `${possessive(world.name)} ${bn(plates)}টা প্লেটই শেষ।${next ? ` সামনে ${next.name}, ${bn(next.size)}×${bn(next.size)}।` : " মেলার সব প্লেট মিলিয়ে ফেলেছ।"}`;
+}
+
+/** What one more star would have taken, in moves or in hints. Empty at three stars. Never contradicts the stars shown. */
+export function nearMissLine(count: number, level: number, helped: number) {
+  const earned = starsOf(count, level, helped);
+  if (earned === 3) return "";
+  const short = shortBy(count, level, helped);
+  if (short > 0) return `আর ${bn(short)} চাল কম হলে ${bn(earned + 1)} তারা।`;
+  return earned === hintCap(helped) ? "সাহায্য ছাড়া মেলালে ৩ তারা পর্যন্ত পাবে।" : "";
+}
+
+/** "১:০৫" for the end screen. */
+export const clock = (seconds: number) => `${bn(Math.floor(seconds / 60))}:${bn(Math.floor(seconds % 60)).padStart(2, "০")}`;
+/** "১ মিনিট ৫ সেকেন্ড", for screen readers. */
+export const duration = (seconds: number) => {
+  const m = Math.floor(seconds / 60), s = Math.floor(seconds % 60);
+  return m ? `${bn(m)} মিনিট${s ? ` ${bn(s)} সেকেন্ড` : ""}` : `${bn(s)} সেকেন্ড`;
+};
+
+/** The level's name with its finale mark, for badges and the sheet. */
+export const levelName = (level: number) => `${isFinale(level) ? "শেষ প্লেট: " : ""}${infoOf(level).name}`;
 
 /** After playing a friend's level: fewer moves win, and it stays kind either way. */
 export function compareLine(mine: number, theirs: number, name: string) {

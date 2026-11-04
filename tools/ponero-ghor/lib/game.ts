@@ -2,6 +2,7 @@
 import { starsFor } from "../../../shared/game-core";
 import { isSolved, lineTo, opposite, shuffled, sizeOf, solve, step, LEVEL_COUNT, type Board, type Dir } from "./board";
 import { LEVELS } from "./levels";
+import { METHOD } from "./plates";
 
 export { LEVEL_COUNT, sizeOf };
 export const isLevel = (level: number) => Number.isInteger(level) && level >= 1 && level <= LEVEL_COUNT;
@@ -9,21 +10,36 @@ export const isLevel = (level: number) => Number.isInteger(level) && level >= 1 
 export const levelBoard = (level: number) => shuffled(sizeOf(level), LEVELS[level - 1][0], LEVELS[level - 1][1]).board;
 /** The level's par: on 3×3 the fewest moves possible. */
 export const parOf = (level: number) => LEVELS[level - 1][2];
-/** Three stars at par plus a fifth, two with a little more room, one for any finish. */
-export const threeStar = (level: number) => parOf(level) + Math.floor(parOf(level) / 5);
+/**
+ * What the star targets build on: the layered method's moves on this plate (row by row, the way a patient person solves it).
+ * On ৩×৩ that is the true shortest, so it equals par. On bigger plates par can be the shuffle undone, which only a lucky
+ * eye finds, so building on it made the early ৪×৪ plates the hardest to three-star; the method keeps the curve honest.
+ */
+export const targetOf = (level: number) => Math.max(parOf(level), METHOD[level - 1]);
+/** Three stars within the target plus a fifth, two with a little more room, one for any finish. */
+export const threeStar = (level: number) => targetOf(level) + Math.floor(targetOf(level) / 5);
 export const twoStar = (level: number) => threeStar(level) + Math.max(4, Math.ceil(threeStar(level) * 0.6));
-/** Help from the hint caps a solve at one star. */
-export const starsOf = (count: number, level: number, helped = 0) => helped ? 1 : starsFor(count, threeStar(level), twoStar(level), true);
-/** How many fewer moves would have earned the next star (0 at three stars or with help). */
+/** The most stars a plate can still earn after `helped` hints: the first hint costs one star, a second another. */
+export const hintCap = (helped: number) => helped <= 0 ? 3 : helped === 1 ? 2 : 1;
+/** Stars for a finish: by moves against the level's targets, capped by the hints taken. */
+export const starsOf = (count: number, level: number, helped = 0) => Math.min(hintCap(helped), starsFor(count, threeStar(level), twoStar(level), true));
+/** How many fewer moves would have earned the next star (0 at three stars, or when hints cap it anyway). */
 export const shortBy = (count: number, level: number, helped = 0) => {
   const earned = starsOf(count, level, helped);
-  return helped || earned === 3 ? 0 : count - (earned === 2 ? threeStar(level) : twoStar(level));
+  if (earned >= hintCap(helped)) return 0;
+  return count - (earned === 2 ? threeStar(level) : twoStar(level));
 };
+/** Mid-plate: the stars this plate is on track for right now, and how many more moves keep them (Infinity at one star). */
+export function onTrack(count: number, level: number, helped = 0) {
+  const stars = starsOf(count, level, helped);
+  const line = stars === 3 ? threeStar(level) : stars === 2 ? twoStar(level) : Infinity;
+  return { stars, left: line - count };
+}
 
-/** `moves` are gap steps: one per ঘুঁটি slid. */
-export type Game = { level: number; board: Board; moves: Dir[]; helped: number; won: boolean };
+/** `moves` are gap steps: one per ঘুঁটি slid. `undone` counts moves taken back (pushed straight back the way they came). */
+export type Game = { level: number; board: Board; moves: Dir[]; helped: number; won: boolean; undone: number };
 
-export const startGame = (level: number): Game => ({ level, board: levelBoard(level), moves: [], helped: 0, won: false });
+export const startGame = (level: number): Game => ({ level, board: levelBoard(level), moves: [], helped: 0, won: false, undone: 0 });
 
 /**
  * Plays gap steps in order. Sliding a ঘুঁটি straight back where it came from takes that move away.
@@ -31,16 +47,26 @@ export const startGame = (level: number): Game => ({ level, board: levelBoard(le
  */
 export function play(game: Game, steps: readonly Dir[], help = false): Game | null {
   if (game.won || !steps.length) return null;
-  let board = game.board;
+  let board = game.board, undone = game.undone ?? 0;
   const moves = game.moves.slice();
   for (const dir of steps) {
     const next = step(board, dir);
     if (!next) return null;
     board = next;
-    if (moves.length && moves[moves.length - 1] === opposite(dir)) moves.pop();
+    if (moves.length && moves[moves.length - 1] === opposite(dir)) { moves.pop(); undone++; }
     else moves.push(dir);
   }
-  return { ...game, board, moves, helped: game.helped + (help ? 1 : 0), won: isSolved(board) };
+  return { ...game, board, moves, helped: game.helped + (help ? 1 : 0), won: isSolved(board), undone };
+}
+
+/** ফিরিয়ে নাও: slides the last ঘুঁটি back where it came from, which takes that move away. Null with nothing to undo. */
+export const undo = (game: Game) => game.moves.length ? play(game, [opposite(game.moves[game.moves.length - 1])]) : null;
+
+/** How many ঘুঁটি sit in their home cell. */
+export function homeCount(board: Board) {
+  let home = 0;
+  for (let cell = 0; cell < board.cells.length - 1; cell++) if (board.cells[cell] === cell + 1) home++;
+  return home;
 }
 
 /** Tapping a ঘুঁটি in the gap's row or column slides that whole line; anything else does nothing (null). */
@@ -89,7 +115,7 @@ export function replay(level: number, text: string, count: number): Game | null 
   return game.won ? game : null;
 }
 
-/** Where to open: the furthest level reached that isn't three-starred yet, else the first one that isn't. */
+/** The old opening rule, kept for its tests: the furthest level reached that isn't three-starred yet, else the first one that isn't. */
 export function startLevel(stars: Record<number, number>, unlocked: number) {
   if ((stars[unlocked] ?? 0) < 3) return unlocked;
   for (let level = 1; level <= LEVEL_COUNT; level++) if ((stars[level] ?? 0) < 3) return level;
