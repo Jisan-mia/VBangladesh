@@ -1,0 +1,342 @@
+---
+title: "o-te-ojogor (after the rewrite): levels, the game's own unlock and old links"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: title
+    lg1: done
+  }
+  class lg0 tan
+  class lg1 blue
+  state "Game Title, level ১" as s0 {
+    state "Open levels ১ open" as s1 {
+      s2: Links No link yet
+    }
+    state "Open levels ১, ২ open" as s3 {
+      s4: Links A link opened level ২
+      s5: Links No link yet
+    }
+    state "Open levels ১, ৩ open" as s6 {
+      s7: Links A link opened level ৩
+    }
+    state "Open levels ১, ২, ৩ open" as s8 {
+      s9: Links A link opened level ২
+      s10: Links A link opened level ৩
+      s11: Links No link yet
+    }
+  }
+  state "Game Title, level ১ (the link's tree)" as s12 {
+    state "Open levels ১ open" as s13 {
+      s14: Links A link opened level ১
+    }
+    state "Open levels ১, ২ open" as s15 {
+      s16: Links A link opened level ১
+    }
+    state "Open levels ১, ৩ open" as s17 {
+      s18: Links A link opened level ১
+    }
+    state "Open levels ১, ২, ৩ open" as s19 {
+      s20: Links A link opened level ১
+    }
+  }
+  state "Game Title, level ২ (the link's tree)" as s21 {
+    state "Open levels ১, ২ open" as s22 {
+      s23: Links A link opened level ২
+    }
+    state "Open levels ১, ২, ৩ open" as s24 {
+      s25: Links A link opened level ২
+    }
+  }
+  state "Game Title, level ৩ (the link's tree)" as s26 {
+    state "Open levels ১, ৩ open" as s27 {
+      s28: Links A link opened level ৩
+    }
+    state "Open levels ১, ২, ৩ open" as s29 {
+      s30: Links A link opened level ৩
+    }
+  }
+  state "Game End screen, level ১" as s31 {
+    state "Open levels ১, ২ open" as s32 {
+      s33: Links No link yet
+      s34: Links A link opened level ২
+    }
+    state "Open levels ১, ২, ৩ open" as s35 {
+      s36: Links A link opened level ৩
+      s37: Links A link opened level ২
+      s38: Links No link yet
+    }
+  }
+  state "Game End screen, level ১ (the link's tree)" as s39 {
+    state "Open levels ১, ২ open" as s40 {
+      s41: Links A link opened level ১
+    }
+    state "Open levels ১, ২, ৩ open" as s42 {
+      s43: Links A link opened level ১
+    }
+  }
+  state "Game End screen, level ২ (the link's tree)" as s44 {
+    state "Open levels ১, ২ open" as s45 {
+      s46: Links A link opened level ২
+    }
+    state "Open levels ১, ২, ৩ open" as s47 {
+      s48: Links A link opened level ২
+    }
+  }
+  state "Game End screen, level ৩ (the link's tree)" as s49 {
+    state "Open levels ১, ৩ open" as s50 {
+      s51: Links A link opened level ৩
+    }
+    state "Open levels ১, ২, ৩ open" as s52 {
+      s53: Links A link opened level ৩
+    }
+  }
+  state "Game Title, level ২" as s54 {
+    state "Open levels ১, ২ open" as s55 {
+      s56: Links No link yet
+      s57: Links A link opened level ১
+    }
+    state "Open levels ১, ২, ৩ open" as s58 {
+      s59: Links A link opened level ৩
+      s60: Links A link opened level ১
+      s61: Links No link yet
+    }
+  }
+  state "Game Title, level ৩" as s62 {
+    state "Open levels ১, ৩ open" as s63 {
+      s64: Links A link opened level ১
+    }
+    state "Open levels ১, ২, ৩ open" as s65 {
+      s66: Links A link opened level ২
+      s67: Links A link opened level ১
+      s68: Links No link yet
+    }
+  }
+  state "Game End screen, level ২" as s69 {
+    state "Open levels ১, ২, ৩ open" as s70 {
+      s71: Links No link yet
+      s72: Links A link opened level ১
+      s73: Links A link opened level ৩
+    }
+    state "Open levels ১, ২ open" as s74 {
+      s75: Links A link opened level ১
+    }
+  }
+  state "Game End screen, level ৩" as s76 {
+    state "Open levels ১, ৩ open" as s77 {
+      s78: Links A link opened level ১
+    }
+    state "Open levels ১, ২, ৩ open" as s79 {
+      s80: Links A link opened level ২
+      s81: Links A link opened level ১
+      s82: Links No link yet
+    }
+  }
+  [*] --> s2
+  s2 --> s14: an old link opens
+  s2 --> s23: an old link opens
+  s2 --> s28: an old link opens
+  s2 --> s33: you play the level through
+  s14 --> s23: an old link opens
+  s14 --> s28: an old link opens
+  s14 --> s41: you play the level through
+  s23 --> s16: an old link opens
+  s23 --> s4: you pick a level
+  s23 --> s46: you play the level through
+  s28 --> s18: an old link opens
+  s28 --> s7: you pick a level
+  s28 --> s51: you play the level through
+  s33 --> s5: you pick a level
+  s33 --> s56: you press শ#2503;ষ or you pick a level
+  s16 --> s23: an old link opens
+  s16 --> s30: an old link opens
+  s16 --> s41: you play the level through
+  s16 --> s57: you pick a level
+  s18 --> s28: an old link opens
+  s18 --> s25: an old link opens
+  s18 --> s43: you play the level through
+  s18 --> s64: you pick a level
+  s41 --> s16: an old link opens or you pick a level
+  s41 --> s23: an old link opens
+  s41 --> s57: you press শ#2503;ষ or you pick a level
+  s25 --> s20: an old link opens
+  s25 --> s9: you pick a level
+  s25 --> s66: you pick a level
+  s30 --> s20: an old link opens
+  s30 --> s10: you pick a level
+  s30 --> s59: you pick a level
+  s30 --> s53: you play the level through
+  s4 --> s23: you pick a level
+  s4 --> s34: you play the level through
+  s46 --> s16: an old link opens
+  s46 --> s4: you pick a level
+  s46 --> s23: an old link opens or you press শ#2503;ষ or you pick a level
+  s7 --> s28: an old link opens or you pick a level
+  s7 --> s18: an old link opens
+  s7 --> s25: an old link opens
+  s7 --> s36: you play the level through
+  s51 --> s18: an old link opens
+  s51 --> s7: you pick a level
+  s51 --> s28: an old link opens or you press শ#2503;ষ or you pick a level
+  s5 --> s33: you play the level through
+  s5 --> s56: you pick a level
+  s56 --> s5: you pick a level
+  s56 --> s71: you play the level through
+  s20 --> s25: an old link opens
+  s20 --> s30: an old link opens
+  s20 --> s43: you play the level through
+  s20 --> s60: you pick a level
+  s20 --> s67: you pick a level
+  s57 --> s16: you pick a level
+  s57 --> s75: you play the level through
+  s43 --> s20: an old link opens or you pick a level
+  s43 --> s25: an old link opens
+  s43 --> s60: you press শ#2503;ষ or you pick a level
+  s43 --> s67: you pick a level
+  s64 --> s18: an old link opens or you pick a level
+  s64 --> s28: an old link opens
+  s64 --> s78: you play the level through
+  s57 --> s72: you play the level through
+  s9 --> s25: you pick a level
+  s9 --> s66: you pick a level
+  s9 --> s37: you play the level through
+  s10 --> s30: you pick a level
+  s10 --> s59: you pick a level
+  s10 --> s36: you play the level through
+  s48 --> s20: an old link opens
+  s48 --> s9: you pick a level
+  s48 --> s25: an old link opens or you press শ#2503;ষ or you pick a level
+  s48 --> s66: you pick a level or you press শ#2503;ষ
+  s59 --> s30: you pick a level
+  s59 --> s10: you pick a level
+  s59 --> s73: you play the level through
+  s66 --> s25: you pick a level
+  s66 --> s9: you pick a level
+  s66 --> s80: you play the level through
+  s53 --> s20: an old link opens
+  s53 --> s10: you pick a level
+  s53 --> s59: you pick a level
+  s53 --> s30: an old link opens or you press শ#2503;ষ or you pick a level
+  s34 --> s23: you press শ#2503;ষ or you pick a level
+  s34 --> s4: you pick a level
+  s36 --> s30: you pick a level
+  s36 --> s10: you pick a level
+  s36 --> s59: you press শ#2503;ষ or you pick a level
+  s71 --> s11: you pick a level
+  s71 --> s61: you pick a level
+  s71 --> s68: you press শ#2503;ষ or you pick a level
+  s60 --> s20: you pick a level
+  s60 --> s67: you pick a level
+  s60 --> s72: you play the level through
+  s67 --> s20: you pick a level
+  s67 --> s60: you pick a level
+  s67 --> s81: you play the level through
+  s75 --> s16: an old link opens or you pick a level
+  s75 --> s57: you press শ#2503;ষ or you pick a level
+  s75 --> s23: an old link opens
+  s78 --> s18: an old link opens or you pick a level
+  s78 --> s64: you press শ#2503;ষ or you pick a level
+  s78 --> s28: an old link opens
+  s72 --> s20: you pick a level
+  s72 --> s60: you pick a level or you press শ#2503;ষ
+  s72 --> s67: you press শ#2503;ষ or you pick a level
+  s37 --> s25: you press শ#2503;ষ or you pick a level
+  s37 --> s9: you pick a level
+  s37 --> s66: you pick a level
+  s73 --> s30: you pick a level or you press শ#2503;ষ
+  s73 --> s10: you pick a level
+  s73 --> s59: you press শ#2503;ষ or you pick a level
+  s80 --> s25: you pick a level
+  s80 --> s9: you pick a level
+  s80 --> s66: you press শ#2503;ষ or you pick a level
+  s11 --> s61: you pick a level
+  s11 --> s68: you pick a level
+  s11 --> s38: you play the level through
+  s61 --> s71: you play the level through
+  s61 --> s11: you pick a level
+  s61 --> s68: you pick a level
+  s68 --> s11: you pick a level
+  s68 --> s61: you pick a level
+  s68 --> s82: you play the level through
+  s81 --> s20: you pick a level
+  s81 --> s60: you pick a level
+  s81 --> s67: you press শ#2503;ষ or you pick a level
+  s38 --> s11: you pick a level
+  s38 --> s61: you press শ#2503;ষ or you pick a level
+  s38 --> s68: you pick a level
+  s82 --> s11: you pick a level
+  s82 --> s61: you pick a level
+  s82 --> s68: you press শ#2503;ষ or you pick a level
+  s21 --> s30: an old link opens
+  s21 --> s48: you play the level through
+  s26 --> s25: an old link opens
+  s31 --> s30: an old link opens
+  s39 --> s30: an old link opens
+  s44 --> s30: an old link opens
+  s49 --> s25: an old link opens
+  s54 --> s30: an old link opens
+  s62 --> s25: an old link opens
+  s69 --> s30: an old link opens
+  s76 --> s25: an old link opens
+  s32 --> s16: an old link opens
+  s32 --> s23: an old link opens
+  s3 --> s23: an old link opens
+  s3 --> s16: an old link opens
+  s3 --> s30: an old link opens
+  s55 --> s16: an old link opens
+  s55 --> s23: an old link opens
+  s8 --> s25: an old link opens
+  s8 --> s30: an old link opens
+  s8 --> s20: an old link opens
+  s58 --> s25: an old link opens
+  s58 --> s20: an old link opens
+  s65 --> s30: an old link opens
+  s65 --> s20: an old link opens
+  s35 --> s20: an old link opens
+  s35 --> s25: an old link opens
+  s70 --> s20: an old link opens
+  s70 --> s25: an old link opens
+  s79 --> s20: an old link opens
+  s79 --> s30: an old link opens
+  class s2 tan
+  class s4 tan
+  class s5 tan
+  class s7 tan
+  class s9 tan
+  class s10 tan
+  class s11 tan
+  class s14 tan
+  class s16 tan
+  class s18 tan
+  class s20 tan
+  class s23 tan
+  class s25 tan
+  class s28 tan
+  class s30 tan
+  class s33 blue
+  class s34 blue
+  class s36 blue
+  class s37 blue
+  class s38 blue
+  class s41 blue
+  class s43 blue
+  class s46 blue
+  class s48 blue
+  class s51 blue
+  class s53 blue
+  class s56 tan
+  class s57 tan
+  class s59 tan
+  class s60 tan
+  class s61 tan
+  class s64 tan
+  class s66 tan
+  class s67 tan
+  class s68 tan
+  class s71 blue
+  class s72 blue
+  class s73 blue
+  class s75 blue
+  class s78 blue
+  class s80 blue
+  class s81 blue
+  class s82 blue

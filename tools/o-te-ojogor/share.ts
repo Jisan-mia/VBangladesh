@@ -1,17 +1,10 @@
 import type { ToolShare } from "../../shared/share-types";
-import { parseShared, previewTitle, sharedHash } from "./lib/link";
+import { site } from "./content";
 
-// No tally: a link only re-opens one level (its seed replays the same falling order) with the friend's own mistake count.
+// Played by children: nothing about a child goes into a link, so no new link state is accepted and nothing is tallied.
+// Old short links (made before, some with a name) still redirect to the page, which opens their level and drops the name;
+// their preview is the page's own title, never the name.
 export const share: ToolShare = {
-  normalize(state) {
-    const shared = parseShared(state);
-    return shared ? sharedHash(shared) : null;
-  },
-  preview(state) {
-    const shared = parseShared(state);
-    return {
-      title: shared ? previewTitle(shared) : "অ-তে অজগর: গাছ থেকে বর্ণ পড়ছে, ঠিকটা ঝুড়িতে ধরো",
-      description: "স্বরবর্ণ, ব্যঞ্জনবর্ণ, ছোট শব্দ আর ১ থেকে ২০। একই গাছ, একই ক্রমে বর্ণ পড়বে, দেখো তুমি কয়টা ভুলে পারো। ফ্রি, অ্যাকাউন্ট লাগে না।",
-    };
-  },
+  normalize: () => null,
+  preview: () => ({ title: `${site.name}: ${site.headline}`, description: site.description }),
 };

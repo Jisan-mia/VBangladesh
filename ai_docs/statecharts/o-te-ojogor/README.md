@@ -1,6 +1,160 @@
-# অ-তে অজগর statechart (before the rewrite)
+# অ-তে অজগর statechart
 
-**Which code this models:** HEAD `6775639` and later. That commit made o-te-ojogor the pilot of the shared game player (`GamePage kids`, the pause menu, `useGamePlayer` onPause / onResume / onRestart) and made `useGameLoop` stop on window blur. I started this run on the older code, where nothing listened for blur. That commit landed mid-run, so I re-modelled everything against it, and every live replay below ran on it. The working tree for `tools/o-te-ojogor/` matched HEAD when I finished. If the migration moves on, re-run both specs.
+## After the rewrite (games-to-the-bar)
+The game was rewritten (design: `ai_docs/game-dev/rewrites/o-te-ojogor.md`). There are now two ways to play: গাছতলা (the default, untimed, tap the right fruit) and ঝড়ো হাওয়া (the old falling game, 7+). The rules now live in pure modules the node tests drive: `lib/session.ts` (screens, pause, away, the hand, the kids' break), `lib/progress.ts` (this game's own unlock and link levels), `lib/tree.ts` + `lib/step.hot.ts` (the tree). Three specs, each under the chart budget:
+
+| Spec | What it covers | TLC | Result |
+|---|---|---|---|
+| `Ojogor.tla` / `view.ts` | round, the player's menu, blur and hide, the held arrow or finger | 19 states, 56 steps | all 10 rules hold → `after-fix/chart.mmd` |
+| `OjogorLevels.tla` / `view-levels.ts` | stars, the game's own unlock, old links, the level list (3 levels stand in for 22) | 396 states, 2852 steps | all 6 rules hold → `after-fix-levels/chart.mmd` |
+| `OjogorKids.tla` / `view-kids.ts` | the daily limit, the rest screen, the parent gate, what leaves the phone | 48 states, 188 steps | all 9 rules hold → `after-fix-kids/chart.mmd` |
+
+The rules are the ones below, never weakened. New ones: **HeldOnlyWhileMoving** (nothing is held unless the round moves), **LinkOpensOnlyItsLevel** (the unlock rises only by clearing the level just below it), **OnlyPlayableLevels**.
+
+### Bugs fixed (each replayed as a node test in `tools/o-te-ojogor/tests/o-te-ojogor.test.ts`, then live in Orca)
+1. **BasketStopsWhenYouLetGo:** test "bug 1, BasketStopsWhenYouLetGo…". `pauseNow()` (onPause) calls `hold()`, and every arrow keyup lets go, paused or not. Live (ঝড়ো হাওয়া, Pixel 9 and desktop): hold ← → basket 137, aim 50 → Escape → aim 137, clock frozen for 1 s → keyup under the menu → চালিয়ে যাও → **1.5 s later the basket is still at 137** (before the fix it ran to 50).
+2. **InputReleasedWhenAway:** test "bug 2, InputReleasedWhenAway…". The game's own window `blur` / hidden listener runs `leave()` (pause, drop the hand) and `hold()`. Live: hold → at 197 (aim 310) → blur → paused, held false, aim 197, clock frozen 1.2 s → focus → চালিয়ে যাও → **still 197** (before: 310).
+3. **UnlockNeverShrinks:** test "bug 3, UnlockNeverShrinks…". This game keeps its own unlock (`ektukhani-unlock-o-te-ojogor`, migrated once from the stars), a link opens only its own level, and every link level is kept on the phone (`ektukhani-links-o-te-ojogor`). Live: `#…&l=8` → open ১, ২, ৮ (before: 1–8) → `#…&l=3` → **open ১, ২, ৩, ৮** (before: 1–3, and 4–8 locked again).
+4. **NoShareForKids, NoNameField, NoChildDataLeaves, NoNetworkCalls:** tests "bug 4, NoChildDataLeaves…" and "bug 4, NoNetworkCalls / NoShareForKids / NoNameField…". The name field, `ShareBar` and `/api/share` are gone, and `share.normalize` returns null. The end screen shows `ShowParentButton`. `ShowParent` holds the card with no name, "ছবিটা রাখো" behind its gate, and `<ParentGate><ShareToolLink/></ParentGate>`, which shares only the tool's address. Old links still open their level and seed. The name is never read, and `history.replaceState` strips `n=` from the address bar. A source scan in the test bans `/api/`, `fetch(`, `share-client`, `ShareBar`, `<input`. Live: `#s=4242&t=1&l=8&n=রাফি` opened level ৮ with seed 4242, the address bar became `#s=4242&t=1&l=8`, "রাফি" appears nowhere on the page, and a wrapped `fetch` + `sendBeacon` saw **0 calls** across the link changes, a full level and the parent card (`ShareToolLink` uses the phone's share sheet or clipboard, never `fetch`).
+5. **RestAtTheBreak, NoNewRoundPastLimit:** test "bug 5, RestAtTheBreak / NoNewRoundPastLimit…" (with 400 random action runs for RestOnlyAtBreak). `useKidsSession()`, then `atBreak()` in `begin()` and `playAgain()` before a round, and in `finish()` the moment it is won (not in a timer). Between rounds the game also asks `atBreak()` every second, which the model found was needed: time running out while the child sits on the end screen broke RestAtTheBreak until then. Live: past the limit → খেলো → **rest screen, phase stays title**. On the end screen, pushing the time past the limit → **rest screen within 1.6 s**.
+- **Two pause overlays (migration note):** gone. The game draws its own small "ছুঁয়ে দাও" only when it paused itself with no player menu up (blurred before anyone touched it), and that first tap only wakes it (`tapCounts`).
+- **Shared patterns:** P calls `player.requestPause()`. End-screen keys need a fresh press (`!e.repeat`) and the buttons wait 700 ms (`GUARD_MS`). Buttons blur after a click, and the game's keys are handled at `window`. No celebration timers (StarReveal owns its own). No speech anywhere.
+
+### The chart (`after-fix/chart.mmd`)
+```mermaid
+---
+title: "o-te-ojogor (after the rewrite): round, pause menu, window and arrow key"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: title
+    lg1: play
+    lg2: held
+    lg3: done
+  }
+  class lg0 tan
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  state "Game Title (খ#2503;ল#2507;)" as s0 {
+    state "Window You're on the page" as s1 {
+      s2: Basket Basket still
+    }
+    state "Window Another window has focus" as s3 {
+      s4: Basket Basket still
+    }
+    state "Window Tab hidden" as s5 {
+      s6: Basket Basket still
+    }
+  }
+  state "Game Round in play" as s7 {
+    state "Window You're on the page" as s8 {
+      s9: Basket Basket still
+      s10: Basket Arrow held, basket heads for the edge
+    }
+  }
+  state "Game Title, menu open" as s11 {
+    state "Window You're on the page" as s12 {
+      s13: Basket Basket still
+    }
+    state "Window Another window has focus" as s14 {
+      s15: Basket Basket still
+    }
+    state "Window Tab hidden" as s16 {
+      s17: Basket Basket still
+    }
+  }
+  state "Game End screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ)" as s18 {
+    state "Window You're on the page" as s19 {
+      s20: Basket Basket still
+    }
+  }
+  state "Game Paused, menu open" as s21 {
+    state "Window Another window has focus" as s22 {
+      s23: Basket Basket still
+    }
+    state "Window You're on the page" as s24 {
+      s25: Basket Basket still
+    }
+    state "Window Tab hidden" as s26 {
+      s27: Basket Basket still
+    }
+  }
+  state "Game End screen, menu open" as s28 {
+    state "Window Another window has focus" as s29 {
+      s30: Basket Basket still
+    }
+    state "Window You're on the page" as s31 {
+      s32: Basket Basket still
+    }
+    state "Window Tab hidden" as s33 {
+      s34: Basket Basket still
+    }
+  }
+  [*] --> s2
+  s2 --> s9: you press খ#2503;ল#2507;
+  s2 --> s4: you click into another window
+  s2 --> s6: you hide the tab
+  s2 --> s13: you press #9208;, Escape or P
+  s9 --> s10: you hold #8592; or #8594; (or drag)
+  s4 --> s2: you come back to the window
+  s4 --> s6: you hide the tab
+  s6 --> s2: the tab shows again
+  s13 --> s2: you press নত#2497;ন কর#2503; শ#2497;র#2497; or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s13 --> s15: you click into another window
+  s13 --> s17: you hide the tab
+  s20 --> s9: you press আব#2494;র খ#2503;ল#2507;
+  s20 --> s2: you press শ#2503;ষ (or pick a level, or open a link)
+  s20 --> s30: you click into another window
+  s20 --> s32: you press #9208;, Escape or P
+  s20 --> s34: you hide the tab
+  s10 --> s9: you let go
+  s23 --> s25: you come back to the window
+  s23 --> s27: you hide the tab
+  s25 --> s9: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s25 --> s23: you click into another window
+  s25 --> s27: you hide the tab
+  s25 --> s2: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s27 --> s25: the tab shows again
+  s2 --> s15: you click into another window
+  s2 --> s17: you hide the tab
+  s15 --> s13: you come back to the window
+  s15 --> s17: you hide the tab
+  s17 --> s13: the tab shows again
+  s30 --> s32: you come back to the window
+  s30 --> s34: you hide the tab
+  s32 --> s20: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s32 --> s2: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s32 --> s30: you click into another window
+  s32 --> s34: you hide the tab
+  s34 --> s32: the tab shows again
+  s7 --> s20: the last right letter lands
+  s7 --> s23: you click into another window
+  s7 --> s25: you press #9208;, Escape or P
+  s7 --> s27: you hide the tab
+  s7 --> s2: you press শ#2503;ষ (or pick a level, or open a link)
+  class s2 tan
+  class s4 tan
+  class s6 tan
+  class s9 teal
+  class s10 teal
+  class s13 tan
+  class s15 tan
+  class s17 tan
+  class s20 blue
+  class s23 yellow
+  class s25 yellow
+  class s27 yellow
+  class s30 blue
+  class s32 blue
+  class s34 blue
+```
+
+---
+
+## Before the rewrite
+
+**Which code the before-fix run modelled:** HEAD `6775639` and later. That commit made o-te-ojogor the pilot of the shared game player (`GamePage kids`, the pause menu, `useGamePlayer` onPause / onResume / onRestart) and made `useGameLoop` stop on window blur. I started this run on the older code, where nothing listened for blur. That commit landed mid-run, so I re-modelled everything against it, and every live replay below ran on it. The working tree for `tools/o-te-ojogor/` matched HEAD when I finished. If the migration moves on, re-run both specs.
 
 Two specs, because one would pass the 500-state chart budget:
 - `Ojogor.tla` / `Ojogor.cfg` / `view.ts`: the level, the player's pause menu, pause and focus, the held arrow key, the clock, levels and friend links. TLC: 400 states, 1735 steps. Chart: `before-fix/chart.mmd` (48 states, 138 arrows).
@@ -89,12 +243,14 @@ Replays ran in Orca (my own tab, Pixel 9, immersive player after খেলো). 
 7. **HUD:** the picture-word line, the "এবার" chip and the letter strip sit above the tree, with the star total at the top. The middle stays clear. Good.
 8. **Sound:** a signature two-note chime on each picture word, a springy boing for a wrong letter (never a buzzer), and a soft thump for a miss. All synthesized and all also shown in text. Good.
 
-## Regenerate
+## Regenerate (after the rewrite; the specs in this folder now model the rewritten code)
 ```sh
 scripts/statechart.sh ai_docs/statecharts/o-te-ojogor/Ojogor.tla --view ai_docs/statecharts/o-te-ojogor/view.ts --out ai_docs/statecharts/o-te-ojogor/after-fix
+scripts/statechart.sh ai_docs/statecharts/o-te-ojogor/OjogorLevels.tla --view ai_docs/statecharts/o-te-ojogor/view-levels.ts --out ai_docs/statecharts/o-te-ojogor/after-fix-levels
 scripts/statechart.sh ai_docs/statecharts/o-te-ojogor/OjogorKids.tla --view ai_docs/statecharts/o-te-ojogor/view-kids.ts --out ai_docs/statecharts/o-te-ojogor/after-fix-kids
 rm ai_docs/statecharts/o-te-ojogor/after-fix*/tlc.out
 ```
+(Use a fresh `--out` folder, or delete the old one first.) The before-fix specs are in git history at `1191cab`; their reports are in `before-fix/` and `before-fix-kids/`.
 After the fixes:
 - **Ojogor:** `YouPressPause`, `WindowBlurs` and `TabHides` set `hand' = "off"`; `YouLetGo` always sets `"off"`; `AFriendsLinkOpens` keeps `opened` reachable.
 - **OjogorKids:** `SomeoneTypesAName` and `SomeoneSharesTheCard` go away (a gated `AParentSharesTheLink` replaces them), and `TheLevelEnds` / `YouPressStart` set `resting' = overLimit`.

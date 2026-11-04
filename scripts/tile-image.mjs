@@ -151,6 +151,8 @@ async function tileFromPage(b, slug) {
   // First load in dev compiles on demand; wait for #tool to have content.
   for (let i = 0; i < 40; i++) { if (await b.run(`return !!document.querySelector('#tool canvas, #tool svg, #tool button')`)) break; await sleep(500); }
   await sleep(1800);
+  // Games inside the shared player show a launch card on a phone: press খেলো so the game itself is on screen.
+  if (await b.run(`const play = document.querySelector('.gp-play'); if (play) play.click(); return !!play`)) await sleep(2000);
   if (o.before) { await b.run(o.before); await sleep(1500); }
   const area = await b.run(findArea(o));
   if (!area) return null;
@@ -159,6 +161,7 @@ async function tileFromPage(b, slug) {
   const [fx, fy] = o.focus || [0.5, 0.5];
   const clip = { x: area.x + (area.width - short) * fx, y: area.y + (area.height - short) * fy, width: short, height: short, scale: 1 };
   const shot = await b.send('Page.captureScreenshot', { format: 'png', clip, captureBeyondViewport: true });
+  if (!shot.result?.data) return null;
   const url = await b.run(encode(`data:image/png;base64,${shot.result.data}`));
   return { url, how: `${area.tag}${area.cls ? '.' + area.cls.split(' ')[0] : ''} ${Math.round(area.width)}×${Math.round(area.height)}` };
 }

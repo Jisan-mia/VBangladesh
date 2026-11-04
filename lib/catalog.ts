@@ -145,7 +145,7 @@ export const catalog = [
   { slug: "roshi-tana", name: "রশি টানাটানি", description: "ঢোলের তালে চাপো, রশি টানো। একা ১০টা দল, নয়তো দুজনে এক ফোনে।", category: "গেম", action: "রশি টানো" },
   { slug: "moshar-raat", name: "মশার রাত", description: "বাতি নেভানো ঘরে পিন-পিন। ব্যাটে মশা মারো, ভোর পর্যন্ত বালিশ বাঁচাও।", category: "গেম", action: "মশা মারো" },
   { slug: "al-dhore-hati", name: "আল ধরে হাঁটি", description: "ধানখেতের সরু আল ধরে হাঁটো, পা যেন কাদায় না পড়ে।", category: "গেম", action: "হাঁটা শুরু করো" },
-  { slug: "o-te-ojogor", name: "অ-তে অজগর", description: "গাছ থেকে বর্ণ পড়ছে, অ-এর পর আ ঝুড়িতে ধরো। ২২টা লেভেল, ছবিসহ।", category: "গেম", action: "বর্ণ ধরো" },
+  { slug: "o-te-ojogor", name: "অ-তে অজগর", description: "গাছে পাকা বর্ণ, অ-এর পর আ ঝুড়িতে তোলো। ২২টা লেভেল, ছবিসহ।", category: "গেম", action: "বর্ণ পাড়ো" },
   { slug: "kar-chinho", name: "কার-চিহ্ন বসাও", description: "ছবি দেখে শব্দে ঠিক কার-চিহ্ন বসায়, আ-কার থেকে ঔ-কার। প্রিন্টের পাতাও আছে।", category: "ছোটদের জন্য", action: "খেলা শুরু করো" },
   { slug: "nam-shikhi", name: "নাম শিখি", description: "ছবি দেখে পশুপাখি, ফল, সবজি, শরীরের নাম শেখায়, বাংলা আর ইংরেজিতে।", category: "ছোটদের জন্য", action: "নাম শেখো" },
   { slug: "sourojogot", name: "সৌরজগতের সফর", description: "রকেটে সূর্য থেকে নেপচুন। গ্রহের নাম, ক্রম আর মাপ শেখে, প্রজেক্টের পাতাও প্রিন্ট হয়।", category: "ছোটদের জন্য", action: "সফরে চলো" },

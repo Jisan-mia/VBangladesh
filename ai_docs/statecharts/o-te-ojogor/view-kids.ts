@@ -1,23 +1,22 @@
-export const title = "অ-তে অজগর (HEAD 6775639) against the kids' rules";
-const game = (v: any) => ({ ready: "Start screen", play: "Letters falling", won: "Card with শেয়ার করো and a name field" } as any)[v.phase]
-  + (v.begun === "late" && v.phase === "play" ? ", started after today's time ran out" : "");
+export const title = "o-te-ojogor (after the rewrite) against the kids' rules";
 export const state = (v: any) => ({
-  Game: game(v),
+  Game: ({ title: "Title (খেলো)", play: "Round in play", done: "End screen (আবার খেলো / শেষ / আব্বু-আম্মুকে দেখাও)" } as any)[v.phase],
   Today: v.resting ? "Rest screen" : v.overLimit ? "Today's kids' time is up" : "Time left today",
-  Phone: v.holder === "parent" ? "A parent has the phone" : "The child has the phone",
-  Name: v.named ? "A name typed on the card" : "No name",
-  Server: v.sent === "name" ? "The name went to /api/share" : v.sent === "card" ? "The card went to /api/share" : "Nothing sent",
+  Phone: v.holder === "parent" ? (v.gate === "open" ? "A parent has the phone, gate open" : "A parent has the phone") : "The child has the phone",
+  Sent: v.sent === "address" ? "The tool's address was shared" : "Nothing sent",
 });
 export const step = (action: string) => ({
-  YouPressStart: "you press শুরু করো",
+  YouPressStart: "you press খেলো",
   TheLevelEnds: "the level ends",
   YouPlayAgain: "you press আবার খেলো",
-  YouGoToTheNextLevel: "you press পরের লেভেল",
-  SomeoneTypesAName: "someone types a name under the card",
-  SomeoneSharesTheCard: "someone taps শেয়ার করো or লিংক কপি করো",
+  YouFinishUp: "you press শেষ",
+  ThePageOpens: "the page opens again",
   TimeIsUp: "today's kids' time runs out",
+  AParentGivesMoreTime: "a parent gives 10 more minutes",
   AParentTakesThePhone: "a parent takes the phone",
   TheChildTakesItBack: "the child takes the phone back",
+  AParentOpensTheGate: "a parent opens the gate",
+  AParentSharesTheLink: "a parent shares the game's link",
 } as Record<string, string>)[action] ?? action;
-export const group = (v: any) => v.phase === "won" ? "done" : "play";
-export const colors = { play: "teal", done: "blue" };
+export const group = (v: any) => v.resting ? "rest" : v.phase === "play" ? "play" : v.phase === "done" ? "done" : "title";
+export const colors = { title: "tan", play: "teal", done: "blue", rest: "purple" };

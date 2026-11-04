@@ -23,7 +23,7 @@ The page is a kids' page (৪–৮ বছর). Before, letters fell in real tim
 ## Difficulty and story
 - **গাছতলা:** "বর্ণ ঝুলে থাকে, যত সময় লাগে নাও।" The level sets how many fruits hang (2–4).
 - **ঝড়ো হাওয়া:** "বাতাসে বর্ণ নিজেই পড়ে, ঝুড়ি সরিয়ে ধরো।" The level sets fall speed and how many fall together.
-- **Bots:** a child who knows the next letter 80% of the time and otherwise taps at random finishes every level in গাছতলা, and earns 3 stars on level 1 on ≥ 60% of seeds. In ঝড়ো হাওয়া a careful bot (0.45 s reaction) clears every level with 3 stars on every seed. A casual bot (0.35 s reaction, aim error, 3% wild moves) clears level 1 with 3 stars on ≥ 90% of seeds and the last finale on 20–90%.
+- **Bots:** a child who knows the next letter 80% of the time and otherwise taps at random finishes every level in গাছতলা, and earns 3 stars on level 1 on ≥ 60% of seeds. In ঝড়ো হাওয়া a careful bot (0.45 s reaction) clears every level with 3 stars on every seed. A careless bot (0.35 s reaction, aim error, 3% wild moves, never dodges) gets 3 stars on level 1 on ≥ 90% of seeds. A bot that notices 70% of the wrong fruit gets 3 stars on level 1 on ≥ 95% of seeds and on the last finale on 40–90%.
 - **No story.** The tree is the world, and a pre-reader can't read panels. The first fruit of level 1 has a ghost finger instead.
 
 ## Screens
@@ -37,7 +37,7 @@ The page is a kids' page (৪–৮ বছর). Before, letters fell in real tim
 
 ## Sound (`shared/game-sound.ts`, no loops, no music)
 - a pop when a fruit lands in the basket;
-- **the signature,** a two-note brass bell with the picture word (plus the word spoken, if the phone has a Bangla voice and sound is on);
+- **the signature,** a two-note brass bell as the picture word appears (no voice anywhere: the picture, the word and the motion carry every cue);
 - a soft rustle when a fruit leaves its branch;
 - a springy boing for a wrong pick, never a buzzer;
 - a soft টুপ for a dropped fruit (ঝড়ো হাওয়া);
@@ -54,5 +54,5 @@ Each sound has a visible twin: the picture word, the basket rock and the ring, t
 
 **Kept for compatibility:**
 - old links `#s=…&t=…&l=…(&n=…)` still open that level with that seed (the same tree). The name is ignored and removed from the address bar. No new link carries anything: `share.normalize` returns null, and an old short link's preview no longer shows a name;
-- `ektukhani-levels-o-te-ojogor` (stars). New: `ektukhani-unlock-o-te-ojogor` (this game's own unlock, migrated once from the stars) and `ektukhani-mode-o-te-ojogor`;
+- `ektukhani-levels-o-te-ojogor` (stars). New: `ektukhani-unlock-o-te-ojogor` (this game's own unlock, migrated once from the stars), `ektukhani-links-o-te-ojogor` (levels an old link opened, so a second link never locks them) and `ektukhani-mode-o-te-ojogor`;
 - `/o-te-ojogor`, the share id, title, description and H1.

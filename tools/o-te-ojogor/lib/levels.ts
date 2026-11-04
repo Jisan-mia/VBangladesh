@@ -85,7 +85,7 @@ export const LEVELS: Level[] = [
   { title: "শব্দ: পানি, হাঁস, নৌকা", world: "word", items: words("পানি", "হাঁস", "নৌকা"), speed: 130, decoys: 2, ripen: 0.7, gap: 0.4 },
   { title: "শব্দ: কলা, গরু, ঘুড়ি, বাঘ", world: "word", items: words("কলা", "গরু", "ঘুড়ি", "বাঘ"), speed: 150, decoys: 2, ripen: 0.6, gap: 0.35 },
   { title: "শব্দ: টিয়া, লাটিম, শাপলা", world: "word", items: words("টিয়া", "লাটিম", "শাপলা"), speed: 175, decoys: 3, ripen: 0.5, gap: 0.3 },
-  { title: "শব্দ: রিকশা, টমেটো, তরমুজ", world: "word", items: words("রিকশা", "টমেটো", "তরমুজ"), speed: 205, decoys: 3, ripen: 0.4, gap: 0.25 },
+  { title: "শব্দ: রিকশা, টমেটো, তরমুজ", world: "word", items: words("রিকশা", "টমেটো", "তরমুজ"), speed: 205, decoys: 3, ripen: 0.4, gap: 0.25, milestone: true },
   { title: "সংখ্যা: ১ থেকে ১০", world: "number", items: NUMBERS.slice(0, 10), speed: 135, decoys: 2, ripen: 0.6, gap: 0.35 },
   { title: "সংখ্যা: ১১ থেকে ২০", world: "number", items: NUMBERS.slice(10), speed: 165, decoys: 3, ripen: 0.55, gap: 0.3 },
   { title: "জোড় সংখ্যা: ২ থেকে ২০", world: "number", items: NUMBERS.filter((_, index) => index % 2 === 1), speed: 195, decoys: 3, ripen: 0.4, gap: 0.25 },
@@ -93,6 +93,17 @@ export const LEVELS: Level[] = [
 ];
 
 export const LEVEL_COUNT = LEVELS.length;
+
+/** The four worlds: one tree at its own time of day, and a named finale that closes each. */
+export const WORLDS = [
+  { world: "vowel", name: "স্বরবর্ণ", first: 1, last: 3, finale: "এগারোটা স্বরবর্ণ" },
+  { world: "consonant", name: "ব্যঞ্জনবর্ণ", first: 4, last: 12, finale: "পুরো বর্ণমালা" },
+  { world: "word", name: "শব্দ", first: 13, last: 18, finale: "বাজারের ঝুড়ি" },
+  { world: "number", name: "সংখ্যা", first: 19, last: 22, finale: "উল্টো গোনা" },
+] as const satisfies readonly { world: World; name: string; first: number; last: number; finale: string }[];
+export const worldIndex = (level: number) => Math.max(0, WORLDS.findIndex(world => level >= world.first && level <= world.last));
+/** The finale's name on its own level, else "". */
+export const finaleName = (level: number) => WORLDS.find(world => world.last === level)?.finale ?? "";
 export const isLevel = (level: number) => Number.isInteger(level) && level >= 1 && level <= LEVEL_COUNT;
 export const levelOf = (level: number) => LEVELS[Math.min(LEVEL_COUNT, Math.max(1, Math.round(level) || 1)) - 1];
 

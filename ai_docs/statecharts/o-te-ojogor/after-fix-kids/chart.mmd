@@ -1,0 +1,60 @@
+---
+title: "o-te-ojogor (after the rewrite) against the kids' rules"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: rest
+  }
+  class lg0 teal
+  class lg1 purple
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Title (খ#2503;ল#2507;)
+      s1: Round in play
+      s2: End screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ / আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও)
+      [*] --> s0
+      s0 --> s1: you press খ#2503;ল#2507; [when Today is Time left today]
+      s1 --> s0: the page opens again
+      s1 --> s2: the level ends
+      s2 --> s0: the page opens again
+      s2 --> s0: you press শ#2503;ষ [when Today is Time left today]
+      s2 --> s1: you press আব#2494;র খ#2503;ল#2507; [when Today is Time left today]
+    }
+    --
+    state "Today" as r1 {
+      s3: Time left today
+      s4: Rest screen
+      s5: Today's kids' time is up
+      [*] --> s3
+      s3 --> s4: today's kids' time runs out [when Game is not Round in play]
+      s3 --> s5: today's kids' time runs out [when Game is Round in play]
+      s5 --> s4: the page opens again or the level ends
+      s4 --> s3: a parent gives 10 more minutes [when Phone is A parent has the phone, gate open]
+    }
+    --
+    state "Phone" as r2 {
+      s6: The child has the phone
+      s7: A parent has the phone
+      s8: A parent has the phone, gate open
+      [*] --> s6
+      s6 --> s7: a parent takes the phone
+      s7 --> s6: the child takes the phone back
+      s7 --> s8: a parent opens the gate
+      s8 --> s6: the child takes the phone back
+      s8 --> s7: the page opens again
+      s8 --> s7: a parent gives 10 more minutes [when Game is not Round in play and Today is Rest screen]
+      s8 --> s7: a parent shares the game's link [when Game is End screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ / আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও) and Today is not Today's kids' time is up]
+    }
+    --
+    state "Sent" as r3 {
+      s9: Nothing sent
+      s10: The tool's address was shared
+      [*] --> s9
+      s9 --> s10: a parent shares the game's link [when Game is End screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ / আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও) and Today is not Today's kids' time is up and Phone is A parent has the phone, gate open]
+    }
+  }
+  class s1 teal
+  class s4 purple
+  class s5 teal
