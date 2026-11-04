@@ -1,0 +1,149 @@
+{
+  "tools/adda/components/carrom.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/ami-bolechhilam/components/envelope.tsx": {
+    "uncleared-timer": 2
+  },
+  "tools/argentina-na-brazil/lib/fan.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/bangla-typing/components/typewriter.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/bhangti-nai/components/shop-game.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/bhorta/components/shilpata.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/biye-kobe/components/ghotok-file.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/carrom/components/carrom-game.tsx": {
+    "uncleared-timer": 2
+  },
+  "tools/chhip-felo/components/fishing-game.tsx": {
+    "uncleared-timer": 5
+  },
+  "tools/chhobir-tukro/components/jigsaw-game.tsx": {
+    "uncleared-timer": 3
+  },
+  "tools/chhok-jora/components/quilt-game.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/churir-bazar/components/bangle-game.tsx": {
+    "uncleared-timer": 4
+  },
+  "tools/current-gelo/lib/gelo.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/daripalla/lib/game.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/deri-hoye-gelo/components/late-game.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/dosh-ghater-nouka/components/nouka-game.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/dudh-uthlano/components/milk-game.tsx": {
+    "uncleared-timer": 3
+  },
+  "tools/ganer-koli/lib/game.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/ghuri/components/kite-builder.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/golokdhadha/lib/levels.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/grade-dao/components/mark-sheet.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/gune-dekhi/lib/game.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/handi-bhanga/components/handi-game.tsx": {
+    "uncleared-timer": 2
+  },
+  "tools/hat-dhui/components/routine.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/jhalmuri-sap/components/snake-game.tsx": {
+    "uncleared-timer": 4
+  },
+  "tools/jibh/components/ticket-counter.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/juktoborno/components/juktoborno-game.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/kagojer-urojahaj/lib/scene.ts": {
+    "sim-nondeterminism": 7
+  },
+  "tools/kalbaishakhi-aam/components/mango-game.tsx": {
+    "uncleared-timer": 2
+  },
+  "tools/kalbaishakhi-aam/lib/draw-scene.ts": {
+    "sim-nondeterminism": 9
+  },
+  "tools/koto-cheno/components/slam-book.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/marble-sinri/components/marble-game.tsx": {
+    "uncleared-timer": 2
+  },
+  "tools/matir-bank/components/bank-builder.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/moner-boyos/components/weighing-machine.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/namta/components/slate-game.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/namta/lib/namta.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/nodi-par/components/river-game.tsx": {
+    "uncleared-timer": 2
+  },
+  "tools/paka-kancha/components/code-game.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/pati-buni/components/pati-game.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/roshi-tana/components/roshi-game.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/salami-chek/components/cheque-builder.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/shesh-bol/components/last-ball.tsx": {
+    "uncleared-timer": 2
+  },
+  "tools/shoman-bhag/lib/game.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/sir-ghurlei-thamo/components/chit-game.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/sudoku/components/sudoku-game.tsx": {
+    "uncleared-timer": 3
+  },
+  "tools/sudoku/lib/game.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/tarer-fanke-belun/components/balloon-game.tsx": {
+    "uncleared-timer": 2
+  },
+  "tools/ulto-khela/lib/game.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/vo-katta/components/vo-katta-game.tsx": {
+    "uncleared-timer": 2
+  }
+}
