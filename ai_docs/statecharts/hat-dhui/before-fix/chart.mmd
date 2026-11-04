@@ -1,0 +1,204 @@
+---
+title: "হﬂ°°2494¶ßত ধﬂ°°2497¶ßই, দﬂ°°2494¶ßﬂ°°2433¶ßত মﬂ°°2494¶ßজﬂ°°2495¶ß: routine, finish timer, window, rest screen and parent gate"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: rest
+    lg2: done
+    lg3: gone
+    lg4: Breaks GateClosesBehindParent or NoReadingNeeded or ParentGate or PausedWhenBlurred or PausedWhenHidden or RestOnlyAtBreak or ResultMatchesPlay
+    lg5: Breaks GateClosesBehindParent or NoReadingNeeded or NoShareForKids or ParentGate or PausedWhenBlurred or PausedWhenHidden or RestOnlyAtBreak or ResultMatchesPlay in some cases
+    lg6: Path to the GateClosesBehindParent or NoReadingNeeded or NoShareForKids or ParentGate or PausedWhenBlurred or PausedWhenHidden or RestOnlyAtBreak or ResultMatchesPlay bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 pink
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Waiting for শ#2497;র#2497; কর#2507;
+      s1: The child left for another page
+      s2: Ring filling
+      s3: কখন ধ#2507;ব quiz
+      s4: হয#2492;#2503; গ#2503;ছ#2503;
+      s5: Paused
+      s6: The share sheet opened
+      s7: Done screen
+      s8: Done screen for a routine you never finished
+      s9: Today's record
+      [*] --> s0
+      s0 --> s1: the child taps a link in the header or the related games [when Timer is No finish timer and Window is On the page and Rest is not Rest screen and Gate is not A parent has the gate open]
+      s0 --> s2: you press শ#2497;র#2497; কর#2507; [when Window is On the page and Rest is not Rest screen]
+      s0 --> s3: you tap a tab [when Window is On the page and Rest is not Rest screen]
+      s2 --> s0: you tap a tab [when Window is On the page]
+      s2 --> s1: the child taps a link in the header or the related games [when Timer is No finish timer and Window is On the page and Gate is not A parent has the gate open]
+      s2 --> s3: you tap a tab [when Window is On the page]
+      s2 --> s4: the ring fills [when Timer is No finish timer and Window is On the page]
+      s2 --> s5: you press একট#2497; থ#2494;ম#2494;ও [when Timer is No finish timer and Window is On the page]
+      s0 --> s6: someone shares the link or saves the picture [when Timer is No finish timer and Window is On the page and Gate is not Gate shut]
+      s3 --> s0: you tap a tab
+      s3 --> s1: the child taps a link in the header or the related games [when Timer is No finish timer and Gate is not A parent has the gate open]
+      s4 --> s7: 0.7 s later the finish timer fires
+      s4 --> s0: you tap a tab
+      s4 --> s3: you tap a tab
+      s5 --> s0: you tap a tab [when Window is On the page]
+      s5 --> s1: the child taps a link in the header or the related games [when Window is On the page and Gate is not A parent has the gate open]
+      s5 --> s2: you press আব#2494;র চ#2494;ল#2494;ও [when Window is On the page]
+      s5 --> s3: you tap a tab [when Window is On the page]
+      s2 --> s6: someone shares the link or saves the picture [when Timer is No finish timer and Window is On the page and Gate is not Gate shut]
+      s3 --> s7: you press দ#2503;খ#2507; ক#2496; শ#2495;খল#2503; [when Timer is No finish timer]
+      s3 --> s6: someone shares the link or saves the picture [when Timer is No finish timer and Gate is not Gate shut]
+      s7 --> s0: you tap a tab or you press আব#2494;র খ#2503;ল#2507; [when Rest is not Rest screen and Gate is not Showing a parent]
+      s7 --> s1: the child taps a link in the header or the related games [when Rest is not Rest screen and Gate is one of Gate left open, the child has the phone, Gate shut]
+      s7 --> s3: you tap a tab or you press আব#2494;র খ#2503;ল#2507; [when Rest is not Rest screen and Gate is not Showing a parent]
+      s7 --> s9: you press শ#2503;ষ [when Rest is not Rest screen and Gate is not Showing a parent]
+      s0 --> s8: 0.7 s later the finish timer fires [when Timer is Finish timer for a routine you left and Window is On the page and Rest is not Rest screen]
+      s5 --> s6: someone shares the link or saves the picture [when Window is On the page and Gate is not Gate shut]
+      s3 --> s8: 0.7 s later the finish timer fires [when Timer is Finish timer for a routine you left]
+      s7 --> s6: someone shares the link or saves the picture [when Gate is one of A parent has the gate open, Gate left open, the child has the phone]
+      s8 --> s0: you tap a tab or you press আব#2494;র খ#2503;ল#2507; [when Rest is not Rest screen and Gate is not Showing a parent]
+      s8 --> s1: the child taps a link in the header or the related games [when Rest is not Rest screen and Gate is one of Gate left open, the child has the phone, Gate shut]
+      s8 --> s3: you tap a tab or you press আব#2494;র খ#2503;ল#2507; [when Rest is not Rest screen and Gate is not Showing a parent]
+      s8 --> s9: you press শ#2503;ষ [when Rest is not Rest screen and Gate is not Showing a parent]
+      s9 --> s0: you tap a tab
+      s9 --> s1: the child taps a link in the header or the related games [when Gate is not A parent has the gate open]
+      s9 --> s3: you tap a tab
+      s2 --> s8: 0.7 s later the finish timer fires [when Timer is Finish timer for a routine you left and Window is On the page]
+      s8 --> s6: someone shares the link or saves the picture [when Gate is one of A parent has the gate open, Gate left open, the child has the phone]
+      s9 --> s6: someone shares the link or saves the picture [when Gate is not Gate shut]
+    }
+    --
+    state "Timer" as r1 {
+      s10: No finish timer
+      s11: #8212;
+      s12: Finish timer for this routine
+      s13: Finish timer for a routine you left
+      [*] --> s10
+      s10 --> s11: the child taps a link in the header or the related games [when Window is On the page and Rest is not Rest screen and Gate is one of Gate left open, the child has the phone, Gate shut]
+      s10 --> s12: the ring fills [when Game is Ring filling and Window is On the page and Rest is not Rest screen and Gate is not Showing a parent]
+      s10 --> s11: someone shares the link or saves the picture [when Window is On the page and Gate is one of A parent has the gate open, Gate left open, the child has the phone]
+      s12 --> s10: 0.7 s later the finish timer fires
+      s12 --> s13: you tap a tab
+      s13 --> s10: 0.7 s later the finish timer fires
+    }
+    --
+    state "Window" as r2 {
+      s14: On the page
+      s15: #8212;
+      s16: Another window has focus
+      s17: Tab hidden
+      [*] --> s14
+      s14 --> s15: the child taps a link in the header or the related games [when Game is not হয#2492;#2503; গ#2503;ছ#2503; and Timer is No finish timer and Rest is not Rest screen and Gate is one of Gate left open, the child has the phone, Gate shut]
+      s14 --> s16: you click into another window [when Game is one of Paused, Ring filling, Waiting for শ#2497;র#2497; কর#2507; and Timer is No finish timer and Gate is not Showing a parent]
+      s14 --> s17: the tab hides [when Game is one of Paused, Ring filling, Waiting for শ#2497;র#2497; কর#2507; and Timer is No finish timer and Gate is not Showing a parent]
+      s16 --> s14: you come back to the window
+      s16 --> s17: the tab hides
+      s17 --> s14: the tab shows again
+      s14 --> s15: someone shares the link or saves the picture [when Game is not হয#2492;#2503; গ#2503;ছ#2503; and Timer is No finish timer and Gate is one of A parent has the gate open, Gate left open, the child has the phone]
+    }
+    --
+    state "Rest" as r3 {
+      s18: Time left today
+      s19: Rest screen
+      s20: #8212;
+      s21: Today's time is up
+      [*] --> s18
+      [*] --> s19
+      s18 --> s20: the child taps a link in the header or the related games [when Game is not হয#2492;#2503; গ#2503;ছ#2503; and Timer is No finish timer and Window is On the page and Gate is one of Gate left open, the child has the phone, Gate shut]
+      s18 --> s21: today's time runs out [when Window is On the page]
+      s21 --> s20: the child taps a link in the header or the related games [when Game is not হয#2492;#2503; গ#2503;ছ#2503; and Timer is No finish timer and Window is On the page and Gate is one of Gate left open, the child has the phone, Gate shut]
+      s18 --> s20: someone shares the link or saves the picture [when Game is not হয#2492;#2503; গ#2503;ছ#2503; and Timer is No finish timer and Window is On the page and Gate is one of A parent has the gate open, Gate left open, the child has the phone]
+      s19 --> s18: someone gives ১০ ম#2495;ন#2495;ট more [when Window is On the page and Gate is not Gate shut]
+      s19 --> s20: someone shares the link or saves the picture [when Window is On the page and Gate is not Gate shut]
+      s21 --> s20: someone shares the link or saves the picture [when Game is not হয#2492;#2503; গ#2503;ছ#2503; and Timer is No finish timer and Window is On the page and Gate is one of A parent has the gate open, Gate left open, the child has the phone]
+      s21 --> s19: 0.7 s later the finish timer fires [when Game is one of Ring filling, Waiting for শ#2497;র#2497; কর#2507;, কখন ধ#2507;ব quiz, হয#2492;#2503; গ#2503;ছ#2503; and Timer is not No finish timer and Window is On the page and Gate is not Showing a parent]
+      s21 --> s19: you press দ#2503;খ#2507; ক#2496; শ#2495;খল#2503; [when Game is কখন ধ#2507;ব quiz and Timer is No finish timer and Window is On the page and Gate is not Showing a parent]
+    }
+    --
+    state "Gate" as r4 {
+      s22: Gate shut
+      s23: #8212;
+      s24: A parent has the gate open
+      s25: Gate left open, the child has the phone
+      s26: Showing a parent
+      [*] --> s22
+      s22 --> s23: the child taps a link in the header or the related games [when Game is not হয#2492;#2503; গ#2503;ছ#2503; and Timer is No finish timer and Window is On the page and Rest is not Rest screen]
+      s22 --> s24: a parent opens বড#2492;দ#2503;র জন#2509;য [when Game is not হয#2492;#2503; গ#2503;ছ#2503; and Timer is No finish timer and Window is On the page]
+      s24 --> s22: someone presses বন#2509;ধ কর#2507; [when Game is not হয#2492;#2503; গ#2503;ছ#2503; and Timer is No finish timer and Window is On the page]
+      s24 --> s22: the tab hides [when Game is one of Paused, Ring filling, Waiting for শ#2497;র#2497; কর#2507; and Timer is No finish timer]
+      s24 --> s25: the parent hands the phone back [when Game is not হয#2492;#2503; গ#2503;ছ#2503; and Timer is No finish timer and Window is On the page]
+      s24 --> s23: someone shares the link or saves the picture [when Game is not হয#2492;#2503; গ#2503;ছ#2503; and Timer is No finish timer and Window is On the page]
+      s24 --> s22: someone gives ১০ ম#2495;ন#2495;ট more [when Game is one of Done screen, Done screen for a routine you never finished, Waiting for শ#2497;র#2497; কর#2507; and Timer is No finish timer and Window is On the page and Rest is Rest screen]
+      s25 --> s22: someone presses বন#2509;ধ কর#2507; [when Game is not হয#2492;#2503; গ#2503;ছ#2503; and Timer is No finish timer and Window is On the page]
+      s25 --> s23: the child taps a link in the header or the related games [when Game is not হয#2492;#2503; গ#2503;ছ#2503; and Timer is No finish timer and Window is On the page and Rest is not Rest screen]
+      s25 --> s22: the tab hides [when Game is one of Paused, Ring filling, Waiting for শ#2497;র#2497; কর#2507; and Timer is No finish timer]
+      s25 --> s23: someone shares the link or saves the picture [when Game is not হয#2492;#2503; গ#2503;ছ#2503; and Timer is No finish timer and Window is On the page]
+      s25 --> s22: someone gives ১০ ম#2495;ন#2495;ট more [when Game is one of Done screen, Done screen for a routine you never finished, Waiting for শ#2497;র#2497; কর#2507; and Timer is No finish timer and Window is On the page and Rest is Rest screen]
+      s22 --> s26: you press আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও [when Game is one of Done screen, Done screen for a routine you never finished and Timer is No finish timer and Window is On the page and Rest is not Rest screen]
+      s26 --> s22: you press দ#2503;খ#2494;ন#2507; শ#2503;ষ
+      s26 --> s24: a parent opens বড#2492;দ#2503;র জন#2509;য
+      s24 --> s26: someone presses বন#2509;ধ কর#2507; [when Game is one of Done screen, Done screen for a routine you never finished and Timer is No finish timer and Window is On the page and Rest is not Rest screen]
+      s25 --> s26: someone presses বন#2509;ধ কর#2507; [when Game is one of Done screen, Done screen for a routine you never finished and Timer is No finish timer and Window is On the page and Rest is not Rest screen]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 bugPath
+  class s1 pink
+  class s1 breaks
+  class s1 bugPath
+  class s2 teal
+  class s2 breaks
+  class s2 bugPath
+  class s3 teal
+  class s4 teal
+  class s4 bugPath
+  class s5 teal
+  class s5 breaks
+  class s6 pink
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 mayBreak
+  class s8 breaks
+  class s8 bugPath
+  class s9 blue
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 pink
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 teal
+  class s12 bugPath
+  class s13 teal
+  class s13 bugPath
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 pink
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 bugPath
+  class s17 bugPath
+  class s18 mayBreak
+  class s18 bugPath
+  class s19 yellow
+  class s19 bugPath
+  class s20 pink
+  class s20 mayBreak
+  class s20 bugPath
+  class s21 mayBreak
+  class s21 bugPath
+  class s22 mayBreak
+  class s22 bugPath
+  class s23 pink
+  class s23 mayBreak
+  class s23 bugPath
+  class s24 mayBreak
+  class s24 bugPath
+  class s25 breaks
+  class s25 bugPath
+  class s26 blue

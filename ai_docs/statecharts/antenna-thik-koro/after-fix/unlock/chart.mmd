@@ -1,0 +1,32 @@
+---
+title: "অﬂ°°2509¶ßযﬂ°°2494¶ßনﬂ°°2509¶ßটﬂ°°2503¶ßনﬂ°°2494¶ß ঠﬂ°°2495¶ßক করﬂ°°2507¶ß: which levels open (3 levels stand in for 12)"
+---
+stateDiagram-v2
+  s0: Open up to 1
+  s1: Open up to 2
+  s2: Open up to 3
+  s3: Open up to 1, friend's 2 waiting
+  s4: Open up to 1, friend's 3 waiting
+  s5: Open up to 2, friend's 3 waiting
+  s6: Open up to 1, friend's 2, 3 waiting
+  s7: Open up to 3, friend's 2 waiting
+  s8: Open up to 3, friend's 3 waiting
+  s9: Open up to 3, friend's 2, 3 waiting
+  [*] --> s0
+  [*] --> s1
+  [*] --> s2
+  s0 --> s3: you clear a friend's level further on
+  s0 --> s4: you clear a friend's level further on
+  s0 --> s1: you clear a level you had opened
+  s1 --> s5: you clear a friend's level further on
+  s1 --> s2: you clear a level you had opened
+  s3 --> s6: you clear a friend's level further on
+  s3 --> s7: you clear a level you had opened
+  s4 --> s6: you clear a friend's level further on
+  s4 --> s5: you clear a level you had opened
+  s5 --> s8: you clear a level you had opened
+  s6 --> s9: you clear a level you had opened
+  s7 --> s2: you clear a level you had opened
+  s8 --> s2: you clear a level you had opened
+  s9 --> s8: you clear a level you had opened
+  s9 --> s2: you clear a level you had opened

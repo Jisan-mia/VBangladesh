@@ -1,0 +1,167 @@
+---
+title: "এবﬂ°°2495¶ßসﬂ°°2495¶ß বﬂ°°2494¶ßজﬂ°°2494¶ßর: round, stars, window, rest screen and parent gate"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: rest
+    lg2: done
+    lg3: gone
+    lg4: Breaks GateClosesBehindParent or NoReadingNeeded or ParentGate
+    lg5: Breaks GateClosesBehindParent or NoReadingNeeded or NoShareForKids or ParentGate in some cases
+    lg6: Path to the GateClosesBehindParent or NoReadingNeeded or NoShareForKids or ParentGate bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 pink
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: On the first item
+      s1: The child left for another page
+      s2: first item solved
+      s3: On the last item
+      s4: The share sheet opened
+      s5: last item solved
+      s6: Done screen
+      s7: আর#2503;কট#2494; খ#2503;লব#2503;? menu
+      [*] --> s0
+      s0 --> s1: the child taps a link in the header, the guide or the related games [when Window is On the page and Grownups is one of Time left, gate shut, Today's time is up]
+      s0 --> s2: you tap the right one [when Window is On the page and Grownups is one of Time left, gate shut, Today's time is up]
+      s2 --> s0: you pick a level [when Window is On the page]
+      s2 --> s1: the child taps a link in the header, the guide or the related games [when Window is On the page]
+      s2 --> s3: you press পর#2503;রট#2494; [when Window is On the page]
+      s0 --> s4: someone shares the link or prints [when Window is On the page and Grownups is one of Rest screen, a parent has the gate open, Rest screen, gate left open, the child has the phone]
+      s3 --> s0: you pick a level [when Window is On the page]
+      s3 --> s1: the child taps a link in the header, the guide or the related games [when Window is On the page]
+      s3 --> s5: you tap the right one [when Window is On the page]
+      s5 --> s0: you pick a level [when Window is On the page]
+      s5 --> s1: the child taps a link in the header, the guide or the related games [when Window is On the page]
+      s5 --> s6: you press শ#2503;ষ দ#2503;খ#2507; [when Window is On the page]
+      s6 --> s7: you press শ#2503;ষ [when Grownups is one of Time left, gate shut, Today's time is up]
+      s6 --> s1: the child taps a link in the header, the guide or the related games [when Grownups is one of Time left, gate shut, Today's time is up, Today's time is up, gate left open, the child has the phone, gate left open, the child has the phone]
+      s6 --> s0: you pick a level or you press আব#2494;র খ#2503;ল#2507; [when Grownups is one of Time left, gate shut, Today's time is up]
+      s6 --> s4: someone shares the link or prints [when Grownups is none of Rest screen, Time left, gate shut, Today's time is up, Today's time is up, showing a parent, showing a parent]
+      s7 --> s1: the child taps a link in the header, the guide or the related games [when Grownups is none of Today's time is up, a parent has the gate open, a parent has the gate open]
+      s7 --> s0: you pick a level [when Grownups is one of Time left, gate shut, Today's time is up]
+      s7 --> s4: someone shares the link or prints [when Grownups is none of Time left, gate shut, Today's time is up]
+    }
+    --
+    state "Window" as r1 {
+      s8: On the page
+      s9: #8212;
+      s10: Away
+      [*] --> s8
+      s8 --> s9: the child taps a link in the header, the guide or the related games [when Grownups is one of Time left, gate shut, Today's time is up, Today's time is up, gate left open, the child has the phone, gate left open, the child has the phone]
+      s8 --> s10: you go to another window or tab [when Game is none of Done screen, আর#2503;কট#2494; খ#2503;লব#2503;? menu and Grownups is one of Rest screen, Rest screen, a parent has the gate open, Rest screen, gate left open, the child has the phone, Time left, gate shut, Today's time is up]
+      s10 --> s8: you come back
+      s8 --> s9: someone shares the link or prints [when Game is one of Done screen, On the first item, আর#2503;কট#2494; খ#2503;লব#2503;? menu and Grownups is none of Rest screen, Time left, gate shut, Today's time is up, Today's time is up, showing a parent, showing a parent]
+    }
+    --
+    state "Grownups" as r2 {
+      s11: Time left, gate shut
+      s12: Rest screen
+      s13: #8212;
+      s14: Today's time is up
+      s15: Rest screen, a parent has the gate open
+      s16: Rest screen, gate left open, the child has the phone
+      s17: showing a parent
+      s18: a parent has the gate open
+      s19: gate left open, the child has the phone
+      s20: Today's time is up, showing a parent
+      s21: Today's time is up, a parent has the gate open
+      s22: Today's time is up, gate left open, the child has the phone
+      [*] --> s11
+      [*] --> s12
+      s11 --> s13: the child taps a link in the header, the guide or the related games [when Window is On the page]
+      s11 --> s14: today's time runs out [when Window is On the page]
+      s12 --> s15: a parent opens বড#2492;দ#2503;র জন#2509;য [when Window is On the page]
+      s14 --> s13: the child taps a link in the header, the guide or the related games [when Window is On the page]
+      s15 --> s11: someone gives ১০ ম#2495;ন#2495;ট more
+      s15 --> s12: someone presses বন#2509;ধ কর#2507;
+      s15 --> s12: you go to another window or tab [when Game is On the first item]
+      s15 --> s16: the parent hands the phone back
+      s15 --> s13: someone shares the link or prints
+      s16 --> s11: someone gives ১০ ম#2495;ন#2495;ট more
+      s16 --> s12: someone presses বন#2509;ধ কর#2507;
+      s16 --> s12: you go to another window or tab [when Game is On the first item]
+      s16 --> s13: someone shares the link or prints
+      s11 --> s17: you press আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও [when Game is Done screen and Window is On the page]
+      s11 --> s18: a parent opens বড#2492;দ#2503;র জন#2509;য [when Game is one of Done screen, আর#2503;কট#2494; খ#2503;লব#2503;? menu and Window is On the page]
+      s14 --> s12: you press শ#2503;ষ দ#2503;খ#2507; [when Game is last item solved and Window is On the page]
+      s14 --> s20: you press আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও [when Game is Done screen and Window is On the page]
+      s14 --> s21: a parent opens বড#2492;দ#2503;র জন#2509;য [when Game is one of Done screen, আর#2503;কট#2494; খ#2503;লব#2503;? menu and Window is On the page]
+      s17 --> s11: you press দ#2503;খ#2494;ন#2507; শ#2503;ষ
+      s17 --> s20: today's time runs out
+      s17 --> s18: a parent opens বড#2492;দ#2503;র জন#2509;য
+      s18 --> s11: someone presses বন#2509;ধ কর#2507;
+      s18 --> s19: the parent hands the phone back
+      s18 --> s21: today's time runs out
+      s18 --> s13: someone shares the link or prints
+      s19 --> s11: someone presses বন#2509;ধ কর#2507;
+      s19 --> s13: the child taps a link in the header, the guide or the related games or someone shares the link or prints
+      s19 --> s22: today's time runs out
+      s20 --> s14: you press দ#2503;খ#2494;ন#2507; শ#2503;ষ
+      s20 --> s21: a parent opens বড#2492;দ#2503;র জন#2509;য
+      s21 --> s14: someone presses বন#2509;ধ কর#2507;
+      s21 --> s13: someone shares the link or prints
+      s21 --> s22: the parent hands the phone back
+      s18 --> s17: someone presses বন#2509;ধ কর#2507; [when Game is Done screen]
+      s22 --> s14: someone presses বন#2509;ধ কর#2507;
+      s22 --> s13: the child taps a link in the header, the guide or the related games or someone shares the link or prints
+      s19 --> s17: someone presses বন#2509;ধ কর#2507; [when Game is Done screen]
+      s21 --> s20: someone presses বন#2509;ধ কর#2507; [when Game is Done screen]
+      s22 --> s20: someone presses বন#2509;ধ কর#2507; [when Game is Done screen]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 bugPath
+  class s1 pink
+  class s1 breaks
+  class s1 bugPath
+  class s2 teal
+  class s2 bugPath
+  class s3 teal
+  class s3 bugPath
+  class s4 pink
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 teal
+  class s5 bugPath
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 blue
+  class s7 breaks
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 pink
+  class s9 mayBreak
+  class s9 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 yellow
+  class s12 bugPath
+  class s13 pink
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s15 yellow
+  class s15 bugPath
+  class s16 yellow
+  class s16 breaks
+  class s16 bugPath
+  class s17 blue
+  class s18 blue
+  class s18 mayBreak
+  class s19 blue
+  class s19 breaks
+  class s20 blue
+  class s21 blue
+  class s21 mayBreak
+  class s22 blue
+  class s22 breaks

@@ -1,0 +1,146 @@
+---
+title: "Dosh ghater nouka (boat race): race, spin timer, away, sound, daily limit and gate"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: rest
+    lg2: done
+    lg3: Breaks EveryFinishedRaceCounts or FreshRaceStartsClean or NoShareLinkDuringARace or NothingRunsWhileAway
+    lg4: Breaks EveryFinishedRaceCounts or FreshRaceStartsClean or NoShareLinkDuringARace or NothingRunsWhileAway in some cases
+    lg5: Path to the EveryFinishedRaceCounts or FreshRaceStartsClean or NoShareLinkDuringARace or NothingRunsWhileAway bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Race" as r0 {
+      s0: Your turn
+      s1: Your চরক#2495; spinning
+      s2: Your turn, tap the ghats
+      s3: Your turn, the last race's চরক#2495; still spinning
+      s4: আব#2509;ব#2497;'s turn
+      s5: Your turn, a spin you never made is set
+      s6: Your boat at the last ghat, card coming
+      s7: Race card shows
+      s8: আব#2509;ব#2497;'s চরক#2495; spinning
+      s9: ন#2508;ক#2494; ঘ#2494;ট#2503; ব#2494;#2433;ধ#2494; হল#2507;
+      s10: Rest screen after the race
+      s11: আব#2509;ব#2497;'s boat counting
+      [*] --> s0
+      s0 --> s1: you spin your চরক#2495; [when Window is You're on the page]
+      s1 --> s2: the চরক#2495; stops
+      s1 --> s3: you tap a mode button or a ধ#2494;প
+      s2 --> s0: you tap a mode button or a ধ#2494;প
+      s2 --> s4: you tap the ghats to where it stops [when Window is You're on the page]
+      s2 --> s6: you tap the ghats to where it stops [when Window is You're on the page]
+      s3 --> s5: the চরক#2495; stops
+      s4 --> s0: you tap a mode button or a ধ#2494;প
+      s4 --> s8: a second later আব#2509;ব#2497; spins
+      s5 --> s0: you tap a mode button or a ধ#2494;প
+      s5 --> s4: you tap the ghats to where it stops [when Window is You're on the page]
+      s5 --> s6: you tap the ghats to where it stops [when Window is You're on the page]
+      s6 --> s7: 0.9 s later the card shows [when Today is one of Time left today, Time left today, a finished race never counted]
+      s6 --> s0: you tap a mode button or a ধ#2494;প
+      s7 --> s0: you press আব#2494;র খ#2503;ল#2507; or নত#2497;ন খ#2503;ল#2494; or you tap a mode button or a ধ#2494;প
+      s7 --> s9: you press শ#2503;ষ
+      s8 --> s3: you tap a mode button or a ধ#2494;প
+      s8 --> s11: the চরক#2495; stops
+      s6 --> s10: 0.9 s later the card shows [when Today is one of Today's time is up, Today's time is up, a finished race never counted]
+      s9 --> s0: you press আব#2494;র খ#2503;ল#2507; or নত#2497;ন খ#2503;ল#2494; or you tap a mode button or a ধ#2494;প
+      s10 --> s7: a grown-up gives ১০ more minutes
+      s11 --> s0: আব#2509;ব#2497;'s boat counts its ghats or you tap a mode button or a ধ#2494;প
+    }
+    --
+    state "Window" as r1 {
+      s12: You're on the page
+      s13: You're away
+      [*] --> s12
+      s12 --> s13: you leave (another window or tab)
+      s13 --> s12: you come back
+    }
+    --
+    state "Sound" as r2 {
+      s14: Sound on
+      s15: Sound off
+      [*] --> s14
+      s14 --> s15: you turn sound off [when Race is not Rest screen after the race and Window is You're on the page]
+      s15 --> s14: you turn sound on [when Race is not Rest screen after the race and Window is You're on the page]
+    }
+    --
+    state "Today" as r3 {
+      s16: Time left today
+      s17: Today's time is up
+      s18: Time left today, a finished race never counted
+      s19: Today's time is up, a finished race never counted
+      [*] --> s16
+      s16 --> s17: today's time runs out [when Window is You're on the page]
+      s16 --> s18: you tap a mode button or a ধ#2494;প [when Race is Your boat at the last ghat, card coming]
+      s18 --> s19: today's time runs out [when Window is You're on the page]
+      s17 --> s19: you tap a mode button or a ধ#2494;প [when Race is Your boat at the last ghat, card coming]
+      s17 --> s16: a grown-up gives ১০ more minutes [when Race is Rest screen after the race]
+      s18 --> s16: 0.9 s later the card shows [when Race is Your boat at the last ghat, card coming]
+      s19 --> s17: 0.9 s later the card shows [when Race is Your boat at the last ghat, card coming]
+    }
+    --
+    state "Gate" as r4 {
+      s20: বড#2492;দ#2503;র জন#2509;য closed
+      s21: Share link open
+      [*] --> s20
+      s20 --> s21: a grown-up opens বড#2492;দ#2503;র জন#2509;য [when Race is not Rest screen after the race and Window is You're on the page]
+      s21 --> s20: বন#2509;ধ কর#2507;, one use, a minute or hiding the tab closes it
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 teal
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 teal
+  class s3 mayBreak
+  class s3 bugPath
+  class s4 teal
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 teal
+  class s5 breaks
+  class s5 bugPath
+  class s6 teal
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 blue
+  class s8 teal
+  class s8 mayBreak
+  class s9 blue
+  class s10 yellow
+  class s11 teal
+  class s11 mayBreak
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 mayBreak
+  class s16 mayBreak
+  class s16 bugPath
+  class s17 mayBreak
+  class s18 teal
+  class s18 breaks
+  class s18 bugPath
+  class s19 teal
+  class s19 breaks
+  class s20 mayBreak
+  class s20 bugPath
+  class s21 mayBreak
+  class s21 bugPath

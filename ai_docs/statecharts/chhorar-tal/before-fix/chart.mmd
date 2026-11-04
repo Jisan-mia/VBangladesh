@@ -1,0 +1,170 @@
+---
+title: "ছডﬂ°°2492¶ßﬂ°°2494¶ßর তﬂ°°2494¶ßলﬂ°°2503¶ß: the round, the window, keys, the voice and the daily limit"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks EveryFinishCounts or NoReadingNeeded or SpaceNeverRestarts or SpaceReachesTheDrum or VoiceOnlyOnTheResult
+    lg4: Breaks EveryFinishCounts or NoReadingNeeded or SpaceNeverRestarts or SpaceReachesTheDrum or VoiceOnlyOnTheResult in some cases
+    lg5: Path to the EveryFinishCounts or NoReadingNeeded or SpaceNeverRestarts or SpaceReachesTheDrum or VoiceOnlyOnTheResult bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Round" as r0 {
+      s0: Drum waiting (ঢ#2507;ল#2503; চ#2494;প দ#2494;ও)
+      s1: ছড#2492;#2494; playing, first lines
+      s2: ছড#2492;#2494; playing, last line
+      s3: Rhyme pick, nothing spoken: only words to read
+      s4: Rhyme pick (the ছড#2492;#2494; was spoken)
+      s5: Right picture, card in 1.8 s
+      s6: ছড#2492;#2494; playing, first lines, the won round was never counted
+      s7: Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ)
+      s8: ছড#2492;#2494; playing, last line, the won round was never counted
+      s9: আজক#2503;র মত#2507; হল#2507;
+      [*] --> s0
+      s0 --> s1: you tap the drum or you tap a ছড#2492;#2494; number
+      s1 --> s2: the beat moves on [when Window is On the page]
+      s2 --> s1: you tap a ছড#2492;#2494; number [when Window is On the page]
+      s2 --> s3: the ছড#2492;#2494; ends and the pictures come [when Window is On the page and Keys is none of Nothing focused, Space scrolled the page and Voice is No Bangla voice on this phone and Sound is Sound on]
+      s2 --> s4: the ছড#2492;#2494; ends and the pictures come [when Window is On the page and Voice is not No Bangla voice on this phone]
+      s2 --> s1: you press Space [when Window is On the page and Keys is one of Focus on a ছড#2492;#2494; button, Space started the ছড#2492;#2494; over]
+      s3 --> s1: you tap a ছড#2492;#2494; number
+      s4 --> s1: you tap a ছড#2492;#2494; number
+      s4 --> s5: you tap the right picture
+      s5 --> s6: you tap a ছড#2492;#2494; number [when Window is On the page]
+      s5 --> s7: the done screen comes
+      s6 --> s1: you tap a ছড#2492;#2494; number [when Window is On the page]
+      s6 --> s8: the beat moves on [when Window is On the page]
+      s7 --> s1: you tap আব#2494;র খ#2503;ল#2507; or you tap a ছড#2492;#2494; number [when Window is On the page and Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+      s7 --> s9: you tap শ#2503;ষ [when Window is On the page and Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+      s8 --> s1: you tap a ছড#2492;#2494; number [when Window is On the page]
+      s8 --> s6: you press Space [when Window is On the page and Keys is not Focus on the drum]
+      s8 --> s4: the ছড#2492;#2494; ends and the pictures come [when Window is On the page]
+      s9 --> s1: you tap a ছড#2492;#2494; number
+    }
+    --
+    state "Window" as r1 {
+      s10: On the page
+      s11: Away (another window or tab)
+      [*] --> s10
+      s10 --> s11: you click into another window or hide the tab [when Round is one of Right picture, card in 1.8 s, ছড#2492;#2494; playing, first lines, ছড#2492;#2494; playing, first lines, the won round was never counted, ছড#2492;#2494; playing, last line, ছড#2492;#2494; playing, last line, the won round was never counted and Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+      s11 --> s10: you come back
+    }
+    --
+    state "Keys" as r2 {
+      s12: Nothing focused
+      s13: Focus on the drum
+      s14: Focus on a ছড#2492;#2494; button
+      s15: Space started the ছড#2492;#2494; over
+      s16: Space scrolled the page
+      [*] --> s12
+      s12 --> s13: you tap the drum [when Round is one of Drum waiting (ঢ#2507;ল#2503; চ#2494;প দ#2494;ও), ছড#2492;#2494; playing, first lines, ছড#2492;#2494; playing, last line and Window is On the page and Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+      s12 --> s14: you tap a ছড#2492;#2494; number [when Window is On the page and Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+      s13 --> s14: you tap a ছড#2492;#2494; number [when Window is On the page]
+      s14 --> s13: you tap the drum [when Round is none of Rhyme pick (the ছড#2492;#2494; was spoken), Rhyme pick, nothing spoken: only words to read and Window is On the page]
+      s14 --> s15: you press Space [when Round is none of Rhyme pick (the ছড#2492;#2494; was spoken), Rhyme pick, nothing spoken: only words to read and Window is On the page]
+      s13 --> s12: the ছড#2492;#2494; ends and the pictures come [when Round is one of ছড#2492;#2494; playing, last line, ছড#2492;#2494; playing, last line, the won round was never counted and Window is On the page]
+      s15 --> s14: you tap a ছড#2492;#2494; number [when Window is On the page]
+      s15 --> s14: the ছড#2492;#2494; ends and the pictures come [when Round is one of ছড#2492;#2494; playing, last line, ছড#2492;#2494; playing, last line, the won round was never counted and Window is On the page]
+      s14 --> s12: you tap the right picture [when Round is Rhyme pick (the ছড#2492;#2494; was spoken) and Window is On the page and Voice is not No Bangla voice on this phone]
+      s15 --> s12: the ছড#2492;#2494; ends and the pictures come [when Round is one of ছড#2492;#2494; playing, last line, ছড#2492;#2494; playing, last line, the won round was never counted and Window is On the page]
+      s12 --> s16: you press Space [when Round is one of ছড#2492;#2494; playing, first lines, ছড#2492;#2494; playing, last line and Window is On the page and Voice is not No Bangla voice on this phone and Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+      s16 --> s14: you tap a ছড#2492;#2494; number [when Window is On the page]
+      s16 --> s12: the ছড#2492;#2494; ends and the pictures come [when Round is ছড#2492;#2494; playing, last line and Window is On the page]
+    }
+    --
+    state "Voice" as r3 {
+      s17: No Bangla voice on this phone
+      s18: Voice quiet
+      s19: Voice reading the ছড#2492;#2494;
+      [*] --> s17
+      [*] --> s18
+      s18 --> s19: you tap the right picture [when Round is Rhyme pick (the ছড#2492;#2494; was spoken) and Window is On the page and Keys is one of Focus on a ছড#2492;#2494; button, Nothing focused and Sound is Sound on and Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+      s19 --> s18: the voice finishes
+      s19 --> s18: you tap the right picture [when Round is Rhyme pick (the ছড#2492;#2494; was spoken) and Window is On the page and Keys is one of Focus on a ছড#2492;#2494; button, Nothing focused and Sound is Sound off and Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+    }
+    --
+    state "Sound" as r4 {
+      s20: Sound on
+      s21: Sound off
+      [*] --> s20
+      s20 --> s21: you turn sound off [when Round is one of Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ), Right picture, card in 1.8 s and Window is On the page and Keys is Nothing focused and Voice is not No Bangla voice on this phone and Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+      s21 --> s20: you turn sound on [when Window is On the page and Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+    }
+    --
+    state "Today" as r5 {
+      s22: Time left today
+      s23: Today's time is up
+      s24: Rest screen (আজ এট#2497;ক#2497;ই)
+      [*] --> s22
+      s22 --> s23: today's time runs out
+      s23 --> s24: the done screen comes [when Round is Right picture, card in 1.8 s and Keys is Nothing focused and Voice is not No Bangla voice on this phone]
+      s24 --> s22: a parent gives ১০ more minutes [when Window is On the page]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 teal
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 teal
+  class s3 breaks
+  class s3 bugPath
+  class s4 teal
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 teal
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 teal
+  class s6 breaks
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 teal
+  class s8 breaks
+  class s9 blue
+  class s9 mayBreak
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 teal
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 teal
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 teal
+  class s15 breaks
+  class s15 bugPath
+  class s16 teal
+  class s16 breaks
+  class s16 bugPath
+  class s17 teal
+  class s17 bugPath
+  class s18 bugPath
+  class s19 mayBreak
+  class s19 bugPath
+  class s20 mayBreak
+  class s20 bugPath
+  class s21 mayBreak
+  class s22 mayBreak
+  class s22 bugPath
+  class s23 mayBreak
+  class s24 yellow
+  class s24 mayBreak

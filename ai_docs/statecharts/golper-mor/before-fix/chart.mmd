@@ -1,0 +1,143 @@
+---
+title: "Golper mor (story turns): reading, read marks across tabs, daily limit and gates"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: rest
+    lg2: done
+    lg3: Breaks NoStoryAfterTimeIsUp or ReadMarksNeverVanish
+    lg4: Path to the NoStoryAfterTimeIsUp or ReadMarksNeverVanish bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Story" as r0 {
+      s0: Shelf
+      s1: Reading up to the ম#2507;ড#2492;
+      s2: Shelf, বড#2492;দ#2503;র জন#2509;য open
+      s3: Reading turn ১
+      s4: Reading turn ২
+      s5: Reading up to the ম#2507;ড#2492; after today's time is up
+      s6: Rest screen as the shelf opens
+      s7: End page
+      s8: Reading turn ১ after today's time is up
+      s9: Reading turn ২ after today's time is up
+      s10: Rest screen after a story
+      s11: আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও
+      [*] --> s0
+      s0 --> s1: you open the story or press আব#2494;র পড#2492;#2507; [when Today is Time left today]
+      s0 --> s2: a grown-up opens বড#2492;দ#2503;র জন#2509;য
+      s1 --> s0: you press #8592; সব গল#2509;প or শ#2503;ষ
+      s1 --> s3: you pick a turn at the ম#2507;ড#2492;
+      s1 --> s4: you pick a turn at the ম#2507;ড#2492;
+      s0 --> s5: you open the story or press আব#2494;র পড#2492;#2507; [when Today is Today's time is up]
+      s0 --> s6: you open or reload the page [when Today is Today's time is up]
+      s2 --> s0: you press বন#2509;ধ কর#2507;
+      s2 --> s1: you open the story or press আব#2494;র পড#2492;#2507; [when Today is Time left today]
+      s3 --> s0: you press #8592; সব গল#2509;প or শ#2503;ষ
+      s3 --> s7: you press গল#2509;প শ#2503;ষ [when Today is Time left today]
+      s4 --> s7: you press গল#2509;প শ#2503;ষ [when Today is Time left today]
+      s4 --> s0: you press #8592; সব গল#2509;প or শ#2503;ষ
+      s1 --> s6: you open or reload the page [when Today is Today's time is up]
+      s5 --> s0: you press #8592; সব গল#2509;প or শ#2503;ষ
+      s5 --> s6: you open or reload the page [when Today is Today's time is up]
+      s5 --> s8: you pick a turn at the ম#2507;ড#2492;
+      s5 --> s9: you pick a turn at the ম#2507;ড#2492;
+      s6 --> s0: a grown-up gives ১০ more minutes
+      s2 --> s5: you open the story or press আব#2494;র পড#2492;#2507; [when Today is Today's time is up]
+      s2 --> s6: you open or reload the page [when Today is Today's time is up]
+      s7 --> s1: you open the story or press আব#2494;র পড#2492;#2507; [when Today is Time left today]
+      s7 --> s1: you press অন#2509;যট#2494; ব#2503;ছ#2503; দ#2503;খ#2507;
+      s7 --> s0: you press #8592; সব গল#2509;প or শ#2503;ষ
+      s7 --> s11: you press আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও
+      s3 --> s6: you open or reload the page [when Today is Today's time is up]
+      s3 --> s10: you press গল#2509;প শ#2503;ষ [when Today is Today's time is up]
+      s4 --> s10: you press গল#2509;প শ#2503;ষ [when Today is Today's time is up]
+      s4 --> s6: you open or reload the page [when Today is Today's time is up]
+      s8 --> s0: you press #8592; সব গল#2509;প or শ#2503;ষ
+      s8 --> s6: you open or reload the page [when Today is Today's time is up]
+      s8 --> s10: you press গল#2509;প শ#2503;ষ [when Today is Today's time is up]
+      s9 --> s10: you press গল#2509;প শ#2503;ষ [when Today is Today's time is up]
+      s9 --> s0: you press #8592; সব গল#2509;প or শ#2503;ষ
+      s9 --> s6: you open or reload the page [when Today is Today's time is up]
+      s7 --> s5: you open the story or press আব#2494;র পড#2492;#2507; [when Today is Today's time is up]
+      s7 --> s6: you open or reload the page [when Today is Today's time is up]
+      s10 --> s7: a grown-up gives ১০ more minutes
+      s10 --> s6: you open or reload the page
+      s11 --> s7: you press দ#2503;খ#2494;ন#2507; শ#2503;ষ
+      s7 --> s5: you press অন#2509;যট#2494; ব#2503;ছ#2503; দ#2503;খ#2507;
+      s11 --> s6: you open or reload the page [when Today is Today's time is up]
+      s8 --> s7: you press গল#2509;প শ#2503;ষ [when Marks is none of Saved: nothing, Saved: turn ২, this tab shows nothing and Today is Time left today]
+      s9 --> s7: you press গল#2509;প শ#2503;ষ [when Marks is none of Saved: nothing, Saved: turn ২, this tab shows nothing and Today is Time left today]
+    }
+    --
+    state "Marks" as r1 {
+      s12: Saved: nothing
+      s13: Saved: turn ২, this tab shows nothing
+      s14: Saved: turn ২
+      s15: Saved: turn ১
+      s16: A turn you read lost its mark. Saved: turn ১
+      s17: A turn you read lost its mark. Saved: turn ২, this tab shows turn ১
+      s18: Saved: both turns
+      s19: A turn you read lost its mark. Saved: turn ২, this tab shows both turns
+      [*] --> s12
+      s12 --> s13: in another tab you finish turn ২
+      s12 --> s15: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ১, Reading turn ১ after today's time is up]
+      s12 --> s14: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ২, Reading turn ২ after today's time is up]
+      s13 --> s14: you open or reload the page [when Today is Today's time is up]
+      s15 --> s17: in another tab you finish turn ২
+      s13 --> s16: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ১, Reading turn ১ after today's time is up]
+      s13 --> s14: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ২, Reading turn ২ after today's time is up]
+      s14 --> s18: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ১, Reading turn ১ after today's time is up]
+      s17 --> s14: you open or reload the page [when Today is Today's time is up]
+      s15 --> s18: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ২, Reading turn ২ after today's time is up]
+      s18 --> s19: in another tab you finish turn ২
+      s17 --> s16: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ১, Reading turn ১ after today's time is up]
+      s16 --> s18: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ২, Reading turn ২ after today's time is up]
+      s17 --> s18: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ২, Reading turn ২ after today's time is up]
+      s19 --> s14: you open or reload the page [when Today is Today's time is up]
+      s19 --> s18: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ১, Reading turn ১ after today's time is up, Reading turn ২, Reading turn ২ after today's time is up]
+    }
+    --
+    state "Today" as r2 {
+      s20: Time left today
+      s21: Today's time is up
+      [*] --> s20
+      s20 --> s21: today's time runs out
+      s21 --> s20: a grown-up gives ১০ more minutes [when Story is one of Rest screen after a story, Rest screen as the shelf opens]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 blue
+  class s0 bugPath
+  class s1 teal
+  class s1 bugPath
+  class s2 blue
+  class s3 teal
+  class s3 bugPath
+  class s4 teal
+  class s5 teal
+  class s5 breaks
+  class s5 bugPath
+  class s6 yellow
+  class s7 blue
+  class s7 bugPath
+  class s8 teal
+  class s8 breaks
+  class s9 teal
+  class s9 breaks
+  class s10 yellow
+  class s11 blue
+  class s12 bugPath
+  class s15 bugPath
+  class s16 breaks
+  class s17 breaks
+  class s17 bugPath
+  class s19 breaks
+  class s20 bugPath
+  class s21 bugPath

@@ -6,7 +6,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 |---|---|---|---|
 | kalbaishakhi-aam | S01 | analysed | rewriting |
 | dudh-uthlano | S01 | analysed | todo |
-| jhalmuri-sap | S01 | analysed | rewriting |
+| jhalmuri-sap | S01 | analysed | done |
 | danguli | S02 | analysed | todo |
 | sir-ghurlei-thamo | S02 | analysed | todo |
 | deri-hoye-gelo | S02 | analysed | todo |
@@ -31,7 +31,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | sudoku | S09 | analysed | done |
 | switchboard | S09 | analysed | todo |
 | golokdhadha | S09 | analysed | todo |
-| ponero-ghor | S10 | analysed | todo |
+| ponero-ghor | S10 | analysed | rewriting |
 | chhobi-photao | S10 | analysed | todo |
 | ghontar-sur | S10 | analysed | todo |
 | konta-nei | S11 | analysed | todo |
@@ -45,7 +45,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | chhip-felo | S13 | analysed | todo |
 | latim | S14 | analysed | todo |
 | nodi-par | S14 | analysed | todo |
-| penalty | S14 | analysed | todo |
+| penalty | S14 | analysed | rewriting |
 | golir-badminton | S15 | analysed | todo |
 | kagojer-urojahaj | S15 | analysed | todo |
 | marble-sinri | S15 | analysed | todo |
