@@ -65,6 +65,11 @@ Then build it.
   - Never change `unlockedLevel` itself.
 - **Result keys need a fresh press.** A key held through the end of a round (Space, Enter) must not skip the result or start the next run. Accept result-screen keys only from a keydown that arrives after the screen appears, with `!e.repeat`.
 - **Enter and Space go to the game, not to the last focused button.** Blur the button after a click, or handle the game keys at `window` with `preventDefault`, so one Enter never wipes a board or undoes a move.
+- **Kids' games:**
+  - Record the stars and check `atBreak()` at the moment the round is won, not inside a delay timer that a quick tap can cancel.
+  - The end buttons (আবার খেলো, শেষ) are pictures at least 96 px.
+  - `GamePage` gives the kids-only header and rails; nothing in the child's view links to grown-up pages.
+  - `speak()` is now silent when sound is off.
 - **ধীরে খেলো must not make stars easier to earn,** unless the design says so explicitly.
 
 ## Scope
