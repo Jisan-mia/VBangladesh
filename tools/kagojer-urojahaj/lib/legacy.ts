@@ -1,29 +1,75 @@
-// A wave's whole plan, made from the seed: which cloud comes when and where, every raindrop, the storm's rain curtains.
-// Every position is a pure function of time, so the game, the fairness check and a friend's phone all see the same sky.
-// Pure and server-safe (share.ts checks links against it).
+// The original game (2025: a plane at the bottom of a monsoon sky popping clouds), kept bit for bit so old challenge links
+// (`s t l c r h n`) still check out: no more clouds than that seed's sky had, no score it couldn't make. Nothing here is played any more.
+// Pure and server-safe (share.ts reads links through link.ts). A fingerprint test pins it to the old generator.
 import { makeRng, pick } from "../../../shared/game-core";
-import { LEVELS, type LevelSpec, type Pattern } from "./levels";
+
+type Pattern = "single" | "pair" | "row" | "column" | "vee" | "diag" | "zig";
+type StormSpec = { hp: number; life: number; wide: boolean; every: number; warn: number; spit: boolean };
+type LevelSpec = {
+  groups: number;
+  /** Seconds between cloud groups. */
+  gap: number;
+  patterns: Pattern[];
+  /** Share of dark (two-hit) clouds. */
+  dark: number;
+  /** Seconds between drops from one dark cloud; 0 means dark clouds don't drip yet. */
+  rain: number;
+  /** How fast clouds come down, in sky units a second (the sky is 100 wide, 125 tall). */
+  speed: number;
+  /** How far clouds sway left and right. */
+  sway: number;
+  storm?: StormSpec;
+};
+
+/** The old 20 waves (four places × five, a কালবৈশাখী on every fifth). */
+const basic: Pattern[] = ["single", "pair"];
+const LEVELS: LevelSpec[] = [
+  { groups: 7, gap: 2.6, patterns: basic, dark: 0, rain: 0, speed: 15, sway: 0 },
+  { groups: 9, gap: 2.6, patterns: [...basic, "row"], dark: 0, rain: 0, speed: 16, sway: 0 },
+  { groups: 9, gap: 2.6, patterns: [...basic, "row", "column"], dark: 0.3, rain: 0, speed: 16, sway: 0 },
+  { groups: 10, gap: 2.6, patterns: [...basic, "row", "column"], dark: 0.35, rain: 2.2, speed: 17, sway: 0 },
+  { groups: 4, gap: 2.6, patterns: [...basic, "row"], dark: 0.3, rain: 2.4, speed: 17, sway: 0, storm: { hp: 40, life: 26, wide: false, every: 3.2, warn: 1.0, spit: false } },
+
+  { groups: 10, gap: 2.5, patterns: [...basic, "row", "zig"], dark: 0.35, rain: 2.2, speed: 17, sway: 12 },
+  { groups: 10, gap: 2.5, patterns: [...basic, "row", "zig", "vee"], dark: 0.35, rain: 2.1, speed: 18, sway: 12 },
+  { groups: 10, gap: 2.5, patterns: [...basic, "row", "column", "zig", "vee"], dark: 0.5, rain: 1.9, speed: 18, sway: 12 },
+  { groups: 11, gap: 2.4, patterns: [...basic, "row", "column", "zig", "vee"], dark: 0.45, rain: 1.9, speed: 21, sway: 12 },
+  { groups: 4, gap: 2.5, patterns: [...basic, "row", "zig"], dark: 0.4, rain: 2.0, speed: 19, sway: 12, storm: { hp: 55, life: 27, wide: false, every: 3.0, warn: 0.95, spit: true } },
+
+  { groups: 11, gap: 2.4, patterns: [...basic, "row", "zig", "vee", "diag"], dark: 0.45, rain: 1.9, speed: 20, sway: 14 },
+  { groups: 11, gap: 2.4, patterns: [...basic, "row", "zig", "vee", "diag"], dark: 0.5, rain: 1.8, speed: 20, sway: 18 },
+  { groups: 13, gap: 2.2, patterns: [...basic, "row", "column", "zig", "vee", "diag"], dark: 0.5, rain: 1.8, speed: 21, sway: 18 },
+  { groups: 13, gap: 2.2, patterns: [...basic, "row", "column", "zig", "vee", "diag"], dark: 0.62, rain: 1.7, speed: 21, sway: 18 },
+  { groups: 4, gap: 2.4, patterns: [...basic, "row", "zig", "diag"], dark: 0.45, rain: 1.9, speed: 20, sway: 14, storm: { hp: 70, life: 28, wide: true, every: 2.8, warn: 0.9, spit: true } },
+
+  { groups: 13, gap: 2.2, patterns: [...basic, "row", "column", "zig", "vee", "diag"], dark: 0.5, rain: 1.7, speed: 22, sway: 18 },
+  { groups: 13, gap: 2.2, patterns: [...basic, "row", "zig", "vee", "diag"], dark: 0.55, rain: 1.7, speed: 23, sway: 22 },
+  { groups: 13, gap: 2.1, patterns: [...basic, "row", "column", "zig", "vee", "diag"], dark: 0.65, rain: 1.5, speed: 23, sway: 20 },
+  { groups: 15, gap: 2.0, patterns: [...basic, "row", "column", "zig", "vee", "diag"], dark: 0.6, rain: 1.5, speed: 25, sway: 20 },
+  { groups: 5, gap: 2.2, patterns: [...basic, "row", "zig", "diag"], dark: 0.5, rain: 1.8, speed: 22, sway: 16, storm: { hp: 85, life: 30, wide: true, every: 2.5, warn: 0.85, spit: true } },
+];
+export const LEGACY_COUNT = LEVELS.length;
 
 /** The sky is 100 units wide and 125 tall (4:5); the plane flies along a fixed line near the bottom. */
-export const W = 100, H = 125;
-export const PLANE_Y = 108, PLANE_HH = 4.5, PLANE_DROP_HW = 3.4;
-export const X_MIN = 6, X_MAX = 94;
+const W = 100, H = 125;
+const PLANE_Y = 108, PLANE_HH = 4.5, PLANE_DROP_HW = 3.4;
+const X_MIN = 6, X_MAX = 94;
 /** The tap buttons move the plane this fast; a drag may go faster. Fairness is proved at button speed. */
-export const BUTTON_SPEED = 72, DRAG_SPEED = 170;
-export const DROP_R = 1.4;
-export const STORM = -1;
+const BUTTON_SPEED = 72;
+const DROP_R = 1.4;
+const STORM = -1;
 export const STORM_WEIGHT = 5, STORM_SUNS = 5, STORM_POINTS = 150, SUN_POINTS = 10, COMBO_CAP = 16;
-export const STORM_Y = 20, STORM_RAIN_Y = 34;
+const STORM_Y = 20, STORM_RAIN_Y = 34;
 const CURTAIN_ROWS = 4, ROW_GAP = 0.12, STORM_RISE = 17;
 
-export type CloudKind = "puff" | "dark" | "spit";
-export type CloudPlan = {
+type CloudKind = "puff" | "dark" | "spit";
+type CloudPlan = {
   kind: CloudKind; t0: number; x0: number; vy: number; sway: number; freq: number; phase: number;
   hp: number; rw: number; rh: number; points: number; weight: number; group: number; fromStorm: boolean;
 };
-export type DropPlan = { t: number; x: number; y: number; vy: number; source: number };
-export type Curtain = { t: number; warn: number; slots: readonly number[] };
-export type StormPlan = { t0: number; life: number; hp: number; amp: number; rw: number; rh: number; curtains: Curtain[] };
+type DropPlan = { t: number; x: number; y: number; vy: number; source: number };
+type Curtain = { t: number; warn: number; slots: readonly number[] };
+type StormPlan = { t0: number; life: number; hp: number; amp: number; rw: number; rh: number; curtains: Curtain[] };
 export type Wave = {
   seed: number; level: number; clouds: CloudPlan[]; drops: DropPlan[]; storm: StormPlan | null;
   /** Clouds that count towards the second star (the storm counts as 5), and how many you need. */
@@ -38,30 +84,19 @@ const KINDS = {
   spit: { rw: 6, rh: 4.5, hp: 1, points: 5, weight: 0 },
 } as const;
 
-export const cloudX = (c: CloudPlan, t: number) => c.x0 + c.sway * Math.sin(c.freq * (t - c.t0) + c.phase);
-export const cloudY = (c: CloudPlan, t: number) => -c.rh + c.vy * (t - c.t0);
-export const cloudGoneAt = (c: CloudPlan) => c.t0 + (H + 2 * c.rh) / c.vy;
-export const stormX = (s: StormPlan, t: number) => 50 + s.amp * Math.sin(0.55 * (t - s.t0));
-export function stormY(s: StormPlan, t: number) {
-  const enter = -14 + STORM_RISE * (t - s.t0), leave = STORM_Y - STORM_RISE * (t - s.t0 - s.life);
-  return Math.min(STORM_Y, enter, t > s.t0 + s.life ? leave : STORM_Y);
-}
-/** The storm rains and throws clouds only between arriving and leaving. */
-export const stormActive = (s: StormPlan, t: number) => t >= s.t0 && t < s.t0 + s.life;
-export const stormGoneAt = (s: StormPlan) => s.t0 + s.life + (STORM_Y + 16) / STORM_RISE;
+const cloudX = (c: CloudPlan, t: number) => c.x0 + c.sway * Math.sin(c.freq * (t - c.t0) + c.phase);
+const cloudY = (c: CloudPlan, t: number) => -c.rh + c.vy * (t - c.t0);
+const cloudGoneAt = (c: CloudPlan) => c.t0 + (H + 2 * c.rh) / c.vy;
+const stormX = (s: StormPlan, t: number) => 50 + s.amp * Math.sin(0.55 * (t - s.t0));
+const stormGoneAt = (s: StormPlan) => s.t0 + s.life + (STORM_Y + 16) / STORM_RISE;
 
 // Hitboxes sit inside the drawn shapes, so a graze never counts against you. A cloud can only wet the plane
 // if it's narrower than the paper balls' reach, so holding still under a cloud always pops it first.
-export const cloudHalfX = (c: Pick<CloudPlan, "rw">) => c.rw * 0.6 + PLANE_DROP_HW;
-export const cloudHalfY = (c: Pick<CloudPlan, "rh">) => c.rh * 0.7 + PLANE_HH;
-export const ballReach = (c: Pick<CloudPlan, "rw">) => c.rw * 0.95;
-export const cloudHitsPlane = (c: CloudPlan, cx: number, cy: number, px: number) =>
-  Math.abs(cx - px) < cloudHalfX(c) && Math.abs(cy - PLANE_Y) < cloudHalfY(c);
-export const dropHitsPlane = (dx: number, dy: number, px: number) =>
-  Math.abs(dx - px) < DROP_R + PLANE_DROP_HW && Math.abs(dy - PLANE_Y) < DROP_R + PLANE_HH;
+const cloudHalfX = (c: Pick<CloudPlan, "rw">) => c.rw * 0.6 + PLANE_DROP_HW;
+const cloudHalfY = (c: Pick<CloudPlan, "rh">) => c.rh * 0.7 + PLANE_HH;
 
 /** The storm's rain falls in nine 10-wide lanes. The patterns cycle in a fixed order, so you can learn them: left, right, edges, middle. */
-export const LANE = (slot: number) => 10 + slot * 10;
+const LANE = (slot: number) => 10 + slot * 10;
 const CURTAINS = {
   narrow: [[0, 1, 2, 3], [5, 6, 7, 8], [0, 1, 7, 8], [3, 4, 5]],
   wide: [[0, 1, 2, 3, 4], [4, 5, 6, 7, 8], [0, 1, 2, 6, 7, 8], [2, 3, 4, 5, 6]],
@@ -136,7 +171,7 @@ type Hazard = { from: number; to: number; cloud: CloudPlan | null; drop: DropPla
  * Returns the first moment no reachable spot is dry, or -1 when a path always exists at button speed.
  * With `keep`, also returns that path: one x per step.
  */
-export function sweep(wave: Wave, dt = 1 / 30, margin = 0.6, keep = false): { failAt: number; path: Float32Array | null } {
+function sweep(wave: Wave, dt = 1 / 30, margin = 0.6, keep = false): { failAt: number; path: Float32Array | null } {
   const hazards: Hazard[] = [];
   for (const c of wave.clouds) {
     const reach = cloudHalfY(c);
@@ -203,7 +238,7 @@ export function sweep(wave: Wave, dt = 1 / 30, margin = 0.6, keep = false): { fa
 }
 
 /** The wave for a seed and level: generated, then repaired until the sweep finds a dry path the whole way. */
-export function makeWave(seed: number, level: number): Wave {
+export function makeLegacyWave(seed: number, level: number): Wave {
   const spec = LEVELS[level - 1];
   const rng = makeRng((seed ^ Math.imul(level, 0x9e3779b1)) >>> 0 || 1);
   const groups: Group[] = [];
@@ -252,3 +287,7 @@ export function makeWave(seed: number, level: number): Wave {
   // Never reached in tests; a sky with no clouds is still fair.
   return assemble(seed, level, spec, [], null, makeRng(rainSeed));
 }
+
+/** The old stars: none when soaked (3 hits); else 1, +1 for enough clouds, +1 for never wet. */
+export const legacyStars = (wave: Pick<Wave, "goal">, popped: number, hits: number) =>
+  hits >= 3 ? 0 : 1 + (popped >= wave.goal ? 1 : 0) + (hits === 0 ? 1 : 0);

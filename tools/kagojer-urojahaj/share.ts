@@ -1,16 +1,16 @@
 import type { ToolShare } from "../../shared/share-types";
-import { cardHash, parseCard, previewTitle } from "./lib/result";
+import { parseShared, previewTitle, sharedHash } from "./lib/link";
 
 export const share: ToolShare = {
   normalize(state) {
-    const card = parseCard(state);
-    return card ? cardHash(card) : null;
+    const shared = parseShared(state);
+    return shared ? sharedHash(shared) : null;
   },
   preview(state) {
-    const card = parseCard(state);
+    const shared = parseShared(state);
     return {
-      title: card ? previewTitle(card) : "কাগজের উড়োজাহাজ: তোমার প্লেন শুকনো থাকবে?",
-      description: "খাতার পাতার প্লেনে বর্ষার মেঘ ফাটাও, রোদ কুড়াও। একই আকাশে খেলে দেখো কে বেশি পয়েন্ট পায়। ফ্রি।",
+      title: shared ? previewTitle(shared) : "কাগজের উড়োজাহাজ: তোমার প্লেন কতদূর যাবে?",
+      description: "খাতার পাতার প্লেন ছোড়ো, হাওয়া দেখে ওড়াও, লাল দাগে নামাও। একই উড়ানে খেলে দেখো কে বেশি পয়েন্ট পায়। ফ্রি।",
     };
   },
 };

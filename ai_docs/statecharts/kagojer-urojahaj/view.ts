@@ -1,22 +1,22 @@
-export const title = "Kagojer Urojahaj (কাগজের উড়োজাহাজ): wave, window, steering and wind";
-const game = (v: any) => v.view === "end" ? (v.cheer ? "Result, cheer coming" : "Result shows") : v.paused ? "Paused" : v.view === "ready" ? "First screen (উড়াও)" : "Wave in play";
-const moving = (v: any) => v.view === "play" && !v.paused && v.visible && !v.away;
-const where = (v: any) => !v.visible ? "Tab hidden" : !v.focused ? (moving(v) ? "Away, sky moving" : "Away, sky frozen") : "On the page";
-const steering = (v: any) => v.held && !v.hand ? "Plane steers on its own" : v.held ? "You steer" : v.hand ? "Holding, game didn't notice" : "Hands off";
+export const title = "Kagojer Urojahaj after the rewrite: flight, list, window, hold and wind";
+const game = (v: any) => v.picking ? (v.phase === "paused" ? "সব লেভেল open, flight paused" : "সব লেভেল open")
+  : ({ title: "Title (ছোড়ো)", story: "Story panels", flying: "Plane flying", paused: "Paused", over: "End screen" } as any)[v.phase];
 export const state = (v: any) => ({
   Game: game(v),
-  You: where(v),
-  Steering: steering(v),
-  Wind: v.wind === "real" && v.sound ? "Wind blows" : v.sound ? "Wind quiet" : "Sound off",
+  Window: !v.visible ? "Tab hidden" : v.focused ? "You're on the page" : "Another window has focus",
 });
-const labels: Record<string, string> = {
-  YouLaunch: "you press উড়াও",
-  YouHoldSteer: "you hold a side",
+export const step = (action: string) => ({
+  YouThrow: "you press ছোড়ো",
+  YouPress: "you press the scene (or Space)",
   YouLetGo: "you let go",
-  TheWaveEnds: "the wave ends",
-  TheCheerPlays: "the cheer plays",
-  YouPlayAgain: "you play again or pick a level",
-  YouPause: "you press থামাও or P",
+  StoryEnds: "the story ends",
+  TheFlightEnds: "the plane lands or the last page falls",
+  TheCheerPlays: "the celebration plays",
+  YouPlayAgain: "you press আবার খেলো / পরের লেভেল",
+  YouReset: "you restart or pick a level",
+  YouOpenTheList: "you open সব লেভেল",
+  YouCloseTheList: "you close সব লেভেল",
+  YouPause: "you press P or ⏸",
   YouResume: "you press চালিয়ে যাও",
   WindowBlurs: "you click into another window",
   WindowFocuses: "you come back to the window",
@@ -24,7 +24,6 @@ const labels: Record<string, string> = {
   TabShows: "the tab shows again",
   SoundOff: "you turn sound off",
   SoundOn: "you turn sound on",
-};
-export const step = (action: string) => labels[action] ?? action;
-export const group = (v: any) => v.view === "end" ? "done" : v.paused ? "held" : "play";
-export const colors = { play: "teal", held: "yellow", done: "blue" };
+} as Record<string, string>)[action] ?? action;
+export const group = (v: any) => v.phase === "over" ? "done" : v.phase === "paused" || v.picking ? "held" : v.phase === "title" ? "wait" : "play";
+export const colors = { wait: "blue", play: "teal", held: "yellow", done: "blue" };

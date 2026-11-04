@@ -1,0 +1,66 @@
+---
+title: "Kagojer Urojahaj after the rewrite: flight, list, window, hold and wind"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: wait
+    lg1: play
+    lg2: held
+    lg3: done
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Title (ছ#2507;ড#2492;#2507;)
+      s1: Plane flying
+      s2: Story panels
+      s3: সব ল#2503;ভ#2503;ল open
+      s4: End screen
+      s5: Paused
+      s6: সব ল#2503;ভ#2503;ল open, flight paused
+      [*] --> s0
+      s0 --> s1: you press the scene (or Space) or you press ছ#2507;ড#2492;#2507; [when You're on the page]
+      s0 --> s2: you press ছ#2507;ড#2492;#2507; [when You're on the page]
+      s0 --> s3: you open সব ল#2503;ভ#2503;ল [when You're on the page]
+      s1 --> s4: the plane lands or the last page falls
+      s1 --> s5: you hide the tab or you click into another window or you press P or #9208;
+      s1 --> s6: you open সব ল#2503;ভ#2503;ল
+      s1 --> s0: you restart or pick a level
+      s2 --> s0: you restart or pick a level
+      s2 --> s1: the story ends
+      s2 --> s5: you hide the tab or you click into another window or you press P or #9208;
+      s2 --> s6: you open সব ল#2503;ভ#2503;ল
+      s3 --> s0: you close সব ল#2503;ভ#2503;ল or you restart or pick a level [when You're on the page]
+      s4 --> s1: you press আব#2494;র খ#2503;ল#2507; / পর#2503;র ল#2503;ভ#2503;ল [when You're on the page]
+      s4 --> s3: you open সব ল#2503;ভ#2503;ল [when You're on the page]
+      s4 --> s0: you restart or pick a level [when You're on the page]
+      s5 --> s6: you open সব ল#2503;ভ#2503;ল [when You're on the page]
+      s5 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you press the scene (or Space) [when You're on the page]
+      s5 --> s0: you restart or pick a level [when You're on the page]
+      s6 --> s1: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+      s6 --> s0: you restart or pick a level [when You're on the page]
+      s3 --> s4: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+    }
+    --
+    state "Window" as r1 {
+      s7: You're on the page
+      s8: Tab hidden
+      s9: Another window has focus
+      [*] --> s7
+      s7 --> s8: you hide the tab
+      s7 --> s9: you click into another window
+      s8 --> s7: the tab shows again
+      s9 --> s7: you come back to the window
+      s9 --> s8: you hide the tab
+    }
+  }
+  class s0 blue
+  class s1 teal
+  class s2 teal
+  class s4 blue
+  class s5 yellow
+  class s6 yellow

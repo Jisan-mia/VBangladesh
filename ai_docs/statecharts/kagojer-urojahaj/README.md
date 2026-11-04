@@ -1,4 +1,103 @@
-# কাগজের উড়োজাহাজ: statechart (before the rewrite)
+# কাগজের উড়োজাহাজ: statechart
+
+**After the rewrite (Nov 2026)** the game is a paper-plane glide game: throw, feather the nose, land on the red ring. Its machine lives in `tools/kagojer-urojahaj/lib/session.ts` (pure), driven by `components/flight-game.tsx`. The model `Plane.tla` (with `Plane.cfg` and `view.ts`) now mirrors that code: `start`, `storyDone`, `pause`, `resume`, `away`, `back`, `press`, `finish`, `again`, `reset`, `pick`, `cheerMayPlay` and `windStep`, plus the component's `begin`, `letGo`, the pointer and key handlers, the blur and visibility effect, `openList`/`closeList` and `finishRun`.
+
+Run: `after-fix/report.md` and `after-fix/chart.mmd`. TLC reached 228 states and 1,158 steps. The chart has 10 states and 26 arrows. **Every rule holds:** TypeOK, NoProgressWhileAway, InputReleasedWhenAway, PlaneMovesOnlyWhenHeld, FocusTapIsNotAMove, PausedWhenHidden, PausedWhenBlurred, ChoiceFreezesPlay, LoopOnlyWhenMeaningful, LoopComesBack, NoCheerAfterLeaving and NoDeadlock.
+
+## After the fix
+| Rule | In plain words |
+|---|---|
+| NoProgressWhileAway | The plane flies only while you are on the page. |
+| InputReleasedWhenAway | After you click away, the game doesn't think you are still holding. |
+| PlaneMovesOnlyWhenHeld | The nose goes up only while a finger or key, pressed during the flight, is really down. |
+| FocusTapIsNotAMove | The tap that brings you back (or a press on any other screen) never lifts the nose. |
+| PausedWhenHidden / PausedWhenBlurred | A flight or the story is paused while the tab is hidden or another window has focus. |
+| ChoiceFreezesPlay | While সব লেভেল is open, nothing flies. |
+| LoopOnlyWhenMeaningful / LoopComesBack | The wind is heard exactly while the plane flies in front of you with sound on. |
+| NoCheerAfterLeaving | A celebration is heard only on its own end screen. |
+
+### How each bug was fixed, and its test (`tools/kagojer-urojahaj/tests/session.test.ts`)
+1. **Plane steered on its own after alt-tab** (PlaneMovesOnlyWhenHeld, InputReleasedWhenAway): the game listens for blur and hide and calls `letGo()` (finger, keys and `session.held`), and `press()` counts a hold only while flying. Test: "bug 1 · PlaneMovesOnlyWhenHeld / InputReleasedWhenAway".
+2. **Wind kept blowing in another window** (LoopOnlyWhenMeaningful): blur stops the wind, and the step's `windStep` starts a fresh loop only while `moving()`, never a muted stub. Test: "bug 2 · LoopOnlyWhenMeaningful".
+3. **No চালিয়ে যাও after coming back** (PausedWhenBlurred): blur pauses through `away()`, and the shared player's menu is the pause; focus alone never resumes, and a 0.45 s breath follows চালিয়ে যাও. Test: "bug 3 · PausedWhenBlurred".
+Also replayed: the tap back only resumes, the list and story freeze play, result keys need a fresh press, celebrations stay on their own card, and a friend's far-ahead flight opens nothing in between.
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: wait
+    lg1: play
+    lg2: held
+    lg3: done
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Title (ছ#2507;ড#2492;#2507;)
+      s1: Plane flying
+      s2: Story panels
+      s3: সব ল#2503;ভ#2503;ল open
+      s4: End screen
+      s5: Paused
+      s6: সব ল#2503;ভ#2503;ল open, flight paused
+      [*] --> s0
+      s0 --> s1: you press the scene (or Space) or you press ছ#2507;ড#2492;#2507; [when You're on the page]
+      s0 --> s2: you press ছ#2507;ড#2492;#2507; [when You're on the page]
+      s0 --> s3: you open সব ল#2503;ভ#2503;ল [when You're on the page]
+      s1 --> s4: the plane lands or the last page falls
+      s1 --> s5: you hide the tab or you click into another window or you press P or #9208;
+      s1 --> s6: you open সব ল#2503;ভ#2503;ল
+      s1 --> s0: you restart or pick a level
+      s2 --> s0: you restart or pick a level
+      s2 --> s1: the story ends
+      s2 --> s5: you hide the tab or you click into another window or you press P or #9208;
+      s2 --> s6: you open সব ল#2503;ভ#2503;ল
+      s3 --> s0: you close সব ল#2503;ভ#2503;ল or you restart or pick a level [when You're on the page]
+      s4 --> s1: you press আব#2494;র খ#2503;ল#2507; / পর#2503;র ল#2503;ভ#2503;ল [when You're on the page]
+      s4 --> s3: you open সব ল#2503;ভ#2503;ল [when You're on the page]
+      s4 --> s0: you restart or pick a level [when You're on the page]
+      s5 --> s6: you open সব ল#2503;ভ#2503;ল [when You're on the page]
+      s5 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you press the scene (or Space) [when You're on the page]
+      s5 --> s0: you restart or pick a level [when You're on the page]
+      s6 --> s1: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+      s6 --> s0: you restart or pick a level [when You're on the page]
+      s3 --> s4: you close সব ল#2503;ভ#2503;ল [when You're on the page]
+    }
+    --
+    state "Window" as r1 {
+      s7: You're on the page
+      s8: Tab hidden
+      s9: Another window has focus
+      [*] --> s7
+      s7 --> s8: you hide the tab
+      s7 --> s9: you click into another window
+      s8 --> s7: the tab shows again
+      s9 --> s7: you come back to the window
+      s9 --> s8: you hide the tab
+    }
+  }
+  class s0 blue
+  class s1 teal
+  class s2 teal
+  class s4 blue
+  class s5 yellow
+  class s6 yellow
+```
+
+## Live check (Orca, `/kagojer-urojahaj`, Pixel 9)
+Driven through the page's own loop (`window.__ku.run`) with trusted-shape pointer events, because Orca throttles frames in a pane that isn't showing:
+- a press held through a synthetic window `blur`: `session.held` true → false, phase `flying` → `paused`, and the wind loop stopped (live loops 1 → 0, counted by wrapping `AudioBufferSourceNode.prototype.start/stop`; the dev server keeps audio suspended, so nothing is heard);
+- 60 stepped frames while away moved the flight clock by 0 s;
+- `focus`: still `paused`. চালিয়ে যাও resumed with `held` false while the finger from before the blur was still down;
+- a new press held the nose (`game.a` −0.29 → +0.35 in 30 steps) and the wind loop came back (live loops 0 → 1).
+---
+
+# Before the rewrite
+
 
 Model: `Plane.tla`, `Plane.cfg` and `view.ts`. It mirrors `tools/kagojer-urojahaj/components/plane-game.tsx`: `go`, `start`/`play`/`again`/`proceed`, `finish` and its `later()` cheer, the keydown/keyup effect, `onDown`/`onMove`/`onUp`, `holdDown`/`holdUp`, the `visibilitychange` effect, the `[paused]` effect, `startWind`/`stopWind` and the `SoundToggle` `onChange`. It also mirrors `useGameLoop` in `shared/game-kit.ts`. That is the **working copy**: blur cancels the frame and sets `away`, focus clears it, and a remount starts with `away = false`.
 Run: `before-fix/report.md` and `before-fix/chart.mmd`. TLC found 72 states. The chart has 15 states and 33 arrows.
@@ -57,7 +156,7 @@ The live replays ran in Orca on `/kagojer-urojahaj`, level 1. Each started with 
 
 Screenshots: `.shots/kagojer-urojahaj-sc-first.png` (first screen, Pixel 9), `-play.png` (desktop: the end of a wave, the sky with the result under it), `-clear.png` (the result, 2 stars).
 
-## Regenerate
+## Regenerate (after the rewrite)
 ```sh
 scripts/statechart.sh ai_docs/statecharts/kagojer-urojahaj/Plane.tla --view ai_docs/statecharts/kagojer-urojahaj/view.ts --out ai_docs/statecharts/kagojer-urojahaj/after-fix
 rm ai_docs/statecharts/kagojer-urojahaj/after-fix/tlc*.out

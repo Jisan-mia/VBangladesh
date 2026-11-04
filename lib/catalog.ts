@@ -140,7 +140,7 @@ export const catalog = [
   { slug: "nodi-par", name: "নদী পার", description: "নৌকা, ভেলা, কচুরিপানায় লাফিয়ে নদী পার হও, পথে আম তোলো।", category: "গেম", action: "নদী পার হও" },
   { slug: "penalty", name: "পেনাল্টি কিক", description: "টেনে শট নাও, ঝোঁক দেখে ঝাঁপ দাও। পাড়া থেকে জাতীয়, ৪ কাপে ১২টা ম্যাচ।", category: "গেম", action: "গোল দাও" },
   { slug: "golir-badminton", name: "গলির ব্যাডমিন্টন", description: "বাল্বের নিচে গলির ব্যাডমিন্টন। চাপো, টেনে স্ম্যাশ বা ড্রপ, তিন পাড়ার ১২ জন।", category: "গেম", action: "শাটল মারো" },
-  { slug: "kagojer-urojahaj", name: "কাগজের উড়োজাহাজ", description: "খাতার পাতার প্লেনে বর্ষার মেঘ ফাটাও, রোদ কুড়াও। ২০টা লেভেল, প্রতি পাঁচে কালবৈশাখী।", category: "গেম", action: "প্লেন ওড়াও" },
+  { slug: "kagojer-urojahaj", name: "কাগজের উড়োজাহাজ", description: "খাতার পাতার প্লেন ছোড়ো, হাওয়া দেখে ওড়াও, লাল দাগে নামাও। ১২টা উড়ান।", category: "গেম", action: "প্লেন ছোড়ো" },
   { slug: "marble-sinri", name: "মার্বেল-সিঁড়ি", description: "ছাদ থেকে গলি পর্যন্ত মার্বেল গড়িয়ে নামাও, ক্যাকটাস বাঁচিয়ে।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "roshi-tana", name: "রশি টানাটানি", description: "ঢোলের তালে চাপো, রশি টানো। একা ১২টা দল, নয়তো দুজনে এক ফোনে।", category: "গেম", action: "রশি টানো" },
   { slug: "moshar-raat", name: "মশার রাত", description: "বাতি নেভানো ঘরে পিন-পিন। ব্যাটে মশা মারো, ভোর পর্যন্ত বালিশ বাঁচাও।", category: "গেম", action: "মশা মারো" },
