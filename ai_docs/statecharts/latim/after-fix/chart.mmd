@@ -1,0 +1,64 @@
+---
+title: "লﬂ°°2494¶ßটﬂ°°2495¶ßম after the rewrite: the spin, the window, your hand, the breath, the hum and the star chimes"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  s0: First screen
+  s1: In your hand
+  s2: Level list open
+  s3: Winding the string
+  s4: Pulling the string down
+  s5: Paused (menu)
+  s6: Spinning
+  s7: A breath before the top moves
+  s8: Falling or on the palm
+  s9: Result just appeared
+  s10: Result shows
+  [*] --> s0
+  s0 --> s1: you press খ#2503;ল#2507;
+  s0 --> s2: you open the level list
+  s1 --> s3: you press Space or you hold to wind
+  s1 --> s4: you put a finger on the top
+  s1 --> s5: you leave (another window, or hide the tab) or you press the pause button or P
+  s2 --> s0: you close the level list
+  s2 --> s1: you pick a level or you press নত#2497;ন কর#2503; শ#2497;র#2497; or you start another spin
+  s3 --> s5: you leave (another window, or hide the tab) or you press the pause button or P
+  s3 --> s1: you let go without a throw
+  s3 --> s6: you let go and it throws
+  s4 --> s1: you let go without a throw
+  s4 --> s5: you leave (another window, or hide the tab) or you press the pause button or P
+  s4 --> s6: you pull down and let go
+  s5 --> s1: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s5 --> s7: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s5 --> s2: you open the level list
+  s6 --> s8: the top falls or you press হ#2494;ত#2503; ত#2507;ল#2507;
+  s6 --> s5: you leave (another window, or hide the tab) or you press the pause button or P
+  s7 --> s1: the breath ends
+  s7 --> s5: you leave (another window, or hide the tab) or you press the pause button or P
+  s2 --> s7: you close the level list
+  s8 --> s9: it comes to rest and the result shows
+  s8 --> s5: you leave (another window, or hide the tab) or you press the pause button or P
+  s9 --> s1: you start another spin or you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s9 --> s2: you open the level list
+  s7 --> s6: the breath ends
+  s10 --> s1: you start another spin or you press a fresh key on the result or you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s10 --> s2: you open the level list
+  s2 --> s9: you close the level list
+  s7 --> s8: the breath ends
+  s2 --> s10: you close the level list
+  class s1 teal
+  class s3 teal
+  class s4 teal
+  class s5 yellow
+  class s6 teal
+  class s7 teal
+  class s8 teal
+  class s9 blue
+  class s10 blue

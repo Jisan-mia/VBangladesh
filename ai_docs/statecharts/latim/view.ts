@@ -1,37 +1,43 @@
-export const title = "লাটিম: the spin, the window, your hand and the hum";
-const top = (v: any) => ({ ready: "In your hand", spin: "Spinning", low: "Spinning slowly (হাতে তোলো shows)", settle: "Coming to rest", over: "Card shows" } as any)[v.phase];
-export const state = (v: any) => ({
-  Top: v.paused ? `${top(v)}, paused` : top(v),
-  Window: !v.visible ? "Tab hidden" : v.focused ? "You're on the page" : "Another window has focus",
-  Hand: ({ none: "Hands off", hold: "Holding to wind", swipe: "Pulling down" } as any)[v.hand],
-  Hum: v.hum ? "Hum on" : "Hum off",
-  Sound: v.sound ? "Sound on" : "Sound off",
-  Levels: v.drawer ? "Level list open" : "Level list shut",
-  Cheer: v.cheer ? "Cheer queued" : "No cheer queued",
-});
-export const step = (action: string) => ({
-  YouHoldToWind: "you hold the button to wind",
-  YouLetGoAndThrow: "you let go and it throws",
-  YouStartAPull: "you put a finger on the top",
-  YouFlick: "you pull down and let go",
-  SpinSlows: "the spin slows",
-  TopFalls: "the top falls",
-  YouPickItUp: "you press হাতে তোলো",
-  TopComesToRest: "it comes to rest and the card shows",
-  CheerFires: "the cheer plays",
-  YouPause: "you press থামাও",
+export const title = "লাটিম after the rewrite: the spin, the window, your hand, the breath, the hum and the star chimes";
+const game = (v: any) => {
+  if (v.skipped || v.byItself) return "A held key played by itself";
+  if (v.sheet) return "Level list open";
+  if (v.phase === "over") return v.fresh ? "Result just appeared" : "Result shows";
+  if (v.phase === "title") return "First screen";
+  if (v.paused) return "Paused (menu)";
+  if (v.breath) return "A breath before the top moves";
+  return v.top === "hand" ? (v.winding ? "Winding the string" : v.pull ? "Pulling the string down" : "In your hand") : v.top === "spin" ? "Spinning" : "Falling or on the palm";
+};
+export const state = (v: any) => game(v);
+const labels: Record<string, string> = {
+  YouStart: "you press খেলো",
+  YouPlayAgain: "you start another spin",
+  YouPressAKeyOnTheResult: "you press a fresh key on the result",
+  YouHoldToWind: "you hold to wind",
+  YouPutAFingerOnTheTop: "you put a finger on the top",
+  YouLetGoAndItThrows: "you let go and it throws",
+  YouPullDownAndLetGo: "you pull down and let go",
+  YouLetGoWithoutAThrow: "you let go without a throw",
+  YouNudge: "you tap to steady it",
+  YouPressLift: "you press হাতে তোলো",
+  YouClickAnUnfocusedWindow: "you click the window back into focus",
+  YouPressAPlayKey: "you press Space",
+  TheTopFalls: "the top falls",
+  TheFallSettles: "it comes to rest and the result shows",
+  TheBreathEnds: "the breath ends",
+  WindowBlurs: "you leave (another window, or hide the tab)",
+  TabHides: "you leave (another window, or hide the tab)",
+  YouPause: "you press the pause button or P",
+  WindowFocuses: "you come back",
+  TabShows: "you come back",
   YouResume: "you press চালিয়ে যাও",
-  WindowBlurs: "you click into another window",
-  WindowFocuses: "you come back to the window",
-  TabHides: "you hide the tab",
-  TabShows: "the tab shows again",
-  PullCancelled: "the pull is cancelled",
-  SoundOff: "you turn sound off",
-  SoundOn: "you turn sound on",
-  YouOpenLevels: "you open সব লেভেল",
-  YouCloseLevels: "you close সব লেভেল",
+  YouRestart: "you press নতুন করে শুরু",
+  OpenTheList: "you open the level list",
+  OpenTheListFromTheMenu: "you open the level list",
+  CloseTheList: "you close the level list",
   YouPickALevel: "you pick a level",
-  YouPlayAgain: "you press আবার খেলো",
-} as Record<string, string>)[action] ?? action;
-export const group = (v: any) => v.phase === "over" ? "done" : v.paused ? "held" : "play";
-export const colors = { play: "teal", held: "yellow", done: "blue" };
+};
+const hidden = new Set(["SoundOff", "SoundOn", "TheChimesPlay", "TheKeyRepeats", "YouLetGoOfTheKey", "TheResultSettles", "FriendLinkOpens"]);
+export const step = (action: string) => hidden.has(action) ? null : labels[action] ?? action;
+export const group = (v: any) => v.phase === "over" ? "done" : v.paused || v.sheet ? "held" : v.phase === "title" ? "wait" : "play";
+export const colors = { play: "teal", held: "yellow", done: "blue", wait: "tan" };
