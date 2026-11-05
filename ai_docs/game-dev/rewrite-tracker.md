@@ -23,7 +23,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | baghbandi | S06 | analysed | done |
 | baicher-nouka | S06 | analysed | rewriting |
 | vo-katta | S07 | analysed | done |
-| bhangti-nai | S07 | analysed | rewriting |
+| bhangti-nai | S07 | analysed | done |
 | jam-chharao | S07 | analysed | rewriting |
 | shobdo-khoja | S08 | analysed | done |
 | carrom | S08 | analysed | done |
