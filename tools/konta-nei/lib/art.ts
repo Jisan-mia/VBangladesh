@@ -155,7 +155,7 @@ const DRAW: Record<ItemId, (c: C) => void> = {
   },
   roshun(c) { // a white bulb of garlic
     line(c, "#cfc5b2", 3, [-3, -64, -5, -78]); line(c, "#cfc5b2", 3, [3, -64, 6, -78]);
-    shape(c, "#f4efe4", () => { c.moveTo(0, -64); c.quadraticCurveTo(10, -52, 26, -42); c.bezierCurveTo(44, -24, 28, 0, 0, 0); c.bezierCurveTo(-28, 0, -44, -24, -26, -42); c.quadraticCurveTo(-10, -52, 0, -64); c.closePath(); });
+    shape(c, "#f4efe4", () => { c.moveTo(0, -64); c.quadraticCurveTo(10, -52, 26, -42); c.bezierCurveTo(44, -24, 28, 0, 0, 0); c.bezierCurveTo(-28, 0, -44, -24, -26, -42); c.quadraticCurveTo(-10, -52, 0, -64); c.closePath(); }); // unslop-ignore: painted object colour in the canvas art, not a page background
     c.save(); c.strokeStyle = "#c2b6a2"; c.lineWidth = 2; c.beginPath();
     c.moveTo(-3, -60); c.quadraticCurveTo(-22, -28, -10, -2); c.moveTo(3, -60); c.quadraticCurveTo(22, -28, 10, -2); c.moveTo(0, -60); c.lineTo(0, -1); c.stroke(); c.restore();
     line(c, "#d9a7b8", 3, [-20, -30, -17, -16]);

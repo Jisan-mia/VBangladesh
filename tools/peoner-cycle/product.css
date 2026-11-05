@@ -1,5 +1,5 @@
 /* পিয়নের সাইকেল: the road fills the stage; the title, the end screen and সব লেভেল sit over it. One palette per world (lib/world.ts). */
-.tool-peoner-cycle{--accent:#23705f;--accent-deep:#174c40;--ink:#2b2118;--muted:#6b5a48;--paper:#fff4e2;--candy:#ffb02e;--gold:#ffd166;--cream:#fff8e8}
+.tool-peoner-cycle{--pc-ease:cubic-bezier(.23,1,.32,1);--accent:#23705f;--accent-deep:#174c40;--ink:#2b2118;--muted:#6b5a48;--paper:#fff4e2;--candy:#ffb02e;--gold:#ffd166;--cream:#fff8e8}
 .tool-peoner-cycle .pc-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 .pc{--panel:#1f1a12ea;position:relative;width:100%;max-width:560px;color:var(--cream)}
@@ -15,20 +15,20 @@
 .pc-play>canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
 
 /* the HUD's one HTML part: the level badge, top-left; it opens সব লেভেল */
-.pc-badge{position:absolute;top:8px;left:8px;z-index:2;display:inline-flex;align-items:center;gap:7px;max-width:46%;min-height:30px;padding:0 11px 0 9px;border:0;border-radius:999px;background:#1d1a1499;color:#fff;font-size:13px;font-weight:700;line-height:1.1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-badge{position:absolute;top:8px;left:8px;z-index:2;display:inline-flex;align-items:center;gap:7px;max-width:46%;min-height:30px;padding:0 11px 0 9px;border:0;border-radius:6px;background:#1d1a1499;color:#fff;font-size:13px;font-weight:700;line-height:1.1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pc-badge i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--candy);box-shadow:0 0 0 3px #ff9d2e33}
 
 /* ---- the title ---- */
-.pc-start{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 16px 16px;overflow:auto;overscroll-behavior:contain;background:linear-gradient(#1d1a1400 0%,#1d1a14a8 24%,#1d1a14e0 100%);text-align:center;animation:pc-in .25s ease-out}
+.pc-start{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 16px 16px;overflow:auto;overscroll-behavior:contain;background:linear-gradient(#1d1a1400 0%,#1d1a14a8 24%,#1d1a14e0 100%);text-align:center;animation:pc-in .25s var(--pc-ease)}
 .pc-start[data-finale]{background:linear-gradient(#3a0f0a00 0%,#3a0f0ab0 24%,#1d1a14e6 100%)}
-.pc-go{display:grid;justify-items:center;width:min(100%,330px);padding:4px 8px 12px;border:0;border-radius:26px;background:none;color:#fff;font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1.1;transition:transform .1s ease-out}
+.pc-go{display:grid;justify-items:center;width:min(100%,330px);padding:4px 8px 12px;border:0;border-radius:26px;background:none;color:#fff;font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1.1;transition:transform .1s var(--pc-ease)}
 .pc-go-art{display:block;width:100%;height:clamp(110px,22vh,190px)}
-.pc-go span{margin-top:-4px;padding:6px 30px 8px;border-radius:999px;background:var(--accent);box-shadow:0 5px 0 var(--accent-deep),0 16px 30px -12px #000c}
+.pc-go span{margin-top:-4px;padding:6px 30px 8px;border-radius:14px;background:var(--accent);box-shadow:0 5px 0 var(--accent-deep),0 16px 30px -12px #000c}
 .pc-go:active{transform:translateY(3px) scale(.98)}
 .pc-go:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
 .pc-pick{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px;width:min(100%,380px)}
 .pc-pick-name h2{margin:0;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.3;color:#fff}
-.pc-finale-badge{margin:0 auto 2px;padding:1px 10px;width:max-content;border-radius:999px;background:#c2361f;color:#fff;font-size:12px;font-weight:700}
+.pc-finale-badge{margin:0 auto 2px;padding:1px 10px;width:max-content;border-radius:4px;background:#c2361f;color:#fff;font-size:12px;font-weight:700}
 .pc-got{margin:0;color:var(--gold);font-size:15px;letter-spacing:2px}
 .pc-got span{color:#ffffff40}
 .pc-step{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid #fff8e855;border-radius:14px;background:#ffffff14;color:#fff}
@@ -52,8 +52,8 @@
 
 /* ---- the first-run story ---- */
 .pc-story{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;padding:16px 16px 18%;background:#1d1a1455;pointer-events:none}
-.pc-skip{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);margin:0;white-space:nowrap;padding:4px 10px;border-radius:999px;background:#1d1a14a6;font-size:12px;font-weight:600}
-.pc-panel{max-width:330px;margin:0;padding:14px 18px;border:3px solid var(--paper);border-radius:6px;background:var(--paper) repeating-linear-gradient(transparent 0 27px,#8fb9e066 27px 29px);color:var(--ink);font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1.45;box-shadow:6px 6px 0 #1d1a14;animation:pc-in .3s ease-out}
+.pc-skip{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);margin:0;white-space:nowrap;padding:4px 10px;border-radius:6px;background:#1d1a14a6;font-size:12px;font-weight:600}
+.pc-panel{max-width:330px;margin:0;padding:14px 18px;border:3px solid var(--paper);border-radius:6px;background:var(--paper) repeating-linear-gradient(transparent 0 27px,#8fb9e066 27px 29px);color:var(--ink);font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1.45;box-shadow:6px 6px 0 #1d1a14;animation:pc-in .3s var(--pc-ease)}
 .pc-dots{display:flex;gap:6px;margin:0}
 .pc-dots i{width:8px;height:8px;border-radius:50%;background:#fff8e855}
 .pc-dots i[data-on]{background:#fff}
@@ -64,7 +64,7 @@
 .pc-cover .kit-primary{min-width:200px;min-height:56px;font-size:19px}
 
 /* ---- the end screen ---- */
-.pc-finish{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;overflow:auto;background:#1d1a14c8;text-align:center;animation:pc-in .3s cubic-bezier(.2,.9,.3,1.1) both}
+.pc-finish{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;overflow:auto;background:#1d1a14c8;text-align:center;animation:pc-in .26s var(--pc-ease) both}
 .pc-finish h2{margin:0;font-family:var(--font-display);font-size:clamp(23px,7cqw,30px);font-weight:800;line-height:1.25;color:#fff}
 .pc-finish .gx-reveal{font-size:38px;gap:6px}
 .pc-nostar{margin:0;font-size:30px;letter-spacing:4px;color:#ffffff40}
@@ -86,9 +86,13 @@
 .pc-next b{margin-right:6px;color:var(--gold)}
 .tool-peoner-cycle .pc-see{min-height:44px;color:#fff;font-size:15px}
 
+/* press feedback on the rest of the pressables */
+.pc-step,.pc-modes button,.pc-sheet-close,.pc-world button,.pc-badge{transition:transform .12s var(--pc-ease)}
+.pc-step:active:not(:disabled),.pc-modes button:active,.pc-sheet-close:active,.pc-world button:active:not(:disabled),.pc-badge:active{transform:scale(.97)}
+
 /* ---- সব লেভেল ---- */
-.pc-sheet{position:absolute;inset:0;z-index:4;display:grid;align-items:start;padding:8px;background:#0d0a0899;animation:pc-fade .16s ease-out}
-.pc-sheet-card{display:grid;gap:12px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:14px 12px 16px;border-radius:16px;background:var(--panel);box-shadow:0 20px 40px -20px #000c;animation:pc-in .2s ease-out}
+.pc-sheet{position:absolute;inset:0;z-index:4;display:grid;align-items:start;padding:8px;background:#0d0a0899;animation:pc-fade .16s var(--pc-ease)}
+.pc-sheet-card{display:grid;gap:12px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:14px 12px 16px;border-radius:16px;background:var(--panel);box-shadow:0 20px 40px -20px #000c;animation:pc-in .2s var(--pc-ease)}
 .pc-sheet header{position:relative;padding-right:52px}
 .pc-sheet h2{margin:0;font-family:var(--font-display);font-size:24px;color:#fff}
 .pc-sheet header p{margin:2px 0 0;font-size:13px;color:#f3e6cc}
@@ -101,7 +105,7 @@
 .pc-world button{position:relative;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"key name stars" "key line line";align-items:center;column-gap:10px;row-gap:1px;width:100%;min-height:58px;padding:7px 10px;border:1.5px solid #fff8e82a;border-radius:12px;background:#ffffff10;color:#fff;text-align:left}
 .pc-world button kbd{grid-area:key;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#ffffff1c;font-family:inherit;font-size:13px;font-weight:700}
 .pc-row-name{grid-area:name;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:15px}
-.pc-row-name em{padding:1px 8px;border-radius:999px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800}
+.pc-row-name em{padding:1px 8px;border-radius:3px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800}
 .pc-row-line{grid-area:line;font-size:12.5px;line-height:1.4;color:#f3e6ccc0}
 .pc-row-stars{grid-area:stars;display:flex;font-size:13px;line-height:1}
 .pc-row-stars i{font-style:normal;color:#ffffff30}

@@ -301,9 +301,9 @@ export const PROP_HALF = [[30, 30], [26, 26], [16, 14], [22, 21], [29, 39], [36,
 /** A roadside milestone: a whitewashed stone with a terracotta cap, drawn at the base (0, 0). */
 export function drawMilestone(c: Ctx) {
   ellipse(c, 5, 2, 12, 5, C.shadow);
-  rounded(c, -10, -22, 20, 24, 4, "#f4efe4");
+  rounded(c, -10, -22, 20, 24, 4, "#f4efe4"); // unslop-ignore: painted object colour in the canvas art, not a page background
   rounded(c, -10, -22, 20, 8, 4, C.terracotta);
-  rounded(c, -10, -16, 20, 2, 0, "#f4efe4");
+  rounded(c, -10, -16, 20, 2, 0, "#f4efe4"); // unslop-ignore: painted object colour in the canvas art, not a page background
 }
 
 /** A small flag on a bamboo pole where a friend stopped. Base at (0, 0). */

@@ -14,7 +14,7 @@
 
 /* ---- title: the launch picture is the start button ---- */
 .uk-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:0;padding:8px 4px;text-align:center}
-.uk-launch{position:relative;display:block;width:min(100%,400px);aspect-ratio:360/300;padding:0;border:3px solid var(--ink);border-radius:12px;overflow:hidden;background:#bfe3ff;box-shadow:0 7px 0 var(--ink);cursor:pointer;touch-action:manipulation;transition:transform 160ms var(--ease-out),box-shadow 160ms var(--ease-out)}
+.uk-launch{position:relative;display:block;width:min(100%,400px);aspect-ratio:360/300;padding:0;border:3px solid var(--ink);border-radius:12px;overflow:hidden;background:#bfe3ff;box-shadow:0 7px 0 var(--ink);cursor:pointer;touch-action:manipulation;transition:transform 160ms var(--ease-out)}
 @media (hover:hover) and (pointer:fine){.uk-launch:hover{transform:translateY(-2px)}}
 .uk-launch:active{transform:translateY(5px);box-shadow:0 2px 0 var(--ink)}
 .uk-launch:focus-visible{outline:4px solid var(--w-accent);outline-offset:6px}
@@ -67,7 +67,7 @@
 .uk-say.hint{color:var(--ink);font-weight:600}
 .uk-say.found{color:var(--w-deep);font-weight:700}
 .uk-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:100%;padding-bottom:30px}
-.uk-choice{position:relative;display:grid;justify-items:center;align-content:center;gap:2px;min-height:150px;padding:8px 6px 4px;border:3px solid var(--ink);border-radius:10px;background:#fff;box-shadow:0 5px 0 var(--ink);color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform 140ms var(--ease-out),box-shadow 140ms var(--ease-out),opacity 140ms}
+.uk-choice{position:relative;display:grid;justify-items:center;align-content:center;gap:2px;min-height:150px;padding:8px 6px 4px;border:3px solid var(--ink);border-radius:10px;background:#fff;box-shadow:0 5px 0 var(--ink);color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform 140ms var(--ease-out),opacity 140ms}
 .uk-choice:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ink)}
 .uk-art{display:block;width:min(100px,26vw);aspect-ratio:1}
 .uk-art svg{display:block;width:100%;height:100%}
@@ -75,7 +75,8 @@
 .uk-key{position:absolute;left:10px;top:6px;font-size:16px;font-weight:700;line-height:1;color:var(--muted);opacity:.7}
 @media (pointer:coarse){.uk-key{display:none}}
 .uk-choices[data-kind=sort] .uk-choice{background:repeating-linear-gradient(45deg,#f7e3bd 0 10px,#f2d8a6 10px 20px)}
-.uk-choice.is-glow{border-color:var(--w-accent);box-shadow:0 5px 0 var(--w-accent),0 0 0 4px var(--glow);animation:uk-signal 1.4s ease-in-out infinite}
+.uk-choice.is-glow{border-color:var(--w-accent);box-shadow:0 5px 0 var(--w-accent)}
+.uk-choice.is-glow::after{content:"";position:absolute;inset:-7px;border-radius:14px;box-shadow:0 0 0 4px var(--glow);pointer-events:none;animation:uk-signal 1.4s ease-in-out infinite} /* unslop-ignore: the lit ring marks the one picture to tap */
 .uk-choice.is-right{border-color:#2f9e5b;background:#e9f9ef;box-shadow:0 5px 0 #2f9e5b;animation:uk-pop 160ms var(--ease-out)}
 .uk-choice.is-right::after{content:"";position:absolute;right:-9px;top:-9px;width:32px;height:32px;border-radius:50%;background:#2f9e5b url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/22px no-repeat}
 .uk-choice.is-wrong{opacity:.55;background:#f1ece4}
@@ -96,7 +97,7 @@
 .uk-met-card{display:block;width:48px;height:48px}
 .uk-met-card svg{display:block;width:100%;height:100%}
 .uk-end-stars .gx-stars{font-size:46px}
-.uk-end-stars .gx-stars .on{display:inline-block;animation:uk-star .45s cubic-bezier(.3,1.6,.5,1) both}
+.uk-end-stars .gx-stars .on{display:inline-block;animation:uk-star .4s var(--ease-out) both}
 .uk-end-stars .gx-stars .on:nth-child(1){animation-delay:.35s}
 .uk-end-stars .gx-stars .on:nth-child(2){animation-delay:.65s}
 .uk-end-stars .gx-stars .on:nth-child(3){animation-delay:.95s}
@@ -110,7 +111,7 @@
 .uk-end-news{margin:0;max-width:340px;font-size:19px;font-weight:700;line-height:1.6;color:var(--w-deep)}
 .uk-end-off{margin:0;max-width:340px;font-size:17px;line-height:1.6;color:var(--muted)}
 .uk-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(340px,100%)}
-.uk-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:3px solid var(--ink);border-radius:12px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--ink);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform 140ms var(--ease-out),box-shadow 140ms var(--ease-out)}
+.uk-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:3px solid var(--ink);border-radius:12px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--ink);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform 140ms var(--ease-out)}
 .uk-big:active{transform:translateY(4px);box-shadow:0 2px 0 var(--ink)}
 .uk-big svg{width:48px;height:48px;fill:none;stroke:currentColor;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
 .uk-big-done{background:#fff;color:var(--ink)}
@@ -144,7 +145,7 @@
 @keyframes uk-ring{0%,100%{transform:rotate(0)}30%{transform:rotate(16deg)}70%{transform:rotate(-16deg)}}
 @keyframes uk-sway{0%,8%,100%{transform:rotate(0)}2%{transform:rotate(6deg)}4%{transform:rotate(-5deg)}6%{transform:rotate(3deg)}}
 @keyframes uk-pace{from{transform:scaleX(1)}to{transform:scaleX(0)}}
-@keyframes uk-signal{50%{box-shadow:0 5px 0 var(--w-accent),0 0 0 7px var(--glow)}}
+@keyframes uk-signal{50%{opacity:.35}}
 @keyframes uk-tap{0%,100%{transform:translateY(8px)}50%{transform:translateY(-4px)}}
 @keyframes uk-wob0{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 @keyframes uk-wob1{25%{transform:translateX(5px)}75%{transform:translateX(-5px)}}
@@ -154,7 +155,7 @@
 
 /* ধীরে খেলো and reduced motion: nothing flips, swings or wobbles; the চটপট bar stays (it is the clock, not decoration) */
 .uk[data-slow] *:not(.uk-pace),.uk[data-slow] *::after{animation:none!important;transition:none!important}
-.uk[data-slow] .is-glow{box-shadow:0 5px 0 var(--w-accent),0 0 0 5px var(--glow)}
+.uk[data-slow] .is-glow::after{opacity:.85}
 @media (prefers-reduced-motion:reduce){.uk *:not(.uk-pace),.uk *::after{animation:none!important;transition:none!important}}
 
 /* short stages: smaller sign and cards that still keep 96 px */

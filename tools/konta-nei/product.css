@@ -1,5 +1,5 @@
 /* কোনটা নেই?: a মুদি দোকান at the counter. One wall and awning per shop (lib/art.ts holds the same values for the canvas). */
-.tool-konta-nei{--accent:#c8402e;--accent-deep:#8f2a1c;--ink:#3a2a1c;--muted:#6d5d4b;--paper:#f6eedd;--line:#dccfb8;--trim:#f2b51c;--good:#2f9e5b;--bad:#d4553f;--wall:#3d6e70;--awning:#c8402e}
+.tool-konta-nei{--kn-ease:cubic-bezier(.23,1,.32,1);--kn-move:cubic-bezier(.77,0,.175,1);--accent:#c8402e;--accent-deep:#8f2a1c;--ink:#3a2a1c;--muted:#6d5d4b;--paper:#f6eedd;--line:#dccfb8;--trim:#f2b51c;--good:#2f9e5b;--bad:#d4553f;--wall:#3d6e70;--awning:#c8402e}
 .tool-konta-nei .kn-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .kn[data-world="1"]{--wall:#34507a;--awning:#2e7d4f}
 .kn[data-world="2"]{--wall:#6b3e3a;--awning:#c98a12}
@@ -33,15 +33,15 @@
 .kn-score{position:relative;display:grid;justify-items:end;margin:0;line-height:1.15;text-align:right}
 .kn-score b{font-family:var(--font-display);font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
 .kn-score small{font-size:12px;color:var(--muted)}
-.kn-score em{position:absolute;top:100%;right:0;padding:1px 8px;border-radius:10px;background:var(--trim);color:var(--ink);font-size:12px;font-style:normal;font-weight:800;white-space:nowrap;animation:kn-bump .5s cubic-bezier(.2,.9,.3,1.4)}
+.kn-score em{position:absolute;top:100%;right:0;padding:1px 8px;border-radius:4px;background:var(--trim);color:var(--ink);font-size:12px;font-style:normal;font-weight:800;white-space:nowrap;animation:kn-bump .5s var(--kn-ease)}
 
 /* ---- the shop: a canvas, a timer bar, two eyelids and a tin shutter ---- */
 .kn-shop{flex:1 1 0;min-height:140px;display:grid;place-items:center}
 .kn-frame{position:relative;max-width:100%;border-radius:14px;overflow:hidden;background:var(--wall);box-shadow:0 6px 18px #3a2a1c38;isolation:isolate}
 .kn-frame canvas{display:block;width:100%;height:100%}
-.kn-frame::after{content:"";position:absolute;inset:0;z-index:4;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 0 transparent;transition:box-shadow .25s}
-.kn[data-danger] .kn-frame::after{box-shadow:inset 0 0 0 4px #ffb020,inset 0 0 28px 6px #ffb02099;animation:kn-glow .9s ease-in-out infinite alternate}
-.kn[data-danger][data-calm] .kn-frame::after{box-shadow:inset 0 0 0 4px #ffb020;animation:none}
+.kn-frame::after{content:"";position:absolute;inset:0;z-index:4;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 4px #ffb020,inset 0 0 28px 6px #ffb02099;opacity:0;transition:opacity .25s var(--kn-ease)} /* unslop-ignore: the amber rim is the danger signal (the shelf is about to close) */
+.kn[data-danger] .kn-frame::after{opacity:1;animation:kn-glow .9s ease-in-out infinite alternate}
+.kn[data-danger][data-calm] .kn-frame::after{animation:none}
 .kn-bar{position:absolute;top:0;left:0;right:0;z-index:2;height:6px;background:#0000;transition:background .2s}
 .kn-bar[data-on]{background:#00000033}
 .kn-bar i{display:block;height:100%;background:var(--trim);transform:scaleX(0);transform-origin:left}
@@ -55,17 +55,17 @@
 
 .kn-shutter{position:absolute;inset:0;z-index:5;display:grid;place-items:center;width:100%;padding:0;border:0;border-radius:0;color:var(--ink);cursor:pointer;
   background:linear-gradient(#2c3438 0 16px,transparent 16px),repeating-linear-gradient(#c7ced2 0 9px,#9aa3a8 9px 11px,#dde2e4 11px 19px,#aab2b6 19px 21px);
-  box-shadow:inset 0 -10px 0 #6f787d;transform:translateY(-101%);visibility:hidden;transition:transform .62s cubic-bezier(.65,0,.35,1),visibility 0s .62s}
-.kn-shutter[data-down]{transform:none;visibility:visible;transition:transform .45s cubic-bezier(.3,0,.2,1),visibility 0s}
+  box-shadow:inset 0 -10px 0 #6f787d;transform:translateY(-101%);visibility:hidden;transition:transform .5s var(--kn-move),visibility 0s .5s}
+.kn-shutter[data-down]{transform:none;visibility:visible;transition:transform .4s var(--kn-ease),visibility 0s}
 .kn-shutter::after{content:"";position:absolute;bottom:4px;left:50%;width:56px;height:12px;margin-left:-28px;border-radius:6px;background:#4b5458;box-shadow:inset 0 2px 0 #788287}
-.kn-shutter-sign{display:grid;justify-items:center;gap:4px;padding:16px 22px 14px;border:3px solid #3a2a1c;border-radius:12px;background:#fffaf0;box-shadow:0 6px 0 #3a2a1c4d;transform:rotate(-2deg);transition:transform .12s}
+.kn-shutter-sign{display:grid;justify-items:center;gap:4px;padding:16px 22px 14px;border:3px solid #3a2a1c;border-radius:12px;background:#fffaf0;box-shadow:0 6px 0 #3a2a1c4d;transform:rotate(-2deg);transition:transform .12s var(--kn-ease)}
 .kn-shutter-sign b{font-family:var(--font-display);font-size:clamp(30px,10cqw,48px);font-weight:800;line-height:1.1;color:var(--accent)}
 .kn-shutter-sign small{font-size:14px;font-weight:700;color:var(--muted)}
 .kn-shutter:active .kn-shutter-sign{transform:rotate(-2deg) scale(.96)}
 .kn-shutter:focus-visible .kn-shutter-sign{outline:3px solid var(--trim);outline-offset:4px}
 .kn[data-calm] .kn-shutter,.kn[data-calm] .kn-shutter[data-down]{transform:none;opacity:0;transition:opacity .25s,visibility 0s .25s}
 .kn[data-calm] .kn-shutter[data-down]{opacity:1;transition:opacity .2s,visibility 0s}
-.kn-pop{position:absolute;top:26%;left:50%;z-index:2;padding:2px 12px;border-radius:14px;background:#2f9e5bee;color:#fff;font-family:var(--font-display);font-size:26px;font-style:normal;font-weight:800;pointer-events:none;animation:kn-rise .95s ease-out forwards}
+.kn-pop{position:absolute;top:26%;left:50%;z-index:2;padding:2px 12px;border-radius:8px;background:#2f9e5bee;color:#fff;font-family:var(--font-display);font-size:26px;font-style:normal;font-weight:800;pointer-events:none;animation:kn-rise .95s var(--kn-ease) forwards}
 
 .kn-status{flex:none;min-height:24px;margin:0;font-size:16px;font-weight:700;line-height:1.45;text-align:center}
 .kn[data-phase=ask] .kn-status{font-family:var(--font-display);font-size:19px;color:var(--accent-deep)}
@@ -78,13 +78,13 @@
 .kn-choices{display:grid;grid-template-columns:repeat(min(var(--cols),4),1fr);gap:8px}
 .kn-below[data-n="6"] .kn-choices{grid-template-columns:repeat(3,1fr)}
 @container kn (min-width:500px){.kn-below[data-n="6"] .kn-choices{grid-template-columns:repeat(6,1fr)}}
-.kn-choice{position:relative;display:grid;justify-items:center;align-content:center;gap:1px;min-height:84px;padding:6px 2px 4px;border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font-size:14px;font-weight:700;line-height:1.2;transition:transform .08s,border-color .15s,background .15s}
+.kn-choice{position:relative;display:grid;justify-items:center;align-content:center;gap:1px;min-height:84px;padding:6px 2px 4px;border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font-size:14px;font-weight:700;line-height:1.2;transition:transform .08s var(--kn-ease),border-color .15s,background .15s}
 .kn-choice:active{transform:scale(.95)}
 .kn-choice:disabled{opacity:1;cursor:default}
 .kn-choice kbd{position:absolute;top:4px;left:6px;font-family:inherit;font-size:11px;font-weight:700;color:var(--muted)}
 .kn-choice canvas{display:block}
 .kn-choice span{overflow:hidden;max-width:100%;white-space:nowrap;text-overflow:ellipsis}
-.kn-choice[data-mark=right]{border-color:var(--good);background:#e7f6ec;animation:kn-bump .35s cubic-bezier(.2,.9,.3,1.4)}
+.kn-choice[data-mark=right]{border-color:var(--good);background:#e7f6ec;animation:kn-bump .35s var(--kn-ease)}
 .kn-choice[data-mark=wrong]{border-color:var(--bad);background:#fbe9e4}
 .kn[data-phase=reveal] .kn-choice:not([data-mark]){opacity:.55}
 .kn[data-calm] .kn-choice{animation:none}
@@ -114,8 +114,12 @@
 .kn-friend p{margin:0;font-size:13px;line-height:1.4;color:var(--muted)}
 .kn-friend b{color:var(--ink)}
 
+/* press feedback on the rest of the pressables */
+.kn-step,.kn-sheet-close,.kn-badge,.kn-world button{transition:transform .12s var(--kn-ease)}
+.kn-step:active:not(:disabled),.kn-sheet-close:active,.kn-badge:active,.kn-world button:active:not(:disabled){transform:scale(.97)}
+
 /* ---- সব লেভেল ---- */
-.kn-sheet{position:absolute;inset:0;z-index:20;display:grid;align-items:start;background:#3a2a1c59;animation:kn-fade .16s ease-out}
+.kn-sheet{position:absolute;inset:0;z-index:20;display:grid;align-items:start;background:#3a2a1c59;animation:kn-fade .16s var(--kn-ease)}
 .kn-sheet-card{display:grid;gap:10px;max-height:min(100%,100svh);overflow:auto;overscroll-behavior:contain;padding:14px 14px 18px;border-radius:16px;background:#fbf8f2;box-shadow:0 20px 40px -20px #000a}
 .gp-stage .kn-sheet-card{max-height:var(--stage-h,100%)}
 .kn-sheet header{position:relative;padding-right:52px}
@@ -141,7 +145,7 @@
 .kn-mini i[data-on]{color:var(--trim)}
 
 /* ---- the end: মামার ক্যাশ মেমো ---- */
-.kn-memo{display:grid;align-content:start;gap:9px;padding:14px 14px 12px;border-radius:10px;background:repeating-linear-gradient(#fffdf6 0 27px,#e9dfc8 27px 28px);box-shadow:0 1px 0 #3a2a1c1f,0 14px 30px -18px #3a2a1c66;animation:kn-up .3s cubic-bezier(.2,.9,.3,1.1) both}
+.kn-memo{display:grid;align-content:start;gap:9px;padding:14px 14px 12px;border-radius:10px;background:repeating-linear-gradient(#fffdf6 0 27px,#e9dfc8 27px 28px);box-shadow:0 1px 0 #3a2a1c1f,0 14px 30px -18px #3a2a1c66;animation:kn-fade .2s var(--kn-ease) both}
 .kn-memo[data-finale]{box-shadow:inset 0 0 0 4px var(--accent),0 14px 30px -18px #3a2a1c66}
 .kn-memo[data-still]{animation:none}
 .kn-memo header{display:grid;justify-items:center;padding-bottom:6px;border-bottom:2px dashed #3a2a1c55;text-align:center}
@@ -149,7 +153,7 @@
 .kn-memo h2{margin:0;font-family:var(--font-display);font-size:clamp(22px,7cqw,28px);font-weight:800;line-height:1.3}
 .kn-memo header small{font-size:13px;color:var(--muted)}
 .kn-memo-rows{display:grid;gap:4px;margin:0;padding:0;list-style:none}
-.kn-memo-rows li{display:grid;grid-template-columns:22px minmax(0,1fr) 26px auto 44px;align-items:center;gap:6px;min-height:38px;font-variant-numeric:tabular-nums;animation:kn-up .3s ease-out both}
+.kn-memo-rows li{display:grid;grid-template-columns:22px minmax(0,1fr) 26px auto 44px;align-items:center;gap:6px;min-height:38px;font-variant-numeric:tabular-nums;animation:kn-up .3s var(--kn-ease) both}
 .kn-memo[data-still] .kn-memo-rows li{animation:none}
 .kn-memo-n{font-weight:800;color:var(--muted)}
 .kn-memo-what{display:flex;align-items:center;gap:4px;min-width:0}
@@ -193,4 +197,7 @@
 @keyframes kn-bump{0%{transform:scale(.9)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
 @keyframes kn-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes kn-fade{from{opacity:0}to{opacity:1}}
-@media (prefers-reduced-motion:reduce){.kn *{animation:none!important;transition:none!important}}
+@keyframes kn-pop-fade{0%{opacity:0}18%,70%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.kn *{animation:none!important;transition:none!important}.kn .kn-pop{animation:kn-pop-fade .95s linear forwards!important;transform:translate(-50%,0)}}
+.kn[data-calm] *,.kn[data-calm] *::after{animation:none!important;transition:none!important}
+.kn[data-calm] .kn-shutter,.kn[data-calm] .kn-shutter[data-down]{transition:opacity .2s linear,visibility 0s!important}
