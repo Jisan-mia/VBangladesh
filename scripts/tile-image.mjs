@@ -24,14 +24,25 @@ if (unknown.length) { console.error('not in the catalog:', unknown.join(', ')); 
  * select: a CSS selector for the play area (inside #tool unless it starts with "body ").
  * before: JS run once the page settles (start a level, dismiss a card). keepOverlays: don't hide floating cards.
  * focus: [x, y] in 0..1, where the square sits inside a wide or tall area (default centre).
+ * A selected element is shot as it is; a found canvas or svg grows to its wrapper when that is barely bigger.
  * zoom: crop a smaller square than the area (0.6 = 60% of the short side).
  * preview: [x, y, side] skip the page and crop the share card: x and side as fractions of its width, y of its height.
  * The cards put a headline on top, so the crop aims at the art below it.
  */
 const overrides = {
-  // The start screens: the brass থালা and the TV are the game's own art.
-  'chor-police': { select: '.cp-start', zoom: 0.78, focus: [0.5, 0.15] },
-  'antenna-thik-koro': { select: '.at-title-start' },
+  // Per game, after the start button: which element to shoot and where the square sits in it.
+  'bhangti-nai': { select: '.bt-scene', zoom: 0.62, focus: [0.15, 1], keepOverlays: true, wait: 1500 },
+  'ghontar-sur': { select: '.gs-bells', focus: [0.5, 0] },
+  'jora-melao': { select: '.jm-mat' },
+  // The brass থালা of chits is the art; its words are hidden for the shot.
+  'chor-police': { select: '.cp-start', zoom: 0.78, focus: [0.5, 0.15], before: `document.querySelectorAll('.cp-start-label').forEach(e => { e.style.visibility = 'hidden'; });` },
+  'paka-kancha': { select: '.pk-board' },
+  'chhaya-melao': { select: '.cs-wall', focus: [0.5, 0.12], keepOverlays: true },
+  // The storm scene has no mangoes in view mid-play, so its tile is the earlier, brighter shot of the tree (kept by hand, not re-shot).
+  'chhip-felo': { select: '.cf-pond', focus: [0.5, 1] },
+  'deri-hoye-gelo': { focus: [0.5, 0.85] },
+  'tarer-fanke-belun': { focus: [0.5, 0.8] },
+  'dosh-ghater-nouka': { focus: [0.5, 0.52] },
   // The board is mostly empty before play; the share card has the snake and the ঠোঙা.
   'jhalmuri-sap': { preview: [0.05, 0.1, 0.9] },
   'chhok-jora': { preview: [0.14, 0.2, 0.72] },
@@ -60,6 +71,28 @@ const overrides = {
   'sat-tukro': { preview: [0.05, 0.16, 0.9] },
   'borno-likhi': { preview: [0.05, 0.24, 0.9] },
 };
+
+// The start button of each game's launch screen: pressing it draws the play board, then we wait for things to move.
+const starts = {
+  'konta-nei': '.kn-shutter', 'bhangti-nai': '.bt-cover', 'ghontar-sur': '.gs-giant', 'churui-tarao': '.ct-go',
+  'moshar-raat': '.mr-go', 'marble-sinri': '.ms-go', 'shobdo-khoja': '.sk-go', 'dudh-uthlano': '.du-title-start', 'antenna-thik-koro': '.at-title-start',
+  'deri-hoye-gelo': '.dh-title-start', 'danguli': '.dg-title-start', 'sir-ghurlei-thamo': '.sg-title-start', 'paka-kancha': '.pk-go',
+  'baicher-nouka': '.bn-title-start', 'tarer-fanke-belun': '.tb-title-start', 'vo-katta': '.vk-title-start', 'golokdhadha': '.gd-title-start',
+  'golir-badminton': '.gb-title-start', 'atir-aam': '.aa-title-start', 'churir-bazar': '.cb-title-start', 'chhip-felo': '.cf-title-start',
+  'latim': '.lt-title-start', 'ki-hobe': '.ki-start', 'o-te-ojogor': '.oj-start', 'ghori-dekhi': '.gd-start', 'chhaya-melao': '.cs-stall',
+  'roshi-tana': '.rt-title-start', 'mongole-rover': '.mr-hill', 'daripalla': '.dp-startbtn', 'prithibi-ghuri': '.pg-env', 'dosh-ghater-nouka': '.dg-startbtn',
+  'jora-melao': '.jm-sign', 'hat-dhui': '.hd-hero', 'nirapode-thaki': '.nt-card',
+};
+// The first-run story has a skip button (a click with no pointer counts as the long press).
+const press = (sel, wait = 2500) => `document.querySelector(${JSON.stringify(sel)})?.click(); await new Promise(r => setTimeout(r, 1500)); for (const skip of document.querySelectorAll('[class*=skip]:not(.skip-link)')) skip.click(); await new Promise(r => setTimeout(r, ${wait}));`;
+const tap = (sel, wait = 400) => `document.querySelector(${JSON.stringify(sel)})?.click(); await new Promise(r => setTimeout(r, ${wait}));`;
+// Games that need a few moves before the board has something on it.
+const moves = {
+  // Two guesses so the rows show coloured mangoes.
+  'paka-kancha': `for (const guess of [[0, 1, 2, 3], [4, 5, 6, 7]]) { const keys = [...document.querySelectorAll('.pk-key:not(.pk-erase):not(.pk-check)')]; for (const i of guess) { keys[i]?.click(); await new Promise(r => setTimeout(r, 150)); } document.querySelector('.pk-check')?.click(); await new Promise(r => setTimeout(r, 900)); }`,
+};
+for (const [slug, sel] of Object.entries(starts)) overrides[slug] = { before: press(sel) + (moves[slug] || ''), ...overrides[slug] };
+for (const slug of Object.keys(moves)) if (!starts[slug]) overrides[slug] = { before: moves[slug], ...overrides[slug] };
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const outDir = join(process.cwd(), 'public', 'tiles');
@@ -115,7 +148,7 @@ const findArea = (o) => `
   if (!area) return null;
   // A drawn svg inside a wrapper: use the wrapper when it is barely bigger (keeps the frame and backdrop).
   const wrap = area.parentElement;
-  if (wrap && wrap !== tool && big(wrap) < big(area) * 1.35) area = wrap;
+  if (!o.select && wrap && wrap !== tool && big(wrap) < big(area) * 1.35) area = wrap;
   if (!o.keepOverlays) {
     const box = area.getBoundingClientRect();
     for (const el of document.querySelectorAll('body *')) {
@@ -157,6 +190,14 @@ async function tileFromPage(b, slug) {
   // Games inside the shared player show a launch card on a phone: press খেলো so the game itself is on screen.
   if (await b.run(`const play = document.querySelector('.gp-play'); if (play) play.click(); return !!play`)) await sleep(2000);
   if (o.before) { await b.run(o.before); await sleep(1500); }
+  if (o.wait) await sleep(o.wait);
+  if (flags.full) {
+    const info = await b.run(`const t = document.querySelector('#tool') || document.body; const d = e => (e.tagName.toLowerCase() + '.' + String(e.className?.baseVal ?? e.className).split(' ')[0] + ' ' + Math.round(e.getBoundingClientRect().width) + 'x' + Math.round(e.getBoundingClientRect().height)); return { buttons: [...t.querySelectorAll('button')].map(e => d(e) + ' "' + e.textContent.trim().slice(0, 20) + '"'), drawn: [...t.querySelectorAll('canvas, svg')].map(d).slice(0, 12) };`);
+    console.log(slug, JSON.stringify(info));
+    const full = await b.send('Page.captureScreenshot', { format: 'png' });
+    mkdirSync(join(process.cwd(), 'scratchpad', 'tiles'), { recursive: true });
+    writeFileSync(join(process.cwd(), 'scratchpad', 'tiles', `full-${slug}.png`), Buffer.from(full.result.data, 'base64'));
+  }
   const area = await b.run(findArea(o));
   if (!area) return null;
   await sleep(500);
@@ -203,12 +244,13 @@ if (flags.sheet) {
   const b = await browser();
   try {
     // --sheet-from=previews shows the share cards instead, to judge a fallback before using it.
-    const dir = flags['sheet-from'] === 'previews' ? join(process.cwd(), 'public', 'previews') : outDir;
-    const list = (slugs.length ? slugs : games).filter(slug => existsSync(join(dir, `${slug}.webp`)));
+    const fullDir = join(process.cwd(), 'scratchpad', 'tiles');
+    const dir = flags['sheet-full'] ? fullDir : flags['sheet-dir'] ? flags['sheet-dir'] : flags['sheet-from'] === 'previews' ? join(process.cwd(), 'public', 'previews') : outDir;
+    const list = (slugs.length ? slugs : games).filter(slug => existsSync(join(dir, flags['sheet-full'] ? `full-${slug}.png` : `${slug}.webp`)));
     await b.send('Emulation.setDeviceMetricsOverride', { width: 1200, height: 900, deviceScaleFactor: 1, mobile: false });
     await b.open('about:blank');
-    const cells = list.map(slug => `<figure><img src="data:image/webp;base64,${readFileSync(join(dir, `${slug}.webp`)).toString('base64')}"><figcaption>${slug}</figcaption></figure>`).join('');
-    await b.run(`document.body.innerHTML = ${JSON.stringify(`<style>body{margin:0;background:#222;font:11px sans-serif;color:#eee}main{display:grid;grid-template-columns:repeat(8,140px);align-items:start;gap:8px;padding:8px}figure{margin:0}img{width:140px;${flags['sheet-from'] ? '' : 'height:140px;'}border-radius:12px;display:block}</style><main>${cells}</main>`)}; await Promise.all([...document.images].map(i => i.decode().catch(() => {})));`);
+    const cells = list.map(slug => `<figure><img src="data:image/${flags['sheet-full'] ? 'png' : 'webp'};base64,${readFileSync(join(dir, flags['sheet-full'] ? `full-${slug}.png` : `${slug}.webp`)).toString('base64')}"><figcaption>${slug}</figcaption></figure>`).join('');
+    await b.run(`document.body.innerHTML = ${JSON.stringify(`<style>body{margin:0;background:#222;font:11px sans-serif;color:#eee}main{display:grid;grid-template-columns:repeat(${flags['sheet-full'] ? 6 : 8},${flags['sheet-full'] ? 190 : 140}px);align-items:start;gap:8px;padding:8px}figure{margin:0}img{width:${flags['sheet-full'] ? 190 : 140}px;${flags['sheet-from'] || flags['sheet-full'] ? '' : 'height:140px;'}border-radius:12px;display:block}</style><main>${cells}</main>`)}; await Promise.all([...document.images].map(i => i.decode().catch(() => {})));`);
     const m = await b.send('Page.getLayoutMetrics');
     const shot = await b.send('Page.captureScreenshot', { format: 'png', clip: { x: 0, y: 0, width: 1200, height: Math.ceil(m.result.cssContentSize.height), scale: 1 }, captureBeyondViewport: true });
     writeFileSync(flags.sheet, Buffer.from(shot.result.data, 'base64'));
