@@ -1,29 +1,32 @@
-export const title = "নিরাপদে থাকি: scene, question, sound, daily limit and links";
-const game = (v: any) => {
-  if (v.exit === "site") return "Left for another page";
-  if (v.exit === "share") return "Parent shares the link";
-  if (v.resting) return "Rest screen";
-  if (v.phase === "done") return "What you learned";
-  if (v.phase === "idle") return "Scene tiles (শেষ)";
-  const n = v.q === 0 ? "First question" : "Last question";
-  return v.solved ? `${n}, safe pick found` : v.tried ? `${n}, আরেকবার ভাবো` : n;
+export const title = "নিরাপদে থাকি: screens, the answer that waits for ➜, pause, the pace and the daily limit";
+const screen = (v: any) => {
+  if (v.screen === "title") return "The postcard (খেলো)";
+  if (v.screen === "levels") return "The level list";
+  if (v.screen === "end") return "The end screen (আবার খেলো / শেষ)";
+  if (v.answered) return v.q === 2 ? "Last answer right, stars saved, ➜ waits" : "Right answer shows why, ➜ waits";
+  return v.q === 1 ? "First question" : "Last question";
 };
 export const state = (v: any) => ({
-  Game: game(v),
-  Sound: v.sound ? "Sound on" : "Sound off",
+  Round: screen(v),
+  Menu: v.paused ? "Pause menu open" : v.swallow ? "Back from away, the next tap only wakes" : "Playing",
+  Today: v.resting ? (v.screen === "play" ? "Time's up, the rest waits for the end screen" : "Rest screen") : v.overLimit ? "Today's time is up" : "Time left today",
 });
 export const step = (action: string) => ({
-  YouPickTheSafeOne: "you pick the safe one",
-  YouPickAWrongOne: "you pick a wrong one",
-  YouTapNext: "you press পরেরটা",
-  YouPlayAgain: "you press আবার খেলো",
-  YouTapShesh: "you press শেষ",
-  YouTapASceneTile: "you tap a scene tile",
-  SoundOff: "you turn sound off",
-  SoundOn: "you turn sound on",
-  ParentGivesMoreTime: "a parent gives 10 more minutes",
-  ParentSharesTheLink: "a parent opens the gate and shares the link",
-  YouTapALinkAroundTheGame: "you tap a link around the game",
+  YouStartARound: "the child taps খেলো or আবার খেলো",
+  YouOpenTheLevelList: "the child opens the level list",
+  YouPickALevel: "the child picks a level",
+  YouTapAWrongPicture: "the child taps a wrong picture",
+  YouTapTheSafePicture: "the child taps the safe picture",
+  YouTapNext: "the child taps ➜",
+  YouGoAway: "the window blurs, or ⏸ / P / Esc",
+  YouResume: "চালিয়ে যাও",
+  YouGoBackToTheTitle: "নতুন করে শুরু, or শেষ",
+  YouHoldEnter: "the child holds Enter",
+  TheKeyRepeats: "Enter auto-repeats",
+  YouLetGoOfTheKey: "the child lets go of the key",
+  TimeIsUp: "today's play time runs out",
+  ThePageOpens: "the page opens again",
+  TenMoreMinutes: "a grown-up gives আজ আরও ১০ মিনিট",
 } as Record<string, string>)[action] ?? action;
-export const group = (v: any) => v.exit !== "none" ? "gone" : v.resting ? "rest" : v.phase === "play" ? "play" : "between";
-export const colors = { play: "teal", between: "blue", rest: "yellow", gone: "orange" };
+export const group = (v: any) => v.resting && v.screen !== "play" ? "held" : v.screen === "play" ? "play" : "done";
+export const colors = { play: "teal", held: "yellow", done: "blue" };

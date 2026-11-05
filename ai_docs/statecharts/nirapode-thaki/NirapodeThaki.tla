@@ -1,88 +1,125 @@
 ---- MODULE NirapodeThaki ----
-\* নিরাপদে থাকি as it is on 2026-11-04 (branch games-to-the-bar), mirrored from:
-\*   tools/nirapode-thaki/components/safe-game.tsx  SafeGame: phase, start(), the #s= hash on load, choose() (speak), next(),
-\*                                                  finish() (record, atBreak), আবার খেলো / শেষ, SetTiles under the game
-\*   tools/nirapode-thaki/lib/round.ts              choiceCount, starsOf
-\*   shared/kids-kit.tsx                            useKidsSession().atBreak(), RestScreen, ParentGate, speak()
-\*   shared/game-sound.ts                           tone()/sfx check soundOn(); speak() does not
-\*   shared/site-shell.tsx                          PageFrame links around the game
-\* Two questions stand for five, two scenes for six. Nothing in the game runs on a timer, so focus is not modelled.
-\* Ages 6–10 (parent note), so the 3–5 NoReadingNeeded rule is replaced by its 6+ form: every answer is a picture.
-\* The phone has a Bangla voice (Voice).
+\* নিরাপদে থাকি after the rewrite: the screens, the round of questions, the answer that waits for ➜, the player's pause,
+\* going away and coming back, a key held through an answer, and the kids' daily limit with its rest screen. The pace that
+\* carries from round to round is NirapodeThakiPace.tla, the parent gates NirapodeThakiGates.tla. Mirrored from:
+\*   tools/nirapode-thaki/lib/session.ts    begin, tapTile, solved, advance, pause, resume, blur, toTitle, openLevels, freshNext, freshKey
+\*   tools/nirapode-thaki/lib/play.ts       answer (first-tap right or not), nextPace, createRound(…, pace)
+\*   tools/nirapode-thaki/components/game.tsx  begin() asks kids.atBreak() and keeps roundRef.current.pace; pick() records the
+\*                                          stars at the last right tap; onward() is ➜; onPause/onResume/onRestart
+\*   shared/kids-kit.tsx                    useKidsSession rests on mount past the limit; RestScreen is a real modal
+\* Two questions stand for five.
+\* No voice anywhere on the site (speak() is a no-op), so the old SilentWhenMuted rule has nothing left to check.
 EXTENDS Naturals
-CONSTANTS Questions, Voice
-VARIABLES link, opened, scene, phase, q, solved, tried, sound, resting, exit, lost, spokeMuted, sent, stored
-vars == <<link, opened, scene, phase, q, solved, tried, sound, resting, exit, lost, spokeMuted, sent, stored>>
-Scenes == {"rasta", "pukur"}
-Quiet == lost' = FALSE /\ spokeMuted' = FALSE
-Open == exit = "none" /\ ~resting
+VARIABLES screen, back, q, answered, tried, finished, recorded, begun,   \* the round
+          paused, swallow, held, skipped, moved, lost,                  \* away and back, keys
+          overLimit, resting                                            \* the daily limit
+round == <<screen, back, q, answered, tried, finished, recorded, begun>>
+away == <<paused, swallow, held, skipped, moved, lost>>
+kids == <<overLimit, resting>>
+vars == <<round, away, kids>>
 
-\* The mount effect: start(setFromHash(location.hash) ?? firstOpenSet(...)). "pukur" plays the first set without stars.
-Init == /\ link \in {"none", "rasta", "junk"}
-        /\ scene = IF link = "rasta" THEN "rasta" ELSE "pukur"
-        /\ opened = scene
-        /\ phase = "play" /\ q = 0 /\ solved = FALSE /\ tried = FALSE /\ sound = TRUE /\ resting = FALSE /\ exit = "none"
-        /\ lost = FALSE /\ spokeMuted = FALSE /\ sent = FALSE /\ stored = FALSE
+\* RestScreen renders on every screen but play (game.tsx: kids.resting && screen !== 'play') and covers the rest.
+RestShows == resting /\ screen # "play"
+Free == ~RestShows /\ ~paused
 
-\* choose(right): sfx.good(), speak(question.rule).
-YouPickTheSafeOne == /\ Open /\ phase = "play" /\ ~solved
-                     /\ solved' = TRUE /\ spokeMuted' = (Voice /\ ~sound) /\ lost' = FALSE
-                     /\ UNCHANGED <<link, opened, scene, phase, q, tried, sound, resting, exit, sent, stored>>
-\* choose(wrong): a soft tone and a wobble, "আরেকবার ভাবো।"
-YouPickAWrongOne == /\ Open /\ phase = "play" /\ ~solved /\ ~tried
-                    /\ tried' = TRUE
-                    /\ UNCHANGED <<link, opened, scene, phase, q, solved, sound, resting, exit, sent, stored>> /\ Quiet
-\* next(): পরেরটা, or on the last question দেখো কী শিখলে → finish(): record(), confetti or sfx.win(), setPhase('done'), atBreak().
-YouTapNext == /\ Open /\ phase = "play" /\ solved
-              /\ IF q < Questions - 1
-                 THEN q' = q + 1 /\ solved' = FALSE /\ tried' = FALSE /\ UNCHANGED <<phase, resting>>
-                 ELSE phase' = "done" /\ resting' \in BOOLEAN /\ UNCHANGED <<q, solved, tried>>
-              /\ UNCHANGED <<link, opened, scene, sound, exit, sent, stored>> /\ Quiet
-\* আবার খেলো on the done screen: start(set.id).
-YouPlayAgain == /\ Open /\ phase = "done"
-                /\ phase' = "play" /\ q' = 0 /\ solved' = FALSE /\ tried' = FALSE
-                /\ UNCHANGED <<link, opened, scene, sound, resting, exit, sent, stored>> /\ Quiet
-\* শেষ: setPhase('idle'), the scene tiles.
-YouTapShesh == /\ Open /\ phase = "done" /\ phase' = "idle"
-               /\ UNCHANGED <<link, opened, scene, q, solved, tried, sound, resting, exit, sent, stored>> /\ Quiet
-\* SetTiles (under the game while playing, and on the idle screen): pickSet() → start(id), even for the scene in play.
-YouTapASceneTile == /\ Open
-                    /\ \E s \in Scenes : scene' = s /\ lost' = (phase = "play" /\ s = scene /\ (q > 0 \/ solved \/ tried))
-                    /\ phase' = "play" /\ q' = 0 /\ solved' = FALSE /\ tried' = FALSE /\ spokeMuted' = FALSE
-                    /\ UNCHANGED <<link, opened, sound, resting, exit, sent, stored>>
-SoundOff == /\ sound /\ sound' = FALSE
-            /\ UNCHANGED <<link, opened, scene, phase, q, solved, tried, resting, exit, sent, stored>> /\ Quiet
-SoundOn == /\ ~sound /\ sound' = TRUE
-           /\ UNCHANGED <<link, opened, scene, phase, q, solved, tried, resting, exit, sent, stored>> /\ Quiet
-ParentGivesMoreTime == /\ resting /\ resting' = FALSE
-                       /\ UNCHANGED <<link, opened, scene, phase, q, solved, tried, sound, exit, sent, stored>> /\ Quiet
-ParentSharesTheLink == /\ Open /\ exit' = "share"
-                       /\ UNCHANGED <<link, opened, scene, phase, q, solved, tried, sound, resting, sent, stored>> /\ Quiet
-YouTapALinkAroundTheGame == /\ Open /\ exit' = "site"
-                            /\ UNCHANGED <<link, opened, scene, phase, q, solved, tried, sound, resting, sent, stored>> /\ Quiet
-Done == exit # "none" /\ UNCHANGED vars
+Init == /\ screen = "title" /\ back = "title" /\ q = 1 /\ answered = FALSE /\ tried = FALSE /\ finished = FALSE /\ recorded = FALSE /\ begun = "inTime"
+        /\ paused = FALSE /\ swallow = FALSE /\ held = FALSE /\ skipped = FALSE /\ moved = FALSE /\ lost = FALSE
+        /\ overLimit \in BOOLEAN /\ resting = overLimit   \* useKidsSession: past today's limit the page opens resting
 
-Next == YouPickTheSafeOne \/ YouPickAWrongOne \/ YouTapNext \/ YouPlayAgain \/ YouTapShesh \/ YouTapASceneTile
-        \/ SoundOff \/ SoundOn \/ ParentGivesMoreTime \/ ParentSharesTheLink \/ YouTapALinkAroundTheGame \/ Done
+\* begin(): খেলো on the postcard, আবার খেলো, a level from the list. atBreak() first: past the limit, the rest screen instead.
+StartRound == /\ q' = 1 /\ answered' = FALSE /\ tried' = FALSE /\ finished' = FALSE /\ recorded' = FALSE /\ screen' = "play"
+YouStartARound == /\ screen \in {"title", "end"} /\ Free
+                  /\ IF overLimit
+                     THEN /\ resting' = TRUE /\ UNCHANGED <<screen, q, answered, tried, finished, recorded>>
+                     ELSE /\ StartRound /\ resting' = FALSE
+                  /\ UNCHANGED <<back, begun, paused, held, skipped, moved, lost, overLimit>> /\ swallow' = FALSE
+\* The level list opens from the title or the end screen only, never over a question; `back` remembers which.
+YouOpenTheLevelList == /\ screen \in {"title", "end"} /\ Free /\ screen' = "levels" /\ back' = screen
+                       /\ UNCHANGED <<q, answered, tried, finished, recorded, begun, away, kids>>
+YouPickALevel == /\ screen = "levels" /\ Free
+                 /\ IF overLimit
+                    THEN /\ resting' = TRUE /\ screen' = "title" /\ UNCHANGED <<q, answered, tried, finished, recorded>>
+                    ELSE /\ StartRound /\ resting' = FALSE
+                 \* lost: a round in progress thrown away by a tap on the scene picture (back = "play" is impossible in the code).
+                 /\ lost' = (lost \/ (~overLimit /\ back = "play"))
+                 /\ UNCHANGED <<back, begun, paused, swallow, held, skipped, moved, overLimit>>
+
+\* tapTile(): only on play, nothing covering it, no answer already showing; the first tap after coming back only wakes the game.
+YouTapAWrongPicture == /\ screen = "play" /\ Free /\ ~answered
+                       /\ IF swallow THEN /\ swallow' = FALSE /\ UNCHANGED tried ELSE /\ tried' = TRUE /\ UNCHANGED swallow
+                       /\ UNCHANGED <<screen, back, q, answered, finished, recorded, begun, paused, held, skipped, moved, lost, kids>>
+\* The safe picture: solved(). On the last question the stars are saved and atBreak() runs in this very tap.
+\* answer(): a right tap with no wrong one before it is "first try", and nextPace() counts it.
+YouTapTheSafePicture == /\ screen = "play" /\ Free /\ ~answered
+                        /\ IF swallow
+                           THEN /\ swallow' = FALSE /\ UNCHANGED <<answered, finished, recorded, resting>>
+                           ELSE /\ answered' = TRUE
+                                /\ finished' = (q = 2) /\ recorded' = (q = 2)
+                                /\ resting' = (IF q = 2 THEN overLimit ELSE resting)
+                                /\ UNCHANGED swallow
+                        /\ UNCHANGED <<screen, back, q, tried, begun, paused, held, skipped, moved, lost, overLimit>>
+\* ➜ (advance()): only with an answer showing and the menu shut. The next question, or the end screen after the last.
+\* `moved` would record a step taken under the menu.
+YouTapNext == /\ screen = "play" /\ answered /\ ~paused
+              /\ answered' = FALSE /\ tried' = FALSE /\ moved' = (moved \/ paused)
+              /\ IF q = 2 THEN screen' = "end" /\ UNCHANGED q ELSE q' = 2 /\ UNCHANGED screen
+              /\ UNCHANGED <<back, finished, recorded, begun, paused, swallow, held, skipped, lost, kids>>
+
+\* The player's menu: ⏸, P, Escape, blur or hide (the game's blur handler arms the swallow while a question is open; held keys drop).
+YouGoAway == /\ ~paused /\ paused' = TRUE /\ swallow' = (screen = "play" /\ ~answered) /\ held' = FALSE
+             /\ UNCHANGED <<round, skipped, moved, lost, kids>>
+YouResume == /\ paused /\ paused' = FALSE /\ swallow' = FALSE
+             /\ UNCHANGED <<round, held, skipped, moved, lost, kids>>
+\* নতুন করে শুরু from the menu, or শেষ on the end screen: back to the title (toTitle()).
+YouGoBackToTheTitle == /\ (paused \/ (screen = "end" /\ Free))
+                       /\ screen' = "title" /\ answered' = FALSE /\ paused' = FALSE /\ swallow' = FALSE
+                       /\ UNCHANGED <<back, q, tried, finished, recorded, begun, held, skipped, moved, lost, kids>>
+
+\* Enter or Space held through an answer and auto-repeating: freshNext()/freshKey() refuse a repeat or a keydown from before.
+YouHoldEnter == /\ screen = "play" /\ ~paused /\ ~held /\ held' = TRUE
+                /\ UNCHANGED <<round, paused, swallow, skipped, moved, lost, kids>>
+TheKeyRepeats == /\ held /\ (screen = "end" \/ (screen = "play" /\ answered)) /\ Free
+                 /\ skipped' = FALSE
+                 /\ UNCHANGED <<round, paused, swallow, held, moved, lost, kids>>
+YouLetGoOfTheKey == /\ held /\ held' = FALSE
+                    /\ UNCHANGED <<round, paused, swallow, skipped, moved, lost, kids>>
+
+\* useKidsSession's tick pushes today's time past the limit, at any moment.
+TimeIsUp == /\ ~overLimit /\ overLimit' = TRUE
+            /\ UNCHANGED <<round, away, resting>>
+\* A reload, or opening the game from the kids' hub: the title, resting if past the limit (a new page has a fresh pace).
+ThePageOpens == /\ screen' = "title" /\ back' = "title" /\ q' = 1 /\ answered' = FALSE /\ tried' = FALSE /\ finished' = FALSE /\ recorded' = FALSE
+                /\ paused' = FALSE /\ swallow' = FALSE /\ held' = FALSE
+                /\ resting' = overLimit
+                /\ UNCHANGED <<begun, skipped, moved, lost, overLimit>>
+
+\* A grown-up's আজ আরও ১০ মিনিট on the rest screen (who can reach it is NirapodeThakiGates.tla's job).
+TenMoreMinutes == /\ RestShows /\ overLimit' = FALSE /\ resting' = FALSE /\ UNCHANGED <<round, away>>
+
+Next == YouStartARound \/ YouOpenTheLevelList \/ YouPickALevel \/ YouTapAWrongPicture \/ YouTapTheSafePicture \/ YouTapNext
+        \/ YouGoAway \/ YouResume \/ YouGoBackToTheTitle \/ YouHoldEnter \/ TheKeyRepeats \/ YouLetGoOfTheKey
+        \/ TimeIsUp \/ ThePageOpens \/ TenMoreMinutes
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ link \in {"none", "rasta", "junk"} /\ opened \in Scenes /\ scene \in Scenes /\ phase \in {"play", "done", "idle"} /\ q \in 0..(Questions - 1)
-          /\ solved \in BOOLEAN /\ tried \in BOOLEAN /\ sound \in BOOLEAN /\ resting \in BOOLEAN /\ exit \in {"none", "share", "site"}
-          /\ lost \in BOOLEAN /\ spokeMuted \in BOOLEAN /\ sent \in BOOLEAN /\ stored \in BOOLEAN
+TypeOK == /\ screen \in {"title", "play", "end", "levels"} /\ back \in {"title", "end", "play"} /\ q \in 1..2
+          /\ answered \in BOOLEAN /\ tried \in BOOLEAN /\ finished \in BOOLEAN /\ recorded \in BOOLEAN /\ begun \in {"inTime", "late"}
+          /\ paused \in BOOLEAN /\ swallow \in BOOLEAN /\ held \in BOOLEAN /\ skipped \in BOOLEAN /\ moved \in BOOLEAN /\ lost \in BOOLEAN
+          /\ overLimit \in BOOLEAN /\ resting \in BOOLEAN
 
-\* What the child must tap to go on (6+ form): the answers are icon + word; পরেরটা, আবার খেলো, শেষ are words.
-Answers == {"choice"}
-Pictured == {"choice", "sceneTile", "sound"}
-
-\* The reader's rules.
-\* A #s=<scene> link opens that scene; a broken one falls back to the first scene without stars (checked live too).
-LinkOpensItsScene == opened = (IF link = "rasta" THEN "rasta" ELSE "pukur")
-SilentWhenMuted == ~spokeMuted
+\* ---- the reader's rules ----
+\* The rest screen comes only between rounds, never over a question.
+RestOnlyAtBreak == RestShows => screen # "play"
+\* Once today's time is up, no new round starts without the rest screen first.
+NoNewRoundPastLimit == begun = "inTime"
+\* Every finished round counts: once the last question is right, its stars are saved and the limit checked, whatever comes next.
+EveryFinishCounts == finished => recorded
+\* Nothing moves on under the pause menu.
+NothingMovesUnderTheMenu == ~moved
+\* The level list is a choice screen: opened only from the title or the end screen, so no question waits under it.
+ChoiceFreezesPlay == screen = "levels" => back # "play" /\ ~answered
+\* Bug 2: a round in progress is never thrown away by a tap on a scene picture.
 SceneTileKeepsRound == ~lost
-RestOnlyAtBreak == resting => phase = "done"
-ParentGate == exit # "site"
-NoNetwork == ~sent
-NoChildData == ~stored
-AnswersArePictures == Answers \subseteq Pictured
+\* A key held through an answer or the end screen never moves on.
+ResultNeedsFreshPress == ~skipped
 ====

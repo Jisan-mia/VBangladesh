@@ -2,10 +2,9 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
-import { makeRng } from "../../../shared/game-core";
 import { ICONS, SCENES, sceneMarkup, svgDocument } from "../lib/art";
-import { cardTitle, choiceCount, choicesFor, firstOpenSet, shuffle, starsOf } from "../lib/round";
 import { SETS, setFromHash, setOf } from "../lib/sets";
+import { readLevels } from "../../../shared/game-core";
 import { site } from "../content";
 import { share } from "../share";
 
@@ -23,12 +22,13 @@ test("six scene sets in the order of the brief, each with a picture, a parent li
   }
 });
 
-test("every question: a pictured safe answer, at least two wrong picks, no duplicates, NFC Bangla", () => {
+test("every question: a pictured safe answer, three wrong pictures, no duplicates, NFC Bangla", () => {
   for (const item of SETS) for (const q of item.questions) {
     const all = [q.right, ...q.wrong];
-    assert.ok(q.wrong.length >= 2, `${item.id}/${q.id} has two wrong picks`);
+    assert.ok(q.wrong.length >= 3, `${item.id}/${q.id} has three wrong pictures`);
     assert.equal(new Set(all.map(choice => choice.id)).size, all.length, `${item.id}/${q.id} ids`);
     assert.equal(new Set(all.map(choice => choice.bn)).size, all.length, `${item.id}/${q.id} labels`);
+    assert.equal(new Set(all.map(choice => choice.icon)).size, all.length, `${item.id}/${q.id} pictures`);
     for (const choice of all) { assert.ok(ICONS[choice.icon], `${item.id}/${q.id}/${choice.id} icon ${choice.icon}`); nfc(choice.bn); }
     for (const text of [q.ask, q.why, q.hint, q.rule]) { nfc(text); assert.match(text, /[ঀ-৿]/u); }
     if (q.prop) assert.ok(ICONS[q.prop.icon], `${q.id} prop`);
@@ -64,41 +64,16 @@ test("art: a standalone SVG document for the card, and a prop drawn on its scene
   assert.notEqual(ICONS["look-left"], ICONS["look-right"]);
 });
 
-test("a round: the safe answer is always offered once, with no repeated choice", () => {
-  for (const seed of [1, 7, 99, 12345]) for (const item of SETS) for (const q of item.questions) for (const count of [2, 3, 4]) {
-    const choices = choicesFor(q, count, makeRng(seed));
-    assert.equal(choices.length, Math.min(count, q.wrong.length + 1));
-    assert.equal(choices.filter(choice => choice.id === q.right.id).length, 1);
-    assert.equal(new Set(choices.map(choice => choice.id)).size, choices.length);
-    // The easiest version keeps the most tempting wrong pick.
-    if (count === 2) assert.ok(choices.some(choice => choice.id === q.wrong[0].id));
-  }
-  assert.equal(shuffle([1, 2, 3], makeRng(1)).length, 3);
-});
-
-test("difficulty: three misses in a row eases to two choices, five right in a row steps up to four (if the question has four)", () => {
-  assert.equal(choiceCount(0, 0, 4), 3);
-  assert.equal(choiceCount(2, 0, 4), 3);
-  assert.equal(choiceCount(3, 0, 4), 2);
-  assert.equal(choiceCount(0, 4, 4), 3);
-  assert.equal(choiceCount(0, 5, 4), 4);
-  assert.equal(choiceCount(0, 5, 3), 3);
-  assert.equal(choiceCount(0, 0, 2), 2);
-});
-
-test("stars are a record: 3 for 4–5 safe first picks, 2 for 3, 1 for finishing", () => {
-  assert.deepEqual([0, 1, 2, 3, 4, 5].map(n => starsOf(n, 5)), [1, 1, 1, 2, 3, 3]);
-  assert.equal(firstOpenSet(SETS, {}).id, "rasta");
-  assert.equal(firstOpenSet(SETS, { 1: 2, 2: 3 }).id, "chula");
-  assert.equal(firstOpenSet(SETS, { 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1 }).id, "rasta");
-  assert.equal(cardTitle(setOf("rasta"), bn), "আজ রাস্তা পার হওয়ার ৫টা নিয়ম শিখলাম");
-});
-
 test("a set opens by hash", () => {
   assert.equal(setFromHash("#s=jhor"), "jhor");
   assert.equal(setFromHash("#s=nope"), null);
   assert.equal(setFromHash(""), null);
   assert.equal(setOf(null).id, "rasta");
+});
+
+test("saved stars from before the rewrite still read, and the three finales are new ids", () => {
+  assert.deepEqual(readLevels('{"1":3,"2":2,"6":1}', 9), { 1: 3, 2: 2, 6: 1 });
+  assert.deepEqual(readLevels('{"7":2,"9":3,"10":1}', 9), { 7: 2, 9: 3 }, "ids past the last level are dropped");
 });
 
 test("no sharing of results: normalize always returns null, and there is no tally", () => {
@@ -130,4 +105,25 @@ test("content: SEO limits and the FAQ parents search for", () => {
     assert.doesNotMatch(text, /আপনি|করুন/);
   }
   assert.equal(site.privacy.length, 1);
+});
+
+test("no voice anywhere (bug 1, SilentWhenMuted): the game never calls speak, SpeakButton or speechSynthesis", () => {
+  const files: string[] = [];
+  const walk = (dir: string) => { for (const name of readdirSync(dir)) { const path = join(dir, name); if (statSync(path).isDirectory()) { if (name !== "tests") walk(path); } else if (/\.tsx?$/.test(name)) files.push(path); } };
+  walk(join(import.meta.dirname, ".."));
+  for (const file of files) assert.doesNotMatch(readFileSync(file, "utf8"), /\bspeak\s*\(|SpeakButton|speechSynthesis|SpeechSynthesisUtterance|useBanglaVoice/, file);
+});
+
+test("the page is the shared player with the kids' frame, and no child-facing link leaves it (bug 3, ParentGate)", () => {
+  const page = readFileSync(join(import.meta.dirname, "..", "page.tsx"), "utf8");
+  assert.match(page, /<GamePage[^>]*\bkids\b/);
+  assert.doesNotMatch(page, /PageFrame|<a\b|href=/, "the page itself links nowhere");
+  const game = readdirSync(join(import.meta.dirname, "..", "components")).map(name => readFileSync(join(import.meta.dirname, "..", "components", name), "utf8")).join("\n");
+  assert.doesNotMatch(game, /href=|<a\b|location\.(href|assign|replace)|window\.open/, "the game links nowhere");
+  assert.doesNotMatch(game, /location\.hash\s*=|history\.pushState|\.scrollIntoView/, "no hash writes, no history pushes, no scrolling the page");
+});
+
+test("old links parse and nothing is written to the address bar", () => {
+  const game = readFileSync(join(import.meta.dirname, "..", "components", "game.tsx"), "utf8");
+  assert.doesNotMatch(game, /replaceState|hashchange/);
 });

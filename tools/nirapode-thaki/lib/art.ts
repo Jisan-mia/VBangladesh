@@ -135,6 +135,11 @@ ${at(30, 6, 0.38, kiteShape)}<path d="M42 24q-8 14-20 26" fill="none" stroke="${
   "loose-wire": `<path d="M2 4q24 8 30 18t-4 24q-6 10 4 14" fill="none" stroke="${INK}" stroke-width="3" stroke-linecap="round"/><path d="M30 58l4 4" stroke="#c0392b" stroke-width="3" stroke-linecap="round"/>`,
 };
 ICONS["look-left"] = mirror(ICONS["look-right"]);
+ICONS["spool-wire"] = spool("#d08a3a", `<path d="M22 20q6 4 0 8t0 8 0 8M38 20q-6 4 0 8t0 8 0 8" fill="none" stroke="#fff3d6" stroke-width="2.4" stroke-linecap="round"/>`);
+ICONS.haldi = `<path d="M6 34h52a26 22 0 0 1-52 0z" fill="#c69361" ${o}/><path d="M10 34q22-24 44 0z" fill="#f2b632" ${o}/><path d="M22 28q10-6 20 0" fill="none" stroke="#fff3d6" stroke-width="2.4" stroke-linecap="round"/>`;
+
+/** Where the child's head is in each scene (320×160 box), so the "?" bubble floats over it. */
+export const HEADS: Record<string, readonly [number, number]> = { road: [126, 106], pond: [86, 40], kitchen: [270, 78], roof: [78, 100], fair: [128, 90], storm: [165, 90] };
 
 const sky = (color = "#dbeefa") => `<rect width="320" height="160" fill="${color}"/>`;
 const figure = (look: Look, x: number, y: number, s: number, pose: Pose = "stand", flip = false) =>

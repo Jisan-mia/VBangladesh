@@ -1,30 +1,142 @@
-# নিরাপদে থাকি: statechart before the rewrite
+# নিরাপদে থাকি: statechart
 
-Modelled on 2026-11-04 from the code on branch `games-to-the-bar`. The game is not yet on the shared game player. Files: spec `NirapodeThaki.tla`, config `NirapodeThaki.cfg`, view `view.ts`, and output in `before-fix/` (`report.md`, `chart.mmd`). TLC reached 492 states, and the chart draws 13 states and 36 arrows.
+The game was rewritten on 2026-11-05 (design: `ai_docs/game-dev/rewrites/nirapode-thaki.md`). The model has three parts, so each chart stays readable. The run on the old code is in `before-fix/` (with the old spec itself); the three runs on the rewritten code are `after-fix/`, `after-fix-pace/` and `after-fix-gates/`. **Every rule holds.**
 
-## Systems modelled
-- **Opening:** the page opens on a `#s=<scene>` link, on a broken link, or with no link. The mount effect plays the linked scene, or else the first scene without stars.
-- **Round:** five questions (two in the model). A wrong pick gives "আরেকবার ভাবো"; the safe pick shows why. পরেরটা moves on, and on the last question "দেখো কী শিখলে" runs `finish()`, which records the stars, plays confetti or the win sound, shows the done screen and calls `atBreak()`. `phase` is `play`, `done` or `idle` (after শেষ).
-- **Scene tiles:** shown under the game while you play, and on the idle screen. A tap calls `pickSet()` → `start()`, even for the scene you're in.
-- **Sound and speech:** the site switch. `tone()` and `sfx` check `soundOn()`; `speak(question.rule)` on the safe pick doesn't. The model gives the phone a Bangla voice.
-- **Daily limit:** `atBreak()` runs in `finish()`, `RestScreen` covers the page, and a parent can extend.
-- **Exits:** the parent gate with `ShareToolLink`, and the `PageFrame` links around the game.
-- **Network and storage:** nothing is sent; the parent card's icons are `data:` URLs. Stars go to `ektukhani-levels-nirapode-thaki`.
-- **Not modelled:** window focus. Nothing in this game runs on a timer, so there's nothing to pause.
+| Spec | What it covers | Mirrors | TLC |
+|---|---|---|---|
+| `NirapodeThaki.tla` / `.cfg`, view `view.ts` | the screens (postcard, level list, the round, the end screen), the answer that waits for ➜, the player's pause, coming back from away, a key held through an answer, the daily limit and the rest screen | `tools/nirapode-thaki/lib/session.ts`, `components/game.tsx` (`begin`, `pick`, `onward`, `useGamePlayer`), `shared/kids-kit.tsx` (`useKidsSession`) | 236 states, 1,006 steps |
+| `NirapodeThakiPace.tla` / `.cfg` | how many pictures the next question shows: the streak that adds a picture, and that it crosses the end of a round | `lib/play.ts` (`nextPace`, `choiceCount`), `components/game.tsx` (`begin`, `finishRound` pass `roundRef.current.pace`) | 74 states, 111 steps |
+| `NirapodeThakiGates.tla` / `.cfg`, view `view-gates.ts` | who has the phone, the share gate on the title, the rest screen's gate | `components/game.tsx` (`<ParentGate key={gateKey}>`, the outside-tap listener), `shared/kids-kit.tsx` | 96 states, 536 steps |
 
-## Rules, in plain words
-| Rule | In plain words | Result |
-|---|---|---|
-| LinkOpensItsScene | A `#s=chula` link opens চুলা; a broken link opens the first scene without stars. | holds |
-| SilentWhenMuted | With sound off, nothing makes a sound, speech included. | **breaks** |
-| SceneTileKeepsRound | Tapping the scene you're already in doesn't throw your answers away. | **breaks** |
-| RestOnlyAtBreak | The rest screen appears only on the done screen, never in the middle of a scene. | holds |
-| ParentGate | Nothing takes the child out of the game without the parent gate. | **breaks** |
-| NoNetwork | Nothing is sent. | holds |
-| NoChildData | Only progress is stored. | holds |
-| AnswersArePictures | Every answer has a picture. This is the 6+ form of NoReadingNeeded: the game is for ages 6–10, so the 3–5 rule doesn't apply. | holds |
+Nothing in the game runs on a timer any more: a right answer shows why and waits for the child's ➜. So the old model's pending timer is gone, and "nothing moves under the menu" is now "➜ does nothing under the menu".
 
-## Bugs
+## Rules (plain words), all holding after the fix
+- **RestOnlyAtBreak:** the rest screen comes only between rounds. If the limit passes on the last answer, the rest waits for the end screen.
+- **NoNewRoundPastLimit:** past today's limit, খেলো, আবার খেলো and a level from the list show the rest screen, not a round. A reload past the limit opens on the rest screen.
+- **EveryFinishCounts:** the last right tap saves the stars and checks the limit in that same tap, whatever the hand does next.
+- **NothingMovesUnderTheMenu:** ➜ is ignored while the pause menu is open.
+- **ChoiceFreezesPlay:** the level list opens only from the title or the end screen, so no question waits under it.
+- **SceneTileKeepsRound (bug 2):** no tap on a scene picture can throw a round away: there are no scene tiles in play at all.
+- **ResultNeedsFreshPress:** Enter or Space held through an answer or the end screen never moves on or starts the next round.
+- **PaceSurvivesTheRound** and **FiveRightAddsAChoice (gap 1):** the pace is kept when a new round starts, so five first-tap rights in a row (even across the end of a scene) add a fourth picture.
+- **GateNeedsAnAdult, GateShutOutsideTheTitle, RestGateOnlyOnTheRestScreen, OnlyParentsGiveMoreTime:** only a grown-up opens a gate; the share gate lives on the title only and shuts at its one action, the next touch elsewhere, a round's start or 20 s.
+- **Gone:** **SilentWhenMuted** (the site has no voice, so there is nothing left to mute) and **AnswersArePictures** (now a node test: every choice has a picture and no two share one). **ParentGate** (the old bug 3) is a page property, checked live below.
+
+**Mutation checks (scratch copies):** putting back the old behaviours breaks the rules at once. Letting the level list open over a question breaks **ChoiceFreezesPlay** in 2 steps and **SceneTileKeepsRound** in 3. Letting ➜ run under the menu breaks **NothingMovesUnderTheMenu** in 4. Resetting the streak at the end of a round breaks **PaceSurvivesTheRound** in 3.
+
+## The bugs, and how each was fixed
+All three bugs were replayed live on the old code on 2026-11-04 (see `before-fix/` and the paragraph at the end). After the rewrite:
+
+| # | Bug (the reader's sentence) | Fix | Node test | Live check after the fix (Orca, own tab, Pixel 9, `localhost:3100` so its storage is private) |
+|---|---|---|---|---|
+| 1 | **SilentWhenMuted:** "The sound was off, and when I picked the right answer the phone still read the rule out loud." | No voice anywhere (site rule): the game has no `speak`, `SpeakButton` or `speechSynthesis`. Every cue is a picture, a ring, a wobble or a sound effect. | `nirapode-thaki.test.ts` › no voice anywhere | `speechSynthesis.speak` wrapped, a whole round played: **0 calls**. |
+| 2 | **SceneTileKeepsRound:** "I was on the third road question. I tapped the road picture below, which was already lit, and I was back on question one." | The scene tiles are gone from play. The level list is its own choice screen and opens only from the title or the end screen. | `session.test.ts` › bug 2 | In play: **0** level cards or `aria-pressed` buttons inside the game. |
+| 3 | **ParentGate:** "Under the game there were more pictures, I tapped one, and I was on a grown-ups' page." | `GamePage kids`: the page, rails, grid, header and footer link only to ছোটদের খেলাঘর tools. The share gate sits on the title only. | `nirapode-thaki.test.ts` › the page is the shared player with the kids' frame | 71 links on the page, **0** to `/tools`, `/`, `/amar-chhotobela` or any grown-ups' page; the only others are `#main` and kids' tools. |
+| gap 1 | **FiveRightAddsAChoice:** "I got every question right in a row and it never gave me a harder one." | The pace is kept from round to round (`createRound(id, seed, pace)`). | `levels.test.ts` › the run carries into the next round | Level ২ (মেলা), five first-tap rights: round one showed 3,3,3,3,3 pictures; আবার খেলো opened with **4**, `pace.offset` = 1. |
+| gap 2 | Scene tiles under the game during play | Removed. | `nirapode-thaki.test.ts` | as bug 2 |
+| gap 3 | Questions need reading | The scene holds the situation, a "?" bubble floats over the child, every choice is a picture alone, and the safe one lands in the bubble. One small line is for a parent. | `levels.test.ts` › every question | Screenshots `.shots/nirapode-thaki-q1.png`, `-miss.png`. |
+| — | **EveryFinishCounts** (shared pattern) | `pick()` records the stars and calls `atBreak()` in the tap that answers the last question. | `session.test.ts` › every finish counts | Five rights, then `ektukhani-levels-nirapode-thaki` = `{"1":3}` before ➜ was tapped. |
+| — | **NoNewRoundPastLimit** (shared pattern) | `begin()` asks `kids.atBreak()` first. | `session.test.ts` › bug 4 | Time set past the limit in my private tab: খেলো → the rest screen, round counter unchanged (1). |
+| — | **Pause on blur / first tap back is not a move** (shared patterns) | `onPause` freezes; the swallow arms while a question is open; চালিয়ে যাও clears it. | `session.test.ts` › pause freezes the game | Blur → menu (১ ২ ৩ ·  চালিয়ে যাও · নতুন করে শুরু · শব্দ · ধীরে খেলো), game `inert`; resume → the next tap counts. |
+| — | **Result keys need a fresh press / Enter goes to the game** (shared patterns) | Keys at `window`; `freshNext`/`freshKey` ignore repeats and keydowns from before the answer. | `session.test.ts` › result keys need a fresh press | Key `1` picked; a repeating Enter did nothing; a fresh Enter moved on; P opened the menu. |
+
+## The chart (after the fix)
+```mermaid
+---
+title: "নﬂ°°2495¶ßরﬂ°°2494¶ßপদﬂ°°2503¶ß থﬂ°°2494¶ßকﬂ°°2495¶ß: screens, the answer that waits for ﬂ°°10140¶ß, pause, the pace and the daily limit"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "At the same time" as all {
+    state "Round" as r0 {
+      s0: The postcard (খ#2503;ল#2507;)
+      s1: The level list
+      s2: First question
+      s3: Right answer shows why, #10140; waits
+      s4: Last question
+      s5: Last answer right, stars saved, #10140; waits
+      s6: The end screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ)
+      [*] --> s0
+      s0 --> s1: the child opens the level list [when Menu is Playing and Today is not Rest screen]
+      s0 --> s2: the child taps খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507; [when Menu is Playing and Today is Time left today]
+      s1 --> s0: the page opens again
+      s1 --> s2: the child picks a level [when Menu is Playing and Today is Time left today]
+      s2 --> s0: the page opens again
+      s2 --> s3: the child taps the safe picture [when Menu is Playing]
+      s3 --> s0: the page opens again
+      s3 --> s4: the child taps #10140; [when Menu is Playing]
+      s1 --> s0: the child picks a level [when Menu is Playing and Today is Today's time is up]
+      s1 --> s0: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ [when Menu is Pause menu open]
+      s2 --> s0: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ [when Menu is Pause menu open]
+      s4 --> s0: the page opens again
+      s4 --> s5: the child taps the safe picture [when Menu is Playing]
+      s3 --> s0: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ [when Menu is Pause menu open]
+      s5 --> s0: the page opens again
+      s5 --> s6: the child taps #10140; [when Menu is Playing]
+      s4 --> s0: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ [when Menu is Pause menu open]
+      s6 --> s0: the page opens again
+      s6 --> s2: the child taps খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507; [when Menu is Playing and Today is Time left today]
+      s6 --> s1: the child opens the level list [when Menu is Playing and Today is not Rest screen]
+      s6 --> s0: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ [when Menu is Pause menu open or Today is one of Time left today, Today's time is up]
+      s5 --> s0: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ [when Menu is Pause menu open]
+    }
+    --
+    state "Menu" as r1 {
+      s7: Playing
+      s8: Pause menu open
+      [*] --> s7
+      s7 --> s8: the window blurs, or #9208; / P / Esc
+      s8 --> s7: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+    }
+    --
+    state "Today" as r2 {
+      s9: Time left today
+      s10: Rest screen
+      s11: Today's time is up
+      s12: Time's up, the rest waits for the end screen
+      [*] --> s9
+      [*] --> s10
+      s9 --> s11: today's play time runs out
+      s10 --> s9: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+      s11 --> s10: the page opens again
+      s11 --> s10: the child taps খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507; [when Round is one of The end screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ), The postcard (খ#2503;ল#2507;) and Menu is Playing]
+      s11 --> s10: the child picks a level [when Round is The level list and Menu is Playing]
+      s11 --> s12: the child taps the safe picture [when Round is Last question and Menu is Playing]
+      s12 --> s10: the page opens again
+      s12 --> s10: the child taps #10140; [when Menu is Playing]
+      s12 --> s10: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ [when Menu is Pause menu open]
+    }
+  }
+  class s1 blue
+  class s2 teal
+  class s3 teal
+  class s4 teal
+  class s5 teal
+  class s10 yellow
+  class s12 teal
+```
+
+## Regenerate
+```sh
+D=ai_docs/statecharts/nirapode-thaki
+scripts/statechart.sh $D/NirapodeThaki.tla --view $D/view.ts --out $D/after-fix
+scripts/statechart.sh $D/NirapodeThakiPace.tla --out $D/after-fix-pace
+scripts/statechart.sh $D/NirapodeThakiGates.tla --view $D/view-gates.ts --out $D/after-fix-gates
+rm $D/after-fix*/tlc.out
+```
+Each `--out` folder must be new or empty.
+
+---
+
+## The bugs as replayed on the old code (2026-11-04)
 I replayed every bug live in my own Orca tab (Pixel 9, 412×923) at http://127.0.0.1:3100/nirapode-thaki between 10:08 and 10:09 +06, using `.click()`. The Orca browser has no Bangla voice, so in my tab only I replaced `SpeechSynthesisUtterance` and `speechSynthesis` with a recorder holding one `bn-BD` voice, and I counted `OscillatorNode.start` calls.
 
 ### 1. SilentWhenMuted: shared (`shared/kids-kit.tsx` `speak()`)
@@ -58,9 +170,3 @@ I replayed every bug live in my own Orca tab (Pixel 9, 412×923) at http://127.0
 
 Screenshots: `.shots/nirapode-thaki-first.png` (the first screen, রাস্তা পার), `.shots/nirapode-thaki-done.png` (the done screen).
 
-## Regenerate
-```sh
-scripts/statechart.sh ai_docs/statecharts/nirapode-thaki/NirapodeThaki.tla --view ai_docs/statecharts/nirapode-thaki/view.ts --out ai_docs/statecharts/nirapode-thaki/before-fix
-rm ai_docs/statecharts/nirapode-thaki/before-fix/tlc.out
-```
-The `--out` folder must be new or empty.

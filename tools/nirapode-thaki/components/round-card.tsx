@@ -1,0 +1,19 @@
+'use client';
+// The round's page for "আব্বু-আম্মুকে দেখাও": drawn on the phone once the fonts are in. No name.
+import { useEffect, useRef } from 'react';
+import { loadCardFonts } from '../../../shared/card-canvas';
+import { drawCard, loadPictures, type CardData } from '../lib/draw-card';
+
+export function RoundCard({ data }: { data: CardData }) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    let live = true;
+    void (async () => {
+      await loadCardFonts(`${data.label} ${data.title} ${data.rows.map(row => row.text).join(' ')}`);
+      const pictures = await loadPictures(data.rows.map(row => row.icon));
+      if (live && ref.current) drawCard(ref.current, data, pictures, location.host);
+    })();
+    return () => { live = false; };
+  }, [data]);
+  return <canvas ref={ref} width={1080} height={1350} aria-label={data.title} role="img" />;
+}
