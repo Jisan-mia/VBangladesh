@@ -1,6 +1,5 @@
 // The three mangoes, drawn once as 40×40 paths so the board (SVG) and the card (canvas Path2D) match.
 // They differ by shape, not only colour: a whole ripe mango with a leaf, a mango cut in half, a small hollow raw one.
-import type { Mark } from './game';
 
 export const BODY = 'M21 6C30 5 36 13 35 23C34 32 27 37 19 37C12 37 8 33 9 28C10 24 14 23 15 19C16 14 15 9 21 6Z';
 export const LEAF = 'M21 7C22 2 28 0 34 2C32 7 26 9 21 7Z';
@@ -19,4 +18,3 @@ export const colors = {
   raw: '#4f7f2c', rawFill: '#eef4e2',
 } as const;
 
-export const markHint: Record<Mark, string> = { p: 'ঠিক ঘরে', a: 'আছে, অন্য ঘরে', k: 'নেই' };

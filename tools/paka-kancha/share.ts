@@ -1,6 +1,6 @@
 import type { ToolShare } from '../../shared/share-types';
-import { dhakaDate } from './lib/game';
-import { parseShare, previewTitle, shareHash } from './lib/result';
+import { parseShare, previewTitle, shareHash } from './lib/link';
+import { dhakaDate } from './lib/rules';
 
 // No tally: a link only carries one person's mangoes (or a friend's code), never stored anywhere else.
 export const share: ToolShare = {

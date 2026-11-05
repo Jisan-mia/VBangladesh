@@ -1,12 +1,13 @@
 // The result card: rows of mangoes on a leaf-green board. Spoiler-free: no digit of any guess or of the code is drawn.
 import { possessive } from '../../../shared/bangla';
 import { cardSizes, drawFooterBand, fitText, renderCard, roundedRect, storySafe, type CardFormat } from '../../../shared/card-canvas';
-import { LENGTH, bn, bnDate, humanLine, rulesOf, starsOf, type Mark } from './game';
+import { artFor } from './art';
+import { isFinale, levelName, worldOf } from './levels';
+import { humanLine, rulesOf, starsOf } from './play';
+import { LENGTH, bn, bnDate, type Mark } from './rules';
 import { BLUSH, BODY, HALF, HALF_SKIN, LEAF, RAW_SCALE, SEED, STEM, colors } from './mango';
-import { puzzleLabel, tryCount, type Shared } from './result';
+import { puzzleLabel, tryCount, type Shared } from './link';
 
-const BG = '#1c4a2e', BOARD = '#275f3b', CREAM = '#fff4d6', SOFT = '#cfe6c0', GOLD = '#f6c443';
-const BAND = { band: '#11301d', ask: GOLD, site: '#ffffff' };
 
 /** One mango, `size` px square, top-left at (x, y). */
 export function drawMango(context: CanvasRenderingContext2D, mark: Mark, x: number, y: number, size: number) {
@@ -41,6 +42,9 @@ export function drawMango(context: CanvasRenderingContext2D, mark: Mark, x: numb
   context.restore();
 }
 
+// Set at the start of every drawCard: the world's palette. One canvas is drawn at a time.
+let BG = '', BOARD = '', CREAM = '', SOFT = '', GOLD = '', BAND = { band: '', ask: '', site: '#ffffff' };
+
 const layouts = {
   feed: { title: 150, sub: 214, score: 390, top: 424, bottom: 1110, line: 1176 },
   story: { title: storySafe.top + 140, sub: storySafe.top + 208, score: storySafe.top + 420, top: storySafe.top + 480, bottom: 1500, line: 1584 },
@@ -54,6 +58,9 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, today: strin
   const context = canvas.getContext('2d');
   if (!context) throw new Error('এই ব্রাউজারে ছবি বানানো যাচ্ছে না।');
   const { puzzle, rows, name } = shared;
+  const art = artFor(puzzle.kind === 'level' && !puzzle.legacy ? worldOf(puzzle.level) - 1 : 0);
+  BG = art.cardBg; BOARD = art.cardBoard; CREAM = art.cream; SOFT = art.soft; GOLD = art.gold;
+  BAND = { band: art.band, ask: art.gold, site: '#ffffff' };
 
   context.fillStyle = BG;
   context.fillRect(0, 0, width, height);
@@ -68,10 +75,11 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, today: strin
   context.restore();
 
   fitText(context, [{ text: 'পাকা-কাঁচা', color: CREAM, weight: 800, display: true }], width / 2, layout.title, 96, width - 160, 'center');
-  const label = rows.length ? puzzleLabel(puzzle, today) : 'বন্ধুর জন্য কোড';
+  const finale = puzzle.kind === 'level' && !puzzle.legacy && isFinale(puzzle.level) ? ` · ${levelName(puzzle.level)}` : '';
+  const label = rows.length ? `${puzzleLabel(puzzle, today)}${finale}` : 'বন্ধুর জন্য কোড';
   const kicker = `${name && rows.length ? `${possessive(name)} ` : ''}${label}${puzzle.kind === 'day' ? ` · ${bnDate(puzzle.date)}` : ''}`;
   // A level's card also shows its stars, after the label.
-  const stars = puzzle.kind === 'level' && rows.length ? starsOf(puzzle.level, rows) : 0;
+  const stars = rows.length ? starsOf(puzzle, rows) : 0;
   const starRun = stars ? [{ text: '  ', color: SOFT, weight: 600 }, ...[0, 1, 2].map(index => ({ text: '★', color: index < stars ? GOLD : '#5f8a66', weight: 700 }))] : [];
   fitText(context, [{ text: kicker, color: SOFT, weight: 600 }, ...starRun], width / 2, layout.sub, 38, width - 180, 'center');
   const { tries } = rulesOf(puzzle);

@@ -1,29 +1,34 @@
-export const title = "পাকা-কাঁচা: the row, the Enter key and the levels";
-const over = (v: any) => v.won || v.guesses === 1;
+export const title = "Paka-Kancha (after the rewrite): the game and what holds it";
+// Regions as the player sees them: the game, the window and menu. Where focus sits is checked in the full run (report.md) and left out of the drawing.
 export const state = (v: any) => ({
-  Game: over(v) ? "Result shows" : v.input === "full" ? "Four digits typed" : v.input === "part" ? "Typing a row" : "Row empty",
-  Focus: v.focus === "page" ? "Focus on the page" : v.focus === "erase" ? "Focus on মুছো" : "Focus on a level button",
-  Enter: v.enter === "fine" ? "Enter did what it said" : "Enter threw a full row away",
-  Levels: v.stars[2] > 0 && v.stars[1] === 0 ? "Level 2 has stars, level 1 never played" : v.link === "friend" ? "Opened from a friend's level 2 link" : "Opened on level 1",
+  Game: v.screen === "title" ? (v.linked ? "Friend's level on the start card" : "Start card")
+    : v.screen === "over" ? (v.won ? "Result: cracked, stars show" : "Result: not this time")
+    : v.sheet ? "সব লেভেল open, game held"
+    : v.input === "full" ? "Four digits typed" : v.input === "part" ? "Typing a row" : v.guesses === 0 ? "Fresh row" : "Row empty",
+  Window: v.away ? "You're away, menu up" : v.menu ? "Pause menu" : v.guard ? "Just came back (the next tap only wakes)" : "You're on the page",
 });
-export const step = (action: string, from: any, to: any) => {
-  if (action === "YouPressEnter" || action === "YouTapCheck") {
-    if (from.focus !== "page" && action === "YouPressEnter") return "you press Enter";
-    const skip = (x: any) => x.stars[2] > 0 && x.stars[1] === 0;
-    if (skip(to) && !skip(from)) return "you crack the friend's level 2 code";
-    return to.won ? "you check the row and it's right" : "you check the row and it's wrong";
-  }
-  const labels: Record<string, string | null> = {
-    YouTypeADigit: "you type a digit",
-    YouTapADigit: "you tap a digit on the pad",
-    YouTapErase: "you tap মুছো",
-    YouClickTheBoard: "you click the board",
-    YouPickALevel: "you pick a level under সব লেভেল",
-    YouPressNextLevel: "you press পরের লেভেল or আবার খেলো",
-    YouPlayAgain: "you press পরের লেভেল or আবার খেলো",
-    TheCheerPlays: null,
-  };
-  return action in labels ? labels[action] : action;
-};
-export const group = (v: any) => over(v) ? "done" : "play";
-export const colors = { play: "teal", done: "blue" };
+// Merged: every way to a fresh start card (নতুন করে শুরু, a picked level, পরের লেভেল, a friend's link) is "you start a new game".
+export const step = (action: string) => ({
+  YouStart: "you press শুরু করো",
+  YouTypeADigit: "you type a digit",
+  YouTapADigit: "you tap a digit on the pad",
+  YouTapErase: "you tap মুছো",
+  YouTabToAKey: "you press Tab",
+  YouTapCheck: "you check the row",
+  YouPressEnter: "you press Enter",
+  YouLeave: "you click away or hide the tab",
+  YouComeBack: "you come back",
+  YouOpenTheMenu: "you press ⏸ or P",
+  YouResume: "you press চালিয়ে যাও",
+  YouRestart: "you start a new game",
+  GuardPasses: "a moment passes",
+  ResultGuardPasses: "a moment passes",
+  YouOpenTheSheet: "you open সব লেভেল",
+  YouCloseTheSheet: "you close সব লেভেল",
+  YouPickALevel: "you start a new game",
+  YouGoOn: "you start a new game",
+  FriendLinkOpens: "you open a friend's link",
+  TheCheerPlays: null,
+} as Record<string, string | null>)[action] ?? action;
+export const group = (v: any) => v.screen === "over" ? "done" : v.away || v.menu || v.sheet ? "held" : v.screen === "title" ? "start" : "play";
+export const colors = { play: "teal", held: "yellow", done: "blue", start: "purple" };

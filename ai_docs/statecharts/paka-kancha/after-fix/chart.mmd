@@ -1,0 +1,59 @@
+---
+title: "Paka-Kancha (after the rewrite): the game and what holds it"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: held
+    lg1: done
+  }
+  class lg0 yellow
+  class lg1 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Start card
+      s1: Fresh row
+      s2: Typing a row
+      s3: Four digits typed
+      s4: Row empty
+      s5: Result: cracked, stars show
+      s6: Result: not this time
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; [when You're on the page]
+      s1 --> s2: you tap a digit on the pad or you type a digit [when You're on the page]
+      s2 --> s1: you tap ম#2497;ছ#2507; [when You're on the page]
+      s2 --> s3: you tap a digit on the pad or you type a digit [when You're on the page]
+      s1 --> s0: you start a new game [when Pause menu]
+      s3 --> s2: you tap ম#2497;ছ#2507; [when You're on the page]
+      s3 --> s4: you press Enter or you check the row [when You're on the page]
+      s3 --> s5: you press Enter or you check the row [when You're on the page]
+      s2 --> s0: you start a new game [when Pause menu]
+      s4 --> s2: you tap a digit on the pad or you type a digit [when You're on the page]
+      s3 --> s0: you start a new game [when Pause menu]
+      s2 --> s4: you tap ম#2497;ছ#2507; [when You're on the page]
+      s5 --> s0: you start a new game
+      s4 --> s0: you start a new game [when Pause menu]
+      s3 --> s6: you press Enter or you check the row [when You're on the page]
+      s6 --> s0: you start a new game
+    }
+    --
+    state "Window" as r1 {
+      s7: You're on the page
+      s8: Pause menu
+      s9: You're away, menu up
+      s10: Just came back (the next tap only wakes)
+      [*] --> s7
+      s7 --> s8: you press #9208; or P [unless Result: cracked, stars show or Result: not this time]
+      s7 --> s9: you click away or hide the tab [unless Result: cracked, stars show or Result: not this time]
+      s8 --> s9: you click away or hide the tab
+      s8 --> s10: you start a new game or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+      s9 --> s8: you come back
+      s10 --> s7: a moment passes
+      s10 --> s8: you press #9208; or P
+      s10 --> s9: you click away or hide the tab
+    }
+  }
+  class s5 blue
+  class s6 blue
+  class s8 yellow
+  class s9 yellow
