@@ -1,7 +1,8 @@
+// The old game's field generator and step, kept verbatim as the reference that links without `v=2` must still open the same ridge.
 // The walk itself: a seeded, winding আল, its puddles, goats and wind, and one step of the walker. Pure, so tests can play it.
 // Board units: 360 × 440 px. The field scrolls down; the walker stays at WALKER_Y and only moves sideways.
 import { makeRng, pick } from "../../../shared/game-core";
-import { levelSpec, type LevelSpec } from "./levels";
+import { levelSpec, type LevelSpec } from "../lib/levels";
 
 export const W = 360;
 export const H = 440;

@@ -144,7 +144,7 @@ export const catalog = [
   { slug: "marble-sinri", name: "মার্বেল-সিঁড়ি", description: "ছাদ থেকে গলি পর্যন্ত মার্বেল গড়িয়ে নামাও, ক্যাকটাস বাঁচিয়ে।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "roshi-tana", name: "রশি টানাটানি", description: "ঢোলের তালে চাপো, রশি টানো। একা ১২টা দল, নয়তো দুজনে এক ফোনে।", category: "গেম", action: "রশি টানো" },
   { slug: "moshar-raat", name: "মশার রাত", description: "বাতি নেভানো ঘরে পিন-পিন। ব্যাটে মশা মারো, ভোর পর্যন্ত বালিশ বাঁচাও।", category: "গেম", action: "মশা মারো" },
-  { slug: "al-dhore-hati", name: "আল ধরে হাঁটি", description: "ধানখেতের সরু আল ধরে হাঁটো, পা যেন কাদায় না পড়ে।", category: "গেম", action: "হাঁটা শুরু করো" },
+  { slug: "al-dhore-hati", name: "আল ধরে হাঁটি", description: "ধানখেতের সরু আল ধরে হাঁটো, পা যেন কাদায় না পড়ে। ২০টা খেত।", category: "গেম", action: "হাঁটা শুরু করো" },
   { slug: "o-te-ojogor", name: "অ-তে অজগর", description: "গাছে পাকা বর্ণ, অ-এর পর আ ঝুড়িতে তোলো। ২২টা লেভেল, ছবিসহ।", category: "গেম", action: "বর্ণ পাড়ো" },
   { slug: "kar-chinho", name: "কার-চিহ্ন বসাও", description: "ছবি দেখে শব্দে ঠিক কার-চিহ্ন বসায়, আ-কার থেকে ঔ-কার। প্রিন্টের পাতাও আছে।", category: "ছোটদের জন্য", action: "খেলা শুরু করো" },
   { slug: "nam-shikhi", name: "নাম শিখি", description: "ছবির খাতায় স্টিকার বসায়, নাম শেখে বাংলা আর ইংরেজিতে। পড়তে হয় না।", category: "ছোটদের জন্য", action: "স্টিকার বসাও" },
