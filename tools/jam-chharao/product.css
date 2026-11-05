@@ -1,4 +1,4 @@
-.tool-jam-chharao{--accent:#1d7a3e;--accent-deep:#125429}
+.tool-jam-chharao{--accent:#1d7a3e;--accent-deep:#125429;--ease-out:cubic-bezier(.23,1,.32,1)}
 .tool-jam-chharao .jc-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* One look per street (lib/art.ts LOOKS): the lane in the afternoon, the main road by day, the dug-up road in dust, the night before Eid. */
@@ -10,12 +10,12 @@
 /* The game fills the stage: HUD, the street (as big as fits), one status line, the controls. Nothing scrolls while playing. */
 .tool-jam-chharao .gp-stage{overflow:hidden}
 .tool-jam-chharao .gp-game{height:100%}
-.jc{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:8px;width:100%;max-width:520px;height:min(92svh,860px);margin-inline:auto;padding:8px;border-radius:16px;background:var(--paper);color:var(--ink);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:background .3s ease-out}
+.jc{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:8px;width:100%;max-width:520px;height:min(92svh,860px);margin-inline:auto;padding:8px;border-radius:16px;background:var(--paper);color:var(--ink);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:background .3s var(--ease-out)}
 .gp-stage .jc{height:100%}
 .jc{container-type:size}
 /* the thin line along the very top edge: how clear the street is */
 .jc-top{position:absolute;top:0;left:12px;right:12px;height:3px;overflow:hidden;border-radius:0 0 3px 3px;background:color-mix(in srgb,var(--ink) 14%,transparent);pointer-events:none}
-.jc-top i{display:block;height:100%;background:var(--tray);transform-origin:left;transition:transform .3s ease-out}
+.jc-top i{display:block;height:100%;background:var(--tray);transform-origin:left;transition:transform .3s var(--ease-out)}
 
 /* ---- HUD: jam top-left, the finale's bar top-centre, moves and stars top-right ---- */
 .jc-hud{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;min-height:50px;padding-top:2px}
@@ -29,7 +29,7 @@
 .jc-boss-name{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .jc-boss b{flex:none;color:var(--tray);font-variant-numeric:tabular-nums}
 .jc-boss i{display:block;height:7px;overflow:hidden;border-radius:4px;background:color-mix(in srgb,var(--ink) 16%,transparent)}
-.jc-boss em{display:block;height:100%;background:linear-gradient(90deg,var(--tray),var(--gold));transform-origin:left;transition:transform .3s ease-out}
+.jc-boss em{display:block;height:100%;background:linear-gradient(90deg,var(--tray),var(--gold));transform-origin:left;transition:transform .3s var(--ease-out)}
 .jc-moves{grid-column:3;display:grid;justify-items:end;margin:0}
 .jc-moves p{display:flex;align-items:baseline;gap:6px;margin:0}
 .jc-moves span{font-size:13px;color:var(--muted)}
@@ -37,7 +37,7 @@
 .jc-track{gap:1px!important;align-items:center!important;font-size:15px;line-height:1}
 .jc-track i{font-style:normal;color:color-mix(in srgb,var(--muted) 45%,transparent)}
 .jc-track i[data-on]{color:var(--star)}
-.jc-track i[data-fell]{animation:jc-fall .7s ease-in both}
+.jc-track i[data-fell]{animation:jc-fall .5s var(--ease-out) both}
 .jc-track small{margin-left:4px;font-size:12px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
 .jc-rival{font-size:12px;font-weight:700;color:var(--muted)}
 @keyframes jc-fall{0%{color:var(--star);transform:none}60%{color:#e85d04;transform:translateY(8px) rotate(30deg)}100%{transform:none}}
@@ -49,23 +49,22 @@
 .jc-canvas:active{cursor:grabbing}
 .jc-canvas:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
 /* about to lose a star: the street's rim glows at the edge, never a popup in the middle (a steady border in slow mode) */
-.jc[data-danger] .jc-canvas{box-shadow:0 0 0 4px #f28c28,0 0 26px 6px #f28c2899;animation:jc-warn .9s ease-in-out infinite alternate}
-.jc[data-calm][data-danger] .jc-canvas{animation:none;box-shadow:0 0 0 4px #f28c28}
-@keyframes jc-warn{to{box-shadow:0 0 0 4px #f28c28,0 0 10px 2px #f28c2855}}
+.jc[data-danger] .jc-canvas{box-shadow:0 0 0 4px #f28c28,0 0 22px 5px #f28c2880} /* unslop-ignore: the one-star-left warning, a steady rim so it never animates a shadow */
+.jc[data-calm][data-danger] .jc-canvas{box-shadow:0 0 0 4px #f28c28}
 
 /* ---- under the street: one line of help, then the arrows, undo and the hint with its price ---- */
 .jc-status{display:flex;align-items:center;justify-content:center;min-height:2.9em;margin:0;font-size:14px;font-weight:600;line-height:1.4;color:var(--muted);text-align:center;text-wrap:balance}
 .jc-controls{display:grid;grid-template-columns:48px 48px minmax(0,1fr) minmax(0,1.3fr);gap:8px}
-.jc-arrow,.jc-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:56px;padding:4px 8px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:#2b2118;font-size:15px;font-weight:700;line-height:1.2;white-space:nowrap;box-shadow:0 3px 0 var(--line);transition:transform .08s ease-out}
+.jc-arrow,.jc-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:56px;padding:4px 8px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:#2b2118;font-size:15px;font-weight:700;line-height:1.2;white-space:nowrap;box-shadow:0 3px 0 var(--line);transition:transform .1s var(--ease-out)}
 .jc-arrow{padding:0}
 .jc-arrow:active:not(:disabled),.jc-tool:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
 .jc-arrow:disabled,.jc-tool:disabled{opacity:.42}
 .jc-arrow svg,.jc-tool svg{flex:none;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .jc-hint{border-color:var(--tray);box-shadow:0 3px 0 var(--tray-deep)}
-.jc-hint small{padding:1px 6px;border-radius:999px;background:#fff3cf;color:#7a5200;font-size:12px;font-weight:800}
+.jc-hint small{padding:1px 6px;border-radius:4px;background:#fff3cf;color:#7a5200;font-size:12px;font-weight:800}
 
 /* ---- the end: a slip in place of the controls; the street stays in view ---- */
-.jc-end{grid-row:3 / span 2;display:grid;gap:8px;padding:12px 14px;border:2px solid var(--gold);border-radius:16px;background:#fffdf6;color:#2b2118;box-shadow:0 -6px 18px #0000001f;animation:jc-rise .35s cubic-bezier(.2,1.2,.4,1) both}
+.jc-end{grid-row:3 / span 2;display:grid;gap:8px;padding:12px 14px;border:2px solid var(--gold);border-radius:16px;background:#fffdf6;color:#2b2118;box-shadow:0 -6px 18px #0000001f;animation:jc-rise .26s var(--ease-out) both}
 .jc[data-calm] .jc-end{animation:none}
 .jc-end-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .jc-end h2{margin:0;font-family:var(--font-display);font-size:22px;line-height:1.3}
@@ -81,18 +80,18 @@
 .jc-end-actions kbd{margin-left:8px;padding:1px 5px;border:1px solid #ffffff80;border-radius:5px;font-size:11px;font-family:inherit;opacity:.8}
 @media(hover:none){.jc-end-actions kbd{display:none}}
 .jc-see{justify-self:center;color:#2b2118}
-@keyframes jc-rise{from{opacity:0;transform:translateY(24px)}}
+@keyframes jc-rise{from{opacity:0;transform:translateY(16px)}}
 @keyframes jc-fade{from{opacity:0}}
 
 /* ---- title: the jam is the start button ---- */
-.jc-title{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:10px;padding:12px;overflow:auto;border-radius:16px;background:var(--paper);text-align:center;animation:jc-fade .2s ease-out}
+.jc-title{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:10px;padding:12px;overflow:auto;border-radius:16px;background:var(--paper);text-align:center;animation:jc-fade .2s var(--ease-out)}
 .jc-title>:first-child{margin-top:auto}
 .jc-title>:last-child{margin-bottom:auto}
 .jc-start{display:grid;justify-items:center;padding:0;border:0;background:none;color:inherit;cursor:pointer;touch-action:manipulation}
 .jc-start-art{display:block;width:max(150px,min(100%,360px,calc((100cqh - 270px) * .8148)));aspect-ratio:6.6/8.1}
 .jc-title:has(.jc-friend) .jc-start-art{width:max(150px,min(100%,360px,calc((100cqh - 380px) * .8148)))}
 /* the start stamp: a number plate across the foot of the picture */
-.jc-start span{position:relative;margin-top:-34px;padding:6px 46px 8px;border:4px solid #26221d;border-radius:12px;background:var(--gold);color:#26221d;font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1.3;box-shadow:0 6px 0 #0000004d,0 16px 26px -14px #000;transition:transform .08s ease-out}
+.jc-start span{position:relative;margin-top:-34px;padding:6px 46px 8px;border:4px solid #26221d;border-radius:12px;background:var(--gold);color:#26221d;font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1.3;box-shadow:0 6px 0 #0000004d,0 16px 26px -14px #000;transition:transform .1s var(--ease-out)}
 .jc-start span::before,.jc-start span::after{content:"";position:absolute;top:50%;width:7px;height:7px;margin-top:-3px;border-radius:50%;background:#26221d}
 .jc-start span::before{left:12px}.jc-start span::after{right:12px}
 .jc-start:active span{transform:translateY(4px) scale(.98)}
@@ -107,7 +106,7 @@
 .jc-line span{display:block;font-size:14px;color:var(--muted)}
 .jc-line .jc-new{display:inline;color:var(--tray);font-weight:700}
 .jc[data-world="3"] .jc-line .jc-new{color:var(--gold)}
-.jc-finale-tag{justify-self:center;display:inline-block;padding:1px 9px;border-radius:999px;background:var(--tray);color:#fff;font-size:12px;font-style:normal;font-weight:800}
+.jc-finale-tag{justify-self:center;display:inline-block;padding:1px 9px;border-radius:4px;background:var(--tray);color:#fff;font-size:12px;font-style:normal;font-weight:800}
 .jc[data-world="3"] .jc-finale-tag{color:#1a1d36}
 .tool-jam-chharao .jc-all{min-height:40px;font-weight:600;color:var(--ink)}
 .jc-friend{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;max-width:340px;padding:8px 12px;border-radius:14px;background:#fff;color:#2b2118;text-align:left}
@@ -118,17 +117,17 @@
 /* ---- the story: three panels, tap for the next, hold to skip ---- */
 .jc-story{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;border-radius:16px;background:var(--paper);cursor:pointer;touch-action:none}
 .jc-panel{display:block;width:max(150px,min(100%,360px,calc(100cqh - 190px)));aspect-ratio:1;border-radius:18px;box-shadow:0 0 0 4px #fff,0 0 0 6px var(--ink),0 14px 30px -12px #0006;transform:rotate(-1deg)}
-.jc-caption{max-width:30ch;margin:6px 0 0;font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.45;text-align:center;animation:jc-fade .3s ease-out}
+.jc-caption{max-width:30ch;margin:6px 0 0;font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.45;text-align:center;animation:jc-fade .2s var(--ease-out)}
 .jc-dots{display:flex;gap:6px;margin:0}
 .jc-dots i{width:8px;height:8px;border-radius:50%;background:color-mix(in srgb,var(--ink) 22%,transparent)}
 .jc-dots i[data-on]{background:var(--tray)}
 .jc-skip{position:absolute;right:14px;bottom:12px;display:flex;align-items:center;gap:6px;margin:0;font-size:12px;font-weight:700;color:var(--muted)}
-.jc-skip span{width:28px;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--ink) 18%,transparent)}
-.jc-skip[data-holding] span{background:linear-gradient(90deg,var(--tray) 0 0) no-repeat 0 0/0 100%,color-mix(in srgb,var(--ink) 18%,transparent);animation:jc-hold .6s linear forwards}
-@keyframes jc-hold{to{background-size:100% 100%,auto}}
+.jc-skip span{position:relative;width:28px;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--ink) 18%,transparent)}
+.jc-skip span::after{content:"";position:absolute;inset:0;background:var(--tray);transform:scaleX(0);transform-origin:left}
+.jc-skip[data-holding] span::after{transform:scaleX(1);transition:transform .6s linear}
 
 /* ---- সব জ্যাম: a choice moment over the street ---- */
-.jc-sheet{position:absolute;inset:0;z-index:6;overflow:auto;overscroll-behavior:contain;padding:8px;border-radius:16px;background:color-mix(in srgb,#000 35%,transparent);animation:jc-fade .15s ease-out}
+.jc-sheet{position:absolute;inset:0;z-index:6;overflow:auto;overscroll-behavior:contain;padding:8px;border-radius:16px;background:color-mix(in srgb,#000 35%,transparent);animation:jc-fade .15s var(--ease-out)}
 .jc-sheet-card{display:grid;gap:12px;padding:14px;border-radius:16px;background:#fffdf6;color:#2b2118}
 .jc-sheet header{position:relative;padding-right:48px}
 .jc-sheet h2{margin:0;font-family:var(--font-display);font-size:22px}
@@ -147,7 +146,7 @@
 .jc-world button[aria-current=true]{border-color:#2b2118;box-shadow:inset 0 0 0 1.5px #2b2118}
 .jc-world button[data-finale]{border-style:dashed;border-color:#1d7a3e}
 .jc-world button[data-next]{border-color:#1d7a3e;background:#e7f6ea}
-.jc-world button em{position:absolute;top:-8px;left:50%;padding:0 5px;border-radius:999px;background:#1d7a3e;color:#fff;font-size:10px;font-style:normal;font-weight:800;white-space:nowrap;transform:translateX(-50%)}
+.jc-world button em{position:absolute;top:-8px;left:50%;padding:0 5px;border-radius:4px;background:#1d7a3e;color:#fff;font-size:10px;font-style:normal;font-weight:800;white-space:nowrap;transform:translateX(-50%)}
 .jc-mini{display:flex;font-size:11px;line-height:1}
 .jc-mini i{font-style:normal;color:#d5c9b4}.jc-mini i[data-on]{color:#f2a900}
 
@@ -169,4 +168,10 @@
   .jc-controls{grid-template-columns:44px 44px minmax(0,1fr) minmax(0,1.3fr)}
   .jc-stats dd{font-size:18px}
 }
-@media(prefers-reduced-motion:reduce){.jc-end{animation:none}}
+/* press feedback on everything pressable; low specificity so the arrows, tools and the start stamp keep their own */
+:where(.jc button:not(.jc-start,.jc-arrow,.jc-tool)){transition:transform 160ms var(--ease-out)}
+:where(.jc button:not(:disabled,.jc-start,.jc-arrow,.jc-tool):active){transform:scale(.97)}
+/* ধীরে খেলো and reduced motion: nothing slides, pops or presses in */
+.jc[data-calm] *{animation:none!important;transition:none!important}
+.jc[data-calm] button:active,.jc[data-calm] .jc-start:active span{transform:none}
+@media(prefers-reduced-motion:reduce){.jc *{animation:none!important;transition:none!important}.jc button:active,.jc .jc-start:active span{transform:none}}

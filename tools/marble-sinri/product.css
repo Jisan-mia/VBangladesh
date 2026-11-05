@@ -1,5 +1,5 @@
 /* মার্বেল-সিঁড়ি: the board fills the stage; the title, the end screen and সব তলা sit over it. One palette per world (lib/paint.ts). */
-.tool-marble-sinri{--accent:#2e7d6b;--accent-deep:#1d5548;--ink:#1f2b2a;--muted:#56625e;--paper:#f3ede0;--paper-edge:#ddd5c4;--cream:#fff8ea}
+.tool-marble-sinri{--accent:#2e7d6b;--accent-deep:#1d5548;--ink:#1f2b2a;--muted:#56625e;--paper:#f3ede0;--paper-edge:#ddd5c4;--cream:#fff8ea;--ease-out:cubic-bezier(.23,1,.32,1)}
 .tool-marble-sinri .ms-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 .ms{--panel:#1f2b2ae6;--gold:#ffd166;position:relative;width:100%;max-width:560px;color:var(--cream)}
@@ -16,25 +16,25 @@
 .ms-play>canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
 
 /* the HUD's one HTML part: the floor badge, top-left; it opens সব তলা */
-.ms-badge{position:absolute;top:12px;left:10px;z-index:2;display:inline-flex;align-items:center;gap:7px;max-width:46%;min-height:32px;padding:0 11px 0 9px;border:0;border-radius:999px;background:var(--panel);color:var(--cream);font-size:13px;font-weight:700;line-height:1.1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ms-badge{position:absolute;top:12px;left:10px;z-index:2;display:inline-flex;align-items:center;gap:7px;max-width:46%;min-height:32px;padding:0 11px 0 9px;border:0;border-radius:8px;background:var(--panel);color:var(--cream);font-size:13px;font-weight:700;line-height:1.1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ms-badge i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px #ffd16633}
 .ms-badge:disabled{opacity:1}
 /* the first floors show where to hold, fading after a few seconds */
-.ms-halves{position:absolute;inset:auto 0 18px;z-index:1;display:grid;grid-template-columns:1fr 1fr;margin:0;pointer-events:none;animation:ms-hint 5s ease-in forwards}
-.ms-halves span{justify-self:center;padding:7px 13px;border-radius:999px;background:#1f2b2ab0;color:#fff;font-size:14px;font-weight:700}
+.ms-halves{position:absolute;inset:auto 0 18px;z-index:1;display:grid;grid-template-columns:1fr 1fr;margin:0;pointer-events:none;animation:ms-hint 5s linear forwards}
+.ms-halves span{justify-self:center;padding:7px 13px;border-radius:8px;background:#1f2b2ab0;color:#fff;font-size:14px;font-weight:700}
 @keyframes ms-hint{0%,70%{opacity:1}100%{opacity:0}}
 
 /* ---- the title ---- */
-.ms-start{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 16px 16px;overflow:auto;overscroll-behavior:contain;background:linear-gradient(#1f2b2a00 0%,#1f2b2aa8 24%,#1f2b2ae0 100%);text-align:center;animation:ms-in .25s ease-out}
+.ms-start{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 16px 16px;overflow:auto;overscroll-behavior:contain;background:linear-gradient(#1f2b2a00 0%,#1f2b2aa8 24%,#1f2b2ae0 100%);text-align:center;animation:ms-in .25s var(--ease-out)}
 .ms-start[data-finale]{background:linear-gradient(#3a0f0a00 0%,#3a0f0ab8 24%,#1f2b2ae6 100%)}
-.ms-go{display:grid;justify-items:center;width:min(100%,320px);padding:4px 8px 12px;border:0;border-radius:26px;background:none;color:var(--cream);font-family:var(--font-display);font-size:36px;font-weight:800;line-height:1.1;transition:transform .1s ease-out}
+.ms-go{display:grid;justify-items:center;width:min(100%,320px);padding:4px 8px 12px;border:0;border-radius:26px;background:none;color:var(--cream);font-family:var(--font-display);font-size:36px;font-weight:800;line-height:1.1;transition:transform .12s var(--ease-out)}
 .ms-go-art{display:block;width:100%;height:clamp(120px,25vh,210px)}
-.ms-go span{margin-top:-4px;padding:6px 32px 9px;border-radius:999px;background:var(--accent);box-shadow:0 5px 0 var(--accent-deep),0 16px 30px -12px #000c}
+.ms-go span{margin-top:-4px;padding:6px 32px 9px;border-radius:12px;background:var(--accent);box-shadow:0 5px 0 var(--accent-deep),0 16px 30px -12px #000c}
 .ms-go:active{transform:translateY(3px) scale(.98)}
 .ms-go:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
 .ms-pick{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px;width:min(100%,380px)}
 .ms-pick-name h2{margin:0;font-family:var(--font-display);font-size:21px;font-weight:800;line-height:1.3;color:#fff}
-.ms-finale-badge{margin:0 auto 2px;padding:1px 10px;width:max-content;border-radius:999px;background:#c2361f;color:#fff;font-size:12px;font-weight:700}
+.ms-finale-badge{margin:0 auto 2px;padding:1px 10px;width:max-content;border-radius:4px;background:#c2361f;color:#fff;font-size:12px;font-weight:700}
 .ms-got{margin:0;color:var(--gold);font-size:15px;letter-spacing:2px}
 .ms-got span{color:#ffffff40}
 .ms-got small{color:#f3e6cfcc;font-size:13px;letter-spacing:0}
@@ -62,8 +62,8 @@
 
 /* ---- the first-run story ---- */
 .ms-story{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;padding:16px 16px 18%;background:#1f2b2a66;pointer-events:none}
-.ms-skip{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);margin:0;white-space:nowrap;padding:4px 10px;border-radius:999px;background:#1f2b2aa6;font-size:12px;font-weight:600}
-.ms-panel{max-width:340px;margin:0;padding:14px 18px;border:3px solid var(--cream);border-radius:6px;background:var(--cream);color:var(--ink);font-family:var(--font-display);font-size:21px;font-weight:700;line-height:1.45;box-shadow:6px 6px 0 #1f2b2a;animation:ms-in .3s ease-out}
+.ms-skip{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);margin:0;white-space:nowrap;padding:4px 10px;border-radius:8px;background:#1f2b2aa6;font-size:12px;font-weight:600}
+.ms-panel{max-width:340px;margin:0;padding:14px 18px;border:3px solid var(--cream);border-radius:6px;background:var(--cream);color:var(--ink);font-family:var(--font-display);font-size:21px;font-weight:700;line-height:1.45;box-shadow:6px 6px 0 #1f2b2a;animation:ms-in .24s var(--ease-out)}
 .ms-dots{display:flex;gap:6px;margin:0}
 .ms-dots i{width:8px;height:8px;border-radius:50%;background:#fff8ea55}
 .ms-dots i[data-on]{background:var(--cream)}
@@ -74,7 +74,7 @@
 .ms-cover .kit-primary{min-width:200px;min-height:56px;font-size:19px}
 
 /* ---- the end screen ---- */
-.ms-finish{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;overflow:auto;background:#1f2b2ac8;text-align:center;animation:ms-in .3s cubic-bezier(.2,.9,.3,1.1) both}
+.ms-finish{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;overflow:auto;background:#1f2b2ac8;text-align:center;animation:ms-in .26s var(--ease-out) both}
 .ms-finish-kicker{margin:0;font-size:13px;font-weight:700;color:var(--gold)}
 .ms-finish h2{margin:0;font-family:var(--font-display);font-size:clamp(23px,7cqw,30px);font-weight:800;line-height:1.25;color:#fff}
 .ms-finish .gx-reveal{font-size:38px;gap:6px}
@@ -95,13 +95,13 @@
 .tool-marble-sinri .ms-actions li:first-child button{min-height:58px;font-size:19px}
 .tool-marble-sinri .ms-actions .kit-secondary{background:transparent;color:var(--cream);border-color:var(--cream)}
 .ms-actions kbd{margin-right:8px;padding:1px 7px;border-radius:6px;background:#ffffff2e;font-family:inherit;font-size:13px;font-weight:700}
-.ms-actions em{margin-left:8px;padding:1px 8px;border-radius:999px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800;vertical-align:middle}
+.ms-actions em{margin-left:8px;padding:1px 8px;border-radius:4px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800;vertical-align:middle}
 @media (pointer:coarse){.ms-actions kbd{display:none}}
 .tool-marble-sinri .ms-see{min-height:44px;color:var(--cream);font-size:15px}
 
 /* ---- সব তলা ---- */
-.ms-sheet{position:absolute;inset:0;z-index:4;display:grid;align-items:start;padding:8px;background:#0d0a0899;animation:ms-fade .16s ease-out}
-.ms-sheet-card{display:grid;gap:12px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:14px 12px 16px;border-radius:16px;background:var(--panel);box-shadow:0 20px 40px -20px #000c;animation:ms-in .2s ease-out}
+.ms-sheet{position:absolute;inset:0;z-index:4;display:grid;align-items:start;padding:8px;background:#0d0a0899;animation:ms-fade .16s var(--ease-out)}
+.ms-sheet-card{display:grid;gap:12px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:14px 12px 16px;border-radius:16px;background:var(--panel);box-shadow:0 20px 40px -20px #000c;animation:ms-in .2s var(--ease-out)}
 .ms-sheet header{position:relative;padding-right:52px}
 .ms-sheet h2{margin:0;font-family:var(--font-display);font-size:24px;color:#fff}
 .ms-sheet header p{margin:2px 0 0;font-size:13px;color:#f3e6cf}
@@ -114,8 +114,8 @@
 .ms-world button{position:relative;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"key name stars" "key line line";align-items:center;column-gap:10px;row-gap:1px;width:100%;min-height:58px;padding:7px 10px;border:1.5px solid #fff8ea2a;border-radius:12px;background:#ffffff10;color:var(--cream);text-align:left}
 .ms-world button kbd{grid-area:key;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#ffffff1c;font-family:inherit;font-size:13px;font-weight:700}
 .ms-row-name{grid-area:name;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:15px}
-.ms-row-name i{padding:1px 8px;border-radius:999px;background:#c2361f;color:#fff;font-size:11px;font-style:normal;font-weight:700}
-.ms-row-name em{padding:1px 8px;border-radius:999px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800}
+.ms-row-name i{padding:1px 8px;border-radius:4px;background:#c2361f;color:#fff;font-size:11px;font-style:normal;font-weight:700}
+.ms-row-name em{padding:1px 8px;border-radius:4px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800}
 .ms-row-line{grid-area:line;font-size:12.5px;line-height:1.4;color:#f3e6cfc0}
 .ms-row-stars{grid-area:stars;display:flex;font-size:13px;line-height:1}
 .ms-row-stars i{font-style:normal;color:#ffffff30}
@@ -145,6 +145,10 @@
   .ms-go{font-size:30px}
   .ms-start{gap:6px}
 }
-/* ধীরে খেলো and reduced motion: no slides, no bounce */
-.ms[data-calm] *{animation:none!important;transition:none!important}
-@media (prefers-reduced-motion:reduce){.ms *{animation:none!important;transition:none!important}}
+/* press feedback on everything pressable; low specificity so .kit-primary and .ms-go keep their own */
+:where(.ms button:not(.ms-go)){transition:transform 160ms var(--ease-out)}
+:where(.ms button:not(:disabled,.ms-go):active){transform:scale(.97)}
+/* ধীরে খেলো and reduced motion: no slides, no bounce, no press shrink; the floor hint still fades out (opacity only) */
+.ms[data-calm] *:not(.ms-halves){animation:none!important;transition:none!important}
+.ms[data-calm] button:active{transform:none}
+@media (prefers-reduced-motion:reduce){.ms *:not(.ms-halves){animation:none!important;transition:none!important}.ms button:active{transform:none}}

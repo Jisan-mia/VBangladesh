@@ -1,4 +1,4 @@
-.tool-chhobir-tukro{--accent:#c26a2e;--accent-deep:#8a4318}
+.tool-chhobir-tukro{--accent:#c26a2e;--accent-deep:#8a4318;--ease-out:cubic-bezier(.23,1,.32,1)}
 .tool-chhobir-tukro .ct-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* One look per world (lib/art.ts LOOKS): a cream card at dawn, warm card at sunset, deep blue under the moon. */
@@ -9,7 +9,7 @@
 /* The game fills the stage: HUD, the table (board and tray, as big as fits), one bar. Nothing scrolls while playing. */
 .tool-chhobir-tukro .gp-stage{overflow:hidden}
 .tool-chhobir-tukro .gp-game{height:100%}
-.ct{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:6px;width:100%;max-width:620px;height:min(92svh,900px);margin-inline:auto;padding:6px 8px 8px;border-radius:16px;background:var(--paper);color:var(--ink);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:background .3s ease-out}
+.ct{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:6px;width:100%;max-width:620px;height:min(92svh,900px);margin-inline:auto;padding:6px 8px 8px;border-radius:16px;background:var(--paper);color:var(--ink);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:background .3s var(--ease-out)}
 .gp-stage .ct{height:100%}
 
 /* ---- HUD: level top-left, the finale's named bar top-centre, the clock and stars top-right ---- */
@@ -22,26 +22,26 @@
 .ct-boss span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .ct-boss b{color:var(--tint);font-variant-numeric:tabular-nums}
 .ct-boss i{display:block;height:7px;overflow:hidden;border-radius:4px;background:color-mix(in srgb,var(--ink) 16%,transparent)}
-.ct-boss em{display:block;height:100%;background:linear-gradient(90deg,var(--tint-deep),var(--tint));transform-origin:left;transition:transform .3s ease-out}
+.ct-boss em{display:block;height:100%;background:linear-gradient(90deg,var(--tint-deep),var(--tint));transform-origin:left;transition:transform .3s var(--ease-out)}
 .ct-clock{grid-column:3;display:grid;justify-items:end;margin:0}
-.ct-clock>b{font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums;transition:color .2s ease-out}
+.ct-clock>b{font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums;transition:color .2s var(--ease-out)}
 .ct-clock>b[data-danger]{color:#e0610e}
 .ct-track{display:flex;align-items:center;gap:1px;margin:0;font-size:15px;line-height:1}
 .ct-track i{font-style:normal;color:color-mix(in srgb,var(--muted) 45%,transparent)}
 .ct-track i[data-on]{color:var(--star)}
-.ct-track i[data-fell]{animation:ct-fall .7s ease-in both}
+.ct-track i[data-fell]{animation:ct-fall .5s var(--ease-out) both}
 .ct-track small{margin-left:4px;font-size:12px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
 .ct-rival{font-size:12px;font-weight:700;color:var(--muted)}
 @keyframes ct-fall{0%{color:var(--star);transform:none}60%{color:#e85d04;transform:translateY(8px) rotate(30deg)}100%{transform:none}}
 
 /* ---- the table: one canvas, the board on top and the tray under it ---- */
-.ct-play{position:relative;min-height:0;border-radius:12px;transition:box-shadow .3s ease-out}
+.ct-play{position:relative;min-height:0;border-radius:12px}
+.ct-play::after{content:"";position:absolute;inset:0;z-index:3;border-radius:inherit;box-shadow:0 0 0 3px #f28c28,0 0 22px 4px #f28c2880;opacity:0;pointer-events:none;transition:opacity .2s var(--ease-out)} /* unslop-ignore: the one-more-mistake warning rim */
 /* about to lose a star: the edge glows, never a popup in the middle (a steady border in slow mode) */
-.ct-play[data-danger]{box-shadow:0 0 0 3px #f28c28,0 0 22px 4px #f28c2880;animation:ct-warn .9s ease-in-out infinite alternate}
-.ct[data-calm] .ct-play[data-danger]{animation:none;box-shadow:0 0 0 3px #f28c28}
-@keyframes ct-warn{to{box-shadow:0 0 0 3px #f28c28,0 0 8px 1px #f28c2855}}
+.ct-play[data-danger]::after{opacity:1;animation:ct-warn .9s ease-in-out infinite alternate}
+@keyframes ct-warn{to{opacity:.55}}
 .ct-progress{position:absolute;top:-4px;left:12%;right:12%;z-index:1;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--ink) 14%,transparent);pointer-events:none}
-.ct-progress i{display:block;height:100%;background:var(--tint);transform-origin:left;transition:transform .3s ease-out}
+.ct-progress i{display:block;height:100%;background:var(--tint);transform-origin:left;transition:transform .3s var(--ease-out)}
 .ct-play[data-finale] .ct-progress{display:none}
 .ct-table{position:absolute;inset:0}
 .ct-canvas{position:absolute;left:0;top:0;display:block;touch-action:none;cursor:grab}
@@ -50,7 +50,7 @@
 .ct-board-keys:focus-visible{outline:3px solid #f2a900;outline-offset:3px}
 .ct-slot-key{position:absolute;padding:0;border:0;border-radius:10px;background:none;pointer-events:none}
 .ct-slot-key:focus-visible{outline:3px solid #f2a900;outline-offset:-3px}
-.ct-peek{position:absolute;left:50%;top:0;z-index:2;width:min(100%,70cqh,460px);aspect-ratio:1;border-radius:8px;box-shadow:0 0 0 6px var(--frame),0 12px 30px #0006;transform:translateX(-50%);animation:ct-fade .15s ease-out;pointer-events:none}
+.ct-peek{position:absolute;left:50%;top:0;z-index:2;width:min(100%,70cqh,460px);aspect-ratio:1;border-radius:8px;box-shadow:0 0 0 6px var(--frame),0 12px 30px #0006;transform:translateX(-50%);animation:ct-fade .15s var(--ease-out);pointer-events:none}
 .ct-play{container-type:size}
 
 /* ---- under the table: the box picture (hold to peek), one line of help, ঘোরাও ---- */
@@ -59,13 +59,13 @@
 .ct-lid canvas{display:block;width:100%;height:100%;border-radius:6px}
 .ct-lid[aria-pressed=true]{outline:3px solid var(--tint);outline-offset:1px}
 .ct-status{margin:0;font-size:14px;font-weight:600;line-height:1.4;color:var(--muted);text-wrap:balance}
-.ct-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:96px;min-height:56px;padding:4px 12px;border:1.5px solid var(--tint);border-radius:14px;background:#fff;color:#2a2420;font-size:16px;font-weight:700;white-space:nowrap;box-shadow:0 3px 0 var(--tint-deep);transition:transform .08s ease-out}
+.ct-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:96px;min-height:56px;padding:4px 12px;border:1.5px solid var(--tint);border-radius:14px;background:#fff;color:#2a2420;font-size:16px;font-weight:700;white-space:nowrap;box-shadow:0 3px 0 var(--tint-deep);transition:transform .1s var(--ease-out)}
 .ct-tool:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--tint-deep)}
 .ct-tool:disabled{opacity:.45}
 .ct-tool svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 
 /* ---- the end: a cardboard slip over the tray; the finished painting stays in view ---- */
-.ct-end{position:absolute;left:8px;right:8px;bottom:8px;z-index:3;display:grid;gap:8px;padding:12px 14px;border:2px solid var(--frame);border-radius:16px;background:#fffaf0;color:#2a2420;box-shadow:0 -6px 22px #0000002e;animation:ct-rise .35s cubic-bezier(.2,1.2,.4,1) both}
+.ct-end{position:absolute;left:8px;right:8px;bottom:8px;z-index:3;display:grid;gap:8px;padding:12px 14px;border:2px solid var(--frame);border-radius:16px;background:#fffaf0;color:#2a2420;box-shadow:0 -6px 22px #0000002e;animation:ct-rise .26s var(--ease-out) both}
 .ct[data-calm] .ct-end{animation:none}
 .ct-end-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .ct-end h2{margin:0;font-family:var(--font-display);font-size:21px;line-height:1.3}
@@ -82,14 +82,14 @@
 .ct-end-actions kbd{margin-left:8px;padding:1px 5px;border:1px solid #ffffff80;border-radius:5px;font-size:11px;font-family:inherit;opacity:.8}
 @media(hover:none){.ct-end-actions kbd{display:none}}
 .ct-see{justify-self:center;color:#2a2420}
-@keyframes ct-rise{from{opacity:0;transform:translateY(24px)}}
+@keyframes ct-rise{from{opacity:0;transform:translateY(16px)}}
 @keyframes ct-fade{from{opacity:0}}
 
 /* ---- title: the box lid is the start button ---- */
-.ct-title{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px;overflow:auto;border-radius:16px;background:var(--paper);text-align:center;animation:ct-fade .2s ease-out}
+.ct-title{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px;overflow:auto;border-radius:16px;background:var(--paper);text-align:center;animation:ct-fade .2s var(--ease-out)}
 .ct-start{display:grid;justify-items:center;padding:0;border:0;background:none;color:inherit;cursor:pointer;touch-action:manipulation}
 .ct-start-art{display:block;width:min(100%,420px,calc(var(--stage-h,90svh) * .5));aspect-ratio:1}
-.ct-start span{margin-top:-34px;padding:8px 54px;border:3px dashed #f6d58a;border-radius:18px;background:var(--tint-deep);color:#fff;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.3;box-shadow:0 6px 0 #0000004d,0 16px 26px -14px #000;transition:transform .08s ease-out}
+.ct-start span{margin-top:-34px;padding:8px 54px;border:3px dashed #f6d58a;border-radius:18px;background:var(--tint-deep);color:#fff;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.3;box-shadow:0 6px 0 #0000004d,0 16px 26px -14px #000;transition:transform .08s var(--ease-out)}
 .ct-start:active span{transform:translateY(4px) scale(.98)}
 .ct-start:focus-visible span{outline:3px solid var(--ink);outline-offset:3px}
 .ct-pick{display:flex;align-items:center;gap:10px}
@@ -99,9 +99,9 @@
 .ct-pick svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .ct-line{max-width:36ch;margin:0;font-size:15px;line-height:1.5}
 .ct-line span{display:block;margin-top:2px;font-size:14px;color:var(--muted)}
-.ct-tag{display:inline-block;margin-right:6px;padding:1px 9px;border-radius:999px;background:#2f7d4a;color:#fff;font-size:12px;font-style:normal;font-weight:800;vertical-align:2px}
+.ct-tag{display:inline-block;margin-right:6px;padding:1px 9px;border-radius:4px;background:#2f7d4a;color:#fff;font-size:12px;font-style:normal;font-weight:800;vertical-align:2px}
 .ct-tag-finale{background:#c8452c}
-.ct-calm{margin:0;padding:3px 10px;border-radius:999px;background:var(--card);color:var(--muted);font-size:13px}
+.ct-calm{margin:0;padding:3px 10px;border-radius:6px;background:var(--card);color:var(--muted);font-size:13px}
 .tool-chhobir-tukro .ct-all{min-height:40px;font-weight:600;color:var(--ink)}
 .ct-friend{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;max-width:340px;padding:8px 12px;border-radius:14px;background:#fff;color:#2a2420;text-align:left}
 .ct-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 14px #2a242033;transform:rotate(-4deg)}
@@ -111,17 +111,17 @@
 /* ---- the story: three picture-book panels, tap for the next, hold to skip ---- */
 .ct-story{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;border-radius:16px;background:var(--paper);cursor:pointer;touch-action:none}
 .ct-panel{display:block;width:min(100%,380px,calc(var(--stage-h,90svh) * .52));aspect-ratio:1;border-radius:18px;box-shadow:0 0 0 4px #fff,0 0 0 6px var(--ink),0 14px 30px -12px #0006;transform:rotate(-1deg)}
-.ct-caption{max-width:30ch;margin:6px 0 0;font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.45;text-align:center;animation:ct-fade .3s ease-out}
+.ct-caption{max-width:30ch;margin:6px 0 0;font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.45;text-align:center;animation:ct-fade .2s var(--ease-out)}
 .ct-dots{display:flex;gap:6px;margin:0}
 .ct-dots i{width:8px;height:8px;border-radius:50%;background:color-mix(in srgb,var(--ink) 22%,transparent)}
 .ct-dots i[data-on]{background:var(--tint)}
 .ct-skip{position:absolute;right:14px;bottom:12px;display:flex;align-items:center;gap:6px;margin:0;font-size:12px;font-weight:700;color:var(--muted)}
-.ct-skip span{width:28px;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--ink) 18%,transparent)}
-.ct-skip[data-holding] span{background:linear-gradient(90deg,var(--tint) 0 0) no-repeat 0 0/0 100%,color-mix(in srgb,var(--ink) 18%,transparent);animation:ct-hold .6s linear forwards}
-@keyframes ct-hold{to{background-size:100% 100%,auto}}
+.ct-skip span{position:relative;width:28px;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--ink) 18%,transparent)}
+.ct-skip span::after{content:"";position:absolute;inset:0;background:var(--tint);transform:scaleX(0);transform-origin:left}
+.ct-skip[data-holding] span::after{transform:scaleX(1);transition:transform .6s linear}
 
 /* ---- সব লেভেল: a choice moment over the table ---- */
-.ct-sheet{position:absolute;inset:0;z-index:6;overflow:auto;overscroll-behavior:contain;padding:8px;border-radius:16px;background:color-mix(in srgb,#000 35%,transparent);animation:ct-fade .15s ease-out}
+.ct-sheet{position:absolute;inset:0;z-index:6;overflow:auto;overscroll-behavior:contain;padding:8px;border-radius:16px;background:color-mix(in srgb,#000 35%,transparent);animation:ct-fade .15s var(--ease-out)}
 .ct-sheet-card{display:grid;gap:12px;padding:14px;border-radius:16px;background:#fffaf0;color:#2a2420}
 .ct-sheet header{position:relative;padding-right:48px}
 .ct-sheet h2{margin:0;font-family:var(--font-display);font-size:22px}
@@ -141,7 +141,7 @@
 .ct-world button[aria-current=true]{border-color:#2a2420;box-shadow:inset 0 0 0 1.5px #2a2420}
 .ct-world button[data-finale]{border-style:dashed;border-color:#c8452c}
 .ct-world button[data-next]{border-color:#c26a2e;background:#fff3cf}
-.ct-world button em{position:absolute;top:-8px;left:50%;padding:0 5px;border-radius:999px;background:#c26a2e;color:#fff;font-size:10px;font-style:normal;font-weight:800;white-space:nowrap;transform:translateX(-50%)}
+.ct-world button em{position:absolute;top:-8px;left:50%;padding:0 5px;border-radius:4px;background:#c26a2e;color:#fff;font-size:10px;font-style:normal;font-weight:800;white-space:nowrap;transform:translateX(-50%)}
 .ct-mini{display:flex;font-size:11px;line-height:1}
 .ct-mini i{font-style:normal;color:#d5c9b4}.ct-mini i[data-on]{color:#f2a900}
 
@@ -161,4 +161,12 @@
   .ct-tool{min-width:0;font-size:14px;padding-inline:8px}
   .ct-stats dd{font-size:18px}
 }
-@media(prefers-reduced-motion:reduce){.ct-end,.ct-track i[data-fell]{animation:none}}
+/* press feedback on everything pressable; low specificity so the tool, the lid and the start stamp keep their own */
+:where(.ct button:not(.ct-start,.ct-tool,.ct-lid)){transition:transform 160ms var(--ease-out)}
+:where(.ct button:not(:disabled,.ct-start,.ct-tool,.ct-lid):active){transform:scale(.97)}
+/* ধীরে খেলো and reduced motion: nothing slides, pops or presses in */
+.ct[data-calm] *{animation:none!important;transition:none!important}
+.ct[data-calm] .ct-play::after{animation:none}
+.ct[data-calm] button:active,.ct[data-calm] .ct-start:active span{transform:none}
+.ct[data-calm] .ct-skip[data-holding] span::after{transition:transform .6s linear}
+@media(prefers-reduced-motion:reduce){.ct *{animation:none!important;transition:none!important}.ct .ct-play::after{animation:none}.ct button:active,.ct .ct-start:active span{transform:none}.ct .ct-skip[data-holding] span::after{transition:transform .6s linear}}

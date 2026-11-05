@@ -12,7 +12,7 @@
 
 /* ---- title: the shop itself is the start button ---- */
 .dp-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:16px;min-height:0;padding:8px 4px;text-align:center}
-.dp-startbtn{position:relative;display:block;width:min(100%,400px);padding:0;border:3px solid var(--w-ink);border-radius:14px;overflow:hidden;background:var(--w-wall);box-shadow:0 8px 0 var(--w-ink);font:inherit;cursor:pointer;touch-action:manipulation;transition:transform 160ms var(--ease-out),box-shadow 160ms var(--ease-out)}
+.dp-startbtn{position:relative;display:block;width:min(100%,400px);padding:0;border:3px solid var(--w-ink);border-radius:14px;overflow:hidden;background:var(--w-wall);box-shadow:0 8px 0 var(--w-ink);font:inherit;cursor:pointer;touch-action:manipulation;transition:transform 160ms var(--ease-out)}
 @media (hover:hover) and (pointer:fine){.dp-startbtn:hover{transform:translateY(-3px);box-shadow:0 11px 0 var(--w-ink)}}
 .dp-startbtn:active{transform:translateY(5px);box-shadow:0 3px 0 var(--w-ink)}
 .dp-startbtn:focus-visible{outline:4px solid var(--w-accent);outline-offset:6px}
@@ -94,7 +94,7 @@
 
 /* the tray: weights or fruits to add, or the numbers to answer with, or পরের পাল্লা */
 .dp-tray{display:grid;gap:12px;min-height:96px}
-.dp-take,.dp-choice{position:relative;display:grid;place-items:center;min-width:0;min-height:92px;padding:6px 4px;border:3px solid var(--w-ink);border-radius:10px;background:var(--w-paper);color:var(--w-ink);font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;box-shadow:0 5px 0 var(--w-ink);transition:transform 110ms var(--ease-out),box-shadow 110ms var(--ease-out)}
+.dp-take,.dp-choice{position:relative;display:grid;place-items:center;min-width:0;min-height:92px;padding:6px 4px;border:3px solid var(--w-ink);border-radius:10px;background:var(--w-paper);color:var(--w-ink);font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;box-shadow:0 5px 0 var(--w-ink);transition:transform 110ms var(--ease-out)}
 .dp-take:active,.dp-choice:active{transform:translateY(4px);box-shadow:0 1px 0 var(--w-ink)}
 .dp-take:focus-visible,.dp-choice:focus-visible,.dp-next:focus-visible{outline:4px solid var(--w-accent);outline-offset:3px}
 .dp-take .dp-piece{width:min(64px,100%);height:auto;aspect-ratio:1}
@@ -102,7 +102,7 @@
 .dp-choice:nth-child(2){animation-delay:40ms}.dp-choice:nth-child(3){animation-delay:80ms}
 .dp-choice.is-glow{background:#fff3c9;border-color:#f2a900;box-shadow:0 5px 0 #b87d00}
 .dp-choice.is-tried{background:#fff3c9}
-.dp-next{display:flex;align-items:center;justify-content:center;gap:14px;grid-column:1/-1;width:100%;min-height:96px;padding:6px 16px;border:3px solid var(--w-ink);border-radius:12px;background:var(--w-accent);color:#fff;font:inherit;font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation;box-shadow:0 6px 0 var(--w-ink);animation:dp-in 260ms var(--ease-out) both;transition:transform 110ms var(--ease-out),box-shadow 110ms var(--ease-out)}
+.dp-next{display:flex;align-items:center;justify-content:center;gap:14px;grid-column:1/-1;width:100%;min-height:96px;padding:6px 16px;border:3px solid var(--w-ink);border-radius:12px;background:var(--w-accent);color:#fff;font:inherit;font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation;box-shadow:0 6px 0 var(--w-ink);animation:dp-in 260ms var(--ease-out) both;transition:transform 110ms var(--ease-out)}
 .dp-next:active{transform:translateY(5px);box-shadow:0 1px 0 var(--w-ink)}
 .dp-next svg{width:44px;height:44px;fill:none;stroke:currentColor;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round}
 @keyframes dp-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -115,18 +115,18 @@
 .dp-end-pic{position:relative;width:100%;max-width:340px;aspect-ratio:320/250;overflow:hidden;border:3px solid var(--w-ink);border-radius:10px}
 .dp-end-pic .dp-backdrop{position:absolute;inset:0}
 .dp-end-stars .gx-stars{font-size:46px}
-.dp-end-stars .gx-stars .on{display:inline-block;animation:dp-star .45s cubic-bezier(.3,1.6,.5,1) both}
+.dp-end-stars .gx-stars .on{display:inline-block;animation:dp-star .36s var(--ease-out) both}
 .dp-end-stars .gx-stars .on:nth-child(1){animation-delay:.35s}
 .dp-end-stars .gx-stars .on:nth-child(2){animation-delay:.65s}
 .dp-end-stars .gx-stars .on:nth-child(3){animation-delay:.95s}
-@keyframes dp-star{0%{transform:scale(.5) rotate(-30deg);opacity:0}100%{transform:none;opacity:1}}
+@keyframes dp-star{0%{transform:scale(.6) rotate(-20deg);opacity:0}100%{transform:none;opacity:1}}
 .dp-end-count{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;margin:0;font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.5}
 .dp-end-count b{color:var(--w-deep)}
 .dp-end-news{margin:0;font-size:20px;font-weight:700;line-height:1.6;color:var(--w-deep)}
 .dp-end-note{margin:0;max-width:340px;font-size:17px;line-height:1.6}
 .dp-end-off{margin:0;max-width:340px;font-size:17px;line-height:1.6;color:var(--muted)}
 .dp-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(340px,100%)}
-.dp-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:3px solid var(--w-ink);border-radius:12px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-ink);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out)}
+.dp-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:3px solid var(--w-ink);border-radius:12px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-ink);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform 120ms var(--ease-out)}
 .dp-big:active{transform:translateY(5px);box-shadow:0 1px 0 var(--w-ink)}
 .dp-big svg{width:48px;height:48px;fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
 .dp-in{animation:dp-in 260ms var(--ease-out) both;animation-delay:var(--d,0ms)}
@@ -146,6 +146,7 @@
 .dp-band ol{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin:0;padding:0;list-style:none}
 .dp-band li:has(.finale){grid-column:span 2}
 .dp-card{position:relative;display:grid;justify-items:center;gap:0;width:100%;min-height:124px;padding:8px 4px 6px;border:3px solid var(--w-ink);border-radius:10px;background:var(--w-paper);color:var(--w-ink);font:inherit;cursor:pointer;touch-action:manipulation;transition:transform 120ms var(--ease-out)}
+.dp-chip,.dp-close{transition:transform 120ms var(--ease-out)}
 .dp-card:active,.dp-chip:active,.dp-close:active{transform:scale(.97)}
 .dp-card.finale{background:linear-gradient(var(--w-paper),var(--w-soft))}
 .dp-card[data-next]::after{content:"";position:absolute;inset:-6px;border:4px solid #f2a900;border-radius:14px;opacity:0;pointer-events:none;animation:dp-ring 1.6s var(--ease-out) infinite}
@@ -165,6 +166,10 @@
 .dp[data-slow] .dp-item.drop,.dp[data-slow] .dp-choice,.dp[data-slow] .dp-next,.dp[data-slow] .dp-in,.dp[data-slow] .dp-ghost,.dp[data-slow] .dp-dots li.done,.dp[data-slow] .dp-card[data-next]::after,.dp[data-slow] .dp-end-stars .gx-stars .on,.dp[data-slow] .dp-scene.is-level .dp-hub::after{animation:none}
 .dp[data-slow] .dp-startbtn,.dp[data-slow] .dp-dots li,.dp[data-slow] .dp-take,.dp[data-slow] .dp-choice,.dp[data-slow] .dp-next,.dp[data-slow] .dp-big{transition:none}
 @media (prefers-reduced-motion:reduce){.dp-item.drop,.dp-choice,.dp-next,.dp-in,.dp-ghost,.dp-dots li.done,.dp-card[data-next]::after,.dp-end-stars .gx-stars .on,.dp-scene.is-level .dp-hub::after{animation:none}.dp-startbtn,.dp-dots li,.dp-take,.dp-choice,.dp-next,.dp-big{transition:none}}
+
+/* press shrink and shadow drop go with the motion */
+.dp[data-slow] button,.dp[data-slow] button:active{transition:none;transform:none}
+@media (prefers-reduced-motion:reduce){.dp button,.dp button:active{transition:none;transform:none}}
 
 /* short stages: a lower scene and smaller tray */
 @media (max-height:700px){.dp-scene{min-height:240px}.dp-line{min-height:50px}.dp-take,.dp-choice{min-height:84px}}

@@ -1,4 +1,4 @@
-.tool-chhobi-photao{--accent:#b5452b;--accent-deep:#7a2a18}
+.tool-chhobi-photao{--accent:#b5452b;--accent-deep:#7a2a18;--ease-out:cubic-bezier(.23,1,.32,1)}
 .tool-chhobi-photao .cp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* One look per world (lib/art.ts LOOKS): cream cloth in the উঠান, pond green by the পুকুর, dusk blue at the ঘাট. The board's cloth stays cream in every world, so the numbers always read the same. */
@@ -9,7 +9,7 @@
 /* The game fills the stage: HUD, the board (as big as fits), one bar. Nothing scrolls while playing. */
 .tool-chhobi-photao .gp-stage{overflow:hidden}
 .tool-chhobi-photao .gp-game{height:100%}
-.cp{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:6px;width:100%;max-width:620px;height:min(92svh,900px);margin-inline:auto;padding:6px 8px 8px;border-radius:16px;background:var(--paper);color:var(--ink);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:background .3s ease-out}
+.cp{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:6px;width:100%;max-width:620px;height:min(92svh,900px);margin-inline:auto;padding:6px 8px 8px;border-radius:16px;background:var(--paper);color:var(--ink);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:background .3s var(--ease-out)}
 .gp-stage .cp{height:100%}
 
 /* ---- HUD: level top-left, the finale's named bar top-centre, the clock and stars top-right ---- */
@@ -22,27 +22,27 @@
 .cp-boss span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .cp-boss b{color:var(--tint);font-variant-numeric:tabular-nums}
 .cp-boss i{display:block;height:7px;overflow:hidden;border-radius:4px;background:color-mix(in srgb,var(--ink) 16%,transparent)}
-.cp-boss em{display:block;height:100%;background:linear-gradient(90deg,var(--tint-deep),var(--tint));transform-origin:left;transition:transform .3s ease-out}
+.cp-boss em{display:block;height:100%;background:linear-gradient(90deg,var(--tint-deep),var(--tint));transform-origin:left;transition:transform .3s var(--ease-out)}
 .cp-clock{grid-column:3;display:grid;justify-items:end;margin:0}
 .cp-clock>b{font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums}
 .cp-track{display:flex;align-items:center;gap:1px;margin:0;font-size:15px;line-height:1}
 .cp-track i{font-style:normal;color:color-mix(in srgb,var(--muted) 45%,transparent)}
 .cp-track i[data-on]{color:var(--star)}
-.cp-track i[data-fell]{animation:cp-fall .7s ease-in both}
+.cp-track i[data-fell]{animation:cp-fall .5s var(--ease-out) both}
 .cp-starnote,.cp-rival{max-width:150px;font-size:11px;font-weight:600;line-height:1.3;color:var(--muted);text-align:right}
 .cp-rival{font-weight:700}
 @keyframes cp-fall{0%{color:var(--star);transform:none}60%{color:#e85d04;transform:translateY(8px) rotate(30deg)}100%{transform:none}}
 
 /* ---- the board: a কাঁথা patch with a running stitch round it; clues on the cloth, cells in a 1px grid ---- */
-.cp-play{position:relative;min-height:0;border-radius:14px;transition:box-shadow .3s ease-out}
+.cp-play{position:relative;min-height:0;border-radius:14px}
+.cp-play::after{content:"";position:absolute;inset:0;z-index:1;border-radius:inherit;box-shadow:0 0 0 3px #f28c28,0 0 22px 4px #f28c2880;opacity:0;pointer-events:none;transition:opacity .2s var(--ease-out)} /* unslop-ignore: the one-more-mistake warning rim */
 /* one more mistake costs a star: the edge glows, never a popup in the middle (a steady border in slow mode) */
-.cp-play[data-danger]{box-shadow:0 0 0 3px #f28c28,0 0 22px 4px #f28c2880;animation:cp-warn .9s ease-in-out infinite alternate}
-.cp[data-calm] .cp-play[data-danger]{animation:none;box-shadow:0 0 0 3px #f28c28}
-@keyframes cp-warn{to{box-shadow:0 0 0 3px #f28c28,0 0 8px 1px #f28c2855}}
-.cp-hit{position:absolute;inset:0;z-index:2;border-radius:14px;box-shadow:0 0 0 4px #e8590c,0 0 26px 8px #e8590ccc;pointer-events:none;animation:cp-hit .6s ease-out forwards}
+.cp-play[data-danger]::after{opacity:1;animation:cp-warn .9s ease-in-out infinite alternate}
+@keyframes cp-warn{to{opacity:.55}}
+.cp-hit{position:absolute;inset:0;z-index:2;border-radius:14px;box-shadow:0 0 0 4px #e8590c,0 0 22px 6px #e8590caa;pointer-events:none;animation:cp-hit .6s var(--ease-out) forwards} /* unslop-ignore: a wrong move flashes the board edge once */
 @keyframes cp-hit{to{opacity:0}}
 .cp-progress{position:absolute;top:-4px;left:12%;right:12%;z-index:1;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--ink) 14%,transparent);pointer-events:none}
-.cp-progress i{display:block;height:100%;background:var(--tint);transform-origin:left;transition:transform .3s ease-out}
+.cp-progress i{display:block;height:100%;background:var(--tint);transform-origin:left;transition:transform .3s var(--ease-out)}
 .cp-play[data-finale] .cp-progress{display:none}
 .cp-boardbox{position:absolute;inset:0;display:grid;place-items:center}
 
@@ -50,39 +50,41 @@
 .cp-corner{grid-area:1/1}
 .cp-colclues{grid-area:1/2;display:grid;gap:1px;align-items:end}
 .cp-rowclues{grid-area:2/1;display:grid;gap:1px}
-.cp-clue{display:flex;justify-content:flex-end;align-items:center;gap:.32em;padding-right:6px;border-radius:6px;font-size:var(--font);font-weight:700;line-height:1.05;color:var(--b-ink);transition:color .15s ease-out,opacity .15s ease-out}
+.cp-clue{display:flex;justify-content:flex-end;align-items:center;gap:.32em;padding-right:6px;border-radius:6px;font-size:var(--font);font-weight:700;line-height:1.05;color:var(--b-ink);transition:color .15s var(--ease-out),opacity .15s var(--ease-out)}
 .cp-colclues .cp-clue{flex-direction:column;justify-content:flex-end;gap:.12em;padding:0 0 4px}
-.cp-clue[data-state=done]{opacity:.38;animation:cp-done .4s ease-out}
+.cp-clue[data-state=done]{opacity:.38;animation:cp-done .4s var(--ease-out)}
 .cp-clue[data-cursor]{background:#e8d9bb}
 .cp-clue[data-teach]{background:#ffe3b3;box-shadow:0 0 0 2px var(--tint)}
-.cp-clue[data-teach=pulse]{animation:cp-teach 1.3s ease-in-out infinite}
+.cp-clue[data-teach=pulse]{position:relative}
+.cp-clue[data-teach=pulse]::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 0 5px #b5452b66;opacity:0;pointer-events:none;animation:cp-teach 1.3s ease-in-out infinite}
 .cp-num{padding:1px 2px;border:0;background:none;color:inherit;font:inherit;line-height:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .cp-num[data-struck]{text-decoration:line-through;text-decoration-thickness:2px;opacity:.35}
-@keyframes cp-teach{50%{box-shadow:0 0 0 5px #b5452b55}}
-@keyframes cp-done{0%{transform:scale(1.35);background:#f2c45a99}100%{transform:none}}
+@keyframes cp-teach{50%{opacity:1}}
+@keyframes cp-done{0%{transform:scale(1.35)}100%{transform:none}}
 
-.cp-cells{position:relative;grid-area:2/2;display:grid;gap:1px;background:var(--b-line);border:1.5px solid var(--b-strong);touch-action:none;user-select:none;-webkit-user-select:none;transition:background-color .3s ease-out}
-.cp-cell{position:relative;width:var(--cell);height:var(--cell);padding:0;overflow:hidden;border:0;border-radius:0;background:#fffaf0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .09s ease-out}
+.cp-cells{position:relative;grid-area:2/2;display:grid;gap:1px;background:var(--b-line);border:1.5px solid var(--b-strong);touch-action:none;user-select:none;-webkit-user-select:none;transition:background-color .3s var(--ease-out)}
+.cp-cell{position:relative;width:var(--cell);height:var(--cell);padding:0;overflow:hidden;border:0;border-radius:0;background:#fffaf0;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .09s var(--ease-out)}
 .cp-cell[data-edge=r]{box-shadow:inset -1.5px 0 0 var(--b-strong)}
 .cp-cell[data-edge=b]{box-shadow:inset 0 -1.5px 0 var(--b-strong)}
 .cp-cell[data-edge=rb]{box-shadow:inset -1.5px -1.5px 0 var(--b-strong)}
 .cp-cell[data-teach]{background:#fff0d6}
-.cp-cell[data-mark="1"]{background:var(--fill);animation:cp-stitch .14s ease-out}
+.cp-cell[data-mark="1"]{background:var(--fill);animation:cp-stitch .12s var(--ease-out)}
 .cp-cell[data-mark="2"]{background:linear-gradient(45deg,transparent 44%,var(--cross) 44% 56%,transparent 56%) center/52% 52% no-repeat,linear-gradient(-45deg,transparent 44%,var(--cross) 44% 56%,transparent 56%) center/52% 52% no-repeat,#fffaf0}
 .cp-cell[data-given]{background:var(--given);box-shadow:inset 0 0 0 2px #b8821a;cursor:default}
 .cp-cell[data-hint]{outline:3px solid var(--tint);outline-offset:-3px;z-index:1}
 .cp-cell:focus-visible{outline:3px solid #f2a900;outline-offset:-3px;z-index:1}
-@keyframes cp-stitch{from{transform:scale(.7)}60%{transform:scale(1.06)}to{transform:scale(1)}}
-.cp-refused{position:absolute;inset:0;background:#d62828;opacity:0;pointer-events:none;animation:cp-refuse .45s ease-out}
+@keyframes cp-stitch{from{transform:scale(.82)}to{transform:scale(1)}}
+.cp-refused{position:absolute;inset:0;background:#d62828;opacity:0;pointer-events:none;animation:cp-refuse .45s var(--ease-out)}
+@keyframes cp-refuse-calm{0%{opacity:.8}100%{opacity:0}}
 @keyframes cp-refuse{0%{opacity:.95;transform:translateX(-3px)}20%{transform:translateX(3px)}40%{transform:translateX(-2px)}60%{transform:translateX(2px)}100%{opacity:0;transform:none}}
 .cp-finger{position:absolute;left:calc(var(--cell) * .5);top:calc(var(--cell) * .5);z-index:2;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:#2a1f1566;box-shadow:0 0 0 3px #fffaf0cc;pointer-events:none;animation:cp-slide 1.8s ease-in-out infinite}
 @keyframes cp-slide{0%,12%{transform:translateX(0)}78%,100%{transform:translateX(calc((var(--cell) + 1px) * 4))}}
-.cp-badge{position:absolute;z-index:3;min-width:32px;padding:1px 9px;border-radius:999px;background:var(--tint-deep);color:#fff;font-family:var(--font-display);font-size:18px;font-weight:800;line-height:1.35;text-align:center;box-shadow:0 3px 8px #0004;transform:translate(-50%,-100%);pointer-events:none}
+.cp-badge{position:absolute;z-index:3;min-width:32px;padding:1px 9px;border-radius:6px;background:var(--tint-deep);color:#fff;font-family:var(--font-display);font-size:18px;font-weight:800;line-height:1.35;text-align:center;box-shadow:0 3px 8px #0004;transform:translate(-50%,-100%);pointer-events:none}
 .cp-badge[data-below]{transform:translate(-50%,0)}
 
 /* the bloom: the grid turns into the picture, corner to corner */
 .cp-board[data-solved=true] .cp-cells{background:var(--pic-bg);border-color:var(--pic-bg)}
-.cp-board[data-solved=true] .cp-cell{background:var(--c);box-shadow:none;outline:0;animation:none;cursor:default;transition:background-color .35s ease-out var(--d)}
+.cp-board[data-solved=true] .cp-cell{background:var(--c);box-shadow:none;outline:0;animation:none;cursor:default;transition:background-color .35s var(--ease-out) var(--d)}
 .cp-board[data-solved=true] .cp-clue{opacity:.25}
 .cp-board[data-slow] .cp-cell{animation:none}
 
@@ -96,23 +98,23 @@
 .cp-modes button[aria-pressed=true]{background:var(--tint-deep);color:#fff}
 .cp-swatch{width:18px;height:18px;border-radius:3px;background:var(--fill);box-shadow:0 0 0 2px #fff}
 .cp-x{width:18px;height:18px;background:linear-gradient(45deg,transparent 42%,currentColor 42% 58%,transparent 58%),linear-gradient(-45deg,transparent 42%,currentColor 42% 58%,transparent 58%)}
-.cp-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;padding:4px 10px;border:1.5px solid var(--tint);border-radius:14px;background:#fff;color:#2a2420;font:inherit;font-size:16px;font-weight:700;white-space:nowrap;box-shadow:0 3px 0 var(--tint-deep);transition:transform .08s ease-out}
+.cp-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;padding:4px 10px;border:1.5px solid var(--tint);border-radius:14px;background:#fff;color:#2a2420;font:inherit;font-size:16px;font-weight:700;white-space:nowrap;box-shadow:0 3px 0 var(--tint-deep);transition:transform .08s var(--ease-out)}
 .cp-tool:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--tint-deep)}
 .cp-tool:disabled{opacity:.45}
 .cp-tool svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .cp-tools[data-n="1"] .cp-tool{grid-column:1/-1}
 
 /* ---- the end: the finished picture in its frame, then the numbers ---- */
-.cp-end{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:9px;padding:12px 14px;overflow:auto;border-radius:16px;background:var(--paper);animation:cp-fade .3s ease-out both}
+.cp-end{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:9px;padding:12px 14px;overflow:auto;border-radius:16px;background:var(--paper);animation:cp-fade .2s var(--ease-out) both}
 .cp[data-calm] .cp-end{animation:none}
 .cp-end>:first-child{margin-top:auto}
 .cp-end>:last-child{margin-bottom:auto}
 .cp-end-pic{position:relative;overflow:hidden;width:min(100%,320px,calc(var(--stage-h,90svh) * .36));aspect-ratio:1;border-radius:14px}
-.cp-end-art{display:block;width:100%;height:100%;border-radius:14px;box-shadow:0 10px 24px -10px #0006;animation:cp-bloom .7s cubic-bezier(.2,1.2,.4,1) both}
+.cp-end-art{display:block;width:100%;height:100%;border-radius:14px;box-shadow:0 10px 24px -10px #0006;animation:cp-bloom .5s var(--ease-out) both}
 .cp[data-calm] .cp-end-art{animation:none}
-.cp-sheen{position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,#ffffffaa 50%,transparent 65%);transform:translateX(-120%);animation:cp-sheen 1.1s ease-out .3s both;pointer-events:none}
+.cp-sheen{position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,#ffffffaa 50%,transparent 65%);transform:translateX(-120%);animation:cp-sheen 1.1s var(--ease-out) .3s both;pointer-events:none}
 @keyframes cp-sheen{to{transform:translateX(120%)}}
-@keyframes cp-bloom{from{opacity:0;transform:scale(.88)}}
+@keyframes cp-bloom{from{opacity:0;transform:scale(.92)}}
 .cp-end-head{display:flex;align-items:center;justify-content:center;gap:12px}
 .cp-end h2{margin:0;font-family:var(--font-display);font-size:22px;line-height:1.3}
 .cp-end .gx-stars{font-size:30px;line-height:1}
@@ -130,13 +132,13 @@
 @keyframes cp-fade{from{opacity:0}}
 
 /* ---- title: the cloth patch is the start button ---- */
-.cp-title{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:9px;padding:12px;overflow:auto;border-radius:16px;background:var(--paper);text-align:center;animation:cp-fade .2s ease-out}
+.cp-title{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:9px;padding:12px;overflow:auto;border-radius:16px;background:var(--paper);text-align:center;animation:cp-fade .2s var(--ease-out)}
 .cp-title>:first-child{margin-top:auto}
 .cp-title>:last-child{margin-bottom:auto}
 .cp-title:has(.cp-friend) .cp-start-art{width:min(100%,400px,calc(var(--stage-h,90svh) * .32))}
 .cp-start{display:grid;justify-items:center;padding:0;border:0;background:none;color:inherit;cursor:pointer;touch-action:manipulation}
 .cp-start-art{display:block;width:min(100%,400px,calc(var(--stage-h,90svh) * .46));aspect-ratio:1}
-.cp-start span{margin-top:-30px;padding:8px 52px;border:3px dashed #f6d58a;border-radius:18px;background:var(--tint-deep);color:#fff;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.3;box-shadow:0 6px 0 #0000004d,0 16px 26px -14px #000;transition:transform .08s ease-out}
+.cp-start span{margin-top:-30px;padding:8px 52px;border:3px dashed #f6d58a;border-radius:18px;background:var(--tint-deep);color:#fff;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.3;box-shadow:0 6px 0 #0000004d,0 16px 26px -14px #000;transition:transform .08s var(--ease-out)}
 .cp-start:active span{transform:translateY(4px) scale(.98)}
 .cp-start:focus-visible span{outline:3px solid var(--ink);outline-offset:3px}
 .cp-pick{display:flex;align-items:center;gap:10px}
@@ -147,9 +149,9 @@
 .cp-line{max-width:36ch;margin:0;font-size:15px;line-height:1.5}
 .cp-line span{display:block;margin-top:2px;font-size:14px;color:var(--muted)}
 .cp-three{margin:0;font-size:13px;color:var(--muted)}
-.cp-tag{display:inline-block;margin-right:6px;padding:1px 9px;border-radius:999px;background:#2f7d4a;color:#fff;font-size:12px;font-style:normal;font-weight:800;vertical-align:2px}
+.cp-tag{display:inline-block;margin-right:6px;padding:1px 9px;border-radius:4px;background:#2f7d4a;color:#fff;font-size:12px;font-style:normal;font-weight:800;vertical-align:2px}
 .cp-tag-finale{background:#c8452c}
-.cp-calm{margin:0;padding:3px 10px;border-radius:999px;background:var(--card);color:var(--muted);font-size:13px}
+.cp-calm{margin:0;padding:3px 10px;border-radius:6px;background:var(--card);color:var(--muted);font-size:13px}
 .tool-chhobi-photao .cp-all{min-height:40px;font-weight:600;color:var(--ink)}
 .cp-friend{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;max-width:340px;padding:8px 12px;border-radius:14px;background:#fff;color:#2a2420;text-align:left}
 .cp-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 14px #2a242033;transform:rotate(-4deg)}
@@ -159,17 +161,17 @@
 /* ---- the story: three picture-book panels, tap for the next, hold to skip ---- */
 .cp-story{position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;border-radius:16px;background:var(--paper);cursor:pointer;touch-action:none}
 .cp-panel{display:block;width:min(100%,380px,calc(var(--stage-h,90svh) * .52));aspect-ratio:1;border-radius:18px;box-shadow:0 0 0 4px #fff,0 0 0 6px var(--ink),0 14px 30px -12px #0006;transform:rotate(-1deg)}
-.cp-caption{max-width:30ch;margin:6px 0 0;font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.45;text-align:center;animation:cp-fade .3s ease-out}
+.cp-caption{max-width:30ch;margin:6px 0 0;font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.45;text-align:center;animation:cp-fade .2s var(--ease-out)}
 .cp-dots{display:flex;gap:6px;margin:0}
 .cp-dots i{width:8px;height:8px;border-radius:50%;background:color-mix(in srgb,var(--ink) 22%,transparent)}
 .cp-dots i[data-on]{background:var(--tint)}
 .cp-skip{position:absolute;right:14px;bottom:12px;display:flex;align-items:center;gap:6px;margin:0;font-size:12px;font-weight:700;color:var(--muted)}
-.cp-skip span{width:28px;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--ink) 18%,transparent)}
-.cp-skip[data-holding] span{background:linear-gradient(90deg,var(--tint) 0 0) no-repeat 0 0/0 100%,color-mix(in srgb,var(--ink) 18%,transparent);animation:cp-hold .6s linear forwards}
-@keyframes cp-hold{to{background-size:100% 100%,auto}}
+.cp-skip span{position:relative;width:28px;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--ink) 18%,transparent)}
+.cp-skip span::after{content:"";position:absolute;inset:0;background:var(--tint);transform:scaleX(0);transform-origin:left}
+.cp-skip[data-holding] span::after{transform:scaleX(1);transition:transform .6s linear}
 
 /* ---- সব লেভেল: a choice moment over the board ---- */
-.cp-sheet{position:absolute;inset:0;z-index:7;overflow:auto;overscroll-behavior:contain;padding:8px;border-radius:16px;background:color-mix(in srgb,#000 35%,transparent);animation:cp-fade .15s ease-out}
+.cp-sheet{position:absolute;inset:0;z-index:7;overflow:auto;overscroll-behavior:contain;padding:8px;border-radius:16px;background:color-mix(in srgb,#000 35%,transparent);animation:cp-fade .15s var(--ease-out)}
 .cp-sheet-card{display:grid;gap:12px;padding:14px;border-radius:16px;background:#fffaf0;color:#2a2420}
 .cp-sheet header{position:relative;padding-right:48px}
 .cp-sheet h2{margin:0;font-family:var(--font-display);font-size:22px}
@@ -189,7 +191,7 @@
 .cp-world button[aria-current=true]{border-color:#2a2420;box-shadow:inset 0 0 0 1.5px #2a2420}
 .cp-world button[data-finale]{border-style:dashed;border-color:#c8452c}
 .cp-world button[data-next]{border-color:#b5452b;background:#fff3cf}
-.cp-world button em{position:absolute;top:-8px;left:50%;padding:0 5px;border-radius:999px;background:#b5452b;color:#fff;font-size:10px;font-style:normal;font-weight:800;white-space:nowrap;transform:translateX(-50%)}
+.cp-world button em{position:absolute;top:-8px;left:50%;padding:0 5px;border-radius:4px;background:#b5452b;color:#fff;font-size:10px;font-style:normal;font-weight:800;white-space:nowrap;transform:translateX(-50%)}
 .cp-thumb{display:block;width:44px;height:44px;border-radius:6px}
 .cp-n{position:absolute;top:3px;left:4px;padding:0 4px;border-radius:5px;background:#fffaf0d9;font-size:10px;font-weight:800}
 .cp-mini{display:flex;font-size:11px;line-height:1}
@@ -224,4 +226,13 @@
   .cp-stats dd{font-size:18px}
   .cp-starnote,.cp-rival{max-width:120px}
 }
-@media(prefers-reduced-motion:reduce){.cp-end,.cp-end-art,.cp-sheen,.cp-track i[data-fell],.cp-finger,.cp-clue[data-state=done],.cp-cell{animation:none}.cp-clue[data-teach=pulse]{animation:none}}
+/* press feedback on everything pressable; low specificity so the tools, cells and the start stamp keep their own */
+:where(.cp button:not(.cp-start,.cp-tool,.cp-cell,.cp-num,.cp-modes button)){transition:transform 160ms var(--ease-out)}
+:where(.cp button:not(:disabled,.cp-start,.cp-tool,.cp-cell,.cp-num,.cp-modes button):active){transform:scale(.97)}
+/* ধীরে খেলো and reduced motion: nothing slides, pops or presses in; a wrong move still fades its flash */
+.cp[data-calm] *:not(.cp-hit,.cp-refused),.cp-board[data-slow] *{animation:none!important;transition:none!important}
+.cp[data-calm] .cp-play::after,.cp[data-calm] .cp-clue::after{animation:none;transition:none}
+.cp[data-calm] .cp-refused{animation-name:cp-refuse-calm}
+.cp[data-calm] button:active,.cp[data-calm] .cp-start:active span{transform:none}
+.cp[data-calm] .cp-skip[data-holding] span::after{transition:transform .6s linear}
+@media(prefers-reduced-motion:reduce){.cp .cp-play::after,.cp .cp-clue::after{animation:none;transition:none}.cp *:not(.cp-hit,.cp-refused){animation:none!important;transition:none!important}.cp .cp-refused{animation-name:cp-refuse-calm}.cp button:active,.cp .cp-start:active span{transform:none}.cp .cp-skip[data-holding] span::after{transition:transform .6s linear}}

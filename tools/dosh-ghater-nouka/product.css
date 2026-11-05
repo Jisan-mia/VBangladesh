@@ -17,7 +17,7 @@
 .dg-startbtn:active{transform:scale(.98)}
 .dg-startbtn:focus-visible{outline:4px solid var(--w-accent);outline-offset:6px}
 .dg-scene{display:block;width:100%;height:auto}
-.dg-startbtn-go{position:absolute;right:14px;bottom:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 26px 6px 18px;border-radius:999px;background:#fff8ea;color:var(--w-deep);font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.5;box-shadow:0 5px 0 var(--w-deep)}
+.dg-startbtn-go{position:absolute;right:14px;bottom:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 26px 6px 18px;border-radius:14px;background:#fff8ea;color:var(--w-deep);font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.5;box-shadow:0 5px 0 var(--w-deep)}
 .dg-startbtn-go svg{width:30px;height:30px;fill:var(--w-accent)}
 .dg-chip{display:flex;align-items:center;gap:12px;min-height:64px;max-width:100%;padding:6px 16px 6px 12px;border:2px solid var(--w-edge);border-radius:18px;background:#fff;color:var(--w-ink);font:inherit;text-align:left;cursor:pointer;touch-action:manipulation}
 .dg-chip-n{display:grid;place-items:center;min-width:44px;height:44px;border-radius:14px;background:var(--w-soft);font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.4;color:var(--w-accent)}
@@ -70,8 +70,8 @@
 @keyframes dg-cheer{0%{transform:scale(1)}35%{transform:scale(1.35) skewY(-6deg)}100%{transform:scale(1.1)}}
 @keyframes dg-hop{0%{transform:scaleX(var(--flip,1))}35%{transform:scaleX(var(--flip,1)) translateY(-12px) rotate(-2deg)}100%{transform:scaleX(var(--flip,1))}}
 .dg-pop{position:absolute;bottom:80px;display:grid;justify-items:center;transform:translateX(-50%);font-family:var(--font-display);font-size:48px;font-weight:800;line-height:1.1;color:#fff;-webkit-text-stroke:2px var(--w-deep);paint-order:stroke fill;text-shadow:0 3px 0 var(--w-deep);pointer-events:none;animation:dg-rise 800ms var(--ease-out) both}
-.dg-pop small{font-size:16px;font-weight:700;-webkit-text-stroke:0;text-shadow:0 1px 3px #0008}
-.dg-pop-1{bottom:116px;font-size:32px;color:#e8f2ff;-webkit-text-stroke:1.5px #123564;text-shadow:0 2px 0 #123564}
+.dg-pop small{font-size:16px;font-weight:700;-webkit-text-stroke:0;text-shadow:0 1px 3px #0008} /* unslop-ignore: a legibility shadow under white text on water, not a glow */
+.dg-pop-1{bottom:116px;font-size:32px;color:#e8f2ff;-webkit-text-stroke:1.5px #123564;text-shadow:0 2px 0 #123564} /* unslop-ignore: a hard offset under the number, not a glow */
 @keyframes dg-rise{0%{opacity:0;transform:translate(-50%,14px) scale(.85)}20%{opacity:1;transform:translate(-50%,0) scale(1.12)}34%{transform:translate(-50%,-2px) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-30px) scale(1)}}
 .dg-edge{position:absolute;top:10px;display:flex;align-items:center;gap:2px;padding:4px 8px;border-radius:14px;background:#fffd;box-shadow:0 2px 6px #0003;animation:dg-nudge 1.2s ease-in-out infinite}
 .dg-edge svg{width:40px;height:24px}
@@ -98,7 +98,7 @@
 .dg-ghat.is-next .dg-tile::after{animation:dg-ring 1.3s var(--ease-out) infinite}
 @keyframes dg-ring{0%{opacity:.9;transform:scale(.96)}100%{opacity:0;transform:scale(1.12)}}
 .dg-ghat:focus-visible{outline:4px solid var(--w-accent);outline-offset:-4px;border-radius:18px}
-.dg-ghat.gx-shake .dg-tile{animation:dg-wobble .3s ease-out}
+.dg-ghat.gx-shake .dg-tile{animation:dg-wobble .3s var(--ease-out)}
 @keyframes dg-wobble{25%{transform:rotate(-4deg)}60%{transform:rotate(3deg)}}
 
 /* ---- the controls: the big চরকি and its dots ---- */
@@ -114,11 +114,11 @@
 .dg-spin[data-active]::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:5px solid #f2a900;pointer-events:none;animation:dg-ring 1.4s var(--ease-out) infinite}
 .dg-spin-small{width:64px;height:64px;cursor:default;box-shadow:0 0 0 4px #2f5d8a;pointer-events:none}
 .dg-pips{display:inline-flex;align-items:center;gap:8px;min-width:24px;min-height:44px}
-.dg-pips i{width:26px;height:26px;border-radius:50%;background:var(--w-ink);animation:dg-pip 220ms var(--ease-out) both;animation-delay:calc(var(--i,0) * 70ms)}
+.dg-pips i{width:26px;height:26px;border-radius:50%;background:var(--w-ink);animation:dg-pip 220ms var(--ease-out) both;animation-delay:calc(var(--i,0) * 45ms)}
 .dg-pips-1 i{width:18px;height:18px;background:#2f5d8a}
 @keyframes dg-pip{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
 .dg-ghost{position:absolute;right:-6px;bottom:-22px;z-index:3;width:44px;height:56px;pointer-events:none;animation:dg-tap 1.4s ease-in-out infinite}
-.dg-ripple{fill:var(--w-accent);opacity:0;transform-box:fill-box;transform-origin:center;animation:dg-ripple 1.4s ease-out infinite}
+.dg-ripple{fill:var(--w-accent);opacity:0;transform-box:fill-box;transform-origin:center;animation:dg-ripple 1.4s var(--ease-out) infinite}
 @keyframes dg-tap{0%,100%{transform:translate(8px,10px)}45%,60%{transform:translate(0,0)}}
 @keyframes dg-ripple{0%,40%{opacity:0;transform:scale(.4)}55%{opacity:.5}100%{opacity:0;transform:scale(1.7)}}
 
@@ -126,18 +126,18 @@
 .dg-end{display:grid;justify-items:center;gap:10px;padding:4px 0 8px;text-align:center}
 .dg-row{display:block;width:100%;max-width:360px;height:auto;border-radius:16px;box-shadow:inset 0 0 0 1.5px var(--w-edge)}
 .dg-end-stars .gx-stars{font-size:46px}
-.dg-end-stars .gx-stars .on{display:inline-block;animation:dg-star .45s cubic-bezier(.3,1.6,.5,1) both}
+.dg-end-stars .gx-stars .on{display:inline-block;animation:dg-star .36s var(--ease-out) both}
 .dg-end-stars .gx-stars .on:nth-child(1){animation-delay:.35s}
 .dg-end-stars .gx-stars .on:nth-child(2){animation-delay:.65s}
 .dg-end-stars .gx-stars .on:nth-child(3){animation-delay:.95s}
-@keyframes dg-star{0%{transform:scale(.5) rotate(-30deg);opacity:0}100%{transform:none;opacity:1}}
+@keyframes dg-star{0%{transform:scale(.6) rotate(-20deg);opacity:0}100%{transform:none;opacity:1}}
 .dg-end-count{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;margin:0;font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.5}
 .dg-end-count b{color:var(--w-deep)}
 .dg-end-news{margin:0;font-size:20px;font-weight:700;line-height:1.6;color:var(--w-deep)}
 .dg-end-off{margin:0;max-width:340px;font-size:17px;line-height:1.6;color:var(--muted)}
 .dg-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(340px,100%)}
 .dg-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:0;border-radius:24px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation}
-.dg-big{transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out)}
+.dg-big{transition:transform 120ms var(--ease-out)}
 .dg-big:active{transform:translateY(4px);box-shadow:0 2px 0 var(--w-deep)}
 .dg-in{animation:dg-in 260ms var(--ease-out) both;animation-delay:var(--d,0ms)}
 @keyframes dg-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -169,7 +169,7 @@
 .dg-card-ghats{font-family:var(--font-display);font-size:30px;font-weight:800;line-height:1.5;color:var(--w-accent);white-space:nowrap;margin-top:12px}
 .dg-card-name{font-size:16px;font-weight:700;line-height:1.4}
 .dg-card .gx-stars{font-size:16px}
-.dg-card-next{position:absolute;right:-4px;top:-10px;padding:1px 8px;border-radius:99px;background:#f2a900;color:#3b2a17;font-size:13px;font-weight:800;line-height:1.6}
+.dg-card-next{position:absolute;right:-4px;top:-10px;padding:1px 8px;border-radius:6px;background:#f2a900;color:#3b2a17;font-size:13px;font-weight:800;line-height:1.6}
 
 /* ---- ধীরে খেলো and reduced motion: nothing hops, bobs or pulses ---- */
 .dg[data-slow] .dg-boat svg,.dg[data-slow][data-over] .dg-goal b,.dg[data-slow] .dg-tile::after,.dg[data-slow] .dg-spin::after,.dg[data-slow] .dg-in,.dg[data-slow] .dg-goal b,.dg[data-slow] .dg-pop,.dg[data-slow] .dg-edge,.dg[data-slow] .dg-spin[data-active],.dg[data-slow] .dg-ghat.is-next .dg-tile,.dg[data-slow] .dg-ghost,.dg[data-slow] .dg-ripple,.dg[data-slow] .dg-card[data-next]::after,.dg[data-slow] .dg-end-stars .gx-stars .on,.dg[data-slow] .dg-pips i{animation:none}
@@ -177,6 +177,10 @@
 .dg[data-slow] .dg-ripple{opacity:.4}
 .dg[data-slow] .dg-track,.dg[data-slow] .dg-far,.dg[data-slow] .dg-boat,.dg[data-slow] .dg-startbtn,.dg[data-slow] .dg-strip em{transition:none}
 @media (prefers-reduced-motion:reduce){.dg-boat svg,.dg[data-over] .dg-goal b,.dg-tile::after,.dg-spin::after,.dg-in,.dg-pop,.dg-goal b,.dg-edge,.dg-spin[data-active],.dg-ghat.is-next .dg-tile,.dg-ghost,.dg-ripple,.dg-card[data-next]::after,.dg-end-stars .gx-stars .on,.dg-pips i{animation:none}.dg-ripple{opacity:.4}.dg-track,.dg-far,.dg-boat,.dg-startbtn,.dg-strip em{transition:none}.dg-pop{opacity:1}}
+
+/* press shrink goes with the motion */
+.dg[data-slow] button:active,.dg[data-slow] .dg-ghat:active .dg-tile{transform:none}
+@media (prefers-reduced-motion:reduce){.dg button:active,.dg .dg-ghat:active .dg-tile{transform:none}}
 
 /* short stages: a lower river and a smaller চরকি */
 @media (max-height:700px){.dg-spin{width:104px;height:104px}.dg-water{height:136px}.dg-boat-far{bottom:80px}.dg-far{bottom:248px}.dg-tile b{font-size:38px}}

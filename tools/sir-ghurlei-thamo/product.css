@@ -1,4 +1,4 @@
-.tool-sir-ghurlei-thamo{--accent:#2b4fa0;--accent-deep:#1c3570;--ink:#1f2a24;--muted:#56605a;--wall:#ebe4cf;--paper:#fffdf4;--paper-edge:#e3dcc6;--band:#24382f;--gold:#ffd166;--warn:#f08a00;--watch:#e5383b}
+.tool-sir-ghurlei-thamo{--accent:#2b4fa0;--accent-deep:#1c3570;--ink:#1f2a24;--muted:#56605a;--wall:#ebe4cf;--paper:#fffdf4;--paper-edge:#e3dcc6;--band:#24382f;--gold:#ffd166;--warn:#f08a00;--watch:#e5383b;--ease-out:cubic-bezier(.23,1,.32,1)}
 .tool-sir-ghurlei-thamo .sg-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* the game fills the player's stage: HUD, the classroom (as big as fits), the pass button or the end screen */
@@ -14,8 +14,8 @@
 .tool-sir-ghurlei-thamo .sg-title-friend b{font-family:var(--font-display)}
 .tool-sir-ghurlei-thamo .sg-title-friend span{display:block;font-size:13px;color:var(--muted)}
 .tool-sir-ghurlei-thamo .sg-title-art{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * .8);place-items:center;width:100%;min-height:150px}
-.tool-sir-ghurlei-thamo .sg-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:16px;filter:drop-shadow(0 14px 18px #1f2a2440);transition:transform .18s ease-out}
-.tool-sir-ghurlei-thamo .sg-title-start:hover{transform:translateY(-3px) scale(1.01)}
+.tool-sir-ghurlei-thamo .sg-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:16px;filter:drop-shadow(0 14px 18px #1f2a2440);transition:transform .18s var(--ease-out)}
+@media(hover:hover) and (pointer:fine){.tool-sir-ghurlei-thamo .sg-title-start:hover{transform:translateY(-3px) scale(1.01)}}
 .tool-sir-ghurlei-thamo .sg-title-start:active{transform:translateY(2px) scale(.99)}
 .tool-sir-ghurlei-thamo .sg-title-start:focus-visible{outline:3px solid var(--accent);outline-offset:6px}
 .tool-sir-ghurlei-thamo .sg-title-start canvas{display:block}
@@ -24,13 +24,13 @@
 .tool-sir-ghurlei-thamo .sg-title-level span{font-family:var(--font-display);font-size:18px;font-weight:700}
 .tool-sir-ghurlei-thamo .sg-title-level small{font-size:14px;color:var(--muted);line-height:1.5}
 .tool-sir-ghurlei-thamo .sg-modes{display:flex;gap:6px;justify-content:center}
-.tool-sir-ghurlei-thamo .sg-modes button{min-height:40px;padding:4px 16px;border:1.5px solid var(--paper-edge);border-radius:999px;background:#fff;color:var(--ink);font-size:15px;font-weight:600}
+.tool-sir-ghurlei-thamo .sg-modes button{min-height:40px;padding:4px 16px;border:1.5px solid var(--paper-edge);border-radius:8px;background:#fff;color:var(--ink);font-size:15px;font-weight:600}
 .tool-sir-ghurlei-thamo .sg-modes button[aria-checked=true]{border-color:var(--ink);background:var(--ink);color:#fff}
 .tool-sir-ghurlei-thamo .sg-mode-line{margin:0;max-width:400px;font-size:14px;line-height:1.5;color:var(--muted)}
 .tool-sir-ghurlei-thamo .sg-title-more{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px}
 .tool-sir-ghurlei-thamo .sg-link{min-height:44px;padding:6px 12px;border:0;border-radius:12px;background:none;color:var(--accent-deep);font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:4px}
 .tool-sir-ghurlei-thamo .sg-link span{margin-left:6px;font-weight:500;color:var(--muted);text-decoration:none}
-.tool-sir-ghurlei-thamo .sg-chip{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:6px 14px;border:1.5px solid var(--paper-edge);border-radius:999px;background:#fff;color:var(--ink);font-size:14px}
+.tool-sir-ghurlei-thamo .sg-chip{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:6px 14px;border:1.5px solid var(--paper-edge);border-radius:8px;background:#fff;color:var(--ink);font-size:14px}
 .tool-sir-ghurlei-thamo .sg-chip svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .tool-sir-ghurlei-thamo .sg-chip[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
 
@@ -39,7 +39,7 @@
 .tool-sir-ghurlei-thamo .sg-hud p{margin:0}
 .tool-sir-ghurlei-thamo .sg-badge{display:grid;gap:1px;line-height:1.15}
 .tool-sir-ghurlei-thamo .sg-badge b{font-family:var(--font-display);font-size:16px}
-.tool-sir-ghurlei-thamo .sg-badge span{justify-self:start;padding:0 7px;border-radius:99px;background:var(--ink);color:#fff;font-size:11px;font-weight:700}
+.tool-sir-ghurlei-thamo .sg-badge span{justify-self:start;padding:0 7px;border-radius:4px;background:var(--ink);color:#fff;font-size:11px;font-weight:700}
 .tool-sir-ghurlei-thamo .sg-badge small{font-size:12px;color:var(--muted)}
 .tool-sir-ghurlei-thamo .sg-clock-box{display:grid;justify-items:end;gap:4px}
 .tool-sir-ghurlei-thamo .sg-clock{padding:3px 10px;border-radius:10px;background:var(--ink);color:#fff;font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.25;font-variant-numeric:tabular-nums}
@@ -59,14 +59,14 @@
 .tool-sir-ghurlei-thamo .sg-scene canvas{display:block}
 .tool-sir-ghurlei-thamo .sg[data-screen=over] .sg-scene{flex:1 1 120px;min-height:110px}
 /* danger lives at the edges: a turn coming is an orange border, stronger as the look nears; being watched is a red border, thicker while the chit moves */
-.tool-sir-ghurlei-thamo .sg-scene::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 0 transparent;transition:box-shadow .2s}
-.tool-sir-ghurlei-thamo .sg[data-edge=warn] .sg-scene::after{box-shadow:inset 0 0 0 calc(3px + 4px * var(--edge,0)) var(--warn),inset 0 0 calc(14px + 34px * var(--edge,0)) calc(2px + 8px * var(--edge,0)) #f08a00b3;animation:sg-glow .45s ease-in-out infinite alternate}
-.tool-sir-ghurlei-thamo .sg[data-edge=watch] .sg-scene::after{box-shadow:inset 0 0 0 7px var(--watch),inset 0 0 44px 8px #e5383bcc;animation:sg-glow .6s ease-in-out infinite alternate}
+.tool-sir-ghurlei-thamo .sg-scene::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 0 transparent}
+.tool-sir-ghurlei-thamo .sg[data-edge=warn] .sg-scene::after{box-shadow:inset 0 0 0 calc(3px + 4px * var(--edge,0)) var(--warn),inset 0 0 calc(14px + 34px * var(--edge,0)) calc(2px + 8px * var(--edge,0)) #f08a00b3;animation:sg-glow .45s ease-in-out infinite alternate} /* unslop-ignore: the orange edge is the tell that a turn is coming */
+.tool-sir-ghurlei-thamo .sg[data-edge=watch] .sg-scene::after{box-shadow:inset 0 0 0 7px var(--watch),inset 0 0 44px 8px #e5383bcc;animation:sg-glow .6s ease-in-out infinite alternate} /* unslop-ignore: the red edge means the teacher is looking, the one signal the whole game is about */
 @keyframes sg-glow{to{opacity:.7}}
 
 /* the one big control: hold to pass; its words say what to do and why, so colour is never the only cue */
 .tool-sir-ghurlei-thamo .sg-pass{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;flex:1 1 auto;width:100%;min-height:96px;max-height:280px;padding:10px 16px;background-image:linear-gradient(#ffffff26,#ffffff00 55%);border:0;border-radius:20px;background:var(--accent);color:#fff;box-shadow:0 5px 0 var(--accent-deep);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer;transition:background .1s}
-.tool-sir-ghurlei-thamo .sg-pass svg{flex:none;width:clamp(40px,16vw,76px);height:auto;aspect-ratio:48/36;fill:var(--paper);stroke:#9a8f78;stroke-width:2;stroke-linejoin:round;transform:rotate(-8deg);transition:transform .08s ease-out}
+.tool-sir-ghurlei-thamo .sg-pass svg{flex:none;width:clamp(40px,16vw,76px);height:auto;aspect-ratio:48/36;fill:var(--paper);stroke:#9a8f78;stroke-width:2;stroke-linejoin:round;transform:rotate(-8deg);transition:transform .08s var(--ease-out)}
 .tool-sir-ghurlei-thamo .sg-pass span{display:grid;justify-items:center;text-align:center}
 .tool-sir-ghurlei-thamo .sg-pass b{font-family:var(--font-display);font-size:clamp(24px,7vw,32px);line-height:1.2}
 .tool-sir-ghurlei-thamo .sg-pass small{font-size:15px;opacity:.95}
@@ -86,10 +86,11 @@
 .tool-sir-ghurlei-thamo .sg-story-dots{display:flex;gap:6px}
 .tool-sir-ghurlei-thamo .sg-story-dots i{width:8px;height:8px;border-radius:50%;background:var(--paper-edge)}
 .tool-sir-ghurlei-thamo .sg-story-dots i[data-on=true]{background:var(--ink)}
-.tool-sir-ghurlei-thamo .sg-story-skip{position:absolute;right:10px;top:10px;z-index:1;display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border:0;border-radius:99px;background:var(--ink);color:#fff;font-size:13px;font-weight:700;touch-action:none}
-.tool-sir-ghurlei-thamo .sg-story-skip span{width:14px;height:14px;border-radius:50%;background:conic-gradient(var(--gold) 0deg,#ffffff33 0deg)}
-.tool-sir-ghurlei-thamo .sg-story-skip[data-holding] span{animation:sg-fill .6s linear forwards}
-@keyframes sg-fill{to{background:conic-gradient(var(--gold) 360deg,#ffffff33 360deg)}}
+.tool-sir-ghurlei-thamo .sg-story-skip{position:absolute;right:10px;top:10px;z-index:1;display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border:0;border-radius:8px;background:var(--ink);color:#fff;font-size:13px;font-weight:700;touch-action:none}
+.tool-sir-ghurlei-thamo .sg-story-skip span{position:relative;width:14px;height:14px;border-radius:50%;background:#ffffff33;overflow:hidden}
+.tool-sir-ghurlei-thamo .sg-story-skip span::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--gold);transform:scale(.15);opacity:0}
+.tool-sir-ghurlei-thamo .sg-story-skip[data-holding] span::after{animation:sg-fill .6s linear forwards}
+@keyframes sg-fill{from{opacity:1}to{opacity:1;transform:scale(1)}}
 
 /* ---- the level list ---- */
 .tool-sir-ghurlei-thamo .sg-sheet{position:absolute;inset:0;z-index:5;overflow:auto;padding:14px;border-radius:18px;background:#fffcf3;box-shadow:0 10px 40px #1f2a2440;overscroll-behavior:contain}
@@ -110,7 +111,7 @@
 .tool-sir-ghurlei-thamo .sg-sheet-world button:disabled .sg-sheet-num{background:#8d8578}
 .tool-sir-ghurlei-thamo .sg-sheet-num svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.2}
 .tool-sir-ghurlei-thamo .sg-sheet-name{grid-area:name;font-family:var(--font-display);font-weight:700;font-size:16px}
-.tool-sir-ghurlei-thamo .sg-sheet-name i,.tool-sir-ghurlei-thamo .sg-sheet-name em{margin-left:6px;padding:1px 7px;border-radius:99px;font-size:11px;font-style:normal;vertical-align:2px}
+.tool-sir-ghurlei-thamo .sg-sheet-name i,.tool-sir-ghurlei-thamo .sg-sheet-name em{margin-left:6px;padding:1px 7px;border-radius:4px;font-size:11px;font-style:normal;vertical-align:2px}
 .tool-sir-ghurlei-thamo .sg-sheet-name i{background:#ffe1e1;color:#8a1c1c}
 .tool-sir-ghurlei-thamo .sg-sheet-name em{background:var(--accent);color:#fff}
 .tool-sir-ghurlei-thamo .sg-sheet-teach{grid-area:teach;font-size:13px;line-height:1.45;color:var(--muted)}
@@ -141,7 +142,7 @@
 .tool-sir-ghurlei-thamo .sg-end-choices button{position:relative;width:100%;min-height:54px;padding:6px 8px;font-size:15px;line-height:1.2}
 .tool-sir-ghurlei-thamo .sg-end-choices kbd{display:inline-grid;place-items:center;width:20px;height:20px;margin-right:5px;border-radius:6px;background:#ffffff40;font:inherit;font-size:12px}
 .tool-sir-ghurlei-thamo .sg-end-choices .kit-secondary kbd{background:#1f2a2414}
-.tool-sir-ghurlei-thamo .sg-end-choices em{position:absolute;top:-9px;right:6px;padding:0 7px;border-radius:99px;background:var(--gold);color:var(--ink);font-size:10px;font-style:normal;font-weight:700;line-height:1.6}
+.tool-sir-ghurlei-thamo .sg-end-choices em{position:absolute;top:-9px;right:6px;padding:0 7px;border-radius:4px;background:var(--gold);color:var(--ink);font-size:10px;font-style:normal;font-weight:700;line-height:1.6}
 .tool-sir-ghurlei-thamo .sg-see{min-height:40px}
 
 /* ---- the card ---- */
@@ -156,8 +157,14 @@
 .tool-sir-ghurlei-thamo .kit-chips button[aria-pressed=true]{border-color:var(--accent-deep);background:var(--accent-deep)}
 
 @media(max-width:350px){.tool-sir-ghurlei-thamo .sg-end-choices button{font-size:13px;padding:6px 4px}.tool-sir-ghurlei-thamo .sg-end-choices kbd{display:none}.tool-sir-ghurlei-thamo .sg-end-line{font-size:15px}.tool-sir-ghurlei-thamo .sg-boss{min-width:104px}.tool-sir-ghurlei-thamo .sg-pass b{font-size:21px}.tool-sir-ghurlei-thamo .sg-pass small{font-size:13px}.tool-sir-ghurlei-thamo .sg-modes button{padding:4px 12px}}
+/* press feedback on everything pressable (low specificity so .kit-primary and .sg-pass keep their own) */
+:where(.tool-sir-ghurlei-thamo button){transition:transform 160ms var(--ease-out)}
+:where(.tool-sir-ghurlei-thamo button:not(:disabled):active){transform:scale(.97)}
+:where(.tool-sir-ghurlei-thamo .sg-story-panel:active){transform:scale(.99)}
 /* slow mode: the edges are steady borders, nothing pulses or pops */
 .tool-sir-ghurlei-thamo .sg[data-slow] .sg-scene::after{animation:none!important;transition:none}
 .tool-sir-ghurlei-thamo .sg[data-slow] .sg-pass,.tool-sir-ghurlei-thamo .sg[data-slow] .sg-pass svg{transition:none}
-.tool-sir-ghurlei-thamo .sg[data-slow] .sg-pass[data-held=true]{transform:none}
-@media(prefers-reduced-motion:reduce){.tool-sir-ghurlei-thamo .sg-scene::after{animation:none!important}.tool-sir-ghurlei-thamo .sg-pass,.tool-sir-ghurlei-thamo .sg-pass svg,.tool-sir-ghurlei-thamo .sg-title-start{transition:none}.tool-sir-ghurlei-thamo .sg-title-start:hover{transform:none}.tool-sir-ghurlei-thamo .sg-pass[data-held=true]{transform:none}}
+.tool-sir-ghurlei-thamo .sg[data-slow] .sg-pass[data-held=true],.tool-sir-ghurlei-thamo .sg[data-slow] .sg-pass[data-held=true][data-status]{transform:none}
+.tool-sir-ghurlei-thamo .sg[data-slow] button,.tool-sir-ghurlei-thamo .sg[data-slow] button:active{transition:none;transform:none}
+.tool-sir-ghurlei-thamo .sg[data-slow] .gx-pop{animation:none}
+@media(prefers-reduced-motion:reduce){:where(.tool-sir-ghurlei-thamo button){transition:none}:where(.tool-sir-ghurlei-thamo button:not(:disabled):active,.tool-sir-ghurlei-thamo .sg-story-panel:active){transform:none}.tool-sir-ghurlei-thamo .gx-pop{animation:none}.tool-sir-ghurlei-thamo .sg-scene::after{animation:none!important}.tool-sir-ghurlei-thamo .sg-pass,.tool-sir-ghurlei-thamo .sg-pass svg,.tool-sir-ghurlei-thamo .sg-title-start{transition:none}.tool-sir-ghurlei-thamo .sg-title-start:hover{transform:none}.tool-sir-ghurlei-thamo .sg-pass[data-held=true]{transform:none}}
