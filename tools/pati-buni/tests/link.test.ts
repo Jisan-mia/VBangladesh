@@ -1,10 +1,12 @@
 // Links (old ones keep opening খোলা পাটি unchanged), previews, the words around a result, and the page's content limits.
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import test from "node:test";
 import { site } from "../content";
 import { share } from "../share";
 import { cardLine } from "../lib/draw-card";
-import { LEVELS } from "../lib/levels";
+import { LEVELS, rowsToward } from "../lib/levels";
 import {
   bands, banner, caption, compareLine, humanLine, levelNear, matName, nearLine, nextMat, parseShared, previewTitle, reachable, sharedHash,
   MAX_ROWS, MAX_SCORE, ROW_POINTS,
@@ -90,4 +92,16 @@ test("content meets the SEO limits, keeps at least six FAQs, and never names a t
   assert.doesNotMatch(everything, /tetris|টেট্রিস|tetromino|টেট্রোমিনো|-?tris\b|ট্রিস|korobeiniki|কোরোবেইনিকি/i);
   assert.doesNotMatch(everything, /আপনি|করুন/);
   assert.equal(everything, everything.normalize("NFC"));
+});
+
+test("a run past its goal never prints rows over the goal (card line, friend card without stars, end screen count)", () => {
+  // পাটি 4 has goal 12; a run may weave up to 3 more.
+  const over = { score: 160, rows: 13, pattern: [], name: "", level: 4 };
+  assert.equal(LEVELS[3].goal, 12);
+  assert.doesNotMatch(cardLine(over), /১৩\/১২/);
+  assert.equal(cardLine(over), "বরফি নকশা পুরো হলো, ১৩ সারিতে।");
+  assert.equal(cardLine({ ...over, stars: 0 }), "বরফি নকশা: ১২/১২ সারি বোনা হয়েছিল।");
+  assert.equal(rowsToward(13, 12), 12); assert.equal(rowsToward(9, 12), 9); assert.equal(rowsToward(40, 0), 40);
+  const game = readFileSync(join(import.meta.dirname, "../components/loom-game.tsx"), "utf8");
+  assert.match(game, /value: rowsToward\(result\.rows, result\.goal\)/);
 });

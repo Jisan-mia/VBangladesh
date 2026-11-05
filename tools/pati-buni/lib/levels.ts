@@ -99,6 +99,9 @@ export const STORY = [
   "ফালি ফাঁকে বসাও। সারি ভরলেই বোনা।",
 ] as const;
 
+/** Rows shown against a goal: a run may weave a few past it, but "১৩/১২" is never printed. */
+export const rowsToward = (rows: number, goal: number) => goal ? Math.min(rows, goal) : rows;
+
 /** Stars for a finished পাটি: none unless the goal was woven. */
 export const starsFor = (level: number, rows: number, score: number) => {
   const row = levelOf(level);

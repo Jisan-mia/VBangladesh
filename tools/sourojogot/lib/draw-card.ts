@@ -1,7 +1,7 @@
 // The parent card (1080×1350): the Sun's edge, the round's planets in order, what was done, one true number. No name and
 // no stars: it says what was done, never a grade.
 import { cardSizes, drawFooterBand, fitText, renderCard } from "../../../shared/card-canvas";
-import { levelOf } from "./course";
+import { levelOf, placeOf } from "./course";
 import { bn, PLANETS, type Planet } from "./planets";
 import type { Result } from "./round";
 import { cardFact, doneLine } from "./words";
@@ -66,7 +66,7 @@ export function drawCard(canvas: HTMLCanvasElement, result: Pick<Result, "level"
     fitText(c, [{ text: planet.name, color: colors.muted, weight: 700 }], x, y + Math.max(r, 30) + 46, 34, wide ? 200 : gap - 6, "center");
   });
 
-  fitText(c, [{ text: `সৌরজগতের সফর · লেভেল ${bn(result.level)}`, color: colors.muted, weight: 700, display: true }], width / 2, 120, 38, 960, "center");
+  fitText(c, [{ text: `সৌরজগতের সফর · লেভেল ${bn(placeOf(result.level))}`, color: colors.muted, weight: 700, display: true }], width / 2, 120, 38, 960, "center");
   fitText(c, [{ text: doneLine(result.level), color: colors.ink, weight: 800, display: true }], width / 2, 260, 72, 980, "center");
   fitText(c, [{ text: levelOf(result.level).finale ?? levelOf(result.level).title, color: colors.ask, weight: 700 }], width / 2, 345, 40, 960, "center");
   fitText(c, [{ text: cardFact(result.level), color: colors.ink, weight: 700 }], width / 2, wide ? 1040 : 1010, 44, 960, "center");

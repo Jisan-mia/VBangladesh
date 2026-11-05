@@ -16,7 +16,7 @@ import { CLEAR, EVENT_RING, LOCK, RISE, ROLL, SPAWN, STUCK, SUI_IN } from "../li
 import { createGame, headroom, wovenList, type Game } from "../lib/game";
 import { bestSpot, nextButton, type Target } from "../lib/guide";
 import { fastFall, letGo as releaseHand, makeHand, slideDir, type Hand } from "../lib/hand";
-import { isFinale, levelOf, starsFor, DEFAULT_MODE, LEVEL_COUNT, MODES, STORY, WORLDS } from "../lib/levels";
+import { isFinale, levelOf, rowsToward, starsFor, DEFAULT_MODE, LEVEL_COUNT, MODES, STORY, WORLDS } from "../lib/levels";
 import { bn, caption, compareLine, levelNear, matName, nearLine, parseShared, sharedHash, ROW_POINTS, type Shared } from "../lib/link";
 import { COLOUR, COLS, TURNS } from "../lib/pieces";
 import { afterClear, playable as canPlayLevel, readMode, readUnlock, recommended, BEST_KEY, INTRO_KEY, MODE_KEY, TOOL, UNLOCK_KEY } from "../lib/progress";
@@ -590,13 +590,13 @@ export function LoomGame() {
   const line = !result ? "" : !result.level ? (result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null && best > result.score ? `এই ফোনে সেরা ${bn(best)}` : "")
     : nextLevel && result.firstClear ? `খুলল পাটি ${bn(nextLevel)}: ${levelOf(nextLevel).name}` : result.rollsUsed ? `${bn(result.rollsUsed)} বার গোটাতে হয়েছে।` : "";
   const stats = result ? [
-    { label: "সারি", value: result.rows, ...(result.goal ? { of: result.goal } : {}) },
+    { label: "সারি", value: rowsToward(result.rows, result.goal), ...(result.goal ? { of: result.goal } : {}) },
     { label: "পয়েন্ট", value: result.score },
     { label: "একসাথে সেরা", value: result.bestClear, unit: " সারি" },
     { label: "ফালি", value: result.strips },
   ] : [];
   const badge = level ? `${bn(level)} · ${row.name}` : row.name;
-  const goalText = row.goal ? `${bn(Math.min(woven, row.goal))}/${bn(row.goal)} সারি` : `${bn(woven)} সারি`;
+  const goalText = row.goal ? `${bn(rowsToward(woven, row.goal))}/${bn(row.goal)} সারি` : `${bn(woven)} সারি`;
   const canControl = phase === "playing" || phase === "title" || phase === "paused";
 
   return (

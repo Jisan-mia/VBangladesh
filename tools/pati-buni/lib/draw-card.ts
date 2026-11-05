@@ -1,6 +1,6 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, wrapText, BODY_FONT, type CardFormat, type Segment } from "../../../shared/card-canvas";
 import { drawMat, palette } from "./art";
-import { isFinale, levelOf } from "./levels";
+import { isFinale, levelOf, rowsToward, starsFor } from "./levels";
 import { bn, humanLine, matName, MAT_ROWS, type Shared } from "./link";
 
 export type CardData = Pick<Shared, "score" | "rows" | "pattern" | "name" | "level"> & { stars?: number };
@@ -9,7 +9,9 @@ export type CardData = Pick<Shared, "score" | "rows" | "pattern" | "name" | "lev
 export function cardLine(data: CardData) {
   if (!data.level) return humanLine(data.rows);
   const row = levelOf(data.level);
-  if (!data.stars) return `${row.name}: ${bn(data.rows)}/${bn(row.goal)} সারি বোনা হয়েছিল।`;
+  // A friend's link carries no stars: they follow from the rows and points.
+  const stars = data.stars ?? starsFor(data.level, data.rows, data.score);
+  if (!stars) return `${row.name}: ${bn(rowsToward(data.rows, row.goal))}/${bn(row.goal)} সারি বোনা হয়েছিল।`;
   return isFinale(data.level) ? `${row.name} পুরো হলো, ${bn(data.rows)} সারিতে।` : `${row.name} বোনা হলো, ${bn(data.rows)} সারিতে।`;
 }
 

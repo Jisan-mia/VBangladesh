@@ -246,3 +246,14 @@ test("a finished round reports what was done: the planets, the first-time count,
   assert.ok(isDone(round));
   assert.deepEqual(resultOf(round), { level: 2, stars: 3, count: 8, firstTry: 8, mistakes: 0, planets: [0, 1, 2, 3, 4, 5, 6, 7] });
 });
+
+test("the share card names the level by its place in the list, not its id (ids stay as saved)", async () => {
+  const { readFileSync } = await import("node:fs");
+  const { join } = await import("node:path");
+  const card = readFileSync(join(import.meta.dirname, "../lib/draw-card.ts"), "utf8");
+  assert.match(card, /লেভেল \$\{bn\(placeOf\(result\.level\)\)\}/);
+  assert.doesNotMatch(card, /লেভেল \$\{bn\(result\.level\)\}/);
+  // Id 8 is the fourth level in the list and id 2 the fifth: the label differs from the id for these.
+  assert.equal(placeOf(8), 4); assert.equal(placeOf(2), 5);
+  assert.deepEqual([...ORDER].sort((a, b) => a - b), Array.from({ length: LEVEL_COUNT }, (_, i) => i + 1));
+});
