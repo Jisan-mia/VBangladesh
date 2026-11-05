@@ -1,0 +1,68 @@
+---
+title: "Peoner Cycle after the rewrite: ride, list, window, cheer, loop, link and card"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: start
+    lg1: play
+    lg2: held
+    lg3: done
+  }
+  class lg0 tan
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: At the title
+      s1: Riding, the road loop plays
+      s2: First-run story
+      s3: Stopped, end screen shows
+      s4: Paused
+      s5: Paused, the level list is open
+      [*] --> s0
+      s0 --> s1: you press রওন#2494; দ#2494;ও [when You're on the road]
+      s0 --> s2: you press রওন#2494; দ#2494;ও [when You're on the road]
+      s1 --> s3: the bike stops or you reach the place
+      s1 --> s4: you scroll the road away or you click into another window or the menu opens (P or the pause button) or you hide the tab
+      s1 --> s5: you open সব ল#2503;ভ#2503;ল
+      s2 --> s1: the story ends
+      s2 --> s4: you scroll the road away or you click into another window or the menu opens (P or the pause button) or you hide the tab
+      s2 --> s5: you open সব ল#2503;ভ#2503;ল
+      s3 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল or a friend's link opens or you pick a level [when Road scrolled away or You're on the road]
+      s3 --> s1: you press আব#2494;র খ#2503;ল#2507; [when You're on the road]
+      s4 --> s5: you open সব ল#2503;ভ#2503;ল [when Road scrolled away or You're on the road]
+      s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You're on the road]
+      s5 --> s0: you pick a level [when Road scrolled away or You're on the road]
+      s5 --> s1: you close সব ল#2503;ভ#2503;ল [when You're on the road]
+      s4 --> s2: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You're on the road]
+      s5 --> s2: you close সব ল#2503;ভ#2503;ল [when You're on the road]
+      s5 --> s4: you close সব ল#2503;ভ#2503;ল [when Road scrolled away or You're on the road]
+    }
+    --
+    state "Window" as r1 {
+      s6: You're on the road
+      s7: Road scrolled away
+      s8: Another window has focus
+      s9: Tab hidden
+      [*] --> s6
+      s6 --> s7: you scroll the road away
+      s6 --> s8: you click into another window
+      s6 --> s9: you hide the tab
+      s7 --> s6: you scroll back
+      s7 --> s8: you click into another window
+      s7 --> s9: you hide the tab
+      s8 --> s6: you come back to the window
+      s8 --> s9: you hide the tab
+      s9 --> s6: the tab shows again
+      s8 --> s7: you come back to the window
+      s9 --> s7: the tab shows again
+    }
+  }
+  class s0 tan
+  class s1 teal
+  class s2 tan
+  class s3 blue
+  class s4 yellow
+  class s5 yellow

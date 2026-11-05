@@ -1,18 +1,15 @@
-export const title = "পিয়নের সাইকেল: ride, window, route list, cheer, link and card";
-const game = (v: any) => ({ ready: "Waiting at the start", playing: "Riding", paused: "Paused", over: "Bumped, result shows" } as any)[v.phase];
+export const title = "Peoner Cycle after the rewrite: ride, list, window, cheer, loop, link and card";
+const game = (v: any) => ({ title: "At the title", story: "First-run story", riding: "Riding", paused: "Paused", over: "Stopped, end screen shows" } as any)[v.phase];
 const routeName = (r: string) => r === "theirs" ? "the friend's route" : "another route";
 export const state = (v: any) => ({
-  Game: game(v),
+  Game: v.phase === "paused" && v.picker ? "Paused, the level list is open" : v.phase === "riding" && v.loop ? "Riding, the road loop plays" : game(v),
   Window: v.win === "hidden" ? "Tab hidden" : v.win === "away" ? "Another window has focus" : v.inView ? "You're on the road" : "Road scrolled away",
-  Routes: v.picker ? "সব রুট open" : "সব রুট closed",
-  Cheer: v.fanfare ? "Chimes still to come" : "No chimes waiting",
-  Route: v.link === "none" ? "No friend's link" : (v.phase === "playing" || v.phase === "paused") && v.lvl !== v.rode ? "Label says the friend's route, you ride another" : `On ${routeName(v.lvl)}`,
-  Card: v.card === "none" ? "No result card" : v.link === "friend" ? `Card compares with the friend (${v.card === "theirs" ? "same road" : "a different road"})` : "Card, no comparison",
 });
 const labels: Record<string, string> = {
-  YouStart: "you tap the road or a lane button",
+  YouStart: "you press রওনা দাও",
+  StoryEnds: "the story ends",
   FanfarePlays: "the chimes play",
-  YouPause: "you press থামাও",
+  YouPause: "the menu opens (P or the pause button)",
   YouResume: "you press চালিয়ে যাও",
   TabHides: "you hide the tab",
   TabShows: "the tab shows again",
@@ -20,17 +17,16 @@ const labels: Record<string, string> = {
   WindowFocuses: "you come back to the window",
   YouScrollAway: "you scroll the road away",
   YouScrollBack: "you scroll back",
-  YouOpenRoutes: "you open সব রুট",
-  YouCloseRoutes: "you close সব রুট",
-  YouPickRoute: "you pick a route",
-  YouGoNextRoute: "you press পরের রুট",
+  YouOpenList: "you open সব লেভেল",
+  YouCloseList: "you close সব লেভেল",
+  YouPickRoute: "you pick a level",
+  YouGoNextRoute: "you press পরের লেভেল",
   YouRideAgain: "you press আবার খেলো",
-  YouPlayFromCard: "you press আরেকবার খেলো on the card",
   FriendLinkOpens: "a friend's link opens",
 };
 export const step = (action: string, from: any, to: any) => {
-  if (action === "YouBump") return to.fanfare && !from.fanfare ? "you bump past a star mark" : from.fanfare ? "you bump" : "you bump before the goal";
+  if (action === "YouFinish") return to.fanfare && !from.fanfare ? "you reach the place" : "the bike stops";
   return labels[action] ?? action;
 };
-export const group = (v: any) => v.phase === "over" ? "done" : v.phase === "paused" ? "held" : "play";
-export const colors = { play: "teal", held: "yellow", done: "blue" };
+export const group = (v: any) => v.phase === "over" ? "done" : v.phase === "paused" ? "held" : v.phase === "title" || v.phase === "story" ? "start" : "play";
+export const colors = { start: "tan", play: "teal", held: "yellow", done: "blue" };
