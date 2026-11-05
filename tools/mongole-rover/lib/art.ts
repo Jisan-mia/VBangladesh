@@ -35,3 +35,30 @@ export const REPEAT = `<g fill="none" stroke="currentColor" stroke-width="6" str
 
 export const svgDocument = (inner: string, box = 64) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${box} ${box}" width="256" height="256">${inner}</svg>`;
 
+
+/** Earth as a small blue dot in the Mars sky. */
+const earth = (cx: number, cy: number, r: number) => `<g stroke="#2d1f1a" stroke-width="2"><circle cx="${cx}" cy="${cy}" r="${r}" fill="#3f78c9"/>
+<path d="M${cx - r * 0.6} ${cy - r * 0.2}q${r * 0.3}-${r * 0.5} ${r * 0.7}-${r * 0.4}q-${r * 0.1} ${r * 0.5}-${r * 0.5} ${r * 0.7}z" fill="#58a55c" stroke="none"/>
+<path d="M${cx + r * 0.1} ${cy + r * 0.3}q${r * 0.4}-${r * 0.1} ${r * 0.6} ${r * 0.2}q-${r * 0.2} ${r * 0.3}-${r * 0.6} ${r * 0.1}z" fill="#58a55c" stroke="none"/>
+<path d="M${cx - r * 0.8} ${cy + r * 0.1}q${r * 0.7} ${r * 0.5} ${r * 1.5} ${r * -0.3}" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".8"/></g>`;
+
+const sky = `<rect width="320" height="200" fill="#f0b98a"/><rect y="104" width="320" height="96" fill="#d9773f"/>
+<path d="M0 118q70-26 150-6t170-8v96H0z" fill="#c4622f"/><path d="M0 150q90-22 190-4t130-6v60H0z" fill="#b4532a"/>
+<g fill="#fff6e6" opacity=".9"><circle cx="40" cy="26" r="1.6"/><circle cx="96" cy="14" r="1.2"/><circle cx="168" cy="30" r="1.5"/><circle cx="214" cy="12" r="1.2"/><circle cx="292" cy="30" r="1.6"/><circle cx="20" cy="64" r="1.2"/></g>`;
+const dust = (x: number, y: number) => `<g fill="#e9a06d" opacity=".85"><circle cx="${x}" cy="${y}" r="6"/><circle cx="${x - 10}" cy="${y + 3}" r="4.5"/><circle cx="${x - 19}" cy="${y + 5}" r="3"/></g>`;
+const block = (x: number, y: number, turn: number) => `<g transform="translate(${x} ${y})"><rect width="42" height="42" rx="6" fill="#fbefe4" stroke="#2d1f1a" stroke-width="2.5"/><g transform="translate(21 21) rotate(${turn}) scale(.5) translate(-32 -32)" fill="#b8461f">${ARROW}</g></g>`;
+
+/** Three story panels (320×200), each readable without a word: land, find the rocks, plan before you run. */
+export const STORY_ART: readonly string[] = [
+  `${sky}${earth(246, 52, 15)}${dust(112, 160)}<g transform="translate(106 70) scale(1.5)">${ROVER}</g>`,
+  `${sky}<g transform="translate(34 78) scale(1.4)">${ROVER}</g>
+<g transform="translate(168 96) scale(.95)">${SAMPLE}</g><g transform="translate(226 126) scale(.8)">${SAMPLE}</g><g transform="translate(248 76) scale(.7)">${SAMPLE}</g>`,
+  `${sky}${earth(52, 44, 22)}<path d="M76 54Q150 20 238 86" fill="none" stroke="#2d1f1a" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+<g fill="none" stroke="#2d1f1a" stroke-width="2.5" stroke-linecap="round"><path d="M148 38q8 8 4 18"/><path d="M160 34q12 12 6 28"/></g>
+<g transform="translate(220 72) scale(1.1)">${ROVER}</g>${block(66, 144, 0)}${block(116, 144, 90)}${block(166, 144, 90)}`,
+];
+
+/** The title's hill: Mars horizon, Earth in the sky, the rover on a rise. 320×200. */
+export const TITLE_ART = `${sky}${earth(262, 40, 11)}<path d="M40 200q40-70 120-72t120 72z" fill="#b4532a"/>
+<g transform="translate(112 62) scale(1.55)">${ROVER}</g>${dust(104, 150)}
+<g transform="translate(230 128) scale(.55)">${SAMPLE}</g><g transform="translate(36 140) scale(.5)">${CRATER}</g>`;

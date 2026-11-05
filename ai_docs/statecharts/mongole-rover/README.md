@@ -1,92 +1,143 @@
-# মঙ্গলে রোভার: statechart, before the rewrite
+# মঙ্গলে রোভার: statechart
 
-Kids' game (ছোটদের জন্য, ages 6–11), so NoReadingNeeded (ages 3–5) doesn't apply.
+Kids' game (ছোটদের জন্য, ages 6–11). The game was rewritten on 2026-11-05 (design: `ai_docs/game-dev/rewrites/mongole-rover.md`). The first model and its run on the old code are kept in `before-fix/` (`Rover.tla`, `Rover.cfg`, `view.ts`, `report.md`, `chart.mmd`); the old README's two broken rules, the bugs and the live replays are summarised below.
 
-Spec `Rover.tla` / `Rover.cfg`, view `view.ts`, output `before-fix/` (`report.md`, `chart.mmd`).
+| Spec | What it covers | Mirrors | TLC |
+|---|---|---|---|
+| `Rover.tla` / `Rover.cfg`, view `view.ts` | the screens (hill, story, level list, plan, run, end screen), a plan and its run on a live clock, চালাও and the separate থামাও, the first-run story, the player's menu, a look-away and the first tap back, the daily limit and the rest screen | `tools/mongole-rover/lib/session.ts`, `lib/run.hot.ts`, `components/game.tsx` (`begin`, `go`, `halt`, `step`, `lift`, `finish`, `useGamePlayer`), `shared/kids-kit.tsx` (`useKidsSession`, `RestScreen`) | 484 states, 1,857 steps; the chart draws 14 states and 41 arrows |
 
-The spec models the code as of 2026-11-04 16:50:
-- `tools/mongole-rover/components/rover-game.tsx` and `lib/rover.ts`, unchanged during this work;
-- `shared/kids-kit.tsx` at commit **23fd7c1**.
+The shared parent gate is modelled once, in `../chhaya-melao/KidsGate.tla`.
 
-**Results:** TLC reached 288 states and 1053 steps. The chart has 13 states and 30 arrows. **9 rules hold and 2 break** (counts include TypeOK, NoDeadlock and the two action properties).
+**Results (`after-fix/`): all 15 rules hold** (TypeOK, NoDeadlock, and the two action properties count). The chart is `after-fix/chart.mmd` (also below).
 
-The shared parent gate is modelled once, in `../chhaya-melao/KidsGate.tla`; see that README.
+**Model check (mutations, in a scratch copy):** putting the old behaviour back breaks the rule at once. Letting the rover move without the live check breaks **NoProgressWhileAway** in 6 steps; dropping both the guard and the "rover has moved" condition from থামাও breaks **OneTapOneRun** in 5; letting the waking tap edit the plan breaks **WakeTapIsNotAMove** in 5.
 
 ## Systems modelled
-- **Play phase:** no arrows → planning → run starting → rover driving → bump (back to planning with the bad block lit) or the last rock → won → পরের লেভেল, আবার খেলো or শেষ (idle). The model has 2 levels and 2 rover steps per run. A plan is empty, bad, long (1 star) or shortest (3 stars).
-- **Away:** there is no blur, visibility or pause handler, so away is one flag.
-- **Input:** চালাও and থামাও are the two arms of one JSX ternary in the same slot, so React keeps one `<button>`. The button under your finger, and in focus, turns into থামাও the moment the run starts (`spot`).
-- **Time:** the step timeouts (520 ms, or 850 in slow mode, after a 300 ms lead) and the final win or stop timeout.
-- **Sound:** one-shot sounds only (start chirp, motor, rock chime, bump, win or level-up with confetti). There are no loops.
-- **Levels and stars:** `levels.record` and `unlockedLevel`; the সব লেভেল drawer, which is live while planning, running and on the won screen; the idle LevelGrid.
-- **Kids' limit:** `atBreak()` on a win; the past-the-limit mount check; RestScreen as a modal; a grown-up's "আরও ১০ মিনিট"; reload.
-
-Not modelled:
-- `#og`.
-- The loop block's counts (`repeatLast`) and the hint path after 3 misses (pure functions with tests).
-- SpeakButton, which appears only when the phone has a Bangla voice.
+- **Screens:** hill → (story, first run only) → plan → run → won, plus the level list from anywhere. A level that opens past the limit changes nothing but the rest screen.
+- **Run:** the clock moves only while `Live` (run screen, menu closed, child here). It ends in the last rock lifted (stars saved and `atBreak()` asked right there), then the end screen after a short beat; or in a bump (back to planning, and `atBreak()`).
+- **Stop:** থামাও is its own button over the pad's place. It works only when the 450 ms guard has passed **and** the rover has made its first move.
+- **Away and the menu:** one variable, `hand` (here, away, menu). Blur arms a swallow: the first tap back only wakes the game.
+- **Kids' limit:** the rest screen shows at a break only (a level opening, the end screen, a missed run), never over the rover driving; a limit passing at the last rock waits for the end screen.
+- **Not modelled (pure functions with node tests):** the loop block's counts, the hint path after 3 misses, the result keys (`freshKey`), the arrow-key map.
 
 ## Rules, in plain words
 | Rule | In plain words | Result |
 |---|---|---|
-| NoProgressWhileAway | The rover doesn't drive, and the level doesn't end, while you look away. | **breaks** |
-| OneTapOneRun | One tap on চালাও is one run: a quick second tap, or Enter on the focused button, never cancels it before it moves. | **breaks** |
-| NoDoubleResult | A level is won and recorded once per try. | holds |
-| RestOnlyAtBreak | The rest screen is only over a won level, the idle screen or an untouched level. | holds (broke on the earlier kit) |
-| RestStaysUntilAGrownUp | After the rest screen, no run starts until a grown-up gives more time. | holds (broke on the earlier kit) |
-| NoNetwork / NoChildData | Nothing is sent; only stars and play time are written. | holds (live: no `fetch`, XHR or beacon, and no new resource requests after load in a full 12-level run) |
-| StarsNeverDrop / UnlockNeverShrinks | Best stars only go up; unlocked levels never close. | hold |
+| NoProgressWhileAway | The rover doesn't drive, lift a rock or win while you look away or the menu is open. | holds (**broke on the old code**) |
+| OneTapOneRun | One tap on চালাও is one run: a quick second tap, or Enter, never cancels it before the rover moved. | holds (**broke on the old code**) |
+| WakeTapIsNotAMove | The tap that brings focus back never adds a block, runs or stops. | holds |
+| NoDoubleResult / EveryFinishCounts / ResultMatchesPlay | A level is won and recorded once; the end screen never shows without its stars saved, and they are the plan's stars. | hold |
+| RestOnlyAtBreak / NoNewRoundPastLimit / RestStaysUntilAGrownUp | The rest screen is never over the rover driving; past the limit no level or run starts until a grown-up gives time. | hold |
+| ChoiceFreezesPlay | The level list freezes play. | holds |
+| NoNetwork / NoChildData | Nothing is sent; only stars, play time and the story flag are written. | hold |
+| StarsNeverDrop | Best stars only go up. | holds |
+`UnlockNeverShrinks` is gone: every level is open. **NoReadingNeeded** and the picture end buttons are checked by node tests (`tests/session.test.ts`).
 
-**Key held through the round's end:** the result has no key path. On a win the board and buttons unmount and focus falls to `<body>`. A held Enter on চালাও doesn't skip the result; it toggles the run on and off (bug 2).
-
-## Bugs (current code)
-
-### 1. OneTapOneRun: "I tapped চালাও twice, like I always do, and the rover didn't move" (game)
-- **Path:** 0 no arrows → 1 you add arrows → 2 you tap চালাও (the run starts and the button now says থামাও) → 3 you tap চালাও again quickly: back to planning, and the rover never moved.
-- **Live replay (Orca, 10:2x):**
-  - On level 1 I added → and tapped চালাও. The button read `থামাও`.
-  - 150 ms later, `document.querySelector('.mr-go')` was **the same element** (`sameButtonElement: true`). A second tap on it called `halt()`.
-  - The rover stayed at `translate(100%, 200%)` and 1.5 s later the level was still not won. One tap alone wins in about 0.8 s.
-  - Because focus stays on that one button, Enter (or a held Enter's auto-repeat) toggles run and stop the same way.
-- **Fix:** give থামাও its own place, or a `key`, so it is a different element. Ignore a second tap on the same spot for about 400 ms after চালাও. Blur the button when the run starts. **Game.** The "same slot changes meaning" pattern is worth a lint check across games.
-
-### 2. NoProgressWhileAway: "I pressed চালাও and picked up my mum's call; when I came back the level was done and I'd missed the rover's drive" (game)
-- **Path:** 0 → 1 you add arrows → 2 you tap চালাও → 3 you look away → 4 the rover moves a square. It goes on to the last rock and the won screen.
-- **Live replay (Orca, 16:4x; blur and `visibilitychange` dispatched; the game listens to neither):**
-  - With the level key cleared, I added → on level 1, tapped চালাও and went away at once (`hasFocus` false in the replays).
-  - 1.5 s later, still away, `.mr-done` showed, `ektukhani-levels-mongole-rover` was `{"1":3}`, and 7 oscillator starts (motor, rock chime, win) had played to an empty room.
-  - On level 3 (→ ↑ ↑) the rover went from `translate(100%,300%)` to `translate(200%,200%)` within 0.9 s of going away, and won by 2.5 s.
-- **Fix:** keep the step timers as a run that can pause. On blur or hide, stop scheduling, remember the next step, and resume on return. Or let the shared player's away hook pause it. **Shared pattern** (all three of my games advance their timers while away).
-
-## Found on the earlier kit, fixed by f4f75be and 23fd7c1
-- **RestOnlyAtBreak:** "behind the rest screen I built a plan and drove the rover."
-  - **Then (10:2x):** after winning level 2 with the rest screen up, Tab reached ধীরে, শব্দ, the Mars fact, পরের লেভেল, আবার খেলো, শেষ and আব্বু-আম্মুকে দেখাও, then "সব লেভেল". Enter opened the drawer, and Tab and Enter on লেভেল ৩ opened level 3 under the rest screen (`rest:true, board:true`).
-  - I then built ↑ ↑ → by keyboard and pressed Enter on চালাও. The run went ahead behind the rest screen and bumped the crater ("এখানে গর্ত! …", rover at `translate(100%,300%)`).
-  - **Now:** the same keys, focus and clicks are blocked by the modal (re-checked on দাঁড়িপাল্লা with the same kit). **Holds.**
-- **RestStaysUntilAGrownUp:**
-  - **Then:** after a dev-server reload with today's time already over the limit, the page opened on level 2 with no rest screen. I won it (↑ →) before the rest screen came back.
-  - **Now:** past the limit, the page opens on the rest screen. **Holds.**
-
-## Quality-bar gaps (game-quality-bar), played end to end in Orca (an in-page BFS autopilot played all 12 levels)
-1. **Story (§3):** the skill names this game as one that should have a 2–4 panel intro ("why is the rover on Mars, what are the rocks"). There's none.
-2. **Pause and away (§7):** there's no pause, and a run drives on while you're away (bug 2). There's no P or Esc.
-3. **Controls:** চালাও and থামাও share one spot (bug 1). On a desktop, the arrow keys don't add arrows, although the game is all about arrows.
-4. **Rest at a break:** `atBreak()` runs only on a win. A child stuck on a hard level who fails run after run never reaches a rest. A failed run is also a natural break, so call it in `stopped()` too.
-5. **Pacing (§9):** good. One new idea per stage (short plans, long plans, several rocks, loops, fewest blocks). Optimal play of levels 2–12 took about 60 s in all: 1.7 s for level 2, 10 s for level 12. There's no named finale at level 12 beyond confetti.
-6. **Ending (§10):** good. Stars, "৬ ব্লকের প্ল্যানে সব পাথর তোলা হলো", an exact method line ("সবচেয়ে ছোট প্ল্যানটা ৫ ব্লকের। খুঁজে দেখবে?") and a Mars fact with its source.
-7. **HUD (§5):** the level and rock count sit top-left and top-right, and the board stays clear. That's good. The plan strip and the pad push চালাও below the board, and on a 412 px phone they still fit.
-8. **Sound (§11):** a chirp, motor, rock chime, bump and win. The game works on mute.
-
-## Screenshots
-- `.shots/mongole-rover-first.png`: the first screen, with the ghost finger on →.
-- `.shots/mongole-rover-won12.png`: level 12 won, 2 stars, the method line and the Mars fact.
+## The bugs, and how each was fixed
+| # | Bug (the reader's sentence) | Fix | Node test | Live check after the fix (Orca) |
+|---|---|---|---|---|
+| 1 | **"I tapped চালাও twice, like I always do, and the rover didn't move"** (OneTapOneRun). চালাও and থামাও were one JSX ternary, so React kept one `<button>` under the finger and in focus. | থামাও is its own element (`key="stop"`), over the pad's place, never under the finger on চালাও. চালাও stays, disabled. It is ignored for 450 ms **and** until the rover has moved. A held Enter or Space during a run is swallowed; Backspace stops (not a repeat). | `session.test.ts` › OneTapOneRun | Level 1: → then চালাও; 150 ms later `.mr-stop` existed and **was not** `.mr-go`; a click on it and a second pointerdown on চালাও changed nothing (`screen` still `run`); the run won and `{"1":3}` was saved. |
+| 2 | **"I picked up my mum's call; when I came back the level was done"** (NoProgressWhileAway). | The run is a clock (`lib/run.hot.ts`) driven by one frame loop that stops while the session isn't live (blur, hide, the player's menu), and gives a 350 ms breath after coming back. The last rock is recorded and the end screen shows only on the live clock. | `session.test.ts` › NoProgressWhileAway; `run.test.ts` | Level 12, → … then blur at once: after 6 s away the clock stood at **−300 ms**, 0 steps, the rover at `translate(0%, 500%)`; `focus` → step 1 within 0.8 s, then the run went on. With P (the player's menu) the clock held at −17 ms through 4 s. |
+| 3 | **No intro story** (quality bar §3). | Three panels (picture + one line), a tap shows the next, a 0.6 s hold on the corner button skips; first run only (`ektukhani-intro-mongole-rover`; a phone that already has stars never sees it). | `session.test.ts` › the story | `.shots/mongole-rover-story1.png` |
+| 4 | **No arrow keys on a desktop.** | ↑ ← ↓ → add arrows, R আরেক বার, Backspace removes, Enter or Space runs (on a focused control Enter does that control), P pauses through the player. Keys at `window`, no auto-repeat, ignored under the menu. | › arrow keys | Autopilot played all 12 levels by key presses only. |
+| 5 | **The rest screen came only after a win.** | `atBreak()` also runs when a level opens and after a missed run. | › RestOnlyAtBreak | — |
+| 6 | **No named finale, no pause menu list, words-only end buttons, 44 px pill buttons.** | Four worlds with named finales; `onLevels` opens the pausing list; end buttons are pictures (112 px, and a 96 px tall পরের লেভেল); no sound or slow pill (the player's menu has them). | › kids' rules; `levels.test.ts` | Pause menu → সব লেভেল opened the list (12 cards). |
+| — | **Found by the new model:** the first draft let the 450 ms guard alone protect থামাও, but wall time keeps passing while the clock is held (the menu, a look-away), so a stop right after চালাও could still cancel before the rover moved. Added "the rover has moved". | `S.stepped()` | `session.test.ts` › OneTapOneRun | — |
+| — | **Found by the new model:** a level opening past the limit (পরের লেভেল on the end screen) cleared the result and the board before the rest check, so the end screen went blank under the rest screen. The reset now follows `S.begin()`. | `begin()` | › a level opening past the limit | — |
+| — | **Shared patterns** | No `location.hash` or history; no `setTimeout` in the game; the story's hold timer is cleared on release, pause, blur and unmount; sound scheduled with `tone(…, delay)` so the player's pause cuts it; no voice. | › kids' rules | — |
 
 ## Regenerate
 ```sh
-scripts/statechart.sh ai_docs/statecharts/mongole-rover/Rover.tla --view ai_docs/statecharts/mongole-rover/view.ts --out ai_docs/statecharts/mongole-rover/before-fix
-rm -f ai_docs/statecharts/mongole-rover/before-fix/tlc*.out
+scripts/statechart.sh ai_docs/statecharts/mongole-rover/Rover.tla --view ai_docs/statecharts/mongole-rover/view.ts --out ai_docs/statecharts/mongole-rover/after-fix
+rm -f ai_docs/statecharts/mongole-rover/after-fix/tlc*.out
 ```
-The `--out` folder must be new or empty. `Rover.cfg` has `CONSTRAINT Explore`: it stops past a broken history rule, and explores level 2 only with an empty or shortest plan, to stay under 500 states. After the fixes:
-- remove `YouTapTheSameSpotAgain`, or make it a no-op;
-- gate `TheRoverMoves`, `TheRoverStops` and `TheRoverWins` on `~away`;
-- re-run into `after-fix/`.
+The `--out` folder must be new or empty. `Rover.cfg` has `CONSTRAINT Explore`, which stops past a broken history rule and keeps the chart small: plans are empty, bad or the shortest, level 2 only as a fresh level, looking away and the menu only while planning or driving, the daily limit only on level 1 after the story.
+
+## The chart (after the fix)
+```mermaid
+---
+title: "মঙﬂ°°2509¶ßগলﬂ°°2503¶ß রﬂ°°2507¶ßভﬂ°°2494¶ßর: the plan, the run, the story, the rest screen and you"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: plan
+    lg1: run
+    lg2: rest
+  }
+  class lg0 teal
+  class lg1 orange
+  class lg2 yellow
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: The hill (start)
+      s1: Level list
+      s2: First-run story
+      s3: Planning
+      s4: Rover driving
+      s5: Last rock lifted, stars saved
+      s6: The bad block glows, fix the plan
+      s7: Level won: stars and a Mars fact
+      [*] --> s0
+      s0 --> s1: you open the level list [when Rest is not Rest screen up]
+      s0 --> s2: you tap the hill (খ#2503;ল#2507;) [when Rest is Time left today]
+      s1 --> s0: the page reloads
+      s1 --> s0: you close the level list [when Rest is not Rest screen up]
+      s1 --> s3: you pick a level [when Rest is Time left today]
+      s2 --> s0: the page reloads
+      s2 --> s1: you open the level list
+      s2 --> s3: you finish or skip the story
+      s3 --> s0: the page reloads [when You is Here]
+      s3 --> s1: you open the level list [when You is not Looking away]
+      s3 --> s4: you tap চ#2494;ল#2494;ও [when You is Here]
+      s0 --> s3: you tap the hill (খ#2503;ল#2507;) [when Rest is Time left today]
+      s1 --> s0: you pick a level [when Rest is Today's minutes are up]
+      s4 --> s0: the page reloads [when You is Here]
+      s4 --> s1: you open the level list [when You is not Looking away]
+      s4 --> s3: you tap থ#2494;ম#2494;ও [when You is Here]
+      s4 --> s6: the rover bumps and stops [when You is Here]
+      s4 --> s5: the rover lifts the last rock (stars saved) [when You is Here]
+      s5 --> s0: the page reloads [when You is Here]
+      s5 --> s1: you open the level list [when You is not Looking away]
+      s5 --> s7: the end screen shows [when You is Here]
+      s6 --> s0: the page reloads [when You is Here]
+      s6 --> s3: you add or remove arrows [when Rest is not Rest screen up and You is Here]
+      s6 --> s4: you tap চ#2494;ল#2494;ও [when Rest is not Rest screen up and You is Here]
+      s6 --> s1: you open the level list [when Rest is not Rest screen up and You is not Looking away]
+      s7 --> s0: the page reloads
+      s7 --> s1: you open the level list [when Rest is not Rest screen up]
+      s7 --> s3: you press আব#2494;র খ#2503;ল#2507; or you press পর#2503;র ল#2503;ভ#2503;ল [when Rest is Time left today]
+      s7 --> s0: you press শ#2503;ষ [when Rest is not Rest screen up]
+    }
+    --
+    state "Rest" as r1 {
+      s8: Time left today
+      s9: Today's minutes are up
+      s10: Rest screen up
+      [*] --> s8
+      s8 --> s9: today's minutes run out [when Game is not First-run story and You is Here]
+      s9 --> s10: the page reloads
+      s9 --> s10: you pick a level [when Game is Level list]
+      s9 --> s10: you tap the hill (খ#2503;ল#2507;) [when Game is The hill (start)]
+      s10 --> s8: a grown-up gives 10 more minutes [when Game is not Last rock lifted, stars saved]
+      s9 --> s10: the rover bumps and stops or the rover lifts the last rock (stars saved) [when Game is Rover driving]
+      s9 --> s10: you press পর#2503;র ল#2503;ভ#2503;ল or you press আব#2494;র খ#2503;ল#2507; [when Game is Level won: stars and a Mars fact]
+    }
+    --
+    state "You" as r2 {
+      s11: Here
+      s12: Looking away
+      s13: Menu open
+      [*] --> s11
+      s11 --> s12: you look away [when Game is one of Last rock lifted, stars saved, Planning, Rover driving, The bad block glows, fix the plan and Rest is Time left today]
+      s11 --> s13: the pause menu opens [when Game is one of Last rock lifted, stars saved, Planning, Rover driving, The bad block glows, fix the plan and Rest is Time left today]
+      s12 --> s11: you come back
+      s12 --> s13: the pause menu opens
+      s13 --> s11: you open the level list or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+    }
+  }
+  class s2 teal
+  class s3 teal
+  class s4 orange
+  class s10 yellow
+```
