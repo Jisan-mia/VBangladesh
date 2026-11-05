@@ -33,7 +33,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | golokdhadha | S09 | analysed | done |
 | ponero-ghor | S10 | analysed | done |
 | chhobi-photao | S10 | analysed | done |
-| ghontar-sur | S10 | analysed | rewriting |
+| ghontar-sur | S10 | analysed | done |
 | konta-nei | S11 | analysed | done |
 | bhul-kothay | S11 | analysed | done |
 | atir-aam | S11 | analysed | done |
@@ -57,11 +57,11 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | nam-shikhi | S17 | analysed | done |
 | sourojogot | S18 | analysed | done |
 | dosh-ghater-nouka | S18 | analysed | done |
-| golper-mor | S18 | analysed | rewriting |
+| golper-mor | S18 | analysed | done |
 | juktoborno | S19 | analysed | done |
 | ghori-dekhi | S19 | analysed | done |
 | moner-rong | S19 | analysed | done |
-| sat-tukro | S20 | analysed | rewriting |
+| sat-tukro | S20 | analysed | done |
 | nirapode-thaki | S20 | analysed | rewriting |
 | gune-dekhi | S20 | analysed | rewriting |
 | hat-dhui | S21 | analysed | done |
@@ -73,9 +73,9 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | chhaya-melao | S23 | analysed | rewriting |
 | mongole-rover | S23 | analysed | rewriting |
 | daripalla | S23 | analysed | rewriting |
-| prithibi-ghuri | S24 | analysed | todo |
-| chhorar-tal | S24 | analysed | todo |
-| ammur-number | S24 | analysed | todo |
-| sur-banai | S25 | analysed | todo |
-| borno-likhi | S25 | analysed | todo |
+| prithibi-ghuri | S24 | analysed | rewriting |
+| chhorar-tal | S24 | analysed | rewriting |
+| ammur-number | S24 | analysed | rewriting |
+| sur-banai | S25 | analysed | rewriting |
+| borno-likhi | S25 | analysed | rewriting |
 | antenna-thik-koro | S25 | analysed | done |
