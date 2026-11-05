@@ -1,6 +1,8 @@
-# বাইচের নৌকা statechart (before the rewrite)
+# বাইচের নৌকা: statechart
 
-Model: `BaicherNouka.tla` / `BaicherNouka.cfg` / `view.ts`. Report and chart: `before-fix/report.md`, `before-fix/chart.mmd`.
+Before the rewrite — model: `before-fix/BaicherNouka.before.tla`, `before-fix/BaicherNouka.before.cfg`, `before-fix/view.before.ts`. Report and chart: `before-fix/report.md`, `before-fix/chart.mmd`. The rewrite's model and its run are in **After the rewrite** at the bottom.
+
+(The sections below describe the old code and its five bugs; the live replays are the old page's.)
 Code mirrored: `tools/baicher-nouka/components/baich-game.tsx`, `shared/game-kit.ts` (`useGameLoop`), `shared/game-sound.ts` (`loop`, `setSoundOn`), `shared/game-ui.tsx` (`SoundToggle`).
 
 TLC: 464 states, 1,900 steps. **3 rules hold, 5 break.**
@@ -68,8 +70,235 @@ TLC: 464 states, 1,900 steps. **3 rules hold, 5 break.**
 7. **The result can be skipped by accident** (bug 4), and the friend banner can claim the wrong river (bug 5).
 8. **What's good:** 6 synthesized sounds plus the rush loop, which comes back after sound on and after resume. Real end stats (beats caught, patches), lag calibration, and a seeded, replayable river.
 
+
+## After the rewrite
+
+The model, `BaicherNouka.tla` (138 states, 632 steps), mirrors `tools/baicher-nouka/components/river.tsx` and `tools/baicher-nouka/lib/session.ts`. A friend's link is a second small spec, `link/BaicherLink.tla` (21 states), so each chart stays under 500 states. Reports and charts: `after-fix/report.md`, `after-fix/chart.mmd`, `link/after-fix/chart.mmd`.
+
+What changed in the code, and why each old rule now holds:
+- **The page has no "river scrolled away" any more.** The game fills the shared player's stage, which pauses a desktop page whose stage scrolls off. The pads exist only on the play screen and count only while `session.canTap`. (PausedWhenScrolledAway is gone as a rule; `NoProgressWhileAway` and `ChoiceFreezesPlay` replace it.)
+- **Blur, hide and the player's menu all stop the race** through `session.ticking`, and the page also listens for blur itself, so even before the player has seen a touch the loop stops. After চালিয়ে যাও there is a 0.8 s breath: the water waits and taps don't count, so the click that closes the menu is never a move.
+- **তাল মেলাও:** leaving the window, hiding the tab, the menu or the race list before the eighth pulse sets `calibLost`; the page reads it once (`takeCalibLost`), drops the pulses and goes back to the title saying so. (CalibVoidedWhenAway.)
+- **The result's key guard:** result keys count only from a fresh press at least 2 s after the screen appears, longer than any beat of the new races (1.2 to 1.5 s). A rower still drumming never starts the next race. Buttons answer at once. (ResultStaysABeat.)
+- **A friend's link mid-race or mid-তাল মেলাও** sets `owed`. The next start (title খেলো, আবার খেলো, পরের বাইচ, নতুন করে শুরু) takes their river; at the title after তাল মেলাও their race shows at once. A race picked on purpose from সব বাইচ settles the debt. (ReplayIsExact, in `link/`.)
+- **The rush loop** starts and stops in one place, `syncLoops`, after every handler and every step, from `wantRush`: a race on the water, ticking, sound on. Turning sound on starts a fresh loop (never a stub made while muted).
+
+| Rule | In plain words | Result |
+|---|---|---|
+| NoProgressWhileAway | The race moves only on the play screen, with the menu and list shut, the tab showing, the window focused and the breath over. | holds |
+| PausedWhenHidden | If the tab hides mid-race, the race is paused. | holds |
+| PausedWhenBlurred | If you click into another window mid-race, the race is paused. | holds |
+| ChoiceFreezesPlay | While the race list is open, nothing moves behind it. | holds |
+| CalibVoidedWhenAway | তাল মেলাও never runs while you are in another window, or behind the menu or the list. | holds |
+| LoopOnlyWhenMeaningful | The river rush plays only during a race, on a showing page, with sound on. | holds |
+| LoopComesBack | During such a race the rush is playing, also after sound comes back and after resume. | holds |
+| ResultStaysABeat | A key pressed right after the finish never skips your result. | holds |
+| NoDoubleResult | A race ends once; the rush is off on the result. | holds |
+| ReplayIsExact (link/) | After you open a friend's link, the next race you start is their river. | holds |
+
+Each old bug is a node test in `tools/baicher-nouka/tests/session.test.ts`: `PausedWhenBlurred (bug 1)`, `PausedWhenScrolledAway (bug 2)`, `CalibWaitsWhileAway (bug 3)`, `ResultStaysABeat (bug 4)`, `ReplayIsExact (bug 5)`, plus `LoopOnlyWhenMeaningful and LoopComesBack`.
+
+Live checks in Orca (Pixel 9): blur mid-race opened the player's menu, `t` stayed at 1.20 through 2 s of steps and the rush loop's three sources stopped; চালিয়ে যাও started a 0.8 s breath in which a Space and an arrow did nothing, and a Space after it counted. Sound-node counts: the rush started once at the race start, stopped on blur (3 stops), and came back on resume (3 starts).
+
+### Chart (the page)
+```mermaid
+---
+title: "বﬂ°°2494¶ßইচﬂ°°2503¶ßর নﬂ°°2508¶ßকﬂ°°2494¶ß: screen, window, menu, river rush, sound and friend's river"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: ready
+    lg1: play
+    lg2: done
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 purple
+  state "At the same time" as all {
+    state "Screen" as r0 {
+      s0: Title
+      s1: ত#2494;ল ম#2503;ল#2494;ও running
+      s2: Race on the water
+      s3: Result, keys guarded
+      s4: Result shows
+      s5: Race (a breath after resuming)
+      [*] --> s0
+      s0 --> s1: you press ত#2494;ল ম#2503;ল#2494;ও [when Window is You're on the page and Menu is No menu and List is Race list shut]
+      s0 --> s2: you tap খ#2503;ল#2507; [when Window is You're on the page and Menu is No menu and List is Race list shut]
+      s1 --> s0: ত#2494;ল ম#2503;ল#2494;ও ends or you press ব#2494;দ দ#2494;ও or you open সব ব#2494;ইচ or you click into another window (the pulses are void) or you hide the tab or you press the pause button, P or Esc
+      s2 --> s3: you cross the finish rope [when Window is You're on the page and Menu is No menu and List is Race list shut]
+      s0 --> s2: you pick a race from সব ব#2494;ইচ [when Window is You're on the page and Menu is No menu and List is Race list open]
+      s3 --> s2: you press আব#2494;র খ#2503;ল#2507; or পর#2503;র ব#2494;ইচ [when Window is You're on the page and Menu is No menu and List is Race list shut]
+      s3 --> s4: the key guard ends
+      s2 --> s5: you close the list [when List is Race list open and Rush is River rush off]
+      s2 --> s5: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page and Menu is Player's menu open and Rush is River rush off]
+      s4 --> s2: you press a fresh key on the result or you press আব#2494;র খ#2503;ল#2507; or পর#2503;র ব#2494;ইচ [when Window is You're on the page and Menu is No menu and List is Race list shut]
+      s3 --> s2: you pick a race from সব ব#2494;ইচ [when Window is You're on the page and Menu is No menu and List is Race list open]
+      s5 --> s2: the breath ends [when Window is You're on the page and Menu is No menu and List is Race list shut]
+      s3 --> s2: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page and Menu is Player's menu open]
+      s4 --> s2: you pick a race from সব ব#2494;ইচ [when Window is You're on the page and Menu is No menu and List is Race list open]
+      s5 --> s2: you pick a race from সব ব#2494;ইচ [when Window is You're on the page and Menu is No menu and List is Race list open and Rush is River rush off]
+      s4 --> s2: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page and Menu is Player's menu open]
+      s5 --> s2: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page and Menu is Player's menu open and Rush is River rush off]
+    }
+    --
+    state "Window" as r1 {
+      s6: You're on the page
+      s7: Another window has focus
+      s8: Tab hidden
+      [*] --> s6
+      s6 --> s7: you click into another window [when Screen is not ত#2494;ল ম#2503;ল#2494;ও running]
+      s6 --> s8: you hide the tab
+      s7 --> s6: you come back to the window
+      s7 --> s8: you hide the tab
+      s8 --> s6: the tab shows again
+      s6 --> s7: you click into another window (the pulses are void) [when Screen is ত#2494;ল ম#2503;ল#2494;ও running and Menu is No menu and List is Race list shut and Rush is River rush off]
+    }
+    --
+    state "Menu" as r2 {
+      s9: No menu
+      s10: Player's menu open
+      [*] --> s9
+      s9 --> s10: you click into another window (the pulses are void) [when Screen is ত#2494;ল ম#2503;ল#2494;ও running and Window is You're on the page and List is Race list shut and Rush is River rush off]
+      s9 --> s10: you hide the tab or you press the pause button, P or Esc [when Screen is not Title and Window is You're on the page]
+      s9 --> s10: you click into another window [when Screen is none of Title, ত#2494;ল ম#2503;ল#2494;ও running and Window is You're on the page]
+      s10 --> s9: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Screen is not Title and Window is You're on the page]
+      s10 --> s9: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+    }
+    --
+    state "List" as r3 {
+      s11: Race list shut
+      s12: Race list open
+      [*] --> s11
+      s11 --> s12: you open সব ব#2494;ইচ [when Window is You're on the page and Menu is No menu]
+      s12 --> s11: you pick a race from সব ব#2494;ইচ [when Window is You're on the page and Menu is No menu]
+      s12 --> s11: you close the list
+      s12 --> s11: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Screen is not Title and Window is You're on the page and Menu is Player's menu open]
+    }
+    --
+    state "Rush" as r4 {
+      s13: River rush off
+      s14: River rush on
+      [*] --> s13
+      s13 --> s14: you tap খ#2503;ল#2507; [when Screen is Title and Window is You're on the page and Menu is No menu and List is Race list shut and Sound is Sound on]
+      s13 --> s14: you turn sound on [when Screen is one of Race (a breath after resuming), Race on the water and Window is You're on the page and Menu is No menu and List is Race list shut and Sound is Sound off]
+      s13 --> s14: you pick a race from সব ব#2494;ইচ [when Screen is not ত#2494;ল ম#2503;ল#2494;ও running and Window is You're on the page and Menu is No menu and List is Race list open and Sound is Sound on]
+      s14 --> s13: you turn sound off or you open সব ব#2494;ইচ or you click into another window or you hide the tab or you press the pause button, P or Esc
+      s14 --> s13: you cross the finish rope [when Screen is Race on the water]
+      s13 --> s14: you press আব#2494;র খ#2503;ল#2507; or পর#2503;র ব#2494;ইচ [when Screen is one of Result shows, Result, keys guarded and Window is You're on the page and Menu is No menu and List is Race list shut and Sound is Sound on]
+      s13 --> s14: you close the list [when Screen is one of Race (a breath after resuming), Race on the water and Window is You're on the page and Menu is No menu and List is Race list open and Sound is Sound on]
+      s13 --> s14: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Screen is none of Title, ত#2494;ল ম#2503;ল#2494;ও running and Window is You're on the page and Menu is Player's menu open and Sound is Sound on]
+      s13 --> s14: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Screen is one of Race (a breath after resuming), Race on the water and Window is You're on the page and Menu is Player's menu open and List is Race list shut and Sound is Sound on]
+      s13 --> s14: you press a fresh key on the result [when Screen is Result shows and Window is You're on the page and Menu is No menu and List is Race list shut and Sound is Sound on]
+    }
+    --
+    state "Sound" as r5 {
+      s15: Sound off
+      s16: Sound on
+      [*] --> s15
+      [*] --> s16
+      s15 --> s16: you turn sound on
+      s16 --> s15: you turn sound off
+    }
+  }
+  class s1 blue
+  class s3 purple
+  class s4 purple
+  class s14 teal
+```
+
+### Chart (a friend's link)
+```mermaid
+---
+title: "বﬂ°°2494¶ßইচﬂ°°2503¶ßর নﬂ°°2508¶ßকﬂ°°2494¶ß: a friend's link and whose river the next race is"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: ready
+    lg1: play
+    lg2: held
+    lg3: done
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 yellow
+  class lg3 purple
+  state "Screen Title" as s0 {
+    state "Link No debt" as s1 {
+      s2: River Your river
+      s3: River Their river
+    }
+  }
+  state "Screen ত#2494;ল ম#2503;ল#2494;ও running" as s4 {
+    state "Link No debt" as s5 {
+      s6: River Your river
+      s7: River Their river
+    }
+    state "Link Their river is owed" as s8 {
+      s9: River Your river
+      s10: River Their river
+    }
+  }
+  state "Screen Race on the water" as s11 {
+    state "Link No debt" as s12 {
+      s13: River Your river
+      s14: River Their river
+    }
+    state "Link Their river is owed" as s15 {
+      s16: River Your river
+      s17: River Their river
+    }
+  }
+  state "Screen Result shows" as s18 {
+    state "Link No debt" as s19 {
+      s20: River Your river
+      s21: River Their river
+    }
+    state "Link Their river is owed" as s22 {
+      s23: River Your river
+      s24: River Their river
+    }
+  }
+  [*] --> s2
+  s2 --> s6: you press ত#2494;ল ম#2503;ল#2494;ও
+  s2 --> s3: a friend's link opens
+  s6 --> s2: ত#2494;ল ম#2503;ল#2494;ও ends
+  s6 --> s9: a friend's link opens
+  s13 --> s20: you cross the finish rope
+  s13 --> s16: a friend's link opens
+  s14 --> s21: you cross the finish rope
+  s14 --> s17: a friend's link opens
+  s3 --> s7: you press ত#2494;ল ম#2503;ল#2494;ও
+  s16 --> s23: you cross the finish rope
+  s7 --> s3: ত#2494;ল ম#2503;ল#2494;ও ends
+  s7 --> s10: a friend's link opens
+  s17 --> s24: you cross the finish rope
+  s0 --> s13: you pick a race from সব ব#2494;ইচ or you start a race
+  s0 --> s14: you pick a race from সব ব#2494;ইচ or you start a race
+  s18 --> s13: you pick a race from সব ব#2494;ইচ
+  s18 --> s14: you pick a race from সব ব#2494;ইচ or you start a race
+  s18 --> s3: a friend's link opens
+  s19 --> s13: you start a race
+  s8 --> s3: ত#2494;ল ম#2503;ল#2494;ও ends
+  class s2 blue
+  class s3 blue
+  class s6 blue
+  class s7 blue
+  class s9 yellow
+  class s10 yellow
+  class s13 teal
+  class s14 teal
+  class s16 yellow
+  class s17 yellow
+  class s20 purple
+  class s21 purple
+  class s23 purple
+  class s24 purple
+```
+
 ## Regenerate
 ```sh
 scripts/statechart.sh ai_docs/statecharts/baicher-nouka/BaicherNouka.tla --view ai_docs/statecharts/baicher-nouka/view.ts --out ai_docs/statecharts/baicher-nouka/after-fix
+scripts/statechart.sh ai_docs/statecharts/baicher-nouka/link/BaicherLink.tla --view ai_docs/statecharts/baicher-nouka/link/view.ts --out ai_docs/statecharts/baicher-nouka/link/after-fix
 ```
-The chart hides no steps. Keep the model under 500 states, or the chart only draws bug paths.

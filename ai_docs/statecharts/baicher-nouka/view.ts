@@ -1,36 +1,41 @@
-export const title = "বাইচের নৌকা: race, window, river view, rush sound and friend's river";
-const race = (v: any) => ({
-  ready: "Ready screen", calib: "তাল মেলাও running", playing: "Racing", paused: "Paused",
-  over: v.since === "fresh" ? "Result, first 450 ms" : "Result shows",
-} as any)[v.phase];
+export const title = "বাইচের নৌকা: screen, window, menu, river rush, sound and friend's river";
+const where = (v: any) => ({
+  title: "Title", calib: "তাল মেলাও running", play: v.breath ? "Race (a breath after resuming)" : "Race on the water",
+  over: v.since === "fresh" ? "Result, keys guarded" : "Result shows",
+} as any)[v.screen];
 export const state = (v: any) => ({
-  Race: race(v),
+  Screen: where(v),
   Window: v.win === "hidden" ? "Tab hidden" : v.win === "away" ? "Another window has focus" : "You're on the page",
-  River: v.seen ? "River on screen" : "River scrolled away",
-  Rush: v.rush ? "Rush sound on" : "Rush sound off",
+  Menu: v.menu ? "Player's menu open" : "No menu",
+  List: v.sheet ? "Race list open" : "Race list shut",
+  Rush: v.rush ? "River rush on" : "River rush off",
   Sound: v.sound ? "Sound on" : "Sound off",
 });
-export const step = (action: string, from: any, to: any) => action === "NewRace" ? (to.since === "skipped" ? "you tap Space for one more beat" : "you press আরেকবার or Space") : ({
-  YouStart: "you tap শুরু করো or the drum",
-  YouCalibrate: "you press তাল মেলাও",
-  CalibEnds: "তাল মেলাও ends",
-  YouFinish: "you cross the finish rope",
-  ResultAges: "time passes on the result",
-  YouTapDrumKey: "you tap Space for one more beat",
-  YouPressAgain: "you press আরেকবার",
-  YouPlayFromCard: "you press আরেকবার খেলো under the card",
+export const step = (action: string, from: any, to: any) => ({
+  YouTapStart: to.owedAtStart ? "you tap খেলো (their river is owed)" : "you tap খেলো",
+  YouTapAChoice: "you press আবার খেলো or পরের বাইচ",
+  YouPressAKey: "you press a fresh key on the result",
+  YouDrumTooSoon: "you tap Space for one more beat (refused)",
   YouPickARace: "you pick a race from সব বাইচ",
-  YouPause: "you press থামাও, P or Esc",
-  YouResume: "you press চালিয়ে যাও",
-  ScrollAway: "you scroll the river away",
-  ScrollBack: "you scroll back to the river",
+  YouRestartFromMenu: "you press নতুন করে শুরু",
+  YouStartCalib: "you press তাল মেলাও",
+  CalibEnds: "তাল মেলাও ends",
+  YouSkipCalib: "you press বাদ দাও",
+  RaceStep: "the boats row on",
+  YouFinish: "you cross the finish rope",
+  ResultAges: "the key guard ends",
+  BreathPasses: "the breath ends",
+  WindowBlurs: from.screen === "calib" ? "you click into another window (the pulses are void)" : "you click into another window",
+  WindowFocuses: "you come back to the window",
   TabHides: "you hide the tab",
   TabShows: "the tab shows again",
-  WindowBlurs: "you click into another window",
-  WindowFocuses: "you come back to the window",
+  YouPause: "you press the pause button, P or Esc",
+  YouResume: "you press চালিয়ে যাও",
+  YouOpenTheList: "you open সব বাইচ",
+  YouCloseTheList: "you close the list",
   SoundOff: "you turn sound off",
   SoundOn: "you turn sound on",
   LinkOpens: "a friend's link opens",
 } as Record<string, string>)[action] ?? action;
-export const group = (v: any) => v.phase === "over" ? "done" : v.phase === "paused" ? "held" : v.phase === "ready" ? "ready" : "play";
+export const group = (v: any) => v.screen === "over" ? "done" : v.menu || v.sheet || v.win !== "on" ? "held" : v.screen === "title" || v.screen === "calib" ? "ready" : "play";
 export const colors = { ready: "blue", play: "teal", held: "yellow", done: "purple" };
