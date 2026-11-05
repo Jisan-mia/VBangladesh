@@ -1,6 +1,233 @@
-# কী হবে বলো তো?: statechart, before the rewrite
+# কী হবে বলো তো?: statechart
 
-Spec `KiHobe.tla` / `KiHobe.cfg`, view `view.ts`, output `before-fix/` (`report.md`, `chart.mmd`).
+Two runs: the **before** run on the old code (3 rules hold, 5 break; written up in full below), and the **after** run on the rewrite (every rule holds).
+
+## After the rewrite (2026-11-05, branch `games-to-the-bar`)
+Spec `KiHobe.tla` (+ `KiHobe.cfg` for 2 experiments a round, `KiHobeChart.cfg` for 1), view `view.ts`, output `after-fix/`.
+It mirrors `tools/ki-hobe/lib/round.ts`, `lib/session.ts`, `lib/finish.ts`, `components/game.tsx` and `components/art.tsx`, with the kit's `silenceScheduled()` on mute, its modal `RestScreen` and its one-action `ParentGate`.
+- **Full check:** 1,584 states, 2 experiments a round. **Chart run:** 450 states and 2,032 steps; the chart draws 30 states and 85 arrows (`after-fix/chart.mmd`). The full report is `after-fix/report-2-questions.md`.
+- **All 16 rules hold:** TypeOK, NoDeadlock, NoProgressWhileAway, SilentWhenMuted, NoDoubleResult, RestOnlyAtBreak, BehindRestNothingMoves, NoNewRoundPastLimit, RestAtTheBreak, WonIsRecorded, ResultMatchesPlay, StarsNeverDrop, FirstTapBackIsNotAMove, ParentGate, NoNetwork, NoChildData, NoReadingNeeded.
+- **New rules:** BehindRestNothingMoves (nothing behind the rest screen moves), NoNewRoundPastLimit, RestAtTheBreak, WonIsRecorded, ResultMatchesPlay, StarsNeverDrop, FirstTapBackIsNotAMove.
+- **One more gap, found by the model:** RestAtTheBreak first broke: today's time could run out during the last experiment, and the rest screen then waited for the next one-second check on the end screen. The fix is in `game.tsx` `next()`: `toEnd()` now calls `atBreak()` at once (live check: the rest screen is up on the end screen with the stage inert).
+
+### Each bug, the fix, the test and the live check (Orca, 2026-11-05)
+| Bug | Fix | Node test (`tools/ki-hobe/tests/session.test.ts`) | Live replay |
+|---|---|---|---|
+| 1 NoProgressWhileAway | The scene is paused by CSS whenever `data-run="paused"` (window blur, hidden tab, the player's menu), its clock is a CSS animation, an end that arrives anyway sets `waiting`; `settleWaiting()` shows the answer on return. আবার দেখো replays. | `bug 1, NoProgressWhileAway…`, `bug 1, the pause menu holds…`, `bug 1, the experiment can be watched again…` | Dispatched `blur` 1 s after a guess: 13 animations `paused` at 1,082 ms, still 1,082 ms 3 s later, step still `watch`, sound starts 7 → 7; on `focus` they ran on and the answer showed. The replay button gave 5 new sound starts and the answer again. |
+| 2 SilentWhenMuted | The kit cuts scheduled notes on mute. The game schedules nothing: `lib/sound.ts` has no timers, scene sounds fire from `onAnimationStart`. | `bug 2, SilentWhenMuted…` | Guess, mute after 0.3 s: 5 oscillator/buffer starts before, still 5 after 4.5 s while the experiment ran to its answer. |
+| 3 RestOnlyAtBreak | `restShows()` only off the play screen; the kit's `RestScreen` is a modal; `atBreak()` at round start, at the last guess and at the end screen. | `bug 3, RestOnlyAtBreak…` | Limit passed at the last guess: no rest screen at the guess or during the answer; at the end screen `.kk-rest` was up, Enter and a click on আবার খেলো behind it left the screen on `end`, the stage was inert. |
+| 4 ParentGate | The share link is only inside `ShowParent`, behind `ParentGate`; the kit's gate shuts after one action. | `bug 4, ParentGate…` | The end screen has no share button; the card shows খেলাটার লিংক as a held-down gate button. |
+| 5 NoReadingNeeded | Picture end buttons (128×112), picture answer buttons (112×96), picture world tiles and level chip, picture guesses. | `bug 5, NoReadingNeeded…` | `.ki-big` measured 128×112 each. |
+
+### The chart (`after-fix/chart.mmd`, one experiment a round)
+```mermaid
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: rest
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "Game Title: the pond, the worlds" as s0 {
+    state "Pause Playing" as s1 {
+      s2: Today Time left today
+      s3: Today Today's time used up
+      s4: Today Rest screen up
+    }
+    state "Pause Away, next tap only wakes" as s5 {
+      s6: Today Time left today
+      s7: Today Today's time used up
+      s8: Today Rest screen up
+    }
+  }
+  state "Game Guess what will happen (pictures)" as s9 {
+    state "Pause Playing" as s10 {
+      s11: Today Time left today
+      s12: Today Today's time used up
+    }
+    state "Pause Away, next tap only wakes" as s13 {
+      s14: Today Time left today
+      s15: Today Today's time used up
+    }
+    state "Pause Pause menu" as s16 {
+      s17: Today Time left today
+      s18: Today Today's time used up
+    }
+  }
+  state "Game The experiment plays" as s19 {
+    state "Pause Playing" as s20 {
+      s21: Today Time left today
+      s22: Today Today's time used up
+    }
+    state "Pause Away, next tap only wakes" as s23 {
+      s24: Today Time left today
+      s25: Today Today's time used up
+    }
+    state "Pause Pause menu" as s26 {
+      s27: Today Time left today
+      s28: Today Today's time used up
+    }
+  }
+  state "Game What happened: tick, আব#2494;র দ#2503;খ#2507;, #8594;, ক#2503;ন?" as s29 {
+    state "Pause Playing" as s30 {
+      s31: Today Time left today
+      s32: Today Today's time used up
+    }
+    state "Pause Away, next tap only wakes" as s33 {
+      s34: Today Time left today
+      s35: Today Today's time used up
+    }
+    state "Pause Pause menu" as s36 {
+      s37: Today Time left today
+      s38: Today Today's time used up
+    }
+  }
+  state "Game Round done: আব#2494;র খ#2503;ল#2507; / শ#2503;ষ (pictures)" as s39 {
+    state "Pause Playing" as s40 {
+      s41: Today Time left today
+      s42: Today Today's time used up
+      s43: Today Rest screen up
+    }
+    state "Pause Away, next tap only wakes" as s44 {
+      s45: Today Time left today
+      s46: Today Today's time used up
+      s47: Today Rest screen up
+    }
+  }
+  [*] --> s2
+  s2 --> s11: you tap খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507; (the limit is checked)
+  s2 --> s6: you switch to another app or window
+  s2 --> s3: today's minutes run out
+  s11 --> s12: today's minutes run out
+  s11 --> s21: you tap a guess (on the last one the stars are saved)
+  s11 --> s14: you switch to another app or window
+  s11 --> s17: you open the pause menu
+  s6 --> s2: you come back
+  s6 --> s7: today's minutes run out
+  s3 --> s7: you switch to another app or window
+  s3 --> s4: the one-second check at a break or you tap খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507; (the limit is checked)
+  s12 --> s22: you tap a guess (on the last one the stars are saved)
+  s12 --> s15: you switch to another app or window
+  s12 --> s18: you open the pause menu
+  s7 --> s3: you come back
+  s7 --> s8: the one-second check at a break
+  s4 --> s2: a parent gives ten more minutes
+  s4 --> s8: you switch to another app or window
+  s21 --> s31: the experiment ends and the answer shows or you're back: the answer shows
+  s21 --> s22: today's minutes run out
+  s21 --> s24: you switch to another app or window
+  s21 --> s27: you open the pause menu
+  s14 --> s15: today's minutes run out
+  s14 --> s17: you open the pause menu
+  s17 --> s2: you pick সব ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s17 --> s11: you tap চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s17 --> s18: today's minutes run out
+  s8 --> s6: a parent gives ten more minutes
+  s8 --> s4: you come back
+  s31 --> s21: you tap আব#2494;র দ#2503;খ#2507;
+  s31 --> s32: today's minutes run out
+  s31 --> s41: you tap #8594;
+  s31 --> s34: you switch to another app or window
+  s31 --> s37: you open the pause menu
+  s22 --> s32: the experiment ends and the answer shows or you're back: the answer shows
+  s22 --> s25: you switch to another app or window
+  s22 --> s28: you open the pause menu
+  s14 --> s11: you tap once after coming back: it only wakes the game
+  s15 --> s18: you open the pause menu
+  s24 --> s25: today's minutes run out
+  s24 --> s27: you open the pause menu
+  s18 --> s3: you pick সব ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s18 --> s12: you tap চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s27 --> s21: you tap চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s27 --> s2: you pick সব ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s27 --> s28: today's minutes run out
+  s32 --> s22: you tap আব#2494;র দ#2503;খ#2507;
+  s32 --> s43: you tap #8594;
+  s32 --> s35: you switch to another app or window
+  s32 --> s38: you open the pause menu
+  s41 --> s2: you tap শ#2503;ষ
+  s41 --> s11: you tap খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507; (the limit is checked)
+  s41 --> s45: you switch to another app or window
+  s41 --> s42: today's minutes run out
+  s15 --> s12: you tap once after coming back: it only wakes the game
+  s34 --> s35: today's minutes run out
+  s34 --> s37: you open the pause menu
+  s24 --> s21: you tap once after coming back: it only wakes the game
+  s24 --> s34: the experiment ends and the answer shows or you're back: the answer shows
+  s25 --> s28: you open the pause menu
+  s37 --> s31: you tap চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s37 --> s2: you pick সব ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s37 --> s38: today's minutes run out
+  s28 --> s22: you tap চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s28 --> s3: you pick সব ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s28 --> s4: you pick সব ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s45 --> s41: you come back
+  s45 --> s46: today's minutes run out
+  s42 --> s43: the one-second check at a break or you tap খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507; (the limit is checked)
+  s42 --> s3: you tap শ#2503;ষ
+  s42 --> s46: you switch to another app or window
+  s43 --> s41: a parent gives ten more minutes
+  s43 --> s47: you switch to another app or window
+  s34 --> s31: you tap once after coming back: it only wakes the game
+  s35 --> s38: you open the pause menu
+  s25 --> s22: you tap once after coming back: it only wakes the game
+  s25 --> s35: the experiment ends and the answer shows or you're back: the answer shows
+  s38 --> s32: you tap চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s38 --> s3: you pick সব ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s38 --> s4: you pick সব ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s46 --> s42: you come back
+  s46 --> s47: the one-second check at a break
+  s47 --> s45: a parent gives ten more minutes
+  s47 --> s43: you come back
+  s35 --> s32: you tap once after coming back: it only wakes the game
+  class s2 teal
+  class s3 teal
+  class s4 yellow
+  class s6 teal
+  class s7 teal
+  class s8 yellow
+  class s11 teal
+  class s12 teal
+  class s14 teal
+  class s15 teal
+  class s17 teal
+  class s18 teal
+  class s21 teal
+  class s22 teal
+  class s24 teal
+  class s25 teal
+  class s27 teal
+  class s28 teal
+  class s31 teal
+  class s32 teal
+  class s34 teal
+  class s35 teal
+  class s37 teal
+  class s38 teal
+  class s41 blue
+  class s42 blue
+  class s43 yellow
+  class s45 blue
+  class s46 blue
+  class s47 yellow
+```
+
+Regenerate:
+```sh
+scripts/statechart.sh ai_docs/statecharts/ki-hobe/KiHobe.tla --view ai_docs/statecharts/ki-hobe/view.ts --out ai_docs/statecharts/ki-hobe/full   # 2 experiments, every rule
+scripts/statechart.sh ai_docs/statecharts/ki-hobe/KiHobe.tla --config ai_docs/statecharts/ki-hobe/KiHobeChart.cfg --view ai_docs/statecharts/ki-hobe/view.ts --out ai_docs/statecharts/ki-hobe/chart
+rm -f ai_docs/statecharts/ki-hobe/*/tlc*.out
+```
+
+---
+
+# Before the rewrite (2026-11-04)
+The old spec, config and view are in `before-fix/spec/`. Regenerate with `scripts/statechart.sh ai_docs/statecharts/ki-hobe/before-fix/spec/KiHobe.tla --view ai_docs/statecharts/ki-hobe/before-fix/spec/view.ts --out <new folder>`.
+
+
+Spec `before-fix/spec/KiHobe.tla` / `KiHobe.cfg`, view `view.ts`, output `before-fix/` (`report.md`, `chart.mmd`).
 It mirrors the code as it stood on 2026-11-04 (branch `games-to-the-bar`):
 - `tools/ki-hobe/components/ki-hobe-game.tsx`: `choose`, the `SCENE_MS` reveal timer, `sceneSound`, `goNext`, `restart`, the end and closed screens, the সব ধাপ drawer and the ParentGate.
 - `tools/ki-hobe/lib/game.ts`: `predict`, `next` and `done`.
@@ -78,16 +305,3 @@ Not modelled: levels and stars (shared `recordLevel` keeps the max, and finishin
 - `.shots/ki-hobe-sc-first.png`: Pixel 9, a question with its picture choices.
 - `.shots/ki-hobe-sc-end.png`: desktop, the end screen with four text-only actions.
 
-## Regenerate
-```sh
-scripts/statechart.sh ai_docs/statecharts/ki-hobe/KiHobe.tla --view ai_docs/statecharts/ki-hobe/view.ts --out ai_docs/statecharts/ki-hobe/before-fix
-rm -f ai_docs/statecharts/ki-hobe/before-fix/tlc*.out
-```
-After the fixes:
-- `TheExperimentEnds` needs `~away`, because the scene pauses.
-- `SoundOff` sets `pending' = FALSE`.
-- `YouTabAndEnterBehindRest` is removed.
-- The gate closes on the next child action.
-- The end screen's `Choices` get pictures.
-
-Then re-run into `after-fix/`. All 8 rules must hold.
