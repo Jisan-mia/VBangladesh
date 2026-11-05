@@ -20,12 +20,6 @@
   "tools/current-gelo/lib/gelo.ts": {
     "sim-nondeterminism": 1
   },
-  "tools/daripalla/lib/game.ts": {
-    "sim-nondeterminism": 1
-  },
-  "tools/dosh-ghater-nouka/components/nouka-game.tsx": {
-    "uncleared-timer": 1
-  },
   "tools/ganer-koli/lib/game.ts": {
     "sim-nondeterminism": 1
   },
@@ -36,12 +30,6 @@
     "sim-nondeterminism": 1
   },
   "tools/grade-dao/components/mark-sheet.tsx": {
-    "uncleared-timer": 1
-  },
-  "tools/gune-dekhi/lib/game.ts": {
-    "sim-nondeterminism": 1
-  },
-  "tools/hat-dhui/components/routine.tsx": {
     "uncleared-timer": 1
   },
   "tools/jibh/components/ticket-counter.tsx": {
@@ -67,11 +55,5 @@
   },
   "tools/shesh-bol/components/last-ball.tsx": {
     "uncleared-timer": 2
-  },
-  "tools/shoman-bhag/lib/game.ts": {
-    "sim-nondeterminism": 1
-  },
-  "tools/ulto-khela/lib/game.ts": {
-    "sim-nondeterminism": 1
   }
 }
