@@ -1,427 +1,493 @@
 "use client";
 // IP: what we avoided — no famous runner game's name, look, camera or characters: no three-lane chase from behind, no rails, trains, guards, temples or coins, no "run"/"surf" in the title; ours is a side-on village lane drawn from scratch, a kid in a plain school shirt with a satchel, and our own rule numbers.
+// The game inside the shared player. Rules live in lib/ (step.hot.ts steps them, session.ts decides what input counts);
+// this file feeds input, draws, plays sounds and swaps the screens.
 
 import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from "react";
-import { possessive } from "../../../shared/bangla";
-import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { buzz, cleanName, confetti, hiss, newSeed, sfx, tone, totalStars, useBest, useGameLoop, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
-import { LevelGrid, SoundToggle, StarReveal } from "../../../shared/game-ui";
-import { FormatToggle, ShareBar } from "../../../shared/share-kit";
-import { cardBlob, drawCard } from "../lib/draw-card";
-import { drawScene, makeScene, paintGate, popup, setKid, tickScene, type Scene } from "../lib/draw-scene";
-import { bn, bumpLine, caption, compareLine, headline, humanLine, migrateLevels, nearMiss, parseShareHash, shareHash, type Shared } from "../lib/result";
+import { useGamePlayer } from "../../../shared/game-player-client";
+import { confetti, newSeed, readLevels, silenceScheduled, sfx, totalStars, useGameLoop, useLevels, useSlowMode, useSound } from "../../../shared/game-kit";
+import { finaleStart, girlFor, KID_X, PAGE, PUDDLE, MUD, UNIT } from "../lib/course";
+import { drawFrame } from "../lib/draw.hot";
+import { ARRIVED, createRun, E, END, pieceAt, READY, RUN, tenthsOf, type Run } from "../lib/game";
+import type { Card } from "../lib/card";
+import { isLevel, isMode, LEVEL_COUNT, levelDef, MODE_INFO, nextAhead, openLevel, readAhead, starsOf, type Mode } from "../lib/levels";
 import {
-  createRun, dayOf, dayStars, gateOf, girlFor, pressDuck, pressJump, releaseDuck, releaseJump, stepRun,
-  CRASH, DAY_COUNT, GATE, GOT_PAGE, GOT_TIFFIN, JUMPED, LANDED, MILESTONE, PAGES, PUDDLE, SAVED, SLOW_CAP, TOP, type Run,
-} from "../lib/road";
+  bn, bumpLine, compareLine, friendFits, headline, humanLine, KEYS, LADDER, migrateLadder, nearMiss, parseShared, SLUG, starsOfShared, type Shared,
+} from "../lib/link";
+import { clearFlag, flyPage, makeScene, milestoneWord, puff, resetFx, say, setFlag, setKid, splash, WORD, type Scene, type Sprite } from "../lib/scene";
+import * as S from "../lib/session";
+import { stepRun } from "../lib/step.hot";
+import { EndScreen, type Choice, type EndStats } from "./end-screen";
+import { LevelSheet } from "./level-sheet";
+import { ResultCard } from "./result-card";
+import { sound } from "./sound";
+import { Story } from "./story";
+import { TitleScreen } from "./title-screen";
+import { loadCardFonts } from "../../../shared/card-canvas";
 
-const TOOL = "deri-hoye-gelo";
-/** Slow mode runs the road at this speed (and SLOW_CAP stops it getting faster). */
-const SLOW_TIME = 0.7;
-/** After "চালিয়ে যাও" the road waits this long, so nothing jumps out at a thumb still on the button. */
-const RESUME_GRACE = 0.7;
-/** A finger that moves this far down (CSS pixels) is a swipe: duck. */
-const SWIPE = 22;
-const LEVELS_KEY = `ektukhani-levels-${TOOL}`, BEST_KEY = `ektukhani-best-${TOOL}`;
-type Phase = "ready" | "playing" | "paused" | "over";
-type Result = Shared & { kind: number; record: boolean; day: number; stars: number; pages: number; best: number | null };
+const read = (key: string) => { try { return localStorage.getItem(key); } catch { return null; } };
+const write = (key: string, value: string) => { try { localStorage.setItem(key, value); } catch { /* private mode: fine */ } };
 
-// The road's sounds, all made in code: soft footsteps, a hop, a landing, the ছপাৎ of a puddle, a bump, a page caught, and the school bell at the gate.
-const footstep = (left: boolean) => tone(left ? 150 : 135, 0.05, 0.035, "sine", 0, 80);
-const hop = () => tone(380, 0.09, 0.05, "triangle", 0, 620);
-const land = () => tone(120, 0.06, 0.06, "sine", 0, 70);
-const bump = () => { sfx.thud(); tone(196, 0.16, 0.06, "square", 0.05, 150); };
-const schoolBell = () => { for (let ring = 0; ring < 3; ring++) { tone(880, 0.9, 0.1, "triangle", ring * 0.38); tone(1320, 0.6, 0.045, "sine", ring * 0.38); tone(2210, 0.35, 0.025, "sine", ring * 0.38); } buzz([20, 40, 20]); };
+type Plan = { seed: number; level: number; mode: Mode };
+type Result = { stats: EndStats; shared: Omit<Shared, "name" | "won" | "oldDay">; card: Omit<Card, "name"> };
+type Hud = { pages: number; stumbles: number; bell: number; bossLeft: number; bossOn: boolean; ready: boolean; late: boolean; tiffin: boolean };
+
+const hudOf = (g: Run): Hud => ({
+  pages: g.pages, stumbles: g.stumbles, bell: g.endless ? 0 : Math.max(0, Math.ceil(g.bell - (g.phase >= END ? g.endAt : g.t))), bossLeft: g.bossLeft,
+  bossOn: g.bossMax > 0 && g.meters >= finaleStart(g.def) - 8, ready: g.phase === READY, late: g.late, tiffin: g.tiffin,
+});
+const sameHud = (a: Hud, b: Hud) => a.pages === b.pages && a.stumbles === b.stumbles && a.bell === b.bell && a.bossLeft === b.bossLeft && a.bossOn === b.bossOn && a.ready === b.ready && a.late === b.late && a.tiffin === b.tiffin;
+
+const Bell = () => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" className="dh-bell-icon"><path d="M12 3a6 6 0 0 0-6 6v4l-2 3h16l-2-3V9a6 6 0 0 0-6-6z" /><path d="M10 19a2 2 0 0 0 4 0" /></svg>
+);
+
+/** A new run takes down any confetti still falling from the last card (the kit draws it on a canvas of its own, over the page). */
+function clearConfetti() {
+  document.querySelectorAll<HTMLCanvasElement>('body > canvas[aria-hidden="true"]').forEach(node => { if (node.style.zIndex === "9999") node.remove(); });
+}
+
+/** The piece that made an event at `x` (page flights start from where the page was). */
+function pieceAtX(g: Run, x: number) {
+  for (let index = g.first; index < g.count; index++) if (pieceAt(g, index).x === x) return pieceAt(g, index);
+  return null;
+}
 
 export function LateGame() {
-  const [phase, setPhase] = useState<Phase>("ready");
-  const [slow, setSlow] = useSlowMode();
-  // Before the level store is read: an old phone's best on the endless road opens the days it passed (once).
-  useEffect(() => {
-    try {
-      const moved = migrateLevels(localStorage.getItem(LEVELS_KEY), localStorage.getItem(BEST_KEY));
-      if (moved) localStorage.setItem(LEVELS_KEY, moved);
-    } catch { /* storage blocked: nothing to move */ }
-  }, []);
-  const levels = useLevels(TOOL, DAY_COUNT);
-  const [best, submitBest] = useBest(TOOL);
-  // The day being played or about to be (1..DAY_COUNT), or 0 for the endless road.
-  const [day, setDay] = useState(1);
-  const chosen = useRef(false);
-  const heard = useRef({ events: 0, step: 0 });
-  const [friend, setFriend] = useState<Shared | null>(null);
-  const [result, setResult] = useState<Result | null>(null);
-  const [name, setName] = useState("");
-  const [format, setFormat] = useState<CardFormat>("feed");
-  const [site, setSite] = useState("");
-  const [cardError, setCardError] = useState(false);
-  const canvas = useRef<HTMLCanvasElement>(null);
-  const stage = useRef<HTMLDivElement>(null);
-  const again = useRef<HTMLButtonElement>(null);
-  const preview = useRef<HTMLCanvasElement>(null);
-  const friendPreview = useRef<HTMLCanvasElement>(null);
+  const lane = useRef<HTMLDivElement>(null), canvas = useRef<HTMLCanvasElement>(null), wrap = useRef<HTMLDivElement>(null);
+  const gateText = useRef<HTMLElement>(null), bar = useRef<HTMLSpanElement>(null);
   const scene = useRef<Scene | null>(null);
-  const run = useRef<Run | null>(null);
+  const run = useRef<Run>(createRun(1, 1));
+  const session = useRef<S.Session>(S.createSession());
   const fonts = useRef(false);
-  const grace = useRef(0);
-  const overAt = useRef(0);
-  const finished = useRef(false);
-  const pointer = useRef({ id: -1, x: 0, y: 0, ducked: false });
+  const view = useRef({ edge: "", flash: 0, clock: 0, stride: 0, mile: null as Sprite | null, mileAt: -9, hud: null as Hud | null });
+  const bestAtStart = useRef<number | null>(null);
 
-  const card: Shared | null = result ? { seed: result.seed, meters: result.meters, name: cleanName(name), ...(result.day ? { day: result.day } : {}) } : null;
-  const state = card ? shareHash(card) : "";
-  const friendFits = (forDay: number) => Boolean(friend) && (friend!.day ?? 0) === forDay;
+  const [screen, setScreen] = useState<S.Screen>("title");
+  const [plan, setPlan] = useState<Plan>({ seed: 1, level: 1, mode: "n" });
+  const [hud, setHud] = useState<Hud>(() => hudOf(run.current));
+  const [result, setResult] = useState<Result | null>(null);
+  const [friend, setFriend] = useState<Shared | null>(null);
+  const [sheet, setSheet] = useState(false);
+  /** Preview images only (`&og=1`): the friend's own run as a finished card, nothing saved on this phone. */
+  const [preview, setPreview] = useState(false);
+  const [ahead, setAhead] = useState<number[]>([]);
+  const [best, setBest] = useState<number | null>(null);
+  const [site, setSite] = useState("");
+  const [mode, setModeState] = useState<Mode>("n");
+  const [slow] = useSlowMode();
+  const [soundSwitch] = useSound();
+  const levels = useLevels(LADDER, LEVEL_COUNT);
+  const open = openLevel(levels.stars, ahead);
+  const live = useRef({ slow, screen, plan, friend, levels, ahead, best });
+  live.current = { slow, screen, plan, friend, levels, ahead, best };
+  const def = levelDef(plan.level), world = def.world, girl = girlFor(plan.seed);
 
-  function start(forDay = day) {
-    const seed = friendFits(forDay) ? friend!.seed : newSeed();
-    run.current = createRun(seed, slow ? SLOW_CAP : TOP, forDay);
-    heard.current = { events: 0, step: 0 };
-    setDay(forDay);
-    if (scene.current) setKid(scene.current, girlFor(seed));
-    grace.current = 0;
-    finished.current = false;
-    pointer.current.id = -1;
-    setResult(null);
-    setPhase("playing");
+  const player = useGamePlayer({
+    onPause: () => S.pause(session.current, run.current),
+    onResume: () => S.resume(session.current, run.current),
+    onRestart: () => { S.resume(session.current, run.current); if (live.current.screen === "play" || live.current.screen === "over") begin(live.current.plan); },
+    onLevels: () => setSheet(true),
+  });
+
+  function show(next: S.Screen) {
+    S.goTo(session.current, next, performance.now(), run.current);
+    setScreen(next);
   }
 
-  function letGo() {
-    const current = run.current;
-    if (current) { releaseJump(current); releaseDuck(current); }
-    pointer.current.id = -1;
+  /** A fresh run on the play screen, waiting for the first press. Cuts the last card's chimes. */
+  function begin(next: Plan) {
+    silenceScheduled();
+    clearConfetti();
+    const fresh = createRun(next.seed, next.level, next.mode);
+    run.current = fresh;
+    if (scene.current) { resetFx(scene.current); setKid(scene.current, girlFor(next.seed)); }
+    Object.assign(view.current, { edge: "", flash: 0, stride: 0, mile: null, mileAt: -9, hud: hudOf(fresh) });
+    lane.current?.setAttribute("data-edge", "");
+    setPlan(next); setHud(hudOf(fresh)); setResult(null); setSheet(false);
+    show("play");
+    sound.motif(levelDef(next.level).world);
+    applyFlag(next);
+    wrap.current?.closest(".gp-stage")?.scrollTo({ top: 0 });
   }
 
-  function pause() { letGo(); setPhase(current => current === "playing" ? "paused" : current); }
-  function resume() {
-    grace.current = RESUME_GRACE;
-    if (scene.current && run.current) popup(scene.current, run.current.t, "চলো!", "#ffffff");
-    setPhase("playing");
+  /** The friend's flag stands where they stopped, on their own road only. */
+  function applyFlag(next: Plan = live.current.plan) {
+    const sc = scene.current, link = live.current.friend;
+    if (!sc) return;
+    if (link && !link.oldDay && friendFits(link, next.seed, next.level, next.mode) && (!link.won || !link.level)) setFlag(sc, link.meters, link.name);
+    else clearFlag(sc);
   }
 
-  function finish(played: Run) {
-    if (finished.current) return;
-    finished.current = true;
-    letGo();
-    const stars = dayStars(played);
-    if (stars) levels.record(played.day, stars);
-    const before = best, record = !played.day && submitBest(played.meters) && played.meters > 0;
-    overAt.current = performance.now();
-    setResult({ seed: played.seed, meters: played.meters, name: "", kind: played.hitKind, record, day: played.day, stars, pages: played.pages, best: before });
-    setPhase("over");
-    // Confetti only for three stars, the last day, or a new best on the endless road; a plain day gets the stars' own notes and the bell.
-    const party = stars === 3 || (stars > 0 && played.day === DAY_COUNT) || record;
-    window.setTimeout(() => { if (party) { if (record) sfx.win(); else sfx.levelUp(); confetti(); } else if (stars) sfx.good(); }, stars ? 1500 : 500);
-  }
-
-  /** Sounds for what just happened on the road (events are rare), plus a soft footstep every stride on the ground. */
-  function listen(played: Run) {
-    const ear = heard.current;
-    for (; ear.events < played.eventCount; ear.events++) {
-      const event = played.events[ear.events % played.events.length];
-      if (event.type === JUMPED) hop();
-      else if (event.type === LANDED) land();
-      else if (event.type === GOT_TIFFIN) sfx.coin();
-      else if (event.type === GOT_PAGE) { sfx.pick(); sfx.combo(played.pages + 1); }
-      else if (event.type === SAVED) { sfx.pop(); hiss(0.2, 0.12, 900); }
-      else if (event.type === MILESTONE) sfx.tick();
-      else if (event.type === GATE) schoolBell();
-      else if (event.type === CRASH) { if (played.hitKind === PUDDLE) { sfx.splash(); buzz(40); } else bump(); }
-    }
-    const stride = Math.floor(played.d / 36);
-    if (stride !== ear.step) { ear.step = stride; if (played.air < 0 && !played.ducking && !played.over) footstep(stride % 2 === 0); }
-  }
-
-  const step = (dt: number) => {
-    const played = run.current;
-    if (phase === "playing" && played && !played.over) {
-      if (grace.current > 0) grace.current -= dt;
-      else {
-        played.cap = slow ? SLOW_CAP : TOP;
-        const hadTiffin = played.tiffin;
-        stepRun(played, slow ? dt * SLOW_TIME : dt);
-        if (played.tiffin !== hadTiffin) buzz(10);
-        listen(played);
-        if (played.over) finish(played);
-      }
-    }
-    if (scene.current) tickScene(scene.current, slow ? dt * SLOW_TIME : dt, phase === "ready");
-  };
-  const draw = () => { if (scene.current) drawScene(scene.current, phase === "ready" ? null : run.current, slow, friend && friendFits(day) ? friend : null, gateOf(day)); };
-  const drawRef = useRef(draw);
-  drawRef.current = draw;
-  const pauseRef = useRef(pause);
-  pauseRef.current = pause;
-  // On the ready screen the kid already runs in place (not in slow mode); the loop stops when paused or over.
-  useGameLoop(step, draw, phase === "playing" || (phase === "ready" && !slow));
-
+  // ---- first load: a friend's link, saved progress, the remembered mode ----
   useEffect(() => {
-    const element = canvas.current;
-    if (!element) return;
-    const build = () => {
-      if (element.clientWidth <= 0) return;
-      const girl = run.current ? girlFor(run.current.seed) : scene.current?.girl ?? false;
-      scene.current = makeScene(element, element.clientWidth, girl, scene.current);
-      if (fonts.current) paintGate(scene.current);
-      drawRef.current();
-    };
-    build();
-    loadCardFonts("দেরি হয়ে গেল স্কুল গেট ০১২৩৪৫৬৭৮৯").then(() => {
-      fonts.current = true;
-      if (scene.current) paintGate(scene.current);
-      drawRef.current();
-    }).catch(() => { /* the system font draws the numbers instead */ });
-    const observer = new ResizeObserver(build);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    // In-page anchors also change the hash, so only a real challenge counts.
-    const readFriend = () => {
-      const shared = parseShareHash(window.location.hash);
-      if (!shared) return;
-      setFriend(shared);
-      chosen.current = true;
-      setDay(shared.day ?? 0);
-      if (scene.current) { setKid(scene.current, girlFor(shared.seed)); drawRef.current(); }
-      setPhase(current => current === "playing" ? current : "ready");
-    };
-    readFriend();
+    const link = parseShared(window.location.hash);
+    setFriend(link);
+    live.current.friend = link;
     setSite(window.location.host);
-    const hide = () => { if (document.hidden) pauseRef.current(); };
-    window.addEventListener("hashchange", readFriend);
-    document.addEventListener("visibilitychange", hide);
-    return () => { window.removeEventListener("hashchange", readFriend); document.removeEventListener("visibilitychange", hide); };
+    if (link && new URLSearchParams(window.location.hash.slice(1)).get("og") === "1") setPreview(true);
+    // Before the ladder is read: an old phone's six days (or its endless best) open the first levels, once.
+    const moved = migrateLadder(read(KEYS.ladder), read(KEYS.days), read(KEYS.best));
+    if (moved) { write(KEYS.ladder, moved); for (const [level, earned] of Object.entries(JSON.parse(moved) as Record<string, number>)) levels.record(Number(level), earned); }
+    const saved = readLevels(read(KEYS.ladder), LEVEL_COUNT), savedAhead = readAhead(read(KEYS.ahead));
+    setAhead(savedAhead);
+    const savedBest = Number(read(KEYS.best));
+    setBest(read(KEYS.best) !== null && Number.isFinite(savedBest) ? savedBest : null);
+    const savedMode = read(KEYS.mode) ?? "n", chosen = isMode(savedMode) ? savedMode : "n";
+    const playMode = link && !link.oldDay && link.level > 0 ? link.mode : chosen;
+    setModeState(playMode);
+    const first: Plan = link ? { seed: link.seed, level: link.level, mode: playMode } : { seed: newSeed(), level: openLevel(saved, savedAhead), mode: chosen };
+    setPlan(first);
+    run.current = createRun(first.seed, first.level, first.mode);
+    setHud(hudOf(run.current));
+    return () => { silenceScheduled(); };
   }, []);
 
+  // A friend's link opened on a page that is already here (only the hash changes): never under a run, so the run ends
+  // and the title shows their road.
   useEffect(() => {
-    const typing = (target: EventTarget | null) => target instanceof HTMLElement && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName));
-    const isJump = (key: string) => key === " " || key === "ArrowUp" || key === "w" || key === "W";
-    const isDuck = (key: string) => key === "ArrowDown" || key === "s" || key === "S";
-    const down = (event: KeyboardEvent) => {
-      if (typing(event.target) || event.altKey || event.ctrlKey || event.metaKey) return;
-      const here = document.activeElement === document.body || Boolean(stage.current?.contains(document.activeElement));
-      const current = run.current;
-      if (phase === "playing" && current) {
-        if (isJump(event.key) || isDuck(event.key)) {
-          event.preventDefault();
-          if (!event.repeat) { if (isJump(event.key)) pressJump(current); else pressDuck(current); }
-        } else if (event.key === "p" || event.key === "P" || event.key === "Escape") { event.preventDefault(); pause(); }
-        return;
+    const onHash = () => {
+      const link = parseShared(window.location.hash);
+      if (!link) return;
+      silenceScheduled();
+      setFriend(link);
+      live.current.friend = link;
+      const played = link.oldDay || link.level === 0 ? live.current.plan.mode : link.mode;
+      if (!link.oldDay && link.level > 0) setModeState(link.mode);
+      const next: Plan = { seed: link.seed, level: link.level, mode: played };
+      run.current = createRun(next.seed, next.level, next.mode);
+      setPlan(next); setHud(hudOf(run.current)); setResult(null); setSheet(false);
+      show("title");
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
+  // Dev builds only: lets an in-page autopilot (play-test-orca) read the game; nothing ships.
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    Object.assign(window, { __dh: { run: () => run.current, session: () => session.current, scene: () => scene.current, plan: () => live.current.plan } });
+  }, []);
+
+  useEffect(() => { if (!soundSwitch) silenceScheduled(); }, [soundSwitch]);
+
+  // ---- away and back: the real blur or a hidden tab lets go of every key and finger ----
+  useEffect(() => {
+    const onBlur = () => S.blur(session.current, run.current);
+    const onFocus = () => S.focus(session.current);
+    const onVisibility = () => { if (document.hidden) S.hide(session.current, run.current); else S.show(session.current); };
+    window.addEventListener("blur", onBlur);
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => { window.removeEventListener("blur", onBlur); window.removeEventListener("focus", onFocus); document.removeEventListener("visibilitychange", onVisibility); };
+  }, []);
+
+  // ---- the lane scrolled off a desktop page: hands off and nothing moves until it's back (ticking needs inView) ----
+  const playing = screen === "play" || screen === "over";
+  useEffect(() => {
+    const box = lane.current;
+    if (!box) return;
+    const observer = new IntersectionObserver(([entry]) => S.setInView(session.current, entry.isIntersecting, run.current), { threshold: 0.2 });
+    observer.observe(box);
+    return () => { observer.disconnect(); S.setInView(session.current, true); };
+  }, [playing]);
+
+  // ---- the level list is a choice screen: nothing moves behind it ----
+  useEffect(() => { if (sheet) S.openSheet(session.current, run.current); else S.closeSheet(session.current, run.current); }, [sheet]);
+
+  // ---- one step: input, rules, sound, juice ----
+  function step(dt: number) {
+    const s = session.current, g = run.current;
+    if (!S.ticking(s) || S.breathing(s, dt)) return;
+    S.takeInput(s, g);
+    stepRun(g, dt, live.current.slow);
+    for (let i = 0; i < g.evCount; i++) onEvent(g, g.ev[i], g.evX[i]);
+    g.evCount = 0;
+    // Soft footsteps each stride on the ground.
+    const stride = Math.floor(g.d / 36);
+    if (stride !== view.current.stride) { view.current.stride = stride; if (g.phase === RUN && g.air < 0 && !g.ducking && g.speed > 0) sound.step(stride % 2 === 0); }
+    const now = hudOf(g);
+    if (!view.current.hud || !sameHud(view.current.hud, now)) { view.current.hud = now; setHud(now); }
+  }
+
+  function onEvent(g: Run, kind: number, x: number) {
+    const sc = scene.current, slowNow = live.current.slow, t = g.t, ground = sc?.groundY ?? 0, kid = g.d + KID_X;
+    if (kind === E.JUMP) { sound.hop(); if (sc) { sc.takeoffAt = t; if (!slowNow) puff(sc, kid, ground, t, 3); } }
+    else if (kind === E.LAND) { sound.land(); if (sc) { sc.landAt = t; if (!slowNow) puff(sc, kid, ground, t, 3.5); } }
+    else if (kind === E.STUMBLE) {
+      const wet = g.hitKind === PUDDLE || g.hitKind === MUD;
+      if (wet) sound.splash(); else sound.bump();
+      if (sc) {
+        if (wet && !slowNow) splash(sc, kid, ground - 2, t);
+        say(sc, wet ? WORD.SPLASH : WORD.OOF, t);
+        if (!slowNow) sc.shakeAt = t;
       }
-      if (!here || !(isJump(event.key) || event.key === "Enter")) return;
-      if (phase === "ready") { event.preventDefault(); start(); }
-      else if (phase === "paused") { event.preventDefault(); resume(); }
-      else if (phase === "over" && performance.now() - overAt.current > 600 && document.activeElement === document.body) { event.preventDefault(); primary(); }
+      view.current.flash = 0.5;
+    } else if (kind === E.PAGE) {
+      sound.page(g.pages - 1);
+      const piece = pieceAtX(g, x);
+      if (sc) flyPage(sc, x + 9, ground - (piece && piece.kind === PAGE ? piece.y : 8) - 8, t);
+    } else if (kind === E.TIFFIN) { sound.tiffin(); if (sc) say(sc, WORD.TIFFIN, t); }
+    else if (kind === E.SAVED) { sound.saved(); if (sc) say(sc, WORD.SAVED, t); view.current.flash = 0.35; }
+    else if (kind === E.MILESTONE) { sound.milestone(); if (sc) { view.current.mile = milestoneWord(sc, g.meters - (g.meters % 100), `${bn(g.meters - (g.meters % 100))} মিটার!`); view.current.mileAt = t; } }
+    else if (kind === E.GATE_M) { sound.bell(false); if (sc) say(sc, WORD.GATE, t); }
+    else if (kind === E.BOSS) sound.notch();
+    else if (kind === E.TICK) sound.tick();
+    else if (kind === E.WARN) sound.whoosh();
+    else if (kind === E.ARRIVE) { keepStars(g); sound.bell(false); if (sc) say(sc, WORD.MADE_IT, t); }
+    else if (kind === E.LATE) { sound.bell(true); if (sc) say(sc, WORD.LATE, t); view.current.flash = 0.6; }
+    else if (kind === E.CRASH) {
+      const wet = g.hitKind === PUDDLE || g.hitKind === MUD;
+      if (wet) sound.splash(); else sound.bump();
+      if (sc) { if (wet && !slowNow) splash(sc, kid, ground - 2, t); say(sc, wet ? WORD.SPLASH : WORD.OOF, t); if (!slowNow) sc.shakeAt = t; }
+      view.current.flash = 0.6;
+      keepBest(g.meters);
+    } else if (kind === E.OVER) finish();
+  }
+
+  /** The level is cleared: stars are recorded now, so a quick tap on the end moment can't lose them. */
+  function keepStars(g: Run) {
+    if (g.endless) return;
+    const { level } = live.current.plan, earned = starsOf(true, g.stumbles, g.pages, level);
+    const list = nextAhead(live.current.levels.stars, live.current.ahead, level);
+    write(KEYS.ahead, JSON.stringify(list)); setAhead(list);
+    live.current.levels.record(level, earned);
+  }
+  /** The endless best is kept the moment the run ends, not when the end screen shows. */
+  function keepBest(meters: number) {
+    const before = live.current.best;
+    bestAtStart.current = before;
+    if (meters > 0 && (before === null || meters > before)) { write(KEYS.best, String(meters)); setBest(meters); live.current.best = meters; }
+  }
+
+  function finish() {
+    const g = run.current, { level, mode: played, seed } = live.current.plan, d = levelDef(level), link = live.current.friend;
+    const won = g.endKind === ARRIVED, earned = starsOf(won, g.stumbles, g.pages, level), tenths = tenthsOf(g.endAt);
+    const previous = g.endless ? bestAtStart.current : null;
+    const bestLine = !g.endless ? "" : previous === null ? `এই ফোনে প্রথম রেকর্ড: ${bn(g.meters)} মিটার।` : g.meters > previous ? `নতুন রেকর্ড! আগের সেরা ছিল ${bn(previous)} মিটার।` : `এই ফোনে সেরা ${bn(previous)} মিটার।`;
+    const rival = link && friendFits(link, seed, level, played) ? link : null;
+    const versus = rival ? compareLine({ won, stumbles: g.stumbles, pages: g.pages, tenths, meters: g.meters }, rival) : "";
+    const slowUsed = live.current.slow;
+    setResult({
+      stats: {
+        level, name: d.name, title: d.title, finale: d.finale?.name ?? "", won, meters: g.meters, gate: g.gateM, stars: earned,
+        jobs: [won, won && g.stumbles === 0, g.pages >= 3], pages: g.pages, stumbles: g.stumbles, tenths, spare: won ? Math.max(0, Math.round((g.bell - g.endAt) * 10)) : 0,
+        jumps: g.jumps, ducks: g.ducks, cleared: g.cleared, bestStreak: g.bestStreak,
+        headline: headline(level, won, g.meters), trip: g.hitKind >= 0 ? bumpLine(g.hitKind) : "ঘণ্টা পড়ে গেল!",
+        line: versus || humanLine({ level, won, stumbles: g.stumbles, pages: g.pages, meters: g.meters }),
+        near: nearMiss({ level, won, stumbles: g.stumbles, pages: g.pages, meters: g.meters, best: previous, mode: played }), best: bestLine,
+      },
+      shared: { seed, meters: g.meters, level, mode: played, slow: slowUsed, stumbles: g.stumbles, pages: g.pages, tenths },
+      card: { seed, meters: g.meters, level, mode: played, stars: earned, won, stumbles: g.stumbles, pages: g.pages, tenths, slow: slowUsed },
+    });
+    show("over");
+    // The stars and the fanfare are scheduled tones, so the player's pause (silenceScheduled) cuts them.
+    const record = g.endless && g.meters > 0 && (previous === null || g.meters > previous);
+    if (won) { sound.stars(earned, earned === 3); if (earned === 3) confetti(); }
+    else if (record) { sound.stars(0, true); confetti(); }
+    else sound.lose();
+  }
+
+  function draw() {
+    const target = canvas.current, sc = scene.current;
+    if (!target || !sc) return;
+    const g = run.current, v = view.current, now = performance.now() / 1000, dt = Math.min(0.1, Math.max(0, now - (v.clock || now)));
+    v.clock = now;
+    if (S.ticking(session.current)) sc.clock += dt;
+    drawFrame(sc, g, live.current.slow, v.mile, v.mileAt);
+    if (v.flash > 0) v.flash -= dt;
+    const edge = v.flash > 0 ? "hit" : g.phase === RUN && g.late ? "late" : "";
+    if (edge !== v.edge) { v.edge = edge; lane.current?.setAttribute("data-edge", edge); }
+    const wide = g.endless ? 1 : g.gateM;
+    if (bar.current) bar.current.style.transform = `scaleX(${Math.min(1, g.d / UNIT / wide)})`;
+    if (gateText.current) gateText.current.textContent = bn(g.endless ? g.meters : Math.max(0, g.gateM - g.meters));
+  }
+
+  useGameLoop(step, draw, screen === "play" && !player.paused && !sheet);
+
+  // ---- size the lane to its box and pre-render this world's sprites ----
+  useEffect(() => {
+    const box = lane.current, target = canvas.current;
+    if (!box || !target) return;
+    const size = () => {
+      const width = Math.floor(box.clientWidth), height = Math.floor(box.clientHeight);
+      if (width < 60 || height < 60) return;
+      target.style.width = `${width}px`; target.style.height = `${height}px`;
+      scene.current = makeScene(target, width, height, Math.min(2, window.devicePixelRatio || 1), world, girl, fonts.current, scene.current);
+      const sc = scene.current;
+      // The pads sit in the verge below the road; on a short stage they ride over the road's foot.
+      const room = (sc.viewH - sc.groundY - 44) * (width / 360);
+      box.style.setProperty("--pad-h", `${Math.round(Math.max(60, Math.min(124, room - 14)))}px`);
+      applyFlag();
+      draw();
+    };
+    const observer = new ResizeObserver(size);
+    observer.observe(box);
+    // The shop signs are Bangla text baked into a sprite; paint them again once the font is in.
+    void loadCardFonts("চা মুদি দর্জি স্কুল ঠিক সময়ে ঢং ঢং গেট পার ছপাৎ উফ চলো টিফিন বাঁচলে").then(() => { fonts.current = true; size(); }).catch(() => { /* the system font draws the signs */ });
+    return () => observer.disconnect();
+  }, [playing, world]);
+
+  // ---- keys: the game's keys at window, so Enter never presses a stale focused button ----
+  useEffect(() => {
+    const down = (event: KeyboardEvent) => {
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      const target = event.target as HTMLElement | null;
+      if (target?.closest?.("input, textarea, select, [contenteditable]")) return;
+      const s = session.current, key = event.key;
+      if (s.paused || sheet) return;
+      if (screen === "play") {
+        if (key === "p" || key === "P") { event.preventDefault(); player.requestPause(); return; }
+        const pressedKey = S.keyOf(key);
+        if (pressedKey) { event.preventDefault(); if (!event.repeat) S.keyDown(s, pressedKey); }
+      } else if (screen === "title" && (key === "Enter" || key === " ") && !event.repeat) {
+        const onButton = target?.closest?.("button");
+        if (onButton && !onButton.classList.contains("dh-title-start")) return;
+        event.preventDefault(); start();
+      } else if (screen === "over" && S.freshResultKey(s, event)) {
+        const pick = key === "Enter" || key === " " || key === "1" ? 0 : key === "2" || key === "r" || key === "R" ? 1 : key === "3" ? 2 : -1;
+        if (pick >= 0 && choices[pick]) { event.preventDefault(); choices[pick].run(); }
+      }
     };
     const up = (event: KeyboardEvent) => {
-      const current = run.current;
-      if (!current) return;
+      const pressedKey = S.keyOf(event.key);
+      if (!pressedKey) return;
       // Space on a focused button would also "click" it on keyup: during play the key belongs to the game.
-      if (phase === "playing" && (isJump(event.key) || isDuck(event.key)) && !typing(event.target)) event.preventDefault();
-      if (isJump(event.key)) releaseJump(current);
-      else if (isDuck(event.key)) releaseDuck(current);
+      if (screen === "play") event.preventDefault();
+      S.keyUp(session.current, pressedKey);
     };
     window.addEventListener("keydown", down);
     window.addEventListener("keyup", up);
     return () => { window.removeEventListener("keydown", down); window.removeEventListener("keyup", up); };
   });
 
-  // Saved stars load after the first paint: open the furthest day reached, unless the player or a friend's link chose one.
-  useEffect(() => {
-    if (!levels.loaded || chosen.current) return;
-    chosen.current = true;
-    setDay(current => phase === "ready" ? levels.unlocked : current);
-  }, [levels.loaded]);
-
-  // "আরেকবার" takes focus a moment after a bump, so a jump pressed at the instant of the bump doesn't restart at once.
-  useEffect(() => {
-    if (phase !== "over") return;
-    const timer = window.setTimeout(() => again.current?.focus({ preventScroll: true }), 600);
-    return () => window.clearTimeout(timer);
-  }, [phase]);
-
-  useEffect(() => {
-    let cancelled = false;
-    loadCardFonts("দেরি হয়ে গেল মিটার ০১২৩৪৫৬৭৮৯").then(() => {
-      if (cancelled) return;
-      if (card && preview.current) drawCard(preview.current, card, format, site, result?.stars ?? 0);
-      if (friend && friendPreview.current) drawCard(friendPreview.current, friend, "feed", site);
-      setCardError(false);
-    }).catch(() => { if (!cancelled) setCardError(true); });
-    return () => { cancelled = true; };
-    // `state` encodes everything the card draws.
-  }, [state, format, site, friend, result?.stars]);
-
-  function onStageDown(event: ReactPointerEvent<HTMLDivElement>) {
-    const control = pointer.current;
-    if (event.button > 0 || control.id !== -1 || phase === "over" || phase === "paused") return;
-    if (phase === "ready") start();
-    else if (run.current) pressJump(run.current);
-    Object.assign(control, { id: event.pointerId, x: event.clientX, y: event.clientY, ducked: false });
-    try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* the pointer is already gone */ }
+  // ---- the road: a thumb here jumps (hold for higher), swiped down it ducks; the two pads do the same ----
+  function laneDown(event: ReactPointerEvent<HTMLDivElement>) {
+    if (event.button > 0 || (event.target as Element).closest("button, a")) return;
+    if (!S.laneDown(session.current, event.pointerId, event.clientX, event.clientY)) return;
+    event.preventDefault();
+    try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* already gone */ }
   }
-
-  function onStageMove(event: ReactPointerEvent<HTMLDivElement>) {
-    const control = pointer.current, current = run.current;
-    if (event.pointerId !== control.id || control.ducked || !current) return;
-    const dy = event.clientY - control.y, dx = event.clientX - control.x;
-    if (dy > SWIPE && dy > Math.abs(dx)) { control.ducked = true; pressDuck(current); }
-  }
-
-  function onStageUp(event: ReactPointerEvent<HTMLDivElement>) {
-    const control = pointer.current, current = run.current;
-    if (event.pointerId !== control.id) return;
-    if (current) { if (control.ducked) releaseDuck(current); else releaseJump(current); }
-    control.id = -1;
-  }
-
-  // The two big buttons: press and hold work by touch; a keyboard "click" (detail 0) is a quick tap.
-  function buttonDown(event: ReactPointerEvent<HTMLButtonElement>, duck: boolean) {
+  const laneMove = (event: ReactPointerEvent<HTMLDivElement>) => { S.laneMove(session.current, event.pointerId, event.clientX, event.clientY); };
+  const laneUp = (event: ReactPointerEvent<HTMLDivElement>) => S.laneUp(session.current, event.pointerId);
+  function padDown(event: ReactPointerEvent<HTMLButtonElement>, duck: boolean) {
     if (event.button > 0) return;
-    if (phase === "ready") { start(); return; }
-    const current = run.current;
-    if (phase !== "playing" || !current) return;
-    if (duck) pressDuck(current); else pressJump(current);
+    if (!S.padDown(session.current, duck, event.pointerId)) return;
+    event.preventDefault();
     try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* fine */ }
   }
-  function buttonUp(duck: boolean) {
-    const current = run.current;
-    if (current) { if (duck) releaseDuck(current); else releaseJump(current); }
-  }
-  function buttonClick(event: ReactMouseEvent<HTMLButtonElement>, duck: boolean) {
+  const padUp = (event: ReactPointerEvent<HTMLButtonElement>, duck: boolean) => S.padUp(session.current, duck, event.pointerId);
+  /** A keyboard "click" (detail 0) on a pad is a quick tap. */
+  function padClick(event: ReactMouseEvent<HTMLButtonElement>, duck: boolean) {
     if (event.detail !== 0) return;
-    if (phase === "ready") { start(); return; }
-    const current = run.current;
-    if (phase !== "playing" || !current) return;
-    if (duck) { pressDuck(current); releaseDuck(current); } else { pressJump(current); releaseJump(current); }
+    if (S.padDown(session.current, duck, -2)) S.padUp(session.current, duck, -2);
   }
 
-  function restart() { if (performance.now() - overAt.current > 450) start(); }
-  const nextDay = result && result.stars && result.day < DAY_COUNT ? result.day + 1 : 0;
-  /** After a day: the next one when this one is done, else the same day again. */
-  function primary() { if (performance.now() - overAt.current > 450) start(nextDay || day); }
-  /** A day from the grid, or the endless road: back to the ready screen. */
-  function choose(to: number) {
-    chosen.current = true;
-    setDay(to); setResult(null); setPhase("ready");
-    stage.current?.scrollIntoView({ behavior: slow ? "auto" : "smooth", block: "center" });
+  // ---- choices ----
+  function setMode(next: Mode) { setModeState(next); write(KEYS.mode, next); setPlan(current => ({ ...current, mode: next })); sfx.tap(); }
+  const lockedMode = friend !== null && !friend.oldDay && friend.level > 0 && friend.level === plan.level && friend.seed === plan.seed;
+  function start() {
+    sfx.tap();
+    const fits = friendFits(friend, plan.seed, plan.level, lockedMode ? plan.mode : mode);
+    if (!read(KEYS.intro) && !friend) { show("intro"); return; }
+    begin(fits || lockedMode ? plan : { ...plan, mode });
   }
-  const gate = gateOf(day), miss = result ? nearMiss({ day: result.day, meters: result.meters, stars: result.stars, pages: result.pages, best: result.best }) : "";
+  function storyDone() { write(KEYS.intro, "1"); begin({ ...plan, mode }); }
+  function pickLevel(level: number) {
+    if (level !== 0 && (!isLevel(level) || level > open)) return;
+    const rival = friend && friend.level === level && (friend.oldDay || friend.level === 0 || friend.mode === mode) ? friend : null;
+    begin({ seed: rival ? rival.seed : newSeed(), level, mode: rival && !rival.oldDay && rival.level > 0 ? rival.mode : mode });
+  }
+  function ownGame() {
+    setFriend(null);
+    live.current.friend = null;
+    history.replaceState(history.state, "", location.pathname + location.search);
+    const saved = readLevels(read(KEYS.ladder), LEVEL_COUNT), level = openLevel(saved, ahead);
+    const next: Plan = { seed: newSeed(), level, mode };
+    run.current = createRun(next.seed, next.level, next.mode);
+    setPlan(next); setHud(hudOf(run.current));
+  }
+  const again = () => begin({ ...plan, seed: friendFits(friend, plan.seed, plan.level, plan.mode) ? plan.seed : newSeed() });
+  const nextLevel = plan.level > 0 && plan.level < LEVEL_COUNT && plan.level + 1 <= open ? plan.level + 1 : 0;
+  const won = Boolean(result?.stats.won);
+  const choices: Choice[] = won && nextLevel
+    ? [{ label: "পরের লেভেল", run: () => begin({ seed: newSeed(), level: nextLevel, mode }) }, { label: "আবার খেলো", run: again }, { label: "সব লেভেল", run: () => setSheet(true) }]
+    : [{ label: "আবার খেলো", run: again },
+      ...(mode !== "e" && !won && plan.level > 0 ? [{ label: "সহজে খেলো", run: () => { setMode("e"); begin({ ...plan, seed: newSeed(), mode: "e" }); } }]
+        : won && plan.level === LEVEL_COUNT ? [{ label: "যত দূর পারো", run: () => begin({ seed: newSeed(), level: 0, mode }) }] : []),
+      { label: "সব লেভেল", run: () => setSheet(true) }];
+  const toCard = () => {
+    const card = document.getElementById("result"), stage = card?.closest(".gp-stage");
+    if (card && stage) stage.scrollTo({ top: card.offsetTop - 8, behavior: slow ? "auto" : "smooth" });
+  };
 
-  const goToCard = () => document.getElementById("result")?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
-  const keepTap = (event: ReactPointerEvent) => event.stopPropagation();
-  const friendName = friend?.name || "";
+  const total = totalStars(levels.stars);
+  const endless = plan.level === 0, finale = def.finale;
+  const shownMode = lockedMode ? plan.mode : mode;
 
   return (
-    <div className="dh">
-      {friend && (
-        <section className="dh-friend" aria-labelledby="dh-friend-title">
-          <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`${friendName || "বন্ধুর"} ছবি: ${bn(friend.meters)} মিটার`} />
-          <div>
-            <p className="dh-friend-kicker">তোমার জন্য একটা চ্যালেঞ্জ</p>
-            <h2 id="dh-friend-title">{friendName || "তোমার বন্ধু"} {bn(friend.meters)} মিটার গেছে। <span>একই রাস্তা, এবার তোমার পালা।</span></h2>
-            <p>{friendName ? possessive(friendName) : "বন্ধুর"} নিজের ফোনের স্কোর। রাস্তার পাশে পতাকা দেখলেই বুঝবে, ওখানেই থেমেছিল।</p>
-          </div>
-        </section>
-      )}
-
-      <div className="dh-top">
-        <p className="dh-where">{day ? <>{dayOf(day).name} <span>· {bn(gate)} মিটারে গেট · ★ {bn(totalStars(levels.stars))}/{bn(DAY_COUNT * 3)}</span></> : <>যত দূর পারো <span>· শেষ নেই{best !== null ? `, সেরা ${bn(best)} মি` : ""}</span></>}</p>
-        <SoundToggle compact />
-      </div>
-
-      <div className="dh-stage" ref={stage} data-phase={phase} tabIndex={-1}
-        onPointerDown={onStageDown} onPointerMove={onStageMove} onPointerUp={onStageUp} onPointerCancel={onStageUp}>
-        <canvas ref={canvas} role="img" aria-label="গ্রামের রাস্তা ধরে স্কুলের পথে এক বাচ্চা, পিঠে ব্যাগ। চাপ দিলে লাফ, নিচে টানলে মাথা নিচু। স্পেস বা ওপরের তীরে লাফ, নিচের তীরে নিচু।" />
-        {phase === "ready" && (
-          <div className="dh-overlay dh-ready">
-            <p className="dh-how">চাপ দিলে লাফ</p>
-            <p className="dh-sub">নিচে টানলে মাথা নিচু · {bn(gate)} মিটারে গেট</p>
-            {day > 0 && <p className="dh-target">খাতার পাতা কুড়াও: ২টায় <b>★★</b>, {bn(PAGES)}টায় <b>★★★</b></p>}
-            <button type="button" className="kit-primary dh-go" onPointerDown={keepTap} onClick={() => start()}>শুরু করো</button>
-          </div>
-        )}
-        {phase === "paused" && (
-          <div className="dh-overlay dh-dim">
-            <p className="dh-how">খেলা থেমে আছে</p>
-            <button type="button" className="kit-primary dh-go" onPointerDown={keepTap} onClick={resume}>চালিয়ে যাও</button>
-          </div>
-        )}
-        <p className="screen-reader-only" aria-live="polite">{phase === "over" && result ? `খেলা শেষ। ${bn(result.meters)} মিটার গেলে। ${result.stars ? `${dayOf(result.day).name}ের গেটে, ${bn(result.stars)} তারা।` : ""}${result.record ? " এই ফোনে নতুন রেকর্ড!" : ""} ${miss}` : ""}</p>
-        {phase === "over" && result && (
-          <div className="dh-overlay dh-bump">
-            <p className="dh-kicker">{result.stars ? `${dayOf(result.day).name}ের গেটে! ঘণ্টা পড়ার আগেই।` : bumpLine(result.kind)}</p>
-            {result.stars > 0 ? <StarReveal count={result.stars} /> : <p className="dh-headline">{headline(result.meters, gateOf(result.day))}</p>}
-          </div>
-        )}
-      </div>
-
-      {phase === "over" && result ? (
-        <div className="dh-over">
-          <p className="dh-score"><b>{bn(result.meters)} মিটার</b><span>{result.day ? `খাতার পাতা ${bn(result.pages)}/${bn(PAGES)}` : result.record ? "এই ফোনে নতুন রেকর্ড!" : best !== null ? `এই ফোনে সেরা: ${bn(best)} মিটার` : ""}</span></p>
-          {miss && <p className="dh-miss">{miss}</p>}
-          {friend && friendFits(result.day) && <p className="dh-versus">{compareLine(result.meters, friend.meters, friendName)}</p>}
-          <div className="dh-over-actions" data-two={nextDay > 0}>
-            <button type="button" ref={again} className="kit-primary dh-again" onClick={nextDay ? primary : restart}>{nextDay ? "পরের দিন" : "আরেকবার"}</button>
-            {nextDay > 0 && <button type="button" className="dh-to-card" onClick={restart}>আবার খেলো</button>}
-            <button type="button" className="dh-to-card" onClick={goToCard}>ছবি বানাও ↓</button>
-          </div>
-        </div>
-      ) : (
-        <div className="dh-pad" aria-label="লাফ আর নিচু হওয়ার বোতাম">
-          <button type="button" className="dh-duck" disabled={phase === "paused"}
-            onPointerDown={event => buttonDown(event, true)} onPointerUp={() => buttonUp(true)} onPointerCancel={() => buttonUp(true)} onClick={event => buttonClick(event, true)}>
-            <span aria-hidden="true">↓</span>নিচু হও
-          </button>
-          <button type="button" className="dh-jump" disabled={phase === "paused"}
-            onPointerDown={event => buttonDown(event, false)} onPointerUp={() => buttonUp(false)} onPointerCancel={() => buttonUp(false)} onClick={event => buttonClick(event, false)}>
-            <span aria-hidden="true">↑</span>লাফ দাও
-          </button>
-        </div>
-      )}
-
-      <div className="dh-bar">
-        <button type="button" className="dh-toggle" aria-pressed={slow} onClick={() => setSlow(!slow)}>
-          <i aria-hidden="true" />ধীরে খেলো<small>গতি কম, ঝাঁকুনি নেই</small>
-        </button>
-        <button type="button" className="dh-pause" onClick={phase === "paused" ? resume : pause} disabled={phase !== "playing" && phase !== "paused"}>
-          {phase === "paused" ? "চালিয়ে যাও" : "থামাও"}
-        </button>
-      </div>
-
-      <details className="dh-levels">
-        <summary>সপ্তাহের সব দিন <span>★ {bn(totalStars(levels.stars))}/{bn(DAY_COUNT * 3)}</span></summary>
-        <LevelGrid count={DAY_COUNT} stars={levels.stars} unlocked={Math.max(levels.unlocked, friend?.day ?? 1)} current={day || undefined} onPick={choose} noun="দিন" />
-        <p>শনিবার থেকে বৃহস্পতিবার: প্রতিদিন গেট একটু দূরে, রাস্তায় নতুন কিছু। গেটে পৌঁছালে ১ তারা। খাতার ২টা পাতা কুড়ালে ২, ৩টাই কুড়ালে ৩ তারা।</p>
-        <button type="button" className="dh-endless" aria-pressed={day === 0} onClick={() => choose(0)}>
-          যত দূর পারো<small>১০০০ মিটারে গেট, তারপরও রাস্তা চলে{best !== null ? ` · সেরা ${bn(best)} মি` : ""}</small>
-        </button>
-      </details>
-
-      {card && result && (
-        <section className="dh-result" id="result" aria-labelledby="dh-result-title">
-          <div className="dh-result-head">
-            <h2 id="dh-result-title">স্কুলের পথে <em>{bn(card.meters)} মিটার</em></h2>
-            <p>{friend && friendFits(result.day) ? `${compareLine(card.meters, friend.meters, friendName)} ${humanLine(card.meters, gateOf(result.day))}` : humanLine(card.meters, gateOf(result.day))}</p>
-          </div>
-          <div className="dh-result-body">
-            <figure className="kit-card" data-format={format}>
-              <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="dh-card-summary" />
-              <figcaption id="dh-card-summary" className="dh-sr">দেরি হয়ে গেল!{card.day ? ` · ${dayOf(card.day).name}` : ""}{card.name && ` · ${card.name}`}: {bn(card.meters)} মিটার{result.stars ? `, ${bn(result.stars)} তারা` : ""}। {humanLine(card.meters, gateOf(result.day))}</figcaption>
-              {cardError && <p className="kit-status" role="alert">ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
-            </figure>
-            <div className="dh-controls">
-              <label className="dh-name">
-                <span>তোমার নাম <small>ছবিতে বসবে, না দিলেও চলবে</small></span>
-                <input value={name} maxLength={MAX_NAME} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
-              </label>
-              <FormatToggle value={format} onChange={setFormat} />
-              <ShareBar tool={TOOL} fileName="deri-hoye-gelo.png" makeImage={() => cardBlob(card, format, site, result.stars)} imageKey={`${state}|${format}|${result.stars}`} caption={caption(card)} state={state} hint="বন্ধু লিংক খুললে ঠিক এই রাস্তাটাই পাবে, তোমার পতাকাসহ।" />
+    <div className="dh-wrap" ref={wrap}>
+      <div className="dh" data-slow={slow || undefined} data-screen={screen} data-world={world}>
+        {screen === "title" && <TitleScreen level={plan.level} mode={shownMode} friend={friend} stars={total} girl={girl} slow={slow} lockedMode={lockedMode} onStart={start} onMode={setMode} onLevels={() => setSheet(true)} onOwn={ownGame} />}
+        {screen === "intro" && <Story girl={girl} onDone={storyDone} />}
+        {playing && (
+          <div className="dh-play">
+            <div className="dh-lane" ref={lane} data-edge="" onPointerDown={laneDown} onPointerMove={laneMove} onPointerUp={laneUp} onPointerCancel={laneUp} onLostPointerCapture={laneUp} onContextMenu={event => event.preventDefault()}>
+              <canvas ref={canvas} className="dh-canvas" role="img" aria-label={`${def.name}-এর পথে স্কুলের দিকে এক বাচ্চা। ${endless ? "" : `গেট ${bn(def.gate)} মিটারে, ঘণ্টার আগে পৌঁছাও। `}চাপ দিলে লাফ, নিচে টানলে মাথা নিচু।`} />
+              {!endless && <span className="dh-progress" aria-hidden="true" ref={bar} />}
+              <div className="dh-hud" aria-hidden={screen !== "play"}>
+                <div className="dh-hud-left">
+                  <p className="dh-badge"><b>{endless ? "যত দূর পারো" : `লেভেল ${bn(plan.level)}`}</b>{!endless && plan.mode !== "n" && <span>{MODE_INFO[plan.mode].name}</span>}</p>
+                  {endless ? <p className="dh-tiffin" data-on={hud.tiffin || undefined}>টিফিন {hud.tiffin ? "আছে" : "নেই"}</p>
+                    : <p className="dh-pages" aria-label={`খাতার ${bn(hud.pages)}টা পাতা`}>{[0, 1, 2].map(at => <i key={at} data-on={at < hud.pages} />)}</p>}
+                </div>
+                <div className="dh-hud-mid">
+                  {!endless && (
+                    <p className="dh-clock" data-late={hud.late || undefined} aria-label={`ঘণ্টা পড়তে আর ${bn(hud.bell)} সেকেন্ড`}>
+                      <Bell /><b>{bn(hud.bell)}</b>
+                    </p>
+                  )}
+                  {finale && hud.bossOn && (
+                    <p className="dh-boss" aria-label={`${finale.name}: আর ${bn(hud.bossLeft)}টা বাকি`}>
+                      <b>{finale.name}</b>
+                      <span>{Array.from({ length: run.current.bossMax }, (_, at) => <i key={at} data-on={at < hud.bossLeft} />)}</span>
+                    </p>
+                  )}
+                </div>
+                <div className="dh-hud-right">
+                  <p className="dh-gate">{endless ? "" : "গেট "}<b ref={gateText}>{bn(endless ? 0 : def.gate)}</b> {endless ? "মিটার" : "মি"}</p>
+                  {!endless && <p className="dh-stumbles" data-on={hud.stumbles > 0 || undefined}>হোঁচট {bn(hud.stumbles)}</p>}
+                </div>
+              </div>
+              {screen === "play" && hud.ready && (
+                <>
+                  <p className="dh-intro"><b>{endless ? def.title : `${def.name} · ${def.title}`}</b><span>{def.teach}</span></p>
+                  <p className="dh-hint"><span className="dh-finger" aria-hidden="true" />চাপ দাও: রওনা<small>কম্পিউটারে স্পেস চাপো</small></p>
+                </>
+              )}
+              {screen === "play" && (
+                <div className="dh-pad" aria-label="লাফ আর নিচু হওয়ার বোতাম">
+                  <button type="button" className="dh-duck" onPointerDown={event => padDown(event, true)} onPointerUp={event => padUp(event, true)} onPointerCancel={event => padUp(event, true)} onLostPointerCapture={event => padUp(event, true)} onClick={event => padClick(event, true)}>
+                    <span aria-hidden="true">↓</span>নিচু হও
+                  </button>
+                  <button type="button" className="dh-jump" onPointerDown={event => padDown(event, false)} onPointerUp={event => padUp(event, false)} onPointerCancel={event => padUp(event, false)} onLostPointerCapture={event => padUp(event, false)} onClick={event => padClick(event, false)}>
+                    <span aria-hidden="true">↑</span>লাফ দাও
+                  </button>
+                </div>
+              )}
+              {screen === "over" && result && <EndScreen stats={result.stats} slow={slow} choices={choices} onCard={toCard} />}
             </div>
           </div>
-        </section>
+        )}
+        {sheet && <LevelSheet stars={levels.stars} open={open} current={plan.level} mode={shownMode} best={best} onMode={setMode} onPick={pickLevel} onClose={() => setSheet(false)} />}
+      </div>
+      {screen === "over" && result && <ResultCard result={result.shared} card={result.card} site={site} />}
+      {preview && friend && (
+        <ResultCard site={site} startName={friend.name}
+          result={{ seed: friend.seed, meters: friend.meters, level: friend.level, mode: friend.mode, slow: friend.slow, stumbles: friend.stumbles, pages: friend.pages, tenths: friend.tenths }}
+          card={{ seed: friend.seed, meters: friend.meters, level: friend.level, mode: friend.mode, stars: starsOfShared(friend), won: friend.won, stumbles: friend.stumbles, pages: friend.pages, tenths: friend.tenths, slow: friend.slow }} />
       )}
+      <p className="dh-sr" aria-live="polite">{screen === "play" && hud.ready ? "চাপ দিলে দৌড় শুরু। আবার চাপলে লাফ, নিচে টানলে মাথা নিচু।" : ""}</p>
     </div>
   );
 }

@@ -1,71 +1,148 @@
-# দেরি হয়ে গেল: statechart before the rewrite
+# দেরি হয়ে গেল: statechart
 
-The model is `Late.tla` with `Late.cfg` and `view.ts`. It mirrors `tools/deri-hoye-gelo/components/late-game.tsx` and `tools/deri-hoye-gelo/lib/road.ts` as they are on `games-to-the-bar`. The report and chart are in `before-fix/`. No code was changed.
+Two halves:
+- **before-fix/**: the model of the shipped game (one bump ends the run, six school days), which found 4 bugs in 6 broken rules. `before-fix/notes.md` is that analysis with its live replays; the old spec is kept there as `Late.before.tla.txt`.
+- **after-fix/**: the model of the rewrite (three worlds of four levels with a bell clock, a stumble instead of one bump, the shared player's menu), where every rule holds.
 
-TLC reached 364 states. Six of the eight rules break. The chart (`before-fix/chart.mmd`) draws 12 states and 26 arrows. It hides arrows that repeat ones already drawn (pausing from the ducking states, the resets, and picking a day).
+## Files
+| File | What |
+|---|---|
+| `Late.tla`, `Late.cfg`, `view.ts` | The rewrite: the screens (title, story, road, end), the shared player's pause, where the window is, the level list, your hand (a key, the road under a thumb or a pad), the run and its bell, a friend's road against your own, and the end moment's scheduled chimes. |
+| `before-fix/report.md`, `chart.mmd`, `notes.md`, `Late.before.*.txt` | The old model's run, the bug write-up and the old spec. |
+| `after-fix/report.md`, `chart.mmd` | Today's spec: 328 states, 1844 steps, all 15 checks hold (TypeOK, the 13 rules below and NoDeadlock). |
 
-## Systems modelled
-- **Play phase:** ready → playing ⇄ paused → over (a bump, or a day's gate).
-- **Pause and focus:** P, Esc or থামাও, the tab hidden or shown (it pauses and lets go), the window focused or blurred, and চালিয়ে যাও.
-- **Input:** the physical key (Space to jump, ↓ to duck) against what the run thinks is held (`duckHeld`). Also the keyup, and a Space held since before the bump.
-- **The result:** the 600 ms before আরেকবার takes focus (one "settled" moment stands for both the 450 ms and 600 ms guards), and the click a Space keyup gives the focused button.
-- **Time:** the setTimeout in `finish()` that plays the bell notes, `levelUp` or `win`, and confetti 500 ms or 1500 ms later.
-- **Links:** the day and road on screen (`day` state, set by a friend's link or the day grid) against the day and road being run (`run.current`, fixed by `start()`).
-- **Left out:** the jump flag (held, it only floats one jump 0.2 s longer), the pointer and the on-screen buttons (they set the same flags, and `pointercancel` lets go), slow mode, the 0.7 s resume grace, sound (no loops), and saved stars (`recordLevel` keeps the max; the migration writes only when the levels key is missing).
+**What the model mirrors:**
+- `tools/deri-hoye-gelo/components/late-game.tsx`: `begin` (cuts scheduled tones and any confetti), `finish`, `keepStars` on `E.ARRIVE`, the blur/focus/visibility effect, the IntersectionObserver on the road, the sheet effect, the hashchange effect, and `useGamePlayer`'s `onPause`, `onResume`, `onRestart`, `onLevels`;
+- `lib/session.ts`: `ticking`, `breathing`, `blur`, `hide`, `setInView`, `pause`, `resume`, `openSheet`, `closeSheet` (with its breath), `goTo`, `letGo`, the lane, key and pad presses, `takeInput` (a press between two steps still counts once), `freshResultKey`;
+- `lib/step.hot.ts` and `lib/game.ts`: the first press (it starts the run and the bell, it doesn't jump), the gate, the bell, the end moment (`END`, then `OVER`);
+- `shared/game-player-client.tsx`: blur, hide and scrolling the stage away open the menu once you've touched the game; চালিয়ে যাও and নতুন করে শুরু send a focus first; pausing cuts scheduled tones.
+- Abstractions: the road is the run itself, with no distance; you have already touched the game; sound is on. The game has no sound loops (every sound is a one-shot or a delayed tone), so there is no loop rule. A stumble only moves the bell's clock, which `tests/levels.test.ts` checks (the bell's promise per mode).
 
-## Rules
-| Rule | In plain words | Result |
-|---|---|---|
-| PausedWhenHidden | Hide the tab mid-run and the run pauses. | holds |
-| PausedWhenBlurred | Click into another window mid-run and the run pauses. | **breaks** |
-| InputReleasedWhenAway | Once you leave the page, the kid isn't held down. | **breaks** |
-| InputMatchesHand | The kid ducks only while you hold ↓. | **breaks** |
-| ResultStaysUntilYouChoose | The result stays until you make a fresh choice. | **breaks** |
-| NoDoubleResult | A run ends once (the `finished` ref). | holds |
-| CelebrationOnlyOnResult | The bell, stars and confetti play only on the result. | **breaks** |
-| ReplayIsExact | The road you run is the one on screen: yours, or your friend's under their banner. | **breaks** |
+## Rules (each holds after the fix)
+| Rule | In plain words | Before | After |
+|---|---|---|---|
+| PausedWhenBlurred | Click into another window mid-run and the menu opens, the road waits. | **broke** | holds |
+| InputReleasedWhenAway | Once you leave (another window, a hidden tab, the road scrolled off, the menu, the list, the end screen), no key, finger or latched press is held. | **broke** | holds |
+| InputMatchesHand | The kid ducks only while you hold ↓ (or the pad, or a swipe). | **broke** | holds |
+| ResultNeedsAFreshPress (was ResultStaysUntilYouChoose) | The end screen starts a run only from a fresh press, never from a key still down. | **broke** | holds |
+| NoCelebrationAfterLeaving (was CelebrationOnlyOnResult) | The bell, chimes and confetti are only ever on the end screen, and never over your next run. | **broke** | holds |
+| ReplayIsExact | The road you run is the one on screen: yours, or your friend's under their banner. | **broke** | holds |
+| PausedWhenHidden | Hide the tab mid-run and the menu opens. | held | holds |
+| NoDoubleResult | The end screen's chimes are made once, when it shows. | held | holds |
+| ChoiceFreezesPlay | While the level list is open, nothing moves. | new | holds |
+| StillWhenOffScreen | With the road scrolled off a desktop page, nothing moves. | new | holds |
+| StarsKeptTheMomentYouWin | The stars are saved when the gate is reached, before the end screen, so leaving early never loses them. | new | holds |
+| ProgressOnlyWhileTicking | A press taken, the gate, the bell and the end moment happen only while the road moves, never in the breath after চালিয়ে যাও. | new | holds |
+| TheClickBackIsNotAPress | The click that brings focus back never jumps or ducks. | new | holds |
 
-## Bugs
+I also broke the spec on purpose to be sure the rules bite (the mutations are not kept): no release on blur, no cut of scheduled tones in `begin`, a result key that ignores a stale held key, and a tab that hides without pausing each broke the matching rule.
 
-### 1. PausedWhenBlurred, InputReleasedWhenAway and InputMatchesHand: "I held ↓, clicked another window, and the kid ran on, ducked, into a puddle" (shared)
-- **Path:** (0) ready → (1) you press Space: running → (2) you let go → (3) you hold ↓: ducking → (4) you click into another window: running ducked while you're away. Come back and the kid is still ducked with no key held. PausedWhenBlurred breaks one step sooner: (0) ready → (1) you press Space → (2) you click into another window.
-- **Why:** there is no `blur` handler. The ↓ keyup goes to the other window, so `run.duckHeld` stays true, and `useGameLoop` keeps stepping the run. Only `visibilitychange` calls `pause()`.
-- **Live replay:** Space started the run (2 m). Hold ↓: `duckHeld` and `ducking` true. Window `blur`: the phase was still `playing`, and `duckHeld` stayed true for all 10 s of polling. The run then ended on its own at 24 m in the first puddle (`hitKind` 0, "ছপাৎ! জুতা-মোজা কাদায় মাখামাখি।") with nobody there. (The Orca tab was a background tab at about 2 frames a second, so time ran slowly, but it ran.)
-- **Fix:** on `blur`, call `pause()`, which already does `letGo()`. This is the shared blur fix.
+## The four bugs, fixed
+1. **PausedWhenBlurred, InputReleasedWhenAway, InputMatchesHand:** "I held ↓, clicked another window, and the kid ran on, ducked, into a puddle." `session.blur` lets go (`letGo` with the run) and `ticking` needs focus; the player opens its menu. Test: `bug 1, PausedWhenBlurred` in `tests/session.test.ts`.
+   - Live (Orca, 390 × 630, level 12): held ↓, the kid ducking at 73.6 m (`duckHeld` true). A window `blur`: `duckHeld` false, the session's duck 0, the menu open. Three seconds later the road was still at 1473 units and the clock at 7.67 s. After চালিয়ে যাও the road stood still for the 0.5 s breath (four samples 120 ms apart all at 1473), then moved (1477, 1490, 1512, 1539).
+2. **ResultStaysUntilYouChoose:** "I held Space as I reached the gate, let go a second later, and a new run had already started." No button takes focus after a run, and the end screen's keys count only from a fresh, non-repeating keydown made after the screen showed (`freshResultKey`). Test: `bug 2, ResultStaysUntilYouChoose` (the pure rule plus a source check: no `.focus(` in the component).
+   - Live: Space down at the gate and held through the end screen, a second of auto-repeat (12 `repeat` keydowns), then released: the screen stayed on the end screen, focus on the stage (not a button). A fresh Space 0.5 s later chose the first choice (a new run).
+3. **CelebrationOnlyOnResult:** "The win fanfare and confetti went off in the middle of my next run." The component keeps no timers. The bell, the stars' chimes and the fanfare are delayed `tone()`s, which `begin()` (`silenceScheduled`) and the player's pause cut, and `begin()` takes down any confetti canvas still falling. The stars are recorded at `E.ARRIVE`. Test: `bug 3, NoCelebrationAfterLeaving` (no `setTimeout` in the component, `begin` cuts tones and confetti, the star and bell tones are delayed, `keepStars` on `E.ARRIVE`).
+   - Live: after the fresh press above, 4 oscillator starts in the first 60 ms (the level's motif) and no confetti canvas on the page.
+4. **ReplayIsExact:** "I opened my friend's link mid-run; the banner and the gate changed, but I was still on my own road." A link that arrives in a live page (the hashchange effect) ends the run: `run.current` becomes the friend's seed and level, and the title shows their road under their banner. Nothing changes under a run. Test: `bug 4, ReplayIsExact` (the handler creates the friend's run and shows the title; the address is only ever replaced with `history.replaceState`).
+   - Live: mid-run on level 12, the hash set to a level-7 link: the screen went to the title with `{ seed: 4242, level: 7 }`, the banner "রাফি লেভেল ৭-এ ২০০ মিটার গিয়েছিল, তারপর ঘণ্টা পড়ে গেল।". (Setting the hash from a script pushes history, so the player also left full screen: the shared popstate pattern. The game itself never sets the hash.)
 
-### 2. ResultStaysUntilYouChoose: "I held Space as I bumped, let go a second later, and a new run had already started" (shared)
-- **Path:** (0) ready → (1) you press Space: running → (2) the kid bumps into something: the result → (3) আরেকবার takes focus → (4) you let go: a new run starts by itself.
-- **Why:** 600 ms after the bump, `again.current.focus()` moves focus to আরেকবার while Space is still down. The keyboard's auto-repeat then sends Space keydowns to the button. The window handler skips them (focus isn't on the body), so on keyup the browser clicks the button and `restart()` runs. The 450 ms guard has passed by then.
-- **Live replay (trusted keys from `orca exec "keydown ' '"`):** Space down on the body started the run. The kid bumped at 24 m, and 1.5 s later focus was on `kit-primary dh-again`. A second Space keydown (what auto-repeat sends) landed on the button, then Space up, and the phase went `over → playing`: the result was gone and a new run was going. A control run with no second keydown didn't restart, since Chrome clicks a button on Space-up only if a Space keydown reached it. A real held key always gets there, because auto-repeat starts at about 0.5 s.
-- **Fix:** don't move focus to আরেকবার while a key is still down. Better, accept the result's keys only from a fresh keydown made after the result appeared, through the shared result guard.
+**Found while building (a new rule, not in the old model):** the orange "running late" edge lit on a clean run on the levels that speed up, because it compared the gate with the speed *now*. It now counts the road's own speed-up (`remainTable`). `tests/game.test.ts` (running late) shows it never lights on a clean run on any level in any mode, and lights by the stumble after each mode's limit.
 
-### 3. CelebrationOnlyOnResult: "The win fanfare and confetti went off in the middle of my next run" (shared)
-- **Path:** (0) ready → (1) you press Space → (2) the kid reaches the gate: the result → (3) you let go → (4) you open a friend's link: the ready screen, with the old confetti still to come. The same happens when you press আরেকবার or পরের দিন soon after.
-- **Why:** `finish()` calls `window.setTimeout(…, stars ? 1500 : 500)` and drops the id. `start()` and `choose()` don't clear it. `restart()` and `primary()` allow a new run from 450 ms, so a day cleared with stars leaves about a second (450–1500 ms) where the celebration lands on the next run.
-- **Live replay:** on the endless road with no stored best, the first run ended at 24 m (`এই ফোনে নতুন রেকর্ড!`). আরেকবার was pressed 480 ms later and the new run started. 487 ms after the result, the confetti canvas appeared with the phase `playing`, together with `sfx.win()`.
-- **Fix:** keep the timer id and clear it in `start()`, `choose()`, `readFriend()` and on unmount. This is the shared `later()` helper.
+## Also checked live in Orca
+- All 12 levels cleared by an in-page autopilot (a steady player, with the rAF shim from the play-test skill, since Orca runs a hidden pane at 2 frames a second): clean times 9.1, 15.6, 21.0, 27.8, 26.7, 29.6, 30.8, 36.0, 33.3, 36.9, 39.9, 39.7 s, the same as the bot in tests. Level 1 in 9.1 s.
+- An idle kid on level 12: 21 stumbles, the orange edge lit once the stumbles had used up the bell's slack (`tests/game.test.ts` pins it to the stumble past each mode's limit), the red edge pulse on each stumble, the clock red, the bell at 41.7 s: "দেরি হয়ে গেল!" with the exact stats and "৪১.৭ সে.".
+- 320 px: no sideways scroll on the page, the title, the road, the menu or the list.
 
-### 4. ReplayIsExact: "I opened my friend's link mid-run; the banner and the gate changed, but I was still on my own road" (game)
-- **Path:** (0) ready → (1) you press Space: running → (2) you let go → (3) you open a friend's link: your road under the friend's banner.
-- **Why:** `readFriend()` sets the friend, `setDay(shared.day)` and the kid, but keeps the phase while playing. The run in `run.current` stays yours, yet the HUD and `drawScene(…, gateOf(day))` now use the friend's day.
-- **Live replay:** a Saturday run (`শনিবার · ৩০০ মিটারে গেট`, seed 361323359, `run.gateM` 300). Set the hash to `#s=4242&t=250&l=2&n=rafi`. The top line now reads `রবিবার · ৪০০ মিটারে গেট`, the friend banner shows, and the canvas badge reads `গেট ৩৮৯ মি` at 11 m. The run is still seed 361323359 with its gate at 300 m, so it will end 89 m before the gate on screen. Screenshot: `.shots/deri-hoye-gelo-friend-banner-mid-run.png`.
-- **Fix:** when a link arrives mid-run, pause and ask before switching, or end the run and show the ready screen for the friend's day. Never change `day` under a run.
-
-## Quality-bar gaps (from a play in Orca)
-1. **Pause:** P, Esc, থামাও and hiding the tab all pause, but blur doesn't (bug 1). The pause screen is a dim overlay with one button, not a menu (no নতুন করে শুরু, কীভাবে খেলবে, শব্দ or ধীরে খেলো).
-2. **Leaving the result:** a held Space restarts on release (bug 2), and the celebration can land on the next run (bug 3).
-3. **First screen:** the ready overlay (চাপ দিলে লাফ, শুরু করো) is inside the stage, which is good. The H1, and on a friend's link the challenge card, sit above it and push the stage down on a phone.
-4. **HUD (good):** meters, pages and the distance to the gate are small badges in the canvas corners, and the middle stays clear.
-5. **Danger:** obstacles show only as themselves. Nothing at the edge warns about something fast coming in at the higher speeds of বুধবার and বৃহস্পতিবার.
-6. **Choices:** the day grid and the endless road are hidden in a `<details>` with no numbering. After a cleared day, পরের দিন is the primary button, which is right.
-7. **Pacing (good):** each day adds one obstacle (bike, cow, branch) and then speed. বৃহস্পতিবার is the end of the week, but the gate isn't a named finale.
-8. **Sound (good):** footsteps, hop, landing, splash, bump, tiffin, a page with a rising note, and the school bell as the signature. All are one-shots, and it works on mute.
-
-Screenshot: `.shots/deri-hoye-gelo-friend-banner-mid-run.png` (desktop, mid-run, after the friend's link: Sunday's banner and `গেট ৩৮৯ মি` over a Saturday road).
+## The chart (after-fix/chart.mmd)
+```mermaid
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  state "At the same time" as all {
+    state "Road" as r0 {
+      s0: On the title
+      s1: The story
+      s2: Waiting for the first press
+      s3: Level list open
+      s4: Paused (menu)
+      s5: Running
+      s6: At the gate or the bell
+      s7: End screen
+      [*] --> s0
+      s0 --> s1: you tap চল#2507;! [when You're on the road]
+      s0 --> s2: you tap চল#2507;! [when You're on the road]
+      s0 --> s3: you open সব ল#2503;ভ#2503;ল [unless Tab hidden]
+      s1 --> s0: you open a friend's link [unless Tab hidden]
+      s1 --> s2: you tap through the story [when You're on the road]
+      s2 --> s0: you open a friend's link
+      s2 --> s4: you click into another window or you scroll the road away [when You're on the road]
+      s2 --> s4: you press pause or you hide the tab
+      s3 --> s0: you close the list [when Road scrolled off or You're on the road]
+      s3 --> s0: you open a friend's link [unless Tab hidden]
+      s2 --> s5: you press: the run starts [when You're on the road]
+      s1 --> s3: you open সব ল#2503;ভ#2503;ল [unless Tab hidden]
+      s4 --> s2: you press নত#2497;ন কর#2503; শ#2497;র#2497; or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [unless Tab hidden]
+      s4 --> s0: you open a friend's link [unless Tab hidden]
+      s4 --> s3: you open সব ল#2503;ভ#2503;ল [unless Tab hidden]
+      s5 --> s0: you open a friend's link
+      s5 --> s6: the bell rings first or the kid reaches the gate (stars kept) [when You're on the road]
+      s5 --> s4: you click into another window or you scroll the road away [when You're on the road]
+      s5 --> s4: you press pause or you hide the tab
+      s3 --> s1: you close the list [when Road scrolled off or You're on the road]
+      s3 --> s2: you close the list [when Road scrolled off or You're on the road]
+      s6 --> s0: you open a friend's link
+      s6 --> s7: the end screen shows [when You're on the road]
+      s6 --> s4: you click into another window or you scroll the road away [when You're on the road]
+      s6 --> s4: you press pause or you hide the tab
+      s4 --> s5: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [unless Tab hidden]
+      s3 --> s2: you press নত#2497;ন কর#2503; শ#2497;র#2497; [unless Tab hidden]
+      s7 --> s0: you open a friend's link [unless Tab hidden]
+      s7 --> s3: you open সব ল#2503;ভ#2503;ল [unless Tab hidden]
+      s4 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [unless Tab hidden]
+      s3 --> s5: you close the list [when Road scrolled off or You're on the road]
+      s7 --> s2: you pick পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; [when You're on the road]
+      s3 --> s7: you close the list [when Road scrolled off or You're on the road]
+      s7 --> s2: you press নত#2497;ন কর#2503; শ#2497;র#2497; [unless Tab hidden]
+      s3 --> s6: you close the list [when Road scrolled off or You're on the road]
+    }
+    --
+    state "Window" as r1 {
+      s8: You're on the road
+      s9: In another window
+      s10: Tab hidden
+      s11: Road scrolled off
+      [*] --> s8
+      s8 --> s9: you click into another window
+      s8 --> s9: you press pause [unless Paused (menu)]
+      s8 --> s10: you hide the tab
+      s8 --> s11: you scroll the road away
+      s9 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you come back to the window or you open সব ল#2503;ভ#2503;ল
+      s9 --> s10: you hide the tab
+      s10 --> s8: the tab shows again
+      s11 --> s10: you hide the tab
+      s11 --> s8: you scroll the road back
+      s9 --> s8: you press নত#2497;ন কর#2503; শ#2497;র#2497; [unless On the title or The story]
+    }
+  }
+  class s2 tan
+  class s4 yellow
+  class s5 teal
+  class s6 teal
+  class s7 blue
+```
 
 ## Regenerate
 ```sh
-scripts/statechart.sh ai_docs/statecharts/deri-hoye-gelo/Late.tla --view ai_docs/statecharts/deri-hoye-gelo/view.ts --out ai_docs/statecharts/deri-hoye-gelo/before-fix
-rm ai_docs/statecharts/deri-hoye-gelo/before-fix/tlc*.out
+scripts/statechart.sh ai_docs/statecharts/deri-hoye-gelo/Late.tla --view ai_docs/statecharts/deri-hoye-gelo/view.ts --out ai_docs/statecharts/deri-hoye-gelo/after-fix
+rm ai_docs/statecharts/deri-hoye-gelo/after-fix/tlc*.out
 ```
-After the fixes, update the spec to the new code and run into a fresh `after-fix/`. Every rule must hold there.
