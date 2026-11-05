@@ -1,0 +1,22 @@
+---
+title: "জﬂ°°2507¶ßডﬂ°°2492¶ßﬂ°°2494¶ß মﬂ°°2503¶ßলﬂ°°2494¶ßও: Enter held through the end of a board"
+---
+stateDiagram-v2
+  direction LR
+  state "At the same time" as all {
+    state "Screen" as r0 {
+      s0: Playing
+      s1: End screen
+      [*] --> s0
+      s0 --> s1: the end screen shows
+      s1 --> s0: you press Enter [when Enter up]
+    }
+    --
+    state "Key" as r1 {
+      s2: Enter up
+      s3: Enter held down
+      [*] --> s2
+      s2 --> s3: you press Enter
+      s3 --> s2: you let go
+    }
+  }

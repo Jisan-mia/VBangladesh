@@ -1,113 +1,89 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readLevels, unlockedLevel } from "../../../shared/game-core";
-import { LEVELS, LEVEL_COUNT, SIZES, TOYS, flip, flipsText, migrateLevels, movesToNextStar, newGame, readFlips, replay, starsOf, startLevel, type Game, type Size } from "../lib/game";
-import { caption, cardHash, cardOf, parseCard, sizeLabel } from "../lib/result";
+import { LEVELS, LEVEL_COUNT, PER_WORLD, changes, isFinale, lesson, worldOf } from "../lib/levels";
+import { newGame, starsOf } from "../lib/play";
+import { PICTURES, worldSet } from "../lib/pictures";
+import { PLAYERS, play } from "./bot";
 
-/** A perfect memory that never uses the face-up demo pair: the opening order is its only luck. */
-function perfect(seed: number, size: Size) {
-  let game: Game = newGame(seed, size, 1);
-  const seen = new Map<number, number>();
-  const hidden = () => game.board.map((_, index) => index).filter(index => game.found[index] < 0 && !seen.has(index) && !game.open.includes(index));
-  while (game.phase !== "over") {
-    const pair = [...seen].flatMap(([a, toy]) => [...seen].filter(([b, other]) => a < b && toy === other && game.found[a] < 0).map(([b]) => [a, b]))[0];
-    const first = pair ? pair[0] : hidden()[0];
-    game = flip(game, first);
-    seen.set(first, game.board[first]);
-    const mate = pair ? pair[1] : [...seen].find(([index, toy]) => index !== first && toy === game.board[first] && game.found[index] < 0)?.[0];
-    const second = mate ?? hidden()[0];
-    game = flip(game, second);
-    seen.set(second, game.board[second]);
-  }
-  return game;
-}
-
-test("levels: the board grows 8 → 12 → 16 → 20 and par only tightens within a size", () => {
-  assert.equal(LEVEL_COUNT, 12);
-  assert.deepEqual([...new Set(LEVELS.map(level => level.size))], [8, 12, 16, 20]);
-  LEVELS.forEach((level, index) => {
-    assert.ok(level.three < level.two, `level ${index + 1}`);
-    assert.ok(level.three >= level.size / 2, `level ${index + 1}: three stars needs at least one move per pair`);
-    const before = LEVELS[index - 1];
-    if (!before) return;
-    assert.ok(level.size >= before.size);
-    if (level.size === before.size) assert.ok(level.three <= before.three && level.two <= before.two && (level.three < before.three || level.two < before.two), `level ${index + 1} is a step up`);
-  });
-  assert.ok(TOYS.length * 2 >= Math.max(...SIZES), "enough toys for the biggest board");
-});
-
-test("every level is fair: a perfect memory earns three stars on most deals, and every clear earns a star", () => {
-  for (const [index, level] of LEVELS.entries()) {
-    let three = 0;
-    for (let seed = 1; seed <= 300; seed++) {
-      const end = perfect(seed, level.size);
-      assert.equal(end.phase, "over");
-      const stars = starsOf(index + 1, end.moves);
-      assert.ok(stars >= 1);
-      if (stars === 3) three++;
+const SEEDS = 300;
+/** Per level: how often each player earns each star count, over the same 300 deals. */
+const rates = (() => {
+  const done = new Map<number, Record<"casual" | "steady" | "sharp", number[]>>();
+  return (level: number) => {
+    let row = done.get(level);
+    if (!row) {
+      row = { casual: [0, 0, 0, 0], steady: [0, 0, 0, 0], sharp: [0, 0, 0, 0] };
+      const spec = LEVELS[level - 1];
+      for (let seed = 1; seed <= SEEDS; seed++) for (const name of ["casual", "steady", "sharp"] as const) row[name][starsOf(spec, play(seed, spec, PLAYERS[name]).game.moves)]++;
+      done.set(level, row);
     }
-    assert.ok(three / 300 >= 0.45, `level ${index + 1}: three stars on ${Math.round(three / 3)}% of deals`);
+    return row;
+  };
+})();
+const share = (counts: number[], atLeast: number) => counts.slice(atLeast).reduce((sum, n) => sum + n, 0) / SEEDS;
+
+test("the ladder: 3 worlds × 8, a finale last in each, and every level teaches one thing", () => {
+  assert.equal(LEVEL_COUNT, 24);
+  LEVELS.forEach((spec, index) => {
+    const level = index + 1;
+    assert.equal(worldOf(level), spec.world);
+    assert.ok(spec.three < spec.two && spec.three >= spec.pairs, `level ${level}: par`);
+    assert.ok(spec.two - spec.three >= 2 || level === 1, `level ${level}: a one-move slip must not skip a star`);
+    assert.ok(lesson(level).length > 0, `level ${level} says what is new`);
+    assert.ok(changes(level).length >= 1, `level ${level} has a chip`);
+    if (level % PER_WORLD !== 1) {
+      const before = LEVELS[index - 1];
+      const moved = (["pairs", "alike", "peek", "every", "flyers"] as const).filter(key => spec[key] !== before[key]);
+      assert.equal(moved.length, 1, `level ${level} changes exactly one thing: ${moved}`);
+    }
+  });
+  assert.deepEqual([8, 16, 24].map(isFinale).concat([7].map(isFinale)), [true, true, true, false]);
+  assert.deepEqual(LEVELS.filter(spec => isFinale(LEVELS.indexOf(spec) + 1)).map(spec => spec.pairs), [12, 12, 12]);
+  // The three tables' twists.
+  assert.ok(LEVELS.slice(0, 8).every(spec => !spec.peek && !spec.every));
+  assert.ok(LEVELS.slice(8, 16).every(spec => spec.peek > 0 && !spec.every));
+  assert.ok(LEVELS.slice(16).every(spec => !spec.peek && spec.every > 0));
+});
+
+test("every board can be dealt: enough pictures, each twice, look-alikes in pairs", () => {
+  for (const [index, spec] of LEVELS.entries()) {
+    for (let seed = 1; seed <= 60; seed++) {
+      const game = newGame(seed, spec);
+      assert.equal(game.board.length, spec.pairs * 2);
+      const counts = new Map<number, number>();
+      for (const id of game.board) counts.set(id, (counts.get(id) ?? 0) + 1);
+      assert.equal(counts.size, spec.pairs, `level ${index + 1}`);
+      assert.ok([...counts.values()].every(count => count === 2));
+      assert.ok([...counts.keys()].every(id => PICTURES[id].world === spec.world));
+      const twins = [...counts.keys()].filter(id => PICTURES[id].twinOf >= 0 && counts.has(PICTURES[id].twinOf));
+      assert.equal(twins.length, spec.alike, `level ${index + 1} look-alike pairs`);
+      assert.equal(game.demo !== null, spec.demo);
+    }
+  }
+  for (const world of [0, 1, 2]) assert.equal(worldSet(world).base.length, 10);
+});
+
+test("level 1: a casual player clears it inside 10 seconds on nearly every deal", () => {
+  const spec = LEVELS[0];
+  let quick = 0;
+  for (let seed = 1; seed <= SEEDS; seed++) if (play(seed, spec, PLAYERS.casual).seconds <= 10) quick++;
+  assert.ok(quick / SEEDS >= 0.95, `${quick}/${SEEDS}`);
+});
+
+test("stars mean something: the sharp player gets three on most deals, the steady one on about half, the casual one on few", () => {
+  for (let level = 1; level <= LEVEL_COUNT; level++) {
+    const row = rates(level), label = `level ${level}`;
+    assert.ok(share(row.sharp, 3) >= 0.85, `${label}: sharp ★★★ ${share(row.sharp, 3)}`);
+    assert.ok(share(row.steady, 3) >= 0.45, `${label}: steady ★★★ ${share(row.steady, 3)}`);
+    assert.ok(share(row.casual, 2) >= (level < PER_WORLD ? 0.75 : 0.6), `${label}: casual ★★+ ${share(row.casual, 2)}`);
+    if (level >= 3) assert.ok(share(row.casual, 3) <= 0.7, `${label}: casual ★★★ ${share(row.casual, 3)}`);
   }
 });
 
-test("stars by moves and the exact gap to the next star", () => {
-  // Level 4: 12 cards, three ≤ 10, two ≤ 13.
-  assert.equal(starsOf(4, 6), 3);
-  assert.equal(starsOf(4, 10), 3);
-  assert.equal(starsOf(4, 11), 2);
-  assert.equal(starsOf(4, 13), 2);
-  assert.equal(starsOf(4, 14), 1);
-  assert.equal(starsOf(0, 10), 0, "not a level game");
-  assert.equal(movesToNextStar(4, 14), 1);
-  assert.equal(movesToNextStar(4, 12), 2);
-  assert.equal(movesToNextStar(4, 9), 0);
-  assert.equal(startLevel({}, 1), 1);
-  assert.equal(startLevel({ 1: 3, 2: 3 }, 3), 3);
-  assert.equal(startLevel({ 1: 2, 2: 3, 3: 3 }, 3), 1);
-});
-
-test("the 20-card board deals ten toys twice, and its flips past 15 survive a link", () => {
-  const game = perfect(77, 20);
-  assert.equal(new Set(game.board).size, 10);
-  assert.ok(game.flips.some(index => index >= 16));
-  assert.deepEqual(readFlips(flipsText(game.flips)), game.flips);
-  assert.deepEqual(replay(77, 20, 1, game.flips)?.moves, game.moves);
-  const card = cardOf(game, ["রাফি"], 10);
-  const hash = cardHash(card);
-  assert.match(hash, /g=20&l=10/);
-  assert.deepEqual(parseCard(hash), card);
-  assert.equal(sizeLabel(20), "৫×৪");
-  assert.equal(sizeLabel(8), "২×৪");
-  assert.match(caption(card), /লেভেল ১০: ২০টা কার্ড/);
-});
-
-test("old links still open; level links must match their board", () => {
-  const easy = perfect(5, 12);
-  const old = cardHash(cardOf(easy, [""]));
-  assert.ok(!old.includes("l="), "a game outside the levels carries no level");
-  assert.equal(parseCard(old)?.level, 0);
-  assert.equal(parseCard(old)?.size, 12);
-  const full = perfect(6, 16);
-  assert.equal(parseCard(cardHash(cardOf(full, ["মিম"])))?.size, 16);
-  // A level link: the level's board size, solo only.
-  const small = perfect(8, 8), link = cardHash(cardOf(small, [""], 2));
-  assert.equal(parseCard(link)?.level, 2);
-  assert.equal(parseCard(link.replace("l=2", "l=5")), null, "level 5 is a 12-card board");
-  assert.equal(parseCard(link.replace("l=2", "l=13")), null);
-  assert.equal(parseCard(link.replace("l=2", "l=x")), null);
-  assert.equal(parseCard(link.replace("&l=2", "")), null, "an 8-card board only comes from a level");
-  assert.equal(parseCard(`${link}&m=2&a=4`), null, "two players don't play levels");
-  assert.equal(cardOf(newGame(1, 16, 2), ["", ""], 7).level, 0, "a two-player card never carries a level");
-});
-
-test("old bests on ৩×৪ and ৪×৪ become stars once, judged by the level's par", () => {
-  const moved = migrateLevels(null, "9", "20");
-  assert.ok(moved);
-  const stars = readLevels(moved, LEVEL_COUNT);
-  assert.deepEqual(stars, { 4: 3, 7: 1 });
-  assert.equal(unlockedLevel(stars, LEVEL_COUNT), 8);
-  assert.deepEqual(readLevels(migrateLevels(null, null, "15"), LEVEL_COUNT), { 7: 2 });
-  assert.equal(migrateLevels('{"1":2}', "9", "20"), null, "only once");
-  assert.equal(migrateLevels(null, null, null), null);
-  assert.equal(migrateLevels(null, "abc", "3"), null, "nonsense and impossible bests are ignored");
+test("each finale is the hardest board of its table", () => {
+  for (const world of [0, 1, 2]) {
+    const finale = (world + 1) * PER_WORLD, others = Array.from({ length: PER_WORLD - 1 }, (_, i) => world * PER_WORLD + i + 1);
+    const lowest = Math.min(...others.map(level => share(rates(level).steady, 3)));
+    assert.ok(share(rates(finale).steady, 3) <= lowest + 0.0001, `world ${world + 1}: finale ${share(rates(finale).steady, 3)} vs ${lowest}`);
+  }
 });
