@@ -1,57 +1,177 @@
-# ছায়া মেলাও: statechart, before the rewrite
+# ছায়া মেলাও: statechart
 
-Kids' game (ছোটদের জন্য, ages 3–6).
+Kids' game (ছোটদের জন্য, ages 3–6). Rewritten 2026-11-05: drag-and-snap shadow matching, 4 worlds, 11 levels.
 
-Specs:
-- `Chhaya.tla` / `Chhaya.cfg` with `view.ts`, output in `before-fix/`.
-- `KidsGate.tla` / `KidsGate.cfg` with `gate-view.ts`, output in `gate-before-fix/`. This is the kids' kit parent gate, shared by every kids' game. It has its own spec because it is independent of the round and would double the state count.
+Specs (all rules hold, `after-fix*/report.md`):
+- `Chhaya.tla` / `Chhaya.cfg` with `view.ts`, output in `after-fix/`: the page around a round (screens, the toy in the hand, the hold between walls, pause and away, the rest screen). 414 states.
+- `ChhayaStars.tla` with `stars-view.ts`, output in `after-fix-stars/`: how a round earns its stars (the forced last toy is not scored). 61 states.
+- `ChhayaKeys.tla` with `keys-view.ts`, output in `after-fix-keys/`: a key held through the end of a round. 9 states.
+- `KidsGate.tla` / `gate-view.ts`, output in `gate-before-fix/`: the shared parent gate. Unchanged by this rewrite (the kit is shared); its two residual breaks are in the section "Residual".
+- `before-fix/`: the model of the old code, with its report, chart and the old spec as `Chhaya.before.tla`.
 
-Both specs model the code as of 2026-11-04 16:50:
-- `tools/chhaya-melao/components/chhaya-game.tsx`, unchanged during this work.
-- `shared/kids-kit.tsx` at commit **23fd7c1**. The kit changed twice while I worked (f4f75be at 16:45 and 23fd7c1 at 16:47). See "Found on the earlier kit" below.
-
-**Results:**
-- **Chhaya:** TLC reached 228 states and 672 steps; the chart has 13 states and 27 arrows. **9 rules hold and 2 break** (counts include TypeOK, NoDeadlock and StarsNeverDrop).
-- **KidsGate:** 42 states. **4 rules hold and 2 break.** Both breaks are the residual chance that a child guesses the sum.
-
-## Systems modelled
-- **Play phase:** lamp off → shadow on the wall → right picture (a 1500 ms `NEXT_MS` timer is pending) → next shadow → round over → শেষ (idle). The model uses 2 shadows per round (the code has 6).
-- **Away:** there is no blur, visibility or pause handler, so "another window" and "hidden tab" are modelled as one flag.
-- **Input and focus:** LevelGrid is on screen in every phase. Focus stays on a level button after you tap it, and moves to a picture when you tap one. The model has an Enter on the last-focused button.
-- **Time:** the `NEXT_MS` timer, and the kit's 10 s tick (now only while the tab is focused and visible).
-- **Sound:** one-shot sounds only (lamp click, soft miss, `sfx.good`, `sfx.win` or confetti, StarReveal chimes). There are no loops.
-- **Results and stars:** `finish()` → `levels.record` (keeps the better result).
-- **Kids' limit:** `atBreak()` at round end; the mount check that opens on the rest screen past the limit (23fd7c1); RestScreen as a real modal (f4f75be); a grown-up's "আজ আরও ১০ মিনিট"; reload.
-- **Parent gate (KidsGate.tla):**
-  - hold start and stop, the 2 s timer, key repeat and blur;
-  - the two-digit sum, with two wrong answers closing the gate;
-  - one action, then the gate shuts; it also shuts after 60 s, on hide and on pagehide.
-
-Not modelled:
-- `#og`, the preview image, which saves nothing.
-- Slow mode and the quiet-ease choice count (`choiceCount`, a pure function).
-- ShowParent's saved picture. It sits behind the same gate.
+Code mirrored: `lib/session.ts`, `lib/drag.ts`, `lib/round.ts`, `components/game.tsx`, `shared/kids-kit.tsx`.
 
 ## Rules, in plain words
 | Rule | In plain words | Result |
 |---|---|---|
-| NoProgressWhileAway | Nothing moves on while you look away: no next shadow, no round end, no chime to an empty room. | **breaks** |
-| NoReadingNeeded | For 3–6, every control the child needs to go on is a picture or a number, not a word. | **breaks** |
-| KeyNeverWipesTheRound | A stray Enter never throws away a round in progress (the last-focused-button pattern). | holds |
-| NoDoubleResult | A round ends and is recorded once. | holds |
-| RestOnlyAtBreak | The rest screen is only ever over a finished round or an empty wall, never over a round in play. | holds (broke on the earlier kit) |
-| RestStaysUntilAGrownUp | Once the rest screen has come today, no new round starts until a grown-up gives more time. | holds (broke on the earlier kit) |
-| NoNetwork / NoChildData | Nothing is sent; only stars and play time are written. | holds |
-| StarsNeverDrop | A level's best only goes up. | holds |
-| KidsGate: AskNeedsAHold | The sum is asked only after a real 2 s hold. | holds (broke on the earlier kit) |
-| KidsGate: TwoTriesPerHold | A child tapping at random gets at most two tries per 2 s hold. | holds (new) |
-| KidsGate: ShutsAfterOneAction | The open gate never stays open after its one action. | holds (new) |
-| KidsGate: OnlyAGrownUpOpensIt / NoShareForKids | The grown-ups' side opens only for a grown-up. | **breaks by chance**: residual, measured below |
+| NoProgressWhileAway | Nothing moves on while you look away or have a menu or list open: no next wall, no end screen, no chime to an empty room. | **holds** (broke on the old code) |
+| InputReleasedWhenAway | After blur, hide, pause or a list, no toy is in the hand. | holds |
+| NothingMovesUnderTheMenu / WakeTapIsNotAMove | A toy is lifted and dropped only while play is live; the touch that brings focus back only wakes the game. | holds |
+| EveryFinishCounts / NoDoubleResult | The round is saved once, at the match that finishes it, with the child there. | holds |
+| RestOnlyAtBreak / NoNewRoundPastLimit | The rest screen comes only between rounds; a round never starts past the limit. | holds |
+| ChoiceFreezesPlay | The level list is a choice screen: nothing runs under it. | holds |
+| NoStrayRestart | No level number is on screen during play, so a stray tap can't restart a round. | holds (broke on the old code) |
+| NoReadingNeeded | Every control the child needs to go on is a picture, a number or a drawing. | holds (broke on the old code) |
+| StarsNeverDrop / ResultMatchesPlay / EveryRoundEarnsAStar / NoThreeStarsWithSlips | A level's best only goes up; the stars shown are this round's. | holds |
+| ResultNeedsFreshPress / RepeatNeverStarts | A held or repeating key never skips the end screen or starts a round. | holds |
 
-**Key held through the round's end:** there is no game key. A held Enter only repeats a click on the focused element, and at round end focus is on `<body>` (the picked picture unmounts). Live: after a tap on ধাপ ২ and then a picture, `activeElement` was `BODY` and Enter changed nothing. Both patterns hold.
+## The chart (`after-fix/chart.mmd`)
+```mermaid
+---
+title: "ছﬂ°°2494¶ßযﬂ°°2492¶ßﬂ°°2494¶ß মﬂ°°2503¶ßলﬂ°°2494¶ßও: the lamp, the wall, the toy in your hand, the hold, the rest screen"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "Wall The unlit lamp (ব#2494;ত#2495; জ#2509;ব#2494;ল#2494;ও)" as s0 {
+    state "Window Nothing to hold" as s1 {
+      s2: Today Time left today
+      s3: Today Rest screen
+    }
+  }
+  state "Wall The level list" as s4 {
+    state "Window Nothing to hold" as s5 {
+      s6: Today Time left today
+      s7: Today Rest screen
+    }
+  }
+  state "Wall A shadow on the wall" as s8 {
+    state "Window In front" as s9 {
+      s10: Today Time left today
+    }
+    state "Window Menu open or looking away, the hold waits" as s11 {
+      s12: Today Time left today
+    }
+  }
+  state "Wall Wall matched, the hold runs" as s13 {
+    state "Window In front" as s14 {
+      s15: Today Time left today
+    }
+    state "Window Menu open or looking away, the hold waits" as s16 {
+      s17: Today Time left today
+    }
+  }
+  state "Wall A toy in your hand" as s18 {
+    state "Window In front" as s19 {
+      s20: Today Time left today
+    }
+  }
+  state "Wall Last shadow matched, round saved, the hold runs" as s21 {
+    state "Window In front" as s22 {
+      s23: Today Time left today
+      s24: Today Time's up, the rest waits for the end screen
+    }
+    state "Window Menu open or looking away, the hold waits" as s25 {
+      s26: Today Time left today
+      s27: Today Time's up, the rest waits for the end screen
+    }
+  }
+  state "Wall End screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ)" as s28 {
+    state "Window Nothing to hold" as s29 {
+      s30: Today Time left today
+      s31: Today Rest screen
+    }
+  }
+  [*] --> s2
+  [*] --> s3
+  s2 --> s6: you open the level list
+  s2 --> s10: you tap the lamp or আব#2494;র খ#2503;ল#2507;
+  s3 --> s2: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s6 --> s2: the page opens again or you go back from the list or নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s6 --> s10: you tap the lamp or আব#2494;র খ#2503;ল#2507; or you go back from the list
+  s10 --> s15: you drop it on the right shadow (or tap it, with one shadow open)
+  s10 --> s12: the window blurs, or #9208; / P / Esc
+  s10 --> s20: you lift a toy
+  s2 --> s12: you tap the lamp or আব#2494;র খ#2503;ল#2507;
+  s2 --> s3: the page opens again or you tap the lamp or আব#2494;র খ#2503;ল#2507;
+  s6 --> s12: you tap the lamp or আব#2494;র খ#2503;ল#2507; or you go back from the list
+  s15 --> s10: the hold runs out: next wall or the end screen
+  s15 --> s17: the window blurs, or #9208; / P / Esc
+  s12 --> s10: চ#2494;ল#2495;য#2492;#2503; য#2494;ও, or the window comes back
+  s6 --> s3: you tap the lamp or আব#2494;র খ#2503;ল#2507;
+  s12 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s20 --> s2: the page opens again
+  s20 --> s10: you drop it on a wrong shadow or in the air: it goes home
+  s20 --> s6: you open the level list
+  s20 --> s15: you drop it on the right shadow (or tap it, with one shadow open)
+  s20 --> s12: the window blurs, or #9208; / P / Esc
+  s6 --> s15: you go back from the list
+  s10 --> s23: you drop it on the right shadow (or tap it, with one shadow open)
+  s17 --> s15: চ#2494;ল#2495;য#2492;#2503; য#2494;ও, or the window comes back
+  s17 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s20 --> s3: the page opens again
+  s6 --> s17: you go back from the list
+  s23 --> s2: the page opens again
+  s23 --> s6: you open the level list
+  s23 --> s30: the hold runs out: next wall or the end screen
+  s23 --> s26: the window blurs, or #9208; / P / Esc
+  s10 --> s24: you drop it on the right shadow (or tap it, with one shadow open)
+  s20 --> s23: you drop it on the right shadow (or tap it, with one shadow open)
+  s6 --> s23: you go back from the list
+  s30 --> s2: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s30 --> s10: you tap the lamp or আব#2494;র খ#2503;ল#2507;
+  s30 --> s6: you open the level list
+  s24 --> s7: you open the level list
+  s24 --> s31: the hold runs out: next wall or the end screen
+  s24 --> s27: the window blurs, or #9208; / P / Esc
+  s26 --> s2: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s26 --> s6: you open the level list
+  s26 --> s23: চ#2494;ল#2495;য#2492;#2503; য#2494;ও, or the window comes back
+  s20 --> s24: you drop it on the right shadow (or tap it, with one shadow open)
+  s6 --> s30: you go back from the list
+  s6 --> s26: you go back from the list
+  s30 --> s12: you tap the lamp or আব#2494;র খ#2503;ল#2507;
+  s7 --> s6: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s30 --> s31: you tap the lamp or আব#2494;র খ#2503;ল#2507;
+  s31 --> s30: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s27 --> s7: you open the level list
+  s27 --> s24: চ#2494;ল#2495;য#2492;#2503; য#2494;ও, or the window comes back
+  s27 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s7 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s31 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s4 --> s3: the page opens again
+  s8 --> s2: the page opens again
+  s8 --> s6: you open the level list
+  s8 --> s3: the page opens again
+  s13 --> s2: the page opens again
+  s13 --> s6: you open the level list
+  s13 --> s3: the page opens again
+  s21 --> s3: the page opens again
+  s28 --> s3: the page opens again
+  class s2 blue
+  class s3 yellow
+  class s6 blue
+  class s7 yellow
+  class s10 teal
+  class s12 teal
+  class s15 teal
+  class s17 teal
+  class s20 teal
+  class s23 teal
+  class s24 teal
+  class s26 teal
+  class s27 teal
+  class s30 blue
+  class s31 yellow
+```
 
-## Bugs (current code)
-
+## Bugs found on the old code, and how each was fixed
 ### 1. NoProgressWhileAway: "I matched the last shadow and switched apps; when I came back the round was over, the stars were saved and the chime had already played" (game)
 - **Path:**
   - 0: lamp off
@@ -73,29 +193,28 @@ Not modelled:
 - **Live (Orca, Pixel 9, 16:5x):** the buttons read `["আবার খেলো","শেষ","আব্বু-আম্মুকে দেখাও"]` and none has an icon. On a phone they sit below the fold under the six found pictures (`.shots/chhaya-melao-done-phone.png`).
 - **Fix:** give each button a picture: ↻ or the lamp switch for আবার খেলো, a closed door or a moon for শেষ, two adult faces for আব্বু-আম্মুকে দেখাও. Show the found pictures smaller, or after the buttons, so the next action is on the first screen. **Game** (the kit's `ShowParentButton` is word-only too, so that part is shared).
 
-## Found on the earlier kit, fixed by f4f75be and 23fd7c1 (re-checked live)
-These broke in my first run (10:04–10:13). The kit was then changed, and I re-checked them on the current kit at 16:46–16:50.
+### Fixes
+| # | Fix | Node test (`tests/session.test.ts`) | Live replay on the new code (Orca) |
+|---|---|---|---|
+| 1 NoProgressWhileAway | The 1.5 s `setTimeout` is gone. The hold is `session.hold`, run down by `S.tick` every 100 ms and **only while `S.live`** (not paused, not away, no list or rest screen). The round is saved at the last match itself, not at the end of the timer. | `NoProgressWhileAway: matching the last shadow and switching apps…`, `…the next wall never comes while away, paused, or behind the level list`, `EveryFinishCounts` | Matched the last shadow, dispatched blur: after 4 s the screen was still `play`, `hold` still 2200, no new write to the stars key (the one write came at the match), `recorded` 1. After চালিয়ে যাও the hold ran 2200 → 1500 in 0.7 s and the end screen came. |
+| 2 NoReadingNeeded | The end buttons are two equal 112 px picture buttons (a circling arrow, a closed door) right under the counts, with আব্বু-আম্মুকে দেখাও under them; the parent's lines come after. | `NoReadingNeeded: the end buttons are pictures of at least 96 px…` | Pixel 9 emulation: all three buttons on the first screen (`.shots/chhaya-melao-phone-end.png`). |
+| Gap: level chips | Each level is a tiny wall (shadows above, toys below) with its name; each world has a one-line idea. | `levels: ids 1–5 keep their old meaning…`, `each level teaches exactly one new thing` | `.shots/chhaya-melao-phone-list.png` |
+| Gap: stray tap | The level grid is gone from play. The list is its own screen, opened from the title chip, the end screen or the pause menu's সব লেভেল; closing it gives the round back and the first tap only wakes it. | `StrayTap: the level list is not on screen during play…` | list opens and closes mid-round with the round intact |
 
-- **RestOnlyAtBreak:** "behind the rest screen, my child pressed Tab and Enter and was playing again."
-  - **Then:** Tab from `<body>` reached the header (1–12), then ধীরে, শব্দ, আবার খেলো, শেষ and আব্বু-আম্মুকে দেখাও, and at step 19 `ধাপ ১`. Enter started a round under the rest screen (`rest:true, dots now, 2 choices`). Shift+Tab and Enter on the right picture matched it (`dots done`, শাপলা).
-  - **Now (দাঁড়িপাল্লা, same kit):** Tab, Tab, Shift+Tab, Enter and Space changed nothing. A scripted `focus()` and `click()` on আবার খেলো, and a level click in সব ধাপ, were blocked, and focus went back to `.kk-rest`. On a fresh rest screen, Tab moved only to the gate inside it. **Holds.**
-- **RestStaysUntilAGrownUp:** "after the rest screen, a reload gave a whole new round."
-  - **Then:** with 3830 s played today (limit 15 min), a reload showed no rest screen, and the switch started a round.
-  - **Now:** I set the time key to 1000 s, reloaded, and the page opened on `.kk-rest` with focus inside it. I restored the key afterwards. **Holds.**
-- **Gate, AskNeedsAHold:** "two fingers for a moment, or a short Enter, and the sum came up."
-  - **Then:** two touch pointers held for 200 ms opened the question 2.0 s later. Enter held 581 ms (2 repeats) opened it 1.5 s after release. One finger for 200 ms did not.
-  - **Now:** the same two-finger and Enter-with-repeats inputs give no question at 2.2 s, and one finger for 2.1 s asks. **Holds.**
-- **Gate, child mashing:**
-  - **Then:** wrong answers only cleared the pad. In 20 trials of random taps, the median was **136 taps** to open (min 5, five trials under 40), because sums of 6–9 took one digit.
-  - **Now:** sums are 10–18, the gate closes after 2 wrong answers, and each try needs a new 2 s hold. 80 s of random play gave 39 holds, 156 taps and **2 opens** (each session closed after 4 taps). That is about 1 open per 20 holds.
+## Systems modelled
+- **Play phase:** lamp (title) → a wall (a shadow, a toy in the hand) → wall matched, the hold runs → next wall → … → last shadow matched, round saved, the hold runs → end screen. The model uses 2 walls (the code has 2–8).
+- **Toy in the hand:** one pointer only, tap versus drag, dropped on blur, pause, a list or a lost press. (Tap-then-tap and the one-shadow tap are the same transition as a drop on the right shadow.)
+- **Time:** the hold (the one clock, only while live), the kit's 10 s play counter, the nudge finger (a picture only, cleared on pause and away).
+- **Pause and away:** the player's menu, blur, hide, resume; the first touch back only wakes the game unless the menu took it.
+- **Sound:** one-shot sounds only (lift, land, miss, lamp, stars, a finale tune). No loops, no voice.
+- **Results and stars:** `levels.record` at the last match (keeps the better).
+- **Kids' limit:** `atBreak()` when a round starts and at the last match; the rest screen only at a break.
 
-## Residual (current kit)
-- **OnlyAGrownUpOpensIt / NoShareForKids (KidsGate):** a child who keeps up 2 s holds and taps at random still gets in about once per 20 holds (≈ 1 in 100 per try). Once in, one action (the share) runs, and then the gate shuts. **Shared.** If this is too high:
-  - keep `misses` across openings, for example locking the gate for 1 minute after 2 failed holds; or
-  - ask for the digits in order on a shuffled pad.
-- **Shared page frame, observed and not modelled:** the child's view shows the site header with a free-text search box and links to গেম, কুইজ and টুলস. "এগুলোও ভালো লাগতে পারে" links to adult tools (আমার ছোটবেলা). The kids' brief says no free-text input and no outbound links in the child's view. `PageFrame` should take a kids variant: logo, ছোটদের খেলাঘর, and related kids' games only.
+## Residual (shared kit, unchanged)
+- **KidsGate OnlyAGrownUpOpensIt / NoShareForKids:** a child who keeps up 2 s holds and taps at random still gets in about once per 20 holds. One action runs, then the gate shuts. Shared.
+- **Page frame:** the player's kids header and rails now cover the earlier adult-nav finding.
 
-## Quality-bar gaps (game-quality-bar), played end to end in Orca (desktop and Pixel 9)
+## Quality-bar gaps from the first analysis, and where each went
 1. **First screen (§1):** good. The switch is the game's own art and the largest thing on the wall. The ghost finger shows on the first visit.
 2. **Ending (§10):** the next action is below the fold on a phone, and in words only (bug 2). The method line ("প্রথমবারেই সবগুলো…") is good.
 3. **Choices (§4, §2):** the five levels are bare numbers. Nothing says what ধাপ ৪ (same family) or ধাপ ৫ (turned shadows, 6+) changes. Show a small picture of the change on each chip.
@@ -105,15 +224,13 @@ These broke in my first run (10:04–10:13). The kit was then changed, and I re-
 7. **Sound (§11):** a lamp click, a soft miss, the good and win sounds, and star chimes. The game works on mute. There's no signature sound.
 8. **Celebration:** confetti appears only when every level has its first star, which follows the brief.
 
-## Screenshots
-- `.shots/chhaya-melao-rest.png`: the rest screen covering the page (earlier kit; it looks the same now).
-- `.shots/chhaya-melao-first-phone.png`: the Pixel 9 first screen, with the header search and adult nav visible above the game.
-- `.shots/chhaya-melao-done-phone.png`: the Pixel 9 done screen, with the buttons below the fold.
+All eight are addressed in the rewrite design (`ai_docs/game-dev/rewrites/chhaya-melao.md`): the lamp is the first screen, level cards show their change, no level grid in play, the player's pause, a bridge level (একটু কাত) before full turns, a world tune and a signature knock-and-bell.
 
 ## Regenerate
 ```sh
-scripts/statechart.sh ai_docs/statecharts/chhaya-melao/Chhaya.tla --view ai_docs/statecharts/chhaya-melao/view.ts --out ai_docs/statecharts/chhaya-melao/before-fix
-scripts/statechart.sh ai_docs/statecharts/chhaya-melao/KidsGate.tla --view ai_docs/statecharts/chhaya-melao/gate-view.ts --out ai_docs/statecharts/chhaya-melao/gate-before-fix
-rm -f ai_docs/statecharts/chhaya-melao/*before-fix/tlc*.out
+scripts/statechart.sh ai_docs/statecharts/chhaya-melao/Chhaya.tla --view ai_docs/statecharts/chhaya-melao/view.ts --out ai_docs/statecharts/chhaya-melao/after-fix
+scripts/statechart.sh ai_docs/statecharts/chhaya-melao/ChhayaStars.tla --view ai_docs/statecharts/chhaya-melao/stars-view.ts --out ai_docs/statecharts/chhaya-melao/after-fix-stars
+scripts/statechart.sh ai_docs/statecharts/chhaya-melao/ChhayaKeys.tla --view ai_docs/statecharts/chhaya-melao/keys-view.ts --out ai_docs/statecharts/chhaya-melao/after-fix-keys
+rm -f ai_docs/statecharts/chhaya-melao/after-fix*/tlc*.out
 ```
-Each `--out` folder must be new or empty. `Chhaya.cfg` has `CONSTRAINT Explore`, which stops past a broken history rule to stay under 500 states. After the fix, gate `NextShadowComes` and `RoundEnds` on `~away`, add the picture set to `Pictured`, and re-run into `after-fix/`.
+Each `--out` folder must be new or empty.

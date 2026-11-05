@@ -1,31 +1,33 @@
-export const title = "ছায়া মেলাও: the wall, the round, the rest screen and you";
+export const title = "ছায়া মেলাও: the lamp, the wall, the toy in your hand, the hold, the rest screen";
 const wall = (v: any) => {
-  if (v.phase === "dark") return "Lamp off, switch waiting";
-  if (v.phase === "done") return "Round over: stars and the found pictures";
-  if (v.phase === "idle") return "আজকের মতো হলো";
-  const n = v.item === 1 ? "First shadow" : "Last shadow";
-  return v.solved ? `${n} matched, next one coming` : `${n} on the wall`;
+  if (v.screen === "title") return "The unlit lamp (বাতি জ্বালাও)";
+  if (v.screen === "levels") return "The level list";
+  if (v.screen === "end") return "End screen (আবার খেলো / শেষ)";
+  if (v.solved) return v.idx === 2 ? "Last shadow matched, round saved, the hold runs" : "Wall matched, the hold runs";
+  return v.hand ? "A toy in your hand" : "A shadow on the wall";
 };
 export const state = (v: any) => ({
   Wall: wall(v),
-  Rest: v.resting ? "Rest screen up" : v.over ? (v.restSeen ? "Rest was shown, time still over" : "Today's minutes are up") : "Time left today",
-  You: v.away ? "Looking away" : v.focus === "level" ? "Here, a level button has focus" : "Here",
+  Window: v.screen !== "play" ? "Nothing to hold" : v.paused || v.away ? "Menu open or looking away, the hold waits" : "In front",
+  Today: v.resting ? (v.screen === "play" ? "Time's up, the rest waits for the end screen" : "Rest screen") : "Time left today",
 });
 export const step = (action: string) => ({
-  YouFlipTheSwitch: "you press the light switch",
-  YouPickTheRightPicture: "you tap the right picture",
-  YouPickAWrongPicture: "you tap a wrong picture",
-  NextShadowComes: "a moment later the next shadow comes",
-  RoundEnds: "a moment later the round ends",
-  YouTapALevel: "you tap a level number",
-  YouPressEnter: "you press Enter",
-  YouPressPlayAgain: "you press আবার খেলো",
-  YouPressDone: "you press শেষ",
-  TodaysMinutesRunOut: "today's minutes run out",
-  AGrownUpGivesTenMore: "a grown-up gives 10 more minutes",
-  ThePageReloads: "the page reloads",
-  YouLookAway: "you look away",
-  YouComeBack: "you come back",
+  YouLightTheLamp: "you tap the lamp or আবার খেলো",
+  YouOpenTheLevelList: "you open the level list",
+  YouPickALevel: "you tap the lamp or আবার খেলো",
+  YouCloseTheLevelList: "you go back from the list",
+  YouLiftAToy: "you lift a toy",
+  YouLetGoOfTheToy: "you drop it on a wrong shadow or in the air: it goes home",
+  YouMatchAShadow: "you drop it on the right shadow (or tap it, with one shadow open)",
+  TheHoldRunsOut: "the hold runs out: next wall or the end screen",
+  YouGoAway: "the window blurs, or ⏸ / P / Esc",
+  TheWindowBlurs: "the window blurs, or ⏸ / P / Esc",
+  TheWindowComesBack: "চালিয়ে যাও, or the window comes back",
+  YouResume: "চালিয়ে যাও, or the window comes back",
+  YouGoBackToTheTitle: "নতুন করে শুরু, or শেষ",
+  TimeIsUp: "today's play time runs out",
+  ThePageOpens: "the page opens again",
+  TenMoreMinutes: "a grown-up gives আজ আরও ১০ মিনিট",
 } as Record<string, string>)[action] ?? action;
-export const group = (v: any) => v.resting ? "rest" : v.phase === "play" ? "play" : v.phase === "done" ? "done" : "wait";
-export const colors = { play: "teal", rest: "yellow", done: "blue", wait: "tan" };
+export const group = (v: any) => v.resting && v.screen !== "play" ? "held" : v.screen === "play" ? "play" : "done";
+export const colors = { play: "teal", held: "yellow", done: "blue" };

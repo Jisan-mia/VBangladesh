@@ -1,0 +1,82 @@
+---
+title: "ছﬂ°°2494¶ßযﬂ°°2492¶ßﬂ°°2494¶ß মﬂ°°2503¶ßলﬂ°°2494¶ßও: a round's stars"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: done
+  }
+  class lg0 teal
+  class lg1 blue
+  s0: Title
+  s1: Playing: 0 of 4 scored, 0 on the first try
+  s2: Playing: 1 of 4 scored, 0 on the first try
+  s3: Playing: 1 of 4 scored, 1 on the first try
+  s4: Playing: 2 of 4 scored, 0 on the first try
+  s5: Playing: 2 of 4 scored, 1 on the first try
+  s6: Playing: 2 of 4 scored, 2 on the first try
+  s7: Playing: 3 of 4 scored, 0 on the first try
+  s8: Playing: 3 of 4 scored, 1 on the first try
+  s9: Playing: 3 of 4 scored, 2 on the first try
+  s10: Playing: 3 of 4 scored, 3 on the first try
+  s11: End screen, 1 stars, best 1
+  s12: End screen, 2 stars, best 2
+  s13: End screen, 3 stars, best 3
+  s14: End screen, 1 stars, best 2
+  s15: End screen, 1 stars, best 3
+  s16: End screen, 2 stars, best 3
+  [*] --> s0
+  s0 --> s1: you start a round
+  s1 --> s2: you match a shadow after a slip
+  s1 --> s3: you match a shadow on the first try
+  s2 --> s4: you match a shadow after a slip
+  s2 --> s5: you match a shadow on the first try
+  s3 --> s5: you match a shadow after a slip
+  s3 --> s6: you match a shadow on the first try
+  s4 --> s7: you match a shadow after a slip
+  s4 --> s8: you match a shadow on the first try
+  s5 --> s8: you match a shadow after a slip
+  s5 --> s9: you match a shadow on the first try
+  s6 --> s9: you match a shadow after a slip
+  s6 --> s10: you match a shadow on the first try
+  s7 --> s11: you match a shadow after a slip or you match a shadow on the first try
+  s8 --> s11: you match a shadow after a slip
+  s8 --> s12: you match a shadow on the first try
+  s9 --> s12: you match a shadow after a slip
+  s9 --> s13: you match a shadow on the first try
+  s10 --> s13: you match a shadow after a slip or you match a shadow on the first try
+  s11 --> s1: you start a round
+  s11 --> s0: শ#2503;ষ
+  s12 --> s1: you start a round
+  s12 --> s0: শ#2503;ষ
+  s13 --> s1: you start a round
+  s13 --> s0: শ#2503;ষ
+  s7 --> s14: you match a shadow after a slip or you match a shadow on the first try
+  s7 --> s15: you match a shadow after a slip or you match a shadow on the first try
+  s8 --> s14: you match a shadow after a slip
+  s8 --> s15: you match a shadow after a slip
+  s8 --> s16: you match a shadow on the first try
+  s9 --> s16: you match a shadow after a slip
+  s14 --> s1: you start a round
+  s14 --> s0: শ#2503;ষ
+  s15 --> s1: you start a round
+  s15 --> s0: শ#2503;ষ
+  s16 --> s1: you start a round
+  s16 --> s0: শ#2503;ষ
+  class s0 blue
+  class s1 teal
+  class s2 teal
+  class s3 teal
+  class s4 teal
+  class s5 teal
+  class s6 teal
+  class s7 teal
+  class s8 teal
+  class s9 teal
+  class s10 teal
+  class s11 blue
+  class s12 blue
+  class s13 blue
+  class s14 blue
+  class s15 blue
+  class s16 blue

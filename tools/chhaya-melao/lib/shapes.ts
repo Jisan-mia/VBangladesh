@@ -121,3 +121,6 @@ export const shapeOf = (id: string) => SHAPES.find(shape => shape.id === id);
 
 /** A whole SVG document for one object (for the card, drawn from a data: URL, so nothing is fetched). */
 export const svgDocument = (art: string) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="400" height="400">${art}</svg>`;
+
+/** The same drawing as a flat shadow: every colour becomes the world's dark, details vanish, strokes stay strokes. */
+export const silhouette = (art: string, color: string) => art.replace(/#[0-9a-fA-F]{3,8}\b/g, color);
