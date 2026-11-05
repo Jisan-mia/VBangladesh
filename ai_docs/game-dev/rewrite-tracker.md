@@ -58,7 +58,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | sourojogot | S18 | analysed | rewriting |
 | dosh-ghater-nouka | S18 | analysed | rewriting |
 | golper-mor | S18 | analysed | rewriting |
-| juktoborno | S19 | analysed | rewriting |
+| juktoborno | S19 | analysed | done |
 | ghori-dekhi | S19 | analysed | rewriting |
 | moner-rong | S19 | analysed | rewriting |
 | sat-tukro | S20 | analysed | rewriting |
