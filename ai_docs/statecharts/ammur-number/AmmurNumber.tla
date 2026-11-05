@@ -1,116 +1,100 @@
 ---- MODULE AmmurNumber ----
-\* আম্মুর নম্বর (ছোটদের জন্য, ৪–৮): the number set behind the gate, a round of pieces (the digits play and light, then
-\* hide; the child dials them; a 1 s rest; the next, longer piece; the ring and a 1.7 s wait; the end screen), the
-\* আবার দেখাও look, a held Enter key, the window, the spoken number, and the daily limit and rest screen.
-\* Mirrored from tools/ammur-number/components/number-game.tsx (NumberGame: listen() and its setTimeouts,
-\* stopListening, start, setNumber, tap → dial, lookAgain → peek, pickWho, the piece/end effect with its 1000 ms and
-\* 1700 ms timers, the end screen's আবার খেলো / শেষ / পরের ধাপ, the সব ধাপ LevelGrid, SpeakButton on the rhyme line)
-\* and tools/ammur-number/lib/game.ts (dial, nextPiece, peek, roundStars); shared/kids-kit.tsx at 23fd7c1 (useKidsSession,
-\* RestScreen, now a modal, SpeakButton → speak(), which takes the first bn voice whatever its localService).
-\* Abstractions: two pieces stand in for four, and the step is ধাপ ৩ (দেখে, তারপর লুকিয়ে: each piece plays once with
-\* the digits showing, then they all hide), where the look matters most. A piece is dialled in one "right" step; misses
-\* are left out (they change only the stars). Blur and hide are one "away" step: nothing in this game listens for
-\* either. The parent gates are the shared kids-kit gate, modelled in ai_docs/statecharts/prithibi-ghuri/.
+\* আম্মুর নম্বর (ছোটদের জন্য, ৪–৮), after the rewrite. The title (the parent's form behind the gate, খেলো), a round of pieces (the look:
+\* the digits play and light, then hide; the child dials a piece; the rest; the next, longer piece; the whole number rings; the end
+\* screen), the eye key, the window and the player's menu, the parent's tick to keep the number on this phone, and the daily limit.
+\* Mirrored from tools/ammur-number/lib/session.ts (begin, lookDone, tapKey, askLook, dialled, restDone, ringDone, pause/blur,
+\* toTitle), lib/play.ts (look, dial, nextPiece), lib/saved.ts, and the beat effect in components/game.tsx, which starts a beat's timer
+\* only while nobody is away and clears it on pause or blur; coming back starts the beat again from its first digit.
+\* shared/kids-kit.tsx at the same commit (useKidsSession, RestScreen).
+\* Abstractions: two pieces stand for four; the model is the hidden worlds, where every piece opens with the look; a piece is dialled in
+\* one step; misses are left out (they change only the stars). "away" stands for a blurred window, a hidden tab and the player's
+\* open menu: they hold the game the same way. The gates are the shared kids-kit gate, modelled in ai_docs/statecharts/prithibi-ghuri/.
 EXTENDS Naturals
 CONSTANTS LookButtonHasAPicture
-VARIABLES phase, piece, win, looked, held, charged, lost, sent, overLimit, resting
-vars == <<phase, piece, win, looked, held, charged, lost, sent, overLimit, resting>>
+VARIABLES phase, piece, win, looked, charged, recorded, keep, stored, overLimit, resting
+vars == <<phase, piece, win, looked, charged, recorded, keep, stored, overLimit, resting>>
 
-\* setup: no number yet. listen: the digits play and light. typing: the child dials. pieceRest: the 1 s rest.
-\* ringing: the whole number dialled, 1.7 s to the end screen. end, closed: the end screen and ফোন রেখে দিলাম.
-Phases == {"setup", "listen", "typing", "pieceRest", "ringing", "end", "closed"}
+\* title: no round. look: the digits play and light. dial: the child dials. rest: a piece is dialled, the next comes.
+\* ring: the whole number dialled, the round already recorded. end: the end screen.
+Phases == {"title", "look", "dial", "rest", "ring", "end"}
+InRound == phase \in {"look", "dial", "rest", "ring"}
 Free == ~resting /\ win = "here"
-InRound == phase \in {"listen", "typing", "pieceRest", "ringing"}
 
-\* start(number, level): newRound, then listen(next, showFirst): the digits play while you may or may not be looking.
-Start == /\ phase' = "listen" /\ piece' = 0 /\ looked' = (win = "here") /\ charged' = FALSE
-         \* (the ghost marks for the rules clear with each round, so the model stays small)
-         /\ sent' = FALSE
+Init == /\ phase = "title" /\ piece = 0 /\ win = "here" /\ looked = FALSE /\ charged = FALSE /\ recorded = FALSE
+        /\ keep = FALSE /\ stored = FALSE /\ overLimit = FALSE /\ resting = FALSE
 
-Init == /\ phase = "setup" /\ piece = 0 /\ win = "here" /\ looked = FALSE /\ held = FALSE /\ charged = FALSE
-        /\ lost = FALSE /\ sent = FALSE /\ overLimit = FALSE /\ resting = FALSE
-
-\* A parent opens নম্বর দাও (hold 2 s, the sum), types the number: setNumber → start; the gates re-key and close.
-\* (নমুনা নম্বরে দেখো does the same with the demo number, no gate.)
-AParentSetsTheNumber == /\ phase = "setup" /\ Free /\ Start /\ lost' = FALSE
-                        /\ UNCHANGED <<win, held, overLimit, resting>>
-\* The last digit's timer: setLit(null). The child may now dial.
-ThePlaybackEnds == /\ phase = "listen" /\ phase' = "typing"
-                   /\ UNCHANGED <<piece, win, looked, held, charged, lost, sent, overLimit, resting>>
-\* tap() during the playback: stopListening(), then dial. The child chose to cut the look short.
-\* tap() while typing: the piece is dialled (two pieces: a 1 s rest; the last: the ring).
-\* (with the key let go: a finger tap moves focus to the digit, and a held key would repeat there instead)
-YouDialThePiece == /\ phase \in {"listen", "typing"} /\ Free /\ ~held
-                   /\ phase' = (IF piece = 0 THEN "pieceRest" ELSE "ringing") /\ looked' = FALSE /\ charged' = FALSE
-                   /\ UNCHANGED <<piece, win, held, lost, sent, overLimit, resting>>
-\* The [round, phase] effect, 1000 ms: nextPiece, listen(next). setTimeout runs whether or not anyone is looking.
-TheNextPiecePlays == /\ phase = "pieceRest"
-                     /\ phase' = "listen" /\ piece' = 1 /\ looked' = (win = "here") /\ charged' = FALSE
-                     /\ UNCHANGED <<win, held, lost, sent, overLimit, resting>>
-\* The same effect, 1700 ms after the ring: record stars, sfx.win, atBreak(), the end screen.
-TheEndScreenComes == /\ phase = "ringing"
-                     /\ phase' = "end" /\ resting' = overLimit
-                     /\ UNCHANGED <<piece, win, looked, held, charged, lost, sent, overLimit>>
-\* আবার দেখাও → lookAgain(): peek (helps + 1 while anything is hidden) and listen(next, true), also while a look
-\* is already playing. A pointer press, or the first keydown of a held Enter.
-LookAgain(isHeld) == /\ phase \in {"listen", "typing"} /\ Free
-                     /\ charged' = (charged \/ phase = "listen")
-                     /\ phase' = "listen" /\ looked' = TRUE /\ held' = isHeld
-                     /\ UNCHANGED <<piece, win, lost, sent, overLimit, resting>>
-YouTapLookAgain == ~held /\ LookAgain(FALSE)
-YouHoldEnterOnLookAgain == ~held /\ LookAgain(TRUE)
-\* Each auto-repeat keydown clicks the focused আবার দেখাও again: another help, the playback starts over.
-TheKeyRepeats == held /\ LookAgain(TRUE)
-YouLetGo == /\ held /\ held' = FALSE
-            /\ UNCHANGED <<phase, piece, win, looked, charged, lost, sent, overLimit, resting>>
-\* pickWho(other) (when both numbers are set) or a ধাপ in সব ধাপ: start() mid-round. In "ringing" the 1.7 s timer is
-\* cleared: the number was dialled, but the round is never recorded and atBreak() never runs.
-YouSwitchNumberOrStep == /\ InRound /\ Free /\ Start /\ lost' = (phase = "ringing")
-                         /\ UNCHANGED <<win, held, overLimit, resting>>
-\* The end screen: আবার খেলো or পরের ধাপ → start(); শেষ → closed (its আবার খেলো → start()).
-YouPlayAgain == /\ phase \in {"end", "closed"} /\ Free /\ Start /\ lost' = FALSE
-                /\ UNCHANGED <<win, held, overLimit, resting>>
-YouPressShesh == /\ phase = "end" /\ Free /\ phase' = "closed"
-                 /\ UNCHANGED <<piece, win, looked, held, charged, lost, sent, overLimit, resting>>
-\* SpeakButton shows next to the rhyme line while the digits show; it appears only if the phone has a Bangla voice.
-\* speak() takes the first bn voice, and Chrome's "Google" voices are network voices (localService = false):
-\* the number's words go to the speech server.
-YouTapTheSpeakerOnAPhoneWithANetworkVoice == /\ phase = "listen" /\ Free /\ sent' = TRUE
-                                             /\ UNCHANGED <<phase, piece, win, looked, held, charged, lost, overLimit, resting>>
-\* The window: no handler, so nothing pauses and nothing is released. Leaving is modelled where it changes what the
-\* child sees: while the digits play, and in the 1 s rest before the next piece plays.
-YouLeave == /\ win = "here" /\ phase \in {"listen", "pieceRest"} /\ win' = "away"
-            /\ looked' = (looked /\ phase # "listen")
-            /\ UNCHANGED <<phase, piece, held, charged, lost, sent, overLimit, resting>>
+\* The form behind নম্বর দাও (hold 2 s, the sum): the number goes to page memory; the tick decides whether this phone's storage keeps it.
+AParentSetsTheNumber(tick) == /\ phase = "title" /\ Free /\ keep' = tick /\ stored' = tick
+                              /\ UNCHANGED <<phase, piece, win, looked, charged, recorded, overLimit, resting>>
+\* নম্বর মুছে দাও: the page's copy and the stored one both go.
+AParentClearsTheNumber == /\ phase = "title" /\ Free /\ keep' = FALSE /\ stored' = FALSE
+                          /\ UNCHANGED <<phase, piece, win, looked, charged, recorded, overLimit, resting>>
+\* begin(): atBreak() first; past the limit nothing starts and the rest screen shows.
+YouPlay == /\ phase \in {"title", "end"} /\ Free /\ ~overLimit
+           /\ phase' = "look" /\ piece' = 0 /\ looked' = FALSE /\ charged' = FALSE /\ recorded' = FALSE
+           /\ UNCHANGED <<win, keep, stored, overLimit, resting>>
+YouPlayPastTheLimit == /\ phase \in {"title", "end"} /\ Free /\ overLimit /\ resting' = TRUE
+                       /\ UNCHANGED <<phase, piece, win, looked, charged, recorded, keep, stored, overLimit>>
+\* The beat effect: the last light goes out, lookDone() (only while nobody is away).
+TheLookEnds == /\ phase = "look" /\ win = "here" /\ phase' = "dial" /\ looked' = (win = "here")
+               /\ UNCHANGED <<piece, win, charged, recorded, keep, stored, overLimit, resting>>
+\* tapKey() while the look plays: ignored. The look is never cut short.
+YouTapADigitWhileTheDigitsPlay == /\ phase = "look" /\ Free /\ UNCHANGED vars
+\* askLook() while the look plays: ignored, never charged again (a double tap, a held Enter).
+YouTapTheEyeWhileTheDigitsPlay == /\ phase = "look" /\ Free /\ UNCHANGED vars
+\* askLook() while dialling: one look, which plays from its first digit.
+YouTapTheEye == /\ phase = "dial" /\ Free /\ phase' = "look" /\ looked' = FALSE
+                /\ UNCHANGED <<piece, win, charged, recorded, keep, stored, overLimit, resting>>
+\* dial() the last digit of the first piece: dialled(): the rest.
+YouDialTheFirstPiece == /\ phase = "dial" /\ piece = 0 /\ Free /\ phase' = "rest" /\ looked' = FALSE
+                        /\ UNCHANGED <<piece, win, charged, recorded, keep, stored, overLimit, resting>>
+\* The last digit of the whole number: dialled(): ring, recorded and atBreak() at this very tap.
+YouDialTheWholeNumber == /\ phase = "dial" /\ piece = 1 /\ Free /\ phase' = "ring" /\ looked' = FALSE
+                         /\ recorded' = TRUE /\ resting' = overLimit
+                         /\ UNCHANGED <<piece, win, charged, keep, stored, overLimit>>
+\* The beat effect, 1000 ms: restDone(), nextPiece, the look again (only while nobody is away).
+TheNextPiecePlays == /\ phase = "rest" /\ win = "here" /\ phase' = "look" /\ piece' = 1 /\ looked' = FALSE
+                     /\ UNCHANGED <<win, charged, recorded, keep, stored, overLimit, resting>>
+\* The beat effect, 1600 ms after the ring: ringDone(), the end screen (only while nobody is away).
+TheEndScreenComes == /\ phase = "ring" /\ win = "here" /\ phase' = "end"
+                     /\ UNCHANGED <<piece, win, looked, charged, recorded, keep, stored, overLimit, resting>>
+\* ⟳ in the player, শেষ, or the pause menu's নতুন করে শুরু / সব লেভেল: toTitle(). The menu closes.
+YouRestart == /\ phase # "title" /\ phase' = "title" /\ win' = "here" /\ looked' = FALSE
+              /\ UNCHANGED <<piece, charged, recorded, keep, stored, overLimit, resting>>
+\* blur, hide, or ⏸ / P / Escape: the beat's timers are cleared.
+YouLeave == /\ win = "here" /\ win' = "away"
+            /\ UNCHANGED <<phase, piece, looked, charged, recorded, keep, stored, overLimit, resting>>
+\* focus or চালিয়ে যাও: the beat starts again from its first digit; the phase is what it was.
 YouComeBack == /\ win = "away" /\ win' = "here"
-               /\ UNCHANGED <<phase, piece, looked, held, charged, lost, sent, overLimit, resting>>
+               /\ UNCHANGED <<phase, piece, looked, charged, recorded, keep, stored, overLimit, resting>>
 TimeIsUp == /\ ~overLimit /\ overLimit' = TRUE
-            /\ UNCHANGED <<phase, piece, win, looked, held, charged, lost, sent, resting>>
+            /\ UNCHANGED <<phase, piece, win, looked, charged, recorded, keep, stored, resting>>
 AParentGivesTenMinutes == /\ resting /\ win = "here" /\ resting' = FALSE /\ overLimit' = FALSE
-                          /\ UNCHANGED <<phase, piece, win, looked, held, charged, lost, sent>>
+                          /\ UNCHANGED <<phase, piece, win, looked, charged, recorded, keep, stored>>
 
-Next == AParentSetsTheNumber \/ ThePlaybackEnds \/ YouDialThePiece \/ TheNextPiecePlays \/ TheEndScreenComes
-        \/ YouTapLookAgain \/ YouHoldEnterOnLookAgain \/ TheKeyRepeats \/ YouLetGo \/ YouSwitchNumberOrStep
-        \/ YouPlayAgain \/ YouPressShesh \/ YouTapTheSpeakerOnAPhoneWithANetworkVoice
+Next == AParentSetsTheNumber(TRUE) \/ AParentSetsTheNumber(FALSE) \/ AParentClearsTheNumber \/ YouPlay \/ YouPlayPastTheLimit
+        \/ TheLookEnds \/ YouTapADigitWhileTheDigitsPlay \/ YouTapTheEyeWhileTheDigitsPlay \/ YouTapTheEye
+        \/ YouDialTheFirstPiece \/ YouDialTheWholeNumber \/ TheNextPiecePlays \/ TheEndScreenComes \/ YouRestart
         \/ YouLeave \/ YouComeBack \/ TimeIsUp \/ AParentGivesTenMinutes
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ phase \in Phases /\ piece \in 0..1 /\ win \in {"here", "away"} /\ looked \in BOOLEAN /\ held \in BOOLEAN
-          /\ charged \in BOOLEAN /\ lost \in BOOLEAN /\ sent \in BOOLEAN /\ overLimit \in BOOLEAN /\ resting \in BOOLEAN
+TypeOK == /\ phase \in Phases /\ piece \in 0..1 /\ win \in {"here", "away"} /\ looked \in BOOLEAN /\ charged \in BOOLEAN
+          /\ recorded \in BOOLEAN /\ keep \in BOOLEAN /\ stored \in BOOLEAN /\ overLimit \in BOOLEAN /\ resting \in BOOLEAN
 
 \* The reader's rules.
-\* The digits play and hide only while the child is on the page; nothing moves on while they're away.
-NoProgressWhileAway == phase = "typing" => looked
-\* One look costs one help: pressing আবার দেখাও again while the digits are already playing (a double tap, a held
-\* Enter) doesn't charge again.
+\* The digits play and hide only while the child is on the page: dialling starts only after a look that was seen.
+NoProgressWhileAway == phase = "dial" => looked
+\* While away, no beat moves: the phase, the piece and the look stay as they were (the only exit is the menu's restart, which comes back first).
+AwayFreezes == [][(win = "away" /\ win' = "away") => UNCHANGED <<phase, piece, looked>>]_vars
+\* One look costs one help: a look already playing is never charged again (a double tap, a held Enter).
 OneLookOneHelp == ~charged
-\* A number you dialled to the end is always recorded and checked against the daily limit.
-EveryFinishCounts == ~lost
-\* The parent's number never leaves the phone.
-NoChildData == ~sent
-\* A 4–5 year old who missed the look gets it back by picture or sound, not by reading আবার দেখাও.
-NoReadingNeeded == (phase = "typing" /\ ~looked) => LookButtonHasAPicture
-\* The rest screen comes only between rounds.
-RestOnlyAtBreak == resting => phase \in {"end", "closed"}
+\* A number dialled to the end is always recorded and checked against the daily limit, at the last digit.
+EveryFinishCounts == phase \in {"ring", "end"} => recorded
+\* The number is kept on this phone only when a parent ticked keep, and forgotten when a parent clears it.
+StoredOnlyWhenKept == stored => keep
+\* A 4–5 year old who missed the look gets it back by picture or sound: the eye key is a picture, and the ghost finger points to it.
+NoReadingNeeded == (phase = "dial" /\ ~looked) => LookButtonHasAPicture
+\* The rest screen comes only between rounds: it can be owed during the ring, and shows from the end screen.
+RestOnlyAtBreak == resting => phase \in {"title", "ring", "end"}
 ====

@@ -1,7 +1,7 @@
 // The "আব্বু-আম্মুকে দেখাও" card: a phone whose screen shows eleven dots and whose keys are blank, so no digit is ever drawn.
 // No name, no number, no stars. Saving it is behind the parent gate.
 import { cardSizes, drawFooterBand, fitText, renderCard } from "../../../shared/card-canvas";
-import { cardLine, type Who } from "./game";
+import { cardLine, type Who } from "./play";
 
 const colors = { bg: "#eef6f2", ink: "#16332a", muted: "#4d6b60", accent: "#0f7a5a", phone: "#16332a", screen: "#dff3ea", key: "#ffffff", band: "#0d3b2e", ask: "#ffd98a" };
 export const CARD_ASK = "নম্বরটা আজ ওর মুখে একবার শুনে নাও";
