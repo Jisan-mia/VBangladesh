@@ -1,8 +1,8 @@
 // The "আব্বু-আম্মুকে দেখাও" card: a passport page with today's three stamps, and no name of the child. 1080×1350.
-import { cardSizes, drawFooterBand, fitText, roundedRect } from "../../../shared/card-canvas";
+import { cardSizes, drawFooterBand, fitText, renderCard, roundedRect } from "../../../shared/card-canvas";
 import { flagDocument, picDocument } from "./art";
 import { countryOf } from "./countries";
-import { helloLine } from "./game";
+import { helloLine } from "./text";
 
 export type CardData = { label: string; title: string; trip: string; stars: number; ids: string[] };
 
@@ -84,4 +84,10 @@ export function drawCard(canvas: HTMLCanvasElement, data: CardData, pictures: Ma
   });
 
   drawFooterBand(c, "feed", FOOTER, site, { band: colors.band, ask: "#ffd166", site: "#ffffff" });
+}
+
+/** The card as a PNG for the parent's "ফোনে ছবি রাখো" (behind the gate). */
+export async function cardBlob(data: CardData, site: string) {
+  const pictures = await loadPictures(data.ids);
+  return renderCard(canvas => drawCard(canvas, data, pictures, site));
 }
