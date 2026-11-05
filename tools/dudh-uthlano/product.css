@@ -194,4 +194,15 @@
 .tool-dudh-uthlano .du[data-slow] .du-edge[data-edge=danger]::after{animation:none}
 .tool-dudh-uthlano .du[data-slow] .du-sheet,.tool-dudh-uthlano .du[data-slow] .du-end,.tool-dudh-uthlano .du[data-slow] .du-press,.tool-dudh-uthlano .du[data-slow] .du-caller,.tool-dudh-uthlano .du[data-slow] .du-pop,.tool-dudh-uthlano .du[data-slow] .du-bell{transition:none;animation:none}
 .tool-dudh-uthlano .du[data-slow] .du-press[data-held=true]{transform:none}
-@media(prefers-reduced-motion:reduce){.tool-dudh-uthlano .du-sheet,.tool-dudh-uthlano .du-end{animation:none}.tool-dudh-uthlano .du-story-skip span{transition-duration:0ms}
+@media(prefers-reduced-motion:reduce){.tool-dudh-uthlano .du-sheet,.tool-dudh-uthlano .du-end{animation:none}.tool-dudh-uthlano .du-story-skip span{transition-duration:0ms}.tool-dudh-uthlano .du-caller,.tool-dudh-uthlano .du-pop,.tool-dudh-uthlano .du-bell[data-on],.tool-dudh-uthlano .du-edge[data-edge=danger]::after{animation:none}.tool-dudh-uthlano .du-title-start,.tool-dudh-uthlano .du-press{transition:none}.tool-dudh-uthlano .du-title-start:active,.tool-dudh-uthlano .du-press[data-held=true]{transform:none}}
+
+/* press feedback on everything small and pressable: a 160ms squeeze that lets go as fast (one rule, the pot and the big button have their own) */
+.tool-dudh-uthlano :is(.du-modes button,.du-link,.du-sheet-close,.du-story-skip,.du-end-choices button,.du-sheet-world button:not(:disabled)){transition:transform 160ms var(--ease-out)}
+.tool-dudh-uthlano :is(.du-modes button,.du-link,.du-sheet-close,.du-story-skip,.du-end-choices button,.du-sheet-world button:not(:disabled)):active{transform:scale(.97)}
+.tool-dudh-uthlano .du[data-slow] :is(.du-modes button,.du-link,.du-sheet-close,.du-story-skip,.du-end-choices button,.du-sheet-world button){transition:none}
+.tool-dudh-uthlano .du[data-slow] :is(.du-modes button,.du-link,.du-sheet-close,.du-story-skip,.du-end-choices button,.du-sheet-world button):active{transform:none}
+/* the stars arrive from 0.8, never from a dot (the shared gx-pop starts at .4) */
+@keyframes du-star{from{opacity:0;transform:scale(.8)}}
+.tool-dudh-uthlano .gx-pop{animation:du-star 240ms var(--ease-out) both}
+.tool-dudh-uthlano .du[data-slow] .gx-pop{animation:none}
+@media(prefers-reduced-motion:reduce){.tool-dudh-uthlano .gx-pop{animation:none}.tool-dudh-uthlano :is(.du-modes button,.du-link,.du-sheet-close,.du-story-skip,.du-end-choices button,.du-sheet-world button):active{transform:none}}

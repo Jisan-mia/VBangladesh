@@ -544,7 +544,7 @@ export function PenaltyGame() {
   const scoreText = data.format === "shots" ? `${bn(hud.goals)}/${bn(data.kicks)}` : data.format === "saves" ? `${bn(hud.theirs.filter(mark => !mark).length)}/${bn(data.kicks)}` : score(hud.goals, hud.conceded);
 
   return (
-    <div className="pk" ref={root} data-phase={phase} data-palette={paletteFor(level).name}>
+    <div className="pk" ref={root} data-slow={slow || undefined} data-phase={phase} data-palette={paletteFor(level).name}>
       <div className="pk-hud" aria-hidden={phase === "title" || undefined}>
         <p className="pk-badge"><b>{bn(level)}</b><span>{data.finale ? "ফাইনাল · " : ""}{data.name}</span></p>
         <div className="pk-score" role="group" aria-label={drill ? `${usLabel} ${scoreText}` : `স্কোর: আমরা ${bn(hud.goals)}, ${team.name} ${bn(hud.conceded)}`}>

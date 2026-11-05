@@ -60,7 +60,7 @@ circle.bl-done-line{fill:var(--cover);stroke:none}
 .bl-nib{fill:var(--cover-deep);stroke:#fff;stroke-width:1.2;opacity:0;pointer-events:none}
 .bl-start circle{fill:var(--red);stroke:var(--red);stroke-opacity:.35;stroke-width:0}
 .bl-start text{fill:#fff;font-family:var(--font-bengali);font-size:5.6px;font-weight:700}
-.bl-glow circle{animation:bl-glow 1.4s ease-in-out infinite}
+.bl-glow circle{transform-box:fill-box;transform-origin:center;animation:bl-glow 1.4s cubic-bezier(.77,0,.175,1) infinite}
 .bl-arrow{fill:var(--ink)}
 .bl-finger{fill:var(--cover);opacity:.2;pointer-events:none}
 .bl-pen{fill:var(--amber);stroke:#fff;stroke-width:1.2;opacity:0;pointer-events:none}
@@ -70,7 +70,7 @@ circle.bl-done-line{fill:var(--cover);stroke:none}
 .bl-board:not([data-hand]) .bl-hand{display:none}
 .bl-letter{animation:bl-in .22s var(--ease-out)}
 @keyframes bl-in{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:none}}
-@keyframes bl-glow{0%,100%{stroke-width:0}50%{stroke-width:3.4}}
+@keyframes bl-glow{50%{transform:scale(1.14)}}
 .bl-title-pen .bl-pen{opacity:1}
 
 /* the letter turns into its picture: a page over the board, the letter small in its corner */
@@ -80,11 +80,11 @@ circle.bl-done-line{fill:var(--cover);stroke:none}
 .bl-reveal-pic{display:block;max-width:100%}
 .bl-reveal[data-on] .bl-reveal-pic{animation:bl-alive .85s var(--ease-out)}
 .bl-reveal-word{margin:0;font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1.5;color:var(--cover-deep)}
-@keyframes bl-alive{0%{transform:scale(.8) rotate(-8deg)}35%{transform:scale(1.07) rotate(5deg)}60%{transform:rotate(-3deg)}100%{transform:none}}
+@keyframes bl-alive{0%{transform:scale(.85) rotate(-8deg)}35%{transform:scale(1.07) rotate(5deg)}60%{transform:rotate(-3deg)}100%{transform:none}}
 
 /* ---- the row under the board: 96 px picture buttons ---- */
 .bl-bar{display:flex;align-items:stretch;justify-content:space-between;gap:16px;width:var(--bs);min-height:96px;margin:6px auto 0}
-.bl-show,.bl-again,.bl-next{display:grid;justify-items:center;align-content:center;gap:2px;min-width:96px;min-height:96px;padding:6px 4px;border:0;border-radius:4px;font:inherit;font-family:var(--font-display);font-size:18px;font-weight:800;line-height:1.4;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .12s var(--ease-out),box-shadow .12s var(--ease-out)}
+.bl-show,.bl-again,.bl-next{display:grid;justify-items:center;align-content:center;gap:2px;min-width:96px;min-height:96px;padding:6px 4px;border:0;border-radius:4px;font:inherit;font-family:var(--font-display);font-size:18px;font-weight:800;line-height:1.4;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 120ms var(--ease-out)}
 .bl-show,.bl-again{background:#fff;color:var(--cover-deep);box-shadow:inset 0 0 0 3px var(--cover),0 5px 0 var(--cover-deep)}
 .bl-next{flex:1;background:var(--cover);color:#fff;box-shadow:0 5px 0 var(--cover-deep)}
 .bl-again{min-width:112px}
@@ -96,7 +96,7 @@ circle.bl-done-line{fill:var(--cover);stroke:none}
 .bl-name{flex:1;display:grid;place-items:center;margin:0;font-family:var(--font-display);font-size:56px;font-weight:800;line-height:1.5;color:var(--cover-deep);white-space:pre}
 .bl-teaser{display:grid;place-items:center;flex:none;width:96px;height:96px}
 .bl-teaser canvas{filter:grayscale(1);opacity:.4}
-.bl-bar:has(.bl-next) .bl-next{animation:bl-nudge 1.8s ease-in-out 1.2s 3}
+.bl-bar:has(.bl-next) .bl-next{animation:bl-nudge 1.8s cubic-bezier(.77,0,.175,1) 1.2s 3}
 @keyframes bl-nudge{0%,100%{translate:0 0}50%{translate:5px 0}}
 
 /* ---- end of a set: the filled page, stars, counts, two picture buttons ---- */
@@ -112,13 +112,13 @@ circle.bl-done-line{fill:var(--cover);stroke:none}
 .bl-end-stars .gx-stars .on:nth-child(1){animation-delay:.35s}
 .bl-end-stars .gx-stars .on:nth-child(2){animation-delay:.65s}
 .bl-end-stars .gx-stars .on:nth-child(3){animation-delay:.95s}
-@keyframes bl-star{from{transform:scale(.6) rotate(-25deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes bl-star{from{transform:scale(.75) rotate(-25deg);opacity:0}to{transform:none;opacity:1}}
 .bl-end-count{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;margin:0;font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.5}
 .bl-end-count b{color:var(--cover-deep)}
 .bl-end-news{margin:0;font-size:20px;font-weight:700;line-height:1.6;color:var(--cover-deep)}
 .bl-end-off{margin:0;max-width:340px;font-size:17px;line-height:1.6;color:var(--muted)}
 .bl-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(340px,100%)}
-.bl-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:0;border-radius:4px;background:var(--cover);color:#fff;box-shadow:0 6px 0 var(--cover-deep);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform .12s var(--ease-out),box-shadow .12s var(--ease-out)}
+.bl-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:0;border-radius:4px;background:var(--cover);color:#fff;box-shadow:0 6px 0 var(--cover-deep);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform 120ms var(--ease-out)}
 .bl-big:active{transform:translateY(4px);box-shadow:0 2px 0 var(--cover-deep)}
 .bl-big svg{width:48px;height:48px;fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
 .bl-big-done{background:#fff;color:var(--cover-deep);box-shadow:inset 0 0 0 3px var(--cover),0 6px 0 var(--cover-deep)}
@@ -170,9 +170,13 @@ circle.bl-print-dots{fill:#6d6d6d;stroke:none}
 html.bl-printing body>:not(.bl-print-root){display:none!important}
 .bl-print-root{min-height:100vh;padding:16px;background:#fff;color:var(--ink)}
 
+/* press feedback on the small pressables: a 160ms squeeze, released as fast */
+.bl-chip,.bl-close,.bl-card{transition:transform 160ms var(--ease-out)}
+.bl-chip:active,.bl-close:active,.bl-card:active{transform:scale(.97)}
 /* ধীরে খেলো and reduced motion: nothing pulses, pops or slides */
 .bl[data-slow] *{animation:none!important;transition:none!important}
-@media (prefers-reduced-motion:reduce){.bl *{animation:none!important;transition:none!important}}
+@media (prefers-reduced-motion:reduce){.bl *{animation:none!important;transition:none!important}.bl :is(.bl-chip,.bl-close,.bl-card):active{transform:none}}
+.bl[data-slow] :is(.bl-chip,.bl-close,.bl-card):active{transform:none}
 
 /* short stages: a smaller letter name; the buttons keep 96 px */
 @media (max-height:700px){.bl-name{font-size:44px}}

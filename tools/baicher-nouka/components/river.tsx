@@ -411,7 +411,7 @@ export function RiverGame() {
       }
       if (h.along[0] !== shown.along0 || h.along[1] !== shown.along1 || h.along[2] !== shown.along2 || h.along[3] !== shown.along3) {
         shown.along0 = h.along[0]; shown.along1 = h.along[1]; shown.along2 = h.along[2]; shown.along3 = h.along[3];
-        for (let index = 0; index < 4; index++) { const dot = dotRefs.current[index]; if (dot) dot.style.left = `${h.along[index] / 2}%`; }
+        for (let index = 0; index < 4; index++) { const dot = dotRefs.current[index]; if (dot) dot.style.transform = `translateX(${h.along[index] / 2}cqw)`; }
       }
     }
     const edge = s.screen === "play" ? h.edge : "";

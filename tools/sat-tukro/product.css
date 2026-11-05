@@ -25,8 +25,8 @@
 .st-board-go{display:inline-flex;align-items:center;gap:10px;margin-top:14px;padding:8px 34px 8px 24px;border-radius:4px;background:#fff8ea;color:var(--w-deep);font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.4;box-shadow:0 5px 0 #6a3d18}
 .st-board-go svg{width:32px;height:32px;fill:var(--w-accent)}
 .st-chip{display:flex;align-items:center;gap:12px;min-height:64px;max-width:100%;padding:6px 16px 6px 12px;border:2px solid var(--w-edge);border-radius:8px;background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
-.st-chip,.st-badge,.st-card{transition:transform .14s var(--ease-out)}
-.st-chip:active,.st-badge:active,.st-card:active{transform:scale(.97)}
+.st-chip,.st-badge,.st-card,.st-close{transition:transform 160ms var(--ease-out)}
+.st-chip:active,.st-badge:active,.st-card:active,.st-close:active{transform:scale(.97)}
 .st-chip-art{flex:none}
 .st-chip b{display:block;font-family:var(--font-display);font-size:18px;line-height:1.5}
 .st-chip small{display:block;font-size:16px;line-height:1.4;color:var(--muted)}
@@ -45,7 +45,7 @@
 .st-badge-art{flex:none}
 .st-dots{display:flex;gap:5px;margin:0;padding:6px 8px;border-radius:6px;background:#ffffffd9;list-style:none}
 /* the dot and the bar answer when the piece lands (it slides for 160 ms), not when the finger lets go */
-.st-dots li{width:16px;height:16px;border-radius:3px;background:#fff;box-shadow:inset 0 0 0 2px var(--c,#999);transition:background .2s ease 150ms,transform .22s var(--ease-out) 150ms}
+.st-dots li{width:16px;height:16px;border-radius:3px;background:#fff;box-shadow:inset 0 0 0 2px var(--c,#999);transition:background-color .2s var(--ease-out) 150ms,transform .22s var(--ease-out) 150ms}
 .st-dots li[data-in]{background:var(--c,#999);transform:scale(1.12)}
 .st-bar{position:absolute;left:0;right:0;top:0;height:4px;border-radius:2px;background:#0000001a;overflow:hidden}
 .st-bar i{display:block;width:100%;height:100%;background:var(--w-accent);transform-origin:left;transition:transform .3s var(--ease-out) 150ms}
@@ -55,7 +55,7 @@
 .st-canvas{position:absolute;left:0;top:0;display:block;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 .st-controls{display:flex;justify-content:center;gap:16px;padding-bottom:2px}
 .st-ctl{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:96px;min-height:72px;padding:6px 18px;border:3px solid var(--w-accent);border-radius:8px;background:#fff;color:var(--w-deep);font:inherit;font-family:var(--font-display);font-size:19px;font-weight:800;box-shadow:0 5px 0 var(--w-deep);cursor:pointer;touch-action:manipulation}
-.st-ctl{transition:transform .12s var(--ease-out),box-shadow .12s var(--ease-out)}
+.st-ctl{transition:transform 120ms var(--ease-out)}
 .st-ctl:active:not(:disabled){transform:translateY(4px) scale(.97);box-shadow:0 1px 0 var(--w-deep)}
 .st-ctl:disabled{opacity:.45;box-shadow:none;cursor:default}
 .st-ctl svg{width:32px;height:32px;fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
@@ -65,10 +65,10 @@
 .st-end-pic{animation:st-bob 1.2s var(--ease-out) 1}
 .st-end-pic svg,.st-world svg{display:block}
 .st-world{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:0;padding:10px;border-radius:8px;background:var(--w-soft);box-shadow:inset 0 0 0 1.5px var(--w-edge);list-style:none}
-.st-world li{padding:4px;border-radius:6px;background:#fff;animation:st-pop .4s ease-out both}
+.st-world li{padding:4px;border-radius:6px;background:#fff;animation:st-pop .4s var(--ease-out) both}
 .st-end-name{margin:0;font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.5}
 .st-end-stars .gx-stars{font-size:46px}
-.st-end-stars .gx-stars .on{display:inline-block;animation:st-star .4s cubic-bezier(.3,1.5,.5,1) both}
+.st-end-stars .gx-stars .on{display:inline-block;animation:st-star .36s var(--ease-out) both}
 .st-end-stars .gx-stars .on:nth-child(1){animation-delay:.35s}
 .st-end-stars .gx-stars .on:nth-child(2){animation-delay:.65s}
 .st-end-stars .gx-stars .on:nth-child(3){animation-delay:.95s}
@@ -77,7 +77,7 @@
 .st-end-news{margin:0;max-width:340px;font-size:19px;font-weight:700;line-height:1.6;color:var(--w-deep)}
 .st-end-off{margin:0;max-width:340px;font-size:17px;line-height:1.6;color:var(--muted)}
 .st-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(340px,100%)}
-.st-big{transition:transform .12s var(--ease-out),box-shadow .12s var(--ease-out);display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:0;border-radius:8px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation}
+.st-big{transition:transform 120ms var(--ease-out);display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:0;border-radius:8px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation}
 .st-big:active{transform:translateY(4px) scale(.97);box-shadow:0 2px 0 var(--w-deep)}
 .st-big svg{width:48px;height:48px;fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
 .st-big-done{background:#fff;color:var(--w-deep);box-shadow:inset 0 0 0 3px var(--w-accent),0 6px 0 var(--w-deep)}
@@ -85,7 +85,7 @@
 @keyframes st-in{from{opacity:0;transform:translateY(8px)}}
 @keyframes st-pop{0%{transform:scale(.9)}60%{transform:scale(1.08)}100%{transform:none}}
 @keyframes st-bob{0%,100%{transform:none}30%{transform:translateY(-12px) rotate(-3deg)}60%{transform:rotate(2deg)}}
-@keyframes st-star{0%{transform:scale(.6) rotate(-20deg);opacity:0}100%{transform:none;opacity:1}}
+@keyframes st-star{0%{transform:scale(.75) rotate(-20deg);opacity:0}100%{transform:none;opacity:1}}
 
 /* ---- the picture list: a choice screen ---- */
 .st-levels{animation:st-in .18s var(--ease-out) both;position:relative;display:grid;gap:14px;align-content:start;max-height:var(--stage-h,none);overflow:auto;overscroll-behavior:contain;padding:0 2px 12px}
@@ -128,9 +128,9 @@
 /* ---- ধীরে খেলো and reduced motion: nothing bobs, pops or pulses ---- */
 /* movement goes, colour and opacity stay (the ring still shows which picture is next) */
 .st[data-slow] .st-end-pic,.st[data-slow] .st-world li,.st[data-slow] .st-card[data-next]::after,.st[data-slow] .st-end-stars .gx-stars .on,.st[data-slow] .st-levels{animation:none}
-.st[data-slow] .st-board,.st[data-slow] .st-chip,.st[data-slow] .st-badge,.st[data-slow] .st-card,.st[data-slow] .st-ctl,.st[data-slow] .st-big,.st[data-slow] .st-dots li,.st[data-slow] .st-bar i{transition:none}
+.st[data-slow] .st-board,.st[data-slow] .st-close,.st[data-slow] .st-chip,.st[data-slow] .st-badge,.st[data-slow] .st-card,.st[data-slow] .st-ctl,.st[data-slow] .st-big,.st[data-slow] .st-dots li,.st[data-slow] .st-bar i{transition:none}
 .st[data-slow] .st-board:hover{transform:none}
-@media (prefers-reduced-motion:reduce){.st-end-pic,.st-world li,.st-card[data-next]::after,.st-end-stars .gx-stars .on,.st-levels{animation:none}.st-board,.st-chip,.st-badge,.st-card,.st-ctl,.st-big,.st-dots li,.st-bar i{transition:none}.st-board:hover{transform:none}}
+@media (prefers-reduced-motion:reduce){.st-close{transition:none}.st-end-pic,.st-world li,.st-card[data-next]::after,.st-end-stars .gx-stars .on,.st-levels{animation:none}.st-board,.st-chip,.st-badge,.st-card,.st-ctl,.st-big,.st-dots li,.st-bar i{transition:none}.st-board:hover{transform:none}}
 
 @media (max-height:700px){.st-board-go{font-size:28px}.st-end-name{font-size:21px}}
 
