@@ -51,7 +51,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | marble-sinri | S15 | analysed | done |
 | roshi-tana | S16 | analysed | done |
 | moshar-raat | S16 | analysed | done |
-| al-dhore-hati | S16 | analysed | rewriting |
+| al-dhore-hati | S16 | analysed | done |
 | o-te-ojogor | S17 | analysed | done |
 | kar-chinho | S17 | analysed | done |
 | nam-shikhi | S17 | analysed | done |
