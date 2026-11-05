@@ -72,7 +72,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | shoman-bhag | S22 | analysed | done |
 | chhaya-melao | S23 | analysed | done |
 | mongole-rover | S23 | analysed | done |
-| daripalla | S23 | analysed | rewriting |
+| daripalla | S23 | analysed | done |
 | prithibi-ghuri | S24 | analysed | done |
 | chhorar-tal | S24 | analysed | rewriting |
 | ammur-number | S24 | analysed | done |
