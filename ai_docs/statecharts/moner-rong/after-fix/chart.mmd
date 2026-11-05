@@ -1,0 +1,252 @@
+---
+title: "Moner Rong: the picture book, pause and focus, the stars and the daily limit"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "Game Title or level list" as s0 {
+    state "Pause Playing" as s1 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s2 {
+        s3: Today No rest screen
+        s4: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+      state "Saved 1 played, 1 stars, 2 pictures on the card" as s5 {
+        s6: Today No rest screen
+        s7: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+    }
+    state "Pause Away, next tap only wakes" as s8 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s9 {
+        s10: Today No rest screen
+        s11: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+      state "Saved 1 played, 1 stars, 2 pictures on the card" as s12 {
+        s13: Today No rest screen
+        s14: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+    }
+    state "Pause Pause menu" as s15 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s16 {
+        s17: Today No rest screen
+        s18: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+      state "Saved 1 played, 1 stars, 2 pictures on the card" as s19 {
+        s20: Today No rest screen
+        s21: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+    }
+  }
+  state "Game Picture 1: a grey ?, faces on offer" as s22 {
+    state "Pause Playing" as s23 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s24 {
+        s25: Today No rest screen
+      }
+    }
+    state "Pause Pause menu" as s26 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s27 {
+        s28: Today No rest screen
+      }
+    }
+  }
+  state "Game Picture 1: the colour is filled, two kind things" as s29 {
+    state "Pause Playing" as s30 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s31 {
+        s32: Today No rest screen
+      }
+    }
+    state "Pause Pause menu" as s33 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s34 {
+        s35: Today No rest screen
+      }
+    }
+  }
+  state "Game Picture 1: settled, #8594; shows" as s36 {
+    state "Pause Playing" as s37 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s38 {
+        s39: Today No rest screen
+      }
+    }
+    state "Pause Pause menu" as s40 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s41 {
+        s42: Today No rest screen
+      }
+    }
+  }
+  state "Game Picture 2: a grey ?, faces on offer" as s43 {
+    state "Pause Playing" as s44 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s45 {
+        s46: Today No rest screen
+      }
+    }
+    state "Pause Pause menu" as s47 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s48 {
+        s49: Today No rest screen
+      }
+    }
+  }
+  state "Game Picture 2: the colour is filled, two kind things" as s50 {
+    state "Pause Playing" as s51 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s52 {
+        s53: Today No rest screen
+      }
+    }
+    state "Pause Pause menu" as s54 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s55 {
+        s56: Today No rest screen
+      }
+    }
+  }
+  state "Game Last picture won and recorded, #8594; shows" as s57 {
+    state "Pause Playing" as s58 {
+      state "Saved 1 played, 1 stars, 2 pictures on the card" as s59 {
+        s60: Today No rest screen
+        s61: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+    }
+    state "Pause Pause menu" as s62 {
+      state "Saved 1 played, 1 stars, 2 pictures on the card" as s63 {
+        s64: Today No rest screen
+        s65: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+    }
+  }
+  state "Game End screen" as s66 {
+    state "Pause Playing" as s67 {
+      state "Saved 1 played, 1 stars, 2 pictures on the card" as s68 {
+        s69: Today No rest screen
+        s70: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+    }
+    state "Pause Pause menu" as s71 {
+      state "Saved 1 played, 1 stars, 2 pictures on the card" as s72 {
+        s73: Today No rest screen
+        s74: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+    }
+  }
+  [*] --> s3
+  s3 --> s10: the window or tab goes away
+  s3 --> s25: খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507;
+  s3 --> s4: today's play time runs out
+  s3 --> s17: #9208; or P or the window or tab goes away
+  s10 --> s3: the page opens again or the window is back
+  s10 --> s11: today's play time runs out
+  s25 --> s28: #9208; or P or the window or tab goes away
+  s4 --> s3: a parent gives ১০ ম#2495;ন#2495;ট more
+  s4 --> s11: the window or tab goes away
+  s17 --> s3: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s17 --> s18: today's play time runs out
+  s25 --> s32: the child taps the face that fits
+  s11 --> s10: a parent gives ১০ ম#2495;ন#2495;ট more
+  s11 --> s4: the page opens again or the window is back
+  s28 --> s25: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s28 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497; or সব ল#2503;ভ#2503;ল in the pause menu
+  s18 --> s4: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s18 --> s17: a parent gives ১০ ম#2495;ন#2495;ট more
+  s32 --> s35: #9208; or P or the window or tab goes away
+  s4 --> s18: the window or tab goes away
+  s28 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497; or সব ল#2503;ভ#2503;ল in the pause menu
+  s32 --> s39: the child taps a kind picture
+  s35 --> s32: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s35 --> s3: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s39 --> s42: #9208; or P or the window or tab goes away
+  s35 --> s4: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s39 --> s46: the child presses #8594;
+  s42 --> s39: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s42 --> s3: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s46 --> s49: #9208; or P or the window or tab goes away
+  s42 --> s4: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s46 --> s53: the child taps the face that fits
+  s49 --> s46: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s49 --> s3: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s53 --> s56: #9208; or P or the window or tab goes away
+  s49 --> s4: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s53 --> s60: the child taps a kind picture
+  s56 --> s53: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s56 --> s3: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s53 --> s61: the child taps a kind picture
+  s60 --> s6: the page opens again
+  s60 --> s64: #9208; or P or the window or tab goes away
+  s56 --> s4: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s6 --> s13: the window or tab goes away
+  s6 --> s7: today's play time runs out
+  s6 --> s20: #9208; or P or the window or tab goes away
+  s60 --> s69: the child presses #8594;
+  s61 --> s60: a parent gives ১০ ম#2495;ন#2495;ট more
+  s61 --> s65: #9208; or P or the window or tab goes away
+  s64 --> s60: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s64 --> s6: the page opens again or সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s13 --> s6: the page opens again or the window is back
+  s13 --> s14: today's play time runs out
+  s69 --> s6: the page opens again or সব ল#2503;ভ#2503;ল or শ#2503;ষ
+  s69 --> s70: today's play time runs out
+  s69 --> s73: the window or tab goes away or #9208; or P
+  s7 --> s6: a parent gives ১০ ম#2495;ন#2495;ট more
+  s7 --> s14: the window or tab goes away
+  s20 --> s6: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s20 --> s21: today's play time runs out
+  s65 --> s61: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s65 --> s64: a parent gives ১০ ম#2495;ন#2495;ট more
+  s14 --> s13: a parent gives ১০ ম#2495;ন#2495;ট more
+  s14 --> s7: the page opens again or the window is back
+  s70 --> s69: a parent gives ১০ ম#2495;ন#2495;ট more
+  s70 --> s7: the page opens again
+  s70 --> s74: the window or tab goes away
+  s7 --> s21: the window or tab goes away
+  s73 --> s6: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s73 --> s74: today's play time runs out
+  s73 --> s69: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s21 --> s7: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s21 --> s20: a parent gives ১০ ম#2495;ন#2495;ট more
+  s74 --> s7: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s74 --> s73: a parent gives ১০ ম#2495;ন#2495;ট more
+  s74 --> s70: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s22 --> s3: the page opens again
+  s22 --> s4: the page opens again
+  s29 --> s3: the page opens again
+  s29 --> s4: the page opens again
+  s36 --> s3: the page opens again
+  s36 --> s4: the page opens again
+  s43 --> s3: the page opens again
+  s43 --> s4: the page opens again
+  s50 --> s3: the page opens again
+  s50 --> s4: the page opens again
+  s57 --> s7: the page opens again
+  s58 --> s70: the child presses #8594;
+  s62 --> s7: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  class s3 blue
+  class s4 yellow
+  class s6 blue
+  class s7 yellow
+  class s10 blue
+  class s11 yellow
+  class s13 blue
+  class s14 yellow
+  class s17 blue
+  class s18 yellow
+  class s20 blue
+  class s21 yellow
+  class s25 teal
+  class s28 teal
+  class s32 teal
+  class s35 teal
+  class s39 teal
+  class s42 teal
+  class s46 teal
+  class s49 teal
+  class s53 teal
+  class s56 teal
+  class s60 teal
+  class s61 yellow
+  class s64 teal
+  class s65 yellow
+  class s69 blue
+  class s70 yellow
+  class s73 blue
+  class s74 yellow

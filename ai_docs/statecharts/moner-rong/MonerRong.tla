@@ -1,138 +1,161 @@
 ---- MODULE MonerRong ----
+\* মনের রং after the rewrite (games-to-the-bar): the screens, a round of pictures (name the feeling → a kind thing → →), the
+\* player's pause menu, pause and focus, the end screen's guard, saved stars and today's card, and the kids' daily limit with its
+\* rest screen. Mirrored from tools/moner-rong/lib/session.ts (begin, tapCounts, stepped, won, toEnd, endLive, home, openList,
+\* closeList, choosingAllowed, pause, resume, leave, back), lib/round.ts (nameFeeling, chooseKind, advance), lib/finish.ts
+\* (finishRound), lib/progress.ts (practised) and components/game.tsx (begin, pickFace, pickKind, next, finishUp, pickLevel, the
+\* 1 s atBreak() check between rounds, the blur / focus / visibility listeners, the keys handler, useGamePlayer onPause / onResume
+\* / onRestart / onLevels, showRest), plus shared/game-player-client.tsx (the menu on blur, hide, Escape, ⏸ and P once "engaged")
+\* and shared/kids-kit.tsx (useKidsSession: rest on open past the limit, atBreak, extend; RestScreen: a modal over every screen
+\* but play). The parent gate, sharing and voice: MonerRongKids.tla. The spec before the rewrite is in git (before-fix/ is its run).
+\* Two pictures stand in for a round of three to five, and a level is played at most twice (enough to show the stars and the
+\* card count up). A wrong face only wobbles (round.ts: tries, no step), so it has no action.
+\* A tap on a face or a kind picture is checked as a step of the picture (NothingChosenWhenItCannotCount), so a guard that let a
+\* tap through under the menu, away, as the first tap back or inside the settle time would show up as a broken rule.
+\* "settled": SETTLE_MS has passed since the last step. "fresh": the end screen's guard has passed.
+\* "stars": the stars saved for the level, "cardPictures": the pictures the parents' card says (2 a finished round).
 EXTENDS Naturals
-\* মনের রং (ages 4–9): one set of scenes (name the feeling → pick a kind thing → talk about it → next), the read-aloud
-\* voice and the site-wide sound switch, the end card and the hidden button under it, the practice stars, the cues a
-\* pre-reader gets, the kids' daily limit and rest screen, the parent gate, and the ways out of the kids' area.
-\* Mirrored from, as of 2026-11-04:
-\*   tools/moner-rong/components/moner-game.tsx  (onFace, onKind, onNext, restart, the end / closed screens, the drawer)
-\*   tools/moner-rong/lib/scenes.ts              (nameFeeling, chooseKind, nextScene → null on the last scene, practised)
-\*   shared/kids-kit.tsx                         (speak, atBreak/extend, RestScreen, ParentGate)
-\*   shared/game-kit.ts, shared/game-core.ts     (useLevels.record = recordLevel: max of old and new)
-\*   shared/game-sound.ts, shared/game-ui.tsx    (SoundToggle → setSoundOn: stops loops, not speech)
-\*   shared/site-shell.tsx                       (PageFrame: header search and links, related tools, footer)
-\* A set has two scenes here (the game has four to six). The phone has a Bangla voice, so speak() really speaks; a line
-\* has finished before the child's next choice, so the model ends it on the next step.
-\* Stars mean "times this set was played through", capped at 3 (practised); the model plays it through once (a second set can start, to show what starts under the rest screen, but not finish).
-\* The gate works the same on every screen, so the model uses it on the end card and the rest screen only.
+CONSTANT MaxPlays   \* rounds that may be won: 1 for the chart, 2 for the run that checks the stars and the card count up
+VARIABLES screen, picture, step, recorded, plays, stars, cardPictures, fresh, settled, menu, engaged, window, swallow, overLimit, resting, begun
+vars == <<screen, picture, step, recorded, plays, stars, cardPictures, fresh, settled, menu, engaged, window, swallow, overLimit, resting, begun>>
 
-VARIABLES step, speaking, sound, plays, stars, recorded, overLimit, rest, gate, away
-vars == <<step, speaking, sound, plays, stars, recorded, overLimit, rest, gate, away>>
+Here == window = "here"
+\* showRest: the rest screen covers the stage on every screen but play, and blocks every tap outside it.
+RestShows == resting /\ screen # "play"
+Free == ~RestShows /\ ~menu
+Counts == ~menu /\ Here /\ ~swallow /\ settled
+\* The first tap back (not under the menu, window here, settle time over): it only wakes the game.
+Wakes == ~menu /\ Here /\ swallow /\ settled
 
-Steps == {"name1", "kind1", "talk1", "name2", "kind2", "talk2", "end", "closed"}
-InSet == step \in {"name1", "kind1", "talk1", "name2", "kind2", "talk2"}
-AtBreak == step \in {"end", "closed"}
-Gate == {"shut", "holding", "repeat", "orphan", "ask", "early", "open", "child"}
-KeysWritten == {"levels", "kidsTime", "kidsLimit", "sound", "slow"}
-Progress == {"levels", "kidsTime", "kidsLimit", "sound", "slow"}
-ASSUME KeysWritten \subseteq Progress
-Min(a, b) == IF a < b THEN a ELSE b
+Init == /\ screen = "title" /\ picture = 1 /\ step = "name" /\ recorded = FALSE /\ plays = 0 /\ stars = 0 /\ cardPictures = 0
+        /\ fresh = FALSE /\ settled = FALSE /\ menu = FALSE /\ engaged = FALSE /\ window = "here" /\ swallow = FALSE 
+        /\ overLimit = FALSE /\ resting = FALSE /\ begun = "inTime"
 
-Init == /\ step = "name1" /\ speaking = FALSE /\ sound = TRUE /\ plays = 0 /\ stars = 0 /\ recorded = 0
-        /\ overLimit = FALSE /\ rest = FALSE /\ gate = "shut" /\ away = FALSE
+\* begin(session, atBreak()): from the title, or from the end screen once its guard has passed. Past today's limit the rest screen
+\* comes instead of a round. A level is played at most twice here.
+YouPressStart == /\ Free /\ Here /\ (screen = "title" \/ (screen = "end" /\ fresh)) /\ plays < MaxPlays
+                 /\ IF overLimit
+                    THEN resting' = TRUE /\ UNCHANGED <<screen, picture, step, recorded, begun, engaged, swallow, settled>>
+                    ELSE /\ screen' = "play" /\ picture' = 1 /\ step' = "name" /\ recorded' = FALSE
+                         /\ begun' = "inTime" /\ engaged' = TRUE /\ swallow' = FALSE /\ settled' = FALSE
+                         /\ UNCHANGED resting
+                 /\ UNCHANGED <<plays, stars, cardPictures, fresh, menu, window, overLimit>>
 
-Here == ~away
-Touch == Here /\ ~rest /\ ~AtBreak   \* the end card (.mr-over, z-index 5) and the rest screen cover the scene
-Card == Here /\ ~rest /\ AtBreak
+\* SETTLE_MS passes: the next tap counts.
+TheSettleTimePasses == /\ screen = "play" /\ ~settled /\ settled' = TRUE
+                       /\ UNCHANGED <<screen, picture, step, recorded, plays, stars, cardPictures, fresh, menu, engaged, window, swallow, overLimit, resting, begun>>
 
-\* onFace(): a face that fits → sfx.good, speak(sayLine). speak() asks soundOn() since 2026-11-04 10:12 (before that it
-\* spoke with sound off too; replayed live at 10:05). setSoundOn(false) never calls speechSynthesis.cancel().
-YouNameTheFeeling == /\ Touch /\ step \in {"name1", "name2"}
-                     /\ step' = (IF step = "name1" THEN "kind1" ELSE "kind2") /\ speaking' = sound
-                     /\ UNCHANGED <<sound, plays, stars, recorded, overLimit, rest, gate, away>>
-\* onFace(): a face that doesn't fit → a soft tone, a shake, "আরেকবার ভাবো" (the round's ease, not modelled).
-YouPickAnotherFace == /\ Touch /\ step \in {"name1", "name2"} /\ speaking' = FALSE
-                      /\ UNCHANGED <<step, sound, plays, stars, recorded, overLimit, rest, gate, away>>
-\* onKind(): a note, speak(after).
-YouPickAKindThing == /\ Touch /\ step \in {"kind1", "kind2"}
-                     /\ step' = (IF step = "kind1" THEN "talk1" ELSE "talk2") /\ speaking' = sound
-                     /\ UNCHANGED <<sound, plays, stars, recorded, overLimit, rest, gate, away>>
-\* onNext(): পরের ছবি → the next scene, speak(scene text).
-YouPressNextPicture == /\ Touch /\ step = "talk1" /\ step' = "name2" /\ speaking' = sound
-                       /\ UNCHANGED <<sound, plays, stars, recorded, overLimit, rest, gate, away>>
-\* onNext() on the last scene: nextScene() is null → record practised(stars), add to today's card, win, atBreak(), "end".
-\* The last scene stays drawn under the card with its ধাপ শেষ button.
-YouPressSetDone == /\ Touch /\ step = "talk2" /\ plays < 1
-                   /\ step' = "end" /\ speaking' = FALSE
-                   /\ plays' = plays + 1 /\ stars' = Min(3, stars + 1) /\ recorded' = recorded + 1 /\ rest' = overLimit
-                   /\ UNCHANGED <<sound, overLimit, gate, away>>
-\* The card covers ধাপ শেষ for a finger, not a keyboard: press() acts on click with detail 0, so Enter runs onNext() again.
-YouPressTheHiddenButton == /\ Here /\ AtBreak /\ recorded < 2 /\ stars < 3
-                           /\ step' = "end" /\ stars' = Min(3, stars + 1) /\ recorded' = recorded + 1 /\ rest' = overLimit
-                           /\ UNCHANGED <<speaking, sound, plays, overLimit, gate, away>>
-\* শেষ → "আজকের ছবিগুলো তোলা রইল।"
-YouPressShesh == /\ Card /\ step = "end" /\ step' = "closed" /\ gate' = "shut"
-                 /\ UNCHANGED <<speaking, sound, plays, stars, recorded, overLimit, rest, away>>
-\* restart(): আবার খেলো, পরের ধাপ, or a set from "সব ধাপ" (the model replays the same set).
-YouStartASet == /\ Here /\ ~rest /\ step # "name1"
-                /\ step' = "name1" /\ recorded' = 0 /\ speaking' = FALSE /\ gate' = "shut"
-                /\ UNCHANGED <<sound, plays, stars, overLimit, rest, away>>
-\* RestScreen has no inert or focus trap: Tab reaches আবার খেলো under it.
-YouTabUnderTheRestScreen == /\ Here /\ rest /\ AtBreak
-                            /\ step' = "name1" /\ recorded' = 0 /\ gate' = "shut"
-                            /\ UNCHANGED <<speaking, sound, plays, stars, overLimit, rest, away>>
+\* pickFace(): the child taps the face that fits. tapCounts decides: under the menu, away or inside the settle time it is
+\* ignored; the first tap after coming back only wakes the game; otherwise the colour fills and the picture goes on to its kind
+\* things (stepped(): the settle time starts again).
+YouTapTheRightFace ==
+  /\ screen = "play" /\ step = "name" /\ ~RestShows
+  /\ IF Counts THEN step' = "kind" /\ settled' = FALSE ELSE UNCHANGED <<step, settled>>
+  /\ swallow' = IF Wakes THEN FALSE ELSE swallow
+  /\ UNCHANGED <<screen, picture, recorded, plays, stars, cardPictures, fresh, menu, engaged, window, overLimit, resting, begun>>
 
-SoundOff == /\ Here /\ sound /\ sound' = FALSE /\ UNCHANGED <<step, speaking, plays, stars, recorded, overLimit, rest, gate, away>>
-SoundOn == /\ Here /\ ~sound /\ sound' = TRUE /\ UNCHANGED <<step, speaking, plays, stars, recorded, overLimit, rest, gate, away>>
-TheLineIsSpoken == /\ speaking /\ speaking' = FALSE /\ UNCHANGED <<step, sound, plays, stars, recorded, overLimit, rest, gate, away>>
+\* pickKind(): the child taps one of the two kind pictures. Same guards. On the last picture this wins the round at this very
+\* tap: finishRound() saves the stars (practice: one more per play-through), adds the pictures to today's card and checks the
+\* limit, once (won(): recorded === serial).
+YouTapAKindPicture ==
+  /\ screen = "play" /\ step = "kind" /\ ~RestShows
+  /\ IF Counts
+     THEN /\ step' = "after" /\ settled' = FALSE
+          /\ IF picture = 2 /\ ~recorded
+             THEN /\ recorded' = TRUE /\ plays' = plays + 1 /\ stars' = plays + 1
+                  /\ cardPictures' = cardPictures + 2 /\ resting' = overLimit
+             ELSE UNCHANGED <<recorded, plays, stars, cardPictures, resting>>
+     ELSE UNCHANGED <<step, settled, recorded, plays, stars, cardPictures, resting>>
+  /\ swallow' = IF Wakes THEN FALSE ELSE swallow
+  /\ UNCHANGED <<screen, picture, fresh, menu, engaged, window, overLimit, begun>>
 
-TodaysTimeRunsOut == /\ Here /\ ~overLimit /\ overLimit' = TRUE
-                     /\ UNCHANGED <<step, speaking, sound, plays, stars, recorded, rest, gate, away>>
+\* next(): → (or Enter or Space). The next picture, or the end screen once the last picture is won (toEnd: only after it was
+\* recorded). Off the play screen the 1 s atBreak() check runs again (modelled as at once).
+YouPressNext == /\ screen = "play" /\ step = "after" /\ Free /\ Here
+                /\ IF ~settled \/ swallow
+                   THEN /\ swallow' = FALSE /\ UNCHANGED <<screen, picture, step, settled, fresh, resting>>
+                   ELSE IF picture = 1
+                   THEN picture' = 2 /\ step' = "name" /\ settled' = FALSE /\ UNCHANGED <<screen, fresh, swallow, resting>>
+                   ELSE /\ recorded /\ screen' = "end" /\ fresh' = FALSE /\ resting' = (resting \/ overLimit)
+                        /\ UNCHANGED <<picture, step, settled, swallow>>
+                /\ UNCHANGED <<recorded, plays, stars, cardPictures, menu, engaged, window, overLimit, begun>>
+\* GUARD_MS passes on the end screen (endLive).
+TheGuardPasses == /\ screen = "end" /\ ~fresh /\ fresh' = TRUE
+                  /\ UNCHANGED <<screen, picture, step, recorded, plays, stars, cardPictures, settled, menu, engaged, window, swallow, overLimit, resting, begun>>
+\* শেষ (after the guard): home(); the next level waits on the title, nothing starts.
+YouPressShesh == /\ screen = "end" /\ fresh /\ Free /\ screen' = "title"
+                 /\ UNCHANGED <<picture, step, recorded, plays, stars, cardPictures, fresh, settled, menu, engaged, window, swallow, overLimit, resting, begun>>
+\* সব লেভেল: openList() from the title or the end screen, or from the pause menu mid-round (the menu resumes, then asks for the
+\* list; the round is left unfinished, nothing is recorded). A picked level (or ফিরে যাও) closes it to a title. World tiles
+\* (pickWorld, title only) just change which level waits there, so they need no step of their own.
+YouOpenTheList == /\ screen \in {"title", "end"} /\ Free /\ screen' = "list"
+                  /\ UNCHANGED <<picture, step, recorded, plays, stars, cardPictures, fresh, settled, menu, engaged, window, swallow, overLimit, resting, begun>>
+YouPickAllLevelsInThePauseMenu == /\ screen = "play" /\ menu /\ Here /\ screen' = "list" /\ menu' = FALSE /\ swallow' = FALSE
+                                  /\ resting' = (resting \/ overLimit)   \* the game calls atBreak() as it leaves the round
+                                  /\ UNCHANGED <<picture, step, recorded, plays, stars, cardPictures, fresh, settled, engaged, window, overLimit, begun>>
+YouPickALevel == /\ screen = "list" /\ Free /\ screen' = "title"
+                 /\ UNCHANGED <<picture, step, recorded, plays, stars, cardPictures, fresh, settled, menu, engaged, window, swallow, overLimit, resting, begun>>
+\* A reload or opening from the kids' hub: a fresh page on the title; the kit starts resting past the limit. Saved stars stay.
+ThePageOpens == /\ screen' = "title" /\ picture' = 1 /\ step' = "name" /\ recorded' = FALSE /\ fresh' = FALSE
+                /\ settled' = FALSE /\ menu' = FALSE /\ engaged' = FALSE /\ window' = "here" /\ swallow' = FALSE
+                /\ resting' = overLimit /\ begun' = "inTime"
+                /\ UNCHANGED <<plays, stars, cardPictures, overLimit>>
 
-\* ParentGate (see Juktoborno.tla for the timer story).
-GateOnScreen == Here /\ (step = "end" \/ rest)
-SomeoneHoldsTheGate == /\ GateOnScreen /\ gate = "shut" /\ gate' = "holding"
-                       /\ UNCHANGED <<step, speaking, sound, plays, stars, recorded, overLimit, rest, away>>
-TheKeyAutoRepeats == /\ gate = "holding" /\ gate' = "repeat"
-                     /\ UNCHANGED <<step, speaking, sound, plays, stars, recorded, overLimit, rest, away>>
-TheyLetGoEarly == /\ gate \in {"holding", "repeat"} /\ gate' = IF gate = "repeat" THEN "orphan" ELSE "shut"
-                  /\ UNCHANGED <<step, speaking, sound, plays, stars, recorded, overLimit, rest, away>>
-TwoSecondsPass == /\ gate \in {"holding", "repeat", "orphan"} /\ gate' = IF gate = "orphan" THEN "early" ELSE "ask"
-                  /\ UNCHANGED <<step, speaking, sound, plays, stars, recorded, overLimit, rest, away>>
-AGrownUpAnswers == /\ gate \in {"ask", "early"} /\ gate' = "open"
-                   /\ UNCHANGED <<step, speaking, sound, plays, stars, recorded, overLimit, rest, away>>
-AChildMashesThePad == /\ gate \in {"ask", "early"} /\ gate' = "child"
-                      /\ UNCHANGED <<step, speaking, sound, plays, stars, recorded, overLimit, rest, away>>
-TheGateCloses == /\ gate \in {"ask", "early", "open", "child"} /\ gate' = "shut"
-                 /\ UNCHANGED <<step, speaking, sound, plays, stars, recorded, overLimit, rest, away>>
-TheyGiveTenMore == /\ rest /\ gate \in {"open", "child"} /\ rest' = FALSE /\ overLimit' = FALSE /\ gate' = "shut"
-                   /\ UNCHANGED <<step, speaking, sound, plays, stars, recorded, away>>
+\* The player's menu: ⏸, Escape or the game's own P (player.requestPause()), on any screen → pause().
+YouPressPause == /\ Here /\ ~menu /\ ~RestShows /\ menu' = TRUE /\ engaged' = TRUE
+                 /\ UNCHANGED <<screen, picture, step, recorded, plays, stars, cardPictures, fresh, settled, window, swallow, overLimit, resting, begun>>
+\* Blur or hide: the game's own leave() (mid-round the next tap only wakes) and the player's menu once engaged.
+GoAway(w) == /\ window' = w /\ swallow' = (swallow \/ screen = "play") /\ menu' = (menu \/ engaged)
+             /\ UNCHANGED <<screen, picture, step, recorded, plays, stars, cardPictures, fresh, settled, engaged, overLimit, resting, begun>>
+WindowBlurs == Here /\ GoAway("blurred")
+TabHides == window # "hidden" /\ GoAway("hidden")
+\* Focus or the tab shown again: back(). The menu (if any) stays until চালিয়ে যাও.
+YouComeBack == /\ window # "here" /\ window' = "here"
+               /\ UNCHANGED <<screen, picture, step, recorded, plays, stars, cardPictures, fresh, settled, menu, engaged, swallow, overLimit, resting, begun>>
+\* চালিয়ে যাও: resume(); the menu took the click that came back, so nothing is swallowed.
+YouResume == /\ menu /\ Here /\ menu' = FALSE /\ swallow' = FALSE
+             /\ UNCHANGED <<screen, picture, step, recorded, plays, stars, cardPictures, fresh, settled, engaged, window, overLimit, resting, begun>>
+\* নতুন করে শুরু: resume() then toTitle(level).
+YouRestart == /\ menu /\ Here /\ menu' = FALSE /\ swallow' = FALSE /\ screen' = "title" /\ resting' = (resting \/ overLimit)
+              /\ UNCHANGED <<picture, step, recorded, plays, stars, cardPictures, fresh, settled, engaged, window, overLimit, begun>>
 
-\* PageFrame: header search and links, related tools (the flagship first), the footer — in the child's view.
-TheChildTapsASiteLink == /\ Here /\ ~rest /\ step \in {"name1", "end"}
-                         /\ away' = TRUE /\ step' = "name1" /\ recorded' = 0 /\ speaking' = FALSE
-                         /\ UNCHANGED <<sound, plays, stars, overLimit, rest, gate>>
-TheyComeBack == /\ away /\ away' = FALSE /\ gate' = "shut"
-                /\ UNCHANGED <<step, speaking, sound, plays, stars, recorded, overLimit, rest>>
+\* Today's time passes the section's limit. Between rounds the game asks atBreak() every second (modelled as at once);
+\* during play nothing asks until the round is won.
+TimeIsUp == /\ ~overLimit /\ overLimit' = TRUE /\ resting' = (resting \/ screen # "play")
+            /\ UNCHANGED <<screen, picture, step, recorded, plays, stars, cardPictures, fresh, settled, menu, engaged, window, swallow, begun>>
+\* Behind the rest screen's parent gate (MonerRongKids.tla): আজ আরও ১০ মিনিট → extend().
+AParentGivesMoreTime == /\ resting /\ resting' = FALSE /\ overLimit' = FALSE
+                        /\ UNCHANGED <<screen, picture, step, recorded, plays, stars, cardPictures, fresh, settled, menu, engaged, window, swallow, begun>>
 
-\* Played through once: the model stops replaying (one play is enough to show every rule).
-Done == /\ plays = 1 /\ AtBreak /\ UNCHANGED vars
-
-Next == YouNameTheFeeling \/ YouPickAnotherFace \/ YouPickAKindThing \/ YouPressNextPicture \/ YouPressSetDone
-        \/ YouPressTheHiddenButton \/ YouPressShesh \/ YouStartASet \/ YouTabUnderTheRestScreen
-        \/ SoundOff \/ SoundOn \/ TheLineIsSpoken \/ TodaysTimeRunsOut
-        \/ SomeoneHoldsTheGate \/ TheKeyAutoRepeats \/ TheyLetGoEarly \/ TwoSecondsPass \/ AGrownUpAnswers \/ AChildMashesThePad
-        \/ TheGateCloses \/ TheyGiveTenMore \/ TheChildTapsASiteLink \/ TheyComeBack
-        \/ Done
+Next == YouPressStart \/ TheSettleTimePasses \/ YouTapTheRightFace \/ YouTapAKindPicture \/ YouPressNext \/ TheGuardPasses \/ YouPressShesh
+        \/ YouOpenTheList \/ YouPickAllLevelsInThePauseMenu \/ YouPickALevel \/ ThePageOpens \/ YouPressPause \/ WindowBlurs \/ TabHides
+        \/ YouComeBack \/ YouResume \/ YouRestart \/ TimeIsUp \/ AParentGivesMoreTime
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == step \in Steps /\ speaking \in BOOLEAN /\ sound \in BOOLEAN /\ plays \in 0..2 /\ stars \in 0..3 /\ recorded \in 0..2
-          /\ overLimit \in BOOLEAN /\ rest \in BOOLEAN /\ gate \in Gate /\ away \in BOOLEAN
+TypeOK == /\ screen \in {"title", "list", "play", "end"} /\ picture \in 1..2 /\ step \in {"name", "kind", "after"} 
+          /\ recorded \in BOOLEAN /\ plays \in 0..2 /\ stars \in 0..2 /\ cardPictures \in 0..4 /\ fresh \in BOOLEAN /\ settled \in BOOLEAN
+          /\ menu \in BOOLEAN /\ engaged \in BOOLEAN /\ window \in {"here", "blurred", "hidden"} /\ swallow \in BOOLEAN
+          /\ overLimit \in BOOLEAN /\ resting \in BOOLEAN /\ begun \in {"inTime", "late"}
 
-\* What a pre-reader has, besides the words, on each screen: faces (name), icons (kind), a → and a ghost finger after a
-\* wait (talk). The end card's আবার খেলো, শেষ and পরের ধাপ are words only, the same size, no picture, no 🔈.
-Cue == step \notin {"end"}
-
-\* The reader's rules.
-NoReadingNeeded == Here /\ ~rest => Cue
-VoiceOnlyWithSound == speaking => sound
-NoDoubleResult == recorded <= 1
-StarsMatchPlays == stars = Min(3, plays)
-StarsNeverDrop == [][stars' >= stars]_vars
-RestOnlyAtBreak == rest => AtBreak
-GateNeedsAFullHold == gate # "early"
-ChildCannotOpenGate == gate # "child"
-NoWayOutWithoutGate == away => gate = "open"
-NoNetwork == TRUE          \* no action above sends anything
-NoChildData == KeysWritten \subseteq Progress
+\* The reader's rules (the before-fix rules, kept, plus the shared patterns of the rewrite).
+\* The rest screen never covers a picture in progress: during play it can only be pending once the round is recorded.
+RestOnlyAtBreak == (resting /\ screen = "play") => recorded
+\* Once today's time is up, no new round starts without the rest screen first.
+NoNewRoundPastLimit == begun = "inTime"
+\* Past today's limit, every screen but play is a break, and the rest screen is up there.
+RestAtTheBreak == (screen # "play" /\ overLimit) => resting
+\* The old NoDoubleResult and StarsMatchPlays: a won round is recorded at the tap that won it, once; the stars are the times a
+\* level was played through, and the parents' card counts the pictures of exactly those rounds (never more).
+WonIsRecorded == (screen = "play" /\ picture = 2 /\ step = "after") => recorded
+EndFollowsARecordedRound == screen = "end" => recorded
+StarsMatchPlays == stars = plays
+CardMatchesPlays == cardPictures = 2 * plays
+\* No face or kind picture is chosen under the pause menu, away, as the first tap back, or inside the settle time: a step of the
+\* picture only ever comes from a tap that counted. (A reload, or → going on to the next picture, is not a choice.)
+NothingChosenWhenItCannotCount == [][(screen = "play" /\ screen' = "play" /\ step \in {"name", "kind"} /\ step' # step)
+                                       => (~menu /\ Here /\ ~swallow /\ settled)]_vars
+\* A round in play while the window is away is either paused by the menu or waiting for a wake tap.
+PausedOrWakingWhenAway == (screen = "play" /\ window # "here") => (menu \/ swallow)
+StarsNeverDrop == [][stars' >= stars /\ cardPictures' >= cardPictures]_vars
 ====

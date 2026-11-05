@@ -1,40 +1,282 @@
-# মনের রং: statechart (before the rewrite)
+# মনের রং: statechart
 
-The model covers the game as it stood on 2026-11-04 (branch `games-to-the-bar`). Files: `MonerRong.tla`, `MonerRong.cfg` and `view.ts`. The output is in `before-fix/`. TLC reached 336 states. The chart draws 22 states in 4 regions.
+The game was rewritten as a feelings picture-book (`ai_docs/game-dev/rewrites/moner-rong.md`). The specs mirror the new code:
+- `MonerRong.tla` / `.cfg` / `view.ts`: the screens, a round of pictures, the player's pause menu, pause and focus, the settle time, saved stars and the parents' card, and the daily limit with its rest screen. Mirrors `tools/moner-rong/lib/session.ts`, `lib/round.ts`, `lib/finish.ts` and `components/game.tsx`. TLC (MaxPlays = 1): 394 states, 30 chart states and 89 arrows, every rule holds. Chart: `after-fix/chart.mmd`. `MonerRongTwice.cfg` runs the same spec with MaxPlays = 2 (stars 0..2, card 0..4): 2,000+ states, every rule holds, no chart.
+- `MonerRongKids.tla` / `.cfg` / `view-kids.ts`: the kids' rules (limit, parent gate, sharing, voice, the phone's launch card). 144 states, every rule holds. Chart: `after-fix-kids/chart.mmd`.
+- `before-fix/`: the run of the spec before the rewrite (that spec is in git history). The findings are below.
 
-Live replays ran in Orca at http://127.0.0.1:3100/moner-rong, 10:03–10:12 (+06). At 10:12 another agent made `speak()` check `soundOn()`. The spec models that fixed `speak()`. The replay at 10:05 shows the old behaviour.
+The parent gate's own timing rules (full hold, key repeat, random taps) are the shared kit's; they were replayed and fixed in `shared/kids-kit.tsx` and are modelled in the juktoborno spec.
 
-## Systems modelled
-- **Set:** per scene, name the feeling (faces) → pick a kind thing (icons) → talk about it → পরের ছবি; ধাপ শেষ on the last scene; the card → শেষ. Also আবার খেলো, পরের ধাপ and "সব ধাপ". The model has 2 scenes per set.
-- **Practice stars:** `practised()` adds 1 per play-through, up to 3, through `recordLevel`.
-- **Voice:** `speak()` on a fitting face, a kind choice and the next scene, plus the site-wide sound switch.
-- **The card:** `.mr-over` (z-index 5) covers the last scene, whose ধাপ শেষ stays in the DOM.
-- **Pre-reader cues per screen.**
-- **Kids' daily limit and rest screen.**
-- **Parent gate.**
-- **Ways out:** the site frame.
-- **Not modelled:** the 7 s idle timer that brings back the ghost finger (a hint, not progress) and the quiet ease.
-- **Abstractions:**
-  - a set is played through once (a second set can start but not finish)
-  - speech ends on the next step
-  - the gate is used only on the card and the rest screen
-
-## Rules in plain words
+## Rules in plain words (after the fix)
 | Rule | Plain words | Result |
 |---|---|---|
-| NoDoubleResult | A set is recorded once. | **breaks** |
-| StarsMatchPlays | The stars ("times played") equal the times the set was really played. | **breaks** |
-| VoiceOnlyWithSound | Nothing reads aloud while sound is off. | **breaks** |
-| NoReadingNeeded | For ages 4–5, every screen can be used by picture or sound. | **breaks** (the card) |
-| RestOnlyAtBreak | The rest screen shows only between sets. | **breaks** |
-| GateNeedsAFullHold | The question appears only after a 2-second hold. | **breaks** |
-| ChildCannotOpenGate | Random tapping can't open the gate. | **breaks** |
-| NoWayOutWithoutGate | No leaving the kids' area or sharing without the gate. | **breaks** |
-| StarsNeverDrop | Stars never go down. | holds |
-| NoNetwork | Nothing is sent. | holds |
-| NoChildData | Only progress is stored (`ektukhani-levels-moner-rong`, kids' time and limit, sound, slow). | holds |
+| WonIsRecorded, EndFollowsARecordedRound | A round is recorded at the tap that finishes its last picture; the end screen only follows a recorded round. | holds |
+| StarsMatchPlays, CardMatchesPlays | Stars are the times a level was played through; the parents' card counts the pictures of exactly those rounds. | holds |
+| StarsNeverDrop | Stars and card pictures never go down. | holds |
+| RestOnlyAtBreak, RestAtTheBreak | The rest screen never covers a picture in play; past the limit every other screen shows it. | holds |
+| NoNewRoundPastLimit | খেলো and আবার খেলো past the limit show the rest screen instead of a round. | holds |
+| NothingChosenWhenItCannotCount | No face or kind picture is chosen under the pause menu, away, as the first tap back, or inside the 350 ms settle time. | holds |
+| PausedOrWakingWhenAway | A round in play while the window is away is paused by the menu or waiting for a wake tap. | holds |
+| NoVoice, NoShareForKids, NoChildDataLeaves, OnlyParentsGiveMoreTime | Kids' rules. | holds |
+| End buttons are pictures at least 96 px | AgainIcon and DoneIcon at 112 px, → at 104 × 96 | tests/session.test.ts |
 
-## Bugs
+## Chart (after the fix)
+```mermaid
+---
+title: "Moner Rong: the picture book, pause and focus, the stars and the daily limit"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "Game Title or level list" as s0 {
+    state "Pause Playing" as s1 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s2 {
+        s3: Today No rest screen
+        s4: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+      state "Saved 1 played, 1 stars, 2 pictures on the card" as s5 {
+        s6: Today No rest screen
+        s7: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+    }
+    state "Pause Away, next tap only wakes" as s8 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s9 {
+        s10: Today No rest screen
+        s11: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+      state "Saved 1 played, 1 stars, 2 pictures on the card" as s12 {
+        s13: Today No rest screen
+        s14: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+    }
+    state "Pause Pause menu" as s15 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s16 {
+        s17: Today No rest screen
+        s18: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+      state "Saved 1 played, 1 stars, 2 pictures on the card" as s19 {
+        s20: Today No rest screen
+        s21: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+    }
+  }
+  state "Game Picture 1: a grey ?, faces on offer" as s22 {
+    state "Pause Playing" as s23 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s24 {
+        s25: Today No rest screen
+      }
+    }
+    state "Pause Pause menu" as s26 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s27 {
+        s28: Today No rest screen
+      }
+    }
+  }
+  state "Game Picture 1: the colour is filled, two kind things" as s29 {
+    state "Pause Playing" as s30 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s31 {
+        s32: Today No rest screen
+      }
+    }
+    state "Pause Pause menu" as s33 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s34 {
+        s35: Today No rest screen
+      }
+    }
+  }
+  state "Game Picture 1: settled, #8594; shows" as s36 {
+    state "Pause Playing" as s37 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s38 {
+        s39: Today No rest screen
+      }
+    }
+    state "Pause Pause menu" as s40 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s41 {
+        s42: Today No rest screen
+      }
+    }
+  }
+  state "Game Picture 2: a grey ?, faces on offer" as s43 {
+    state "Pause Playing" as s44 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s45 {
+        s46: Today No rest screen
+      }
+    }
+    state "Pause Pause menu" as s47 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s48 {
+        s49: Today No rest screen
+      }
+    }
+  }
+  state "Game Picture 2: the colour is filled, two kind things" as s50 {
+    state "Pause Playing" as s51 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s52 {
+        s53: Today No rest screen
+      }
+    }
+    state "Pause Pause menu" as s54 {
+      state "Saved 0 played, 0 stars, 0 pictures on the card" as s55 {
+        s56: Today No rest screen
+      }
+    }
+  }
+  state "Game Last picture won and recorded, #8594; shows" as s57 {
+    state "Pause Playing" as s58 {
+      state "Saved 1 played, 1 stars, 2 pictures on the card" as s59 {
+        s60: Today No rest screen
+        s61: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+    }
+    state "Pause Pause menu" as s62 {
+      state "Saved 1 played, 1 stars, 2 pictures on the card" as s63 {
+        s64: Today No rest screen
+        s65: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+    }
+  }
+  state "Game End screen" as s66 {
+    state "Pause Playing" as s67 {
+      state "Saved 1 played, 1 stars, 2 pictures on the card" as s68 {
+        s69: Today No rest screen
+        s70: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+    }
+    state "Pause Pause menu" as s71 {
+      state "Saved 1 played, 1 stars, 2 pictures on the card" as s72 {
+        s73: Today No rest screen
+        s74: Today Rest screen (আজ এট#2497;ক#2497;ই)
+      }
+    }
+  }
+  [*] --> s3
+  s3 --> s10: the window or tab goes away
+  s3 --> s25: খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507;
+  s3 --> s4: today's play time runs out
+  s3 --> s17: #9208; or P or the window or tab goes away
+  s10 --> s3: the page opens again or the window is back
+  s10 --> s11: today's play time runs out
+  s25 --> s28: #9208; or P or the window or tab goes away
+  s4 --> s3: a parent gives ১০ ম#2495;ন#2495;ট more
+  s4 --> s11: the window or tab goes away
+  s17 --> s3: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s17 --> s18: today's play time runs out
+  s25 --> s32: the child taps the face that fits
+  s11 --> s10: a parent gives ১০ ম#2495;ন#2495;ট more
+  s11 --> s4: the page opens again or the window is back
+  s28 --> s25: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s28 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497; or সব ল#2503;ভ#2503;ল in the pause menu
+  s18 --> s4: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s18 --> s17: a parent gives ১০ ম#2495;ন#2495;ট more
+  s32 --> s35: #9208; or P or the window or tab goes away
+  s4 --> s18: the window or tab goes away
+  s28 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497; or সব ল#2503;ভ#2503;ল in the pause menu
+  s32 --> s39: the child taps a kind picture
+  s35 --> s32: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s35 --> s3: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s39 --> s42: #9208; or P or the window or tab goes away
+  s35 --> s4: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s39 --> s46: the child presses #8594;
+  s42 --> s39: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s42 --> s3: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s46 --> s49: #9208; or P or the window or tab goes away
+  s42 --> s4: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s46 --> s53: the child taps the face that fits
+  s49 --> s46: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s49 --> s3: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s53 --> s56: #9208; or P or the window or tab goes away
+  s49 --> s4: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s53 --> s60: the child taps a kind picture
+  s56 --> s53: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s56 --> s3: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s53 --> s61: the child taps a kind picture
+  s60 --> s6: the page opens again
+  s60 --> s64: #9208; or P or the window or tab goes away
+  s56 --> s4: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s6 --> s13: the window or tab goes away
+  s6 --> s7: today's play time runs out
+  s6 --> s20: #9208; or P or the window or tab goes away
+  s60 --> s69: the child presses #8594;
+  s61 --> s60: a parent gives ১০ ম#2495;ন#2495;ট more
+  s61 --> s65: #9208; or P or the window or tab goes away
+  s64 --> s60: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s64 --> s6: the page opens again or সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s13 --> s6: the page opens again or the window is back
+  s13 --> s14: today's play time runs out
+  s69 --> s6: the page opens again or সব ল#2503;ভ#2503;ল or শ#2503;ষ
+  s69 --> s70: today's play time runs out
+  s69 --> s73: the window or tab goes away or #9208; or P
+  s7 --> s6: a parent gives ১০ ম#2495;ন#2495;ট more
+  s7 --> s14: the window or tab goes away
+  s20 --> s6: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s20 --> s21: today's play time runs out
+  s65 --> s61: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s65 --> s64: a parent gives ১০ ম#2495;ন#2495;ট more
+  s14 --> s13: a parent gives ১০ ম#2495;ন#2495;ট more
+  s14 --> s7: the page opens again or the window is back
+  s70 --> s69: a parent gives ১০ ম#2495;ন#2495;ট more
+  s70 --> s7: the page opens again
+  s70 --> s74: the window or tab goes away
+  s7 --> s21: the window or tab goes away
+  s73 --> s6: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s73 --> s74: today's play time runs out
+  s73 --> s69: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s21 --> s7: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s21 --> s20: a parent gives ১০ ম#2495;ন#2495;ট more
+  s74 --> s7: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s74 --> s73: a parent gives ১০ ম#2495;ন#2495;ট more
+  s74 --> s70: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s22 --> s3: the page opens again
+  s22 --> s4: the page opens again
+  s29 --> s3: the page opens again
+  s29 --> s4: the page opens again
+  s36 --> s3: the page opens again
+  s36 --> s4: the page opens again
+  s43 --> s3: the page opens again
+  s43 --> s4: the page opens again
+  s50 --> s3: the page opens again
+  s50 --> s4: the page opens again
+  s57 --> s7: the page opens again
+  s58 --> s70: the child presses #8594;
+  s62 --> s7: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;
+  class s3 blue
+  class s4 yellow
+  class s6 blue
+  class s7 yellow
+  class s10 blue
+  class s11 yellow
+  class s13 blue
+  class s14 yellow
+  class s17 blue
+  class s18 yellow
+  class s20 blue
+  class s21 yellow
+  class s25 teal
+  class s28 teal
+  class s32 teal
+  class s35 teal
+  class s39 teal
+  class s42 teal
+  class s46 teal
+  class s49 teal
+  class s53 teal
+  class s56 teal
+  class s60 teal
+  class s61 yellow
+  class s64 teal
+  class s65 yellow
+  class s69 blue
+  class s70 yellow
+  class s73 blue
+  class s74 yellow
+```
+
+## Bugs found before the rewrite, and what fixed them
 
 ### 1. NoDoubleResult and StarsMatchPlays (game: `moner-game.tsx`)
 - **Player's sentence:** "We played the set once, but it shows three stars, and the card for my parents says 9 pictures."
@@ -75,22 +317,26 @@ The component is the same as in juktoborno, replayed there. Enter auto-repeat op
 - **Live (10:03):** related tools: `/amar-chhotobela`, `/sat-tukro`, `/nirapode-thaki`, `/gune-dekhi`, `/tools`. Also the header search input and গেম / কুইজ / টুলস. There are no off-site links.
 - **Fix:** a kids' frame (shared).
 
-## Quality-bar gaps (set 1 played end to end at 10:04, and set 2 at 10:11)
-1. **First screen:** a calm scene with a big "?" face and two big face buttons, plus a ghost finger on the right face. Good, but it sits under the H1 and parent note.
-2. **Choices:** 2–3 faces per scene, with ease after misses, which fits the brief. The kind choices are icon plus long text, which a parent must read.
-3. **The scene line and question are text;** the 🔈 shows only with a Bangla voice. Reading by the parent is intended (the note says so), so it's fine for co-play but not for solo play.
-4. **Ending:** a stars-as-practice card and a mirror prompt, which is good. The buttons need icons (bug 3), and the stars can be inflated (bug 1).
-5. **No pause or menu,** and no কীভাবে খেলবে. Instructions live in the page guide.
-6. **Sound:** good, a note per kind choice and win. Speech on every step could be long for shared rooms; it's mute-first after the fix.
-7. **Pacing:** 6 sets, adding one feeling each, which is good. There's no closing moment for the whole set of feelings beyond confetti on set 6.
+## Fixes and their tests
+| Bug | Fixed in | Node test |
+|---|---|---|
+| 1 NoDoubleResult, StarsMatchPlays | `lib/session.ts won()` (once per round), `lib/finish.ts finishRound()`; no hidden button remains | `bug 1, NoDoubleResult…`, `bug 1, StarsMatchPlays…` |
+| 2 VoiceOnlyWithSound | no voice at all: `speak`, `SpeakButton` and `speechSynthesis` removed | `the tool never touches the network, never speaks…` |
+| 3 NoReadingNeeded | picture end buttons, 112 px; → 104 × 96 | `bug 3, NoReadingNeeded…` |
+| 4 RestOnlyAtBreak | the kit's modal rest screen; the game calls `atBreak()` at round start and at the winning tap, and when leaving a round by the menu | `bug 4, NoNewRoundPastLimit…`, `bug 4, RestOnlyAtBreak…` |
+| 5–7 gate and ways out | the shared kit and kids' `GamePage` frame | shared |
+| New: a double tap skipped a picture | `SETTLE_MS` after each step | `a double tap never skips a picture…` |
+| New (found by the new model): leaving a round through the pause menu's সব লেভেল past the limit showed no rest screen for a second | `onLevels` and `onRestart` call `atBreak()` at once | model rule RestAtTheBreak |
 
-Screenshots in `.shots/`:
-- `moner-rong-first.png`
-- `moner-rong-end.png`
-- `moner-rong-showparent-tripled.png`
+## Live replays in Orca (Pixel 9, 2026-11-05)
+- **Round recorded once:** a round of level 1 with the limit passed mid-play: no rest screen during play or at the win, rest screen at the end, three Enter presses on it started nothing. Stars went `{"1":2}` to `{"1":3}`, once.
+- **Pause:** blur opened the player's menu; a tap on the face under it changed nothing (step stayed "name"); চালিয়ে যাও then a tap named the feeling; P opened the menu; সব লেভেল opened the list with nothing recorded.
+- **Old stars move once:** `{1:3,2:2,3:1,4:2,5:1,6:3}` became `{"1":3,"2":2,"4":1,"5":2,"7":1,"8":3}` and stayed after a reload.
+- **Played end to end:** levels 1, 2, 3, 4, 6, 7, 8, 9 with an autopilot that missed first on every picture: 8 end screens, no console errors.
 
 ## Regenerate
 ```sh
 scripts/statechart.sh ai_docs/statecharts/moner-rong/MonerRong.tla --view ai_docs/statecharts/moner-rong/view.ts --out ai_docs/statecharts/moner-rong/after-fix
+scripts/statechart.sh ai_docs/statecharts/moner-rong/MonerRongKids.tla --view ai_docs/statecharts/moner-rong/view-kids.ts --out ai_docs/statecharts/moner-rong/after-fix-kids
 ```
-The view hides the gate-shutting arrows on set start and শেষ.
+For the two-play run, copy the spec with `MonerRongTwice.cfg` as its cfg.

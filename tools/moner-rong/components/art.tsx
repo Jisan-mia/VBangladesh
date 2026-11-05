@@ -3,8 +3,10 @@ import type { ReactNode } from "react";
 import { FACES, HEAD, INK, NEUTRAL, type Feeling } from "../lib/faces";
 import type { Hair, Icon, Prop } from "../lib/scenes";
 
-const parts = (feeling: Feeling | "calm") => FACES[feeling].map((part, index) =>
-  <path key={index} d={part.d} fill={part.fill ?? "none"} stroke={part.line ? INK : undefined} strokeWidth={part.line} strokeLinecap="round" strokeLinejoin="round" />);
+/** With `draw`, the strokes draw themselves in (each on its own beat) and the dots pop in: the face is painted as you watch. */
+const parts = (feeling: Feeling | "calm", draw = false) => FACES[feeling].map((part, index) =>
+  <path key={index} d={part.d} fill={part.fill ?? "none"} stroke={part.line ? INK : undefined} strokeWidth={part.line} strokeLinecap="round" strokeLinejoin="round"
+    pathLength={draw && part.line ? 1 : undefined} className={draw ? (part.line ? "mr-stroke" : "mr-dot") : undefined} style={draw ? { animationDelay: `${100 + index * 70}ms` } : undefined} />);
 
 export function Face({ feeling, fill }: { feeling: Feeling | "calm"; fill: string }) {
   return <svg viewBox="-2 -2 104 104" aria-hidden="true"><path d={HEAD} fill={fill} stroke={INK} strokeWidth="4" />{parts(feeling)}</svg>;
@@ -12,11 +14,11 @@ export function Face({ feeling, fill }: { feeling: Feeling | "calm"; fill: strin
 
 const HAIR = "#2d2018";
 /** The child in the scene: a "?" until the feeling is named, then that face. */
-export function Child({ face, fill, hair, glasses }: { face: Feeling | "calm" | null; fill: string; hair: Hair; glasses?: boolean }) {
+export function Child({ face, fill, hair, glasses, draw = false }: { face: Feeling | "calm" | null; fill: string; hair: Hair; glasses?: boolean; draw?: boolean }) {
   return <svg viewBox="-4 -4 108 108" aria-hidden="true">
     {hair === "long" && <path d="M8 46Q4 6 50 4Q96 6 92 46L94 92Q84 98 80 86L82 52H18L20 86Q16 98 6 92Z" fill={HAIR} />}
     <path d={HEAD} fill={face ? fill : NEUTRAL} stroke={INK} strokeWidth="4" />
-    {face ? parts(face) : <text x="50" y="72" textAnchor="middle" fontSize="54" fontWeight="800" fill="#9b8a72">?</text>}
+    {face ? parts(face, draw) : <text x="50" y="72" textAnchor="middle" fontSize="54" fontWeight="800" fill="#9b8a72">?</text>}
     <path d={hair === "long" ? "M10 40Q14 8 50 7Q86 8 90 40Q74 22 50 24Q30 22 10 40Z" : "M7 44Q6 8 50 5Q94 8 93 44Q86 26 66 22Q60 30 44 26Q26 24 7 44Z"} fill={HAIR} />
     {glasses && face && <path d="M25 46a11 11 0 1 0 22 0a11 11 0 1 0 -22 0zM53 46a11 11 0 1 0 22 0a11 11 0 1 0 -22 0zM47 45h6" fill="none" stroke={INK} strokeWidth="3" />}
   </svg>;
@@ -75,3 +77,15 @@ export function Ghost() {
     <path d="M14 30V8a5 5 0 0 1 10 0v16l12 2a6 6 0 0 1 5 7l-2 13a10 10 0 0 1-10 9H19a9 9 0 0 1-7-4L3 39a4.5 4.5 0 0 1 7-5z" fill="#fff" stroke="#1d2b53" strokeWidth="2.5" strokeLinejoin="round" />
   </svg>;
 }
+
+/** A round face placed inside a larger SVG (the title's ring of six). */
+export function FaceAt({ feeling, fill, x, y, size, className, delay = 0 }: { feeling: Feeling | "calm"; fill: string; x: number; y: number; size: number; className?: string; delay?: number }) {
+  return <g transform={`translate(${x - size / 2} ${y - size / 2}) scale(${size / 100})`}>
+    <g className={className} style={{ animationDelay: `${delay}ms` }}><path d={HEAD} fill={fill} stroke={INK} strokeWidth="4" />{parts(feeling)}</g>
+  </g>;
+}
+
+/** The end buttons are pictures: a circling arrow (আবার খেলো), a closed book (শেষ) and an arrow (পরের ধাপ). */
+export const AgainIcon = () => <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M38 24a14 14 0 1 1-4.1-9.9" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" /><path d="M36 6v10H26" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+export const DoneIcon = () => <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 8h24a4 4 0 0 1 4 4v28H14a4 4 0 0 1-4-4z" fill="currentColor" opacity=".9" /><path d="M10 36a4 4 0 0 1 4-4h24" fill="none" stroke="#fff" strokeWidth="3" /><path d="M18 16h12M18 22h8" stroke="#fff" strokeWidth="3" strokeLinecap="round" /></svg>;
+export const NextIcon = () => <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 24h26M26 13l11 11-11 11" fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" /></svg>;

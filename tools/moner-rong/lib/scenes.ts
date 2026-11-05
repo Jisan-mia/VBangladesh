@@ -1,8 +1,6 @@
-// The scenes and the rules of মনের রং. Pure, so the tests can play it. No score: a feeling that fits is never "right", only "fits".
-import { FEELINGS, ORDER, type Feeling } from "./faces";
-
-const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
-export const bn = (value: number) => digits.format(value);
+// The pictures of মনের রং: a child in a small Bangladeshi moment, the feelings that fit (one to three), a clue, and two kind things.
+// No score: a feeling that fits is never "right", only "fits". The levels that use them are in levels.ts, the rules in round.ts.
+import type { Feeling } from "./faces";
 
 export type Prop =
   | "jama" | "brishti" | "tiffin" | "ghuri" | "khata" | "naru" | "andhar" | "kukur" | "baksho" | "cycle"
@@ -96,100 +94,4 @@ export const SCENES: readonly Scene[] = [
     ask: "কখনো এমন রাগ হয়েছে যে পরে হাসি পেয়েছে?" },
 ];
 
-/** Six sets, each a short round. The faces on offer grow from two to six; the last set is all two-feeling scenes. */
-export const SETS: readonly { title: string; pool: readonly Feeling[]; scenes: readonly string[]; mirror: Feeling }[] = [
-  { title: "খুশি আর মন খারাপ", pool: ["khushi", "mon-kharap"], scenes: ["eid", "brishti", "tiffin"], mirror: "khushi" },
-  { title: "রাগ", pool: ["khushi", "mon-kharap", "rag"], scenes: ["ghuri", "khata", "nanu"], mirror: "rag" },
-  { title: "ভয়", pool: ["khushi", "mon-kharap", "rag", "bhoy"], scenes: ["andhar", "kukur", "bondhu"], mirror: "bhoy" },
-  { title: "অবাক আর লজ্জা", pool: ["khushi", "bhoy", "obak", "lojja"], scenes: ["cycle", "class", "chhora"], mirror: "obak" },
-  { title: "ছয়টা মুখ", pool: ORDER, scenes: ["baj", "eka", "carrom", "sangrai"], mirror: "lojja" },
-  { title: "একসাথে দুটো মন", pool: ORDER, scenes: ["bon", "nagordola", "chacha", "cake"], mirror: "mon-kharap" },
-];
-export const SET_COUNT = SETS.length;
-export const setOf = (set: number) => SETS[Math.min(Math.max(set, 1), SET_COUNT) - 1];
 export const sceneById = (id: string) => SCENES.find(scene => scene.id === id)!;
-export const scenesOf = (set: number) => setOf(set).scenes.map(sceneById);
-
-/** The faces offered for a scene, always in the same order. Eased: only the faces that fit plus one other. */
-export function facesFor(scene: Scene, set: number, eased: boolean): Feeling[] {
-  const pool = setOf(set).pool;
-  if (!eased) return [...pool];
-  const other = pool.find(feeling => !scene.feels.includes(feeling));
-  return pool.filter(feeling => scene.feels.includes(feeling) || feeling === other);
-}
-
-export type Step = "name" | "kind" | "after";
-export type Round = {
-  set: number; index: number; faces: Feeling[];
-  step: Step; picked: Feeling | null; tries: number; kind: number | null;
-  /** The quiet ease: three misses in a row offer fewer faces from the next scene; five first-try fits in a row lift it. */
-  missRun: number; rightRun: number; eased: boolean;
-  named: Feeling[];
-};
-
-export function newRound(set: number, eased = false, rightRun = 0): Round {
-  return { set, index: 0, faces: facesFor(scenesOf(set)[0], set, eased), step: "name", picked: null, tries: 0, kind: null, missRun: 0, rightRun, eased, named: [] };
-}
-
-export const sceneOf = (round: Round) => scenesOf(round.set)[round.index];
-export const isLast = (round: Round) => round.index === scenesOf(round.set).length - 1;
-/** After two tries the faces that fit glow. */
-export const glows = (round: Round) => round.step === "name" && round.tries >= 2;
-
-export type NameResult = { round: Round; outcome: "fits" | "again" | "ignore" };
-export function nameFeeling(round: Round, feeling: Feeling): NameResult {
-  if (round.step !== "name" || !round.faces.includes(feeling)) return { round, outcome: "ignore" };
-  const scene = sceneOf(round);
-  if (!scene.feels.includes(feeling)) {
-    const missRun = round.missRun + 1;
-    return { round: { ...round, tries: round.tries + 1, missRun, rightRun: 0, eased: round.eased || missRun >= 3 }, outcome: "again" };
-  }
-  const rightRun = round.tries === 0 ? round.rightRun + 1 : 0;
-  return {
-    round: { ...round, step: "kind", picked: feeling, missRun: 0, rightRun, named: round.named.includes(feeling) ? round.named : [...round.named, feeling] },
-    outcome: "fits",
-  };
-}
-
-export function chooseKind(round: Round, choice: number): Round {
-  if (round.step !== "kind" || (choice !== 0 && choice !== 1)) return round;
-  return { ...round, step: "after", kind: choice };
-}
-
-/** The next scene, or null when the round is over. The ease changes only here, between scenes, never under a finger. */
-export function nextScene(round: Round): Round | null {
-  if (round.step !== "after" || isLast(round)) return null;
-  const eased = round.eased && round.rightRun < 5;
-  const index = round.index + 1;
-  return { ...round, index, faces: facesFor(scenesOf(round.set)[index], round.set, eased), step: "name", picked: null, tries: 0, kind: null, eased, rightRun: eased ? round.rightRun : 0 };
-}
-
-/** Stars mark practice only: one more each time a set is played through, up to three. Never how many fitted. */
-export const practised = (before: number) => Math.min(3, Math.max(0, before) + 1);
-
-export const question = (scene: Scene) => `${scene.whose} এখন কেমন লাগছে?`;
-export const kindQuestion = (scene: Scene) => scene.q ?? "কী করলে ভালো লাগবে?";
-export const againLine = (scene: Scene) => `${scene.clue} আরেকবার ভাবো।`;
-export const sayLine = (scene: Scene, feeling: Feeling) => FEELINGS[feeling].say(scene.who, scene.whose);
-
-/** "রাগ আর মন খারাপ, দুটোই হতে পারে।" when more than one feeling fits; empty otherwise. */
-export function alsoLine(scene: Scene, picked: Feeling) {
-  if (scene.feels.length < 2) return "";
-  const words = [picked, ...scene.feels.filter(feeling => feeling !== picked)].map(feeling => FEELINGS[feeling].word);
-  return scene.feels.length === 2 ? `${words[0]} আর ${words[1]}, দুটোই হতে পারে।` : `${words.join(", ")}, তিনটাই হতে পারে।`;
-}
-
-export const mirrorLine = (set: number) => `এবার আয়নায় একটা ${FEELINGS[setOf(set).mirror].mirror} বানাও তো।`;
-export const endLine = (round: Round) => `${bn(round.index + 1)}টা ছবিতে মন চিনলে: ${listWords(round.named)}।`;
-
-export function listWords(feelings: readonly Feeling[]) {
-  const words = ORDER.filter(feeling => feelings.includes(feeling)).map(feeling => FEELINGS[feeling].word);
-  return words.length < 2 ? words.join("") : `${words.slice(0, -1).join(", ")} আর ${words.at(-1)}`;
-}
-
-export type Today = { scenes: number; feelings: Feeling[] };
-export const addToday = (today: Today, round: Round): Today =>
-  ({ scenes: today.scenes + round.index + 1, feelings: ORDER.filter(feeling => today.feelings.includes(feeling) || round.named.includes(feeling)) });
-export const cardHead = (today: Today) => `আজ ${bn(today.scenes)}টা ছবিতে`;
-export const cardTail = "মনের রং চিনলাম";
-export const cardSub = "প্রতিটায় ভাবলাম, কী করলে ভালো লাগে";
