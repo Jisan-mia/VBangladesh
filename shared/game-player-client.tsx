@@ -388,10 +388,13 @@ export function GamePlayer({ slug, name, head, lead, art, steps, guideTitle, kid
       setBox(current => current && current.width === size.width && current.height === size.height ? current : { ...size, rows });
     };
     measure();
+    // Fonts and the header can settle after the first paint; measure again then, or a narrow window keeps the default width.
+    const again = requestAnimationFrame(measure), later = window.setTimeout(measure, 400);
     const observer = new ResizeObserver(measure);
     if (bar.current) observer.observe(bar.current);
+    if (root.current) observer.observe(root.current);
     window.addEventListener('resize', measure);
-    return () => { observer.disconnect(); window.removeEventListener('resize', measure); };
+    return () => { cancelAnimationFrame(again); window.clearTimeout(later); observer.disconnect(); window.removeEventListener('resize', measure); };
   }, [shape]);
 
   const api = useMemo<GamePlayerApi>(() => ({ paused: menu !== null, immersive, stage, requestRestart: restart, requestPause: () => openMenu(), onPause, onResume, onRestart, onLevels }), [menu, immersive, stage, restart, openMenu, onPause, onResume, onRestart, onLevels]);

@@ -20,6 +20,15 @@ The owner's bar is **tibo.dog** (poteto's browser game): "this game is literally
 7. **Words:** `research/bangla-writing-guide.md` (the `bangla-writing` skill). For kids' tools (category ছোটদের জন্য) also read `research/kids/kids-brief.md` and use `shared/kids-kit.tsx`.
 8. **The current code:** `tools/{SLUG}/**`. Keep what is good; rewrite what isn't.
 
+## Animation: use the Emil skills (the owner's request)
+Load these skills with the Skill tool before you write any motion, and follow them for every animation in the game:
+- `emil-design-eng`: polish and the invisible details;
+- `animate`: each animation's purpose, properties, curve, duration, interruption and exit;
+- `choreograph`: anything that moves as a group, such as the end-screen count-up, staggered tiles or the title reveal;
+- `animation-performance`: canvas and frame-budget work in `*.hot.ts`.
+
+Before your report, run `review-animations` or `improve-animations` on your own game's motion and fix what it finds. Respect `prefers-reduced-motion` and ধীরে খেলো.
+
 ## Write the design first: `ai_docs/game-dev/rewrites/{SLUG}.md`
 One page:
 - **Core:** the concept in one line, the fantasy, and the core loop in 3 verbs.

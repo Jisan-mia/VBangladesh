@@ -20,6 +20,11 @@ html.gp-locked,html.gp-locked body{overflow:hidden!important;overscroll-behavior
 .gp-rail-left{grid-area:left}.gp-rail-right{grid-area:right}
 .gp-rail ul{display:grid;grid-template-columns:repeat(var(--gp-cols),var(--gp-tile));grid-template-rows:repeat(var(--gp-rows),var(--gp-tile));grid-auto-rows:var(--gp-tile);gap:var(--gp-gap);margin:0;padding:0;list-style:none}
 @media (min-width:1280px){.gp{--gp-cols:2}}
+/* A narrow laptop window: the game stays in the page, the side tiles step aside. */
+@media (pointer:fine) and (max-width:899px),(hover:hover) and (max-width:899px){
+  .gp-arena{grid-template-columns:var(--gp-w,520px);grid-template-areas:"screen" "bar";padding-inline:8px}
+  .gp-rail{display:none!important}
+}
 .gp[data-shape=wide] .gp-rail{display:none}
 @media (min-width:1640px){.gp[data-shape=wide] .gp-rail{display:block}}
 
@@ -97,7 +102,7 @@ html.gp-locked,html.gp-locked body{overflow:hidden!important;overscroll-behavior
 .gp-kids-header .hub-brand{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-family:var(--font-display);font-size:19px;font-weight:700;color:var(--gp-ink);text-decoration:none}
 
 /* ---- phone: a launch card with one huge খেলো; the game waits, mounted, until it opens full screen ---- */
-@media (max-width:899px),(pointer:coarse) and (max-height:599px){
+@media (pointer:coarse) and (max-width:899px),(pointer:coarse) and (max-height:599px){
   .gp-arena{display:block;padding:22px 16px 26px}
   .gp-rail{display:none}
   .gp:not([data-immersive]) .gp-shell{display:none}

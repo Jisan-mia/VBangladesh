@@ -63,5 +63,8 @@ export function inlineStage({ viewWidth, viewHeight, top, bar, shape = 'portrait
   return { width: Math.round(Math.max(0, Math.min(ideal, viewWidth - 32))), height };
 }
 
-/** Phone layout (launch card, then immersive): narrow windows, and phones held sideways. Mirrored in game-player.css. */
-export const PHONE_QUERY = '(max-width: 899px), (pointer: coarse) and (max-height: 599px)';
+/**
+ * Phone mode (launch card, then full screen on খেলো) is for touch phones only, like Poki. A laptop or desktop with a
+ * mouse plays in the page at any window width, and goes full screen only from the ⛶ button.
+ */
+export const PHONE_QUERY = '(pointer: coarse) and (max-width: 899px), (pointer: coarse) and (max-height: 599px)';
