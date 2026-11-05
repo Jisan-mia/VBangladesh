@@ -1,104 +1,157 @@
-# সমান ভাগ: statechart, before the rewrite
+# সমান ভাগ: statechart
 
-Spec `ShomanBhag.tla` / `ShomanBhag.cfg`, view `view.ts`, output `before-fix/` (`report.md`, `chart.mmd`).
-It mirrors the code as it stood at 10:08 on 2026-11-04 (branch `games-to-the-bar`):
-- `tools/shoman-bhag/components/bhag-game.tsx`: `apply` and its `speak()` calls, the "a finished serving rests, then the next guests come" effect with its 1.7 s / 2.8 s timer, `restart`, the end and closed screens, the সব ধাপ drawer and the ParentGate.
-- `tools/shoman-bhag/lib/game.ts`: `tapBasket`, `tapPlate`, `settle`, `decide`, `cut`, `complete` and `nextItem`.
-- `shared/kids-kit.tsx`: `speak()`, `useKidsSession`, `RestScreen` and `ParentGate`.
+The game was rewritten on 2026-11-05 (design: `ai_docs/game-dev/rewrites/shoman-bhag.md`). `before-fix/` keeps the run on the old code and the old spec (`before-fix/ShomanBhag.tla`, `.cfg`, `view.ts`, `report.md`: 3 rules held and 5 broke). `after-fix/` is the run on the rewritten code.
 
-TLC reached 472 states and 2016 steps. The chart has 19 states and 43 arrows. **3 rules hold and 5 break** (TypeOK and NoDeadlock also hold). All 5 broken rules reproduced live in Orca between 10:07 and 10:10 (+06).
+| Spec | What it covers | Mirrors | TLC |
+|---|---|---|---|
+| `ShomanBhag.tla` / `.cfg`, view `view.ts` | the screens (mat, level list, the guests, the end screen), the piece in the child's hand, the ➜ that brings the next guests, stars saved at the last piece, the player's pause, a blur before the menu, a key held through the last serving, the daily limit and the rest screen | `tools/shoman-bhag/lib/round.ts`, `lib/session.ts`, `components/game.tsx` (`play`, `goNext`, `letGo`, `useGamePlayer`), `shared/kids-kit.tsx` | 456 states, 2433 steps, 16 chart states |
 
-**Since then:** `speak()` in `shared/kids-kit.tsx` now returns early when `!soundOn()`, a fix made after my replay. I re-checked it live at 16:40 (bug 1 below). The `before-fix/` model still shows the code as found.
+The parent gate is the same `<ParentGate>` as in abc-bazar, whose model (`ai_docs/statecharts/abc-bazar/AbcBazarGates.tla`) proves it. Here its rules are node tests: the share link sits only inside the gate, and an open gate shuts on the next touch outside it.
 
-## Systems modelled
-- **Play phase:** two kinds of step stand for the five.
-  - A sharing step (ধাপ ১–৩): a plain serving, then the serving with one left over and "শেষ …টা কে পাবে?".
-  - The cutting step (ধাপ ৪): cut the last রুটি, then give each guest a piece.
+**Every rule holds** (`after-fix/report.md`). The chart is `after-fix/chart.mmd`, drawn below.
+- **Model check (mutations, in a scratch copy):** putting the old behaviour back breaks the rule at once. Adding the old 1.7 s timer ("the next guests sit down by themselves") breaks **NoProgressWhileAway** in 5 steps. Keeping the piece in the hand when the window blurs breaks **PieceGoesBackWhenAway** in 3.
 
-  Each serving ends in "everyone served", which rests on screen. Then the next guests come, or the round ends. After the round: আবার খেলো, পরের ধাপ, শেষ, and the closed screen.
-- **Away:** one flag for a hidden tab or another window. The code handles neither.
-- **Sound and voice:** the site-wide switch. On a right cut (and on the naming step's answers) `apply` calls `speak()` with the fraction's word.
-- **Kids' daily limit:** `atBreak()` in the round-end effect, RestScreen, and extend.
-- **Parent gate:** who holds the phone.
-- **Results and storage:** `levels.record` once a round, and nothing sent.
-- **Reading:** the choices on each screen, and whether each has a picture.
+## Rules after the fix (plain words)
+| Rule | In plain words |
+|---|---|
+| NoProgressWhileAway (property) | A served table, and the next guests, wait for you while you are away or the menu is open. |
+| NextGuestsOnlyByTheArrow (property) | The next guests, and the end screen, come only from the child's ➜. Nothing moves on by itself. |
+| PieceGoesBackWhenAway | A piece never stays in the hand while the window is away or the menu is open. |
+| RestOnlyAtBreak | The rest screen never covers a serving; if the limit passes on the last piece it waits for the end screen. |
+| NoNewRoundPastLimit | Past today's limit, a round does not start: the rest screen shows instead. |
+| EveryFinishCounts | Once the last serving is complete, its stars are saved and the limit checked, at that touch. |
+| ResultMatchesPlay, StarsNeverDrop | The end screen's stars are this round's; a worse round never lowers the saved best. |
+| NothingMovesUnderTheMenu | A touch under the pause menu does nothing. |
+| WakeTapIsNotAMove | The touch that brings focus back never lifts, drops or gives a piece, and never presses the ➜. |
+| ChoiceFreezesPlay | The level list is a choice screen: no serving waits under it. |
+| ResultNeedsFreshPress | A key held through the last serving never skips the end screen or starts the next round. |
+| TypeOK, NoDeadlock | |
 
-Not modelled: misses and the quiet ease (they only add tries and glows), the naming step (ধাপ ৫, the same speak and the same timers), the idle ghost finger, and the `#og` card. Answers happen on `pointerdown`, which the model treats as a tap.
+**Rules replaced or moved to node tests.**
+- **SilentWhenMuted** is gone because there is no voice at all: `tests/shoman-bhag.test.ts` › "bug 1" asserts that no file mentions `speak(`, `SpeakButton` or `speechSynthesis`, and that `lib/sound.ts` only uses the kit and no loops.
+- **NoNetwork, NoChildData, ParentGate** are node tests (no `fetch`, no `<input>`, only `ektukhani-levels-shoman-bhag` is written, the share link sits inside `<ParentGate>`).
+- **NoReadingNeeded** is a node test: every `<button>` on the board, the end screen, the title and the list carries a picture; the three last-piece choices are drawings; the end buttons are 112 px, the ➜ 104 px.
 
-## Rules, in plain words
-| Rule | In plain words | Result |
-|---|---|---|
-| NoProgressWhileAway (property) | A served table, and the faces after the last-piece choice, wait for you while you're away. | **breaks** |
-| SilentWhenMuted (property) | With sound off nothing makes a sound, the voice included. | **breaks** (fixed since) |
-| NoDoubleResult | A round is recorded once. | holds |
-| RestOnlyAtBreak | The rest screen appears only between rounds. | **breaks** |
-| ParentGate | The share link is on screen only while a grown-up holds the phone. | **breaks** |
-| NoNetwork | Nothing is sent. | holds |
-| NoChildData | Only progress (stars per ধাপ) is stored. | holds |
-| NoReadingNeeded | Where a screen offers two or more choices, each has a picture. | **breaks** |
-| TypeOK, NoDeadlock | | hold |
-
-## Bugs
-
-### 1. SilentWhenMuted: "I turned the sound off, and the phone still said 'অর্ধেক' out loud."
-- **Path (report):** 1 you pick a step in সব ধাপ (রুটি কাটা) → 2 you turn sound off → 3 you cut the রুটি right: a step that speaks with sound off.
-- **Live replay (10:08):** Orca has a Bangla voice (Piya, bn-IN), so `useBanglaVoice` is true. I turned the switch off (`aria-pressed="false"`), wrapped `speechSynthesis.speak`, and played ধাপ ৪ and ৫. It logged **7 `speak` calls** ("অর্ধেক", "চার ভাগের এক ভাগ", "তিন ভাগের এক ভাগ", …), every one with the switch off.
-- **Fix:** `speak()` returns when `!soundOn()`. **Landed in `shared/kids-kit.tsx` after this replay.** I re-checked at 16:40: ধাপ ৪ played to the end with sound off made **0 `speak` calls**. **Shared:** it covers every kids' game that calls `speak()` itself. Still open:
-  - `SpeakButton` stays visible when sound is off, and now does nothing when tapped. Hide it while muted, or let an explicit tap speak.
-  - Turning sound off doesn't `speechSynthesis.cancel()` a word that is already being spoken.
-
-### 2. NoProgressWhileAway: "I gave the last মোয়া to everyone and looked away. When I came back, the happy faces were gone and new guests were waiting."
-- **Path (report):** 1 you give everyone the same (the table is served) → 2 you switch to another app or window → 3 the next guests sit down, while you're away.
-- **Live replay (10:09):** I chose ধাপ ১ from সব ধাপ and played to "শেষ মোয়াটা কে পাবে?". I tapped ভেঙে সবাইকে দিই and dispatched a window `blur` 50 ms later. A hide can't be replayed, because Orca pins `document.hidden`, and the code has no handler for it either.
-  - At the choice: the faces read "অর্পিতা, খুব খুশি" and "প্রিয়াংকা, খুব খুশি", and the dots read done, done, done, –.
-  - 3 s later, still away: the prompt read "৬টা জিলাপি, দুজন মেহমান। সবাইকে সমান দাও।", the faces read "অপেক্ষা করছে", and the dots read …, now.
-
-  The 2.8 s that the code keeps "to see the faces" ran out with nobody watching. The round end (record, `sfx.win`, `atBreak`) fires away too.
-- **Fix:** hold the serving timer while away (pause on blur or hide, keep the remaining ms), or move on with a tap ("পরের মেহমান"). **Game-specific.** The shared game player's pause covers it if the game moves onto it.
-
-### 3. RestOnlyAtBreak: "The rest screen was up, but new guests had come to the table behind it."
-- **Path (report, 5 steps):** today's minutes run out → you pick রুটি কাটা → you cut it right → the round ends (RestScreen up) → you press Tab and Enter behind the rest screen: "রুটি কাটা: how many pieces?", with "Rest screen up".
-- **Live replay (10:10):** I set the kids timer to 99999 s in-tab only (reads patched, writes swallowed) and finished ধাপ ২, and `.kk-rest` showed. Then I focused আবার খেলো behind it and sent a trusted Enter. A new round started ("৯টা আম, তিনজন মেহমান। সবাইকে সমান দাও।"), with `.kk-rest` still up.
-- **Fix:** RestScreen as a real modal (`<dialog>.showModal()` or `inert` on the game), in kids-kit. **Shared.**
-
-### 4. ParentGate: "The share button stayed out after Ammu gave the phone back."
-- **Path (report):** 1 a parent opens বড়দের জন্য → 2 you give everyone the same: "Gate open, child holding".
-- **Live replay:** this is the same `ParentGate` code, which I replayed in dinosaur (09:53) and ki-hobe (10:08). In both, the share button stayed open through a whole round. I didn't replay it separately here.
-- **Fix:** the gate closes after one action, a timeout, or the next outside tap. **Shared.**
-
-### 5. NoReadingNeeded: "Who gets the last one? I can't read the three buttons."
-- **Path (report, 3 steps):** the first table served → the next guests sit down → you give everyone the same: "Last table: who gets the last one?".
-- **Live check (10:09):** the leftover choices ভেঙে সবাইকে দিই, ছোটজনকে দিই and আম্মুর জন্য রাখি are three 72 px buttons with **no picture** (`.shots/shoman-bhag-sc-leftover.png`). Only "give it to one guest" has a picture route (tap a plate). The end screen's আবার খেলো, শেষ, পরের ধাপ and আব্বু-আম্মুকে দেখাও are text-only too.
-- **Fix:** draw each leftover choice: the piece broken over every plate, the piece by the smallest guest, and the piece under a covered plate for আম্মু. Picture end actions are shared. **Game-specific (leftover) and shared (end screen).**
-
-### Checked and holding
-- **NoDoubleResult:** the end effect returns once `phase !== "play"`, and `restart` drops a pending timer through the effect's cleanup.
-- **NoNetwork and NoChildData:** no fetch, share-client or `/api` in the game (also its tests), and only `ektukhani-levels-shoman-bhag` is written.
-
-## Quality-bar gaps (game-quality-bar + kids brief)
-1. **The leftover choice is words (brief §4):** the game's most interesting moment, "শেষটা কে পাবে?", can't be read by the 5-year-olds it's for (bug 5).
-2. **End screen:** four text-only actions.
-3. **Servings move on by themselves (brief §2, "never hurry"):** 1.7 s after the last plate, or 2.8 s after the leftover choice, the next guests sit down, even while you're away. A calm tap to continue would let the child look at the faces.
-4. **Pause (§7):** none, and no blur or hide handling.
-5. **Hints are text (brief §1):** "একজনের প্লেটে বেশি হয়ে গেল। ওই প্লেট থেকে একটা তুলে নাও।" The surprised face and the glowing extra piece carry it visually, which is good. A short spoken hint would serve the youngest.
-6. **Pacing (§9):** good. Each ধাপ adds one idea (2 → 3 → 4 plates, then cutting, then naming), a miss eases quietly, and a round takes about 1 minute. Confetti comes only after ধাপ ৫.
-7. **Sound (§11):** good. Pick, drop and a soft wrong tone with a gentle shake, a whoosh on the cut, and fraction words spoken where a Bangla voice exists. It plays fully muted.
-8. **First screen (§1):** the basket and plates fill the board, a ghost finger shows the first tap, and the first fair share is about 8 taps away. Good.
-
-## Screenshots
-- `.shots/shoman-bhag-sc-first.png`: Pixel 9, ধাপ ১ with the basket, two plates and the ghost finger.
-- `.shots/shoman-bhag-sc-leftover.png`: ধাপ ২, "শেষ জিলাপিটা কে পাবে?" with the three text-only choices.
+## The bugs, and how each was fixed
+| # | Bug (the reader's sentence) | Fix | Node test | Live check (Orca) |
+|---|---|---|---|---|
+| 1 | **SilentWhenMuted:** "I turned the sound off and the phone still said 'অর্ধেক' out loud." | No voice anywhere: `speak()` calls and `SpeakButton` removed. Every cue is a picture, a motion or a sound effect. | `shoman-bhag.test.ts` › bug 1 | Source scan. With sound off nothing in the game calls the voice API. |
+| 2 | **NoProgressWhileAway:** "I gave the last মোয়া to everyone and looked away. When I came back, the happy faces were gone and new guests were waiting." | The 1.7 s / 2.8 s timer is gone. A served table waits for the ➜ for as long as you like; the player's pause freezes everything else. | `session.test.ts` › bug 2; › "the round never advances by itself" | Served the first table, dispatched `blur`, waited 3.2 s: still serving 1, stage done, faces `happy,happy`, pause menu open. After `focus` nothing had moved. |
+| 3 | **RestOnlyAtBreak:** "The rest screen was up, but new guests had come to the table behind it." | Kit: `RestScreen` is a real modal (shared). Game: `begin()` asks `kids.atBreak()` first, the last piece asks it too, and nothing starts under the rest screen. | `session.test.ts` › bug 3; › every finish counts | Covered by the kit and the model. |
+| 4 | **ParentGate:** "The share button stayed out after Ammu gave the phone back." | Kit: the sum, one action, 20 s, hide. Game: the gate shuts on the next touch outside it (`gateKey` bump) and is unmounted when a round starts. | `session.test.ts` › bug 4 | Gate model: `abc-bazar/AbcBazarGates.tla`. |
+| 5 | **NoReadingNeeded:** "Who gets the last one? I can't read the three buttons." | Three drawings: a piece broken over three plates, the little guest with the piece, a covered dish with a heart. End buttons are a circular arrow and a house, 112 px. The ➜ is a 104 px picture. | `shoman-bhag.test.ts` › bug 5 | `.shots/shoman-bhag-ph-left.png`, `.shots/shoman-bhag-ph-n4.png`, `.shots/shoman-bhag-end1.png`. |
+| — | **Servings move on by themselves** (gap 3) | The ➜ after every serving; faces cheer in a stagger meanwhile. | `session.test.ts` › the round never advances by itself | `.shots/shoman-bhag-ph-served.png` |
+| — | **Hints are text only** (gap 5) | The surprised face, the glowing extra piece and an arrow out of the plate; a row of heads over pieces for a wrong cut; numbered wedges for a wrong name; ≠ on an unequal roti. | `levels.test.ts` › sharing, cutting, naming | `.shots/shoman-bhag-ph-over.png`, `-ph-cutwhy.png`, `-ph-name.png` |
+| — | **No pause** (gap 4) | `useGamePlayer({ onPause, onResume, onRestart, onLevels })`; blur and hide pause through the player; a held piece goes back. | `session.test.ts` › pause; › a held piece is returned | Lifted a piece by tap: `hand: basket`; `blur` → `hand: null`, menu open. A drag in flight: `blur` → `hand: null`, the floater hidden, a `pointerup` afterwards did nothing. |
+| — | **The first touch back is not a move** | `session.blur` arms a swallow; the next touch only wakes the game, unless the player's menu took it. | `session.test.ts` › pause | — |
+| — | **Result keys need a fresh press; Enter goes to the game** | Keys at `window` with `preventDefault`; buttons blur after a pointer press. | `session.test.ts` › result keys; › Enter and Space | — |
 
 ## Regenerate
 ```sh
-scripts/statechart.sh ai_docs/statecharts/shoman-bhag/ShomanBhag.tla --view ai_docs/statecharts/shoman-bhag/view.ts --out ai_docs/statecharts/shoman-bhag/before-fix
-rm -f ai_docs/statecharts/shoman-bhag/before-fix/tlc*.out
+scripts/statechart.sh ai_docs/statecharts/shoman-bhag/ShomanBhag.tla --view ai_docs/statecharts/shoman-bhag/view.ts --out ai_docs/statecharts/shoman-bhag/after-fix
+rm -f ai_docs/statecharts/shoman-bhag/after-fix/tlc*.out
 ```
-After the fixes:
-- `YouCutItRight` speaks only when `sound` (already true in the code).
-- `NextGuestsCome` and `TheRoundEnds` need `~away`.
-- `YouTabAndEnterBehindRest` is removed.
-- The gate closes on the next child action.
-- The leftover and end `Choices` get pictures.
 
-Then re-run into `after-fix/`. All 8 rules must hold.
+## The chart (after the fix)
+```mermaid
+---
+title: "সমﬂ°°2494¶ßন ভﬂ°°2494¶ßগ: screens, the piece in hand, the ﬂ°°10140¶ß, pause, the daily limit and keys"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+  }
+  class lg0 teal
+  class lg1 yellow
+  state "At the same time" as all {
+    state "Round" as r0 {
+      s0: The mat (খ#2503;ল#2507;)
+      s1: The level list
+      s2: First guests
+      s3: First guests: a piece in the hand
+      s4: Table served, every face smiling, waiting for #10140;
+      s5: Last guests
+      s6: Last guests: a piece in the hand
+      s7: Last table served, stars saved, waiting for #10140;
+      s8: The end screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ)
+      [*] --> s0
+      s0 --> s1: the child opens the level list [when Menu is Playing and Today is not Rest screen]
+      s0 --> s2: the child taps the mat or আব#2494;র খ#2503;ল#2507; [when Menu is Playing and Today is Time left today]
+      s1 --> s0: the page opens again
+      s1 --> s0: the child goes back from the list [when Menu is Playing and Today is not Rest screen]
+      s1 --> s2: the child picks a level [when Menu is Playing and Today is Time left today]
+      s2 --> s0: the page opens again
+      s2 --> s3: the child lifts a piece [when Menu is Playing]
+      s1 --> s0: the child picks a level [when Menu is Playing and Today is Today's time is up]
+      s1 --> s0: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ [when Menu is Pause menu open, nothing moves]
+      s2 --> s0: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ [when Menu is Pause menu open, nothing moves]
+      s2 --> s1: সব ল#2503;ভ#2503;ল in the pause menu [when Menu is Pause menu open, nothing moves]
+      s3 --> s0: the page opens again
+      s3 --> s2: the child puts it on a plate that is still short or the window blurs before the menu opens or #9208; / P / Esc, or the window blurs and the menu opens or the child puts it on a plate with its share already
+      s3 --> s4: the child gives the last piece, everyone is equal
+      s4 --> s0: the page opens again
+      s4 --> s5: the child presses #10140; [when Menu is Playing]
+      s5 --> s0: the page opens again
+      s5 --> s6: the child lifts a piece [when Menu is Playing]
+      s4 --> s0: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ [when Menu is Pause menu open, nothing moves]
+      s4 --> s1: সব ল#2503;ভ#2503;ল in the pause menu [when Menu is Pause menu open, nothing moves]
+      s5 --> s0: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ [when Menu is Pause menu open, nothing moves]
+      s5 --> s1: সব ল#2503;ভ#2503;ল in the pause menu [when Menu is Pause menu open, nothing moves]
+      s6 --> s0: the page opens again
+      s6 --> s5: the child puts it on a plate that is still short or the window blurs before the menu opens or #9208; / P / Esc, or the window blurs and the menu opens or the child puts it on a plate with its share already
+      s6 --> s7: the child gives the last piece, everyone is equal
+      s7 --> s0: the page opens again
+      s7 --> s8: the child presses #10140; [when Menu is Playing]
+      s8 --> s0: the page opens again
+      s8 --> s2: the child taps the mat or আব#2494;র খ#2503;ল#2507; [when Menu is Playing and Today is Time left today]
+      s8 --> s1: the child opens the level list [when Menu is Playing and Today is not Rest screen]
+      s8 --> s0: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ [when Menu is Pause menu open, nothing moves or Today is one of Time left today, Today's time is up]
+      s7 --> s1: সব ল#2503;ভ#2503;ল in the pause menu [when Menu is Pause menu open, nothing moves]
+      s7 --> s0: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ [when Menu is Pause menu open, nothing moves]
+    }
+    --
+    state "Menu" as r1 {
+      s9: Playing
+      s10: Pause menu open, nothing moves
+      s11: Back from away, the next touch only wakes
+      [*] --> s9
+      s9 --> s10: #9208; / P / Esc, or the window blurs and the menu opens
+      s9 --> s11: the window blurs before the menu opens [when Round is none of The end screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ), The level list, The mat (খ#2503;ল#2507;) and Today is not Rest screen]
+      s10 --> s9: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+      s11 --> s9: the page opens again
+      s11 --> s9: the child lifts a piece [when Round is one of First guests, Last guests and Today is not Time's up, the rest waits for the end screen]
+      s11 --> s10: #9208; / P / Esc, or the window blurs and the menu opens
+      s10 --> s9: সব ল#2503;ভ#2503;ল in the pause menu [when Round is none of The end screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ), The level list, The mat (খ#2503;ল#2507;) and Today is not Rest screen]
+      s11 --> s9: the child presses #10140; [when Round is one of Last table served, stars saved, waiting for #10140;, Table served, every face smiling, waiting for #10140;]
+    }
+    --
+    state "Today" as r2 {
+      s12: Time left today
+      s13: Rest screen
+      s14: Today's time is up
+      s15: Time's up, the rest waits for the end screen
+      [*] --> s12
+      [*] --> s13
+      s12 --> s14: today's play time runs out
+      s13 --> s12: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+      s14 --> s13: the page opens again
+      s14 --> s13: the child taps the mat or আব#2494;র খ#2503;ল#2507; [when Round is one of The end screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ), The mat (খ#2503;ল#2507;) and Menu is Playing]
+      s14 --> s13: the child picks a level [when Round is The level list and Menu is Playing]
+      s14 --> s15: the child gives the last piece, everyone is equal [when Round is Last guests: a piece in the hand and Menu is Playing]
+      s15 --> s13: the page opens again
+      s15 --> s13: the child presses #10140; [when Menu is Playing]
+      s15 --> s13: সব ল#2503;ভ#2503;ল in the pause menu or নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ [when Menu is Pause menu open, nothing moves]
+    }
+  }
+  class s2 teal
+  class s3 teal
+  class s4 teal
+  class s5 teal
+  class s6 teal
+  class s7 teal
+  class s11 teal
+  class s13 yellow
+  class s15 teal
+```

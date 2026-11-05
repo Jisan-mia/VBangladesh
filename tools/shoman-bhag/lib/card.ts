@@ -1,7 +1,8 @@
 // The "আব্বু-আম্মুকে দেখাও" card: today's sharing, the last table with every plate equal, and the last রুটি cut.
 // No name, no photo, no stars, and nothing about who got the last piece. Saving it is behind the parent gate.
 import { cardSizes, drawFooterBand, fitText, renderCard } from "../../../shared/card-canvas";
-import { bn, cardLines, divisionLine, FRACTIONS, guestsFor, type Today } from "./game";
+import { bn, FRACTIONS, guestsFor } from "./people";
+import { cardLines, divisionLine, type Today } from "./round";
 import { cutRuti, faceArt, FOOD_ART, paint } from "./shapes";
 
 const colors = { bg: "#fdf4e6", ink: "#3d2614", muted: "#7a5a40", accent: "#a34b12", cloth: "#f4dcc0", plate: "#ffffff", rim: "#d9c9b4", band: "#4a2410", ask: "#ffd98a" };

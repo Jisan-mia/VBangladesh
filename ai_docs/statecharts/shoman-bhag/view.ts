@@ -1,38 +1,38 @@
-export const title = "সমান ভাগ: the table, the last piece, the voice, the rest screen and the parent gate";
-const game = (v: any) => {
-  if (v.phase === "end") return "Round done: আবার খেলো / শেষ / পরের ধাপ";
-  if (v.phase === "closed") return "মেহমানরা বাড়ি গেল";
-  const where = v.kind === "cut" ? "রুটি কাটা" : v.item === 1 ? "First table" : "Last table";
-  return ({ share: `${where}: share it out`, left: `${where}: who gets the last one?`, cut: `${where}: how many pieces?`,
-    done: `${where}: everyone served` } as any)[v.stage];
+export const title = "সমান ভাগ: screens, the piece in hand, the ➜, pause, the daily limit and keys";
+const screen = (v: any) => {
+  if (v.screen === "title") return "The mat (খেলো)";
+  if (v.screen === "levels") return "The level list";
+  if (v.screen === "end") return "The end screen (আবার খেলো / শেষ)";
+  const serving = v.idx === 1 ? "First guests" : "Last guests";
+  if (v.solved) return v.idx === 2 ? "Last table served, stars saved, waiting for ➜" : "Table served, every face smiling, waiting for ➜";
+  return v.hand ? `${serving}: a piece in the hand` : serving;
 };
 export const state = (v: any) => ({
-  Game: game(v),
-  Window: v.away ? "You're away" : "You're watching",
-  Sound: v.sound ? "Sound on" : "Sound off",
-  Rest: v.resting ? "Rest screen up" : v.late ? "Today's time used up" : "Time left today",
-  Gate: v.gate ? (v.holder === "parent" ? "Gate open, parent holding" : "Gate open, child holding") : "Gate closed",
+  Round: screen(v),
+  Menu: v.paused ? "Pause menu open, nothing moves" : v.swallow ? "Back from away, the next touch only wakes" : "Playing",
+  Today: v.resting ? (v.screen === "play" ? "Time's up, the rest waits for the end screen" : "Rest screen") : v.overLimit ? "Today's time is up" : "Time left today",
 });
 export const step = (action: string) => ({
-  YouShareFairly: "you give everyone the same",
-  YouGiveTheLastOne: "you choose who gets the last one",
-  YouCutItRight: "you cut the রুটি right and hand out the pieces",
-  NextGuestsCome: "the next guests sit down",
-  TheRoundEnds: "the round ends",
-  YouTapPlayAgain: "you tap আবার খেলো",
-  YouTapNextStep: "you tap পরের ধাপ",
-  YouTapEnd: "you tap শেষ",
-  YouPickAStep: "you pick a step in সব ধাপ",
-  YouTabAndEnterBehindRest: "you press Tab and Enter behind the rest screen",
-  YouLookAway: "you switch to another app or window",
-  YouComeBack: "you come back",
-  SoundOff: "you turn sound off",
-  SoundOn: "you turn sound on",
-  TodaysTimeRunsOut: "today's minutes run out",
-  ParentGivesTenMore: "a parent gives ten more minutes",
-  ParentOpensTheGate: "a parent opens বড়দের জন্য",
-  ParentClosesTheGate: "a parent presses বন্ধ করো",
-  ParentHandsThePhoneBack: "the parent hands the phone back",
+  YouStartARound: "the child taps the mat or আবার খেলো",
+  YouOpenTheLevelList: "the child opens the level list",
+  YouPickALevel: "the child picks a level",
+  YouCloseTheLevelList: "the child goes back from the list",
+  YouOpenLevelsFromTheMenu: "সব লেভেল in the pause menu",
+  YouLiftAPiece: "the child lifts a piece",
+  YouDropAPiece: "the child puts it on a plate that is still short",
+  YouOverfillAPlate: "the child puts it on a plate with its share already",
+  YouGiveTheLastPiece: "the child gives the last piece, everyone is equal",
+  YouPressTheArrow: "the child presses ➜",
+  YouGoAway: "⏸ / P / Esc, or the window blurs and the menu opens",
+  TheWindowBlurs: "the window blurs before the menu opens",
+  YouResume: "চালিয়ে যাও",
+  YouGoBackToTheMat: "নতুন করে শুরু, or শেষ",
+  YouHoldEnter: "the child holds Enter",
+  TheKeyRepeats: "Enter auto-repeats on the end screen",
+  YouLetGoOfTheKey: "the child lets go of the key",
+  TimeIsUp: "today's play time runs out",
+  ThePageOpens: "the page opens again",
+  TenMoreMinutes: "a grown-up gives আজ আরও ১০ মিনিট",
 } as Record<string, string>)[action] ?? action;
-export const group = (v: any) => v.resting ? "rest" : v.phase !== "play" ? "done" : "play";
-export const colors = { play: "teal", rest: "yellow", done: "blue" };
+export const group = (v: any) => v.resting && v.screen !== "play" ? "held" : v.screen === "play" ? "play" : "done";
+export const colors = { play: "teal", held: "yellow", done: "blue" };
