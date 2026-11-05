@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { loadCardFonts } from "../../../shared/card-canvas";
 import { ShowParent } from "../../../shared/kids-kit";
 import { cardBlob, cardFontSample, drawCard } from "../lib/draw-card";
-import { cardLines, OG_TODAY } from "../lib/game";
+import { cardLines, OG_TODAY } from "../lib/today";
 
 export function OgCard({ onClose }: { onClose: () => void }) {
   const card = useRef<HTMLCanvasElement>(null);

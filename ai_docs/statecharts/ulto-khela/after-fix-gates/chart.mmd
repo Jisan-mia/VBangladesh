@@ -1,0 +1,163 @@
+---
+title: "উলﬂ°°2509¶ßটﬂ°°2507¶ß খﬂ°°2503¶ßলﬂ°°2494¶ß: the phone, the share gate and the rest screen's gate"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "Screen The launch picture" as s0 {
+    state "Today Time left today" as s1 {
+      state "Phone The child has the phone" as s2 {
+        state "ShareGate Share gate closed" as s3 {
+          s4: RestGate Rest gate closed
+        }
+        state "ShareGate Share gate open (a parent answered)" as s5 {
+          s6: RestGate Rest gate closed
+        }
+      }
+      state "Phone A parent has the phone" as s7 {
+        state "ShareGate Share gate closed" as s8 {
+          s9: RestGate Rest gate closed
+        }
+        state "ShareGate Share gate open (a parent answered)" as s10 {
+          s11: RestGate Rest gate closed
+        }
+      }
+    }
+    state "Today Rest screen" as s12 {
+      state "Phone The child has the phone" as s13 {
+        state "ShareGate Share gate closed" as s14 {
+          s15: RestGate Rest gate closed
+          s16: RestGate Rest gate open (a parent answered)
+        }
+      }
+      state "Phone A parent has the phone" as s17 {
+        state "ShareGate Share gate closed" as s18 {
+          s19: RestGate Rest gate closed
+          s20: RestGate Rest gate open (a parent answered)
+        }
+      }
+    }
+  }
+  state "Screen The page or the level list" as s21 {
+    state "Today Time left today" as s22 {
+      state "Phone The child has the phone" as s23 {
+        state "ShareGate Share gate closed" as s24 {
+          s25: RestGate Rest gate closed
+        }
+      }
+      state "Phone A parent has the phone" as s26 {
+        state "ShareGate Share gate closed" as s27 {
+          s28: RestGate Rest gate closed
+        }
+      }
+    }
+    state "Today Rest screen" as s29 {
+      state "Phone The child has the phone" as s30 {
+        state "ShareGate Share gate closed" as s31 {
+          s32: RestGate Rest gate closed
+          s33: RestGate Rest gate open (a parent answered)
+        }
+      }
+      state "Phone A parent has the phone" as s34 {
+        state "ShareGate Share gate closed" as s35 {
+          s36: RestGate Rest gate closed
+          s37: RestGate Rest gate open (a parent answered)
+        }
+      }
+    }
+  }
+  state "Screen A round" as s38 {
+    state "Today Time left today" as s39 {
+      state "Phone The child has the phone" as s40 {
+        state "ShareGate Share gate closed" as s41 {
+          s42: RestGate Rest gate closed
+        }
+      }
+      state "Phone A parent has the phone" as s43 {
+        state "ShareGate Share gate closed" as s44 {
+          s45: RestGate Rest gate closed
+        }
+      }
+    }
+  }
+  [*] --> s4
+  [*] --> s15
+  s4 --> s9: a parent takes the phone
+  s15 --> s19: a parent takes the phone
+  s25 --> s4: the page opens again or the child goes back to the launch picture
+  s25 --> s15: the page opens again
+  s25 --> s42: the child taps খ#2503;ল#2507;
+  s25 --> s28: a parent takes the phone
+  s25 --> s32: the child taps খ#2503;ল#2507;
+  s42 --> s4: the page opens again or the child goes back to the launch picture
+  s42 --> s15: the page opens again
+  s42 --> s25: the round ends
+  s42 --> s32: the round ends
+  s42 --> s45: a parent takes the phone
+  s9 --> s4: the child takes the phone back
+  s9 --> s11: the parent opens বড#2492;দ#2503;র জন#2509;য
+  s19 --> s15: the child takes the phone back
+  s19 --> s20: the parent opens the rest screen's gate
+  s28 --> s25: the child takes the phone back
+  s28 --> s9: the page opens again or the child goes back to the launch picture
+  s28 --> s19: the page opens again
+  s28 --> s45: the child taps খ#2503;ল#2507;
+  s28 --> s36: the child taps খ#2503;ল#2507;
+  s32 --> s36: a parent takes the phone
+  s45 --> s42: the child takes the phone back
+  s45 --> s9: the page opens again or the child goes back to the launch picture
+  s45 --> s19: the page opens again
+  s45 --> s28: the round ends
+  s45 --> s36: the round ends
+  s11 --> s9: the page opens again or 20 s pass or the link is shared
+  s11 --> s6: the child takes the phone back
+  s20 --> s19: the page opens again or a limit is chosen, or 20 s pass
+  s20 --> s9: আজ আরও ১০ ম#2495;ন#2495;ট
+  s20 --> s16: the child takes the phone back
+  s36 --> s32: the child takes the phone back
+  s36 --> s37: the parent opens the rest screen's gate
+  s6 --> s4: the page opens again or 20 s pass or the link is shared
+  s6 --> s11: a parent takes the phone
+  s16 --> s15: the page opens again or a limit is chosen, or 20 s pass
+  s16 --> s20: a parent takes the phone
+  s16 --> s4: আজ আরও ১০ ম#2495;ন#2495;ট
+  s37 --> s36: a limit is chosen, or 20 s pass
+  s37 --> s28: আজ আরও ১০ ম#2495;ন#2495;ট
+  s37 --> s33: the child takes the phone back
+  s33 --> s32: a limit is chosen, or 20 s pass
+  s33 --> s37: a parent takes the phone
+  s33 --> s25: আজ আরও ১০ ম#2495;ন#2495;ট
+  s2 --> s15: the page opens again or the child taps খ#2503;ল#2507;
+  s2 --> s25: the child opens the level list
+  s2 --> s42: the child taps খ#2503;ল#2507;
+  s13 --> s4: the page opens again
+  s7 --> s19: the page opens again or the child taps খ#2503;ল#2507;
+  s7 --> s28: the child opens the level list
+  s7 --> s45: the child taps খ#2503;ল#2507;
+  s17 --> s9: the page opens again
+  s30 --> s4: the page opens again
+  s30 --> s15: the page opens again
+  s34 --> s9: the page opens again
+  s34 --> s19: the page opens again
+  class s4 blue
+  class s6 blue
+  class s9 blue
+  class s11 blue
+  class s15 yellow
+  class s16 yellow
+  class s19 yellow
+  class s20 yellow
+  class s25 blue
+  class s28 blue
+  class s32 yellow
+  class s33 yellow
+  class s36 yellow
+  class s37 yellow
+  class s42 teal
+  class s45 teal

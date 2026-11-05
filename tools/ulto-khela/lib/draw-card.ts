@@ -1,5 +1,5 @@
 import { cardSizes, drawFooterBand, fitText, renderCard } from "../../../shared/card-canvas";
-import { cardLines, type Today } from "./game";
+import { cardLines, type Today } from "./today";
 
 const colors = { bg: "#fff4e3", night: "#1f2c5c", ink: "#3a2a1a", muted: "#7a6450", accent: "#c4511f", sun: "#ffc93c", ray: "#f4a21b", moon: "#ffe28a", band: "#3a2316", ask: "#ffd166" };
 export const CARD_ASK = "মুখে মুখে খেলো: তুমি বলো দিন, ও বলবে রাত।";

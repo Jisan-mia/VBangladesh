@@ -1,89 +1,162 @@
+/* Look: a Bangla picture-book flash card. Thick-outlined flat pictures on paper, one saturated colour per world, hard print-style
+   shadows instead of blur, radius only on cards (small) and on what is truly round (the sign, the dots, the bell's world). */
 .tool-ulto-khela{--accent:#c4511f;--accent-deep:#8a3412;--ink:#3a2a1a;--muted:#6e5a48;--paper:#fff4e3;--line:#efd9bb;--glow:#ffd166;--same:#2f7d4a;--color:#6a3fb0;--shape:#1f6f8b}
-.tool-ulto-khela .uk-page{color:var(--ink)}
 
-.tool-ulto-khela .uk-hero{padding:8px 0 2px}
-.tool-ulto-khela .uk-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,40px);line-height:1.4;font-weight:800}
-.tool-ulto-khela .uk-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
+/* ---- the game fills the player's stage ---- */
+.tool-ulto-khela .gp-game{min-height:100%}
+.uk{--ease-out:cubic-bezier(.23,1,.32,1);--w-accent:#c4511f;--w-deep:#8a3412;--w-soft:#fff1dc;--w-edge:#efd0a0;--pic:clamp(104px,calc(var(--stage-h,700px) - 430px),240px);position:relative;display:flex;flex-direction:column;gap:10px;width:100%;max-width:520px;min-height:calc(var(--stage-h,640px) - 8px);margin:0 auto;color:var(--ink)}
+.uk[data-world="1"]{--w-accent:#2f7d4a;--w-deep:#1d5232;--w-soft:#e6f3ea;--w-edge:#b5d8c0}
+.uk[data-world="2"]{--w-accent:#6a3fb0;--w-deep:#46277f;--w-soft:#efe8fb;--w-edge:#cdbdea}
+.uk[data-screen=play],.uk[data-screen=end]{justify-content:center}
+.uk[data-screen=play] .uk-hud,.uk[data-screen=end] .uk-hud{margin-bottom:auto}
+.uk[data-screen=play] .uk-play,.uk[data-screen=end] .uk-end{margin-bottom:auto}
+.uk button{font-family:inherit}
 
-.tool-ulto-khela .uk{display:grid;gap:12px;max-width:520px;margin-top:8px}
-.tool-ulto-khela .uk-play{position:relative;display:grid;gap:12px;padding:10px 12px 12px;border-radius:18px;background:var(--paper)}
-.tool-ulto-khela .uk-top{display:flex;align-items:center;gap:8px;min-width:0}
-.tool-ulto-khela .uk-level{flex:1;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;line-height:1.6}
-.tool-ulto-khela .uk-level b{font-family:var(--font-display)}
-.tool-ulto-khela .uk-level span{color:var(--muted)}
-.tool-ulto-khela .uk-dots{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px;max-width:50%;margin:0;padding:0;list-style:none}
-.tool-ulto-khela .uk-dots li{width:9px;height:9px;border-radius:50%;background:var(--line)}
-.tool-ulto-khela .uk-dots .done{background:var(--accent)}
-.tool-ulto-khela .uk-dots .now{background:var(--accent);box-shadow:0 0 0 3px #c4511f40}
+/* ---- title: the launch picture is the start button ---- */
+.uk-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:0;padding:8px 4px;text-align:center}
+.uk-launch{position:relative;display:block;width:min(100%,400px);aspect-ratio:360/300;padding:0;border:3px solid var(--ink);border-radius:12px;overflow:hidden;background:#bfe3ff;box-shadow:0 7px 0 var(--ink);cursor:pointer;touch-action:manipulation;transition:transform 160ms var(--ease-out),box-shadow 160ms var(--ease-out)}
+@media (hover:hover) and (pointer:fine){.uk-launch:hover{transform:translateY(-2px)}}
+.uk-launch:active{transform:translateY(5px);box-shadow:0 2px 0 var(--ink)}
+.uk-launch:focus-visible{outline:4px solid var(--w-accent);outline-offset:6px}
+.uk-launch-art{display:block}
+.uk-launch-go{position:absolute;left:50%;bottom:12px;display:inline-flex;align-items:center;gap:10px;padding:6px 26px 6px 18px;border:3px solid var(--ink);border-radius:10px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.4;transform:translateX(-50%)}
+.uk-launch-go svg{width:30px;height:30px;fill:#fff}
+.uk-swing{animation:uk-sway 6s ease-in-out 2s infinite}
+.uk-paces{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:min(100%,400px)}
+.uk-paces button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:64px;padding:6px 10px;border:3px solid var(--ink);border-radius:10px;background:#fff;color:var(--ink);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform 140ms var(--ease-out)}
+.uk-paces button:active{transform:scale(.97)}
+.uk-paces button[aria-pressed=true]{background:var(--ink);color:#fff}
+.uk-paces svg{flex:none;width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
+.uk-paces small{font-size:16px;font-weight:600}
+.uk-title-line{min-height:3.2em;max-width:340px;margin:0;font-size:18px;line-height:1.6;color:var(--muted)}
+.uk-chip{display:flex;align-items:center;gap:12px;min-height:64px;max-width:100%;padding:6px 14px 6px 10px;border:2px solid var(--w-edge);border-radius:10px;background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.uk-chip-icon{flex:none;width:38px;height:38px;color:var(--w-accent)}
+.uk-chip-icon svg,.uk-card-icon svg{display:block;width:100%;height:100%}
+.uk-chip b{display:block;font-family:var(--font-display);font-size:18px;line-height:1.5}
+.uk-chip small{display:block;font-size:16px;line-height:1.4;color:var(--muted)}
+.uk-chip-more{flex:none;width:22px;height:22px;fill:none;stroke:var(--muted);stroke-width:2.2;stroke-linecap:round}
+.uk-grown{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px}
+.uk-grown .kk-gate-open>div{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
 
-/* the rule: one big sign, its colour changes with it */
-.tool-ulto-khela .uk-rule{--rule:var(--accent);position:relative;display:flex;align-items:center;justify-content:center;gap:12px;min-height:76px;animation:uk-flip .45s ease-out}
-.tool-ulto-khela .uk-rule-same{--rule:var(--same)}
-.tool-ulto-khela .uk-rule-color{--rule:var(--color)}
-.tool-ulto-khela .uk-rule-shape{--rule:var(--shape)}
-.tool-ulto-khela .uk-rule-icon{display:grid;place-items:center;width:76px;height:76px;border-radius:50%;background:var(--rule);color:#fff;box-shadow:0 0 0 4px #fff,0 0 0 7px var(--rule)}
-.tool-ulto-khela .uk-rule-icon svg{width:54px;height:54px}
-.tool-ulto-khela .uk-rule-color .uk-rule-icon{background:#fff}
-.tool-ulto-khela .uk-rule-name{font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.6;color:var(--rule)}
-.tool-ulto-khela .uk-bell{position:absolute;top:-6px;left:calc(50% - 92px);width:40px;height:40px;transform-origin:50% 10%;animation:uk-ring .4s ease-in-out 3}
-.tool-ulto-khela .uk-bell svg{width:100%;height:100%}
-.tool-ulto-khela .uk-sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* ---- HUD: the level badge top-left, the progress dots top-right ---- */
+.uk-hud{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px}
+.uk-badge{display:flex;align-items:center;gap:8px;min-width:0;margin:0;padding:3px 12px 3px 5px;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 2px var(--w-edge);font-family:var(--font-display);font-size:16px;line-height:1.6}
+.uk-badge b{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--w-accent);color:#fff;font-size:16px;line-height:1}
+.uk-badge span{min-width:0;overflow:hidden;font-weight:700;white-space:nowrap;text-overflow:ellipsis}
+.uk-dots{display:flex;flex:none;flex-wrap:wrap;justify-content:flex-end;gap:3px;max-width:52%;margin:0;padding:0;list-style:none}
+.uk-dots li{width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 2px var(--w-edge)}
+.uk-dots li[data-now]{box-shadow:inset 0 0 0 3px var(--w-accent)}
+.uk-dots li[data-got]{background:var(--w-accent);box-shadow:none;animation:uk-pop 200ms var(--ease-out)}
 
-/* the picture that came, and the two buttons */
-.tool-ulto-khela .uk-show{position:relative;justify-self:center;width:min(150px,42vw);aspect-ratio:1;padding:10px;border:4px solid var(--line);border-radius:24px;background:#fff;animation:uk-in .25s ease-out}
-.tool-ulto-khela .uk-show svg{display:block;width:100%;height:100%}
-.tool-ulto-khela .uk-pace{position:absolute;left:12px;right:12px;bottom:-12px;height:8px;border-radius:4px;background:var(--glow);transform-origin:left;animation:uk-pace var(--pace) linear forwards}
-.tool-ulto-khela .uk-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.tool-ulto-khela .uk-choice{position:relative;display:grid;justify-items:center;align-content:center;gap:2px;min-height:136px;padding:8px 6px 4px;border:3px solid var(--line);border-radius:20px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .08s}
-.tool-ulto-khela .uk-choice:active{transform:scale(.95)}
-.tool-ulto-khela .uk-art{display:block;width:min(96px,26vw);aspect-ratio:1}
-.tool-ulto-khela .uk-art svg{display:block;width:100%;height:100%}
-.tool-ulto-khela .uk-word{font-size:18px;font-weight:700;line-height:1.6;color:var(--muted)}
-.tool-ulto-khela .uk-baskets .uk-choice{border-color:#c99a52;background:repeating-linear-gradient(45deg,#f7e3bd 0 10px,#f2d8a6 10px 20px)}
-.tool-ulto-khela .uk-choice.is-glow{border-color:var(--glow);animation:uk-glow 1.4s ease-in-out infinite}
-.tool-ulto-khela .uk-choice.is-right{border-color:var(--accent);box-shadow:0 0 0 4px #c4511f55}
+/* ---- the round: the picture that came, the rule's sign, one line, two big cards ---- */
+.uk-play{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
+.uk-show{position:relative;width:var(--pic);aspect-ratio:1;padding:8px;border:3px solid var(--ink);border-radius:10px;background:#fff;box-shadow:0 5px 0 var(--ink);animation:uk-in 160ms var(--ease-out)}
+.uk-show svg{display:block;width:100%;height:100%}
+.uk-pace{position:absolute;left:10px;right:10px;bottom:-16px;height:8px;border:2px solid var(--ink);background:var(--glow);transform-origin:left;animation:uk-pace var(--pace) linear forwards}
+.uk-sign{--rule:var(--accent);position:relative;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:76px;animation:uk-flip 300ms var(--ease-out)}
+.uk-sign-same{--rule:var(--same)}.uk-sign-color{--rule:var(--color)}.uk-sign-shape{--rule:var(--shape)}
+.uk-sign-icon{display:grid;place-items:center;width:72px;height:72px;border-radius:50%;background:var(--rule);color:#fff;box-shadow:0 0 0 3px #fff,0 0 0 6px var(--rule)}
+.uk-sign-icon svg{width:50px;height:50px}
+.uk-sign-color .uk-sign-icon{background:#fff}
+.uk-sign-name{font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.6;color:var(--rule)}
+.uk-bell{position:absolute;top:-6px;left:calc(50% - 150px);width:40px;height:40px;transform-origin:50% 10%;animation:uk-ring .28s ease-in-out 2}
+.uk-bell svg{display:block;width:100%;height:100%}
+.uk-sign[data-hit][data-nudge=a] .uk-sign-icon{animation:uk-nudge-a 240ms var(--ease-out)}
+.uk-sign[data-hit][data-nudge=b] .uk-sign-icon{animation:uk-nudge-b 240ms var(--ease-out)}
+.uk-say{min-height:3.4em;max-width:360px;margin:0;font-size:18px;line-height:1.6;text-align:center;color:var(--muted)}
+.uk-say.hint{color:var(--ink);font-weight:600}
+.uk-say.found{color:var(--w-deep);font-weight:700}
+.uk-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:100%;padding-bottom:30px}
+.uk-choice{position:relative;display:grid;justify-items:center;align-content:center;gap:2px;min-height:150px;padding:8px 6px 4px;border:3px solid var(--ink);border-radius:10px;background:#fff;box-shadow:0 5px 0 var(--ink);color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform 140ms var(--ease-out),box-shadow 140ms var(--ease-out),opacity 140ms}
+.uk-choice:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ink)}
+.uk-art{display:block;width:min(100px,26vw);aspect-ratio:1}
+.uk-art svg{display:block;width:100%;height:100%}
+.uk-word{font-size:18px;font-weight:700;line-height:1.6;color:var(--muted)}
+.uk-key{position:absolute;left:10px;top:6px;font-size:16px;font-weight:700;line-height:1;color:var(--muted);opacity:.7}
+@media (pointer:coarse){.uk-key{display:none}}
+.uk-choices[data-kind=sort] .uk-choice{background:repeating-linear-gradient(45deg,#f7e3bd 0 10px,#f2d8a6 10px 20px)}
+.uk-choice.is-glow{border-color:var(--w-accent);box-shadow:0 5px 0 var(--w-accent),0 0 0 4px var(--glow);animation:uk-signal 1.4s ease-in-out infinite}
+.uk-choice.is-right{border-color:#2f9e5b;background:#e9f9ef;box-shadow:0 5px 0 #2f9e5b;animation:uk-pop 160ms var(--ease-out)}
+.uk-choice.is-right::after{content:"";position:absolute;right:-9px;top:-9px;width:32px;height:32px;border-radius:50%;background:#2f9e5b url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/22px no-repeat}
+.uk-choice.is-wrong{opacity:.55;background:#f1ece4}
+.uk-choices[data-done] .uk-choice:not(.is-right){opacity:.55}
+.uk-choice.is-wrong.w0{animation:uk-wob0 300ms var(--ease-out)}
+.uk-choice.is-wrong.w1{animation:uk-wob1 300ms var(--ease-out)}
+.uk-ghost{position:absolute;z-index:3;left:50%;top:calc(100% - 4px);width:40px;height:50px;margin-left:-20px;pointer-events:none;filter:drop-shadow(0 2px 2px #0004);animation:uk-tap 1.4s ease-in-out infinite}
+.uk-pair{display:inline-flex;align-items:center;gap:2px}
+.uk-pair>span{display:block;width:38px;height:38px}
+.uk-pair svg{display:block;width:100%;height:100%}
+.uk-pair>i{display:block;width:18px;height:18px;color:var(--w-deep)}
+.uk-pair>i svg{stroke-width:11}
 
-.tool-ulto-khela .uk-controls{display:flex;justify-content:flex-end;align-items:center;gap:8px}
-.tool-ulto-khela .uk-pill{min-height:44px;padding:6px 14px;border:1.5px solid var(--ink);border-radius:999px;background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:700;cursor:pointer}
-.tool-ulto-khela .uk-pill small{font-size:16px;font-weight:500}
-.tool-ulto-khela .uk-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+/* ---- end of a round: the pairs, stars, counts, two picture buttons ---- */
+.uk-end{display:grid;justify-items:center;gap:10px;padding:4px 0 8px;text-align:center}
+.uk-met{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;width:100%;margin:0;padding:10px;border:3px solid var(--ink);border-radius:10px;background:#fff;list-style:none}
+.uk-met li{animation:uk-pop 200ms var(--ease-out) both}
+.uk-met-card{display:block;width:48px;height:48px}
+.uk-met-card svg{display:block;width:100%;height:100%}
+.uk-end-stars .gx-stars{font-size:46px}
+.uk-end-stars .gx-stars .on{display:inline-block;animation:uk-star .45s cubic-bezier(.3,1.6,.5,1) both}
+.uk-end-stars .gx-stars .on:nth-child(1){animation-delay:.35s}
+.uk-end-stars .gx-stars .on:nth-child(2){animation-delay:.65s}
+.uk-end-stars .gx-stars .on:nth-child(3){animation-delay:.95s}
+.uk-end-count{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 10px;margin:0;font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.5}
+.uk-end-count b{color:var(--w-deep)}
+.uk-end-bell{display:inline-flex;align-items:center;gap:4px}
+.uk-end-bell i{display:block;width:28px;height:28px}
+.uk-end-bell svg{display:block;width:100%;height:100%}
+.uk-end-method,.uk-end-tip{margin:0;max-width:340px;font-size:18px;line-height:1.6}
+.uk-end-tip{padding:8px 14px;border-radius:10px;background:#fff9e6;box-shadow:inset 0 0 0 2px var(--glow);font-weight:600}
+.uk-end-news{margin:0;max-width:340px;font-size:19px;font-weight:700;line-height:1.6;color:var(--w-deep)}
+.uk-end-off{margin:0;max-width:340px;font-size:17px;line-height:1.6;color:var(--muted)}
+.uk-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(340px,100%)}
+.uk-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:3px solid var(--ink);border-radius:12px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--ink);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform 140ms var(--ease-out),box-shadow 140ms var(--ease-out)}
+.uk-big:active{transform:translateY(4px);box-shadow:0 2px 0 var(--ink)}
+.uk-big svg{width:48px;height:48px;fill:none;stroke:currentColor;stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
+.uk-big-done{background:#fff;color:var(--ink)}
+.uk-end .kk-show-button{min-height:56px}
 
-.tool-ulto-khela .uk-ghost{position:absolute;z-index:3;left:54%;top:42%;width:44px;height:55px;pointer-events:none;filter:drop-shadow(0 2px 2px #0004);animation:uk-tap 1.4s ease-in-out infinite}
+/* ---- the level list: a choice screen ---- */
+.uk-levels{position:relative;display:grid;gap:14px;align-content:start;max-height:var(--stage-h,none);overflow:auto;overscroll-behavior:contain;padding:0 2px 12px}
+.uk-levels-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 0 6px;background:#fff}
+.uk-levels-head p{margin:0;font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.5}
+.uk-close{display:grid;place-items:center;width:56px;height:56px;border:3px solid var(--ink);border-radius:10px;background:#fff;cursor:pointer}
+.uk-close svg{width:28px;height:28px;fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.uk-band{--w-accent:#c4511f;--w-deep:#8a3412;--w-soft:#fff1dc;--w-edge:#efd0a0;display:grid;gap:8px;padding:10px;border-radius:10px;background:var(--w-soft);box-shadow:inset 0 0 0 2px var(--w-edge)}
+.uk-band[data-world="1"]{--w-accent:#2f7d4a;--w-deep:#1d5232;--w-soft:#e6f3ea;--w-edge:#b5d8c0}
+.uk-band[data-world="2"]{--w-accent:#6a3fb0;--w-deep:#46277f;--w-soft:#efe8fb;--w-edge:#cdbdea}
+.uk-band h3{margin:0 4px;font-family:var(--font-display);font-size:18px;line-height:1.5;color:var(--w-deep)}
+.uk-band h3 small{display:block;font-family:inherit;font-size:16px;font-weight:400;color:var(--muted)}
+.uk-band ol{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:12px;margin:0;padding:0;list-style:none}
+.uk-card{position:relative;display:grid;justify-items:center;gap:0;width:100%;min-height:128px;padding:8px 4px 6px;border:2px solid var(--w-edge);border-radius:10px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation}
+.uk-card.finale{border-color:var(--w-accent);border-width:3px}
+.uk-card[data-next]{border-color:var(--ink);border-width:3px;box-shadow:0 4px 0 var(--ink)}
+.uk-card[aria-current=true]{outline:3px solid var(--w-deep);outline-offset:2px}
+.uk-card-n{position:absolute;left:8px;top:4px;font-size:16px;font-weight:800;color:var(--muted)}
+.uk-card-icon{display:block;width:44px;height:44px;margin-top:6px;color:var(--w-accent)}
+.uk-card-name{font-size:16px;font-weight:700;line-height:1.4}
+.uk-card .gx-stars{font-size:16px}
+.uk-card-next{position:absolute;right:-4px;top:-12px;padding:1px 8px;border-radius:99px;background:var(--ink);color:#fff;font-size:16px;font-weight:800;line-height:1.6}
 
-.tool-ulto-khela .uk-over{position:absolute;inset:0;z-index:5;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px 24px;border-radius:18px;background:var(--paper);text-align:center}
-.tool-ulto-khela .uk-over .gx-stars{font-size:40px}
-.tool-ulto-khela .uk-end-line{margin:0;font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1.6}
-.tool-ulto-khela .uk-end-note{margin:0;font-size:18px;line-height:1.6}
-.tool-ulto-khela .uk-end-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:min(340px,calc(100vw - 80px))}
-.tool-ulto-khela .uk-end-actions button{width:100%;min-height:72px;padding-inline:6px;font-size:clamp(17px,5.4vw,20px)}
+@keyframes uk-in{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+@keyframes uk-pop{from{transform:scale(.94);opacity:0}to{transform:none;opacity:1}}
+@keyframes uk-flip{from{transform:rotateX(90deg)}to{transform:none}}
+@keyframes uk-ring{0%,100%{transform:rotate(0)}30%{transform:rotate(16deg)}70%{transform:rotate(-16deg)}}
+@keyframes uk-sway{0%,8%,100%{transform:rotate(0)}2%{transform:rotate(6deg)}4%{transform:rotate(-5deg)}6%{transform:rotate(3deg)}}
+@keyframes uk-pace{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+@keyframes uk-signal{50%{box-shadow:0 5px 0 var(--w-accent),0 0 0 7px var(--glow)}}
+@keyframes uk-tap{0%,100%{transform:translateY(8px)}50%{transform:translateY(-4px)}}
+@keyframes uk-wob0{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes uk-wob1{25%{transform:translateX(5px)}75%{transform:translateX(-5px)}}
+@keyframes uk-nudge-a{50%{transform:scale(1.08)}}
+@keyframes uk-nudge-b{50%{transform:scale(1.08)}}
+@keyframes uk-star{0%{transform:scale(.5) rotate(-30deg);opacity:0}100%{transform:none;opacity:1}}
 
-.tool-ulto-khela .uk-drawer{border:1.5px solid var(--line);border-radius:14px;background:#fff}
-.tool-ulto-khela .uk-drawer summary{display:flex;align-items:center;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
-.tool-ulto-khela .uk-drawer[open]{padding-bottom:12px}
-.tool-ulto-khela .uk-drawer .gx-levels{padding:0 10px}
-.tool-ulto-khela .uk-drawer p{margin:8px 14px 0;font-size:16px;line-height:1.6;color:var(--muted)}
-.tool-ulto-khela .uk-parent{display:grid;gap:8px;justify-items:start}
-.tool-ulto-khela .uk-parent p{margin:0;font-size:16px;line-height:1.6;color:var(--muted)}
+/* ধীরে খেলো and reduced motion: nothing flips, swings or wobbles; the চটপট bar stays (it is the clock, not decoration) */
+.uk[data-slow] *:not(.uk-pace),.uk[data-slow] *::after{animation:none!important;transition:none!important}
+.uk[data-slow] .is-glow{box-shadow:0 5px 0 var(--w-accent),0 0 0 5px var(--glow)}
+@media (prefers-reduced-motion:reduce){.uk *:not(.uk-pace),.uk *::after{animation:none!important;transition:none!important}}
 
-.tool-ulto-khela .uk-guide h2{margin-bottom:12px;font-family:var(--font-display)}
-.tool-ulto-khela .uk-guide>p{max-width:640px;color:var(--muted);line-height:1.7}
-.tool-ulto-khela .uk-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.tool-ulto-khela .uk-guide li{display:flex;gap:14px;align-items:flex-start}
-.tool-ulto-khela .uk-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
-.tool-ulto-khela .uk-guide li p{margin:4px 0 0;line-height:1.7}
-
-@keyframes uk-in{0%{opacity:0;transform:scale(.7)}100%{opacity:1;transform:none}}
-@keyframes uk-flip{0%{transform:rotateX(90deg)}100%{transform:none}}
-@keyframes uk-ring{0%,100%{transform:rotate(0)}25%{transform:rotate(18deg)}75%{transform:rotate(-18deg)}}
-@keyframes uk-pace{0%{transform:scaleX(1)}100%{transform:scaleX(0)}}
-@keyframes uk-glow{0%,100%{box-shadow:0 0 0 3px var(--glow)}50%{box-shadow:0 0 0 6px var(--glow),0 0 16px 4px var(--glow)}}
-@keyframes uk-tap{0%,100%{transform:translate(8px,10px)}50%{transform:translate(0,0) scale(.9)}}
-
-/* ধীরে খেলো and reduced motion: nothing moves on its own (the চটপট bar keeps draining: it is the clock, not decoration) */
-.tool-ulto-khela .uk[data-slow] .uk-play *:not(.uk-pace),.tool-ulto-khela .uk[data-slow] .uk-rule{animation:none!important;transition:none!important}
-.tool-ulto-khela .uk[data-slow] .is-glow{box-shadow:0 0 0 5px var(--glow)}
-@media (prefers-reduced-motion:reduce){
-  .tool-ulto-khela .uk .uk-play *:not(.uk-pace),.tool-ulto-khela .uk .uk-rule{animation:none!important;transition:none!important}
-  .tool-ulto-khela .uk .is-glow{box-shadow:0 0 0 5px var(--glow)}
-}
-@media (min-width:640px){.tool-ulto-khela .uk-lead{display:block}}
+/* short stages: smaller sign and cards that still keep 96 px */
+@media (max-height:700px){.uk-choice{min-height:120px}.uk-art{width:min(76px,22vw)}.uk-sign{min-height:64px}.uk-sign-icon{width:60px;height:60px}.uk-sign-icon svg{width:40px;height:40px}.uk-say{min-height:3.2em}}
+@media (max-width:359px){.uk-choices{gap:10px}.uk-bell{left:calc(50% - 128px)}}
