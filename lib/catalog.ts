@@ -110,7 +110,7 @@ export const catalog = [
   { slug: "jora-melao", name: "জোড়া মেলাও", description: "মেলার খেলনা উল্টে রাখা, দুটো করে খুলে জোড়া মেলাও। একা বা এক ফোনে দুজনে।", category: "গেম", action: "কার্ড খোলো" },
   { slug: "chhok-jora", name: "ছক-জোড়া", description: "নকশিকাঁথায় ডট-বক্স: ঘর জিতে ফুল ফোটাও। ১২ লেভেল, দুজনেও।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "churui-tarao", name: "চড়ুই তাড়াও", description: "পাকা ধানে চড়ুই নামছে, চেপে হুশ করে তাড়াও। ১২টা ক্ষেত, শেষে বড় পাখি।", category: "গেম", action: "মাঠে নামো" },
-  { slug: "handi-bhanga", name: "হাঁড়িভাঙা", description: "লাঠিতে বল ফিরিয়ে মেলার সব হাঁড়ি ভাঙো, বন্ধুকে একই সারি পাঠাও।", category: "গেম", action: "হাঁড়ি ভাঙো" },
+  { slug: "handi-bhanga", name: "হাঁড়িভাঙা", description: "তাক করে বল ছোড়ো, মেলার সব হাঁড়ি ভাঙো। বারোটা দোকান।", category: "গেম", action: "তাক করো, ভাঙো" },
   { slug: "peoner-cycle", name: "পিয়নের সাইকেল", description: "১২ রুটে গাঁয়ের পথে চিঠি বিলি করো, গরু, ভ্যান আর কাদা পাশ কাটিয়ে।", category: "গেম", action: "চিঠি বিলি করো" },
   { slug: "sap-ludu", name: "সাপলুডু", description: "ছক্কা চাপো, সিঁড়িতে ওঠো, সাপ এড়াও। একা ১২টা বোর্ড, বা এক ফোনে ২–৪ জন।", category: "গেম", action: "ছক্কা ফেলো" },
   { slug: "baghbandi", name: "বাঘবন্দি", description: "দুই বাঘ, বিশ ছাগল, উঠোনের ছক। ছাগল হয়ে বাঘ আটকাও, নয়তো বাঘ হয়ে ছাগল ধরো।", category: "গেম", action: "খেলা শুরু করো" },

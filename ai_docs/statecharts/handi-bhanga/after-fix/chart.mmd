@@ -1,0 +1,100 @@
+---
+title: "Handi-bhanga: screens, pause, level list and window"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: done
+  }
+  class lg0 teal
+  class lg1 blue
+  state "Game Title: the খ#2503;ল#2507; pot" as s0 {
+    s1: Window You're on the stall
+    s2: Window You're away: another window, a hidden tab or the stall scrolled off
+  }
+  state "Game Level list open" as s3 {
+    s4: Window You're on the stall
+    s5: Window You're away: another window, a hidden tab or the stall scrolled off
+  }
+  state "Game Ball on the ল#2494;ঠ#2495;" as s6 {
+    s7: Window You're on the stall
+    s8: Window You're away: another window, a hidden tab or the stall scrolled off
+  }
+  state "Game Pause menu open" as s9 {
+    s10: Window You're away: another window, a hidden tab or the stall scrolled off
+    s11: Window You're on the stall
+  }
+  state "Game Ball in the air" as s12 {
+    s13: Window You're on the stall
+    s14: Window You're away: another window, a hidden tab or the stall scrolled off
+  }
+  state "Game Result shows" as s15 {
+    s16: Window You're on the stall
+    s17: Window You're away: another window, a hidden tab or the stall scrolled off
+  }
+  [*] --> s1
+  s1 --> s2: you click into another window, hide the tab or scroll the stall away
+  s1 --> s4: you open সব ল#2503;ভ#2503;ল
+  s1 --> s7: you tap the খ#2503;ল#2507; pot
+  s1 --> s11: you open the pause menu
+  s2 --> s1: you come back
+  s2 --> s8: you tap the খ#2503;ল#2507; pot
+  s2 --> s5: you open সব ল#2503;ভ#2503;ল
+  s2 --> s10: you open the pause menu
+  s4 --> s7: you pick a stall, or press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; or you close সব ল#2503;ভ#2503;ল
+  s4 --> s5: you click into another window, hide the tab or scroll the stall away
+  s4 --> s1: you close সব ল#2503;ভ#2503;ল
+  s7 --> s8: you click into another window, hide the tab or scroll the stall away
+  s7 --> s4: you open সব ল#2503;ভ#2503;ল
+  s7 --> s11: you open the pause menu
+  s10 --> s11: you come back
+  s11 --> s10: you click into another window, hide the tab or scroll the stall away
+  s11 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s8 --> s7: you come back
+  s8 --> s5: you open সব ল#2503;ভ#2503;ল
+  s8 --> s10: you open the pause menu
+  s5 --> s4: you come back
+  s5 --> s8: you pick a stall, or press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; or you close সব ল#2503;ভ#2503;ল
+  s5 --> s2: you close সব ল#2503;ভ#2503;ল
+  s7 --> s13: you press Space, Enter or #8593; or you lift your finger
+  s10 --> s2: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s11 --> s7: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s4 --> s11: you close সব ল#2503;ভ#2503;ল
+  s13 --> s7: the ball falls, a ball is lost
+  s13 --> s14: you click into another window, hide the tab or scroll the stall away
+  s13 --> s4: you open সব ল#2503;ভ#2503;ল
+  s13 --> s16: the round ends or the round ends with stars
+  s13 --> s11: you open the pause menu
+  s10 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s5 --> s10: you close সব ল#2503;ভ#2503;ল
+  s14 --> s13: you come back
+  s14 --> s5: you open সব ল#2503;ভ#2503;ল
+  s14 --> s10: you open the pause menu
+  s4 --> s13: you close সব ল#2503;ভ#2503;ল
+  s16 --> s17: you click into another window, hide the tab or scroll the stall away
+  s16 --> s4: you open সব ল#2503;ভ#2503;ল
+  s16 --> s7: you pick a stall, or press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; or you press a fresh key on the result
+  s16 --> s11: you open the pause menu
+  s11 --> s13: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s5 --> s14: you close সব ল#2503;ভ#2503;ল
+  s17 --> s8: you pick a stall, or press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; or you press a fresh key on the result
+  s17 --> s16: you come back
+  s17 --> s5: you open সব ল#2503;ভ#2503;ল
+  s17 --> s10: you open the pause menu
+  s4 --> s16: you close সব ল#2503;ভ#2503;ল
+  s10 --> s14: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s11 --> s16: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s5 --> s17: you close সব ল#2503;ভ#2503;ল
+  s10 --> s17: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s0 --> s10: you click into another window, hide the tab or scroll the stall away
+  s6 --> s10: you click into another window, hide the tab or scroll the stall away
+  s12 --> s10: you click into another window, hide the tab or scroll the stall away
+  s15 --> s10: you click into another window, hide the tab or scroll the stall away
+  class s1 teal
+  class s2 teal
+  class s7 teal
+  class s8 teal
+  class s13 teal
+  class s14 teal
+  class s16 blue
+  class s17 blue
