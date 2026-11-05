@@ -1,0 +1,66 @@
+---
+title: "চﬂ°°2497¶ßডﬂ°°2492¶ßﬂ°°2495¶ßর বﬂ°°2494¶ßজﬂ°°2494¶ßর: tray, pause, window, press, rattle and notes"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: done
+  }
+  class lg0 teal
+  class lg1 blue
+  state "At the same time" as all {
+    state "Tray" as r0 {
+      s0: Title: the medallion says খ#2503;ল#2507;
+      s1: Waiting for your first swap
+      s2: Bangles lifting and falling
+      s3: Last move's bangles falling
+      s4: Out of moves
+      s5: No swap left, the tray shakes
+      s6: Tray still, your move
+      s7: Level cleared, end screen and card
+      [*] --> s0
+      s0 --> s1: you press খ#2503;ল#2507; [when Window is You're on the page]
+      s1 --> s2: you drag it onto its neighbour [when Menu is Menu shut and Window is You're on the page]
+      s1 --> s3: you drag it onto its neighbour [when Menu is Menu shut and Window is You're on the page]
+      s2 --> s1: you press আব#2494;র খ#2503;ল#2507;, পর#2503;র ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page]
+      s2 --> s5: no swap is left [when Menu is Menu shut and Window is You're on the page]
+      s2 --> s6: the tray settles [when Menu is Menu shut and Window is You're on the page]
+      s3 --> s4: the moves run out [when Menu is Menu shut and Window is You're on the page]
+      s3 --> s1: you press আব#2494;র খ#2503;ল#2507;, পর#2503;র ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page]
+      s3 --> s7: the goals are met and the tray settles [when Menu is Menu shut and Window is You're on the page]
+      s4 --> s1: you press আব#2494;র খ#2503;ল#2507;, পর#2503;র ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page]
+      s5 --> s1: you press আব#2494;র খ#2503;ল#2507;, পর#2503;র ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page]
+      s5 --> s6: the shake ends [when Menu is Menu shut and Window is You're on the page]
+      s6 --> s1: you press আব#2494;র খ#2503;ল#2507;, পর#2503;র ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page]
+      s7 --> s1: you press আব#2494;র খ#2503;ল#2507;, পর#2503;র ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page]
+      s2 --> s3: you drag it onto its neighbour [when Menu is Menu shut and Window is You're on the page]
+      s3 --> s2: you drag it onto its neighbour [when Menu is Menu shut and Window is You're on the page]
+      s6 --> s2: you drag it onto its neighbour [when Menu is Menu shut and Window is You're on the page]
+      s6 --> s3: you drag it onto its neighbour [when Menu is Menu shut and Window is You're on the page]
+    }
+    --
+    state "Menu" as r1 {
+      s8: Menu shut
+      s9: Menu open, tray paused
+      [*] --> s8
+      s8 --> s9: you press P, #9208;, Esc or সব ল#2503;ভ#2503;ল [when Tray is not Title: the medallion says খ#2503;ল#2507; and Window is You're on the page]
+      s8 --> s9: you hide the tab [when Tray is none of Level cleared, end screen and card, Out of moves, Title: the medallion says খ#2503;ল#2507; and Window is not Tab hidden]
+      s9 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you press আব#2494;র খ#2503;ল#2507;, পর#2503;র ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page]
+    }
+    --
+    state "Window" as r2 {
+      s10: You're on the page
+      s11: Another window has focus
+      s12: Tab hidden
+      [*] --> s10
+      s10 --> s11: you click into another window
+      s10 --> s12: you hide the tab
+      s11 --> s10: you come back to the window
+      s11 --> s12: you hide the tab
+      s12 --> s10: the tab shows again
+    }
+  }
+  class s0 teal
+  class s4 blue
+  class s7 blue

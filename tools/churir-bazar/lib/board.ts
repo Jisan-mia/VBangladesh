@@ -4,10 +4,15 @@ import { makeRng } from "../../../shared/game-core";
 export const SIZE = 7;
 export const CELLS = SIZE * SIZE;
 export const EMPTY = -1;
-/** A piece is a colour 0..5 (a plain glass bangle), SPARKLE + colour (a gold-glint ঝিকমিক bangle) or RAINBOW. */
+/** A piece is a colour 0..5 (a plain glass bangle), SPARKLE + colour (a gold-glint ঝিকমিক bangle), RAINBOW, or LOCK + colour (a তালা-বাঁধা bangle: it lines up and lifts like its colour but can't be swapped). */
 export const SPARKLE = 10;
 export const RAINBOW = 20;
-export const colourOf = (piece: number) => (piece >= 0 && piece < RAINBOW ? piece % SPARKLE : -1);
+export const LOCK = 100;
+/** Goal targets beyond the colours (0..5), ঝিকমিক and রংধনু (made): wipe dust layers, free tied bangles. */
+export const DUST_GOAL = 30;
+export const FREE_GOAL = 40;
+export const isLocked = (piece: number) => piece >= LOCK && piece < LOCK + SPARKLE;
+export const colourOf = (piece: number) => (piece >= 0 && piece < RAINBOW ? piece % SPARKLE : isLocked(piece) ? piece - LOCK : -1);
 export const isSparkle = (piece: number) => piece >= SPARKLE && piece < RAINBOW;
 /** Points per bangle lifted, times the cascade step (1, 2, 3… up to 5). */
 export const POINT = 10;
@@ -34,7 +39,7 @@ function lineAt(cells: readonly number[], cell: number) {
 
 /** Does swapping these two neighbours do anything? A rainbow always does; otherwise it must make a line of three. */
 export function swapWorks(cells: number[], a: number, b: number) {
-  if (!neighbours(a, b) || cells[a] === EMPTY || cells[b] === EMPTY) return false;
+  if (!neighbours(a, b) || cells[a] === EMPTY || cells[b] === EMPTY || isLocked(cells[a]) || isLocked(cells[b])) return false;
   if (cells[a] === RAINBOW || cells[b] === RAINBOW) return true;
   [cells[a], cells[b]] = [cells[b], cells[a]];
   const works = lineAt(cells, a) >= 3 || lineAt(cells, b) >= 3;
@@ -71,8 +76,8 @@ export function findRuns(cells: readonly number[]) {
   return runs;
 }
 
-/** A fresh tray: no line anywhere, and at least one swap that works. */
-export function deal(seed: number, colours: number) {
+/** A fresh tray: no line anywhere, and at least one swap that works. With `locks`, that many bangles come tied (the seed picks which). */
+export function deal(seed: number, colours: number, locks = 0) {
   for (let attempt = 0; ; attempt++) {
     const cells: number[] = [];
     let n = 100_000 + attempt * 1000;
@@ -83,8 +88,38 @@ export function deal(seed: number, colours: number) {
       while ((col >= 2 && cells[cell - 1] === piece && cells[cell - 2] === piece) || (cell >= 2 * SIZE && cells[cell - SIZE] === piece && cells[cell - 2 * SIZE] === piece));
       cells.push(piece);
     }
+    if (locks > 0) {
+      let k = 0;
+      for (let tied = 0; tied < locks && k < 400; k++) {
+        const cell = draw(seed, 300_000 + attempt * 1000 + k, CELLS);
+        if (cells[cell] < SPARKLE) { cells[cell] += LOCK; tied++; }
+      }
+    }
     if (hasMove(cells)) return cells;
   }
+}
+
+/** Where the dust lies: `count` cells, the first `thick` of them two layers deep. Nothing for a level without dust. */
+export function dustLayout(seed: number, count: number, thick: number) {
+  const dust = Array<number>(CELLS).fill(0);
+  for (let k = 0, put = 0; put < count && k < 600; k++) {
+    const cell = draw(seed, 400_000 + k, CELLS);
+    if (!dust[cell]) { dust[cell] = put < thick ? 2 : 1; put++; }
+  }
+  return dust;
+}
+
+/** The cell where a তালা will fall after the n-th lock drop (n from 1). Fixed by the seed, so it can be shown a move ahead. */
+export const dropCell = (seed: number, n: number) => draw(seed, 500_000 + n, CELLS);
+
+/** Starting gifts: `kind` 1 puts a রংধনু on the tray, 2 turns two bangles into ঝিকমিক ones. The seed picks the cells. */
+export function giftPieces(cells: number[], seed: number, kind: number) {
+  const out = cells.slice(), count = kind === 1 ? 1 : kind === 2 ? 2 : 0;
+  for (let n = 0, k = 0; n < count && k < 400; k++) {
+    const cell = draw(seed, 600_000 + k, CELLS);
+    if (out[cell] >= 0 && out[cell] < SPARKLE) { out[cell] = kind === 1 ? RAINBOW : SPARKLE + out[cell]; n++; }
+  }
+  return out;
 }
 
 /** The cells a ঝিকমিক bangle lifts: two each way along its row and its column. */
@@ -110,6 +145,12 @@ export type Step = {
   fall: number[];
   /** Bangles lifted this step, per colour. */
   lifted: number[];
+  /** Tied bangles that were lifted (their তালা is gone), and dust layers wiped, with the cells they were wiped at. */
+  freed: number;
+  wiped: number;
+  wipedCells: number[];
+  /** The dust after this step (null on a tray with none). */
+  dust: number[] | null;
   points: number;
 };
 
@@ -122,15 +163,25 @@ export type Outcome = {
   /** Bangles lifted per colour, and specials made: [ঝিকমিক, রংধনু]. */
   lifted: number[];
   made: [number, number];
+  /** Tied bangles freed and dust layers wiped over the whole move. */
+  freed: number;
+  wiped: number;
+  /** The dust now (null on a tray with none), and the cell where a তালা fell after the cascade (−1 for none). */
+  dust: number[] | null;
+  lockedAt: number;
   points: number;
 };
+
+/** Extras a level may bring: dust under the tray, and a তালা that falls on `lockAt` once the bangles have settled. */
+export type PlayOpts = { dust?: readonly number[] | null; lockAt?: number };
 
 /**
  * One swap, then every cascade until the tray is still. Null if the swap does nothing (it costs no move).
  * `draws` is how far the seed's stream has been used, so the same moves always bring the same bangles down.
  */
-export function play(start: readonly number[], seed: number, draws: number, colours: number, a: number, b: number): Outcome | null {
-  const cells = start.slice();
+export function play(start: readonly number[], seed: number, draws: number, colours: number, a: number, b: number, opts: PlayOpts = {}): Outcome | null {
+  const cells = start.slice(), dust = opts.dust ? opts.dust.slice() : null;
+  let freedAll = 0, wipedAll = 0;
   if (!swapWorks(cells, a, b)) return null;
   [cells[a], cells[b]] = [cells[b], cells[a]];
 
@@ -173,8 +224,15 @@ export function play(start: readonly number[], seed: number, draws: number, colo
       for (const next of hit) if (!clear.has(next) && !keep.has(next)) { clear.add(next); queue.push(next); }
     }
 
-    const stepLifted = [0, 0, 0, 0, 0, 0];
-    for (const cell of clear) { const colour = colourOf(cells[cell]); if (colour >= 0) { lifted[colour]++; stepLifted[colour]++; } }
+    const stepLifted = [0, 0, 0, 0, 0, 0], wipedCells: number[] = [];
+    let freed = 0;
+    for (const cell of clear) {
+      const colour = colourOf(cells[cell]);
+      if (colour >= 0) { lifted[colour]++; stepLifted[colour]++; if (isLocked(cells[cell])) freed++; }
+      if (dust && dust[cell] > 0) { dust[cell]--; wipedCells.push(cell); }
+    }
+    wipedCells.sort((x, y) => x - y);
+    freedAll += freed; wipedAll += wipedCells.length;
     for (const cell of keep) clear.delete(cell);
     const cleared = [...clear].sort((x, y) => x - y);
     const stepPoints = (cleared.length + keep.size) * POINT * Math.min(step + 1, 5);
@@ -193,21 +251,39 @@ export function play(start: readonly number[], seed: number, draws: number, colo
       }
       for (let row = write; row >= 0; row--) { cells[row * SIZE + col] = draw(seed, draws++, colours); fall[row * SIZE + col] = write + 1; }
     }
-    steps.push({ cleared, blasts, made: born, cells: cells.slice(), fall, lifted: stepLifted, points: stepPoints });
+    steps.push({ cleared, blasts, made: born, cells: cells.slice(), fall, lifted: stepLifted, freed, wiped: wipedCells.length, wipedCells, dust: dust ? dust.slice() : null, points: stepPoints });
   }
 
-  // Nothing left to swap: shake the tray until something lines up, never into a ready-made line.
-  let shuffle: number[] | null = null, out = cells;
+  // A তালা falls on the cell the tray showed a move ago, if a plain bangle sits there now.
+  let lockedAt = -1;
+  const target = opts.lockAt ?? -1;
+  if (target >= 0 && cells[target] >= 0 && cells[target] < SPARKLE) { cells[target] += LOCK; lockedAt = target; }
+
+  const unstuck = unstick(cells, seed, draws, colours);
+  return { cells: unstuck.cells, draws: unstuck.draws, steps, shuffle: unstuck.shuffle, lifted, made, freed: freedAll, wiped: wipedAll, dust, lockedAt, points };
+}
+
+/** Nothing left to swap: shake the tray until something lines up, never into a ready-made line. Tied bangles stay where they are. */
+export function unstick(cells: number[], seed: number, drawsIn: number, colours: number) {
+  let draws = drawsIn, shuffle: number[] | null = null, out = cells;
   if (!hasMove(cells)) {
+    const tied = cells.reduce((sum, piece) => sum + (isLocked(piece) ? 1 : 0), 0);
     for (let attempt = 0; attempt < 200 && !shuffle; attempt++) {
       const order = Array.from({ length: CELLS }, (_, i) => i);
-      for (let i = CELLS - 1; i > 0; i--) { const j = draw(seed, draws++, i + 1); [order[i], order[j]] = [order[j], order[i]]; }
+      if (!tied) {
+        for (let i = CELLS - 1; i > 0; i--) { const j = draw(seed, draws++, i + 1); [order[i], order[j]] = [order[j], order[i]]; }
+      } else {
+        const free = order.filter(cell => !isLocked(cells[cell]));
+        for (let i = free.length - 1; i > 0; i--) { const j = draw(seed, draws++, i + 1); [free[i], free[j]] = [free[j], free[i]]; }
+        let at = 0;
+        for (let cell = 0; cell < CELLS; cell++) if (!isLocked(cells[cell])) order[cell] = free[at++];
+      }
       const next = order.map(cell => cells[cell]);
       if (!findRuns(next).length && hasMove(next)) { shuffle = order; out = next; }
     }
-    if (!shuffle) { out = deal(seed + draws, colours); draws++; shuffle = Array.from({ length: CELLS }, (_, i) => i); }
+    if (!shuffle) { out = deal(seed + draws, colours, tied); draws++; shuffle = Array.from({ length: CELLS }, (_, i) => i); }
   }
-  return { cells: out, draws, steps, shuffle, lifted, made, points };
+  return { cells: out, draws, shuffle };
 }
 
 /** Runs that share a cell form one group (an L or a T); each group lifts together. Four leave a ঝিকমিক, five or more a রংধনু. */

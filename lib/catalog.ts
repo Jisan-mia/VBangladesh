@@ -131,7 +131,7 @@ export const catalog = [
   { slug: "bhul-kothay", name: "ভুল কোথায়?", description: "দুটো প্রায় একই ছবি, বাজার থেকে লোডশেডিংয়ের রাত। কোথায় আলাদা, চাপ দাও।", category: "গেম", action: "অমিল খোঁজো" },
   { slug: "atir-aam", name: "আঁটি থেকে আম", description: "দুটো এক রকম মেলাও: আঁটি থেকে চারা, আম, শেষে বাগান। তিন মৌসুমে বৃষ্টি, শিল, কাক।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "bhimruler-chak", name: "ভিমরুলের চাক", description: "সংখ্যা দেখে লুকানো চাক খোঁজো, গামছা বাঁধো, বাকি ঝোপ সাফ করো।", category: "গেম", action: "খেলা শুরু করো" },
-  { slug: "churir-bazar", name: "চুড়ির বাজার", description: "কাচের চুড়ি বদলে এক রঙের তিনটা মেলাও, ৪০টা লেভেল।", category: "গেম", action: "খেলা শুরু করো" },
+  { slug: "churir-bazar", name: "চুড়ির বাজার", description: "চুড়ি বদলে এক রঙের তিনটা মেলাও। তালা, ধুলো, ৪০ লেভেল।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "mukhe-mukhe-hisab", name: "মুখে মুখে হিসাব", description: "এক মিনিটে যত পারো যোগ-বিয়োগ-গুণ আর বাজারের হিসাব মেলাও, ৩০টা লেভেল।", category: "গেম", action: "হিসাব শুরু করো" },
   { slug: "chhobir-tukro", name: "ছবির টুকরো", description: "নদী, নৌকা, তালগাছের আঁকা ছবি টুকরো করে কাটা। জোড়া লাগাও, তারা নাও।", category: "গেম", action: "টুকরো জোড়াও" },
   { slug: "sat-chara", name: "সাত চাড়া", description: "বল পেছনে টেনে ছাড়ো, তিন বলে সাতটা চাড়াই ফেলো।", category: "গেম", action: "চাড়া ফেলো" },

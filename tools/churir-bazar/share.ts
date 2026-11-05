@@ -1,7 +1,8 @@
 import type { ToolShare } from "../../shared/share-types";
-import { parseShared, previewTitle, sharedHash } from "./lib/link";
+import { parseShared, sharedHash } from "./lib/challenge";
+import { previewTitle } from "./lib/words";
 
-// No tally: a link only re-opens one cleared level, after replaying its moves.
+// No tally: a link only re-opens one cleared level, after replaying its moves. Links without `v` are the old level table.
 export const share: ToolShare = {
   normalize(state) {
     const shared = parseShared(state);

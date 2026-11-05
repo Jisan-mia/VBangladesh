@@ -1,13 +1,15 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, type CardFormat } from "../../../shared/card-canvas";
 import { cleanName } from "../../../shared/game-core";
 import { drawRod, GOLD, VELVET } from "./art";
-import { RAINBOW, SPARKLE } from "./board";
-import { levelOf, levelStars } from "./game";
-import { bn, goalsShort, STAR_LINES, worldOf, WORLDS, type Shared } from "./link";
+import { DUST_GOAL, FREE_GOAL, RAINBOW, SPARKLE } from "./board";
+import type { Shared } from "./challenge";
+import { finaleName, worldOf, WORLDS } from "./ladder";
+import { specOf } from "./rules";
+import { bn, goalsShort, STAR_LINES } from "./words";
 
-export type CardData = Pick<Shared, "level" | "score" | "count" | "name">;
+export type CardData = Pick<Shared, "v" | "level" | "mode" | "gift" | "score" | "count" | "stars" | "name">;
 
-/** The card: a velvet stall with a rod of bangles for each colour in the level, the goal colours stacked tallest. */
+/** The card: a velvet stall with a rod of bangles for each colour in the level, the goal colours stacked tallest. A finale gets a stamp. */
 export function drawCard(canvas: HTMLCanvasElement, data: CardData, format: CardFormat, site: string) {
   const { width, height } = cardSizes[format];
   canvas.width = width;
@@ -15,14 +17,14 @@ export function drawCard(canvas: HTMLCanvasElement, data: CardData, format: Card
   const c = canvas.getContext("2d");
   if (!c) throw new Error("এই ব্রাউজারে ছবি বানানো যাচ্ছে না।");
   const story = format === "story", cx = width / 2, y0 = story ? 290 : 0;
-  const spec = levelOf(data.level), world = worldOf(data.level), [light, dark] = VELVET[world];
+  const spec = specOf(data), world = worldOf(data.level), [light, dark] = VELVET[world], finale = data.v === 2 ? finaleName(data.level) : "";
   const velvet = c.createRadialGradient(cx, height * 0.35, 80, cx, height * 0.4, height * 0.8);
   velvet.addColorStop(0, light); velvet.addColorStop(1, dark);
   c.fillStyle = velvet;
   c.fillRect(0, 0, width, height);
 
-  const name = cleanName(data.name), stars = levelStars(data.level, data.score);
-  fitText(c, [{ text: `চুড়ির বাজার · ${WORLDS[world]} · লেভেল ${bn(data.level)}`, color: GOLD, weight: 700, display: true }], cx, y0 + 96, 40, 940, "center");
+  const name = cleanName(data.name), stars = data.stars;
+  fitText(c, [{ text: `চুড়ির বাজার · ${WORLDS[world].name} · লেভেল ${bn(data.level)}`, color: GOLD, weight: 700, display: true }], cx, y0 + 96, 40, 940, "center");
   fitText(c, [
     { text: name ? `${name} ` : "", color: "#fff6e6", weight: 700, display: true },
     { text: `${bn(data.score)} পয়েন্ট`, color: GOLD, weight: 800, display: true },
@@ -46,9 +48,20 @@ export function drawCard(canvas: HTMLCanvasElement, data: CardData, format: Card
   });
 
   const below = shelf + 120;
-  fitText(c, [{ text: `${goalsShort(data.level)} · ${bn(data.count)} চালে পার`, color: "#fff6e6", weight: 700 }], cx, below, 46, 940, "center");
-  fitText(c, [{ text: STAR_LINES[stars], color: "#f6dcae", weight: 600 }], cx, below + 72, 42, 940, "center");
+  fitText(c, [{ text: `${goalsShort(data)} · ${bn(data.count)} চালে পার`, color: "#fff6e6", weight: 700 }], cx, below, 46, 940, "center");
+  const notes = [goals.has(FREE_GOAL) ? "তালা খুলে" : "", goals.has(DUST_GOAL) ? "ধুলো মুছে" : ""].filter(Boolean);
+  fitText(c, [{ text: notes.length ? `${notes.join(", ")} ${STAR_LINES[stars]}` : STAR_LINES[stars], color: "#f6dcae", weight: 600 }], cx, below + 72, 40, 940, "center");
+  if (finale) {
+    // a red wax stamp for a finale
+    c.save();
+    c.translate(width - 190, y0 + 400); c.rotate(-0.22);
+    c.strokeStyle = "#e5534b"; c.lineWidth = 7; c.beginPath(); c.arc(0, 0, 104, 0, Math.PI * 2); c.stroke();
+    c.lineWidth = 3; c.beginPath(); c.arc(0, 0, 92, 0, Math.PI * 2); c.stroke();
+    c.restore();
+    fitText(c, [{ text: finale, color: "#e5534b", weight: 800, display: true }], width - 190, y0 + 412, 34, 170, "center");
+  }
   drawFooterBand(c, format, "তুমি কত পয়েন্ট পাবে?", site, { band: "#1c0910", ask: GOLD, site: "#ffffff" });
 }
 
 export const cardBlob = (data: CardData, format: CardFormat, site: string) => renderCard(canvas => drawCard(canvas, data, format, site));
+export const cardKicker = (data: CardData) => `লেভেল ${bn(data.level)}${data.v === 2 && finaleName(data.level) ? ` · ${finaleName(data.level)}` : ""}`;

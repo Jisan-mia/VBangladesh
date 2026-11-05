@@ -1,4 +1,109 @@
-# চুড়ির বাজার: statechart (before the rewrite)
+# চুড়ির বাজার statechart
+
+## After the rewrite (`after-fix/`)
+The spec `Churir.tla` (with `Churir.cfg` and `view.ts`) now mirrors `tools/churir-bazar/components/churir-game.tsx` (swap, settled, finish, begin, the player's onPause and onResume, the blur, focus and visibility listeners), `lib/session.ts` (live, canMove and its 250 ms breath, press, dragCounts, wantRattle and syncLoops, startRun and cheer) and `lib/save.ts`. TLC reaches 220 states. The chart draws 13 states and 26 arrows: the tray, the menu and the window. The hand, the sound switch with the rattle, and the result's notes are checked by the rules but hidden from the drawing. The open levels and the friend's link are left out of the model (together they would pass the 500-state budget) and proved by `tests/session.test.ts` and the live replay below.
+
+| Rule | Says | Result |
+|---|---|---|
+| InputReleasedWhenAway | Away, in another window, or under the menu or a choice, no press is still in flight. | holds |
+| NoDragWithoutAPress | A press in flight always has a button or finger down: a mouse that moves with no button held is never a drag. | holds |
+| PausedWhenHidden | Hiding the tab with a level under way shows the pause menu when you come back. | holds |
+| RattleOnlyWhileShaking | The rattle plays only while the tray shakes, with sound on and the screen live. | holds |
+| RattleComesBack | While the tray shakes on a live screen with sound on, the rattle plays (sound on or চালিয়ে যাও brings it back). | holds |
+| NoCheerAfterYouMoveOn | The result's notes are scheduled only while that level's result is on screen. | holds |
+| LinkOpensOnlyItsLevel, SavedUnlockIsEarned (node test) | A friend's link opens its own level and nothing in between; your open level only rises by your own clears. | holds |
+| ResultNeedsFreshPress (node test) | A key held through the last move never picks an end-screen choice. | holds |
+
+### The four bugs, fixed
+1. **InputReleasedWhenAway.** `onBlur`, `onVisibility`, the player's pause and `lostpointercapture` all drop the press (`S.blur`, `S.hide`, `S.pause`, `S.release`). `S.dragCounts` ignores a mouse move with no button held (`event.buttons === 0`) and drops the press. The focus that brings the window back wakes the tray only: presses in the first 250 ms are ignored (`S.focus(s, now)`). Tests: `bug 1 · InputReleasedWhenAway`, `bug 1 · a mouse move with no button held is not a drag`, `the click that brings focus back is not a move`.
+2. **NoCheerAfterYouMoveOn.** The cheer has no timer any more. The result's call, jingle and star notes are scheduled on the audio clock (`tone(…, delay)`), confetti fires at once, and `begin()` calls `S.startRun(session, silenceScheduled)` first. The game's only `setTimeout` is the idle hint, and it is cleared on every input, pause, blur, new run and unmount. Test: `bug 2 · NoCheerAfterYouMoveOn` (also checks the source for one timer).
+3. **RattleComesBack.** The rattle belongs to the shake segment of the move's timeline, not to an 800 ms timer. `S.wantRattle` (live, sound on, shaking) decides it, and `syncLoops` runs after sound on or off, pause, resume, blur, focus and the end of the shake, so a loop created while muted is replaced when sound returns. Test: `bug 3 · RattleOnlyWhileShaking / RattleComesBack`.
+4. **LinkOpensOnlyItsLevel / SavedUnlockIsEarned.** The phone keeps its own open level (`ektukhani-churir-bazar-open`, set once from the old rule) and opens the next level only when you clear your own open level. A friend's level is playable on its own (`visit`), its stars are recorded, nothing in between opens. `unlockedLevel` itself is untouched. Test: `bug 4 · UnlockNeverShrinks / SavedUnlockIsEarned`.
+
+**Live replays (Orca, new code).**
+- **Bug 1 (level 1, Pixel 9).** A mouse `pointerdown` on a bangle, then `blur` (the button let go in another window), 100 ms, `focus`, then `pointermove` over the next bangle with `buttons: 0`: moves **0 → 0** (before the fix, 15 → 14 and a move spent). After চালিয়ে যাও a real drag swapped (moves 1), answered in 1–9 ms from the event to the first drawn frame.
+- **Bug 2 (level 1).** The level cleared in two moves (1140 points); the end screen showed 1.55 s after the last swap. Pressing পরের লেভেল 600 ms later stopped **62 scheduled oscillators** (`stop` calls), started none afterwards (0 new in the next 2.6 s), and level 2 opened with no confetti canvas.
+- **Bug 3 (level 24, a shake after the 17th swap, desktop bar).** Control: **1** looped source at the start of the shake. Sound off mid-shake: `rattle` false. Sound back on 80 ms later, shake still on: `rattle` true and **1** new looped source started (before the fix, 0).
+- **Bug 4 (empty storage, friend link `#s=3001&t=1330&v=2&l=3&m=…&n=Mim`).** The banner read "Mim ৩ নম্বর লেভেলে ১৩৩০ পয়েন্ট পেয়েছে। ৮ চালে পার, ১ তারা", and সব লেভেল showed **levels 1 and 3 open** (before: 1–3). I cleared level 3: stars `{"3":1}`, open key `1`. After a reload with no hash the game opened on level 1 with only level 1 open (before: it opened on level 4).
+- **Pause on blur** works in Orca: a plain window blur opened the player's menu and stopped the tray; the autopilot had to press চালিয়ে যাও. The hidden-tab replay (Orca pins `document.hidden`) is `S.hide` plus `PausedWhenHidden` in the model.
+
+```mermaid
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: done
+  }
+  class lg0 teal
+  class lg1 blue
+  state "At the same time" as all {
+    state "Tray" as r0 {
+      s0: Title: the medallion says খ#2503;ল#2507;
+      s1: Waiting for your first swap
+      s2: Bangles lifting and falling
+      s3: Last move's bangles falling
+      s4: Out of moves
+      s5: No swap left, the tray shakes
+      s6: Tray still, your move
+      s7: Level cleared, end screen and card
+      [*] --> s0
+      s0 --> s1: you press খ#2503;ল#2507; [when Window is You're on the page]
+      s1 --> s2: you drag it onto its neighbour [when Menu is Menu shut and Window is You're on the page]
+      s1 --> s3: you drag it onto its neighbour [when Menu is Menu shut and Window is You're on the page]
+      s2 --> s1: you press আব#2494;র খ#2503;ল#2507;, পর#2503;র ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page]
+      s2 --> s5: no swap is left [when Menu is Menu shut and Window is You're on the page]
+      s2 --> s6: the tray settles [when Menu is Menu shut and Window is You're on the page]
+      s3 --> s4: the moves run out [when Menu is Menu shut and Window is You're on the page]
+      s3 --> s1: you press আব#2494;র খ#2503;ল#2507;, পর#2503;র ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page]
+      s3 --> s7: the goals are met and the tray settles [when Menu is Menu shut and Window is You're on the page]
+      s4 --> s1: you press আব#2494;র খ#2503;ল#2507;, পর#2503;র ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page]
+      s5 --> s1: you press আব#2494;র খ#2503;ল#2507;, পর#2503;র ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page]
+      s5 --> s6: the shake ends [when Menu is Menu shut and Window is You're on the page]
+      s6 --> s1: you press আব#2494;র খ#2503;ল#2507;, পর#2503;র ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page]
+      s7 --> s1: you press আব#2494;র খ#2503;ল#2507;, পর#2503;র ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page]
+      s2 --> s3: you drag it onto its neighbour [when Menu is Menu shut and Window is You're on the page]
+      s3 --> s2: you drag it onto its neighbour [when Menu is Menu shut and Window is You're on the page]
+      s6 --> s2: you drag it onto its neighbour [when Menu is Menu shut and Window is You're on the page]
+      s6 --> s3: you drag it onto its neighbour [when Menu is Menu shut and Window is You're on the page]
+    }
+    --
+    state "Menu" as r1 {
+      s8: Menu shut
+      s9: Menu open, tray paused
+      [*] --> s8
+      s8 --> s9: you press P, #9208;, Esc or সব ল#2503;ভ#2503;ল [when Tray is not Title: the medallion says খ#2503;ল#2507; and Window is You're on the page]
+      s8 --> s9: you hide the tab [when Tray is none of Level cleared, end screen and card, Out of moves, Title: the medallion says খ#2503;ল#2507; and Window is not Tab hidden]
+      s9 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you press আব#2494;র খ#2503;ল#2507;, পর#2503;র ল#2503;ভ#2503;ল or নত#2497;ন কর#2503; শ#2497;র#2497; [when Window is You're on the page]
+    }
+    --
+    state "Window" as r2 {
+      s10: You're on the page
+      s11: Another window has focus
+      s12: Tab hidden
+      [*] --> s10
+      s10 --> s11: you click into another window
+      s10 --> s12: you hide the tab
+      s11 --> s10: you come back to the window
+      s11 --> s12: you hide the tab
+      s12 --> s10: the tab shows again
+    }
+  }
+  class s0 teal
+  class s4 blue
+  class s7 blue
+```
+
+## Regenerate
+```sh
+scripts/statechart.sh ai_docs/statecharts/churir-bazar/Churir.tla --view ai_docs/statecharts/churir-bazar/view.ts --out ai_docs/statecharts/churir-bazar/<new-folder>
+rm ai_docs/statecharts/churir-bazar/<new-folder>/tlc*.out
+```
+
+---
+
+## Before the rewrite (`before-fix/`)
+The spec then was `before-fix/Bangles.tla`, `Bangles.cfg` and `view.ts`, mirrored from `components/bangle-game.tsx` (since replaced). What follows is that run, kept as it was.
+
 
 Model: `Bangles.tla`, `Bangles.cfg` and `view.ts`, mirrored from `tools/churir-bazar/components/bangle-game.tsx`, plus `shared/game-kit.ts` (`useGameLoop`) and `shared/game-sound.ts` (`loop`, `setSoundOn`).
 Output: `before-fix/report.md` and `before-fix/chart.mmd`. TLC reached 164 states, and the chart draws 19 states and 38 arrows.
