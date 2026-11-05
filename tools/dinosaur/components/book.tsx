@@ -17,7 +17,7 @@ export function Book({ found, onClose }: { found: readonly string[]; onClose: ()
       </header>
       {dino ? <>
         <div className="dn-book-art"><DinoArt dino={dino} /></div>
-        <FactCard dino={dino}><button type="button" className="kit-secondary" onClick={() => { sfx.tap(); setOpen(null); }}>সব পাতা দেখো</button></FactCard>
+        <FactCard dino={dino} full><button type="button" className="kit-secondary" onClick={() => { sfx.tap(); setOpen(null); }}>সব পাতা দেখো</button></FactCard>
       </> : <>
         <ul className="dn-pages">
           {DINOS.map(each => {
