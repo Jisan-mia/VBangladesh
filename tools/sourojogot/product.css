@@ -21,7 +21,7 @@
 .sj-launch:active{transform:scale(.985)}
 .sj-launch:focus-visible{outline:4px solid var(--w-accent);outline-offset:6px}
 .sj-launch-art{display:block}
-.sj-launch-go{position:absolute;left:50%;bottom:16px;display:inline-flex;align-items:center;gap:10px;padding:8px 30px 8px 22px;border-radius:999px;background:#fff8ea;color:var(--w-deep);font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.4;box-shadow:0 5px 0 #0004;transform:translateX(-50%)}
+.sj-launch-go{position:absolute;left:50%;bottom:16px;display:inline-flex;align-items:center;gap:10px;padding:8px 30px 8px 22px;border-radius:14px;background:#fff8ea;color:var(--w-deep);font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.4;box-shadow:0 5px 0 #0004;transform:translateX(-50%)}
 .sj-launch-go svg{width:30px;height:30px;fill:var(--w-accent)}
 .sj-bob{animation:sj-bob 2.2s ease-in-out infinite}
 .sj-flame{transform-box:fill-box;transform-origin:50% 0;animation:sj-flicker .28s ease-in-out infinite alternate}
@@ -50,14 +50,14 @@
 .sj[data-mode=build] .sj-board{width:min(100%,calc((var(--stage-h,760px) - 350px) * .766))}
 .sj-sky,.sj-fly{position:absolute;inset:0;width:100%;height:100%}
 .sj-fly{pointer-events:none}
-.sj-planet{position:absolute;display:grid;place-items:center;width:22%;aspect-ratio:1;transform:translate(-50%,-50%);padding:0;border:0;border-radius:50%;background:transparent;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:left .5s cubic-bezier(.4,0,.2,1),top .5s cubic-bezier(.77,0,.175,1),transform 140ms var(--ease-out)}
+.sj-planet{position:absolute;display:grid;place-items:center;width:22%;aspect-ratio:1;transform:translate(-50%,-50%);padding:0;border:0;border-radius:50%;background:transparent;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:left .4s var(--ease-out),top .4s var(--ease-out),transform 140ms var(--ease-out)}
 .sj-planet>svg{grid-area:1/1}
 .sj-planet:active{transform:translate(-50%,-50%) scale(.95)}
 .sj-planet:focus-visible{outline:3px solid var(--glow);outline-offset:-4px}
 .sj-planet.done>svg{animation:sj-landed 320ms var(--ease-out) var(--land,0ms) both}
 .sj-name{position:absolute;left:50%;top:84%;transform:translateX(-50%);padding:0 8px;border-radius:8px;background:#141d3fd9;color:#fff;font-size:16px;font-weight:700;line-height:1.6;white-space:nowrap;pointer-events:none;animation:sj-name 200ms var(--ease-out) var(--land,0ms) both}
 .sj-hole{display:grid;place-items:center;width:64%;aspect-ratio:1;border:3px dashed #aebcff;border-radius:50%;background:#ffffff1a;color:#e8edff;font-size:22px;font-weight:800;line-height:1}
-.sj-glow{box-shadow:0 0 0 4px var(--glow),0 0 22px 6px #ffd16688;animation:sj-breathe 1.6s ease-in-out infinite}
+.sj-glow::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:0 0 0 4px var(--glow),0 0 22px 6px #ffd16688;animation:sj-breathe 1.6s ease-in-out infinite} /* unslop-ignore: the lit ring marks the one right planet, the game's only hint glow */
 .sj-ghost{position:absolute;width:13%;aspect-ratio:48/56;pointer-events:none;z-index:2;animation:sj-tap 1.4s ease-in-out infinite;filter:drop-shadow(0 2px 3px #0006)}
 .sj-wobble.sj-w0{animation:sj-wobble0 300ms var(--ease-out)}
 .sj-wobble.sj-w1{animation:sj-wobble1 300ms var(--ease-out)}
@@ -77,7 +77,7 @@
 .sj-pop{animation:sj-pop 240ms var(--ease-out);transform-box:fill-box;transform-origin:50% 50%}
 .sj-drop{animation:sj-drop 320ms var(--ease-out)}
 .sj-porthole{display:grid;place-items:center;width:min(56vw,calc(var(--stage-h,760px) * .28),220px);aspect-ratio:1;margin:0 auto;padding:9px;border-radius:50%;background:linear-gradient(145deg,#e6eafb,#9aa6d1);box-shadow:0 0 0 3px #2c3768,0 8px 16px #1b22463a,inset 0 0 0 3px #fff8}
-.sj-porthole-glass{display:grid;place-items:center;width:100%;height:100%;padding:7%;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 30% 25%,#34457f,var(--sky-a));box-shadow:inset 0 0 18px #000a;animation:sj-pop 240ms var(--ease-out)}
+.sj-porthole-glass{display:grid;place-items:center;width:100%;height:100%;padding:7%;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 30% 25%,#34457f,var(--sky-a));box-shadow:inset 0 0 0 3px #0009;animation:sj-pop 240ms var(--ease-out)}
 .sj-choices{position:relative;display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:16px}
 .sj-choices[data-n="2"]{--n:2}.sj-choices[data-n="3"]{--n:3}.sj-choices[data-n="4"]{--n:2}
 .sj-choice{position:relative;display:grid;justify-items:center;align-content:center;gap:4px;min-height:116px;padding:12px 6px 8px;border:3px solid var(--w-edge);border-radius:22px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform 140ms var(--ease-out),background .2s,opacity .2s}
@@ -109,7 +109,7 @@
 .sj-visited li{display:grid;justify-items:center;gap:0;color:#fff;font-size:16px;font-weight:700;line-height:1.5;animation:sj-pop 240ms var(--ease-out) both}
 .sj-visited-art{display:block;width:48px;height:48px}
 .sj-end-stars .gx-stars{font-size:46px}
-.sj-end-stars .gx-stars .on{display:inline-block;animation:sj-star .45s cubic-bezier(.3,1.6,.5,1) both}
+.sj-end-stars .gx-stars .on{display:inline-block;animation:sj-star .4s var(--ease-out) both}
 .sj-end-stars .gx-stars .on:nth-child(1){animation-delay:.35s}
 .sj-end-stars .gx-stars .on:nth-child(2){animation-delay:.65s}
 .sj-end-stars .gx-stars .on:nth-child(3){animation-delay:.95s}
@@ -140,13 +140,13 @@
 .sj-band ol{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;margin:0;padding:0;list-style:none}
 .sj-card{position:relative;display:grid;justify-items:center;gap:0;width:100%;min-height:128px;padding:8px 4px 6px;border:2px solid var(--w-edge);border-radius:18px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation}
 .sj-card.finale{border-color:var(--w-accent);background:linear-gradient(#fff,var(--w-soft))}
-.sj-card[data-next]{border-color:var(--w-accent);box-shadow:0 0 0 4px #f2a90055;animation:sj-glow-card 1.6s ease-in-out infinite}
+.sj-card[data-next]{border-color:var(--w-accent);box-shadow:0 0 0 4px #f2a90055}
 .sj-card[aria-current=true]{outline:3px solid var(--w-deep);outline-offset:2px}
 .sj-card-n{position:absolute;left:8px;top:4px;font-size:16px;font-weight:800;color:var(--muted)}
 .sj-card-icon{display:block;width:44px;height:44px;margin-top:6px;color:var(--w-accent)}
 .sj-card-name{font-size:16px;font-weight:700;line-height:1.4}
 .sj-card .gx-stars{font-size:16px}
-.sj-card-next{position:absolute;right:-4px;top:-10px;padding:1px 8px;border-radius:99px;background:#f2a900;color:#3b2a17;font-size:16px;font-weight:800;line-height:1.6}
+.sj-card-next{position:absolute;right:-4px;top:-10px;padding:1px 8px;border-radius:4px;background:#f2a900;color:#3b2a17;font-size:16px;font-weight:800;line-height:1.6}
 
 /* ---- the ?print cut-out sheet ---- */
 .sj-print{display:grid;gap:14px;max-width:760px;margin:0 auto}
@@ -175,7 +175,7 @@ html.sj-printing body>:not(.sj-print-root){display:none!important}
 .sj-print-more{margin:0;line-height:1.7}
 .sj-print-more a{color:var(--accent-deep);font-weight:700}
 
-@keyframes sj-breathe{0%,100%{box-shadow:0 0 0 3px var(--glow),0 0 14px 4px #ffd16666}50%{box-shadow:0 0 0 5px var(--glow),0 0 26px 8px #ffd16699}}
+@keyframes sj-breathe{0%,100%{opacity:.6}50%{opacity:1}}
 @keyframes sj-tap{0%,100%{transform:translate(0,0)}50%{transform:translate(-8%,-12%)}}
 @keyframes sj-tap-up{0%,100%{transform:translateY(8px)}50%{transform:translateY(-4px)}}
 @keyframes sj-wobble0{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
@@ -186,14 +186,13 @@ html.sj-printing body>:not(.sj-print-root){display:none!important}
 @keyframes sj-landed{0%{transform:scale(1)}45%{transform:scale(1.14)}100%{transform:scale(1)}}
 @keyframes sj-name{from{opacity:0;transform:translateX(-50%) translateY(4px)}to{opacity:1;transform:translateX(-50%)}}
 @keyframes sj-drop{0%{transform:translateY(-30px);opacity:0}100%{transform:none;opacity:1}}
-@keyframes sj-star{0%{transform:scale(0) rotate(-30deg);opacity:0}100%{transform:none;opacity:1}}
+@keyframes sj-star{0%{transform:scale(.5) rotate(-30deg);opacity:0}100%{transform:none;opacity:1}}
 @keyframes sj-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @keyframes sj-flicker{from{transform:scaleY(.85)}to{transform:scaleY(1.2)}}
-@keyframes sj-glow-card{50%{box-shadow:0 0 0 7px #f2a90044}}
 
 /* ধীরে খেলো and reduced motion: nothing flies, wobbles or pulses */
 .sj[data-slow] *,.sj[data-slow] *::after{animation:none!important;transition:none!important}
-.sj[data-slow] .sj-glow{box-shadow:0 0 0 4px var(--glow)}
+.sj[data-slow] .sj-glow::after{box-shadow:0 0 0 4px var(--glow)}
 @media (prefers-reduced-motion:reduce){.sj *,.sj *::after{animation:none!important;transition:none!important}}
 
 /* short stages: a smaller picture and choices that still keep 96 px */
@@ -201,3 +200,6 @@ html.sj-printing body>:not(.sj-print-root){display:none!important}
 @media (max-width:359px){.sj-choices{gap:10px}.sj-choice-name{font-size:16px}}
 
 .sj[data-mode=tour] .sj-say,.sj[data-mode=sort] .sj-say,.sj[data-mode=build] .sj-say{min-height:136px}
+/* every pressable gives a little under the finger (the kit's primary button already sinks) */
+.sj-chip,.sj-close,.sj-card,.sj .kit-secondary{transition:transform 140ms var(--ease-out)}
+.sj-chip:active,.sj-close:active,.sj-card:active:not(:disabled),.sj .kit-secondary:active:not(:disabled){transform:scale(.97)}

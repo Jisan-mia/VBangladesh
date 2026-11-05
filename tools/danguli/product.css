@@ -1,4 +1,4 @@
-.tool-danguli{--accent:#b4372a;--accent-deep:#8a2a20;--ink:#26301e;--muted:#5c6152;--paper:#f6efdc;--paper-edge:#e0d4b4;--field:#2f5530;--field-2:#3f6b3a;--gold:#ffd166;--miss:#c8432f}
+.tool-danguli{--dg-ease:cubic-bezier(.23,1,.32,1);--accent:#b4372a;--accent-deep:#8a2a20;--ink:#26301e;--muted:#5c6152;--paper:#f6efdc;--paper-edge:#e0d4b4;--field:#2f5530;--field-2:#3f6b3a;--gold:#ffd166;--miss:#c8432f}
 
 /* the game fills the player's stage: HUD, the field (as big as fits), the call and the tap pad, or the end screen */
 .tool-danguli .gp-game{min-height:100%}
@@ -13,8 +13,8 @@
 .tool-danguli .dg-title-friend b{font-family:var(--font-display)}
 .tool-danguli .dg-title-friend span{display:block;font-size:13px;color:var(--muted)}
 .tool-danguli .dg-title-art{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * .8);place-items:center;width:100%;min-height:150px}
-.tool-danguli .dg-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:24px;transition:transform .18s ease-out}
-.tool-danguli .dg-title-start:hover{transform:translateY(-3px) scale(1.01)}
+.tool-danguli .dg-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:24px;transition:transform .16s var(--dg-ease)}
+@media(hover:hover) and (pointer:fine){.tool-danguli .dg-title-start:hover{transform:translateY(-3px) scale(1.01)}}
 .tool-danguli .dg-title-start:active{transform:translateY(2px) scale(.98)}
 .tool-danguli .dg-title-start:focus-visible{outline:3px solid var(--gold);outline-offset:6px}
 .tool-danguli .dg-title-start canvas{display:block}
@@ -23,10 +23,10 @@
 .tool-danguli .dg-title-level small{font-size:14px;color:#e2e6d4;line-height:1.5}
 .tool-danguli .dg-title-level small b{color:var(--gold)}
 .tool-danguli .dg-modes{display:flex;gap:6px;justify-content:center}
-.tool-danguli .dg-modes button{min-height:40px;padding:4px 16px;border:1.5px solid #ffffff50;border-radius:999px;background:transparent;color:inherit;font-size:15px;font-weight:600}
+.tool-danguli .dg-modes button{min-height:40px;padding:4px 16px;border:1.5px solid #ffffff50;border-radius:8px;background:transparent;color:inherit;font-size:15px;font-weight:600;transition:transform .14s var(--dg-ease)}
 .tool-danguli .dg-modes button[aria-checked=true]{border-color:var(--gold);background:var(--gold);color:var(--ink)}
 .tool-danguli .dg-mode-line{margin:0;max-width:400px;font-size:14px;line-height:1.5;color:#e2e6d4}
-.tool-danguli .dg-link{min-height:44px;padding:6px 12px;border:0;border-radius:12px;background:none;color:var(--gold);font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:4px}
+.tool-danguli .dg-link{min-height:44px;padding:6px 12px;border:0;border-radius:12px;background:none;color:var(--gold);font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:4px;transition:transform .14s var(--dg-ease)}
 .tool-danguli .dg-link span{margin-left:6px;font-weight:500;color:#e2e6d4;text-decoration:none}
 
 /* ---- the HUD: a row above the field, never on it ---- */
@@ -53,13 +53,14 @@
 .tool-danguli .dg[data-screen=over] .dg-field{flex:1 1 120px;min-height:110px}
 .tool-danguli .dg[data-screen=over] .dg-board{touch-action:auto;cursor:default}
 /* danger lives at the edges: the কাঠি falling past the band (red bottom), the last hit still short (orange rim) */
-.tool-danguli .dg-field::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 0 transparent;transition:box-shadow .2s}
+.tool-danguli .dg-field::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
 .tool-danguli .dg[data-edge=late] .dg-field::after{box-shadow:inset 0 -6px 0 0 #e5383b,inset 0 -44px 30px -18px #e5383bcc;animation:dg-glow .3s ease-in-out infinite alternate}
-.tool-danguli .dg[data-edge=danger] .dg-field::after{box-shadow:inset 0 0 0 4px #f28c28,inset 0 0 30px 6px #f28c2899;animation:dg-glow .7s ease-in-out infinite alternate}
+.tool-danguli .dg[data-edge=danger] .dg-field::after{box-shadow:inset 0 0 0 4px #f28c28,inset 0 0 30px 6px #f28c2899;animation:dg-glow .7s ease-in-out infinite alternate} /* unslop-ignore: the orange rim is the last-hit-still-short warning, the only glow here */
 .tool-danguli .dg-call{flex:none;min-height:26px;margin:0;font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.35;text-align:center;color:var(--ink)}
-.tool-danguli .dg-call.dg-in{animation:dg-in .22s ease-out}
-.tool-danguli .dg-pad{flex:1 1 92px;display:grid;min-height:58px;max-height:170px;border:2px solid var(--paper-edge);border-radius:16px;background:#fff;color:var(--ink);font-family:var(--font-display);font-size:18px;font-weight:700;transition:background .1s,transform .06s}
-.tool-danguli .dg-pad:active{transform:translateY(1px)}
+.tool-danguli .dg-call.dg-in{animation:dg-in .2s var(--dg-ease)}
+.tool-danguli .dg-pad{flex:1 1 92px;display:grid;min-height:58px;max-height:170px;border:2px solid var(--paper-edge);border-radius:16px;background:#fff;color:var(--ink);font-family:var(--font-display);font-size:18px;font-weight:700;transition:background .1s,transform .1s var(--dg-ease)}
+.tool-danguli .dg-pad:active{transform:scale(.985)}
+.tool-danguli .dg-modes button:active,.tool-danguli .dg-sheet-close:active,.tool-danguli .dg-sheet-world button:not(:disabled):active,.tool-danguli .dg-link:active{transform:scale(.97)}
 .tool-danguli .dg-pad>span{display:none;align-items:center;justify-content:center;gap:10px}
 .tool-danguli .dg-pad[data-phase="0"] .dg-pad-aim,.tool-danguli .dg-pad[data-phase="1"] .dg-pad-pop,.tool-danguli .dg-pad[data-phase="2"] .dg-pad-fly,.tool-danguli .dg-pad[data-phase="3"] .dg-pad-rest{display:flex}
 .tool-danguli .dg-pad[data-phase="0"]{background:var(--paper)}
@@ -91,14 +92,14 @@
 .tool-danguli .dg-sheet{position:absolute;inset:0;z-index:5;overflow:auto;padding:14px;border-radius:18px;background:#fffcf3;box-shadow:0 10px 40px #26301e40;overscroll-behavior:contain}
 .tool-danguli .dg-sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .tool-danguli .dg-sheet h2{margin:0;font-family:var(--font-display);font-size:22px}
-.tool-danguli .dg-sheet-close{width:44px;height:44px;border:0;border-radius:12px;background:var(--paper);font-size:18px}
+.tool-danguli .dg-sheet-close{width:44px;height:44px;border:0;border-radius:12px;background:var(--paper);font-size:18px;transition:transform .14s var(--dg-ease)}
 .tool-danguli .dg-sheet .dg-modes{justify-content:flex-start;margin-bottom:6px}
 .tool-danguli .dg-sheet .dg-modes button{border-color:var(--paper-edge);color:var(--ink)}
 .tool-danguli .dg-sheet .dg-modes button[aria-checked=true]{border-color:var(--ink);background:var(--ink);color:#fff}
 .tool-danguli .dg-sheet-world h3{margin:12px 0 6px;font-size:15px}
 .tool-danguli .dg-sheet-world h3 small{margin-left:6px;font-size:12px;font-weight:500;color:var(--muted)}
 .tool-danguli .dg-sheet-world ol{display:grid;gap:6px;margin:0;padding:0;list-style:none}
-.tool-danguli .dg-sheet-world button{display:grid;grid-template-columns:36px 1fr auto;grid-template-areas:"num name stars" "num teach teach";gap:0 10px;align-items:center;width:100%;padding:8px 10px;border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff;color:var(--ink);text-align:left}
+.tool-danguli .dg-sheet-world button{display:grid;grid-template-columns:36px 1fr auto;grid-template-areas:"num name stars" "num teach teach";gap:0 10px;align-items:center;width:100%;padding:8px 10px;border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff;color:var(--ink);text-align:left;transition:transform .14s var(--dg-ease)}
 .tool-danguli .dg-sheet-world button[data-next]{border-color:var(--accent);box-shadow:0 0 0 3px #b4372a33}
 .tool-danguli .dg-sheet-world button[aria-current=true]{background:#fff7e6}
 .tool-danguli .dg-sheet-world button:disabled{opacity:.5}
@@ -164,5 +165,6 @@
 @media(max-width:350px){.tool-danguli .dg-end-choices button{font-size:13px;padding:6px 4px}.tool-danguli .dg-end-choices kbd{display:none}.tool-danguli .dg-hits li{min-width:44px;padding:2px 4px}.tool-danguli .dg-hits b{font-size:12px}.tool-danguli .dg-modes button{padding:4px 12px}.tool-danguli .dg-total{padding:4px 7px}.tool-danguli .dg-badge em{display:none}}
 /* slow mode: steady edges, no pops or pulses */
 .tool-danguli .dg[data-slow] .dg-field::after,.tool-danguli .dg[data-slow] .dg-call{animation:none!important}
-.tool-danguli .dg[data-slow] .dg-title-start,.tool-danguli .dg[data-slow] .dg-pad{transition:none}
-@media(prefers-reduced-motion:reduce){.tool-danguli .dg-field::after,.tool-danguli .dg-call{animation:none!important}.tool-danguli .dg-title-start{transition:none}.tool-danguli .dg-title-start:hover{transform:none}}
+.tool-danguli .dg[data-slow] button,.tool-danguli .dg[data-slow] .gx-pop{transition:none!important;animation:none!important}
+.tool-danguli .dg[data-slow] button:active,.tool-danguli .dg[data-slow] .dg-title-start:hover{transform:none}
+@media(prefers-reduced-motion:reduce){.tool-danguli .dg-field::after,.tool-danguli .dg-call,.tool-danguli .gx-pop{animation:none!important}.tool-danguli button,.tool-danguli .dg-total{transition:none!important}.tool-danguli button:active,.tool-danguli .dg-title-start:hover{transform:none}}

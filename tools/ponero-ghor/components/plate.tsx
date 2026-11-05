@@ -79,7 +79,7 @@ export function Plate({ board, level, look, picture, calm, won, flight, live, wa
       if (!tile || was.cells[cell] === tile) continue;
       well.current.querySelector<HTMLElement>(`[data-tile="${tile}"] .pg-face`)?.animate(
         [{ transform: "scale(1)" }, { transform: "scale(1.05, .93)" }, { transform: "scale(1)" }],
-        { duration: 170, delay: ms * 0.75, easing: "ease-out" },
+        { duration: 170, delay: ms * 0.75, easing: "cubic-bezier(0.23, 1, 0.32, 1)" },
       );
     }
   }, [board]);

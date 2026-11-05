@@ -2,7 +2,7 @@
 .tool-kagojer-urojahaj{--accent:#2f6fb3;--accent-deep:#1d4a7c;--ink:#1f2a44;--muted:#5a6478;--paper:#fbfaf3;--candy:#ff9d2e;--gold:#ffd166;--cream:#fff8e8}
 .tool-kagojer-urojahaj .ku-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-.ku{--panel:#1d1a14e8;position:relative;width:100%;max-width:560px;color:var(--cream)}
+.ku{--ku-ease:cubic-bezier(.23,1,.32,1);--panel:#1d1a14e8;position:relative;width:100%;max-width:560px;color:var(--cream)}
 .ku[data-look=roof]{--panel:#2a1c14e8}
 .ku[data-look=river]{--panel:#141b28eb}
 .ku button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
@@ -15,20 +15,20 @@
 .ku-play>canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
 
 /* the HUD's one HTML part: the level badge, top-left; it opens সব লেভেল */
-.ku-badge{position:absolute;top:8px;left:8px;z-index:2;display:inline-flex;align-items:center;gap:7px;max-width:46%;min-height:30px;padding:0 11px 0 9px;border:0;border-radius:999px;background:#1d1a1499;color:#fff;font-size:13px;font-weight:700;line-height:1.1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ku-badge{position:absolute;top:8px;left:8px;z-index:2;display:inline-flex;align-items:center;gap:7px;max-width:46%;min-height:30px;padding:0 11px 0 9px;border:0;border-radius:8px;background:#1d1a1499;color:#fff;font-size:13px;font-weight:700;line-height:1.1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ku-badge i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--candy);box-shadow:0 0 0 3px #ff9d2e33}
 
 /* ---- the title ---- */
-.ku-start{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 16px 16px;overflow:auto;overscroll-behavior:contain;background:linear-gradient(#1d1a1400 0%,#1d1a14a8 24%,#1d1a14e0 100%);text-align:center;animation:ku-in .25s ease-out}
+.ku-start{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 16px 16px;overflow:auto;overscroll-behavior:contain;background:linear-gradient(#1d1a1400 0%,#1d1a14a8 24%,#1d1a14e0 100%);text-align:center;animation:ku-in .25s var(--ku-ease)}
 .ku-start[data-finale]{background:linear-gradient(#3a0f0a00 0%,#3a0f0ab0 24%,#1d1a14e6 100%)}
-.ku-go{display:grid;justify-items:center;width:min(100%,330px);padding:4px 8px 12px;border:0;border-radius:26px;background:none;color:#fff;font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1.1;transition:transform .1s ease-out}
+.ku-go{display:grid;justify-items:center;width:min(100%,330px);padding:4px 8px 12px;border:0;border-radius:26px;background:none;color:#fff;font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1.1;transition:transform .1s var(--ku-ease)}
 .ku-go-art{display:block;width:100%;height:clamp(110px,22vh,190px)}
-.ku-go span{margin-top:-4px;padding:6px 30px 8px;border-radius:999px;background:var(--accent);box-shadow:0 5px 0 var(--accent-deep),0 16px 30px -12px #000c}
+.ku-go span{margin-top:-4px;padding:6px 30px 8px;border-radius:14px;background:var(--accent);box-shadow:0 5px 0 var(--accent-deep),0 16px 30px -12px #000c}
 .ku-go:active{transform:translateY(3px) scale(.98)}
 .ku-go:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
 .ku-pick{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px;width:min(100%,380px)}
 .ku-pick-name h2{margin:0;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.3;color:#fff}
-.ku-finale-badge{margin:0 auto 2px;padding:1px 10px;width:max-content;border-radius:999px;background:#c2361f;color:#fff;font-size:12px;font-weight:700}
+.ku-finale-badge{margin:0 auto 2px;padding:1px 10px;width:max-content;border-radius:4px;background:#c2361f;color:#fff;font-size:12px;font-weight:700}
 .ku-got{margin:0;color:var(--gold);font-size:15px;letter-spacing:2px}
 .ku-got span{color:#ffffff40}
 .ku-step{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid #fff8e855;border-radius:14px;background:#ffffff14;color:#fff}
@@ -52,8 +52,8 @@
 
 /* ---- the first-run story ---- */
 .ku-story{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;padding:16px 16px 18%;background:#1d1a1455;pointer-events:none}
-.ku-skip{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);margin:0;white-space:nowrap;padding:4px 10px;border-radius:999px;background:#1d1a14a6;font-size:12px;font-weight:600}
-.ku-panel{max-width:330px;margin:0;padding:14px 18px;border:3px solid var(--paper);border-radius:6px;background:var(--paper) repeating-linear-gradient(transparent 0 27px,#8fb9e066 27px 29px);color:var(--ink);font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1.45;box-shadow:6px 6px 0 #1d1a14;animation:ku-in .3s ease-out}
+.ku-skip{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);margin:0;white-space:nowrap;padding:4px 10px;border-radius:8px;background:#1d1a14a6;font-size:12px;font-weight:600}
+.ku-panel{max-width:330px;margin:0;padding:14px 18px;border:3px solid var(--paper);border-radius:6px;background:var(--paper) repeating-linear-gradient(transparent 0 27px,#8fb9e066 27px 29px);color:var(--ink);font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1.45;box-shadow:6px 6px 0 #1d1a14;animation:ku-in .26s var(--ku-ease)}
 .ku-dots{display:flex;gap:6px;margin:0}
 .ku-dots i{width:8px;height:8px;border-radius:50%;background:#fff8e855}
 .ku-dots i[data-on]{background:#fff}
@@ -64,7 +64,7 @@
 .ku-cover .kit-primary{min-width:200px;min-height:56px;font-size:19px}
 
 /* ---- the end screen ---- */
-.ku-finish{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;overflow:auto;background:#1d1a14c8;text-align:center;animation:ku-in .3s cubic-bezier(.2,.9,.3,1.1) both}
+.ku-finish{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;overflow:auto;background:#1d1a14c8;text-align:center;animation:ku-in .26s var(--ku-ease) both}
 .ku-finish h2{margin:0;font-family:var(--font-display);font-size:clamp(23px,7cqw,30px);font-weight:800;line-height:1.25;color:#fff}
 .ku-finish .gx-reveal{font-size:38px;gap:6px}
 .ku-nostar{margin:0;font-size:30px;letter-spacing:4px;color:#ffffff40}
@@ -88,7 +88,7 @@
 
 /* ---- সব লেভেল ---- */
 .ku-sheet{position:absolute;inset:0;z-index:4;display:grid;align-items:start;padding:8px;background:#0d0a0899;animation:ku-fade .16s ease-out}
-.ku-sheet-card{display:grid;gap:12px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:14px 12px 16px;border-radius:16px;background:var(--panel);box-shadow:0 20px 40px -20px #000c;animation:ku-in .2s ease-out}
+.ku-sheet-card{display:grid;gap:12px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:14px 12px 16px;border-radius:16px;background:var(--panel);box-shadow:0 20px 40px -20px #000c;animation:ku-in .2s var(--ku-ease)}
 .ku-sheet header{position:relative;padding-right:52px}
 .ku-sheet h2{margin:0;font-family:var(--font-display);font-size:24px;color:#fff}
 .ku-sheet header p{margin:2px 0 0;font-size:13px;color:#f3e6cc}
@@ -101,7 +101,7 @@
 .ku-world button{position:relative;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"key name stars" "key line line";align-items:center;column-gap:10px;row-gap:1px;width:100%;min-height:58px;padding:7px 10px;border:1.5px solid #fff8e82a;border-radius:12px;background:#ffffff10;color:#fff;text-align:left}
 .ku-world button kbd{grid-area:key;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#ffffff1c;font-family:inherit;font-size:13px;font-weight:700}
 .ku-row-name{grid-area:name;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:15px}
-.ku-row-name em{padding:1px 8px;border-radius:999px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800}
+.ku-row-name em{padding:1px 8px;border-radius:4px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800}
 .ku-row-line{grid-area:line;font-size:12.5px;line-height:1.4;color:#f3e6ccc0}
 .ku-row-stars{grid-area:stars;display:flex;font-size:13px;line-height:1}
 .ku-row-stars i{font-style:normal;color:#ffffff30}
@@ -136,3 +136,8 @@
 /* ধীরে খেলো and reduced motion: no slides, no bounce */
 .ku[data-calm] *{animation:none!important;transition:none!important}
 @media (prefers-reduced-motion:reduce){.ku *{animation:none!important;transition:none!important}}
+/* every pressable gives a little under the finger (the kit's primary button already sinks) */
+.ku-badge,.ku-step,.ku-sheet-close,.ku-world button,.ku .kit-secondary{transition:transform .14s var(--ku-ease)}
+.ku-badge:active,.ku-step:active:not(:disabled),.ku-sheet-close:active,.ku-world button:active:not(:disabled),.ku .kit-secondary:active:not(:disabled){transform:scale(.97)}
+.ku-skip{transition:opacity .14s var(--ku-ease)}
+.ku-skip:active{opacity:.7}

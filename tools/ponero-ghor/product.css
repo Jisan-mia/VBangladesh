@@ -10,7 +10,7 @@
 /* The game fills the stage: HUD, the plate (as big as fits), one status line, the controls. Nothing scrolls while playing. */
 .tool-ponero-ghor .gp-stage{overflow:hidden}
 .tool-ponero-ghor .gp-game{height:100%}
-.pg{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:8px;width:100%;max-width:520px;height:min(92svh,860px);margin-inline:auto;padding:8px;border-radius:16px;background:var(--paper);color:var(--ink);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:background .3s ease-out}
+.pg{--pg-ease:cubic-bezier(.23,1,.32,1);position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:8px;width:100%;max-width:520px;height:min(92svh,860px);margin-inline:auto;padding:8px;border-radius:16px;background:var(--paper);color:var(--ink);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:background .3s ease-out}
 .gp-stage .pg{height:100%}
 
 /* ---- HUD: level top-left, the finale's bar top-centre, moves and stars top-right ---- */
@@ -24,7 +24,7 @@
 .pg-boss b{color:var(--tray);font-variant-numeric:tabular-nums}
 .pg[data-world="3"] .pg-boss b{color:var(--trim)}
 .pg-boss i{display:block;height:7px;overflow:hidden;border-radius:4px;background:color-mix(in srgb,var(--ink) 16%,transparent)}
-.pg-boss em{display:block;height:100%;background:linear-gradient(90deg,var(--tray),var(--trim));transform-origin:left;transition:transform .3s ease-out}
+.pg-boss em{display:block;height:100%;background:linear-gradient(90deg,var(--tray),var(--trim));transform-origin:left;transition:transform .3s var(--pg-ease)}
 .pg-moves{grid-column:3;display:grid;justify-items:end;margin:0}
 .pg-moves p{display:flex;align-items:baseline;gap:6px;margin:0}
 .pg-moves span{font-size:13px;color:var(--muted)}
@@ -32,7 +32,7 @@
 .pg-track{gap:1px!important;align-items:center!important;font-size:15px;line-height:1}
 .pg-track i{font-style:normal;color:color-mix(in srgb,var(--muted) 45%,transparent)}
 .pg-track i[data-on]{color:var(--star)}
-.pg-track i[data-fell]{animation:pg-fall .7s ease-in both}
+.pg-track i[data-fell]{animation:pg-fall .45s var(--pg-ease) both}
 .pg-track small{margin-left:4px;font-size:12px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
 .pg-rival{font-size:12px;font-weight:700;color:var(--muted)}
 @keyframes pg-fall{0%{color:var(--star);transform:none}60%{color:#e85d04;transform:translateY(8px) rotate(30deg)}100%{transform:none}}
@@ -47,29 +47,28 @@
     radial-gradient(circle at 95.8% 95.8%,#f5f7f6 0 1%,#8f999d 1.6%,transparent 1.8%),
     linear-gradient(180deg,#ffffff38,#ffffff00 18%,#00000024),
     var(--tray);
-  box-shadow:inset 0 2px 0 #ffffff40,inset 0 -3px 0 #00000030,0 10px 24px #0000004d;transition:box-shadow .3s ease-out}
+  box-shadow:inset 0 2px 0 #ffffff40,inset 0 -3px 0 #00000030,0 10px 24px #0000004d}
 .pg-plate::before{content:"";position:absolute;inset:2.6%;border:2px dotted var(--trim);border-radius:4.5%;pointer-events:none}
 /* about to lose a star: the rim glows at the edge, never a popup in the middle (a steady border in slow mode) */
-.pg-plate[data-danger]{box-shadow:inset 0 2px 0 #ffffff40,0 0 0 4px #f28c28,0 0 26px 6px #f28c2899;animation:pg-warn .9s ease-in-out infinite alternate}
-.pg[data-calm] .pg-plate[data-danger]{animation:none;box-shadow:0 0 0 4px #f28c28}
-@keyframes pg-warn{to{box-shadow:inset 0 2px 0 #ffffff40,0 0 0 4px #f28c28,0 0 10px 2px #f28c2855}}
+.pg-plate[data-danger]::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:0 0 0 4px #f28c28,0 0 26px 6px #f28c2899;animation:pg-warn .9s ease-in-out infinite alternate} /* unslop-ignore: the orange rim is the about-to-lose-a-star warning, the only glow here */
+.pg[data-calm] .pg-plate[data-danger]::after{animation:none;box-shadow:0 0 0 4px #f28c28}
+@keyframes pg-warn{to{opacity:.55}}
 .pg-progress{position:absolute;top:3.3%;left:12%;right:12%;height:4px;overflow:hidden;border-radius:2px;background:#00000038;pointer-events:none}
-.pg-progress i{display:block;height:100%;background:var(--trim);transform-origin:left;transition:transform .3s ease-out}
+.pg-progress i{display:block;height:100%;background:var(--trim);transform-origin:left;transition:transform .3s var(--pg-ease)}
 
 .pg-well{--drag:0;--sx:0;--sy:0;--slide:120ms;position:relative;width:100%;height:100%;border-radius:3%;background:var(--well);box-shadow:inset 0 3px 6px #00000066;touch-action:none;container-type:inline-size;outline:0}
 /* a ঘুঁটি: pressed tin with a raised Bangla digit; it slides with a little overshoot, so it lands with weight */
 .pg-tile{position:absolute;top:0;left:0;width:calc(100% / var(--n));height:calc(100% / var(--n));padding:0;border:0;background:none;cursor:grab;
-  transform:translate3d(calc(var(--c) * 100%),calc(var(--r) * 100%),0);transition:transform var(--slide) cubic-bezier(.25,1.4,.45,1);-webkit-tap-highlight-color:transparent;will-change:transform}
-.pg[data-calm] .pg-tile{transition-timing-function:ease-out}
+  transform:translate3d(calc(var(--c) * 100%),calc(var(--r) * 100%),0);transition:transform var(--slide) var(--pg-ease);-webkit-tap-highlight-color:transparent;will-change:transform}
 .pg-tile[data-drag]{z-index:2;transform:translate3d(calc((var(--c) + var(--drag) * var(--sx)) * 100%),calc((var(--r) + var(--drag) * var(--sy)) * 100%),0);transition:none;cursor:grabbing}
 .pg-tile[data-drag] .pg-face{box-shadow:inset 0 0 0 2px #ffffff8c,inset -2px -3px 0 #0000001f,0 7px 10px #00000059}
 .pg-well[data-scatter] .pg-tile{transform:translate3d(calc(var(--hc) * 100%),calc(var(--hr) * 100%),0);transition:none}
-.pg-well[data-flying] .pg-tile{transition:transform .42s cubic-bezier(.3,1.25,.5,1) calc(var(--i) * 5ms)}
+.pg-well[data-flying] .pg-tile{transition:transform .42s var(--pg-ease) calc(var(--i) * 5ms)}
 .pg-face{position:absolute;inset:3.5%;display:grid;place-items:center;border-radius:14%;
   background:linear-gradient(145deg,#f7f9f8 0%,#d5dadc 45%,#a1aaae 100%);background-size:cover;
   box-shadow:inset 0 0 0 2px #ffffff8c,inset -2px -3px 0 #0000001f,0 3px 0 #00000059;
   font-family:var(--font-display);font-weight:800;line-height:1;color:var(--digit);font-size:28px;font-size:calc(100cqi / var(--n) * .5);
-  text-shadow:-1px -1px 0 #ffffffe6,1px 1.5px 0 #0a143259;transition:box-shadow .12s ease-out}
+  text-shadow:-1px -1px 0 #ffffffe6,1px 1.5px 0 #0a143259} /* unslop-ignore: hard emboss edges on the pressed-tin digit, not a glow */
 .pg-tile:focus-visible{outline:none}
 .pg-tile:focus-visible .pg-face{outline:3px solid var(--trim);outline-offset:1px}
 /* home: a brass rivet in the corner; a whole row home turns brass, so progress shows without sound */
@@ -80,12 +79,12 @@
 .pg-well:not([data-look=digits]) .pg-tile[data-done] .pg-face{background-size:calc(var(--n) * 100%) calc(var(--n) * 100%);box-shadow:inset 0 0 0 3px var(--trim),0 3px 0 #00000059}
 .pg-face small{position:absolute;top:5%;left:6%;min-width:1.6em;padding:1px 4px;border-radius:6px;background:#ffffffde;color:var(--digit);font-size:13px;font-size:max(11px,calc(100cqi / var(--n) * .17));text-shadow:none;text-align:center}
 .pg-well[data-look=faint] .pg-face small{opacity:.42}
-.pg-last{pointer-events:none;animation:pg-drop .45s cubic-bezier(.3,1.4,.5,1) .12s both}
-.pg-sweep{position:absolute;inset:0;z-index:3;border-radius:3%;background:linear-gradient(105deg,transparent 35%,#ffffff8c 50%,transparent 65%);background-size:250% 100%;pointer-events:none;animation:pg-sweep 1s ease-out .35s both}
+.pg-last{pointer-events:none;animation:pg-drop .3s var(--pg-ease) .1s both}
+.pg-sweep{position:absolute;inset:0;z-index:3;border-radius:3%;background:linear-gradient(105deg,transparent 35%,#ffffff8c 50%,transparent 65%);background-size:250% 100%;pointer-events:none;animation:pg-sweep 1s var(--pg-ease) .35s both}
 .pg-well[data-won] .pg-tile{cursor:default}
 @keyframes pg-drop{from{opacity:0;transform:translate3d(calc(var(--c) * 100%),calc(var(--r) * 100%),0) scale(1.3)}}
 @keyframes pg-sweep{from{background-position:120% 0;opacity:1}80%{opacity:1}to{background-position:-20% 0;opacity:0}}
-.pg-peek{position:absolute;inset:7.5%;z-index:3;padding:0;border:0;border-radius:3%;overflow:hidden;background:var(--well);animation:pg-fade .18s ease-out}
+.pg-peek{position:absolute;inset:7.5%;z-index:3;padding:0;border:0;border-radius:3%;overflow:hidden;background:var(--well);animation:pg-fade .18s var(--pg-ease)}
 .pg-peek img{display:block;width:100%;height:100%;object-fit:cover}
 
 /* ---- under the plate: one line of help, then the goal picture, undo and the hint with its price ---- */
@@ -95,15 +94,15 @@
 .pg-goal{padding:3px;border:2px solid var(--trim);border-radius:12px;background:#fff;cursor:pointer}
 .pg-goal[aria-pressed=true]{outline:3px solid var(--tray);outline-offset:1px}
 .pg-goal img{display:block;width:100%;height:100%;border-radius:8px;object-fit:cover}
-.pg-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:56px;padding:4px 8px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:#2a2420;font-size:15px;font-weight:700;line-height:1.2;white-space:nowrap;box-shadow:0 3px 0 var(--line);transition:transform .08s ease-out}
+.pg-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:56px;padding:4px 8px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:#2a2420;font-size:15px;font-weight:700;line-height:1.2;white-space:nowrap;box-shadow:0 3px 0 var(--line);transition:transform .1s var(--pg-ease)}
 .pg-tool:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
 .pg-tool:disabled{opacity:.45}
 .pg-tool svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .pg-hint{border-color:var(--tray);box-shadow:0 3px 0 var(--tray-deep)}
-.pg-hint small{padding:1px 6px;border-radius:999px;background:#fff3cf;color:#7a5200;font-size:12px;font-weight:800}
+.pg-hint small{padding:1px 6px;border-radius:4px;background:#fff3cf;color:#7a5200;font-size:12px;font-weight:800}
 
 /* ---- the end: a tin slip in place of the controls; the plate stays in view ---- */
-.pg-end{grid-row:3 / span 2;display:grid;gap:8px;padding:12px 14px;border:2px solid var(--trim);border-radius:16px;background:#fffdf6;color:#2a2420;box-shadow:0 -6px 18px #0000001f;animation:pg-rise .35s cubic-bezier(.2,1.2,.4,1) both}
+.pg-end{grid-row:3 / span 2;display:grid;gap:8px;padding:12px 14px;border:2px solid var(--trim);border-radius:16px;background:#fffdf6;color:#2a2420;box-shadow:0 -6px 18px #0000001f;animation:pg-rise .28s var(--pg-ease) both}
 .pg[data-calm] .pg-end{animation:none}
 .pg-end-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .pg-end h2{margin:0;font-family:var(--font-display);font-size:22px;line-height:1.3}
@@ -123,10 +122,10 @@
 @keyframes pg-fade{from{opacity:0}}
 
 /* ---- title: the plate is the start button ---- */
-.pg-title{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px;overflow:auto;border-radius:16px;background:var(--paper);text-align:center;animation:pg-fade .2s ease-out}
+.pg-title{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px;overflow:auto;border-radius:16px;background:var(--paper);text-align:center;animation:pg-fade .2s var(--pg-ease)}
 .pg-start{display:grid;justify-items:center;padding:0;border:0;background:none;color:inherit;cursor:pointer;touch-action:manipulation}
 .pg-start-art{display:block;width:min(100%,420px,calc(var(--stage-h,90svh) * .5));aspect-ratio:1}
-.pg-start span{margin-top:-30px;padding:8px 52px;border:3px dashed var(--trim);border-radius:18px;background:var(--tray-deep);color:#fff;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.3;box-shadow:0 6px 0 #0000004d,0 16px 26px -14px #000;transition:transform .08s ease-out}
+.pg-start span{margin-top:-30px;padding:8px 52px;border:3px dashed var(--trim);border-radius:18px;background:var(--tray-deep);color:#fff;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.3;box-shadow:0 6px 0 #0000004d,0 16px 26px -14px #000;transition:transform .1s var(--pg-ease)}
 .pg-start:active span{transform:translateY(4px) scale(.98)}
 .pg-start:focus-visible span{outline:3px solid var(--ink);outline-offset:3px}
 .pg-pick{display:flex;align-items:center;gap:10px}
@@ -136,8 +135,8 @@
 .pg-pick svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .pg-line{max-width:34ch;margin:0;font-size:15px;line-height:1.5}
 .pg-line span{display:block;margin-top:2px;font-size:14px;color:var(--muted)}
-.pg-finale-tag{display:inline-block;margin-right:6px;padding:1px 9px;border-radius:999px;background:var(--tray);color:#fff;font-size:12px;font-style:normal;font-weight:800;vertical-align:2px}
-.pg-calm{margin:0;padding:3px 10px;border-radius:999px;background:#fff;color:#6f6253;font-size:13px}
+.pg-finale-tag{display:inline-block;margin-right:6px;padding:1px 9px;border-radius:4px;background:var(--tray);color:#fff;font-size:12px;font-style:normal;font-weight:800;vertical-align:2px}
+.pg-calm{margin:0;padding:3px 10px;border-radius:6px;background:#fff;color:#6f6253;font-size:13px}
 .tool-ponero-ghor .pg-all{min-height:40px;font-weight:600;color:var(--ink)}
 .pg-friend{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;max-width:340px;padding:8px 12px;border-radius:14px;background:#fff;color:#2a2420;text-align:left}
 .pg-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 14px #2a242033;transform:rotate(-4deg)}
@@ -147,7 +146,7 @@
 /* ---- the story: three panels, tap for the next, hold to skip ---- */
 .pg-story{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;border-radius:16px;background:var(--paper);cursor:pointer;touch-action:none}
 .pg-panel{display:block;width:min(100%,360px,calc(var(--stage-h,90svh) * .5));aspect-ratio:1;border-radius:18px;box-shadow:0 0 0 4px #fff,0 0 0 6px var(--ink),0 14px 30px -12px #0006;transform:rotate(-1deg)}
-.pg-caption{max-width:30ch;margin:6px 0 0;font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.45;text-align:center;animation:pg-fade .3s ease-out}
+.pg-caption{max-width:30ch;margin:6px 0 0;font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.45;text-align:center;animation:pg-fade .3s var(--pg-ease)}
 .pg-dots{display:flex;gap:6px;margin:0}
 .pg-dots i{width:8px;height:8px;border-radius:50%;background:color-mix(in srgb,var(--ink) 22%,transparent)}
 .pg-dots i[data-on]{background:var(--tray)}
@@ -157,7 +156,7 @@
 @keyframes pg-hold{to{background-size:100% 100%,auto}}
 
 /* ---- সব লেভেল: a choice moment over the plate ---- */
-.pg-sheet{position:absolute;inset:0;z-index:6;overflow:auto;overscroll-behavior:contain;padding:8px;border-radius:16px;background:color-mix(in srgb,#000 35%,transparent);animation:pg-fade .15s ease-out}
+.pg-sheet{position:absolute;inset:0;z-index:6;overflow:auto;overscroll-behavior:contain;padding:8px;border-radius:16px;background:color-mix(in srgb,#000 35%,transparent);animation:pg-fade .15s var(--pg-ease)}
 .pg-sheet-card{display:grid;gap:12px;padding:14px;border-radius:16px;background:#fffdf6;color:#2a2420}
 .pg-sheet header{position:relative;padding-right:48px}
 .pg-sheet h2{margin:0;font-family:var(--font-display);font-size:22px}
@@ -176,7 +175,7 @@
 .pg-world button[aria-current=true]{border-color:#2a2420;box-shadow:inset 0 0 0 1.5px #2a2420}
 .pg-world button[data-finale]{border-style:dashed;border-color:#c23b22}
 .pg-world button[data-next]{border-color:#c23b22;background:#fff3cf}
-.pg-world button em{position:absolute;top:-8px;left:50%;padding:0 5px;border-radius:999px;background:#c23b22;color:#fff;font-size:10px;font-style:normal;font-weight:800;white-space:nowrap;transform:translateX(-50%)}
+.pg-world button em{position:absolute;top:-8px;left:50%;padding:0 5px;border-radius:4px;background:#c23b22;color:#fff;font-size:10px;font-style:normal;font-weight:800;white-space:nowrap;transform:translateX(-50%)}
 .pg-mini{display:flex;font-size:11px;line-height:1}
 .pg-mini i{font-style:normal;color:#d5c9b4}.pg-mini i[data-on]{color:#f2a900}
 
@@ -197,4 +196,12 @@
   .pg-tool svg{display:none}
   .pg-stats dd{font-size:18px}
 }
-@media(prefers-reduced-motion:reduce){.pg-tile{transition-duration:.05s}.pg-last,.pg-sweep,.pg-end{animation:none}}
+/* every pressable gives a little under the finger (the kit's primary button already sinks) */
+.pg-goal,.pg-world button,.pg-sheet-close,.pg .kit-secondary{transition:transform .14s var(--pg-ease)}
+.pg-goal:active,.pg-world button:active:not(:disabled),.pg-sheet-close:active,.pg .kit-secondary:active:not(:disabled){transform:scale(.97)}
+/* ধীরে খেলো and reduced motion: tiles jump, nothing flies, drops, sweeps or pulses; the danger rim stays, still */
+.pg[data-calm] .pg-tile,.pg[data-calm] .pg-well[data-flying] .pg-tile{transition:none}
+.pg[data-calm] *,.pg[data-calm]{animation:none!important}
+@media(prefers-reduced-motion:reduce){.pg-tile,.pg-well[data-flying] .pg-tile,.pg .kit-secondary,.pg-goal,.pg-world button,.pg-sheet-close,.pg-tool,.pg-start span{transition:none!important}.pg *,.pg-plate::after,.pg-last,.pg-sweep,.pg-end{animation:none!important}}
+/* the hold-to-skip fill is progress, not decoration: it keeps running */
+.pg .pg-skip[data-holding] span{animation:pg-hold .6s linear forwards!important}

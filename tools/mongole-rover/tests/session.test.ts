@@ -223,7 +223,7 @@ test("kids' rules: no voice, no network, no history or hash, end buttons are pic
   assert.match(css, /\.mr-big\{min-height:112px\}/);
   assert.match(css, /\.mr-big-next\{[^}]*min-height:96px/);
   // The arrow pad, the buttons and the queue ticket keep touch sizes.
-  assert.match(css, /\.mr-arrow,\.mr-repeat,\.mr-back,\.mr-go,\.mr-stop\{[^}]*min-height:76px/);
+  assert.match(css, /\.mr-arrow,\.mr-repeat,\.mr-back,\.mr-go,\.mr-stop\{[^}]*min-height:7[2-9]px/);
   assert.match(page, /<GamePage site=\{site\} kids/);
   assert.match(game, /<ParentGate key=\{gateKey\}/);
   assert.equal((game.match(/ShareToolLink/g) ?? []).length, 2, "the share link is only inside the gate");

@@ -10,8 +10,23 @@
 .gd-defs{position:absolute;width:0;height:0;overflow:hidden}
 :where(.gd button){font:inherit;color:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
 
+/* ---- the scene: the ghat bank of the pond, the fair's cloth, the evening haat; the stage is the place, the cards sit on it ---- */
+.gd{--scene:linear-gradient(#a9d3c4,#9ccfc2);--decor:linear-gradient(#0000,#0000)}
+.gd[data-world="0"]{--scene:repeating-linear-gradient(135deg,#ffffff1f 0 18px,transparent 18px 36px),linear-gradient(#a9d8c8,#8cc5b6);
+  --decor:radial-gradient(ellipse 34px 21px at 9% 14%,#4aa68b 97%,transparent),radial-gradient(ellipse 22px 14px at 15% 18%,#5db69a 97%,transparent),
+  radial-gradient(ellipse 40px 25px at 92% 66%,#4aa68b 97%,transparent),radial-gradient(ellipse 26px 16px at 85% 71%,#5db69a 97%,transparent),
+  radial-gradient(ellipse 30px 19px at 20% 92%,#4aa68b 97%,transparent),
+  radial-gradient(circle at 78% 12%,transparent 0 24px,#ffffff66 24px 26px,transparent 26px 42px,#ffffff4d 42px 44px,transparent 44px),
+  radial-gradient(circle at 30% 56%,transparent 0 34px,#ffffff4d 34px 36px,transparent 36px 58px,#ffffff38 58px 60px,transparent 60px)}
+.gd[data-world="1"]{--scene:repeating-linear-gradient(90deg,#f2b93f 0 32px,#eaa82e 32px 64px),repeating-linear-gradient(0deg,#ffffff2e 0 32px,transparent 32px 64px),#f2b93f;
+  --decor:radial-gradient(circle at 80% 14%,transparent 0 24px,#d99a2b55 24px 26px,transparent 26px 42px,#d99a2b44 42px 44px,transparent 44px),radial-gradient(circle at 24% 62%,transparent 0 32px,#d99a2b4d 32px 34px,transparent 34px 56px,#d99a2b38 56px 58px,transparent 58px)}
+.gd[data-world="2"]{--scene:radial-gradient(circle 2px at 12% 9%,#ffffffcc 96%,transparent),radial-gradient(circle 2px at 38% 4%,#ffffffcc 96%,transparent),radial-gradient(circle 3px at 71% 11%,#ffffffcc 96%,transparent),radial-gradient(circle 2px at 90% 5%,#ffffffcc 96%,transparent),repeating-linear-gradient(180deg,transparent 0 38px,#ffffff17 38px 40px),linear-gradient(#2a3270,#3f4f99 55%,#6b7fcf);
+  --decor:radial-gradient(circle at 78% 14%,transparent 0 24px,#ffffff66 24px 26px,transparent 26px 42px,#ffffff4d 42px 44px,transparent 44px),radial-gradient(circle at 26% 64%,transparent 0 32px,#ffffff4d 32px 34px,transparent 34px 56px,#ffffff38 56px 58px,transparent 58px)}
+.gd:is([data-screen=title],[data-screen=play],[data-screen=end]){padding:12px;border-radius:16px;background:var(--scene)}
+.gd[data-screen=end]{justify-content:center}
+
 /* ---- title: the world's own picture is the start button ---- */
-.gd-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:flex-start;gap:14px;padding:8px 4px;text-align:center}
+.gd-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:flex-start;gap:14px;padding:8px 0;text-align:center}
 .gd-start{display:grid;justify-items:center;gap:0;width:min(100%,400px);padding:12px 12px 16px;border:0;border-radius:14px;background:var(--w-soft);box-shadow:inset 0 0 0 3px var(--w-edge),0 8px 0 var(--w-edge);cursor:pointer;transition:transform 140ms var(--ease-out),box-shadow 140ms var(--ease-out)}
 .gd-start:active{transform:translateY(4px) scale(.98);box-shadow:inset 0 0 0 3px var(--w-edge),0 3px 0 var(--w-edge)}
 .gd-start:focus-visible,.gd-chip:focus-visible,.gd-big:focus-visible,.gd-tile:focus-visible,.gd-fish:focus-visible,.gd-pond:focus-visible,.gd-cover:focus-visible,.gd-card:focus-visible{outline:4px solid var(--w-accent);outline-offset:4px}
@@ -33,7 +48,8 @@
 .gd-chip b{display:block;font-family:var(--font-display);font-size:18px;line-height:1.5}
 .gd-chip small{display:block;font-size:16px;line-height:1.4;color:var(--muted)}
 .gd-chip-more svg{display:block;width:22px;height:22px;fill:none;stroke:var(--muted);stroke-width:2.2;stroke-linecap:round}
-.gd-title-line{display:flex;align-items:center;justify-content:center;gap:10px;margin:0;font-size:18px;line-height:1.6;color:var(--muted)}
+.gd-title-line{display:flex;align-items:center;justify-content:center;gap:10px;margin:0;padding:4px 14px;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--w-edge);font-size:18px;line-height:1.6;color:var(--muted)}
+.gd-title-line .gd-dotrow{flex:none;flex-wrap:nowrap}
 .gd-title-line .gd-dotrow i{background:var(--w-accent);width:10px}
 .gd-grown{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px}
 .gd-grown .kk-gate-open>div{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
@@ -50,20 +66,21 @@
 .gd-badge{display:flex;align-items:center;gap:8px;margin:0;padding:2px 12px 2px 8px;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--w-edge)}
 .gd-badge b{display:block;font-family:var(--font-display);font-size:16px;line-height:1.4}
 .gd-badge small{display:block;font-size:14px;line-height:1.3;color:var(--muted)}
-.gd-dots{display:flex;gap:7px;margin:0;padding:0;list-style:none}
+.gd-dots{display:flex;gap:7px;margin:0;padding:8px 10px;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--w-edge);list-style:none}
 .gd-dots li{width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 2px var(--w-edge);transition:background-color 200ms ease,box-shadow 200ms ease}
 .gd-dots .done{background:var(--w-accent);box-shadow:inset 0 0 0 2px var(--w-accent)}
 .gd-dots .now{box-shadow:inset 0 0 0 3px var(--w-accent)}
-.gd-q{margin:0;min-height:1.6em;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.6;color:var(--w-deep)}
-.gd-msg{min-height:1.6em;margin:0;font-size:18px;line-height:1.6;color:var(--muted)}
+.gd-q{align-self:center;margin:0;padding:2px 16px;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--w-edge);font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.6;text-align:center;color:var(--w-deep)}
+.gd-msg{align-self:center;min-height:1.6em;margin:0;padding:0 14px;border-radius:8px;font-size:18px;line-height:1.6;text-align:center;color:var(--muted)}
+.gd-msg:not(:empty){background:#fff;box-shadow:inset 0 0 0 1.5px var(--w-edge)}
 
 /* ---- the field: one entrance per pond, its fish are simply there ---- */
 .gd-field{animation:gd-enter 220ms var(--ease-out) both}
-.gd-pond{position:relative;display:block;width:100%;padding:0;overflow:hidden;border:4px solid var(--water-deep);border-radius:18px;background:radial-gradient(120% 90% at 30% 20%,var(--water-top),var(--water) 60%)}
-.gd-count{height:clamp(220px,min(calc(var(--rows) * 92px),calc(var(--stage-h,640px) - 300px)),400px)}
+.gd-pond{position:relative;display:block;width:100%;padding:0;overflow:hidden;border:4px solid var(--water-deep);border-radius:18px;background:var(--decor),radial-gradient(120% 90% at 30% 20%,var(--water-top),var(--water) 60%)}
+.gd-count{flex:1 1 220px;min-height:220px}
 .gd-fish{position:absolute;display:grid;place-items:center;width:calc(100% / var(--cols));height:calc(100% / var(--rows));padding:0;border:0;background:none;cursor:pointer;transform:translate(-50%,-50%)}
 .gd-swim{display:block;animation:gd-bob 3s ease-in-out infinite}
-.gd-fish .gd-fish-art{display:block;width:min(78%,88px);height:auto;margin:0 auto;transition:transform 120ms var(--ease-out)}
+.gd-fish .gd-fish-art{display:block;width:min(78%,112px);height:auto;margin:0 auto;transition:transform 120ms var(--ease-out)}
 .gd-fish:active .gd-fish-art{transform:scale(.94)}
 .gd-fish.is-on .gd-swim{animation:gd-hop 220ms var(--ease-out) 1 both}
 .gd-fish.is-on .gd-fish-art{filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff)}
@@ -73,8 +90,9 @@
 .gd-count.is-cheer .gd-badge-n{animation:gd-cheer 260ms var(--ease-out) calc(min(var(--i),6) * 40ms) both}
 
 /* which has more, and the merge finale: ponds side by side, the whole pond is the button */
-.gd-ponds{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.gd-small{height:clamp(190px,calc(var(--stage-h,640px) - 380px),260px);transition:transform 240ms var(--ease-in-out),border-radius 240ms var(--ease-in-out),box-shadow 160ms ease}
+.gd-ponds{position:relative;display:grid;flex:1 1 190px;grid-template-columns:1fr 1fr;gap:16px}
+.gd-ponds{align-content:center}
+.gd-small{align-self:center;height:440px;max-height:100%;min-height:190px;transition:transform 240ms var(--ease-in-out),border-radius 240ms var(--ease-in-out),box-shadow 160ms ease}
 button.gd-small{cursor:pointer}
 button.gd-small:active{transform:scale(.97)}
 .gd-spot{position:absolute;width:var(--fish);transform:translate(-50%,-50%);transition:left 300ms var(--ease-in-out),top 300ms var(--ease-in-out)}
@@ -89,8 +107,8 @@ button.gd-small:active{transform:scale(.97)}
 .gd-ponds.is-joined .gd-sum{animation:gd-pop-center 220ms var(--ease-out) both}
 
 /* at a glance: the flashed group, then a cover you tap to look again */
-.gd-glimpse{display:grid}
-.gd-look{display:flex;align-items:center;justify-content:center;gap:12px;height:clamp(190px,calc(var(--stage-h,640px) - 380px),240px);border:4px solid var(--water-deep);border-radius:18px;background:var(--water);animation:gd-fade 160ms ease-out both}
+.gd-glimpse{display:grid;flex:1 1 190px}
+.gd-look{display:flex;align-items:center;justify-content:center;gap:12px;min-height:190px;border:4px solid var(--water-deep);border-radius:18px;background:var(--decor),var(--water);animation:gd-fade 160ms ease-out both}
 .gd-group{display:flex;align-items:center;gap:12px}
 .gd-plus{font-family:var(--font-display);font-size:40px;font-style:normal;font-weight:800;line-height:1;color:var(--w-deep)}
 .gd-pattern{position:relative;display:block;flex:none;width:min(170px,40vw);aspect-ratio:1}
@@ -111,7 +129,7 @@ button.gd-small:active{transform:scale(.97)}
 .gd-tile{position:relative;display:grid;place-items:center;min-height:96px;padding:6px;border:3px solid var(--w-edge);border-radius:10px;background:#fff;box-shadow:0 5px 0 var(--w-edge);cursor:pointer;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out),background-color 200ms ease,color 200ms ease}
 .gd-tile b{font-family:var(--font-display);font-size:60px;line-height:1.2}
 .gd-tile:active{transform:translateY(3px) scale(.97);box-shadow:0 2px 0 var(--w-edge)}
-.gd-tile.is-empty{border-style:dashed;background:transparent;box-shadow:none;opacity:.55}
+.gd-tile.is-empty{border-style:dashed;background:#ffffff59;box-shadow:none;opacity:.8}
 .gd-tiles.is-wait .gd-tile{pointer-events:none}
 .gd-key{position:absolute;left:10px;top:6px;font-size:16px;font-weight:700;line-height:1;color:var(--muted);opacity:.7}
 .gd-tile.is-right{border-color:var(--w-accent);background:var(--w-accent);color:#fff}
@@ -124,7 +142,7 @@ button.gd-small:active{transform:scale(.97)}
 .gd-ripple{fill:var(--w-accent);opacity:0;animation:gd-rip 1.4s ease-out infinite}
 
 /* ---- end of a round: stars, counts ticking up, a task off the screen, two picture buttons ---- */
-.gd-end{display:grid;justify-items:center;gap:12px;padding:8px 0;text-align:center;animation:gd-enter 220ms var(--ease-out) both}
+.gd-end{display:grid;justify-items:center;gap:12px;padding:16px 12px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 2px var(--w-edge);text-align:center;animation:gd-enter 220ms var(--ease-out) both}
 .gd-end-stars .gx-stars{font-size:52px}
 .gd-end-stars .gx-stars .on{display:inline-block;animation:gd-star 240ms var(--ease-out) both}
 .gd-end-stars .gx-stars .on:nth-child(1){animation-delay:300ms}

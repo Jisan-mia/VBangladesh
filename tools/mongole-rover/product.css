@@ -2,13 +2,13 @@
 
 /* ---- the game fills the player's stage: HUD, the board, one line, the queue, the pad ---- */
 .tool-mongole-rover .gp-game{min-height:100%}
-.mr{--w-accent:#b8461f;--w-deep:#7f2c12;--w-soft:#fdebdd;--w-edge:#e7cdb9;--ground:#e9a06d;--ground-line:#dc8a57;--rim:#c97848;--board-h:clamp(150px,calc(var(--stage-h,640px) - 410px),400px);
-  position:relative;display:flex;flex-direction:column;gap:10px;width:100%;max-width:520px;min-height:calc(var(--stage-h,640px) - 8px);margin:0 auto;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.mr{--w-accent:#b8461f;--w-deep:#7f2c12;--w-soft:#fdebdd;--w-edge:#e7cdb9;--ground:#e9a06d;--ground-line:#dc8a57;--rim:#c97848;--board-h:clamp(220px,calc(var(--stage-h,640px) - 340px),560px);
+  position:relative;display:flex;flex-direction:column;gap:8px;width:100%;max-width:520px;min-height:calc(var(--stage-h,640px) - 8px);margin:0 auto;color:var(--ink);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .mr[data-world="1"]{--w-accent:#8a5a1c;--w-deep:#5a3a0f;--w-soft:#f6ead6;--w-edge:#e0cba4;--ground:#c98f5c;--ground-line:#b97f4e;--rim:#a56b3b}
 .mr[data-world="2"]{--w-accent:#2f5fb0;--w-deep:#1d3d78;--w-soft:#e8effb;--w-edge:#bccdee;--ground:#d49a7a;--ground-line:#c4886a;--rim:#b07656}
 .mr[data-world="3"]{--w-accent:#7a3fa0;--w-deep:#52286d;--w-soft:#f2e9f8;--w-edge:#d6bfe6;--ground:#b97a72;--ground-line:#a8685f;--rim:#965850}
-.mr[data-screen=plan],.mr[data-screen=run],.mr[data-screen=won]{justify-content:center}
-.mr[data-screen=plan] .mr-hud,.mr[data-screen=run] .mr-hud{margin-bottom:auto}
+.mr[data-screen=won]{justify-content:center}
+.mr[data-screen=plan] .mr-board,.mr[data-screen=run] .mr-board{margin-block:auto}
 .mr[data-screen=won] .mr-end{margin:auto 0}
 
 /* ---- title: the hill is the start button ---- */
@@ -52,7 +52,7 @@
 
 /* ---- the map: a grid of sand cells; things sit in cells by percentage, the rover slides by transform ---- */
 .mr-board{--cell-w:calc(100% / var(--cols));--cell-h:calc(100% / var(--rows));position:relative;width:min(100%,calc(var(--board-h) * var(--cols) / var(--rows)));aspect-ratio:var(--cols)/var(--rows);margin-inline:auto;border-radius:8px;overflow:hidden;
-  background-color:var(--ground);background-image:linear-gradient(var(--ground-line) 2px,transparent 2px),linear-gradient(90deg,var(--ground-line) 2px,transparent 2px);background-size:var(--cell-w) var(--cell-h);background-position:-1px -1px;box-shadow:inset 0 0 0 2px var(--rim)}
+  background-color:var(--ground);background-image:linear-gradient(var(--ground-line) 2px,transparent 2px),linear-gradient(90deg,var(--ground-line) 2px,transparent 2px);background-size:var(--cell-w) var(--cell-h);background-position:-1px -1px;box-shadow:inset 0 0 0 2px var(--rim),0 0 0 4px var(--w-edge),0 8px 0 4px var(--w-edge)}
 .mr-thing,.mr-rover{position:absolute;left:0;top:0;width:var(--cell-w);height:var(--cell-h);display:grid;place-items:center;pointer-events:none}
 .mr-thing svg{width:86%;height:86%}
 .mr-crater svg{width:94%;height:94%}
@@ -67,21 +67,21 @@
 .mr-nudge.bump{animation:mr-bump 500ms var(--ease-out)}
 .mr-rover svg{width:92%;height:92%;transition:transform 200ms var(--ease-out)}
 .mr-rover svg.flip{transform:scaleX(-1)}
-.mr[data-slow] .mr-rover{transition-duration:700ms}
+.mr[data-slow] .mr-rover{transition:none}
 
-.mr-say{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;text-align:center}
-.mr-say p{margin:0;font-size:18px;font-weight:600;line-height:1.55}
+.mr-say{display:flex;align-items:center;justify-content:center;gap:8px;min-height:36px;margin-top:6px;text-align:center}
+.mr-say p{margin:0;font-size:17px;font-weight:600;line-height:1.55}
 .mr-say .mr-oops{color:var(--ink)}
-.mr-say .mr-oops b{display:block;color:var(--w-deep);font-family:var(--font-display);font-size:19px}
+.mr-say .mr-oops b{display:inline;margin-right:6px;color:var(--w-deep);font-family:var(--font-display);font-size:18px}
 
 /* ---- the queue: numbered tickets, the running one lifts and glows, a bumped one turns dashed ---- */
-.mr-plan{display:flex;flex-wrap:wrap;gap:6px;min-height:68px;max-height:132px;margin:0;padding:6px;overflow-y:auto;overscroll-behavior:contain;border:2px dashed var(--w-edge);border-radius:8px;background:#fff;list-style:none}
-.mr-block{position:relative;display:grid;place-items:center;align-content:center;width:52px;height:54px;padding:0;border:2px solid var(--w-edge);border-radius:6px;background:var(--paper);color:var(--w-accent);font:inherit;cursor:pointer;touch-action:manipulation;transition:transform 140ms var(--ease-out),background-color 140ms ease,border-color 140ms ease}
+.mr-plan{display:flex;flex-wrap:wrap;gap:6px;min-height:58px;max-height:116px;margin:0;padding:5px;overflow-y:auto;overscroll-behavior:contain;border:2px dashed var(--w-edge);border-radius:8px;background:#fff;list-style:none}
+.mr-block{position:relative;display:grid;place-items:center;align-content:center;width:46px;height:48px;padding:0;border:2px solid var(--w-edge);border-radius:6px;background:var(--paper);color:var(--w-accent);font:inherit;cursor:pointer;touch-action:manipulation;transition:transform 140ms var(--ease-out),background-color 140ms ease,border-color 140ms ease}
 .mr-block:disabled{cursor:default;opacity:1}
-.mr-block svg{width:32px;height:32px}
+.mr-block svg{width:28px;height:28px}
 .mr-block i{position:absolute;right:4px;bottom:1px;font-size:12px;font-style:normal;font-weight:700;line-height:1.3;color:var(--muted)}
 .mr-block b{font-size:14px;line-height:1.1;color:var(--ink)}
-.mr-block:has(b) svg{width:22px;height:22px}
+.mr-block:has(b) svg{width:20px;height:20px}
 .mr-block.now{border-color:var(--glow);background:#fff4cf;box-shadow:0 0 0 3px #f2a90066;transform:translateY(-3px)}
 .mr-block.oops{border-color:var(--w-accent);border-style:dashed;background:var(--w-soft)}
 .mr-block.pop{animation:mr-pop 120ms var(--ease-out)}
@@ -89,22 +89,22 @@
 
 /* ---- the pad and the buttons: at least 72 px, 12 px apart ---- */
 .mr-controls{position:relative}
-.mr-pad{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;transition:opacity 160ms ease}
+.mr-pad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;transition:opacity 160ms ease}
 .mr-controls:has(.mr-stop) .mr-pad{opacity:.3}
-.mr-arrow,.mr-repeat,.mr-back,.mr-go,.mr-stop{position:relative;display:grid;place-items:center;min-height:76px;padding:4px;border:2.5px solid var(--w-edge);border-radius:10px;background:#fff;color:var(--w-accent);font:inherit;box-shadow:0 4px 0 var(--w-edge);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 100ms var(--ease-out),box-shadow 100ms var(--ease-out),opacity 160ms ease}
-.mr-arrow svg{width:48px;height:48px}
+.mr-arrow,.mr-repeat,.mr-back,.mr-go,.mr-stop{position:relative;display:grid;place-items:center;min-height:72px;padding:2px;border:2.5px solid var(--w-edge);border-radius:10px;background:#fff;color:var(--w-accent);font:inherit;box-shadow:0 3px 0 var(--w-edge);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 100ms var(--ease-out),opacity 160ms ease}
+.mr-arrow svg{width:40px;height:40px}
 .mr-arrow:active,.mr-repeat:active,.mr-back:active,.mr-go:active,.mr-stop:active{transform:translateY(3px);box-shadow:0 1px 0 var(--w-edge)}
 .mr-arrow:disabled,.mr-repeat:disabled,.mr-back:disabled{opacity:.45;cursor:default}
-.mr-actions{display:flex;gap:12px}
-.mr-repeat,.mr-back{flex:1;min-width:0;grid-auto-flow:row;gap:0;color:var(--ink);font-size:16px;font-weight:700;line-height:1.3}
-.mr-repeat svg{width:32px;height:32px;color:var(--w-accent)}
-.mr-back svg{width:30px;height:30px;fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
-.mr-go{flex:1.6;grid-auto-flow:column;gap:8px;justify-content:center;border-color:var(--w-deep);background:var(--w-accent);color:#fff;box-shadow:0 5px 0 var(--w-deep);font-family:var(--font-display);font-size:24px;font-weight:800}
-.mr-go svg{width:24px;height:24px;fill:#fff}
+.mr-actions{display:flex;gap:8px}
+.mr-repeat,.mr-back{flex:1;min-width:0;grid-auto-flow:row;gap:0;color:var(--ink);font-size:14px;font-weight:700;line-height:1.2}
+.mr-repeat svg{width:26px;height:26px;color:var(--w-accent)}
+.mr-back svg{width:24px;height:24px;fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.mr-go{flex:1.6;grid-auto-flow:column;gap:8px;justify-content:center;border-color:var(--w-deep);background:var(--w-accent);color:#fff;box-shadow:0 4px 0 var(--w-deep);font-family:var(--font-display);font-size:22px;font-weight:800}
+.mr-go svg{width:22px;height:22px;fill:#fff}
 .mr-go:active{box-shadow:0 1px 0 var(--w-deep)}
 .mr-go[aria-disabled=true]{opacity:.4;transform:none;box-shadow:0 4px 0 var(--w-deep);cursor:default}
 /* থামাও is its own button, over the pad's place, never under the finger that pressed চালাও */
-.mr-stop{position:absolute;inset:0;grid-auto-flow:column;gap:10px;justify-content:center;border-color:var(--w-deep);background:var(--w-deep);color:#fff;box-shadow:0 4px 0 #0003;font-family:var(--font-display);font-size:24px;font-weight:800;animation:mr-in 160ms var(--ease-out) both}
+.mr-stop{position:absolute;inset:0;grid-auto-flow:column;gap:10px;justify-content:center;border-color:var(--w-deep);background:var(--w-deep);color:#fff;box-shadow:0 3px 0 #0003;font-family:var(--font-display);font-size:22px;font-weight:800;animation:mr-in 160ms var(--ease-out) both}
 .mr-stop svg{width:30px;height:30px;fill:#fff;stroke:none}
 
 .mr-ghost-at{position:absolute;left:50%;top:58%;width:0;height:0;pointer-events:none;z-index:3}
@@ -115,7 +115,7 @@
 .mr-end-finale{margin:0;padding:2px 14px;border-radius:8px;background:var(--w-soft);box-shadow:inset 0 0 0 1.5px var(--w-edge);color:var(--w-deep);font-family:var(--font-display);font-size:18px;font-weight:800;line-height:1.6}
 .mr-stars{display:flex;gap:6px}
 .mr-stars svg{width:42px;height:42px;fill:#e7d8c8;stroke:#b79d85;stroke-width:1.2;stroke-linejoin:round}
-.mr-stars svg[data-on]{fill:var(--glow);stroke:#b57a00;animation:mr-star 380ms cubic-bezier(.3,1.5,.5,1) both}
+.mr-stars svg[data-on]{fill:var(--glow);stroke:#b57a00;animation:mr-star 320ms var(--ease-out) both}
 .mr-end h2{margin:0;font-family:var(--font-display);font-size:clamp(21px,5.6vw,26px);line-height:1.45}
 .mr-end-count{display:flex;justify-content:center;gap:22px;margin:0;font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.5}
 .mr-end-count span{display:inline-flex;align-items:center;gap:8px}
@@ -190,15 +190,20 @@
 .mr[data-slow] .mr-panel,.mr[data-slow] .mr-end,.mr[data-slow] .mr-stop{animation:mr-fade 120ms linear both}
 .mr[data-slow] .mr-block.now{transform:none}
 .mr[data-slow] .mr-ghost{opacity:1;transform:none}
+.mr[data-slow] .mr-chip,.mr[data-slow] .mr-card,.mr[data-slow] .mr-close,.mr[data-slow] .mr-big,.mr[data-slow] .mr-big-next,.mr[data-slow] .mr-sample svg,.mr[data-slow] .mr-skip span{transition:none}
 .mr[data-slow] .mr-hill,.mr[data-slow] .mr-arrow,.mr[data-slow] .mr-go,.mr[data-slow] .mr-block{transition:none}
 @media (prefers-reduced-motion:reduce){
   .mr-nudge,.mr-crater svg,.mr-block,.mr-ghost,.mr-stars svg{animation:none!important}
   .mr-panel,.mr-end,.mr-stop{animation:mr-fade 120ms linear both}
   .mr-block.now{transform:none}.mr-ghost{opacity:1;transform:none}
-  .mr-rover,.mr-hill,.mr-arrow,.mr-go,.mr-block{transition:none}
+  .mr-rover,.mr-hill,.mr-arrow,.mr-go,.mr-block,.mr-chip,.mr-card,.mr-close,.mr-big,.mr-big-next,.mr-sample svg{transition:none}
 }
 
 /* short stages and narrow phones: the controls keep 72 px, the board gives way */
-@media (max-height:700px){.mr-arrow,.mr-repeat,.mr-back,.mr-go{min-height:72px}.mr-arrow svg{width:42px;height:42px}.mr-say{min-height:40px}.mr-say p{font-size:16px}.mr{gap:8px}.mr-board{--board-h:clamp(130px,calc(var(--stage-h,560px) - 360px),400px)}}
+@media (max-height:700px){.mr-arrow svg{width:32px;height:32px}.mr-say{min-height:30px;margin-top:2px}.mr-say p{font-size:16px}.mr-board{--board-h:clamp(170px,calc(var(--stage-h,560px) - 324px),560px)}}
 @media (max-width:360px){.mr-pad,.mr-actions{gap:8px}.mr-hill-go{font-size:26px}.mr-go{font-size:21px}.mr-repeat,.mr-back{font-size:15px}.mr-badge small{display:none}}
 @media (min-width:900px) and (max-height:900px){.mr-title{gap:10px}.mr-hill{width:min(100%,320px)}.mr-hill-go{font-size:26px}}
+
+/* every pressable gives a little under the finger (the arrows already sink) */
+.mr-chip,.mr-card,.mr-close,.mr-big,.mr-big-next{transition:transform 120ms var(--ease-out)}
+.mr-chip:active,.mr-card:active,.mr-close:active{transform:scale(.97)}

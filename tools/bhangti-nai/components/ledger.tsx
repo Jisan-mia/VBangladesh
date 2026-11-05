@@ -40,7 +40,7 @@ export function Ledger({ rows, stats, title, sub, line, near, best, slow, finale
       </header>
       <ol className="bt-ledger-rows" aria-label="দশজন খদ্দের">
         {rows.map((row, index) => (
-          <li key={index} data-state={row.ok ? (row.clean ? 'clean' : 'slip') : 'late'} style={{ animationDelay: slow ? undefined : `${index * 60}ms` }}>
+          <li key={index} data-state={row.ok ? (row.clean ? 'clean' : 'slip') : 'late'}>
             <span className="bt-ledger-n">{bn(index + 1)}</span>
             <span className="bt-ledger-who">{PEOPLE[row.who]} <b>ফেরত {bn(row.change)}</b></span>
             <span className="bt-ledger-mark" role="img" aria-label={row.ok ? (row.clean ? 'প্রথমবারেই ঠিক' : 'ভুলের পর ঠিক') : 'চলে গেছে'}>{row.ok ? (row.clean ? '✓' : '~') : '✗'}</span>
