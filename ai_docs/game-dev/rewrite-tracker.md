@@ -38,7 +38,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | bhul-kothay | S11 | analysed | done |
 | atir-aam | S11 | analysed | done |
 | bhimruler-chak | S12 | analysed | done |
-| churir-bazar | S12 | analysed | rewriting |
+| churir-bazar | S12 | analysed | done |
 | mukhe-mukhe-hisab | S12 | analysed | done |
 | chhobir-tukro | S13 | analysed | done |
 | sat-chara | S13 | analysed | done |
