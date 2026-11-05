@@ -1,15 +1,14 @@
 // The result card: the shop's yellow signboard on a teal tin wall, and a cash memo with ten customer faces. Plain chits only, never real note art.
 import { possessive } from '../../../shared/bangla';
 import { cardSizes, drawFooterBand, fitText, renderCard, roundedRect, storySafe, wrapText, BODY_FONT, type CardFormat } from '../../../shared/card-canvas';
-import { CUSTOMERS, bn, dayStars, humanLine } from './game';
-import { outOf } from './link';
+import { CHIT_COLORS, isCoin } from './art';
+import { CUSTOMERS } from './legacy';
+import { WORLDS, finaleName, worldOf } from './levels';
+import { bn } from './money';
+import { humanLine, starsOf } from './play';
+import { dayTag, outOf } from './link';
 
 export const colors = { wall: '#15605a', wallLine: '#1d7068', sign: '#f6c945', signInk: '#8a1f17', paper: '#fff7e3', ink: '#2a1d12', muted: '#7a6650', face: '#f6c945', cream: '#fdf1d2' };
-const BAND = { band: '#0d3d39', ask: colors.sign, site: '#ffffff' };
-
-/** Each chit's own colour, plus the big notes customers hand over. Coins (১, ২, ৫) are round, the rest are slips. */
-export const CHIT_COLORS: Record<number, string> = { 1: '#d9a27c', 2: '#cdd5dc', 5: '#e8c35a', 10: '#a6dcc7', 20: '#f4ab93', 50: '#c4b5ec', 100: '#8dc4e8', 200: '#efa6c8', 500: '#a9d48f' };
-export const isCoin = (value: number) => value < 10;
 
 /** One chit centred at (x, y), `size` its height. */
 export function drawChit(context: CanvasRenderingContext2D, value: number, x: number, y: number, size: number, angle = 0) {
@@ -53,9 +52,18 @@ const layouts = {
   story: { sign: storySafe.top + 20, signH: 196, kicker: storySafe.top + 290, paper: storySafe.top + 340, paperH: 800, line: 1488 },
 } as const;
 
-export type CardData = { score: number; right: number; name: string; day?: number; clean?: number };
+/** `level` 0 is the classic queue; `v` 1 an old shop day, 2 the new ladder. */
+export type CardData = { score: number; right: number; name: string; level?: number; v?: 1 | 2; clean?: number; calm?: boolean };
 
-export function drawCard(canvas: HTMLCanvasElement, { score, right, name, day, clean = 0 }: CardData, format: CardFormat, site: string) {
+/** The shop's wall, its signboard and the darker band under the card, from the level's shop (the old queues keep the first). */
+function palette({ level = 0, v = 1 }: Pick<CardData, 'level' | 'v'>) {
+  const world = v === 2 && level ? WORLDS[worldOf(level)] : WORLDS[0];
+  return { ...colors, wall: world.wall, sign: world.sign, signInk: world.ink, wallLine: world.wall + 'cc', band: '#0d1f2b', finale: v === 2 ? finaleName(level) : '' };
+}
+
+
+export function drawCard(canvas: HTMLCanvasElement, data: CardData, format: CardFormat, site: string) {
+  const { score, right, name, level = 0, clean = 0, calm = false } = data, colors = palette(data), BAND = { band: colors.band, ask: colors.sign, site: '#ffffff' };
   const { width, height } = cardSizes[format];
   const layout = layouts[format];
   canvas.width = width;
@@ -82,10 +90,10 @@ export function drawCard(canvas: HTMLCanvasElement, { score, right, name, day, c
 
   const shop = name ? `${possessive(name)} দোকান` : 'আজকের দোকান';
   // A shop day names the day and its stars in place of "দশজন খদ্দের".
-  const earned = dayStars(clean);
-  const kicker = day
-    ? [{ text: `${shop} · দিন ${bn(day)} `, color: colors.cream, weight: 600 }, ...[0, 1, 2].map(star => ({ text: '★', color: star < earned ? colors.sign : '#5f9a93', weight: 700 }))]
-    : [{ text: `${shop} · দশজন খদ্দের`, color: colors.cream, weight: 600 }];
+  const earned = starsOf(clean, !calm);
+  const kicker = level
+    ? [{ text: `${shop} · ${dayTag(level)}`.replace(/ · $/, ' '), color: colors.cream, weight: 600 }, ...[0, 1, 2].map(star => ({ text: '★', color: star < earned ? colors.sign : '#ffffff55', weight: 700 }))]
+    : [{ text: `${shop} · দশজন খদ্দেরের হিসাব`, color: colors.cream, weight: 600 }];
   fitText(context, kicker, width / 2, layout.kicker, 40, width - 180, 'center');
 
   // The cash memo.
@@ -113,6 +121,16 @@ export function drawCard(canvas: HTMLCanvasElement, { score, right, name, day, c
   drawChit(context, 100, left + paperW - 70, top + 8, 86, 0.22);
   drawChit(context, 5, left + 30, top + paperH - 20, 78, -0.2);
   drawChit(context, 2, left + 96, top + paperH + 8, 58, 0.3);
+
+  if (colors.finale) {
+    context.save();
+    context.translate(left + paperW - 190, top + paperH - 62 * unit);
+    context.rotate(-0.22);
+    context.strokeStyle = colors.signInk; context.lineWidth = 8;
+    roundedRect(context, -170, -40, 340, 80, 14); context.stroke();
+    fitText(context, [{ text: colors.finale, color: colors.signInk, weight: 800, display: true }], 0, 16, 44, 310, 'center');
+    context.restore();
+  }
 
   context.font = `600 ${format === 'story' ? 46 : 42}px ${BODY_FONT}`;
   const lines = wrapText(context, humanLine(right, score), width - 200, 2);

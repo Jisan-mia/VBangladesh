@@ -1,118 +1,133 @@
 ---- MODULE Bhangti ----
-\* ভাংতি নাই! as it is today: the shop day's phase, the queue, the customer's clock, the hand-off timer (`advance`),
-\* the window, the counter on screen, the "সময় নিয়ে" switch, the fanfare timer and saved stars.
-\* Mirrored from tools/bhangti-nai/components/shop-game.tsx (startGame, finish, later, hand, lateNow, pause, resume,
-\* restart, nextDay, pickDay, the visibilitychange/shopInView effects, the keys handler, the useGameLoop clock) and
-\* tools/bhangti-nai/lib/game.ts (give, timeUp, isOver). useGameLoop (shared/game-kit.ts) runs only while
-\* phase = "playing" and the clock is on, and stops when the tab hides. Ten customers are abstracted to two.
+\* ভাংতি নাই! after the rewrite: the shift's phases on one pausable phase clock, the window (tab, focus, the counter on screen)
+\* and the player's menu (which pauses the same way), the সব দিন sheet, a chit held under a finger or mouse, the end-of-day
+\* save and a held Enter on the ledger.
+\* Mirrors tools/bhangti-nai/lib/session.ts (begin, tick, served, pause, resume, running, decided) and
+\* tools/bhangti-nai/components/shop-game.tsx (start, hand, walkOff, finalize, openSheet/closeSheet, pauseFor/resumeFrom,
+\* the blur, visibilitychange and inView effects, load, the chit pointer handlers, the key handler).
+\* Abstractions: a shift has N customers (the game has 10); the clock is on (সময় নিয়ে only removes PatienceRunsOut) and the stars are not modelled
+\* (they are a max over recorded results, tested in game-core); time is the reducer's: a timed phase moves on only while its
+\* clock runs, and `elapsed` does not grow while paused, so "the clock runs" is exactly Clock below. The right beat and the
+\* walk-off are phases (not timers), so a pause holds them.
 EXTENDS Naturals
 CONSTANT N
-VARIABLES phase, served, linger, visible, focused, inView, relaxed, results, fanfare, saved
-vars == <<phase, served, linger, visible, focused, inView, relaxed, results, fanfare, saved>>
 
-Phases == {"ready", "playing", "paused", "over"}
-Max(a, b) == IF a > b THEN a ELSE b
-\* The customer's clock bar runs: the loop runs while playing with the clock on, and lateNow/the bar skip while `lock`.
-ClockRuns == phase = "playing" /\ visible /\ ~relaxed /\ ~linger
+VARIABLES phase, why, sheet, visible, focused, inView, served, saves, recorded, drag, held, skipped
+vars == <<phase, why, sheet, visible, focused, inView, served, saves, recorded, drag, held, skipped>>
 
-Init == /\ phase = "ready" /\ served = 0 /\ linger = FALSE
-        /\ visible = TRUE /\ focused = TRUE /\ inView = TRUE
-        /\ relaxed \in BOOLEAN /\ results = 0 /\ fanfare = FALSE /\ saved = 0
+Phases == {"ready", "opening", "serve", "right", "late", "over"}
+Whys == {"none", "away", "sheet"}
+Here == visible /\ focused
+\* session.running: a phase that moves on its own or counts, and nothing pausing it.
+Running(p, w) == w = "none" /\ p \notin {"ready", "over"}
+Clock == Running(phase, why)
 
-\* startGame(): শুরু করো, a chit on the ready screen, or Enter (the keys handler has no shopInView check).
-\* It scrolls the counter into view only when the counter sits below the fold, so from further down the page
-\* (Enter while reading the FAQ) the counter stays off screen. The model keeps inView as it was.
-YouOpenShop == /\ phase = "ready" /\ visible /\ focused
-               /\ phase' = "playing" /\ served' = 0 /\ linger' = FALSE
-               /\ UNCHANGED <<visible, focused, inView, relaxed, results, fanfare, saved>>
-\* hand() with the right change: live.lock, the customer lingers, later(850) sets the hand-off timer.
-YouGiveRightChange == /\ phase = "playing" /\ visible /\ focused /\ ~linger /\ served < N
-                      /\ served' = served + 1 /\ linger' = TRUE
-                      /\ UNCHANGED <<phase, visible, focused, inView, relaxed, results, fanfare, saved>>
-\* The clock bar runs out → lateNow(): timeUp, the customer says "থাক", later(2000).
-ClockRunsOut == /\ ClockRuns /\ served < N
-                /\ served' = served + 1 /\ linger' = TRUE
-                /\ UNCHANGED <<phase, visible, focused, inView, relaxed, results, fanfare, saved>>
-\* later()'s setTimeout fires whatever the phase: meet() the next customer...
-NextCustomerStepsUp == /\ linger /\ served < N
-                       /\ linger' = FALSE
-                       /\ UNCHANGED <<phase, served, visible, focused, inView, relaxed, results, fanfare, saved>>
-\* ...or, after the last one, finish(): go("over"), levels.record(stars), and a fanfare timer when there are stars.
-ShopCloses == /\ linger /\ served = N
-              /\ linger' = FALSE /\ phase' = "over" /\ results' = results + 1
-              /\ \E earned \in 0..2 :
-                   /\ saved' = IF earned > 0 THEN Max(saved, earned) ELSE saved
-                   /\ fanfare' = (earned > 0)
-              /\ UNCHANGED <<served, visible, focused, inView, relaxed>>
-FanfareFires == /\ fanfare
-                /\ fanfare' = FALSE
-                /\ UNCHANGED <<phase, served, linger, visible, focused, inView, relaxed, results, saved>>
-\* pause(): the HUD button or P/Esc. It does not touch the hand-off timer.
-YouPause == /\ phase = "playing" /\ visible /\ focused
-            /\ phase' = "paused"
-            /\ UNCHANGED <<served, linger, visible, focused, inView, relaxed, results, fanfare, saved>>
-\* resume(): the overlay button, the HUD button, P, Esc or Enter. None of them needs the counter on screen.
-YouResume == /\ phase = "paused" /\ visible /\ focused
-             /\ phase' = "playing"
-             /\ UNCHANGED <<served, linger, visible, focused, inView, relaxed, results, fanfare, saved>>
-\* There is no blur listener.
-WindowBlurs == /\ visible /\ focused
-               /\ focused' = FALSE
-               /\ UNCHANGED <<phase, served, linger, visible, inView, relaxed, results, fanfare, saved>>
-WindowFocuses == /\ visible /\ ~focused
-                 /\ focused' = TRUE
-                 /\ UNCHANGED <<phase, served, linger, visible, inView, relaxed, results, fanfare, saved>>
-\* visibilitychange → hidden: pause() from "playing".
-TabHides == /\ visible
-            /\ visible' = FALSE /\ focused' = FALSE
-            /\ phase' = IF phase = "playing" THEN "paused" ELSE phase
-            /\ UNCHANGED <<served, linger, inView, relaxed, results, fanfare, saved>>
-TabShows == /\ ~visible
-            /\ visible' = TRUE /\ focused' = TRUE
-            /\ UNCHANGED <<phase, served, linger, inView, relaxed, results, fanfare, saved>>
-\* useEffect([shopInView]): pause() when the counter scrolls away (only on the change to false).
-ScrollAway == /\ visible /\ inView
-              /\ inView' = FALSE
-              /\ phase' = IF phase = "playing" THEN "paused" ELSE phase
-              /\ UNCHANGED <<served, linger, visible, focused, relaxed, results, fanfare, saved>>
-ScrollBack == /\ visible /\ ~inView
-              /\ inView' = TRUE
-              /\ UNCHANGED <<phase, served, linger, visible, focused, relaxed, results, fanfare, saved>>
-\* "সময় নিয়ে (ঘড়ি ছাড়া)": the clock loop stops or starts again.
-YouSwitchTheClock == /\ visible /\ focused
-                     /\ relaxed' = ~relaxed
-                     /\ UNCHANGED <<phase, served, linger, visible, focused, inView, results, fanfare, saved>>
-\* restart(), nextDay(), playFromCard(): startGame() clears the timers.
-PlayAgain == /\ phase = "over" /\ visible /\ focused
-             /\ phase' = "playing" /\ served' = 0 /\ linger' = FALSE /\ results' = 0 /\ fanfare' = FALSE
-             /\ UNCHANGED <<visible, focused, inView, relaxed, saved>>
-\* pickDay() from সব দিন, or a friend's link (hashchange): clearTimers(), go("ready"). Works in any phase.
-YouPickADay == /\ visible /\ focused
-               /\ phase' = "ready" /\ served' = 0 /\ linger' = FALSE /\ results' = 0 /\ fanfare' = FALSE
-               /\ UNCHANGED <<visible, focused, inView, relaxed, saved>>
+Init == /\ phase = "ready" /\ why = "none" /\ sheet = FALSE /\ visible = TRUE /\ focused = TRUE /\ inView = TRUE
+        /\ served = 0 /\ saves = 0 /\ recorded = FALSE /\ drag = FALSE /\ held = FALSE /\ skipped = FALSE
 
-Next == YouOpenShop \/ YouGiveRightChange \/ ClockRunsOut \/ NextCustomerStepsUp \/ ShopCloses \/ FanfareFires
-        \/ YouPause \/ YouResume \/ WindowBlurs \/ WindowFocuses \/ TabHides \/ TabShows \/ ScrollAway \/ ScrollBack
-        \/ YouSwitchTheClock \/ PlayAgain \/ YouPickADay
+\* The last customer is decided: finalize() saves once per play, right now, not behind the beat that follows.
+Decide(n) == IF n = N THEN /\ saves' = saves + 1 /\ recorded' = TRUE
+             ELSE UNCHANGED <<saves, recorded>>
+
+\* ঘণ্টা বাজাও (the bell, or a fresh Enter): start(). It needs the stage on screen and no sheet.
+YouRingTheBell == /\ Here /\ inView /\ ~sheet /\ phase = "ready" /\ phase' = "opening"
+                  /\ UNCHANGED <<why, sheet, visible, focused, inView, served, saves, recorded, drag, held, skipped>>
+\* session.tick: the bell's beat is over and the first customer steps in.
+CustomerSteps == /\ phase = "opening" /\ Clock /\ phase' = "serve"
+                 /\ UNCHANGED <<why, sheet, visible, focused, inView, served, saves, recorded, drag, held, skipped>>
+\* দাও with the right change: hand() → give, session.served. The clock must be running (canAct).
+YouGiveRightChange == /\ Here /\ inView /\ phase = "serve" /\ Clock /\ phase' = "right" /\ served' = served + 1 /\ Decide(served + 1)
+                      /\ UNCHANGED <<why, sheet, visible, focused, inView, drag, held, skipped>>
+\* The customer's patience runs out: session.tick → walkOff(). Only with the clock on.
+PatienceRunsOut == /\ phase = "serve" /\ Clock /\ phase' = "late" /\ served' = served + 1 /\ Decide(served + 1)
+                   /\ UNCHANGED <<why, sheet, visible, focused, inView, drag, held, skipped>>
+\* session.tick: the beat after a right answer or a walk-off is over; the next customer steps up, or the ledger shows.
+BeatEnds == /\ phase \in {"right", "late"} /\ Clock /\ phase' = IF served = N THEN "over" ELSE "serve"
+            /\ UNCHANGED <<why, sheet, visible, focused, inView, served, saves, recorded, drag, held, skipped>>
+\* load(): পরের দিন / আবার খেলো on the ledger (a click, or a fresh Enter), a day picked in the sheet, or the player's নতুন করে শুরু.
+Load == /\ phase' = "ready" /\ why' = "none" /\ sheet' = FALSE /\ served' = 0 /\ recorded' = FALSE /\ saves' = 0
+YouPlayOn == /\ Here /\ ~sheet /\ phase = "over" /\ Load
+             /\ UNCHANGED <<visible, focused, inView, drag, held, skipped>>
+YouPickADay == /\ Here /\ sheet /\ Load
+               /\ UNCHANGED <<visible, focused, inView, drag, held, skipped>>
+YouRestart == /\ Here /\ ~sheet /\ phase \notin {"ready", "over"} /\ Load
+              /\ UNCHANGED <<visible, focused, inView, drag, held, skipped>>
+
+\* pauseFor("away"): blur, a hidden tab, the counter scrolled away and the player's menu. A running clock stops; a sheet pause stays one.
+\* Blur and hide also drop a chit held down (pointerup never arrives).
+Away == why' = IF Clock THEN "away" ELSE why
+TabHides == /\ visible /\ visible' = FALSE /\ focused' = FALSE /\ drag' = FALSE /\ Away
+            /\ UNCHANGED <<phase, sheet, inView, served, saves, recorded, held, skipped>>
+TabShows == /\ ~visible /\ visible' = TRUE /\ focused' = TRUE
+            /\ UNCHANGED <<phase, why, sheet, inView, served, saves, recorded, drag, held, skipped>>
+WindowBlurs == /\ visible /\ focused /\ focused' = FALSE /\ drag' = FALSE /\ Away
+               /\ UNCHANGED <<phase, sheet, visible, inView, served, saves, recorded, held, skipped>>
+WindowFocuses == /\ visible /\ ~focused /\ focused' = TRUE
+                 /\ UNCHANGED <<phase, why, sheet, visible, inView, served, saves, recorded, drag, held, skipped>>
+\* useEffect([inView]): pauseFor("away") when the stage scrolls away.
+ScrollAway == /\ inView /\ inView' = FALSE /\ Away
+              /\ UNCHANGED <<phase, sheet, visible, focused, served, saves, recorded, drag, held, skipped>>
+ScrollBack == /\ ~inView /\ inView' = TRUE
+              /\ UNCHANGED <<phase, why, sheet, visible, focused, served, saves, recorded, drag, held, skipped>>
+\* চালিয়ে যাও (the menu's, the cover's, or a fresh Enter): resume "away" only ends an away pause, and a "sheet" pause ends once the
+\* sheet is shut. Both need the counter on screen (resumeFrom's onScreen check), so a resume from the menu with the stage
+\* scrolled away leaves the cover down until you tap it back in view.
+YouResume == /\ Here /\ inView /\ (why = "away" \/ (why = "sheet" /\ ~sheet)) /\ why' = "none"
+             /\ UNCHANGED <<phase, sheet, visible, focused, inView, served, saves, recorded, drag, held, skipped>>
+
+\* openSheet(): pause("sheet") stops a running clock and outranks an away pause; closeSheet(): resume("sheet").
+YouOpenTheSheet == /\ Here /\ ~sheet /\ sheet' = TRUE /\ why' = IF Clock \/ why = "away" THEN "sheet" ELSE why
+                   /\ UNCHANGED <<phase, visible, focused, inView, served, saves, recorded, drag, held, skipped>>
+YouCloseTheSheet == /\ Here /\ sheet /\ sheet' = FALSE /\ why' = IF why = "sheet" /\ inView THEN "none" ELSE why
+                    /\ UNCHANGED <<phase, visible, focused, inView, served, saves, recorded, drag, held, skipped>>
+
+\* A chit under a finger or the mouse: put down at pointerdown, held while dragged, released by pointerup, pointercancel or blur.
+YouHoldAChit == /\ Here /\ inView /\ phase = "serve" /\ Clock /\ ~drag /\ drag' = TRUE
+                /\ UNCHANGED <<phase, why, sheet, visible, focused, inView, served, saves, recorded, held, skipped>>
+YouLetGoOfTheChit == /\ drag /\ drag' = FALSE
+                     /\ UNCHANGED <<phase, why, sheet, visible, focused, inView, served, saves, recorded, held, skipped>>
+
+\* A key held through the last customer repeats. The ledger acts only on `fresh && timeStamp > overAt + 400`.
+ResultActsOnRepeat == FALSE
+YouHoldEnter == /\ Here /\ ~held /\ held' = TRUE
+                /\ UNCHANGED <<phase, why, sheet, visible, focused, inView, served, saves, recorded, drag, skipped>>
+EnterRepeats == /\ held /\ skipped' = (skipped \/ (phase = "over" /\ ResultActsOnRepeat))
+                /\ UNCHANGED <<phase, why, sheet, visible, focused, inView, served, saves, recorded, drag, held>>
+YouLetGo == /\ held /\ held' = FALSE
+            /\ UNCHANGED <<phase, why, sheet, visible, focused, inView, served, saves, recorded, drag, skipped>>
+
+Next == YouRingTheBell \/ CustomerSteps \/ YouGiveRightChange \/ PatienceRunsOut \/ BeatEnds \/ YouPlayOn \/ YouPickADay \/ YouRestart
+        \/ TabHides \/ TabShows \/ WindowBlurs \/ WindowFocuses \/ ScrollAway \/ ScrollBack \/ YouResume \/ YouOpenTheSheet \/ YouCloseTheSheet
+        \/ YouHoldAChit \/ YouLetGoOfTheChit \/ YouHoldEnter \/ EnterRepeats \/ YouLetGo
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ phase \in Phases /\ served \in 0..N /\ linger \in BOOLEAN
-          /\ visible \in BOOLEAN /\ focused \in BOOLEAN /\ inView \in BOOLEAN /\ relaxed \in BOOLEAN
-          /\ results \in 0..2 /\ fanfare \in BOOLEAN /\ saved \in 0..2
+TypeOK == /\ phase \in Phases /\ why \in Whys /\ served \in 0..N /\ saves \in 0..2
+          /\ sheet \in BOOLEAN /\ visible \in BOOLEAN /\ focused \in BOOLEAN /\ inView \in BOOLEAN /\ recorded \in BOOLEAN
+          /\ drag \in BOOLEAN /\ held \in BOOLEAN /\ skipped \in BOOLEAN
 
-\* The reader's rules.
-PausedWhenHidden == ~visible => phase # "playing"
-PausedWhenBlurred == (visible /\ ~focused) => phase # "playing"
-\* The customer's clock only runs while you can see the counter and the page has focus.
-NoProgressWhileAway == ClockRuns => (focused /\ inView)
-\* Game rule: "scrolling the counter away mid-game pauses it, so no clock runs off-screen" (the code's own comment).
-OffScreenMeansPaused == phase = "playing" => inView
-\* ChoiceFreezesPlay for the pause screen: nothing is waiting to happen on its own while the shop is paused.
-NothingPendingWhilePaused == phase = "paused" => ~linger
-NoDoubleResult == results <= 1
-NoFanfareAfterMovingOn == fanfare => phase = "over"
-\* The day only ends from play you can see, never behind the pause screen or a hidden tab.
-DayEndsOnlyWhilePlaying == [][(phase' = "over" /\ phase # "over") => (phase = "playing" /\ visible)]_vars
-StarsNeverDrop == [][saved' >= saved]_vars
+\* ---- the reader's rules ----
+\* The customer's patience, the right beat and the walk-off stop when the tab hides...
+PausedWhenHidden == ~visible => ~Clock
+\* ...and when you click into another window (the old game had no blur listener).
+PausedWhenBlurred == (visible /\ ~focused) => ~Clock
+\* The customer's clock runs only while you can see the counter on a focused page.
+NoProgressWhileAway == Clock => (visible /\ focused /\ inView)
+\* The game's own rule: scrolling the counter away pauses it, however play starts or resumes.
+OffScreenMeansPaused == (phase # "ready" /\ ~inView) => ~Clock
+\* A pause covers the customer and holds everything: nothing is waiting to happen on its own while paused.
+NothingPendingWhilePaused == why # "none" => ~Clock
+\* While the day list is open, nothing counts down.
+LevelPickerFreezesPlay == sheet => ~Clock
+\* A day is saved once.
+NoDoubleResult == saves <= 1
+\* The ledger shows only after the last customer was decided and saved, and the save happens at the decision.
+MemoMeansSaved == phase = "over" => recorded
+DecidedMeansSaved == (phase \in {"right", "late"} /\ served = N) => recorded
+\* No chit stays held after you leave the page.
+InputReleasedWhenAway == ~Here => ~drag
+\* A key held through the end of a day never skips the ledger.
+ResultNeedsFreshPress == ~skipped
+\* The day ends only from play you can see, never behind the pause screen or a hidden tab.
+DayEndsOnlyWhilePlaying == [][(phase' = "over" /\ phase # "over") => (phase \in {"right", "late"} /\ Clock /\ visible)]_vars
 ====
