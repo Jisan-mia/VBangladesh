@@ -1,16 +1,19 @@
 import type { ToolShare } from "../../shared/share-types";
-import { parseShare, potsWord, previewTitle, shareHash } from "./lib/link";
+import { parseShared, potsWord, previewTitle, sharedHash, whereText } from "./lib/challenge";
 
 export const share: ToolShare = {
   normalize(state) {
-    const shared = parseShare(state);
-    return shared ? shareHash(shared) : null;
+    const shared = parseShared(state);
+    return shared ? sharedHash(shared) : null;
   },
   preview(state) {
-    const shared = parseShare(state);
+    const shared = parseShared(state);
+    const count = shared?.scores.length ?? 5;
     return {
       title: shared ? previewTitle(shared) : "দুধটা দেখিস! উথলানোর আগে নামাতে পারবে?",
-      description: `চুলায় ${potsWord(shared?.scores.length ?? 5)} পাতিল, ফেনা উঠছে। উথলানোর ঠিক আগে নামাও, কিনারার যত কাছে তত নম্বর। একই ${potsWord(shared?.scores.length ?? 5)} পাতিলে খেলে দেখো। ফ্রি, অ্যাকাউন্ট লাগে না।`,
+      description: shared
+        ? `${whereText(shared)}: চুলায় ${potsWord(count)} পাতিল, ফেনা উঠছে। উথলানোর ঠিক আগে নামাও, কিনারার যত কাছে তত নম্বর। একই পাতিলে খেলে দেখো। ফ্রি, অ্যাকাউন্ট লাগে না।`
+        : "চুলায় পাতিল, ফেনা উঠছে। উথলানোর ঠিক আগে নামাও, কিনারার যত কাছে তত নম্বর। বন্ধুকে একই পাতিলে চ্যালেঞ্জ দাও। ফ্রি, অ্যাকাউন্ট লাগে না।",
     };
   },
 };

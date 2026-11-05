@@ -1,114 +1,108 @@
 ---- MODULE Milk ----
-\* দুধ উথলানোর আগে: the pots of one kitchen (the count abstracted: after any pot's score, the next pot or the card), pause on a hidden tab, window focus, the held
-\* Space or finger, the hum loop, the delayed celebration, the kitchen list and a friend's link.
-\* Mirrored from tools/dudh-uthlano/components/milk-game.tsx (begin, press, release, liftNow, finishRound,
-\* step, the visibilitychange and hashchange effects, again/primary/choose) and tools/dudh-uthlano/lib/dudh.ts
-\* (startPot, liftPot, stepRound), plus shared/game-sound.ts (loop(), setSoundOn) and shared/game-kit.ts
-\* (useGameLoop stops frames while the tab is hidden, never on blur).
-VARIABLES phase, paused, visible, focused, hold, hum, sound, cheer, friend, on, seed
-vars == <<phase, paused, visible, focused, hold, hum, sound, cheer, friend, on, seed>>
+EXTENDS Naturals
+\* দুধ উথলানোর আগে after the rewrite: the title and the play screen's phases, the player's menu and the level list, window focus and tab
+\* visibility, the finger on the button, the breath after coming back, the stove's hum, the delayed confetti, and a friend's link.
+\* The pots' count and the foam's curve are abstracted (tests/pots.test.ts, tests/levels.test.ts); the unlock rules have their own
+\* small spec, Levels.tla. Story panels count as "title".
+\* Mirrored from tools/dudh-uthlano/lib/session.ts (blur, hide, pause, openSheet, wake, press, release, syncHum, goTo),
+\* lib/round.ts + lib/step.hot.ts (startPot, liftPot, stepRound), lib/slot.ts, and components/game.tsx (begin, step, finish, takeLink,
+\* pickLevel, liftNow, press, release).
+VARIABLES game, choice, win, held, away, hum, sound, cheer, link
+vars == <<game, choice, win, held, away, hum, sound, cheer, link>>
 
-Phases == {"waiting", "rising", "result", "over"}
-\* on: which kitchen is open ("theirs" = the friend's kitchen, "mine" = another); seed: whose pots are on the stove.
-Running == ~paused /\ visible            \* useGameLoop steps the round
+Games == {"title", "waiting", "rising", "result", "over"}
+\* choice: the player's menu or the level list (both pause). win: the window has focus, another has, or the tab is hidden.
+\* away: the pot stopped mid-play ("stale") and on return waits a breath ("breath"). link: a friend's challenge is open.
+Play == game \in {"waiting", "rising", "result"}
+\* session.ts ticking(): the foam moves only on the play screen, menu and list shut, tab showing, window focused.
+Ticks(g, c, w) == g \in {"waiting", "rising", "result"} /\ c = "none" /\ w = "on"
+Ticking == Ticks(game, choice, win)
+WantHum == Ticking /\ sound /\ game = "rising"
 
-Init == /\ phase = "waiting" /\ paused = FALSE /\ visible = TRUE /\ focused = TRUE
-        /\ hold = FALSE /\ hum = FALSE /\ sound = TRUE /\ cheer = FALSE
-        /\ friend = FALSE /\ on = "mine" /\ seed = "fresh"
+Init == /\ game = "title" /\ choice = "none" /\ win = "on" /\ held = FALSE /\ away = "no" /\ hum = FALSE /\ sound = TRUE
+        /\ cheer = FALSE /\ link = "none"
 
-\* begin(seed, kitchen): a fresh round; it stops the hum and clears hold and paused, not the celebration timer.
-Begin(which, linked) == /\ phase' = "waiting" /\ paused' = FALSE /\ hold' = FALSE /\ hum' = FALSE
-                /\ on' = which
-                /\ seed' = IF linked /\ which = "theirs" THEN "theirs" ELSE "fresh"
+\* begin(): a fresh round. It cancels the celebration slot (clearTimers), lets go of the button, shuts the list and the menu, stops the hum.
+Begin(newLink) == /\ game' = "waiting" /\ choice' = "none" /\ held' = FALSE /\ away' = "no" /\ cheer' = FALSE /\ hum' = FALSE /\ link' = newLink
+                  /\ UNCHANGED <<win, sound>>
+\* away(): anything that stops the kitchen lets go of the button and marks the pot stale if it was ticking.
+\* wake(): when it may tick again and was stale, a breath first. syncHum() runs after every event.
+Wake(g, c, w) == away' = IF away = "stale" /\ Ticks(g, c, w) THEN "breath" ELSE away
+Stale(g, c, w) == away' = IF Ticking /\ ~Ticks(g, c, w) THEN "stale" ELSE away
 
-\* press(): Space keydown or pointerdown on the stage or the big button.
-\* While paused it only resumes (and restarts the hum on a rising pot).
-YouPressToResume == /\ paused /\ visible /\ focused
-                    /\ paused' = FALSE /\ hum' = (phase = "rising" /\ sound)
-                    /\ UNCHANGED <<phase, visible, focused, hold, sound, cheer, friend, on, seed>>
-\* On a waiting pot: startPot(), ignite, the hum starts, the press counts as held.
-YouPressToLight == /\ ~paused /\ visible /\ focused /\ ~hold /\ phase = "waiting"
-                   /\ phase' = "rising" /\ hold' = TRUE /\ hum' = sound
-                   /\ UNCHANGED <<paused, visible, focused, sound, cheer, friend, on, seed>>
-\* On a rising pot after a short tap: liftNow().
-YouPressToLift == /\ ~paused /\ visible /\ focused /\ ~hold /\ phase = "rising"
-                  /\ phase' = "result" /\ hum' = FALSE
-                  /\ UNCHANGED <<paused, visible, focused, hold, sound, cheer, friend, on, seed>>
-\* release(): keyup or pointerup reaches the page only while it has focus. A short tap leaves the milk heating.
-YouLetGoQuickly == /\ hold /\ focused
-                   /\ hold' = FALSE
-                   /\ UNCHANGED <<phase, paused, visible, focused, hum, sound, cheer, friend, on, seed>>
-\* A real hold (≥ 260 ms) lifts the pot the moment it ends.
-YouLetGoAfterHolding == /\ hold /\ focused /\ phase = "rising"
-                        /\ hold' = FALSE /\ phase' = "result" /\ hum' = FALSE
-                        /\ UNCHANGED <<paused, visible, focused, sound, cheer, friend, on, seed>>
-\* stepRound(): the foam reaches the rim. step() clears hold, stops the hum, sizzles.
-MilkSpills == /\ phase = "rising" /\ Running
-              /\ phase' = "result" /\ hold' = FALSE /\ hum' = FALSE
-              /\ UNCHANGED <<paused, visible, focused, sound, cheer, friend, on, seed>>
-\* stepRound(): after 1.4 s the next pot comes, or the round ends: finishRound() stops the hum, records stars,
-\* and queues the stars' notes, confetti or the lose sound for 0.3–1.1 s later (never cleared).
-NextPotComes == /\ phase = "result" /\ Running
-                /\ phase' = "waiting"
-                /\ UNCHANGED <<paused, visible, focused, hold, hum, sound, cheer, friend, on, seed>>
-RoundEnds == /\ phase = "result" /\ Running
-             /\ phase' = "over" /\ hum' = FALSE /\ cheer' = TRUE
-             /\ UNCHANGED <<paused, visible, focused, hold, sound, friend, on, seed>>
-CheerPlays == /\ cheer /\ cheer' = FALSE
-              /\ UNCHANGED <<phase, paused, visible, focused, hold, hum, sound, friend, on, seed>>
-\* On the card, after the 0.6 s guard: পরের রান্নাঘর / আরেকবার / আবার এই রান্নাঘরে খেলো → begin().
-YouPlayOn == /\ phase = "over" /\ visible /\ focused
-             /\ Begin(on, friend)
-             /\ UNCHANGED <<visible, focused, sound, cheer, friend>>
-\* নতুন পাতিলে খেলো under a friend's card: setFriend(null), begin(fresh pots) in the same kitchen.
-YouPlayFreshPots == /\ phase = "over" /\ friend /\ visible /\ focused
-                    /\ friend' = FALSE /\ Begin(on, FALSE)
-                    /\ UNCHANGED <<visible, focused, sound, cheer>>
-\* LevelGrid onPick → choose(): begin() on any screen.
-YouPickKitchen(which) == /\ visible /\ focused /\ (which = "theirs" => friend)
-                         /\ Begin(which, friend)
-                         /\ UNCHANGED <<visible, focused, sound, cheer, friend>>
-\* hashchange with a valid link: begin(friend's seed, friend's kitchen) on any screen.
-FriendLinkOpens == /\ ~friend /\ visible
-                   /\ friend' = TRUE /\ Begin("theirs", TRUE)
-                   /\ UNCHANGED <<visible, focused, sound, cheer>>
-\* There is no blur listener.
-WindowBlurs == /\ visible /\ focused /\ focused' = FALSE
-               /\ UNCHANGED <<phase, paused, visible, hold, hum, sound, cheer, friend, on, seed>>
-WindowFocuses == /\ visible /\ ~focused /\ focused' = TRUE
-                 /\ UNCHANGED <<phase, paused, visible, hold, hum, sound, cheer, friend, on, seed>>
-\* visibilitychange → hidden: only a rising pot pauses (hold cleared; the paused effect stops the hum).
-TabHides == /\ visible
-            /\ visible' = FALSE /\ focused' = FALSE
-            /\ paused' = (paused \/ phase = "rising")
-            /\ hold' = IF phase = "rising" THEN FALSE ELSE hold
-            /\ hum' = IF phase = "rising" THEN FALSE ELSE hum
-            /\ UNCHANGED <<phase, sound, cheer, friend, on, seed>>
-TabShows == /\ ~visible /\ visible' = TRUE /\ focused' = TRUE
-            /\ UNCHANGED <<phase, paused, hold, hum, sound, cheer, friend, on, seed>>
-\* The site-wide switch: off stops every loop; on starts nothing.
-SoundOff == /\ sound /\ focused /\ sound' = FALSE /\ hum' = FALSE
-            /\ UNCHANGED <<phase, paused, visible, focused, hold, cheer, friend, on, seed>>
-SoundOn == /\ ~sound /\ focused /\ sound' = TRUE
-           /\ UNCHANGED <<phase, paused, visible, focused, hold, hum, cheer, friend, on, seed>>
+YouPressStart == /\ game = "title" /\ win = "on" /\ choice = "none" /\ Begin(IF link = "none" THEN "none" ELSE "theirs")
+\* press(): only while ticking, never during the breath (the click that brings focus back is not a move), never twice.
+YouPressToLight == /\ Ticking /\ away # "breath" /\ ~held /\ game = "waiting"
+                   /\ game' = "rising" /\ held' = TRUE /\ hum' = sound /\ UNCHANGED <<choice, win, away, sound, cheer, link>>
+YouPressToLift == /\ Ticking /\ away # "breath" /\ ~held /\ game = "rising"
+                  /\ game' = "result" /\ held' = TRUE /\ hum' = FALSE /\ UNCHANGED <<choice, win, away, sound, cheer, link>>
+\* release(): a keyup or pointerup reaches the page only while it has focus. A short tap leaves the milk heating.
+YouLetGoQuickly == /\ held /\ win = "on" /\ held' = FALSE /\ UNCHANGED <<game, choice, win, away, hum, sound, cheer, link>>
+\* A real hold (>= 260 ms) lifts the pot the moment it ends.
+YouLetGoAfterHolding == /\ held /\ Ticking /\ game = "rising"
+                        /\ held' = FALSE /\ game' = "result" /\ hum' = FALSE /\ UNCHANGED <<choice, win, away, sound, cheer, link>>
+\* stepRound(): the foam reaches the rim. step() lets go of the button, the hum stops, sizzle.
+MilkSpills == /\ Ticking /\ away # "breath" /\ game = "rising"
+              /\ game' = "result" /\ held' = FALSE /\ hum' = FALSE /\ UNCHANGED <<choice, win, away, sound, cheer, link>>
+NextPotComes == /\ Ticking /\ away # "breath" /\ game = "result" /\ game' = "waiting" /\ UNCHANGED <<choice, win, held, away, hum, sound, cheer, link>>
+\* finish(): the stars are recorded now, the celebration is queued in the slot (a cleared level only).
+RoundEndsCleared == /\ Ticking /\ away # "breath" /\ game = "result"
+                    /\ game' = "over" /\ held' = FALSE /\ hum' = FALSE /\ cheer' = TRUE /\ UNCHANGED <<choice, win, away, sound, link>>
+RoundEndsFailed == /\ Ticking /\ away # "breath" /\ game = "result"
+                   /\ game' = "over" /\ held' = FALSE /\ hum' = FALSE /\ UNCHANGED <<choice, win, away, sound, cheer, link>>
+CheerPlays == /\ cheer /\ cheer' = FALSE /\ UNCHANGED <<game, choice, win, held, away, hum, sound, link>>
+\* The end screen's choices (fresh keys): আবার খেলো keeps a friend's pots, পরের লেভেল and the list start fresh ones.
+YouPlayAgain == /\ game = "over" /\ win = "on" /\ choice = "none" /\ Begin(link)
+YouPlayNext == /\ game = "over" /\ win = "on" /\ choice = "none" /\ Begin(IF link = "none" THEN "none" ELSE "other")
+\* The level list is a choice screen: it pauses.
+YouOpenList == /\ choice = "none" /\ win = "on" /\ choice' = "list" /\ held' = FALSE /\ Stale(game, "list", win) /\ hum' = FALSE
+               /\ UNCHANGED <<game, win, sound, cheer, link>>
+YouPickLevel == /\ choice = "list" /\ win = "on" /\ Begin(IF link = "none" THEN "none" ELSE "other")
+YouCloseList == /\ choice = "list" /\ choice' = "none" /\ Wake(game, "none", win) /\ hum' = (Ticks(game, "none", win) /\ sound /\ game = "rising")
+                /\ UNCHANGED <<game, win, held, sound, cheer, link>>
+\* The player's menu (useGamePlayer onPause / onResume).
+YouOpenMenu == /\ choice = "none" /\ game # "title" /\ win = "on" /\ choice' = "menu" /\ held' = FALSE /\ Stale(game, "menu", win) /\ hum' = FALSE
+               /\ UNCHANGED <<game, win, sound, cheer, link>>
+YouResume == /\ choice = "menu" /\ choice' = "none" /\ Wake(game, "none", win) /\ hum' = (Ticks(game, "none", win) /\ sound /\ game = "rising")
+             /\ UNCHANGED <<game, win, held, sound, cheer, link>>
+\* Window blur and focus (real, or the player's synthetic ones); hide and show.
+WindowBlurs == /\ win = "on" /\ win' = "blurred" /\ held' = FALSE /\ Stale(game, choice, "blurred") /\ hum' = FALSE
+               /\ UNCHANGED <<game, choice, sound, cheer, link>>
+WindowFocuses == /\ win = "blurred" /\ win' = "on" /\ Wake(game, choice, "on") /\ hum' = (Ticks(game, choice, "on") /\ sound /\ game = "rising")
+                 /\ UNCHANGED <<game, choice, held, sound, cheer, link>>
+TabHides == /\ win # "hidden" /\ win' = "hidden" /\ held' = FALSE /\ Stale(game, choice, "hidden") /\ hum' = FALSE
+            /\ UNCHANGED <<game, choice, sound, cheer, link>>
+TabShows == /\ win = "hidden" /\ win' = "on" /\ Wake(game, choice, "on") /\ hum' = (Ticks(game, choice, "on") /\ sound /\ game = "rising")
+            /\ UNCHANGED <<game, choice, held, sound, cheer, link>>
+\* The breath after coming back runs down while the kitchen ticks.
+BreathPasses == /\ Ticking /\ away = "breath" /\ away' = "no" /\ UNCHANGED <<game, choice, win, held, hum, sound, cheer, link>>
+\* The site-wide switch: off stops every loop in the kit; on lets syncHum start a fresh hum if the milk is rising.
+SoundOff == /\ sound /\ sound' = FALSE /\ hum' = FALSE /\ UNCHANGED <<game, choice, win, held, away, cheer, link>>
+SoundOn == /\ ~sound /\ sound' = TRUE /\ hum' = (Ticking /\ game = "rising") /\ UNCHANGED <<game, choice, win, held, away, cheer, link>>
+\* hashchange with a valid link: takeLink() shows the title with the friend's challenge, cancels the celebration and lets go of
+\* everything. (On a ticking round the code keeps the link pending until the player is away, then does exactly this; the model
+\* lets it happen at any moment, which covers both.)
+FriendLinkOpens == /\ link = "none" /\ win = "on"
+                   /\ link' = "theirs" /\ game' = "title" /\ held' = FALSE /\ hum' = FALSE /\ cheer' = FALSE /\ away' = "no"
+                   /\ UNCHANGED <<choice, win, sound>>
 
-Next == YouPressToResume \/ YouPressToLight \/ YouPressToLift \/ YouLetGoQuickly \/ YouLetGoAfterHolding
-        \/ MilkSpills \/ NextPotComes \/ RoundEnds \/ CheerPlays \/ YouPlayOn \/ YouPlayFreshPots
-        \/ YouPickKitchen("theirs") \/ YouPickKitchen("mine") \/ FriendLinkOpens
-        \/ WindowBlurs \/ WindowFocuses \/ TabHides \/ TabShows \/ SoundOff \/ SoundOn
+Next == YouPressStart \/ YouPressToLight \/ YouPressToLift \/ YouLetGoQuickly \/ YouLetGoAfterHolding
+        \/ MilkSpills \/ NextPotComes \/ RoundEndsCleared \/ RoundEndsFailed \/ CheerPlays \/ YouPlayAgain \/ YouPlayNext
+        \/ YouOpenList \/ YouPickLevel \/ YouCloseList \/ YouOpenMenu \/ YouResume
+        \/ WindowBlurs \/ WindowFocuses \/ TabHides \/ TabShows \/ BreathPasses \/ SoundOff \/ SoundOn \/ FriendLinkOpens
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ phase \in Phases /\ paused \in BOOLEAN /\ visible \in BOOLEAN
-          /\ focused \in BOOLEAN /\ hold \in BOOLEAN /\ hum \in BOOLEAN /\ sound \in BOOLEAN
-          /\ cheer \in BOOLEAN /\ friend \in BOOLEAN /\ on \in {"theirs", "mine"} /\ seed \in {"theirs", "fresh"}
+TypeOK == /\ game \in Games /\ choice \in {"none", "menu", "list"} /\ win \in {"on", "blurred", "hidden"} /\ held \in BOOLEAN
+          /\ away \in {"no", "stale", "breath"} /\ hum \in BOOLEAN /\ sound \in BOOLEAN /\ cheer \in BOOLEAN /\ link \in {"none", "theirs", "other"}
 
 \* The reader's rules.
-PausedWhenHidden == (phase = "rising" /\ ~visible) => paused
-PausedWhenBlurred == (phase = "rising" /\ ~paused) => focused
-InputReleasedWhenAway == hold => focused
-HumOnlyWhileHeating == hum => (phase = "rising" /\ ~paused /\ visible /\ sound)
-HumComesBack == (phase = "rising" /\ ~paused /\ visible /\ sound) => hum
-CelebrationOnItsOwnCard == cheer => phase = "over"
-ReplayIsExact == (friend /\ on = "theirs") => seed = "theirs"
+\* The milk never rises while the tab is hidden or the window is blurred: either the pot ticks, or it is marked and will breathe on return.
+PausedWhenAway == (game = "rising" /\ ~Ticking) => away # "no"
+InputReleasedWhenAway == held => (Play /\ win = "on" /\ choice = "none")
+ClickThatBringsFocusBackIsNotAMove == away = "breath" => ~held
+ChoiceFreezesPlay == choice # "none" => ~Ticking
+HumOnlyWhileHeating == hum => (game = "rising" /\ Ticking /\ sound)
+HumComesBack == WantHum => hum
+CelebrationOnItsOwnCard == cheer => game = "over"
 ====
