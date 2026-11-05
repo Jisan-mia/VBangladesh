@@ -1,26 +1,18 @@
 import "./product.css";
+import { GamePage } from "../../shared/game-player";
 import { ParentNote } from "../../shared/kids-kit";
-import { Faq, JsonLd, PageFrame } from "../../shared/site-shell";
-import { TangramGame } from "./components/tangram-game";
+import { TangramGame } from "./components/game";
 import { parentNote, site } from "./content";
 
 export default function SatTukroPage() {
   return (
-    <PageFrame site={site}>
-      <JsonLd site={site} />
-      <div className="st-page">
-        <section className="st-hero container" aria-labelledby="st-title">
-          <h1 id="st-title">{site.headline}</h1>
-          <ParentNote slug={site.slug} {...parentNote} />
-        </section>
-        <section className="container" id="tool" aria-label="সাত টুকরো খেলো"><TangramGame /></section>
-        <section className="container section st-guide" id="guide" aria-labelledby="guide-title">
-          <h2 id="guide-title">{site.guideTitle}</h2>
-          <p>{site.guideIntro}</p>
-          <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{new Intl.NumberFormat("bn-BD").format(index + 1)}</span><p>{step}</p></li>)}</ol>
-        </section>
-        <Faq items={site.faq} />
-      </div>
-    </PageFrame>
+    <GamePage site={site} kids title={site.headline} note={<ParentNote slug={site.slug} {...parentNote} />}
+      more={<section className="st-more" aria-labelledby="st-print-title">
+        <h3 id="st-print-title">কেটে খেলার পাতা</h3>
+        <p>সাত টুকরোর বর্গ আর ছয়টা ছবির ছায়া, A4 কাগজে। শক্ত কাগজে প্রিন্ট করে দাগ ধরে কাটো। কাঁচিটা বড়রা ধরবে।</p>
+        <a href="/sat-tukro?print">কাটার পাতা প্রিন্ট করো</a>
+      </section>}>
+      <TangramGame />
+    </GamePage>
   );
 }

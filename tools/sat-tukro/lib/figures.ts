@@ -40,13 +40,5 @@ export const FIGURES: readonly Figure[] = [
   fig('dourano', 'মানুষ দৌড়াচ্ছে', false, false, [['Q', 1, 2, 0], ['P', 0, 0, 2, 1], ['L', 5, 2, 4], ['S', 5, 5, 3], ['M', 0, 0, 4], ['L', 3, 4, 6], ['S', 1, 1, 7]]),
 ];
 
-export const LEVEL_COUNT = FIGURES.length;
-
-/** Four steps: outlines with pieces already turned right → outlines, pieces turned → only the shadow → shadow, turned. */
-export function bandOf(level: number) {
-  const step = level <= 6 ? 0 : level <= 12 ? 1 : level <= 17 ? 2 : 3;
-  return { step, outlines: step < 2, turned: step % 2 === 1 };
-}
-
 /** The six silhouettes on the printed sheet. */
 export const PRINT_IDS = ['ghor', 'nouka', 'biral', 'mach', 'rickshaw', 'dourano'] as const;

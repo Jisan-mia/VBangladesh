@@ -1,105 +1,145 @@
 ---- MODULE SatTukro ----
-\* সাত টুকরো as it is on 2026-11-04 (branch games-to-the-bar), mirrored from:
-\*   tools/sat-tukro/components/tangram-game.tsx  Play (phase, finish() timer, start(), the title button, LevelGrid, আবার খেলো, শেষ)
-\*                                                 Board (down/move/up/cancel on the SVG, the drag ref)
-\*   tools/sat-tukro/lib/game.ts                   drop/tapPiece/settle: a piece clicks in or goes back
-\*   shared/kids-kit.tsx                           useKidsSession().atBreak(), RestScreen, ParentGate, ShareToolLink
-\*   shared/site-shell.tsx                         PageFrame: header, crumbs, related tools and footer links around the game
-\* Two pieces stand for the seven. No blur, visibilitychange or keyup handler exists in the game, so "away" is one flag.
-\* No sound loop and no speech: every sfx goes through tone(), which checks soundOn(), so sound is not modelled.
+\* সাত টুকরো after the rewrite (branch games-to-the-bar), mirrored from:
+\*   tools/sat-tukro/lib/session.ts          begin, pressTable, finished, timerFires/timerMayRun, pause, resume, blur, toTitle,
+\*                                           openLevels, closeLevels, pickFromList, freshKey
+\*   tools/sat-tukro/components/game.tsx     begin() asks kids.atBreak(); landed() records the stars at the last drop; the
+\*                                           cheer timer; useGamePlayer(onPause, onResume, onRestart, onLevels); keys at window
+\*   tools/sat-tukro/components/table.tsx    onDown/onMove/onUp/cancel: the hand is dropped on blur, hide, pointercancel,
+\*                                           lost capture and a mouse move with no button; a stale press is replaced
+\*   shared/kids-kit.tsx                     useKidsSession().atBreak(), RestScreen (a real modal), ParentGate, ShareToolLink
+\* Two pieces stand for the seven. "paused" is the player's menu, which opens on blur and hide too. No sound loop and no voice,
+\* so sound is not modelled. The child's view has no link out: the only exits are behind the parent gate.
 EXTENDS Naturals
 CONSTANTS N
-VARIABLES phase, placed, cheer, grip, finger, focused, resting, exit, dropped, lost, sent, stored
-vars == <<phase, placed, cheer, grip, finger, focused, resting, exit, dropped, lost, sent, stored>>
+VARIABLES screen, back, placed, pending, finished, recorded, begun,   \* the picture
+          grip, finger, focused, paused, swallow, moved,              \* hand and window
+          overLimit, resting, lost, exit, sent, stored
 
-Open == exit = "none" /\ ~resting /\ focused   \* the child can tap: still on the page, in front, no rest screen over it
+vars == <<screen, back, placed, pending, finished, recorded, begun, grip, finger, focused, paused, swallow, moved, overLimit, resting, lost, exit, sent, stored>>
 
-Init == /\ phase = "play" /\ placed = 0 /\ cheer = FALSE /\ grip = FALSE /\ finger = FALSE /\ focused = TRUE
-        /\ resting = FALSE /\ exit = "none" /\ dropped = FALSE /\ lost = FALSE /\ sent = FALSE /\ stored = FALSE
+RestShows == resting /\ screen # "play"          \* game.tsx: kids.resting && screen !== 'play'
+Free == exit = "none" /\ ~RestShows /\ ~paused /\ focused
 
-\* Board.down(): only the primary pointer, only when no drag is in flight (drag.current), never on a placed piece.
-YouPressAPiece == /\ Open /\ phase = "play" /\ focused /\ ~grip /\ ~finger /\ placed < N
-                  /\ grip' = TRUE /\ finger' = TRUE
-                  /\ UNCHANGED <<phase, placed, cheer, focused, resting, exit, dropped, lost, sent, stored>>
-\* Board.up() → onDrop → drop()/settle(): it clicks in. The last piece calls finish(): sfx.win() and a 1.2 s setTimeout.
-YouDropItInPlace == /\ grip /\ finger /\ focused /\ placed < N
+Init == /\ screen = "title" /\ back = "title" /\ placed = 0 /\ pending = FALSE /\ finished = FALSE /\ recorded = FALSE /\ begun = "inTime"
+        /\ grip = FALSE /\ finger = FALSE /\ focused = TRUE /\ paused = FALSE /\ swallow = FALSE /\ moved = FALSE
+       
+        /\ overLimit \in BOOLEAN /\ resting = overLimit        \* useKidsSession: past today's limit the page opens resting
+        /\ lost = FALSE /\ exit = "none" /\ sent = FALSE /\ stored = FALSE
+
+\* begin(): খেলো, আবার খেলো, Enter, or a picture from the list. atBreak() first: past the limit, the rest screen instead.
+Begins == IF overLimit
+          THEN /\ resting' = TRUE /\ UNCHANGED <<screen, placed, pending, finished, recorded, begun>>
+          ELSE /\ screen' = "play" /\ placed' = 0 /\ pending' = FALSE /\ finished' = FALSE /\ recorded' = FALSE /\ resting' = FALSE
+               /\ begun' = "inTime"
+
+YouStartAPicture == /\ screen \in {"title", "end"} /\ Free /\ ~grip
+                    /\ Begins /\ swallow' = FALSE
+                    /\ UNCHANGED <<back, grip, finger, focused, paused, moved, overLimit, lost, exit, sent, stored>>
+YouPlayAgain == YouStartAPicture      \* আবার খেলো is begin() of the same picture: the same step in the model
+
+\* table.onDown: only the primary pointer, no press in flight, never a placed piece; the first press back only wakes.
+YouPressAPiece == /\ screen = "play" /\ Free /\ ~pending /\ ~grip /\ ~finger /\ placed < N
+                  /\ IF swallow THEN /\ swallow' = FALSE /\ UNCHANGED <<grip, finger>>
+                     ELSE /\ grip' = TRUE /\ finger' = TRUE /\ UNCHANGED swallow
+                  /\ UNCHANGED <<screen, back, placed, pending, finished, recorded, begun, focused, paused, moved, overLimit, resting, lost, exit, sent, stored>>
+\* The piece lands. The last one finishes the picture at this very drop: stars saved, the limit checked (landed(), S.finished).
+YouDropItInPlace == /\ grip /\ finger /\ screen = "play" /\ focused /\ ~paused /\ placed < N
                     /\ placed' = placed + 1 /\ grip' = FALSE /\ finger' = FALSE
-                    /\ cheer' = (placed + 1 = N)
-                    /\ UNCHANGED <<phase, focused, resting, exit, dropped, lost, sent, stored>>
-\* drop() → 'miss' | 'park' | 'home': the piece goes back or stays loose.
-YouDropItWrong == /\ grip /\ finger /\ focused
+                    /\ IF placed + 1 = N
+                       THEN /\ pending' = TRUE /\ finished' = TRUE /\ recorded' = TRUE /\ resting' = overLimit
+                       ELSE UNCHANGED <<pending, finished, recorded, resting>>
+                    /\ UNCHANGED <<screen, back, begun, focused, paused, swallow, moved, overLimit, lost, exit, sent, stored>>
+YouDropItWrong == /\ grip /\ finger /\ focused /\ ~paused /\ screen = "play"
                   /\ grip' = FALSE /\ finger' = FALSE
-                  /\ UNCHANGED <<phase, placed, cheer, focused, resting, exit, dropped, lost, sent, stored>>
-\* onPointerCancel={cancel}: the phone takes the touch away.
+                  /\ UNCHANGED <<screen, back, placed, pending, finished, recorded, begun, focused, paused, swallow, moved, overLimit, resting, lost, exit, sent, stored>>
 TouchIsCancelled == /\ grip /\ grip' = FALSE /\ finger' = FALSE
-                    /\ UNCHANGED <<phase, placed, cheer, focused, resting, exit, dropped, lost, sent, stored>>
-\* No blur handler: drag.current survives.
-WindowBlurs == /\ focused /\ focused' = FALSE
-               /\ UNCHANGED <<phase, placed, cheer, grip, finger, resting, exit, dropped, lost, sent, stored>>
-\* The button or finger comes up while another window has it: Board.up() never runs.
+                    /\ UNCHANGED <<screen, back, placed, pending, finished, recorded, begun, focused, paused, swallow, moved, overLimit, resting, lost, exit, sent, stored>>
+
+\* The window blurs or the tab hides: the player's menu opens, the table lets go of the piece (a glide home), the cheer timer
+\* freezes, and the first press back only wakes the game.
+WindowBlurs == /\ focused /\ focused' = FALSE /\ grip' = FALSE /\ paused' = TRUE /\ swallow' = (screen = "play")
+               /\ UNCHANGED <<screen, back, placed, pending, finished, recorded, begun, finger, moved, overLimit, resting, lost, exit, sent, stored>>
+\* The button or finger comes up while another window has it: the table never sees pointerup, and holds nothing anyway.
 YouLetGoAway == /\ finger /\ ~focused /\ finger' = FALSE
-                /\ UNCHANGED <<phase, placed, cheer, grip, focused, resting, exit, dropped, lost, sent, stored>>
+                /\ UNCHANGED <<screen, back, placed, pending, finished, recorded, begun, grip, focused, paused, swallow, moved, overLimit, resting, lost, exit, sent, stored>>
 WindowFocuses == /\ ~focused /\ focused' = TRUE
-                 /\ UNCHANGED <<phase, placed, cheer, grip, finger, resting, exit, dropped, lost, sent, stored>>
-\* The title button (ছবি ৩/২২) or শেষ: setPhase('pick'). The Board unmounts, so the drag ref goes with it.
-\* The finish() timer is not cleared.
-YouOpenThePictures == /\ Open /\ phase \in {"play", "end"} /\ ~finger
-                      /\ phase' = "pick" /\ grip' = FALSE
-                      /\ UNCHANGED <<placed, cheer, finger, focused, resting, exit, dropped, lost, sent, stored>>
-\* LevelGrid onPick={start}: clears the timer and starts that picture afresh with a new seed. There is no "back" button.
-YouPickThisPicture == /\ Open /\ phase = "pick"
-                      /\ lost' = (lost \/ (placed > 0 /\ placed < N))
-                      /\ dropped' = (dropped \/ cheer)
-                      /\ phase' = "play" /\ placed' = 0 /\ cheer' = FALSE
-                      /\ UNCHANGED <<grip, finger, focused, resting, exit, sent, stored>>
-YouPickAnotherPicture == /\ Open /\ phase = "pick"
-                         /\ dropped' = (dropped \/ cheer)
-                         /\ phase' = "play" /\ placed' = 0 /\ cheer' = FALSE
-                         /\ UNCHANGED <<grip, finger, focused, resting, exit, lost, sent, stored>>
-\* The finish() timer fires from whatever screen is up: record(), setPhase('end'), atBreak() (true once today's limit passed).
-\* Stars go to localStorage (progress, allowed).
-CheerEnds == /\ cheer
-             /\ cheer' = FALSE /\ phase' = "end" /\ grip' = FALSE
-             /\ resting' \in BOOLEAN
-             /\ UNCHANGED <<placed, finger, focused, exit, dropped, lost, sent, stored>>
-\* আবার খেলো: start(level % 22 + 1).
-YouPlayAgain == /\ Open /\ phase = "end"
-                /\ phase' = "play" /\ placed' = 0
-                /\ UNCHANGED <<cheer, grip, finger, focused, resting, exit, dropped, lost, sent, stored>>
-\* RestScreen → ParentGate → আজ আরও ১০ মিনিট: extend().
-ParentGivesMoreTime == /\ resting /\ resting' = FALSE
-                       /\ UNCHANGED <<phase, placed, cheer, grip, finger, focused, exit, dropped, lost, sent, stored>>
-\* The bottom ParentGate (2 s hold, then a sum) → ShareToolLink: the plain address only.
-ParentSharesTheLink == /\ Open /\ ~finger /\ exit' = "share"
-                       /\ UNCHANGED <<phase, placed, cheer, grip, finger, focused, resting, dropped, lost, sent, stored>>
-\* PageFrame's header, crumbs, "এগুলোও ভালো লাগতে পারে" cards and footer, and the print link: none is behind a gate.
-YouTapALinkAroundTheGame == /\ Open /\ ~finger /\ exit' = "site"
-                            /\ UNCHANGED <<phase, placed, cheer, grip, finger, focused, resting, dropped, lost, sent, stored>>
+                 /\ UNCHANGED <<screen, back, placed, pending, finished, recorded, begun, grip, finger, paused, swallow, moved, overLimit, resting, lost, exit, sent, stored>>
+\* The player's ⏸, P or Esc.
+YouPause == /\ ~paused /\ paused' = TRUE /\ grip' = FALSE /\ swallow' = (screen = "play")
+            /\ UNCHANGED <<screen, back, placed, pending, finished, recorded, begun, finger, focused, moved, overLimit, resting, lost, exit, sent, stored>>
+\* চালিয়ে যাও.
+YouResume == /\ paused /\ focused /\ paused' = FALSE /\ swallow' = FALSE
+             /\ UNCHANGED <<screen, back, placed, pending, finished, recorded, begun, grip, finger, focused, moved, overLimit, resting, lost, exit, sent, stored>>
+\* নতুন করে শুরু from the menu: back to the title; the cheer timer is cleared.
+YouRestartFromTheMenu == /\ paused /\ screen' = "title" /\ pending' = FALSE /\ paused' = FALSE /\ swallow' = FALSE /\ grip' = FALSE
+                         /\ UNCHANGED <<back, placed, finished, recorded, begun, finger, focused, moved, overLimit, resting, lost, exit, sent, stored>>
+
+\* timerFires() runs only when timerMayRun(): the menu shut. `moved` would record a step taken under the menu.
+CheerEnds == /\ pending /\ ~paused /\ screen = "play"
+             /\ pending' = FALSE /\ screen' = "end" /\ moved' = (moved \/ paused)
+             /\ UNCHANGED <<back, placed, finished, recorded, begun, grip, finger, focused, paused, swallow, overLimit, resting, lost, exit, sent, stored>>
+
+\* The picture list, from the title, the end screen or mid-picture (the player's সব লেভেল, or the title chip). During the cheer
+\* it lets the end screen come first: the picture is done and its stars are saved.
+YouOpenThePictures == /\ screen \in {"title", "end", "play"} /\ Free /\ ~finger
+                      /\ IF screen = "play" /\ pending
+                         THEN /\ back' = "end" /\ pending' = FALSE
+                         ELSE /\ back' = screen /\ UNCHANGED pending
+                      /\ screen' = "levels" /\ grip' = FALSE
+                      /\ UNCHANGED <<placed, finished, recorded, begun, finger, focused, paused, swallow, moved, overLimit, resting, lost, exit, sent, stored>>
+\* ফিরে যাও: nothing changes.
+YouGoBack == /\ screen = "levels" /\ Free /\ screen' = back /\ swallow' = FALSE
+             /\ UNCHANGED <<back, placed, pending, finished, recorded, begun, grip, finger, focused, paused, moved, overLimit, resting, lost, exit, sent, stored>>
+\* The picture being built, tapped in the list: pickFromList() answers 'resume', and the pieces stay.
+YouPickThisPicture == /\ screen = "levels" /\ Free /\ back = "play" /\ screen' = "play" /\ swallow' = FALSE
+                      /\ UNCHANGED <<back, placed, pending, finished, recorded, begun, grip, finger, focused, paused, moved, overLimit, resting, lost, exit, sent, stored>>
+\* Any other picture, or any picture from the title or end screen: begin().
+YouPickAnotherPicture == /\ screen = "levels" /\ Free /\ \/ back # "play" \/ TRUE
+                         /\ Begins /\ swallow' = FALSE
+                         /\ UNCHANGED <<back, grip, finger, focused, paused, moved, overLimit, lost, exit, sent, stored>>
+\* শেষ: the title; nothing starts by itself.
+YouPressShesh == /\ screen = "end" /\ Free /\ screen' = "title"
+                 /\ UNCHANGED <<back, placed, pending, finished, recorded, begun, grip, finger, focused, paused, swallow, moved, overLimit, resting, lost, exit, sent, stored>>
+
+\* useKidsSession's tick pushes today's time past the limit, at any moment.
+TimeIsUp == /\ ~overLimit /\ overLimit' = TRUE
+            /\ UNCHANGED <<screen, back, placed, pending, finished, recorded, begun, grip, finger, focused, paused, swallow, moved, resting, lost, exit, sent, stored>>
+\* A grown-up's আজ আরও ১০ মিনিট behind the gate on the rest screen.
+ParentGivesMoreTime == /\ RestShows /\ overLimit' = FALSE /\ resting' = FALSE
+                       /\ UNCHANGED <<screen, back, placed, pending, finished, recorded, begun, grip, finger, focused, paused, swallow, moved, lost, exit, sent, stored>>
+\* The grown-ups' row on the title: the gate (a hold, then a sum), then the plain link or the print sheet.
+ParentOpensThePrintSheetOrShares == /\ screen = "title" /\ Free /\ ~finger /\ exit' = "share"
+                                    /\ UNCHANGED <<screen, back, placed, pending, finished, recorded, begun, grip, finger, focused, paused, swallow, moved, overLimit, resting, lost, sent, stored>>
 Done == exit # "none" /\ UNCHANGED vars
 
-Next == YouPressAPiece \/ YouDropItInPlace \/ YouDropItWrong \/ TouchIsCancelled \/ WindowBlurs \/ YouLetGoAway \/ WindowFocuses
-        \/ YouOpenThePictures \/ YouPickThisPicture \/ YouPickAnotherPicture \/ CheerEnds \/ YouPlayAgain
-        \/ ParentGivesMoreTime \/ ParentSharesTheLink \/ YouTapALinkAroundTheGame \/ Done
+Next == YouStartAPicture \/ YouPressAPiece \/ YouDropItInPlace \/ YouDropItWrong \/ TouchIsCancelled \/ WindowBlurs \/ YouLetGoAway
+        \/ WindowFocuses \/ YouPause \/ YouResume \/ YouRestartFromTheMenu \/ CheerEnds \/ YouOpenThePictures \/ YouGoBack
+        \/ YouPickThisPicture \/ YouPickAnotherPicture \/ YouPressShesh
+        \/ TimeIsUp \/ ParentGivesMoreTime \/ ParentOpensThePrintSheetOrShares \/ Done
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ phase \in {"play", "end", "pick"} /\ placed \in 0..N /\ cheer \in BOOLEAN /\ grip \in BOOLEAN /\ finger \in BOOLEAN
-          /\ focused \in BOOLEAN /\ resting \in BOOLEAN /\ exit \in {"none", "share", "site"}
-          /\ dropped \in BOOLEAN /\ lost \in BOOLEAN /\ sent \in BOOLEAN /\ stored \in BOOLEAN
+TypeOK == /\ screen \in {"title", "play", "end", "levels"} /\ back \in {"title", "play", "end"} /\ placed \in 0..N
+          /\ pending \in BOOLEAN /\ finished \in BOOLEAN /\ recorded \in BOOLEAN /\ begun \in {"inTime", "late"}
+          /\ grip \in BOOLEAN /\ finger \in BOOLEAN /\ focused \in BOOLEAN /\ paused \in BOOLEAN /\ swallow \in BOOLEAN /\ moved \in BOOLEAN
+          /\ overLimit \in BOOLEAN /\ resting \in BOOLEAN /\ lost \in BOOLEAN
+          /\ exit \in {"none", "share", "site"} /\ sent \in BOOLEAN /\ stored \in BOOLEAN
 
-\* What a child must tap to go on, per screen, and which of those carry a picture (not only words or numerals).
-\* Ages 5–12 per the parent note, so the 3–5 rule covers the 5-year-olds.
-Needed == CASE phase = "play" -> {"piece"}
-          []   phase = "end"  -> {"again", "shesh"}        \* plain text buttons
-          []   phase = "pick" -> {"numberTile"}            \* ১…২২ with stars; the names are a text line below
-Pictured == {"piece", "flip", "sound"}
+\* What a child must tap to go on, per screen: each is a picture (a piece, a ↻ and a ✓ at 112 px, a thumbnail and a ← at 64 px).
+Needed == CASE screen = "play"   -> {"piece"}
+          []   screen = "end"    -> {"again", "shesh"}
+          []   screen = "levels" -> {"thumbnail", "back"}
+          []   screen = "title"  -> {"board"}
+Pictured == {"piece", "again", "shesh", "thumbnail", "back", "board"}
 
-\* The reader's rules.
+\* ---- the reader's rules ----
 InputReleasedWhenAway == ~focused => ~grip
-ChoiceFreezesPlay == phase = "pick" => ~cheer
-FinishCounts == ~dropped
+ChoiceFreezesPlay == screen = "levels" => ~pending
+FinishCounts == finished => recorded
 PickerKeepsWork == ~lost
-RestOnlyAtBreak == resting => (phase = "end" /\ ~cheer)
+RestOnlyAtBreak == RestShows => screen # "play"
+NoNewRoundPastLimit == begun = "inTime"
+NothingMovesUnderTheMenu == ~moved
 ParentGate == exit # "site"
 NoNetwork == ~sent
 NoChildData == ~stored

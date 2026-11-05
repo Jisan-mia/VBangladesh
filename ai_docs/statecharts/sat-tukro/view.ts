@@ -1,18 +1,20 @@
-export const title = "সাত টুকরো: picture, hand, window, daily limit and links";
+export const title = "সাত টুকরো: picture, hand, window, pause, picture list and daily limit";
 const game = (v: any) => {
-  if (v.exit === "site") return "Left for another page";
-  if (v.exit === "share") return "Parent shares the link";
-  if (v.resting) return "Rest screen";
-  if (v.phase === "pick") return v.cheer ? "Picture list, cheer still pending" : "Picture list";
-  if (v.phase === "end") return "End screen";
-  if (v.cheer) return "Picture done, cheering";
+  if (v.exit === "share") return "Parent opens the gate: plain link or print sheet";
+  if (v.resting && v.screen !== "play") return "Rest screen";
+  if (v.screen === "title") return "Title (the board is খেলো)";
+  if (v.screen === "levels") return v.back === "play" ? "Picture list, the half-built picture kept" : "Picture list";
+  if (v.screen === "end") return "End screen (আবার খেলো / শেষ)";
+  if (v.pending) return "Picture done, stars saved, the cheer";
   return v.placed === 0 ? "Empty shadow" : "Half built";
 };
 export const state = (v: any) => ({
-  Game: game(v),
-  Hand: v.grip ? (!v.focused ? "Away, piece still held" : v.finger ? "Dragging a piece" : "Piece follows the bare pointer") : v.focused ? "Hands off" : "Away",
+  Picture: game(v),
+  Hand: v.grip ? "Dragging a piece" : v.focused ? (v.swallow ? "Back from away, the next press only wakes" : "Hands off") : "Away",
+  Player: v.paused ? "Pause menu open, the cheer waits" : "Playing",
 });
 export const step = (action: string) => ({
+  YouStartAPicture: "the child taps খেলো or আবার খেলো",
   YouPressAPiece: "you press a piece",
   YouDropItInPlace: "you drop it in its place",
   YouDropItWrong: "you drop it in the wrong place",
@@ -20,14 +22,18 @@ export const step = (action: string) => ({
   WindowBlurs: "you click into another window",
   YouLetGoAway: "you let go over the other window",
   WindowFocuses: "you come back to the window",
-  YouOpenThePictures: "you tap the picture's name (or শেষ)",
-  YouPickThisPicture: "you pick the same picture",
-  YouPickAnotherPicture: "you pick another picture",
+  YouPause: "⏸, P or Esc",
+  YouResume: "চালিয়ে যাও",
+  YouRestartFromTheMenu: "নতুন করে শুরু",
   CheerEnds: "the cheer ends and the end screen shows",
-  YouPlayAgain: "you press আবার খেলো",
-  ParentGivesMoreTime: "a parent gives 10 more minutes",
-  ParentSharesTheLink: "a parent opens the gate and shares the link",
-  YouTapALinkAroundTheGame: "you tap a link around the game",
+  YouOpenThePictures: "you open the picture list",
+  YouGoBack: "ফিরে যাও",
+  YouPickThisPicture: "you pick the picture you are building",
+  YouPickAnotherPicture: "you pick a picture",
+  YouPressShesh: "you press শেষ",
+  TimeIsUp: "today's play time runs out",
+  ParentGivesMoreTime: "a grown-up gives আজ আরও ১০ মিনিট",
+  ParentOpensThePrintSheetOrShares: "a grown-up opens the gate and shares or prints",
 } as Record<string, string>)[action] ?? action;
-export const group = (v: any) => v.exit !== "none" ? "gone" : v.resting ? "rest" : v.phase === "play" ? "play" : "between";
+export const group = (v: any) => v.exit !== "none" ? "gone" : v.resting && v.screen !== "play" ? "rest" : v.screen === "play" ? "play" : "between";
 export const colors = { play: "teal", between: "blue", rest: "yellow", gone: "orange" };
