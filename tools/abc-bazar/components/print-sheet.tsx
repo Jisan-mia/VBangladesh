@@ -1,6 +1,6 @@
 // The ?print view: one A4 sheet, A to Z, each letter pair with its picture in outline to colour and the word under it.
 import { LETTERS } from "../lib/letters";
-import { EnglishWord, Pic } from "./art";
+import { EnglishWord, Pic } from "./pieces";
 
 export function PrintSheet() {
   return <div className="ab-print">

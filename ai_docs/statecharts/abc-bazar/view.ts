@@ -1,39 +1,35 @@
-export const title = "এবিসি বাজার: round, stars, window, rest screen and parent gate";
-const game = (v: any) => {
-  if (v.out === "childLeft") return "The child left for another page";
-  if (v.out !== "none") return "The share sheet opened";
-  if (v.phase === "done") return "Done screen";
-  if (v.phase === "menu") return "আরেকটা খেলবে? menu";
-  const item = v.idx === 1 ? "first item" : "last item";
-  return v.solved ? `${item} solved` : `On the ${item}`;
+export const title = "এবিসি বাজার: screens, the ➜, pause, the daily limit and keys";
+const screen = (v: any) => {
+  if (v.screen === "title") return "The stall (খেলো)";
+  if (v.screen === "levels") return "The level list";
+  if (v.screen === "end") return "The basket (আবার খেলো / শেষ)";
+  const item = v.idx === 1 ? "First item" : "Last item";
+  if (v.solved) return v.idx === 2 ? "Last tile right, stars saved, waiting for ➜" : "Right tile, waiting for ➜";
+  return item;
 };
-const on = (v: any, label: string) => v.out === "none" ? label : "—";
 export const state = (v: any) => ({
-  Game: game(v),
-  Window: on(v, v.away ? "Away" : "On the page"),
-  Grownups: on(v, [v.resting ? "Rest screen" : v.limit ? "Today's time is up" : "", v.gate === "parent" ? "a parent has the gate open" : v.gate === "child" ? "gate left open, the child has the phone" : v.showing ? "showing a parent" : ""].filter(Boolean).join(", ") || "Time left, gate shut"),
+  Round: screen(v),
+  Menu: v.paused ? "Pause menu open, nothing moves" : v.swallow ? "Back from away, the next tap only wakes" : "Playing",
+  Today: v.resting ? (v.screen === "play" ? "Time's up, the rest waits for the basket" : "Rest screen") : v.overLimit ? "Today's time is up" : "Time left today",
 });
 export const step = (action: string) => ({
-  YouTapTheRightPicture: "you tap the right one",
-  YouTapAWrongPicture: "you tap a wrong one",
-  YouPressNext: "you press পরেরটা",
-  YouPressSeeTheEnd: "you press শেষ দেখো",
-  YouPressPlayAgain: "you press আবার খেলো",
-  YouPressShesh: "you press শেষ",
-  YouPickALevel: "you pick a level",
-  YouShowAParent: "you press আব্বু-আম্মুকে দেখাও",
-  ShowingIsOver: "you press দেখানো শেষ",
-  YouToggleSound: "you press the sound switch",
-  YouLeave: "you go to another window or tab",
-  YouComeBack: "you come back",
-  TheDailyLimitPasses: "today's time runs out",
-  AParentOpensTheGate: "a parent opens বড়দের জন্য",
-  TheParentHandsThePhoneBack: "the parent hands the phone back",
-  SomeoneClosesTheGate: "someone presses বন্ধ করো",
-  SomeoneGivesTenMinutes: "someone gives ১০ মিনিট more",
-  SomeoneShares: "someone shares the link or prints",
-  TheChildTapsASiteLink: "the child taps a link in the header, the guide or the related games",
-  Gone: "the page is gone",
+  YouStartARound: "the child taps the stall or আবার খেলো",
+  YouOpenTheLevelList: "the child opens the level list",
+  YouPickALevel: "the child picks a level",
+  YouCloseTheLevelList: "the child goes back from the list",
+  YouTapAWrongTile: "the child taps a wrong tile",
+  YouTapTheRightTile: "the child taps the right tile",
+  YouPressTheArrow: "the child presses ➜",
+  YouGoAway: "the window blurs, or ⏸ / P / Esc",
+  TheWindowBlurs: "the window blurs before the menu opens",
+  YouResume: "চালিয়ে যাও",
+  YouGoBackToTheTitle: "নতুন করে শুরু, or শেষ",
+  YouHoldEnter: "the child holds Enter",
+  TheKeyRepeats: "Enter auto-repeats on the basket",
+  YouLetGoOfTheKey: "the child lets go of the key",
+  TimeIsUp: "today's play time runs out",
+  ThePageOpens: "the page opens again",
+  TenMoreMinutes: "a grown-up gives আজ আরও ১০ মিনিট",
 } as Record<string, string>)[action] ?? action;
-export const group = (v: any) => v.out !== "none" ? "gone" : v.resting ? "rest" : v.phase === "play" ? "play" : "done";
-export const colors = { play: "teal", rest: "yellow", done: "blue", gone: "pink" };
+export const group = (v: any) => v.resting && v.screen !== "play" ? "held" : v.screen === "play" ? "play" : "done";
+export const colors = { play: "teal", held: "yellow", done: "blue" };
