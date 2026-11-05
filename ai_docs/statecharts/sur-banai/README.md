@@ -1,39 +1,195 @@
-# সুর বানাই statechart (before the rewrite)
+# সুর বানাই statechart (after the rewrite)
 
-A kids' game (ছোটদের জন্য, ages 3–12). Spec: `SurBanai.tla` / `SurBanai.cfg` / `view.ts`, mirrored from `tools/sur-banai/components/sur-game.tsx`, `tools/sur-banai/lib/sound.ts`, `shared/game-sound.ts`, `shared/kids-kit.tsx` and `shared/site-shell.tsx`. Modelled against the current shared kit (commits f4f75be and 23fd7c1). TLC: 249 states, 964 steps. Chart: `before-fix/chart.mmd` (33 states, 137 arrows). Report: `before-fix/report.md`.
+A kids' game (ছোটদের জন্য, ages 3–12), rewritten to the tibo.dog bar inside the shared game player. This file is the model of the **new** code. The model of the old code, with its bugs and live replays, is kept in `before-fix/` and in the section "The bugs found before the rewrite" below.
+
+Specs, each mirrored from the files it names in its first lines:
+- `SurBanai.tla` / `.cfg` / `view.ts`: the screens, the beat loop, the free tune's draft, a win, away and back, the player's pause menu and the daily limit. TLC: 360 states, 1,516 steps. Chart: `after-fix/chart.mmd` (17 states, 73 arrows).
+- `SurBanaiSound.tla` / `.cfg` / `SurBanaiSoundView.ts`: the beat and the site-wide sound switch. TLC: 11 states. Chart: `after-fix-Sound/chart.mmd`.
+- `SurBanaiGate.tla` / `.cfg` / `SurBanaiGateView.ts`: the parent gate and leaving the game. TLC: 5 states. Chart: `after-fix-Gate/chart.mmd`.
+
+The model is split in three because one spec with the sound and the gate came to 1,236 states, over the chart's budget of 500. The gate and the sound share no variable with the screens, and no rule mixes them.
 
 ## Systems modelled
-- **Screen:** the free grid (আমার সুর), the match grid (সুরটা মেলাও), the saved card, the won card, and idle (শেষ). Mode and phase are folded into one variable.
-- **The beat loop:** `startPlay`'s `setTimeout` chain plays either your tune (it loops) or the tune to copy (it ends, then `heard`). `stopPlay` ends it.
-- **Your tune:** whether the free grid holds notes that aren't kept yet (`unsaved`).
-- **Choices:** the সব সুর drawer (`<details>`) and picking a tune from it (`openLevel`).
-- **Away and back:** on the page, another window (blur), tab hidden. The code has only `visibilitychange → stopPlay()`, and no blur listener.
-- **Sound:** the site-wide switch, and whether the last beat made a sound. There is no `loop()` and no cached audio node: every beat calls `playBeat → tone()`, which reads `soundOn()` there and then. So the "`??=` keeps a silent stub" pattern can't happen, and the model proves the next beat after sound-on is heard.
-- **Speech:** `<SpeakButton>` and `speak()`.
-- **Kids' rules:** the daily limit: `resting` is "atBreak" when `atBreak()` fires at a round's end, or "atOpen" when the page opens past today's limit (23fd7c1). `RestScreen` is a real modal (f4f75be). Also the parent gate's 2-second hold, and leaving the kids' section through the related-tool cards under the game.
-- **Reduction:** the gate and the voice share no variable with the game. Each is explored from the first screen while the rest of the page waits, which keeps TLC under the 500-state chart budget. No rule mixes them with the game.
-- **Left out:** stars. `check()` computes them once and `levels.record` keeps the higher count (`shared/game-core.ts:69`). `tests/sur-banai.test.ts` covers "stars are a record of checks". It's a kids' game with no real-time play, so there's no P, Esc or pause menu to model.
-- **Keyboard patterns:** the game has no key handler. Enter only clicks the focused button. Live: Enter on মিলিয়ে দেখো gave the won card with focus on BODY. A held key can't skip the result, and Enter can't hit a stale button. Both patterns hold.
+- **Screens:** title, a level, the free grid (আমার সুর), the end screen (a won level, or a tune kept) and the level list. `lib/session.ts` is the pure session the component forwards events to.
+- **The beat loop:** `run()`'s `setTimeout` chain plays one of four things: the free tune (loops), the tune to hear, your copy (once), your matched tune (once, lit). `halt()` stops it. `S.canPlay` says where it may run: on a grid, with nothing covering it, and not on a won level for the tune to hear.
+- **The draft:** the free grid writes its tune to `ektukhani-sur-banai-draft` on every tap (`setFree`), so a tune is in storage the moment it exists.
+- **A win:** `S.won()` runs at the ✓ tap: stars saved (`levels.record`), `atBreak()` checked. The tune plays through, and ➜ waits. The rest screen shows only after ➜, on the end screen.
+- **Away and back:** window blur and a hidden tab both end in `halt()`. The first tap back only wakes the game.
+- **The player's menu:** ⏸, P, Escape or blur open it (`onPause` → `halt()`), চালিয়ে যাও resumes without restarting, নতুন করে শুরু goes to the title, সব লেভেল (`onLevels`) opens the list.
+- **Kids' limit:** `atBreak()` runs when a round starts and at a keep or a win. `RestScreen` shows on the title, the end screen and the level list, never over a grid.
+- **Sound:** every beat calls `playBeat → tone()`, which reads `soundOn()` then and there. There is no `loop()` and no cached node, so nothing silent is kept.
+- **No voice:** `speak()` and `SpeakButton` are gone from the game. `tests/session.test.ts` checks the source.
 
 ## Rules in plain words
 | Rule | Plain words | Result |
 |---|---|---|
-| SilentWhenHidden | The tune stops when the tab hides. | holds |
-| NoProgressWhileAway | Nothing plays on its own while you're in another window. | **breaks** |
-| BeatOnlyWithSound | When you turn sound off, nothing keeps ringing. | holds since f4f75be (was bug 4) |
-| LoopComesBack | Turn sound back on and the next beat is heard. | holds (live too) |
-| ChoiceFreezesPlay | While the সব সুর list is open, the tune doesn't play on. | **breaks** |
-| RestOnlyAtBreak | A rest screen that comes during play comes only after a tune is kept or matched (the FAQ promises "মাঝপথে নয়"). Opening the page past the limit is a break too. | **breaks** |
-| RestKeepsYourTune | The rest screen never covers a tune that isn't kept yet. | **breaks** |
-| QuietUnderRest | Nothing plays or reacts under the rest screen. | holds (live: taps and Enter behind it did nothing) |
-| SilentWhenMuted | Sound off means silent, the voice included. | holds since f4f75be (was bug 3) |
-| HoldMeansHold | The parent gate's question opens only after a real 2-second hold. | holds since f4f75be (was bug 6; re-checked live) |
-| NoWayOutWithoutGate | No way out of the kids' section without the parent gate (ParentGate / NoShareForKids). | **breaks** |
-| NoReadingNeeded | For ages 3–5, every screen has a way on by picture or sound. | **breaks** |
-| NoNetwork / NoChildData | Nothing is sent and nothing but tunes and stars is stored. | holds (structural: no fetch, no `/api`, `share.normalize` returns null; checked live) |
+| NoProgressWhileAway (with SilentWhenHidden) | The tune stops when you click into another window or hide the tab, and coming back doesn't restart it. | holds (was bug 2) |
+| PausedMeansQuiet | Nothing plays under the player's menu. | holds |
+| PlayOnlyOnTheGrid | The beat never runs on the title, the end screen or the level list. | holds |
+| ChoiceFreezesPlay | While the level list is open, nothing plays. | holds (was bug 5) |
+| RestOnlyAtBreak | The rest screen comes only after a tune is kept, a level is matched, or when a round is about to open. Never over the free grid or an unwon level. Stopping the tune is not a break. | holds (was bug 1) |
+| RestKeepsYourTune | A tune that isn't kept is always in storage. | holds (was bug 1) |
+| QuietUnderRest | Nothing plays or reacts under the rest screen. | holds |
+| EveryFinishCounts | A won level is recorded at its ✓ tap, before ➜ and before the end screen. | holds |
+| NoReadingNeeded | Every screen has its way on by picture. | holds (was bug 8; the node test checks the source) |
+| BeatOnlyWithSound, LoopComesBack, NoBeatAwayOrPaused (`SurBanaiSound`) | A beat sounds only with sound on, the next beat after sound-on is heard, and the beat never runs away or paused. | hold |
+| HoldMeansHold, NoWayOutWithoutGate (`SurBanaiGate`) | The gate's sum opens only after a real 2-second hold. The only way out of the game lands on another kids' tool. | hold (was bugs 6 and 7) |
 | TypeOK, NoDeadlock | | hold |
 
-## Bugs
+## The chart (`after-fix/chart.mmd`)
+```mermaid
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: card
+    lg2: rest
+  }
+  class lg0 teal
+  class lg1 blue
+  class lg2 yellow
+  state "At the same time" as all {
+    state "Screen" as r0 {
+      s0: Opens on the rest screen
+      s1: Title: the card, আম#2494;র স#2497;র, সব ল#2503;ভ#2503;ল
+      s2: আম#2494;র স#2497;র: empty grid
+      s3: The level list
+      s4: Level: listen first
+      s5: Rest screen
+      s6: Level: heard, copying
+      s7: Level: your copy plays
+      s8: Level: the tune plays
+      s9: Level matched, #10140; waits
+      s10: আম#2494;র স#2497;র: a tune in the draft
+      s11: End screen: the tune is kept
+      s12: End screen: আব#2494;র খ#2503;ল#2507; / শ#2503;ষ
+      s13: আম#2494;র স#2497;র: your tune plays
+      [*] --> s0
+      [*] --> s1
+      s0 --> s1: a grown-up gives 10 more minutes
+      s1 --> s2: you press আম#2494;র স#2497;র [when In the game]
+      s1 --> s3: you open সব ল#2503;ভ#2503;ল [when In the game]
+      s1 --> s4: you press খ#2503;ল#2507; or pick a level [when In the game]
+      s1 --> s5: you press খ#2503;ল#2507; or pick a level or you press আম#2494;র স#2497;র [when In the game]
+      s1 --> s6: you press খ#2503;ল#2507; or pick a level [when In the game]
+      s2 --> s1: you press the home button [when In the game]
+      s2 --> s10: you tap a cell, the draft is saved [when In the game]
+      s3 --> s1: you close the list [when In the game]
+      s3 --> s4: you press খ#2503;ল#2507; or pick a level [when In the game]
+      s3 --> s5: you press খ#2503;ল#2507; or pick a level [when In the game]
+      s3 --> s6: you press খ#2503;ল#2507; or pick a level [when In the game]
+      s4 --> s7: you press ব#2494;জ#2494;ও on your copy [when In the game]
+      s4 --> s8: you press শ#2507;ন#2507; [when In the game]
+      s5 --> s1: a grown-up gives 10 more minutes
+      s6 --> s7: you press ব#2494;জ#2494;ও on your copy [when In the game]
+      s6 --> s8: you press শ#2507;ন#2507; [when In the game]
+      s6 --> s9: you press ম#2503;ল#2494;ও and it matches [when In the game]
+      s1 --> s3: সব ল#2503;ভ#2503;ল in the menu [when Pause menu open]
+      s7 --> s4: the tune reaches its end or you press থ#2494;ম#2494;ও or you click into another window, or hide the tab or the pause menu opens (#9208;, P, Esc)
+      s0 --> s3: a grown-up gives 10 more minutes
+      s8 --> s4: you press থ#2494;ম#2494;ও or you click into another window, or hide the tab or the pause menu opens (#9208;, P, Esc)
+      s8 --> s6: the tune reaches its end or you press ম#2503;ল#2494;ও and it doesn't match or you press থ#2494;ম#2494;ও or you click into another window, or hide the tab or the pause menu opens (#9208;, P, Esc)
+      s7 --> s6: the tune reaches its end or you press ম#2503;ল#2494;ও and it doesn't match or you press থ#2494;ম#2494;ও or you click into another window, or hide the tab or the pause menu opens (#9208;, P, Esc)
+      s7 --> s9: you press ম#2503;ল#2494;ও and it matches
+      s8 --> s9: you press ম#2503;ল#2494;ও and it matches
+      s9 --> s5: you press the big #10140; [when In the game]
+      s9 --> s12: you press the big #10140; [when In the game]
+      s10 --> s2: you press ম#2497;ছ#2507; [when In the game]
+      s10 --> s5: you press র#2494;খ#2507; [when In the game]
+      s10 --> s11: you press র#2494;খ#2507; [when In the game]
+      s10 --> s13: you press ব#2494;জ#2494;ও [when In the game]
+      s10 --> s1: you press the home button [when In the game]
+      s2 --> s1: নত#2497;ন কর#2503; শ#2497;র#2497; [when Pause menu open]
+      s2 --> s3: সব ল#2503;ভ#2503;ল in the menu [when Pause menu open]
+      s3 --> s1: নত#2497;ন কর#2503; শ#2497;র#2497; [when Pause menu open]
+      s4 --> s1: নত#2497;ন কর#2503; শ#2497;র#2497; [when Pause menu open]
+      s4 --> s3: সব ল#2503;ভ#2503;ল in the menu [when Pause menu open]
+      s6 --> s1: নত#2497;ন কর#2503; শ#2497;র#2497; [when Pause menu open]
+      s6 --> s3: সব ল#2503;ভ#2503;ল in the menu [when Pause menu open]
+      s5 --> s11: a grown-up gives 10 more minutes
+      s11 --> s5: you press আব#2494;র খ#2503;ল#2507; [when In the game]
+      s11 --> s2: you press আব#2494;র খ#2503;ল#2507; [when In the game]
+      s11 --> s3: you open সব ল#2503;ভ#2503;ল [when In the game]
+      s11 --> s1: you press শ#2503;ষ [when In the game]
+      s5 --> s3: a grown-up gives 10 more minutes
+      s5 --> s12: a grown-up gives 10 more minutes
+      s12 --> s4: you press আব#2494;র খ#2503;ল#2507; [when In the game]
+      s12 --> s6: you press আব#2494;র খ#2503;ল#2507; [when In the game]
+      s12 --> s5: you press আব#2494;র খ#2503;ল#2507; [when In the game]
+      s12 --> s3: you open সব ল#2503;ভ#2503;ল [when In the game]
+      s12 --> s1: you press শ#2503;ষ [when In the game]
+      s13 --> s10: you press থ#2494;ম#2494;ও or you click into another window, or hide the tab or the pause menu opens (#9208;, P, Esc)
+      s13 --> s5: you press র#2494;খ#2507;
+      s13 --> s11: you press র#2494;খ#2507;
+      s13 --> s1: you press the home button
+      s1 --> s10: you press আম#2494;র স#2497;র [when In the game]
+      s9 --> s5: সব ল#2503;ভ#2503;ল in the menu or নত#2497;ন কর#2503; শ#2497;র#2497; [when Pause menu open]
+      s9 --> s3: সব ল#2503;ভ#2503;ল in the menu [when Pause menu open]
+      s9 --> s1: নত#2497;ন কর#2503; শ#2497;র#2497; [when Pause menu open]
+      s10 --> s1: নত#2497;ন কর#2503; শ#2497;র#2497; [when Pause menu open]
+      s10 --> s3: সব ল#2503;ভ#2503;ল in the menu [when Pause menu open]
+      s13 --> s2: you press থ#2494;ম#2494;ও or you click into another window, or hide the tab or the pause menu opens (#9208;, P, Esc)
+      s11 --> s3: সব ল#2503;ভ#2503;ল in the menu [when Pause menu open]
+      s11 --> s1: নত#2497;ন কর#2503; শ#2497;র#2497; [when Pause menu open]
+      s12 --> s3: সব ল#2503;ভ#2503;ল in the menu [when Pause menu open]
+      s12 --> s1: নত#2497;ন কর#2503; শ#2497;র#2497; [when Pause menu open]
+    }
+    --
+    state "Hand" as r1 {
+      s14: In the game
+      s15: In another window or tab hidden
+      s16: Pause menu open
+      [*] --> s14
+      s14 --> s15: you click into another window, or hide the tab
+      s14 --> s16: the pause menu opens (#9208;, P, Esc)
+      s15 --> s14: you come back to the window
+      s15 --> s16: the pause menu opens (#9208;, P, Esc)
+      s16 --> s14: নত#2497;ন কর#2503; শ#2497;র#2497; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও or সব ল#2503;ভ#2503;ল in the menu
+      s16 --> s15: নত#2497;ন কর#2503; শ#2497;র#2497; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও or সব ল#2503;ভ#2503;ল in the menu
+    }
+  }
+  class s0 yellow
+  class s1 blue
+  class s2 teal
+  class s3 blue
+  class s4 teal
+  class s5 yellow
+  class s6 teal
+  class s7 teal
+  class s8 teal
+  class s9 teal
+  class s10 teal
+  class s11 blue
+  class s12 blue
+  class s13 teal
+```
+
+## Live replays of the old bugs, on the new code (headless Chrome with touch, fresh storage)
+Replay scripts live in the scratchpad of this run; counts come from `OscillatorNode.prototype.start`.
+
+1. **Bug 1, rest over an unsaved tune.** 2 notes on the grid, বাজাও running, then today's stored time set to 5,000 s (over the limit) and থামাও pressed: playing `none`, **no `.kk-rest`**, 2 notes still on the grid, the draft in storage (`{"tune":[1,4,0,0,0,0],"sound":0}`). Then রাখো: the tune on the shelf, the draft cleared, `.kk-rest` on the end screen. (Before: the rest screen covered the grid at থামাও and the tune was lost on close.)
+2. **Bug 2, the tune plays on in another window.** A 3-note tune playing (6 oscillator starts in 0.9 s). A window `blur`: playing `none`, **0 more starts in 2.5 s**, the playhead gone, the pause menu open, the 3 notes still on the grid. `focus` doesn't restart it. (Before: playhead 2→3→4→5→0→1 and 2 more starts after blur.)
+3. **Bug 5, the list doesn't freeze the tune.** Level 1, the tune to hear playing; Escape, then সব লেভেল: screen `levels`, playing `none`, **0 starts in 2.5 s**, no playhead. (Before: the tune ran to its end under the open list.)
+4. **Bug 7, a picture card leads to a grown-up page.** The page's links are `#main`, this tool's own guide and privacy pages, ছোটদের খেলাঘর and kids' tools from the hub. There is no flagship card (আমার ছোটবেলা) and no `/tools`. Note: the hub's "আরও খেলা" list includes a few tools filed under গেম (for example ঘণ্টার সুর, সাপ-লুডু); that list is shared (`lib/hubs.ts`), not part of this game.
+5. **Bug 8, word-only buttons.** Every control carries a drawn icon (ear, play, tick, eraser, heart, home); the end buttons are 112 px picture buttons (আবার খেলো, শেষ) at y 548–660 on a 412×850 phone and y 591 at the bottom on 320×640, above the fold. `tests/session.test.ts` checks the source and the CSS sizes.
+
+Bugs 3, 4 and 6 were fixed in the kit (commit f4f75be) and re-checked live in the first run; the game has no voice now, so bug 3 can't happen.
+
+## Quality-bar gaps, closed
+1. **First screen:** the title card (the world's instrument over a small grid, ▶ খেলো) is the biggest thing; the H1 and parent note moved into the player's launch card. On a level, the HUD sits in the corners, then the grid, one line and the controls.
+2. **End cards above the fold:** the tune picture, stars, counts and two 112 px buttons fit a 640 px stage; আব্বু-আম্মুকে দেখাও is just below on the smallest phones.
+3. **Reading:** modes, controls and end buttons are pictures with one word. A ghost finger shows the first tap.
+4. **Pause:** the player's menu (P, Escape, ⏸, blur, hide) stops the beat and keeps the tune.
+5. **Choices:** the level list is a numbered, three-star choice screen inside the stage, with the next level marked এটা খেলো.
+6. **Pacing:** four worlds, 16 levels, one new idea each (copy, two at once, fill the gap, make your own), a named finale for each. The first level is won inside 10 s of play.
+7. **Sound:** each world has its instrument, plus a soft off tick, a low boing for a miss, the signature "মিলেছে" (your own tune plays through, lit, and a chime rings out), star chimes and a four-note finale tune. Every one has a lit cell or a ring beside it.
+8. **Rest timing:** the rest screen never cuts a tune.
+9. **Leaving the section:** the kids frame links only to kids' tools.
+
+## The bugs found before the rewrite
+The write-up from the analysis run, kept as it was. The model of the old code is in `before-fix/` (`chart.mmd`, `report.md`).
+
+### Bugs
 Replays ran in my own Orca tab at Pixel 9. In-page instrumentation counted `OscillatorNode.start`, logged `OscillatorNode.stop` offsets and `speechSynthesis.speak/cancel`, and read the playhead from `.sb-cell.head`. The shared keys `ektukhani-sound` and `ektukhani-kids-time` were stubbed **in my tab only**, so other agents' storage was never written. Today's real kids timer read 5,020 s, over the 15-minute limit, so `atBreak()` returned true with no stubbing at all. Blur and focus were plain `window` events; no hide-dependent bug needed a hidden tab.
 
 ### 1. RestOnlyAtBreak + RestKeepsYourTune: "I pressed থামাও and the rest screen took my tune" (game)
@@ -92,29 +248,10 @@ Replays ran in my own Orca tab at Pixel 9. In-page instrumentation counted `Osci
 - **SilentWhenHidden:** hide calls `stopPlay()` (in the code; Orca pins `document.hidden`).
 - **QuietUnderRest:** every `atBreak()` call follows `stopPlay()`.
 
-## Quality-bar gaps (one free tune, then levels 1–3 of সুরটা মেলাও, in Orca at Pixel 9)
-1. **First screen:** the H1 and parent note push the grid to y=272. The start action is a 6×5 grid with a ghost finger (good), but বাজাও sits below the fold on a phone (`.shots/sur-banai-first-screen.png`).
-2. **End cards below the fold:** on the won card, stars, title and mini tune fill the screen. পরের সুর, আবার খেলো and শেষ need a scroll (`.shots/sur-banai-won.png`).
-3. **Reading needed:** mode buttons and end-screen buttons are text only (bug 8). For 3–5, the bar's "start action is the game's own art" isn't met after the first screen.
-4. **Pause:** there's no pause at all. Blur doesn't stop the tune (bug 2), and the level list doesn't freeze it (bug 5). The shared player's pause menu would fix both.
-5. **Choices:** the সব সুর list sits at the bottom inside a `<details>`, unnumbered, with no recommended next tune on the won card beyond পরের সুর.
-6. **Pacing and level design:** levels 1–6 are the same idea (a longer line of single notes). Pairs only arrive at 7, and there's no "boss" tune or world end. Listening is free (good), but the hint glows only after 2 checks with no in-between cue.
-7. **Sound:** three synthesized instruments plus the shared sfx (good, mute-first works visually, and mute now cuts notes and speech). There's no signature sound for a match beyond `sfx.win`.
-8. **Rest timing:** the rest screen can cut a tune midway (bug 1), against the brief's "natural end" rule.
-9. **Leaving the section:** related cards and the header take a child to adult tools (bug 7).
-
-Screenshots: `.shots/sur-banai-first-screen.png` (first screen), `.shots/sur-banai-rest-mid-tune.png` (bug 1), `.shots/sur-banai-drawer-open-tune-plays.png` (bug 5), `.shots/sur-banai-won.png` (won card).
-
 ## Regenerate
 ```sh
 scripts/statechart.sh ai_docs/statecharts/sur-banai/SurBanai.tla --view ai_docs/statecharts/sur-banai/view.ts --out ai_docs/statecharts/sur-banai/after-fix
-rm ai_docs/statecharts/sur-banai/after-fix/tlc*.out
+scripts/statechart.sh ai_docs/statecharts/sur-banai/SurBanaiSound.tla --view ai_docs/statecharts/sur-banai/SurBanaiSoundView.ts --out ai_docs/statecharts/sur-banai/after-fix-Sound
+scripts/statechart.sh ai_docs/statecharts/sur-banai/SurBanaiGate.tla --view ai_docs/statecharts/sur-banai/SurBanaiGateView.ts --out ai_docs/statecharts/sur-banai/after-fix-Gate
+rm ai_docs/statecharts/sur-banai/after-fix*/tlc*.out
 ```
-After the game fixes, update the spec:
-- `YouPressStop` no longer sets `resting`.
-- Blur stops play.
-- Opening the drawer stops play.
-- Related cards stay in the kids' section.
-- End screens get picture buttons.
-
-The kit fixes (mute, gate) are already in the spec. Every rule must then hold.

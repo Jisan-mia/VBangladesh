@@ -1,204 +1,162 @@
 ---- MODULE SurBanai ----
-\* সুর বানাই (kids' music grid), as it is before the rewrite. Mirrored from:
-\*   tools/sur-banai/components/sur-game.tsx  (every handler and effect below names its function)
-\*   tools/sur-banai/lib/sound.ts             (playNote / playBeat: one-shot tone() + hiss(), no loop())
-\*   shared/game-sound.ts                     (tone() reads soundOn() on every call; setSoundOn(false) stops loop()s only)
-\*   shared/kids-kit.tsx                      (useKidsSession.atBreak, RestScreen, ParentGate, speak / SpeakButton),
-\*                                            as of commit f4f75be (gate ignores repeats, rest screen is a real modal,
-\*                                            mute cuts scheduled notes and speech)
-\*   shared/site-shell.tsx                    (PageFrame: the "এগুলোও ভালো লাগতে পারে" cards under every tool)
+\* সুর বানাই (kids' music grid), after the rewrite: the game's screens, the beat loop, the free tune's draft, a win, away and
+\* back, the player's pause menu and the kids' daily limit. Mirrored from:
+\*   tools/sur-banai/lib/session.ts          (screens, the beat loop's permission, pause, away, win, keep, rest, keys)
+\*   tools/sur-banai/lib/round.ts, play.ts   (a level round: listen, check, the beat)
+\*   tools/sur-banai/components/game.tsx     (timers, blur / hide, the player's onPause / onResume / onRestart / onLevels)
+\*   tools/sur-banai/lib/draft.ts            (the free grid's tune is written to storage on every tap)
+\*   shared/kids-kit.tsx                     (atBreak, RestScreen as a real modal)
+\*   shared/game-player-client.tsx           (the pause menu, blur / hide / Escape, সব লেভেল)
 \*
-\* Systems: the screen (free grid, match grid, saved card, won card, idle), the beat loop (startPlay's setTimeout chain:
-\* the free tune, or the target tune with its onEnd → heard), the free tune's saved/unsaved state, the সব সুর drawer,
-\* the window (here / another window / tab hidden), the site-wide sound switch, Bangla speech, the kids' daily limit and
-\* rest screen, the parent gate's 2-second hold, and leaving the kids' section through a related-tool card.
+\* Two more small specs hold what would blow this one past the chart budget: SurBanaiSound.tla (the site-wide switch and the
+\* beat) and SurBanaiGate.tla (the parent gate and leaving the game). There is no voice any more (the owner's call), so the
+\* old `talking` variable is gone; tests/session.test.ts checks the source for it.
 \*
-\* Sound: there is no loop() and no cached audio node. Each beat calls playBeat → tone(), which reads soundOn() then and
-\* there, so turning sound back on is heard on the very next beat (the "??= keeps a silent stub" pattern cannot happen).
-\* `beatHeard` records whether the last beat made a sound.
+\* `unsaved` means the free grid holds notes that are not on the shelf. They are in storage the moment they are tapped
+\* (setFree writes the draft), so "unsaved" is never "lost": RestKeepsYourTune says they are always in storage.
 
-VARIABLES screen, playing, unsaved, heard, drawer, window, sound, beatHeard, talking, resting, gate, page
-vars == <<screen, playing, unsaved, heard, drawer, window, sound, beatHeard, talking, resting, gate, page>>
+VARIABLES screen, endKind, playing, heard, answered, recorded, unsaved, draft, window, paused, resting
+vars == <<screen, endKind, playing, heard, answered, recorded, unsaved, draft, window, paused, resting>>
 
-Screens == {"free", "match", "saved", "won", "idle"}   \* mode × phase: free+play, match+play, free+saved, match+won, idle
-\* The parent gate and the voice share no variable with the game, so each is explored from one quiet moment and the
-\* rest of the page waits while a hold or a sentence is in progress. No rule mixes them with the game, so this checks
-\* every path of each and keeps the model under the chart's 500 states.
-Free == gate = "shut" /\ ~talking
-Child == resting = "no" /\ page = "kids" /\ window = "here" /\ Free  \* you can tap only on the page; RestScreen is a fixed full-screen overlay (kids-kit.css .kk-rest)
-Play  == screen \in {"free", "match"}                  \* phase === "play": the grid, speaker and drawer are on screen
+Screens == {"title", "play", "free", "end", "levels"}
+Grid   == screen \in {"play", "free"}                          \* a tune you are making, or a level you are on
+RestUp == resting # "no" /\ ~Grid                              \* restShows(): the rest screen never covers a grid
+Child  == ~paused /\ window = "here" /\ ~RestUp               \* what a finger can reach
 
-Init == /\ screen = "free" /\ playing = "none" /\ unsaved = FALSE /\ heard = FALSE /\ drawer = FALSE
-        /\ window = "here" /\ sound = TRUE /\ beatHeard = FALSE /\ talking = FALSE /\ resting \in {"no", "atOpen"}
-        /\ gate = "shut" /\ page = "kids"
+Init == /\ screen = "title" /\ endKind = "level" /\ playing = "none" /\ heard = FALSE /\ answered = FALSE /\ recorded = FALSE
+        /\ unsaved = FALSE /\ draft = FALSE /\ window = "here" /\ paused = FALSE /\ resting \in {"no", "atOpen"}
 
-\* stopPlay(): clearTimeout + setPlaying(null).
-Stop == playing' = "none" /\ beatHeard' = FALSE
+\* ---------- the free grid (আমার সুর) ----------
+\* tapCell on the free grid: the note sounds, the cell lights, and setFree() writes the draft to storage in the same call.
+YouTapACell == /\ Child /\ screen = "free" /\ unsaved' = TRUE /\ draft' = TRUE
+               /\ UNCHANGED <<screen, endKind, playing, heard, answered, recorded, window, paused, resting>>
+\* clearCells(): the grid empties, and so does the draft: nothing is left to lose.
+YouClear == /\ Child /\ screen = "free" /\ unsaved /\ unsaved' = FALSE /\ draft' = FALSE
+            /\ UNCHANGED <<screen, endKind, playing, heard, answered, recorded, window, paused, resting>>
+\* playFree() while nothing plays: run("free"). (The button is off on an empty grid.)
+YouPressPlay == /\ Child /\ screen = "free" /\ unsaved /\ playing = "none" /\ playing' = "free"
+                /\ UNCHANGED <<screen, endKind, heard, answered, recorded, unsaved, draft, window, paused, resting>>
+\* playFree() while playing: halt(). Stopping is midway, never a break: no atBreak(), the tune stays.
+YouPressStop == /\ Child /\ screen = "free" /\ playing = "free" /\ playing' = "none"
+                /\ UNCHANGED <<screen, endKind, heard, answered, recorded, unsaved, draft, window, paused, resting>>
+\* keep(): halt(), the tune goes on the shelf, the draft is cleared, S.kept() checks the limit: a true break.
+YouKeep == /\ Child /\ screen = "free" /\ unsaved
+           /\ playing' = "none" /\ unsaved' = FALSE /\ draft' = FALSE /\ screen' = "end" /\ endKind' = "kept" /\ resting' \in {"no", "atBreak"}
+           /\ UNCHANGED <<heard, answered, recorded, window, paused>>
+\* The home button: toTitle(). The tune stays in the draft.
+YouGoHome == /\ Child /\ screen = "free" /\ screen' = "title" /\ playing' = "none"
+             /\ UNCHANGED <<endKind, heard, answered, recorded, unsaved, draft, window, paused, resting>>
 
-\* ---------- the free grid ----------
-\* tapCell() in free mode: toggles a note (we model adding one), plays it.
-YouTapACell == /\ Child /\ screen = "free" /\ unsaved' = TRUE
-               /\ UNCHANGED <<screen, playing, heard, drawer, window, sound, beatHeard, talking, resting, gate, page>>
-\* clear() in free mode: the grid empties; nothing is left to lose.
-YouClear == /\ Child /\ screen = "free" /\ unsaved /\ unsaved' = FALSE
-            /\ UNCHANGED <<screen, playing, heard, drawer, window, sound, beatHeard, talking, resting, gate, page>>
-\* playFree() while nothing plays: startPlay("free", …) — the first beat sounds at once.
-YouPressPlay == /\ Child /\ screen = "free" /\ playing = "none"
-                /\ playing' = "free" /\ beatHeard' = sound
-                /\ UNCHANGED <<screen, unsaved, heard, drawer, window, sound, talking, resting, gate, page>>
-\* playFree() while playing: sfx.tap(); stopPlay(); atBreak(). atBreak shows the rest screen if today's limit has passed.
-YouPressStop == /\ Child /\ screen = "free" /\ playing = "free"
-                /\ Stop /\ resting' \in {"no", "atBreak"}
-                /\ UNCHANGED <<screen, unsaved, heard, drawer, window, sound, talking, gate, page>>
-\* save(): stopPlay(), store the tune, phase "saved", atBreak().
-YouSave == /\ Child /\ screen = "free" /\ unsaved
-           /\ Stop /\ unsaved' = FALSE /\ screen' = "saved" /\ resting' \in {"no", "atBreak"}
-           /\ UNCHANGED <<heard, drawer, window, sound, talking, gate, page>>
+\* ---------- starting a round ----------
+\* begin(): opening a round is a break too. Past today's limit it doesn't start and the rest screen shows instead.
+\* A level opens with `heard` false (a make level has nothing to hear, so it opens ready: heard may be true).
+Begin(target) ==
+  \/ /\ resting' = "no" /\ screen' = target /\ heard' \in BOOLEAN /\ answered' = FALSE /\ recorded' = FALSE /\ playing' = "none"
+  \/ /\ resting' = "atBreak" /\ screen' = (IF screen = "levels" THEN "title" ELSE screen)
+     /\ UNCHANGED <<heard, answered, recorded, playing>>
+YouStartALevel == /\ Child /\ screen \in {"title", "levels"} /\ Begin("play")
+                  /\ UNCHANGED <<endKind, unsaved, draft, window, paused>>
+YouStartFree == /\ Child /\ screen = "title" /\ Begin("free")
+                /\ UNCHANGED <<endKind, unsaved, draft, window, paused>>
+\* আবার খেলো on the end screen: the same kind of round again.
+YouPlayAgain == /\ Child /\ screen = "end" /\ Begin(IF endKind = "kept" THEN "free" ELSE "play")
+                /\ UNCHANGED <<endKind, unsaved, draft, window, paused>>
+\* শেষ: back to the title with the next level ready.
+YouFinish == /\ Child /\ screen = "end" /\ screen' = "title"
+             /\ UNCHANGED <<endKind, playing, heard, answered, recorded, unsaved, draft, window, paused, resting>>
+\* The level list: a choice screen, opened from the title or the end screen.
+YouOpenTheLevelList == /\ Child /\ screen \in {"title", "end"} /\ screen' = "levels"
+                       /\ UNCHANGED <<endKind, playing, heard, answered, recorded, unsaved, draft, window, paused, resting>>
+YouCloseTheLevelList == /\ Child /\ screen = "levels" /\ screen' = "title"
+                        /\ UNCHANGED <<endKind, playing, heard, answered, recorded, unsaved, draft, window, paused, resting>>
 
-\* ---------- the beat loop (setTimeout chain; it never checks focus) ----------
-\* beat(): every TEMPOS[tempo].ms, playBeat() → tone(), which is silent only if soundOn() is false right now.
-NextBeat == /\ Free /\ playing # "none" /\ beatHeard' = sound
-            /\ UNCHANGED <<screen, playing, unsaved, heard, drawer, window, sound, talking, resting, gate, page>>
-\* The target tune's last beat: stopPlay(); onEnd() → setHeard(true).
-TuneEnds == /\ Free /\ playing = "target" /\ Stop /\ heard' = TRUE
-            /\ UNCHANGED <<screen, unsaved, drawer, window, sound, talking, resting, gate, page>>
+\* ---------- a level ----------
+\* ear(): run("target"). Allowed only on its own screen, with nothing covering it and the round not won.
+YouListen == /\ Child /\ screen = "play" /\ ~answered /\ playing = "none" /\ playing' = "target"
+             /\ UNCHANGED <<screen, endKind, heard, answered, recorded, unsaved, draft, window, paused, resting>>
+\* mine(): run("mine"), your copy once.
+YouPlayYourCopy == /\ Child /\ screen = "play" /\ ~answered /\ playing = "none" /\ playing' = "mine"
+                   /\ UNCHANGED <<screen, endKind, heard, answered, recorded, unsaved, draft, window, paused, resting>>
+YouStopTheTune == /\ Child /\ screen = "play" /\ playing \in {"target", "mine"} /\ playing' = "none"
+                  /\ UNCHANGED <<screen, endKind, heard, answered, recorded, unsaved, draft, window, paused, resting>>
+\* checkIt() with a copy that doesn't match: halt(), a boing, a line, the extras wobble.
+YouCheckWrong == /\ Child /\ screen = "play" /\ heard /\ ~answered /\ playing' = "none"
+                 /\ UNCHANGED <<screen, endKind, heard, answered, recorded, unsaved, draft, window, paused, resting>>
+\* checkIt() with a match: S.won() at this tap. The stars are saved (levels.record) and atBreak() runs now, not when the end
+\* screen comes. The child's own tune plays through (echo) and ➜ waits.
+YouCheckRight == /\ Child /\ screen = "play" /\ heard /\ ~answered
+                 /\ answered' = TRUE /\ recorded' = TRUE /\ resting' \in {"no", "atBreak"} /\ playing' = "echo"
+                 /\ UNCHANGED <<screen, endKind, heard, unsaved, draft, window, paused>>
+\* onward() → S.advance(): the end screen.
+YouPressNext == /\ Child /\ screen = "play" /\ answered
+                /\ screen' = "end" /\ endKind' = "level" /\ answered' = FALSE /\ playing' = "none"
+                /\ UNCHANGED <<heard, recorded, unsaved, draft, window, paused, resting>>
 
-\* ---------- সুরটা মেলাও ----------
-\* switchMode(next): returns early only when next === mode && phase === "play"; else stopPlay(), and for match openLevel(n).
-YouPickFree == /\ Child /\ screen # "free"
-               /\ Stop /\ screen' = "free" /\ drawer' = FALSE
-               /\ UNCHANGED <<unsaved, heard, window, sound, talking, resting, gate, page>>
-YouPickMatch == /\ Child /\ screen # "match"
-                /\ Stop /\ screen' = "match" /\ heard' = FALSE /\ drawer' = FALSE
-                /\ UNCHANGED <<unsaved, window, sound, talking, resting, gate, page>>
-\* listen(): ignored while the target plays; else startPlay("target", …, () => setHeard(true)).
-YouListen == /\ Child /\ screen = "match" /\ playing # "target"
-             /\ playing' = "target" /\ beatHeard' = sound
-             /\ UNCHANGED <<screen, unsaved, heard, drawer, window, sound, talking, resting, gate, page>>
-\* check() (button disabled until heard and while the target plays). A copy that doesn't match: a line and a wobble.
-YouCheckWrong == /\ Child /\ screen = "match" /\ heard /\ playing # "target"
-                 /\ UNCHANGED vars
-\* A copy that matches: levels.record(), phase "won", atBreak().
-YouCheckRight == /\ Child /\ screen = "match" /\ heard /\ playing # "target"
-                 /\ Stop /\ screen' = "won" /\ drawer' = FALSE /\ resting' \in {"no", "atBreak"}
-                 /\ UNCHANGED <<unsaved, heard, window, sound, talking, gate, page>>
-\* <details className="sb-drawer"> toggles on its own; opening it doesn't touch the beat loop.
-YouOpenDrawer == /\ Child /\ screen = "match" /\ ~drawer /\ drawer' = TRUE
-                 /\ UNCHANGED <<screen, playing, unsaved, heard, window, sound, beatHeard, talking, resting, gate, page>>
-\* LevelGrid onPick → openLevel(pick): stopPlay(), heard false. (The drawer stays open; the model closes it to stay small.)
-YouPickATune == /\ Child /\ screen = "match" /\ drawer
-                /\ Stop /\ heard' = FALSE /\ drawer' = FALSE
-                /\ UNCHANGED <<screen, unsaved, window, sound, talking, resting, gate, page>>
-
-\* ---------- the end screens ----------
-\* saved: আবার খেলো → empty grid, phase play. won: পরের সুর / আবার খেলো → openLevel().
-YouPlayAgain == /\ Child /\ screen \in {"saved", "won"}
-                /\ screen' = IF screen = "saved" THEN "free" ELSE "match"
-                /\ heard' = FALSE /\ drawer' = FALSE
-                /\ UNCHANGED <<playing, unsaved, window, sound, beatHeard, talking, resting, gate, page>>
-YouEnd == /\ Child /\ screen \in {"saved", "won"} /\ screen' = "idle"
-          /\ UNCHANGED <<playing, unsaved, heard, drawer, window, sound, beatHeard, talking, resting, gate, page>>
+\* ---------- the beat loop (a setTimeout chain, stopped by every way of leaving) ----------
+\* A once-through tune reaches its end: halt(); onEnd() (the tune to hear marks the level as heard).
+TuneEnds == /\ playing \in {"target", "mine", "echo"}
+            /\ playing' = "none" /\ heard' = (IF playing = "target" THEN TRUE ELSE heard)
+            /\ UNCHANGED <<screen, endKind, answered, recorded, unsaved, draft, window, paused, resting>>
 
 \* ---------- away and back ----------
-\* There is no blur listener. The only one is visibilitychange: if (document.hidden) stopPlay().
-WindowBlurs == /\ Free /\ window = "here" /\ window' = "away"
-               /\ UNCHANGED <<screen, playing, unsaved, heard, drawer, sound, beatHeard, talking, resting, gate, page>>
-WindowFocuses == /\ Free /\ window = "away" /\ window' = "here"
-                 /\ UNCHANGED <<screen, playing, unsaved, heard, drawer, sound, beatHeard, talking, resting, gate, page>>
-TabHides == /\ Free /\ window # "hidden" /\ window' = "hidden" /\ Stop
-            /\ UNCHANGED <<screen, unsaved, heard, drawer, sound, talking, resting, gate, page>>
-TabShows == /\ Free /\ window = "hidden" /\ window' = "here"
-            /\ UNCHANGED <<screen, playing, unsaved, heard, drawer, sound, beatHeard, talking, resting, gate, page>>
+\* "away" is a window blur or a hidden tab: both end in halt() (the blur and visibilitychange listeners), so the beat stops and
+\* keeps the tune, and coming back never restarts it. (A hidden tab is the same state as another window here.)
+WindowBlurs == /\ window = "here" /\ window' = "away" /\ playing' = "none"
+               /\ UNCHANGED <<screen, endKind, heard, answered, recorded, unsaved, draft, paused, resting>>
+WindowFocuses == /\ window = "away" /\ window' = "here"
+                 /\ UNCHANGED <<screen, endKind, playing, heard, answered, recorded, unsaved, draft, paused, resting>>
 
-\* ---------- sound and speech ----------
-\* SoundToggle → setSoundOn(false): since f4f75be it stops loop()s, calls silenceScheduled() (notes already handed to
-\* the audio clock are cut) and speechSynthesis.cancel(). The beat chain keeps running, silently.
-SoundOff == /\ resting = "no" /\ page = "kids" /\ window = "here" /\ gate = "shut" /\ sound
-            /\ sound' = FALSE /\ beatHeard' = FALSE /\ talking' = FALSE
-            /\ UNCHANGED <<screen, playing, unsaved, heard, drawer, window, resting, gate, page>>
-SoundOn == /\ resting = "no" /\ page = "kids" /\ window = "here" /\ gate = "shut" /\ ~sound /\ sound' = TRUE
-           /\ UNCHANGED <<screen, playing, unsaved, heard, drawer, window, beatHeard, talking, resting, gate, page>>
-\* <SpeakButton> beside the line under the grid (shown when the phone has a Bangla voice). speak() returns early when
-\* soundOn() is false, and muting cancels a sentence already started (both in the current kit).
-\* (Explored from the first screen; the voice reads the same line however you got there.)
-YouTapTheSpeaker == /\ Child /\ screen = "free" /\ playing = "none" /\ ~unsaved /\ talking' = sound
-                    /\ UNCHANGED <<screen, playing, unsaved, heard, drawer, window, sound, beatHeard, resting, gate, page>>
-SpeechEnds == /\ talking /\ talking' = FALSE
-              /\ UNCHANGED <<screen, playing, unsaved, heard, drawer, window, sound, beatHeard, resting, gate, page>>
+\* ---------- the player's pause menu ----------
+\* ⏸, P, Escape, or blur once engaged: onPause → S.pause() + halt() + silenceScheduled().
+PlayerPauses == /\ ~paused /\ paused' = TRUE /\ playing' = "none"
+                /\ UNCHANGED <<screen, endKind, heard, answered, recorded, unsaved, draft, window, resting>>
+\* চালিয়ে যাও: onResume → S.resume(). The beat isn't restarted.
+PlayerResumes == /\ paused /\ paused' = FALSE
+                 /\ UNCHANGED <<screen, endKind, playing, heard, answered, recorded, unsaved, draft, window, resting>>
+\* নতুন করে শুরু: onRestart → toTitle(). The free tune is in its draft; a won level was recorded at its ✓ tap.
+PlayerRestarts == /\ paused /\ paused' = FALSE /\ screen' = "title" /\ answered' = FALSE /\ playing' = "none"
+                  /\ UNCHANGED <<endKind, heard, recorded, unsaved, draft, window, resting>>
+\* সব লেভেল in the menu: onLevels → halt(), openLevels(fromMenu). The list freezes play.
+PlayerOpensTheLevelList == /\ paused /\ paused' = FALSE /\ screen' = "levels" /\ answered' = FALSE /\ playing' = "none"
+                           /\ UNCHANGED <<endKind, heard, recorded, unsaved, draft, window, resting>>
 
 \* ---------- the daily limit ----------
-\* resting: "atBreak" when atBreak() returned true at the end of a round; "atOpen" since 23fd7c1, when today's limit
-\* had already passed as the page opened (useKidsSession's mount effect). RestScreen is a real modal since f4f75be:
-\* window-capture listeners swallow keys, taps and focus outside it, which `Child` mirrors.
-\* RestScreen → ParentGate → আজ আরও ১০ মিনিট → extend(): resting false.
-GrownUpGivesTime == /\ Free /\ resting # "no" /\ resting' = "no"
-                    /\ UNCHANGED <<screen, playing, unsaved, heard, drawer, window, sound, beatHeard, talking, gate, page>>
+\* RestScreen → ParentGate → আজ আরও ১০ মিনিট → extend().
+GrownUpGivesTime == /\ resting # "no" /\ resting' = "no"
+                    /\ UNCHANGED <<screen, endKind, playing, heard, answered, recorded, unsaved, draft, window, paused>>
 
-\* ---------- the parent gate (shared/kids-kit.tsx ParentGate), 2-second hold ----------
-\* The gate shares no variable with the game, so it is explored from one quiet moment (the first screen: an
-\* empty grid, nothing playing, window here, sound on). That checks every gate path and keeps the chart under 500 states.
-Quiet == /\ resting = "no" /\ page = "kids" /\ window = "here" /\ ~talking /\ screen = "free" /\ playing = "none"
-         /\ ~unsaved /\ sound
-\* onPointerDown / onKeyDown Enter → start(): hold.current = setTimeout(open the sum, 2000). Since f4f75be a second
-\* start (a second finger) returns while hold.current is set, and Enter's key repeat (event.repeat) is ignored, so
-\* the "extra" timer of the old kit can no longer be armed.
-YouHoldTheGate == /\ Quiet /\ gate = "shut"
-                  /\ gate' = "holding"
-                  /\ UNCHANGED <<screen, playing, unsaved, heard, drawer, window, sound, beatHeard, talking, resting, page>>
-\* onPointerUp / onPointerLeave / onKeyUp / onBlur → stop(): clears the one timer.
-YouLetGoOfTheGate == /\ gate \in {"holding", "extra"}
-                     /\ gate' = IF gate = "extra" THEN "armed" ELSE "shut"
-                     /\ UNCHANGED <<screen, playing, unsaved, heard, drawer, window, sound, beatHeard, talking, resting, page>>
-\* A surviving timer fires: the sum question opens (the sum still guards the share link).
-GateTimerFires == /\ gate \in {"holding", "extra", "armed"} /\ gate' = "asks"
-                  /\ UNCHANGED <<screen, playing, unsaved, heard, drawer, window, sound, beatHeard, talking, resting, page>>
-GrownUpClosesGate == /\ gate = "asks" /\ gate' = "shut"
-                     /\ UNCHANGED <<screen, playing, unsaved, heard, drawer, window, sound, beatHeard, talking, resting, page>>
-
-\* ---------- leaving the kids' section ----------
-\* PageFrame's related cards: the flagship (আমার ছোটবেলা, an adult tool with share buttons) always comes first. No gate.
-YouTapARelatedCard == /\ Quiet /\ gate = "shut" /\ page' = "adult"
-                      /\ UNCHANGED <<screen, playing, unsaved, heard, drawer, window, sound, beatHeard, talking, resting, gate>>
-Done == page = "adult" /\ UNCHANGED vars
-
-Next == YouTapACell \/ YouClear \/ YouPressPlay \/ YouPressStop \/ YouSave \/ NextBeat \/ TuneEnds
-        \/ YouPickFree \/ YouPickMatch \/ YouListen \/ YouCheckWrong \/ YouCheckRight \/ YouOpenDrawer \/ YouPickATune
-        \/ YouPlayAgain \/ YouEnd \/ WindowBlurs \/ WindowFocuses \/ TabHides \/ TabShows
-        \/ SoundOff \/ SoundOn \/ YouTapTheSpeaker \/ SpeechEnds \/ GrownUpGivesTime
-        \/ YouHoldTheGate \/ YouLetGoOfTheGate \/ GateTimerFires \/ GrownUpClosesGate \/ YouTapARelatedCard \/ Done
+Next == YouTapACell \/ YouClear \/ YouPressPlay \/ YouPressStop \/ YouKeep \/ YouGoHome
+        \/ YouStartALevel \/ YouStartFree \/ YouPlayAgain \/ YouFinish \/ YouOpenTheLevelList \/ YouCloseTheLevelList
+        \/ YouListen \/ YouPlayYourCopy \/ YouStopTheTune \/ YouCheckWrong \/ YouCheckRight \/ YouPressNext
+        \/ TuneEnds \/ WindowBlurs \/ WindowFocuses
+        \/ PlayerPauses \/ PlayerResumes \/ PlayerRestarts \/ PlayerOpensTheLevelList \/ GrownUpGivesTime
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ screen \in Screens /\ playing \in {"none", "free", "target"} /\ unsaved \in BOOLEAN /\ heard \in BOOLEAN
-          /\ drawer \in BOOLEAN /\ window \in {"here", "away", "hidden"} /\ sound \in BOOLEAN /\ beatHeard \in BOOLEAN
-          /\ talking \in BOOLEAN /\ resting \in {"no", "atOpen", "atBreak"} /\ gate \in {"shut", "holding", "extra", "armed", "asks"}
-          /\ page \in {"kids", "adult"}
+TypeOK == /\ screen \in Screens /\ endKind \in {"level", "kept"} /\ playing \in {"none", "free", "mine", "target", "echo"}
+          /\ heard \in BOOLEAN /\ answered \in BOOLEAN /\ recorded \in BOOLEAN /\ unsaved \in BOOLEAN /\ draft \in BOOLEAN
+          /\ window \in {"here", "away"} /\ paused \in BOOLEAN /\ resting \in {"no", "atOpen", "atBreak"}
 
 \* ---------- the reader's rules ----------
-\* The tune stops when the tab hides.
-SilentWhenHidden == window = "hidden" => playing = "none"
-\* Nothing plays on its own while you're in another window (NoProgressWhileAway / PausedWhenBlurred).
+\* Nothing plays on its own while you're in another window (NoProgressWhileAway / PausedWhenBlurred / SilentWhenHidden). Was bug 2.
 NoProgressWhileAway == playing # "none" => window = "here"
-\* A beat makes sound only when sound is on (LoopOnlyWhenMeaningful) ...
-BeatOnlyWithSound == beatHeard => sound
-\* ... and turning sound back on is heard on the next beat: no silent stub is kept (LoopComesBack).
-LoopComesBack == (playing # "none" /\ sound) => ENABLED (NextBeat /\ beatHeard')
-\* While the সব সুর list is open, the tune doesn't play on (ChoiceFreezesPlay).
-ChoiceFreezesPlay == drawer => playing = "none"
-\* The rest screen appears only after a tune is kept or matched, never midway (RestOnlyAtBreak; the FAQ promises
-\* "সুর রাখা বা মেলানো শেষ হলে, মাঝপথে নয়").
-RestOnlyAtBreak == resting = "atBreak" => screen \in {"saved", "won"}
-\* And never over a tune that isn't kept yet.
-RestKeepsYourTune == resting # "no" => ~unsaved
-\* Nothing plays under the rest screen.
-QuietUnderRest == resting # "no" => playing = "none"
-\* Sound off means silent, speech included (the FAQ: "শব্দ একবার বন্ধ করলে এই সাইটের সব খেলায় বন্ধ থাকে").
-SilentWhenMuted == ~sound => ~talking
-\* The parent gate's question opens only after a 2-second hold: no timer survives letting go.
-HoldMeansHold == gate # "armed"
-\* No path out of the kids' section without the parent gate (ParentGate / NoShareForKids).
-NoWayOutWithoutGate == page = "kids"
-\* For ages 3–5, every screen has a way on by picture or sound (NoReadingNeeded). The play screens have the ghost
-\* finger, ▶ and pictures; the saved, won and idle screens offer only text buttons (আবার খেলো, শেষ, পরের সুর).
-NoReadingNeeded == screen \in {"free", "match"}
+\* Nothing plays under the player's menu (PausedMeansQuiet).
+PausedMeansQuiet == paused => playing = "none"
+\* The beat plays only on a grid, never on the title, the end screen or the level list.
+PlayOnlyOnTheGrid == playing # "none" => Grid
+\* While the level list is open, nothing plays (ChoiceFreezesPlay). Was bug 5.
+ChoiceFreezesPlay == screen = "levels" => playing = "none"
+\* The rest screen comes only at a break: after a tune is kept, a level is matched, or when a round is about to open. Never
+\* over the free grid, and never over a level that isn't won. Was bug 1.
+RestOnlyAtBreak == resting # "no" => (screen # "free" /\ (screen # "play" \/ answered))
+\* A tune that isn't kept yet is in storage the moment it is tapped, so no screen, the rest screen included, and not closing the
+\* page, can lose it. Was bug 1 (the rest screen came over a tune never kept).
+RestKeepsYourTune == unsaved => draft
+\* Nothing plays or reacts under the rest screen (it is a real modal).
+QuietUnderRest == RestUp => playing = "none"
+\* A won level is recorded once, at its ✓ tap: before ➜ and before the end screen can come (EveryFinishCounts).
+EveryFinishCounts == /\ (answered => recorded) /\ ((screen = "end" /\ endKind = "level") => recorded)
+\* For ages 3–5, every screen has its way on by picture: the title card and chips, the grid and its icon buttons, the end
+\* screen's 112 px picture buttons, the level list's cards (NoReadingNeeded). Was bug 8; tests/session.test.ts checks the source.
+NoReadingNeeded == screen \in Screens
 ====

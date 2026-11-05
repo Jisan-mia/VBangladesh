@@ -1,0 +1,37 @@
+---
+title: "সﬂ°°2497¶ßর বﬂ°°2494¶ßনﬂ°°2494¶ßই: the parent gate and leaving the game"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: gate
+    lg1: out
+  }
+  class lg0 yellow
+  class lg1 teal
+  state "At the same time" as all {
+    state "Gate" as r0 {
+      s0: Gate shut
+      s1: Holding the gate
+      s2: Gate asks the sum
+      s3: Gate open: share the plain address
+      [*] --> s0
+      s0 --> s1: you hold বড#2492;দ#2503;র জন#2509;য [when In the game]
+      s1 --> s0: you let go
+      s1 --> s2: two seconds pass
+      s2 --> s0: a wrong sum, or 20 seconds, closes the gate
+      s2 --> s3: a grown-up answers the sum
+      s3 --> s0: a wrong sum, or 20 seconds, closes the gate or a grown-up shares the address
+    }
+    --
+    state "Page" as r1 {
+      s4: In the game
+      s5: On another kids' tool
+      [*] --> s4
+      s4 --> s5: you tap another kids' tool [when Gate shut]
+    }
+  }
+  class s1 yellow
+  class s2 yellow
+  class s3 yellow
+  class s5 teal

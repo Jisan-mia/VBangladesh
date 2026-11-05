@@ -1,0 +1,45 @@
+---
+title: "সﬂ°°2497¶ßর বﬂ°°2494¶ßনﬂ°°2494¶ßই: the beat and the sound switch"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: quiet
+  }
+  class lg0 teal
+  class lg1 blue
+  state "At the same time" as all {
+    state "Beat" as r0 {
+      s0: Nothing plays
+      s1: A tune plays
+      [*] --> s0
+      s0 --> s1: you start a tune [when Where is In the game]
+      s1 --> s0: the tune stops or you click into another window, or hide the tab or the pause menu opens
+    }
+    --
+    state "Where" as r1 {
+      s2: In the game
+      s3: In another window or tab hidden
+      s4: Pause menu open
+      [*] --> s2
+      s2 --> s3: you click into another window, or hide the tab
+      s2 --> s4: the pause menu opens
+      s3 --> s2: you come back to the window
+      s3 --> s4: the pause menu opens
+      s4 --> s2: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+      s4 --> s3: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+    }
+    --
+    state "Sound" as r2 {
+      s5: Sound on
+      s6: Sound off
+      [*] --> s5
+      s5 --> s6: you turn sound off
+      s6 --> s5: you turn sound on
+    }
+  }
+  class s0 blue
+  class s1 teal
+  class s3 blue
+  class s4 blue
