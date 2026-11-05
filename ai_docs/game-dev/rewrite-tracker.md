@@ -14,11 +14,11 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | bostar-pahar | S03 | analysed | done |
 | tarer-fanke-belun | S03 | analysed | done |
 | paka-kancha | S04 | analysed | rewriting |
-| jora-melao | S04 | analysed | rewriting |
+| jora-melao | S04 | analysed | done |
 | chhok-jora | S04 | analysed | done |
 | churui-tarao | S05 | analysed | done |
 | handi-bhanga | S05 | analysed | rewriting |
-| peoner-cycle | S05 | analysed | rewriting |
+| peoner-cycle | S05 | analysed | done |
 | sap-ludu | S06 | analysed | done |
 | baghbandi | S06 | analysed | done |
 | baicher-nouka | S06 | analysed | rewriting |
@@ -56,8 +56,8 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | kar-chinho | S17 | analysed | done |
 | nam-shikhi | S17 | analysed | done |
 | sourojogot | S18 | analysed | rewriting |
-| dosh-ghater-nouka | S18 | analysed | todo |
-| golper-mor | S18 | analysed | todo |
+| dosh-ghater-nouka | S18 | analysed | rewriting |
+| golper-mor | S18 | analysed | rewriting |
 | juktoborno | S19 | analysed | rewriting |
 | ghori-dekhi | S19 | analysed | rewriting |
 | moner-rong | S19 | analysed | rewriting |
