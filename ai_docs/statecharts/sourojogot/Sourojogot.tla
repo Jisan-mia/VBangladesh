@@ -1,112 +1,139 @@
 ---- MODULE Sourojogot ----
+\* সৌরজগতের সফর after the rewrite: the screens, the round of questions, the end timer or the ▶ button, the player's
+\* pause, going away and coming back, a key held through the last answer, the kids' daily limit and rest screen. The parent
+\* gates are SourojogotGates.tla. Mirrored from:
+\*   tools/sourojogot/lib/session.ts      begin, tapAnswer, solved, goEnd, timerFires/timerMayRun, pause, resume, blur,
+\*                                        toTitle, openLevels, freshKey
+\*   tools/sourojogot/components/game.tsx begin() asks kids.atBreak(); pick() records the stars at the last answer and moves
+\*                                        the orbit board straight on; nextPlanet() is the ▶ button; onPause/onResume/
+\*                                        onRestart/onLevels via useGamePlayer
+\*   shared/kids-kit.tsx                  useKidsSession rests on mount past the limit; RestScreen is a real modal
+\* Two questions stand in for the round. "style" is how the round ends: "board" (tour, sort, build: the rocket flies, a timer
+\* brings the end screen) or "button" (know, size, far, scale: a reveal waits for ▶). No voice anywhere, so no speech rule.
 EXTENDS Naturals
-\* সৌরজগতের সফর: the round, the end screen and level menu, the kids' daily limit and rest screen, the parent gate
-\* (hold, sum, open), আব্বু-আম্মুকে দেখাও with its picture gate, and the site header search.
-\* Mirrored from tools/sourojogot/components/solar-game.tsx (begin, tapPlanet, choose, nextPlanet, finish, EndScreen, Menu),
-\* shared/kids-kit.tsx (ParentGate start/stop/press, ShowParent, useKidsSession tick/atBreak/extend, RestScreen),
-\* shared/game-kit.ts useLevels.record, and shared/site-shell.tsx + components/header-search.tsx (HeaderSearch).
-\* A round is abstracted to its end: the last right tap (tour, sort) or the last "শেষ দেখো" (size, far). Slips, stars and
-\* the gentle pace are pure functions with node tests (tests/sourojogot.test.ts) and change no state here.
-\* The game has no clock, so pause and focus change nothing in it and are left out; the day's clock counts only while the
-\* tab is visible and focused.
-\* The kit is mirrored as of f4f75be + 23fd7c1 (2026-11-04 16:47). The kit at b51e328, checked this morning, is in
-\* before-kit-fix/: its hold timer leaked on key repeat, its rest screen let Tab through, and a reload skipped the rest.
-VARIABLES phase, due, resting, stage, hold, show, search
-vars == <<phase, due, resting, stage, hold, show, search>>
+VARIABLES screen, item, revealed, pending, finished, recorded, begun, style,   \* the round
+          paused, swallow, held, skipped, moved,                                \* away and back, keys
+          overLimit, resting                                                    \* the daily limit
+round == <<screen, item, revealed, pending, finished, recorded, begun, style>>
+away == <<paused, swallow, held, skipped, moved>>
+kids == <<overLimit, resting>>
+vars == <<round, away, kids>>
 
-\* phase "fresh" = a new round on screen, nothing tapped yet (a break); "late" = a round begun after today's time was up.
-Phases == {"fresh", "play", "late", "done", "menu"}
-Playing == phase \in {"fresh", "play", "late"}
-Fresh == IF due THEN "late" ELSE "fresh"
-\* begin() leaves the page's ParentGate alone, so a gate a grown-up opened stays open into the child's next round.
-LeftOpen == IF stage = "open" THEN "stale" ELSE stage
+\* RestScreen renders on every screen but play (game.tsx: kids.resting && screen !== 'play') and covers the rest.
+RestShows == resting /\ screen # "play"
+Free == ~RestShows /\ ~paused
 
-Init == /\ phase = "fresh" /\ due = FALSE /\ resting = FALSE
-        /\ stage = "closed" /\ hold = "none" /\ show = "off" /\ search = "never"
+Init == /\ screen = "title" /\ item = 1 /\ revealed = FALSE /\ pending = "none" /\ finished = FALSE /\ recorded = FALSE /\ begun = "inTime" /\ style = "board"
+        /\ paused = FALSE /\ swallow = FALSE /\ held = FALSE /\ skipped = FALSE /\ moved = FALSE
+        /\ overLimit \in BOOLEAN /\ resting = overLimit   \* useKidsSession: past today's limit the page opens resting
 
-\* ---- the round ----
-\* The first tap on a planet or a choice.
-YouStartTapping == /\ phase = "fresh" /\ ~resting /\ show = "off" /\ phase' = "play"
-                   /\ UNCHANGED <<due, resting, stage, hold, show, search>>
-\* tapPlanet(last) / nextPlanet(last) → finish(): record stars (max), win sound, then atBreak().
-YouFinishTheRound == /\ phase \in {"play", "late"} /\ ~resting
-                     /\ phase' = "done" /\ resting' = due
-                     /\ UNCHANGED <<due, stage, hold, show, search>>
-\* EndScreen আবার খেলো → begin(level). The rest screen (a real modal since f4f75be) and ShowParent cover it.
-YouPlayAgain == /\ phase = "done" /\ ~resting /\ show = "off"
-                /\ phase' = Fresh /\ stage' = LeftOpen
-                /\ UNCHANGED <<due, resting, hold, show, search>>
-YouPressShesh == /\ phase = "done" /\ ~resting /\ show = "off" /\ phase' = "menu"
-                 /\ UNCHANGED <<due, resting, stage, hold, show, search>>
-\* LevelGrid in the Menu or in the সব লেভেল drawer → begin(level), from any phase, mid-round too.
-YouPickALevel == /\ ~resting /\ show = "off"
-                 /\ phase' = Fresh /\ stage' = LeftOpen
-                 /\ UNCHANGED <<due, resting, hold, show, search>>
-\* The rest screen blocks every key, tap and focus outside itself (f4f75be), so nothing behind it can start a round.
+NewRound == /\ screen' = "play" /\ item' = 1 /\ revealed' = FALSE /\ pending' = "none" /\ finished' = FALSE /\ recorded' = FALSE
+            /\ style' \in {"board", "button"}
 
-\* ---- the daily limit ----
-\* useKidsSession: +10 s every 10 s while visible and focused; atBreak() compares it with the limit when a round ends,
-\* and once on mount. begin() never checks it.
-TodaysTimeRunsOut == /\ ~due /\ due' = TRUE
-                     /\ UNCHANGED <<phase, resting, stage, hold, show, search>>
-\* RestScreen → its own ParentGate → আজ আরও ১০ মিনিট → extend(10).
-AGrownUpGivesTenMore == /\ resting /\ due' = FALSE /\ resting' = FALSE
-                        /\ UNCHANGED <<phase, stage, hold, show, search>>
-\* A reload (or opening the tool again): a fresh round, and since 23fd7c1 the rest screen at once if the time is up.
-YouReload == /\ phase' = "fresh" /\ resting' = due
-             /\ stage' = "closed" /\ hold' = "none" /\ show' = "off" /\ search' = "never"
-             /\ UNCHANGED due
+\* begin(): খেলো on the title, আবার খেলো, Enter on the title. atBreak() first: past the limit, the rest screen instead.
+YouStartARound == /\ screen \in {"title", "end"} /\ Free
+                  /\ IF overLimit
+                     THEN /\ resting' = TRUE /\ UNCHANGED <<round>>
+                     ELSE /\ NewRound /\ resting' = FALSE /\ begun' = "inTime"
+                  /\ swallow' = FALSE
+                  /\ UNCHANGED <<paused, held, skipped, moved, overLimit>>
+\* The level list opens from the title or the end screen; a level from it is begin() too.
+YouOpenTheLevelList == /\ screen \in {"title", "end"} /\ Free /\ screen' = "levels"
+                       /\ UNCHANGED <<item, revealed, pending, finished, recorded, begun, style, away, kids>>
+\* The player's সব লেভেল (onLevels): from a round too. Nothing waits under the list.
+TheMenuOpensTheLevelList == /\ screen = "play" /\ Free /\ screen' = "levels" /\ pending' = "none" /\ revealed' = FALSE
+                            /\ UNCHANGED <<item, finished, recorded, begun, style, away, kids>>
+YouPickALevel == /\ screen = "levels" /\ Free
+                 /\ IF overLimit
+                    THEN /\ resting' = TRUE /\ screen' = "title" /\ UNCHANGED <<item, revealed, pending, finished, recorded, begun, style>>
+                    ELSE /\ NewRound /\ resting' = FALSE /\ begun' = "inTime"
+                 /\ UNCHANGED <<away, overLimit>>
 
-\* ---- the parent gate (বড়দের জন্য) ----
-\* start(): a 2 s timeout into hold.current, only if none is running. A key auto-repeat (event.repeat) or a second
-\* finger does nothing, so there is no second timer.
-YouHoldTheGate == /\ stage = "closed" /\ hold = "none" /\ hold' = "held"
-                  /\ UNCHANGED <<phase, due, resting, stage, show, search>>
-\* stop() on pointerup / leave / cancel, keyup or blur: clears the one timer.
-YouLetGoEarly == /\ hold = "held" /\ hold' = "none"
-                 /\ UNCHANGED <<phase, due, resting, stage, show, search>>
-\* The timer fires: a two-digit sum (10–18). "early" would be a question opened by a hold let go before 2 s.
-TheHoldTimerFires == /\ hold = "held" /\ stage = "closed" /\ stage' = "ask" /\ hold' = "none"
-                     /\ UNCHANGED <<phase, due, resting, show, search>>
-AGrownUpAnswersTheSum == /\ stage \in {"ask", "early"} /\ stage' = "open"
-                         /\ UNCHANGED <<phase, due, resting, hold, show, search>>
-\* থাক / বন্ধ করো, two wrong answers, one grown-up action inside (share or print), 60 s open, or the tab hiding.
-TheGateCloses == /\ stage \in {"ask", "early", "open", "stale"} /\ stage' = "closed"
-                 /\ UNCHANGED <<phase, due, resting, hold, show, search>>
+\* tapAnswer(): only on play, nothing covering it, the round not already finished; a question already answered waits for ▶.
+\* The first tap after coming back only wakes the game.
+YouTapAWrongAnswer == /\ screen = "play" /\ Free /\ pending = "none" /\ ~revealed
+                      /\ swallow' = FALSE
+                      /\ UNCHANGED <<round, paused, held, skipped, moved, kids>>
+\* The right answer: solved(). On the last question the stars are saved and atBreak() runs in this very tap. The orbit board
+\* moves straight on to the next question; a reveal waits for ▶.
+YouTapTheRightAnswer == /\ screen = "play" /\ Free /\ pending = "none" /\ ~revealed
+                        /\ IF swallow
+                           THEN /\ swallow' = FALSE /\ UNCHANGED <<item, revealed, pending, finished, recorded, resting>>
+                           ELSE /\ swallow' = swallow
+                                /\ IF item = 2
+                                   THEN /\ pending' = (IF style = "board" THEN "end" ELSE "wait") /\ finished' = TRUE /\ recorded' = TRUE
+                                        /\ resting' = overLimit /\ UNCHANGED <<item, revealed>>
+                                   ELSE /\ IF style = "board" THEN (item' = 2 /\ revealed' = FALSE) ELSE (item' = item /\ revealed' = TRUE)
+                                        /\ UNCHANGED <<pending, finished, recorded, resting>>
+                        /\ UNCHANGED <<screen, begun, style, paused, held, skipped, moved, overLimit>>
+\* ▶ after a reveal: the next question.
+TheNextButton == /\ screen = "play" /\ Free /\ revealed /\ item = 1
+                 /\ item' = 2 /\ revealed' = FALSE
+                 /\ UNCHANGED <<screen, pending, finished, recorded, begun, style, away, kids>>
+\* goEnd() and timerFires() run only when nothing covers the game; `moved` would record a step taken under the menu.
+TheEndButtonIsTapped == /\ screen = "play" /\ pending = "wait" /\ Free
+                        /\ pending' = "none" /\ screen' = "end"
+                        /\ UNCHANGED <<item, revealed, finished, recorded, begun, style, away, kids>>
+TheEndTimerFires == /\ pending = "end" /\ ~paused
+                    /\ pending' = "none" /\ screen' = "end" /\ moved' = (moved \/ paused)
+                    /\ UNCHANGED <<item, revealed, finished, recorded, begun, style, paused, swallow, held, skipped, kids>>
 
-\* ---- আব্বু-আম্মুকে দেখাও ----
-YouShowAGrownUp == /\ phase = "done" /\ ~resting /\ show = "off" /\ show' = "on"
-                   /\ UNCHANGED <<phase, due, resting, stage, hold, search>>
-\* ছবিটা রাখো is its own ParentGate inside ShowParent; ফোনে ছবি রাখো appears only once it is open.
-AGrownUpOpensSave == /\ show = "on" /\ show' = "gate"
-                     /\ UNCHANGED <<phase, due, resting, stage, hold, search>>
-YouCloseShowParent == /\ show # "off" /\ show' = "off"
-                      /\ UNCHANGED <<phase, due, resting, stage, hold, search>>
+\* The player's menu: ⏸, P, Escape, blur or hide (the game's blur handler arms the swallow; held keys are dropped).
+YouGoAway == /\ ~paused /\ paused' = TRUE /\ swallow' = (screen = "play") /\ held' = FALSE
+             /\ UNCHANGED <<round, skipped, moved, kids>>
+YouResume == /\ paused /\ paused' = FALSE /\ swallow' = FALSE
+             /\ UNCHANGED <<round, held, skipped, moved, kids>>
+\* নতুন করে শুরু from the menu, or শেষ on the end screen: back to the title; the pending timer is cleared.
+YouGoBackToTheTitle == /\ (paused \/ (screen = "end" /\ Free))
+                       /\ screen' = "title" /\ pending' = "none" /\ revealed' = FALSE /\ paused' = FALSE /\ swallow' = FALSE
+                       /\ UNCHANGED <<item, finished, recorded, begun, style, held, skipped, moved, kids>>
 
-\* ---- the site header ----
-\* HeaderSearch: a free-text box on every page; focusing it import()s the search code, typing loads tile pictures.
-YouTypeInTheSearch == /\ search = "never" /\ ~resting /\ show = "off" /\ search' = "open"
-                      /\ UNCHANGED <<phase, due, resting, stage, hold, show>>
+\* Enter or Space held through the last answer and auto-repeating on the end screen: freshKey() refuses a repeat.
+YouHoldEnter == /\ screen = "play" /\ ~paused /\ ~held /\ held' = TRUE
+                /\ UNCHANGED <<round, paused, swallow, skipped, moved, kids>>
+TheKeyRepeats == /\ held /\ screen = "end" /\ Free
+                 /\ skipped' = FALSE
+                 /\ UNCHANGED <<round, paused, swallow, held, moved, kids>>
+YouLetGoOfTheKey == /\ held /\ held' = FALSE
+                    /\ UNCHANGED <<round, paused, swallow, skipped, moved, kids>>
 
-Next == YouStartTapping \/ YouFinishTheRound \/ YouPlayAgain \/ YouPressShesh \/ YouPickALevel
-        \/ TodaysTimeRunsOut \/ AGrownUpGivesTenMore \/ YouReload
-        \/ YouHoldTheGate \/ YouLetGoEarly \/ TheHoldTimerFires \/ AGrownUpAnswersTheSum \/ TheGateCloses
-        \/ YouShowAGrownUp \/ AGrownUpOpensSave \/ YouCloseShowParent
-        \/ YouTypeInTheSearch
+\* useKidsSession's tick pushes today's time past the limit, at any moment.
+TimeIsUp == /\ ~overLimit /\ overLimit' = TRUE
+            /\ UNCHANGED <<round, away, resting>>
+\* A reload, or opening the game from the kids' hub: the title, resting if past the limit; both gates closed.
+ThePageOpens == /\ screen' = "title" /\ item' = 1 /\ revealed' = FALSE /\ pending' = "none" /\ finished' = FALSE /\ recorded' = FALSE
+                /\ paused' = FALSE /\ swallow' = FALSE /\ held' = FALSE
+                /\ resting' = overLimit
+                /\ UNCHANGED <<begun, style, skipped, moved, overLimit>>
+
+\* A grown-up's আজ আরও ১০ মিনিট on the rest screen (who can reach it is SourojogotGates.tla's job).
+TenMoreMinutes == /\ RestShows /\ overLimit' = FALSE /\ resting' = FALSE /\ UNCHANGED <<round, away>>
+
+Next == YouStartARound \/ YouOpenTheLevelList \/ TheMenuOpensTheLevelList \/ YouPickALevel \/ YouTapAWrongAnswer \/ YouTapTheRightAnswer
+        \/ TheNextButton \/ TheEndButtonIsTapped \/ TheEndTimerFires \/ YouGoAway \/ YouResume \/ YouGoBackToTheTitle
+        \/ YouHoldEnter \/ TheKeyRepeats \/ YouLetGoOfTheKey \/ TimeIsUp \/ ThePageOpens
+        \/ TenMoreMinutes
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ phase \in Phases /\ due \in BOOLEAN /\ resting \in BOOLEAN
-          /\ stage \in {"closed", "ask", "early", "open", "stale"} /\ hold \in {"none", "held"}
-          /\ show \in {"off", "on", "gate"} /\ search \in {"never", "open"}
+TypeOK == /\ screen \in {"title", "play", "end", "levels"} /\ item \in 1..2 /\ revealed \in BOOLEAN /\ pending \in {"none", "end", "wait"}
+          /\ finished \in BOOLEAN /\ recorded \in BOOLEAN /\ begun \in {"inTime", "late"} /\ style \in {"board", "button"}
+          /\ paused \in BOOLEAN /\ swallow \in BOOLEAN /\ held \in BOOLEAN /\ skipped \in BOOLEAN /\ moved \in BOOLEAN
+          /\ overLimit \in BOOLEAN /\ resting \in BOOLEAN
 
 \* ---- the reader's rules ----
-RestOnlyAtBreak == resting => phase \in {"fresh", "done", "menu"}
-NoRoundAfterTimeIsUp == phase # "late"
-RestNeverHidesBehindShowParent == ~(resting /\ show # "off")
-GateAsksOnlyAfterAFullHold == stage # "early"
-ShareNeverLeftOpenForTheChild == stage # "stale"
-SaveOnlyBehindTheGate == show = "gate" => phase = "done"
-NoFreeTextForKids == search # "open"
-NothingLoadsAfterStart == search = "never"   \* the same step breaks both: typing needs the loaded code
+\* The rest screen comes only between rounds, never over a question.
+RestOnlyAtBreak == RestShows => screen # "play"
+\* Once today's time is up, no new round starts without the rest screen first.
+NoNewRoundPastLimit == begun = "inTime"
+\* Every finished round counts: once the last answer is right, its stars are saved and the limit checked, whatever comes next.
+EveryFinishCounts == finished => recorded
+\* Nothing moves under the pause menu.
+NothingMovesUnderTheMenu == ~moved
+\* The level list is a choice screen: nothing is waiting under it.
+ChoiceFreezesPlay == screen = "levels" => (pending = "none" /\ ~revealed)
+\* A key held through the last answer never starts the next round.
+ResultNeedsFreshPress == ~skipped
+\* The end screen comes only after the last answer, never from a question still open.
+EndOnlyAfterTheLastAnswer == screen = "end" => finished
 ====

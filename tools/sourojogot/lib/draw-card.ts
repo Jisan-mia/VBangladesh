@@ -1,9 +1,12 @@
-// The parent card (1080×1350): the Sun's edge, the round's planets in order, what was done, with no name.
+// The parent card (1080×1350): the Sun's edge, the round's planets in order, what was done, one true number. No name and
+// no stars: it says what was done, never a grade.
 import { cardSizes, drawFooterBand, fitText, renderCard } from "../../../shared/card-canvas";
-import { cardFact, doneLine, levelOf, planetsOf, starsOf } from "./levels";
-import { bn, type Planet } from "./planets";
+import { levelOf } from "./course";
+import { bn, PLANETS, type Planet } from "./planets";
+import type { Result } from "./round";
+import { cardFact, doneLine } from "./words";
 
-const colors = { sky: "#141d3f", skyLow: "#26346a", ink: "#fff6df", muted: "#c9cff0", star: "#ffd166", starOff: "#4a5688", band: "#0c1330", ask: "#ffd166" };
+const colors = { sky: "#141d3f", skyLow: "#26346a", ink: "#fff6df", muted: "#c9cff0", band: "#0c1330", ask: "#ffd166" };
 
 /** A planet as a shaded ball; Jupiter gets bands and Saturn its ring. Shared with nothing else, so it lives here. */
 export function drawPlanet(c: CanvasRenderingContext2D, planet: Planet, x: number, y: number, r: number) {
@@ -25,6 +28,7 @@ export function drawPlanet(c: CanvasRenderingContext2D, planet: Planet, x: numbe
     c.beginPath(); c.ellipse(x + r * 0.35, y + r * 0.35, r * 0.28, r * 0.2, -0.4, 0, Math.PI * 2); c.fill();
     c.restore();
   }
+  if (planet.id === "mars") { c.fillStyle = "#ffffffd9"; c.beginPath(); c.ellipse(x, y - r * 0.9, r * 0.4, r * 0.18, 0, 0, Math.PI * 2); c.fill(); }
   if (planet.id === "saturn") ring(c, planet, x, y, r, "front");
 }
 
@@ -36,16 +40,7 @@ function ring(c: CanvasRenderingContext2D, planet: Planet, x: number, y: number,
   c.stroke(); c.restore();
 }
 
-function star(c: CanvasRenderingContext2D, cx: number, cy: number, r: number, fill: string) {
-  c.beginPath();
-  for (let i = 0; i < 10; i++) {
-    const angle = -Math.PI / 2 + i * Math.PI / 5, radius = i % 2 ? r * 0.45 : r;
-    c.lineTo(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius);
-  }
-  c.closePath(); c.fillStyle = fill; c.fill();
-}
-
-export function drawCard(canvas: HTMLCanvasElement, level: number, mistakes: number, site: string) {
+export function drawCard(canvas: HTMLCanvasElement, result: Pick<Result, "level" | "planets">, site: string) {
   const { width, height } = cardSizes.feed;
   canvas.width = width; canvas.height = height;
   const c = canvas.getContext("2d");
@@ -62,7 +57,7 @@ export function drawCard(canvas: HTMLCanvasElement, level: number, mistakes: num
   sun.addColorStop(0, "#fff3b0"); sun.addColorStop(0.6, "#ffc93c"); sun.addColorStop(1, "#f28c28");
   c.beginPath(); c.arc(-260, 640, 400, 0, Math.PI * 2); c.fillStyle = sun; c.fill();
 
-  const planets = planetsOf(level), span = width - 230, gap = span / planets.length;
+  const planets = [...new Set(result.planets)].map(index => PLANETS[index]), span = width - 230, gap = span / planets.length;
   // Four planets in one row; eight zigzag on two rows so the big ones get room.
   const wide = planets.length > 4;
   planets.forEach((planet, i) => {
@@ -71,13 +66,11 @@ export function drawCard(canvas: HTMLCanvasElement, level: number, mistakes: num
     fitText(c, [{ text: planet.name, color: colors.muted, weight: 700 }], x, y + Math.max(r, 30) + 46, 34, wide ? 200 : gap - 6, "center");
   });
 
-  fitText(c, [{ text: `সৌরজগতের সফর · লেভেল ${bn(level)}`, color: colors.muted, weight: 700, display: true }], width / 2, 120, 38, 960, "center");
-  fitText(c, [{ text: doneLine(level), color: colors.ink, weight: 800, display: true }], width / 2, 250, 72, 980, "center");
-  const stars = starsOf(mistakes);
-  for (let i = 0; i < 3; i++) star(c, width / 2 + (i - 1) * 86, 345, 34, i < stars ? colors.star : colors.starOff);
-  fitText(c, [{ text: cardFact(level), color: colors.ink, weight: 700 }], width / 2, wide ? 1040 : 1010, 44, 960, "center");
-  fitText(c, [{ text: mistakes ? `${bn(mistakes)}বার আবার ভেবে ঠিকটা পেয়েছি` : "একবারও আটকাইনি", color: colors.muted, weight: 600 }], width / 2, wide ? 1110 : 1090, 36, 960, "center");
+  fitText(c, [{ text: `সৌরজগতের সফর · লেভেল ${bn(result.level)}`, color: colors.muted, weight: 700, display: true }], width / 2, 120, 38, 960, "center");
+  fitText(c, [{ text: doneLine(result.level), color: colors.ink, weight: 800, display: true }], width / 2, 260, 72, 980, "center");
+  fitText(c, [{ text: levelOf(result.level).finale ?? levelOf(result.level).title, color: colors.ask, weight: 700 }], width / 2, 345, 40, 960, "center");
+  fitText(c, [{ text: cardFact(result.level), color: colors.ink, weight: 700 }], width / 2, wide ? 1040 : 1010, 44, 960, "center");
   drawFooterBand(c, "feed", "আজ রাতে একসাথে আকাশটা দেখো", site, { band: colors.band, ask: colors.ask, site: "#ffffff" });
 }
 
-export const cardBlob = (level: number, mistakes: number, site: string) => renderCard(canvas => drawCard(canvas, level, mistakes, site));
+export const cardBlob = (result: Pick<Result, "level" | "planets">, site: string) => renderCard(canvas => drawCard(canvas, result, site));
