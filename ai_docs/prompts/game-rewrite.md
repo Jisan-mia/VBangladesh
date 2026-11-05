@@ -29,6 +29,15 @@ Load these skills with the Skill tool before you write any motion, and follow th
 
 Before your report, run `review-animations` or `improve-animations` on your own game's motion and fix what it finds. Respect `prefers-reduced-motion` and ধীরে খেলো.
 
+## Design: use the `unslop-ui` skill (the owner's request)
+Load `unslop-ui` with the Skill tool before you style anything.
+- **Write down the game's look first:** one real reference, a deliberate palette per world, type from the site's own fonts, and what the player should do first. Then build to that.
+- **Before your report, run its scanner on your folder** and fix every high finding:
+  `python3 "$HOME/Library/Application Support/orca/claude-profiles/1e2db981-883c-45fb-a287-30e1689c4f1b/home/skills/unslop-ui/scripts/devibe_scan.py" tools/{SLUG}`.
+- **The usual tells in this repo** are rounded corners on everything and an unprompted glow. Use a radius only where the object is really round or soft. Glow only to signal something, such as danger or a lit lamp. Never use emoji as icons; draw icons in SVG.
+- **Mark real choices:** a chosen brand value gets `/* unslop-ignore */` with a reason.
+- **Fix to the game's own palette,** never to another default. That includes the cream-plus-serif-plus-sage look.
+
 ## Write the design first: `ai_docs/game-dev/rewrites/{SLUG}.md`
 One page:
 - **Core:** the concept in one line, the fantasy, and the core loop in 3 verbs.
