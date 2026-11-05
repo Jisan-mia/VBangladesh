@@ -1,126 +1,167 @@
-.tool-nodi-par{--accent:#1f6f78;--accent-deep:#164f56;--ink:#22302c;--muted:#5b6964;--paper:#f4efe2;--paper-edge:#e2d7bd;--line:#d5ddd3;--mango:#c98400;--rust:#9a5a28}
-.tool-nodi-par .np-page{color:var(--ink)}
+/* নদী পার: the river fills the stage with the four hop keys under it; the title, the story, the end screen and সব নদী sit over it. One palette per world (lib/art.ts LOOKS). */
+.tool-nodi-par{--accent:#1f6f78;--accent-deep:#164f56;--ink:#22302c;--muted:#5b6964;--paper:#f4efe2;--paper-edge:#e2d7bd;--night:#0f2a2e;--cream:#fff8e6;--rust:#9a5a28}
+.tool-nodi-par .np-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* hero: short, so the river and the pad land on the first phone screen */
-.tool-nodi-par .np-hero{padding:8px 0 6px}
-.tool-nodi-par .np-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,6vw,44px);line-height:1.25;font-weight:700;letter-spacing:0}
-.tool-nodi-par .np-hero h1 .np-hero-kicker{display:block;margin:0;font-family:var(--font-bengali);font-size:13px;font-weight:600;line-height:1.5;color:var(--rust)}
-.tool-nodi-par .np-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.55}
+.np{--ease-out:cubic-bezier(0.23,1,0.32,1);--panel:#10282cec;--gold:#ffd84a;position:relative;width:100%;max-width:560px;margin:0 auto;color:var(--cream)}
+.np[data-look=nodi]{--panel:#2a2216ec;--gold:#ffc857}
+.np[data-look=borsha]{--panel:#142231ec;--gold:#ffe08a}
+.np button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 140ms var(--ease-out),background-color 140ms var(--ease-out),opacity 140ms var(--ease-out)}
+.np button:active:not(:disabled){transform:scale(.97)}
 
-.tool-nodi-par .np{display:grid;gap:8px;justify-items:center}
-/* The river is 9 wide by 10 tall: its width shrinks on short screens so the pad still fits under it. */
-.tool-nodi-par .np>*{width:min(100%,480px,max(280px,calc((100svh - 330px) * 0.9)))}
+/* the room: exactly the stage in the player (the river above, the hop keys below), so nothing scrolls while playing; 9:17 outside it */
+.np-play{position:relative;display:flex;flex-direction:column;width:100%;aspect-ratio:9/17;overflow:hidden;border-radius:16px;background:var(--night);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.np[data-player] .np-play{aspect-ratio:auto;height:var(--stage-h,auto);border-radius:12px}
+.tool-nodi-par .gp-stage[data-immersive] .np-play{border-radius:0}
+.tool-nodi-par .gp-stage,.tool-nodi-par .gp[data-immersive] .gp-stage{padding:0}
+.np-view{position:relative;flex:1;min-height:0;touch-action:none;cursor:pointer}
+.np-view>canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
 
-.tool-nodi-par .np-friend{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;padding:8px 12px;border-radius:16px;background:var(--paper);border:1.5px solid var(--paper-edge)}
-.tool-nodi-par .np-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 6px 14px #22302c33;transform:rotate(-3deg)}
-.tool-nodi-par .np-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.35}
-.tool-nodi-par .np-friend p{margin:0;font-size:13px;color:var(--muted);line-height:1.4}
+/* the hop keys: big, on touch-down; the forward key is the widest */
+.np-pad{flex:none;display:grid;grid-template-columns:1fr 2fr 1fr;grid-template-rows:auto auto;gap:6px;padding:6px 8px 8px;background:#0b1d20;touch-action:manipulation}
+.np-key{display:flex;align-items:center;justify-content:center;gap:6px;min-height:50px;padding:0;border:0;border-radius:14px;background:#ffffff1c;color:var(--cream);font-size:15px;font-weight:700;cursor:pointer}
+.np-key:active:not(:disabled){background:#ffffff40}
+.np-key:disabled{opacity:.45;cursor:default}
+.np-key svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
+.np-up{background:#1f8a92;min-height:56px}
+.np-up:active:not(:disabled){background:#27a4ad}
+.np-back{grid-column:1/4;min-height:38px;font-size:13px;background:#ffffff12}
+.np-key:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
-.tool-nodi-par .np-level{display:flex;justify-content:space-between;gap:8px;margin:0;font-size:14px;line-height:1.3;color:var(--muted)}
-.tool-nodi-par .np-level b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--font-display);font-size:16px;color:var(--ink)}
-.tool-nodi-par .np-level span{white-space:nowrap}
-.tool-nodi-par .np-level span::first-letter{color:#e39b00}
+/* the HUD's one HTML part: the river badge, top-left; it opens সব নদী */
+.np-badge{position:absolute;top:10px;left:10px;z-index:2;display:inline-flex;align-items:center;gap:7px;max-width:30%;min-height:32px;padding:0 11px 0 9px;border:0;border-radius:999px;background:#20282699;color:var(--cream);font-size:13px;font-weight:700;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.np-badge i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px #ffd84a33}
 
-/* the play area; only here do touches belong to the game */
-.tool-nodi-par .np-stage{position:relative;border-radius:18px;overflow:hidden;background:#4f9886;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;box-shadow:0 0 0 2px #2c5c52,0 8px 20px #22302c2e}
-.tool-nodi-par .np-stage canvas{display:block;width:100%;height:auto;aspect-ratio:9/10}
+/* ---- the title ---- */
+.np-start{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 16px 16px;overflow:auto;overscroll-behavior:contain;background:linear-gradient(#0f2a2e88 0%,#0f2a2eb4 38%,#0f2a2ee8 100%);text-align:center;cursor:default;animation:np-fade .16s var(--ease-out) both}
+.np-start[data-finale]{background:linear-gradient(#3a0f0a55 0%,#2a0c12c8 30%,#0f2a2eee 100%)}
+.np-go{display:grid;justify-items:center;width:min(100%,330px);padding:2px 8px 10px;border:0;border-radius:26px;background:none;color:var(--night);font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.1;cursor:pointer}
+.np-go-art{display:block;width:100%;height:clamp(130px,26vh,220px)}
+.np-go span{margin-top:-8px;padding:6px 30px 8px;border-radius:999px;background:var(--gold);box-shadow:0 5px 0 #b8860b,0 16px 30px -12px #000c}
+.np-go:active:not(:disabled){transform:translateY(3px) scale(.97)}
+.np-go:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+.np-pick{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px;width:min(100%,380px)}
+.np-pick-name h2{margin:0;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.3;color:#fff}
+.np-world-badge{justify-self:center;margin:0 auto 2px;padding:1px 10px;width:max-content;max-width:100%;border-radius:999px;background:#ffffff1a;color:var(--cream);font-size:12px;font-weight:700}
+.np-world-badge[data-finale]{background:#c2361f;color:#fff}
+.np-got{margin:0;color:var(--gold);font-size:15px;letter-spacing:2px}
+.np-got span{color:#ffffff40}
+.np-step{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid #fff8e655;border-radius:14px;background:#ffffff14;color:var(--cream);cursor:pointer}
+.np-step:disabled{opacity:.25;cursor:default}
+.np-step svg,.np-sheet-close svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.np-lesson{max-width:380px;margin:0;padding:8px 12px;border-left:4px solid var(--gold);border-radius:4px 12px 12px 4px;background:#ffffff14;font-size:15px;line-height:1.5;text-align:left}
+.np-lesson b{margin-right:6px;color:var(--gold)}
+.np-start[data-finale] .np-lesson{border-left-color:#ff7a5c}
+.np-start[data-finale] .np-lesson b{color:#ffb39e}
+.np-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;width:min(100%,320px);padding:4px;border-radius:14px;background:#ffffff14}
+.np-modes button{min-height:40px;border:0;border-radius:10px;background:transparent;color:var(--cream);font-size:15px;font-weight:700;cursor:pointer}
+.np-modes button[aria-checked=true]{background:var(--cream);color:var(--ink)}
+.np-mode-line,.np-targets{margin:0;font-size:13px;line-height:1.45;color:#e6efe9}
+.np-targets{color:var(--gold);font-weight:600}
+.np-start-foot{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2px 16px;margin:0;font-size:12px;color:#e6efe9aa}
+.np-start-foot .kit-link{min-height:40px;color:var(--cream);font-size:15px;font-weight:700}
+.np-friend{width:min(100%,380px);padding:8px 12px;border-radius:14px;background:#fff8e61f;text-align:left}
+.np-friend p{margin:0;font-size:13px;line-height:1.45;color:#e6efe9}
+.np-friend b{color:#fff}
 
-.tool-nodi-par .np-overlay{position:absolute;left:50%;top:7%;transform:translateX(-50%);display:grid;justify-items:center;gap:6px;width:min(290px,calc(100% - 28px));padding:12px 14px;border-radius:18px;background:#16302ce6;color:#f4f1e4;text-align:center;pointer-events:none}
-.tool-nodi-par .np-overlay button{pointer-events:auto}
-.tool-nodi-par .np-how{margin:0;font-family:var(--font-display);font-size:23px;font-weight:700;line-height:1.3}
-.tool-nodi-par .np-sub{margin:0;font-size:14px;line-height:1.45;color:#dcebe4}
-.tool-nodi-par .np-hint{font-size:13px;color:#b9d3ca}
-.tool-nodi-par .np-go{min-width:180px;min-height:56px;font-size:20px;font-family:var(--font-display)}
-.tool-nodi-par .np-dim{inset:0;width:auto;transform:none;align-content:center;border-radius:0;background:#16302cb0}
-.tool-nodi-par .np-restart{min-height:44px;padding:4px 14px;border:0;background:none;color:#f4f1e4;font-size:15px;font-weight:600;text-decoration:underline;text-underline-offset:4px}
-.tool-nodi-par .np-ribbon{position:absolute;left:12px;right:12px;top:12%;width:fit-content;margin:0 auto;padding:6px 16px;border-radius:999px;background:#16302ce6;color:#ffd166;font-family:var(--font-display);font-size:17px;font-weight:700;text-align:center;pointer-events:none;animation:gx-pop .45s cubic-bezier(.3,1.6,.5,1) both}
-.tool-nodi-par .np-chain{position:absolute;left:0;right:0;top:9px;width:fit-content;margin:0 auto;white-space:nowrap;padding:3px 10px;border-radius:999px;background:var(--mango);color:#fff;font-size:14px;font-weight:700;pointer-events:none;animation:gx-pop .45s cubic-bezier(.3,1.6,.5,1) both}
+/* ---- the first-run story ---- */
+.np-story{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:16px 16px 18%;background:#0f2a2e80;cursor:default}
+.np-panel{display:grid;gap:10px;justify-items:center;max-width:340px;padding:16px 20px 12px;border:3px solid var(--cream);border-radius:6px;background:var(--cream);color:var(--ink);font-family:var(--font-display);font-size:21px;font-weight:700;line-height:1.45;box-shadow:6px 6px 0 #0f2a2e;cursor:pointer;animation:np-pop .22s var(--ease-out) both}
+.np-panel p{margin:0}
+.np-dots{display:flex;gap:6px}
+.np-dots i{width:8px;height:8px;border-radius:50%;background:#22302c33}
+.np-dots i[data-on]{background:var(--ink)}
+.np-skip{position:absolute;bottom:14px;right:14px;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border:0;border-radius:999px;background:#0f2a2eb3;color:var(--cream);font-size:13px;font-weight:700;overflow:hidden;cursor:pointer}
+.np-skip span{width:14px;height:14px;border-radius:50%;border:2px solid var(--cream);background:linear-gradient(var(--cream),var(--cream)) left/0% 100% no-repeat}
+.np-skip[data-holding] span{background-size:100% 100%;transition:background-size .6s linear}
 
-/* the pad: side keys tall for thumbs, "সামনে" big in the middle, "পিছনে" under it */
-.tool-nodi-par .np-pad{display:grid;grid-template-columns:1fr 1.5fr 1fr;grid-template-rows:60px 44px;gap:8px;touch-action:manipulation}
-.tool-nodi-par .np-key{display:flex;align-items:center;justify-content:center;gap:6px;padding:0;border:0;border-radius:16px;background:var(--paper);color:var(--ink);font-family:var(--font-display);font-size:19px;font-weight:700;box-shadow:0 4px 0 var(--paper-edge),inset 0 0 0 1.5px var(--paper-edge);touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-.tool-nodi-par .np-key:first-child,.tool-nodi-par .np-key:nth-child(3){grid-row:1/3}
-.tool-nodi-par .np-key:nth-child(3){grid-column:3}
-.tool-nodi-par .np-up{background:var(--accent);color:#fff;box-shadow:0 4px 0 var(--accent-deep)}
-.tool-nodi-par .np-back{grid-column:2;grid-row:2;font-size:15px;font-family:var(--font-bengali);font-weight:600}
-.tool-nodi-par .np-key svg{width:28px;height:28px;fill:none;stroke:var(--accent);stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
-.tool-nodi-par .np-up svg{stroke:#fff}
-.tool-nodi-par .np-back svg{width:20px;height:20px}
-.tool-nodi-par .np-key:active{transform:translateY(3px);box-shadow:0 1px 0 var(--paper-edge),inset 0 0 0 1.5px var(--paper-edge)}
-.tool-nodi-par .np-up:active{box-shadow:0 1px 0 var(--accent-deep)}
-.tool-nodi-par .np-key:disabled{opacity:.45}
+/* ---- our own pause cover (outside the player's menu) ---- */
+.np-cover{position:absolute;inset:0;z-index:3;display:grid;place-content:center;justify-items:center;gap:12px;background:#0f2a2ec4;text-align:center;cursor:default}
+.np-cover p{margin:0;font-family:var(--font-display);font-size:20px;font-weight:700}
+.np-cover .kit-primary{min-width:200px;min-height:56px;font-size:19px}
 
-/* level clear: stars, the time, the gap to the next star, and the next river under the thumb */
-.tool-nodi-par .np-over{display:grid;gap:4px;padding:10px 12px;border-radius:18px;background:var(--paper);border:1.5px solid var(--paper-edge)}
-.tool-nodi-par .np-over-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0 10px}
-.tool-nodi-par .np-over-kicker{margin:0;font-family:var(--font-display);font-size:17px;font-weight:700;line-height:1.4}
-.tool-nodi-par .np-over .gx-reveal{font-size:32px}
-.tool-nodi-par .np-score{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 12px;margin:0}
-.tool-nodi-par .np-score b{font-family:var(--font-display);font-size:30px;line-height:1.15;color:var(--accent)}
-.tool-nodi-par .np-score span{font-size:14px;font-weight:600;color:var(--muted)}
-.tool-nodi-par .np-detail{margin:0;font-size:15px;font-weight:600;color:var(--rust)}
-.tool-nodi-par .np-near{margin:0;font-size:15px;font-weight:700;color:var(--accent-deep);line-height:1.45}
-.tool-nodi-par .np-versus{margin:0;padding:6px 10px;border-radius:12px;background:#fff;font-size:15px;font-weight:600;line-height:1.45}
-.tool-nodi-par .np-over-actions{display:grid;grid-template-columns:3fr 2fr;gap:10px;margin-top:4px}
-.tool-nodi-par .np-again{min-height:56px;font-size:20px;font-family:var(--font-display)}
-.tool-nodi-par .np-second{min-height:56px;padding:0 6px;white-space:nowrap;border:2px solid var(--accent);border-radius:14px;background:#fff;color:var(--accent);font-size:16px;font-weight:700}
+/* ---- the end screen ---- */
+.np-finish{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;overflow:auto;background:#0f2a2ed6;text-align:center;cursor:default;animation:np-up .28s var(--ease-out) .32s both}
+.np-finish[data-won]{background:linear-gradient(#7fd1c42e,#0f2a2ed0 40%)}
+.np-finish-kicker{margin:0;font-size:13px;font-weight:700;color:#e6efe9}
+.np-finish h2{margin:0;font-family:var(--font-display);font-size:clamp(23px,7cqw,30px);font-weight:800;line-height:1.25;color:#fff}
+.np-finish .gx-reveal{font-size:38px;gap:6px}
+.np-nostar{margin:0;font-size:30px;letter-spacing:4px;color:#ffffff40}
+.np-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:min(100%,380px);margin:4px 0 0}
+.np-stats div{display:grid;gap:1px;padding:7px 4px;border-radius:12px;background:#fff8e61a}
+.np-stats dt{font-size:12px;color:#e6efe9}
+.np-stats dd{margin:0;font-family:var(--font-display);font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;color:#fff}
+.np-stats small{font-size:13px;font-weight:600;color:#e6efe9aa}
+.np-miss{max-width:340px;margin:0;padding:4px 12px;border-radius:12px;background:#ffd84a33;font-size:15px;font-weight:700;color:#fff6e2}
+.np-versus{max-width:320px;margin:0;font-size:15px;font-weight:600;line-height:1.45}
+.np-line{max-width:330px;margin:0;font-size:14px;line-height:1.5;color:#e6efe9}
+.np-choices{display:grid;gap:8px;width:min(100%,360px);margin:4px 0 0;padding:0;list-style:none}
+.np-choices button{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;font-size:18px}
+.tool-nodi-par .np-choices .kit-secondary{background:transparent;color:var(--cream);border-color:#fff8e688}
+.np-choices kbd{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:#ffffff2e;font-family:inherit;font-size:13px;font-weight:700}
+.np-choices em{padding:1px 8px;border-radius:999px;background:#ffffff33;font-size:11px;font-style:normal;font-weight:800}
+@media (pointer:coarse){.np-choices kbd{display:none}}
+.tool-nodi-par .np-see{min-height:44px;color:var(--cream);font-size:15px}
 
-.tool-nodi-par .np-bar{display:flex;gap:8px}
-.tool-nodi-par .np-toggle,.tool-nodi-par .np-pause{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:6px 12px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;line-height:1.2;white-space:nowrap}
-.tool-nodi-par .np-toggle{flex:1 1 auto}
-.tool-nodi-par .np-toggle i{flex:none;position:relative;width:34px;height:20px;border-radius:99px;background:var(--line)}
-.tool-nodi-par .np-toggle i::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .15s}
-.tool-nodi-par .np-toggle[aria-pressed=true]{border-color:var(--accent)}
-.tool-nodi-par .np-toggle[aria-pressed=true] i{background:var(--accent)}
-.tool-nodi-par .np-toggle[aria-pressed=true] i::after{transform:translateX(14px)}
-.tool-nodi-par .np-pause{flex:none;min-width:84px}
-.tool-nodi-par .np-pause:disabled{opacity:.5}
-.tool-nodi-par .np-sound{flex:none;min-width:48px;min-height:48px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink)}
+/* ---- সব নদী ---- */
+.np-sheet{position:absolute;inset:0;z-index:4;display:grid;align-items:start;padding:8px;background:#06141799;cursor:default;animation:np-fade .14s var(--ease-out) both}
+.np-sheet-card{display:grid;gap:10px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:14px 12px 16px;border-radius:16px;background:var(--panel);box-shadow:0 20px 40px -20px #000c;animation:np-pop .2s var(--ease-out) both}
+.np-sheet header{position:relative;padding-right:52px}
+.np-sheet h2{margin:0;font-family:var(--font-display);font-size:24px;color:#fff}
+.np-sheet header p{margin:2px 0 0;font-size:13px;color:#e6efe9}
+.np-sheet-close{position:absolute;top:0;right:0;display:grid;place-items:center;width:46px;height:46px;padding:0;border:1.5px solid #fff8e655;border-radius:14px;background:#ffffff14;color:var(--cream);cursor:pointer}
+.np-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:14px;background:#ffffff14}
+.np-tabs button{min-height:40px;border:0;border-radius:10px;background:transparent;color:var(--cream);font-size:14px;font-weight:700;cursor:pointer}
+.np-tabs button[aria-selected=true]{background:var(--cream);color:var(--ink)}
+.np-world{--world:#7fd1c4}
+.np-world[data-look=nodi]{--world:#f0b86a}.np-world[data-look=borsha]{--world:#9fb8d6}
+.np-world h3{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin:0 0 6px;font-size:16px;color:#fff}
+.np-world h3 i{width:11px;height:11px;border-radius:50%;background:var(--world)}
+.np-world h3 small{font-size:12px;font-weight:600;color:#e6efe9b0}
+.np-world ol{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.np-world button{position:relative;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"key name stars" "key line line";align-items:center;column-gap:10px;row-gap:1px;width:100%;min-height:58px;padding:7px 10px;border:1.5px solid #fff8e62a;border-radius:12px;background:#ffffff10;color:var(--cream);text-align:left;cursor:pointer}
+.np-world button kbd{grid-area:key;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#ffffff1c;font-family:inherit;font-size:13px;font-weight:700}
+.np-row-name{grid-area:name;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:15px}
+.np-row-name em{padding:1px 8px;border-radius:999px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800}
+.np-row-line{grid-area:line;font-size:12.5px;line-height:1.4;color:#e6efe9c0}
+.np-row-stars{grid-area:stars;display:flex;align-items:center;gap:1px;font-size:13px;line-height:1}
+.np-row-stars small{margin-right:6px;font-size:11px;font-weight:600;color:#e6efe9aa;font-variant-numeric:tabular-nums}
+.np-row-stars i{font-style:normal;color:#ffffff30}
+.np-row-stars i[data-on]{color:var(--gold)}
+.np-row-stars svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.np-world button:disabled{opacity:.55;cursor:default}
+.np-world button[data-finale]:not(:disabled){border-color:var(--world)}
+.np-world button[aria-current]{background:#fff8e626;border-color:var(--cream)}
+.np-world button[data-next]{box-shadow:0 0 0 3px var(--gold)}
+.np-world button:focus-visible,.np-tabs button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
-.tool-nodi-par .np-levels{border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff}
-.tool-nodi-par .np-levels summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
-.tool-nodi-par .np-levels summary span{font-weight:500;font-size:14px;color:var(--muted)}
-.tool-nodi-par .np-levels p{margin:0 14px 10px;font-size:14px;line-height:1.55;color:var(--muted)}
-.tool-nodi-par .np-levels .gx-levels{padding:0 12px 12px}
+/* ---- the card and share, under the room inside the stage ---- */
+.np-result{scroll-margin-top:12px;margin-top:16px;padding:18px 12px 8px;border-top:2px solid var(--ink);color:var(--ink)}
+.np-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,30px);line-height:1.4}
+.np-result h2 em{font-style:normal;color:var(--accent)}
+.np-result>p{margin:0 0 16px;color:var(--muted)}
+.np-result-body{display:grid;gap:22px}
+.np-share{display:grid;gap:18px;align-content:start}
+.np-name{display:grid;gap:6px;font-weight:600}
+.np-name small{font-weight:400;color:var(--muted);font-size:13px}
+.np-name input{border:1.5px solid #d5ddd3;border-radius:12px;font-size:17px}
 
-.tool-nodi-par .np-result{scroll-margin-top:12px;width:100%;max-width:none;margin-top:24px;padding-top:20px;border-top:2px solid var(--ink)}
-.tool-nodi-par .np-result-head h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(24px,5vw,36px);line-height:1.4}
-.tool-nodi-par .np-result-head h2 em{font-style:normal;color:var(--accent)}
-.tool-nodi-par .np-result-head p{margin:0 0 16px;color:var(--muted)}
-.tool-nodi-par .np-result-body{display:grid;gap:22px}
-.tool-nodi-par .np-controls{display:grid;gap:18px;align-content:start}
-.tool-nodi-par .np-name{display:grid;gap:6px;font-weight:600}
-.tool-nodi-par .np-name small{font-weight:400;color:var(--muted);font-size:13px}
-.tool-nodi-par .np-name input{border:1.5px solid var(--line);border-radius:12px;font-size:17px}
-.tool-nodi-par .np-again-link{justify-self:start}
-
-.tool-nodi-par .np-guide h2{font-family:var(--font-display);margin-bottom:12px}
-.tool-nodi-par .np-guide>p{color:var(--muted)}
-.tool-nodi-par .np-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.tool-nodi-par .np-guide li{display:flex;gap:14px;align-items:flex-start}
-.tool-nodi-par .np-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--accent);color:#fff;font-weight:700}
-.tool-nodi-par .np-guide li p{margin:4px 0 0}
-
-@media(min-width:720px){
-  .tool-nodi-par .np-hero{padding:24px 0 14px}
-  .tool-nodi-par .np-lead{display:block}
-  .tool-nodi-par .np-page:has(.np-friend) .np-lead{display:none}
-  .tool-nodi-par .np-result{max-width:960px}
-  .tool-nodi-par .np-result-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:36px}
-  .tool-nodi-par .np-friend{grid-template-columns:96px 1fr;padding:12px 16px}
-  .tool-nodi-par .np-friend h2{font-size:20px}
+@keyframes np-pop{from{opacity:0;transform:scale(.96) translateY(6px)}}
+@keyframes np-up{from{opacity:0;transform:translateY(16px)}}
+@keyframes np-fade{from{opacity:0}}
+@media (max-height:640px){
+  .np-go-art{height:clamp(96px,20vh,160px)}
+  .np-go{font-size:27px}
+  .np-start{gap:6px}
+  .np-key{min-height:44px}
 }
-@media(max-width:360px){
-  .tool-nodi-par .np-how{font-size:20px}
-  .tool-nodi-par .np-key{font-size:17px}
-  .tool-nodi-par .np-toggle,.tool-nodi-par .np-pause{padding:6px 8px;font-size:14px;gap:6px}
-  .tool-nodi-par .np-toggle i{width:28px}
-  .tool-nodi-par .np-toggle[aria-pressed=true] i::after{transform:translateX(8px)}
+/* ধীরে খেলো and reduced motion: fewer and gentler, not none: a short fade, no slide, no press scale, the card without its wait.
+   Only the elements that animate are listed (the story's hold-to-skip fill keeps its linear fill: it is progress, not decoration). */
+.np[data-calm] :is(.np-start,.np-panel,.np-finish,.np-sheet,.np-sheet-card){animation-name:np-fade!important;animation-duration:.12s!important;animation-delay:0s!important}
+.np[data-calm] button{transition-property:opacity,background-color!important}
+.np[data-calm] button:active{transform:none!important}
+@media (prefers-reduced-motion:reduce){
+  .np :is(.np-start,.np-panel,.np-finish,.np-sheet,.np-sheet-card){animation-name:np-fade!important;animation-duration:.12s!important;animation-delay:0s!important}
+  .np button{transition-property:opacity,background-color!important}
+  .np button:active{transform:none!important}
 }
-@media(prefers-reduced-motion:reduce){
-  .tool-nodi-par .np-chain,.tool-nodi-par .np-ribbon{animation:none}
-  .tool-nodi-par .np-toggle i::after{transition:none}
-  .tool-nodi-par .np-key:active{transform:none}
-}
-/* A friend's banner takes room above the river: shrink the river so the pad still fits. */
-.tool-nodi-par .np:has(.np-friend)>*{width:min(100%,480px,max(260px,calc((100svh - 430px) * 0.9)))}
+.np-targets,.np-mode-line,.np-lesson{text-wrap:balance}

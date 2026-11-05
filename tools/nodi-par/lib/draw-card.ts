@@ -1,5 +1,6 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, wrapText, BODY_FONT, type CardFormat } from "../../../shared/card-canvas";
-import { C, drawBell, drawFerry, drawKid, drawMango, drawNouka, drawPana, drawSteps, drawTree, drawVela } from "./art";
+import { C, LOOKS, drawBell, drawFerry, drawKid, drawMango, drawNouka, drawPana, drawSteps, drawTree, drawVela } from "./art";
+import { FINALES, WORLDS, worldOf } from "./levels";
 import { bn, detailLine, humanLine, secs, PLACES, type Shared } from "./result";
 import { makeRiver, starsOf } from "./river";
 
@@ -11,18 +12,18 @@ function at(context: CanvasRenderingContext2D, x: number, y: number, paint: () =
 
 /** The river from the far ghat down to the near bank: the kid on a ভেলা mid-river, a mango riding a নৌকা, কচুরিপানা, and a ferry from river 13 on. */
 function paintRiver(context: CanvasRenderingContext2D, top: number, water: number, level: number) {
-  const width = 1080, bottom = top + (water + 2) * CELL, flow = level > 20 ? C.monsoon : level > 10 ? C.river : C.canal;
-  context.fillStyle = C.grass; context.fillRect(0, top, width, CELL); context.fillRect(0, bottom - CELL, width, CELL);
+  const width = 1080, bottom = top + (water + 2) * CELL, look = LOOKS[WORLDS[worldOf(level)].look], flow = look.water;
+  context.fillStyle = look.grass; context.fillRect(0, top, width, CELL); context.fillRect(0, bottom - CELL, width, CELL);
   context.fillStyle = flow; context.fillRect(0, top + CELL, width, water * CELL);
   for (let row = 0; row < water; row++) {
     context.fillStyle = row % 2 ? "rgba(0,30,40,0.07)" : "rgba(255,255,255,0.07)";
     context.fillRect(0, top + (row + 1) * CELL, width, CELL);
   }
-  context.fillStyle = C.mud; context.fillRect(0, top + CELL * 0.84, width, CELL * 0.16); context.fillRect(0, bottom - CELL, width, CELL * 0.16);
+  context.fillStyle = look.mud; context.fillRect(0, top + CELL * 0.84, width, CELL * 0.16); context.fillRect(0, bottom - CELL, width, CELL * 0.16);
   at(context, 3 * CELL, top + CELL * 0.52, () => drawSteps(context, 3, 0.5, true));
   at(context, 3 * CELL, bottom - CELL - 2, () => drawSteps(context, 3, 0.5, false));
   at(context, 6.75 * CELL, top + CELL * 0.55, () => drawBell(context, 0.25));
-  at(context, 1 * CELL, top + CELL * 0.6, () => drawTree(context, 0.8));
+  at(context, 8.5 * CELL, top + CELL * 0.6, () => drawTree(context, 0.8));
   at(context, 8.3 * CELL, bottom - CELL * 0.1, () => drawTree(context, 0.7));
   context.strokeStyle = C.ripple; context.lineWidth = 5; context.lineCap = "round";
   context.beginPath();
@@ -69,7 +70,7 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
   fitText(context, [
     { text: "নদী পার", color: ACCENT, weight: 800, display: true },
     ...(shared.name ? [{ text: ` · ${shared.name}`, color: INK, weight: 700, display: true }] : []),
-    { text: ` · নদী ${bn(shared.level)}`, color: INK, weight: 700, display: true },
+    { text: shared.level in FINALES ? ` · ${FINALES[shared.level]}` : ` · নদী ${bn(shared.level)}`, color: INK, weight: 700, display: true },
   ], 80, head + 50, 58, width - 160);
   fitText(context, [{ text: `ওপারে ${PLACES[shared.level - 1]}`, color: "#8a5a2b", weight: 700 }], 80, head + 120, 40, width - 160);
   fitText(context, [{ text: secs(shared.tenths), color: INK, weight: 800, display: true }, { text: " সেকেন্ড", color: INK, weight: 700, display: true }], 80, head + 290, 170, width - 160);

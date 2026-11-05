@@ -137,7 +137,7 @@ export const catalog = [
   { slug: "sat-chara", name: "সাত চাড়া", description: "বল পেছনে টেনে ছাড়ো, তিন বলে সাতটা চাড়াই ফেলো।", category: "গেম", action: "চাড়া ফেলো" },
   { slug: "chhip-felo", name: "ছিপ ফেলো", description: "বাঁশের ছিপে চার জায়গায় মাছ ধরো, শেষে নামকরা বড় মাছ।", category: "গেম", action: "ছিপ ফেলো" },
   { slug: "latim", name: "লাটিম", description: "নিচে টেনে লাটিম ছোড়ো, টোকায় সামলাও। দেখো কত সেকেন্ড ঘোরে।", category: "গেম", action: "লাটিম ছোড়ো" },
-  { slug: "nodi-par", name: "নদী পার", description: "নৌকা, ভেলা, কচুরিপানায় লাফিয়ে নদী পার হও, পথে আম তোলো।", category: "গেম", action: "নদী পার হও" },
+  { slug: "nodi-par", name: "নদী পার", description: "নৌকা-ভেলায় লাফিয়ে নদী পার, ৩০টা নদী, তিন দুনিয়া, শেষে নামওয়ালা নদী।", category: "গেম", action: "লাফ দাও" },
   { slug: "penalty", name: "পেনাল্টি কিক", description: "টেনে শট নাও, ঝোঁক দেখে ঝাঁপ দাও। পাড়া থেকে জাতীয়, ৪ কাপে ১২টা ম্যাচ।", category: "গেম", action: "গোল দাও" },
   { slug: "golir-badminton", name: "গলির ব্যাডমিন্টন", description: "বাল্বের নিচে গলির ব্যাডমিন্টন। চাপো, টেনে স্ম্যাশ বা ড্রপ, তিন পাড়ার ১২ জন।", category: "গেম", action: "শাটল মারো" },
   { slug: "kagojer-urojahaj", name: "কাগজের উড়োজাহাজ", description: "খাতার পাতার প্লেন ছোড়ো, হাওয়া দেখে ওড়াও, লাল দাগে নামাও। ১২টা উড়ান।", category: "গেম", action: "প্লেন ছোড়ো" },
