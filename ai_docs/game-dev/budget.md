@@ -256,3 +256,8 @@ The numbers are in KB gzipped. The budget is from the seed build.
 | /privacy | 140.5 | 1.5 | 154 |
 | /quiz | 140.5 | 1.5 | 154 |
 | /utsob | 140.5 | 1.5 | 154 |
+
+
+## 2026-11-05: rewritten games raised (31 routes)
+The games-to-the-bar rewrites took 31 game routes 0.1–5.3 KB over their budgets, which had been seeded at the old size + 10%. Each rewrite added worlds and levels as data, a named finale, a story or intro, a pausing level list, and a count-up end screen. The games' own JS is 17–37 KB gzipped on top of the ~155 KB shared base. Each of these budgets is now its measured size rounded up, + 2 KB.
+Candidates to trim later: `/bhul-kothay` (192.3 KB; its scenes are drawn in code, so lazy-load the later worlds' scene data), `/deri-hoye-gelo` (189.5), `/peoner-cycle` (185.3) and `/kagojer-urojahaj` (185.0).
