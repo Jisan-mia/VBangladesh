@@ -1,0 +1,95 @@
+---
+title: "Golper mor (story turns): reading, read marks across tabs, daily limit, pause and gates"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: rest
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "At the same time" as all {
+    state "Story" as r0 {
+      s0: Shelf
+      s1: Reading up to the ম#2507;ড#2492;
+      s2: Shelf, বড#2492;দ#2503;র জন#2509;য open
+      s3: Reading path ১
+      s4: Reading path ২
+      s5: Rest screen over the shelf
+      s6: End page
+      s7: End page, today's time is up (only শ#2503;ষ)
+      s8: আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও
+      [*] --> s0
+      s0 --> s1: you open a story or press আব#2494;র পড#2492;#2507; [when Today is Time left today]
+      s0 --> s2: a grown-up opens বড#2492;দ#2503;র জন#2509;য
+      s1 --> s0: you press the shelf, শ#2503;ষ or সব ল#2503;ভ#2503;ল
+      s1 --> s3: you pick a path at the ম#2507;ড#2492;
+      s1 --> s4: you pick a path at the ম#2507;ড#2492;
+      s0 --> s5: the shelf's one-second check sees the time is up or you open a story, but today's time is up or you open or reload the page [when Today is Today's time is up]
+      s2 --> s0: you press বন#2509;ধ কর#2507;
+      s2 --> s1: you open a story or press আব#2494;র পড#2492;#2507; [when Today is Time left today]
+      s3 --> s0: you press the shelf, শ#2503;ষ or সব ল#2503;ভ#2503;ল
+      s3 --> s1: you press #8592; on the first picture of a path
+      s3 --> s6: you press গল#2509;প শ#2503;ষ (the mark is saved now) [when Today is Time left today]
+      s4 --> s6: you press গল#2509;প শ#2503;ষ (the mark is saved now) [when Today is Time left today]
+      s4 --> s1: you press #8592; on the first picture of a path
+      s4 --> s0: you press the shelf, শ#2503;ষ or সব ল#2503;ভ#2503;ল
+      s1 --> s5: you open or reload the page [when Today is Today's time is up]
+      s5 --> s0: a grown-up gives ১০ more minutes
+      s2 --> s5: you open a story, but today's time is up or you open or reload the page or the shelf's one-second check sees the time is up [when Today is Today's time is up]
+      s6 --> s1: you open a story or press আব#2494;র পড#2492;#2507; or you press অন#2509;যট#2494; [when Today is Time left today]
+      s6 --> s0: you press the shelf, শ#2503;ষ or সব ল#2503;ভ#2503;ল
+      s6 --> s8: you press আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও
+      s3 --> s5: you open or reload the page [when Today is Today's time is up]
+      s3 --> s7: you press গল#2509;প শ#2503;ষ (the mark is saved now) [when Today is Today's time is up]
+      s4 --> s7: you press গল#2509;প শ#2503;ষ (the mark is saved now) [when Today is Today's time is up]
+      s4 --> s5: you open or reload the page [when Today is Today's time is up]
+      s5 --> s2: a grown-up gives ১০ more minutes
+      s6 --> s5: you open a story, but today's time is up or you open or reload the page [when Today is Today's time is up]
+      s7 --> s6: a grown-up gives ১০ more minutes
+      s7 --> s5: you press the shelf, শ#2503;ষ or সব ল#2503;ভ#2503;ল or you open a story, but today's time is up or you open or reload the page
+      s7 --> s8: you press আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও
+      s8 --> s6: you press দ#2503;খ#2494;ন#2507; শ#2503;ষ
+      s8 --> s5: you open or reload the page [when Today is Today's time is up]
+      s8 --> s7: you press দ#2503;খ#2494;ন#2507; শ#2503;ষ [when Today is Today's time is up]
+    }
+    --
+    state "Marks" as r1 {
+      s9: Saved: nothing
+      s10: Saved: path ২
+      s11: Saved: path ১
+      s12: Saved: both paths
+      [*] --> s9
+      s9 --> s10: in another tab you finish path ২
+      s9 --> s11: you press গল#2509;প শ#2503;ষ (the mark is saved now) [when Story is Reading path ১]
+      s9 --> s10: you press গল#2509;প শ#2503;ষ (the mark is saved now) [when Story is Reading path ২]
+      s11 --> s12: in another tab you finish path ২
+      s10 --> s12: you press গল#2509;প শ#2503;ষ (the mark is saved now) [when Story is Reading path ১]
+      s11 --> s12: you press গল#2509;প শ#2503;ষ (the mark is saved now) [when Story is Reading path ২]
+    }
+    --
+    state "Book" as r2 {
+      s13: Awake
+      [*] --> s13
+    }
+    --
+    state "Today" as r3 {
+      s14: Time left today
+      s15: Today's time is up
+      [*] --> s14
+      s14 --> s15: today's time runs out
+      s15 --> s14: a grown-up gives ১০ more minutes [when Story is one of End page, today's time is up (only শ#2503;ষ), Rest screen over the shelf, আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও]
+    }
+  }
+  class s0 blue
+  class s1 teal
+  class s2 blue
+  class s3 teal
+  class s4 teal
+  class s5 yellow
+  class s6 blue
+  class s7 blue
+  class s8 blue

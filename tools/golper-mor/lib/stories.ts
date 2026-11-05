@@ -41,7 +41,7 @@ export const PEOPLE: Record<string, Person> = {
   ammu: { name: "আম্মু", skin: "#9a6440", hair: "long", hairColor: "#1a120c", scarf: "#e7b84a", top: "#e7b84a", bottom: "#b8572e", dress: true, size: "adult" },
 };
 
-export const STORIES: readonly Story[] = [
+const BOOKS: readonly Story[] = [
   {
     id: "tiffin", title: "পড়ে যাওয়া টিফিন", color: "#2f6f9e", hero: "nusrat", other: "tanim", question: "নুসরাত কী করবে?",
     intro: [
@@ -262,7 +262,26 @@ export const STORIES: readonly Story[] = [
   },
 ];
 
+export type WorldId = "school" | "home" | "para";
+/** A shelf of three stories. `root` is the pitch (Hz) of the shelf's tune, `deep`/`paper`/`glow` its colours. */
+export type World = { id: WorldId; name: string; ids: readonly [string, string, string]; root: number; paper: string; edge: string; deep: string; glow: string };
+
+/**
+ * Three shelves of three. The last story of a shelf is its finale (the longest, or the one that asks the most of the
+ * reader's heart), and a shelf lights its lamp once all three stories are read.
+ */
+export const WORLDS: readonly World[] = [
+  { id: "school", name: "স্কুলে", ids: ["tiffin", "notun", "taka"], root: 523, paper: "#eef5fb", edge: "#c9dcec", deep: "#25608a", glow: "#f2b632" },
+  { id: "home", name: "বাড়িতে", ids: ["ghuri", "aam", "cup"], root: 587, paper: "#fff3e4", edge: "#ecd2ad", deep: "#9a4b12", glow: "#f2a23a" },
+  { id: "para", name: "পাড়ায়", ids: ["bajar", "cricket", "dour"], root: 659, paper: "#eef7e6", edge: "#cfe3bd", deep: "#3a7a42", glow: "#f2c94c" },
+];
+
+/** Every story, shelf by shelf. The ids are what old saved marks use, so they never change. */
+export const STORIES: readonly Story[] = WORLDS.flatMap(world => world.ids.map(id => BOOKS.find(story => story.id === id)!));
 export const STORY_IDS = STORIES.map(story => story.id);
+export const worldOf = (id: string) => WORLDS.find(world => world.ids.includes(id))!;
+/** The shelf's last story. */
+export const isFinale = (id: string) => worldOf(id).ids[2] === id;
 export const storyOf = (id: string) => STORIES.find(story => story.id === id);
 
 /** Every panel of one path, in order: the shared start, then the chosen side. */

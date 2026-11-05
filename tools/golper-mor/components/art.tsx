@@ -1,11 +1,11 @@
 // Original flat SVG art: seven places, simple children and grown-ups whose faces carry the feeling, and the story objects.
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import { PEOPLE, type Actor, type Mood, type Panel, type Person, type Place, type Pose, type Prop } from "../lib/stories";
 
 const INK = "#2b2118";
 const GROUND = 186;
 
-function Face({ mood }: { mood: Mood }) {
+function Face({ mood, blink }: { mood: Mood; blink: number }) {
   const line = { fill: "none", stroke: INK, strokeWidth: 1.6, strokeLinecap: "round" as const };
   const eyeR = mood === "surprised" ? 2.4 : 1.8;
   const brows = mood === "sad" || mood === "worried"
@@ -22,7 +22,7 @@ function Face({ mood }: { mood: Mood }) {
   return <g>
     {mood === "shy"
       ? <><path d="M-8 -87 Q-6 -85 -4 -87" {...line} /><path d="M8 -87 Q6 -85 4 -87" {...line} /><circle cx="-10" cy="-81" r="3" fill="#e0786a" opacity=".45" /><circle cx="10" cy="-81" r="3" fill="#e0786a" opacity=".45" /></>
-      : <><circle cx="-6" cy="-87" r={eyeR} fill={INK} /><circle cx="6" cy="-87" r={eyeR} fill={INK} /></>}
+      : <g className="gm-eyes" style={{ animationDelay: `${blink}s` }}><circle cx="-6" cy="-87" r={eyeR} fill={INK} /><circle cx="6" cy="-87" r={eyeR} fill={INK} /></g>}
     {brows}{mouth}
   </g>;
 }
@@ -48,7 +48,7 @@ function HairFront({ person }: { person: Person }) {
   return <path d="M-17 -84 C-18 -109 18 -109 17 -84 C12 -94 -4 -97 -17 -84Z" fill={c} />;
 }
 
-function Upper({ person, mood, pose }: { person: Person; mood: Mood; pose: Pose | "chair" }) {
+function Upper({ person, mood, pose, blink }: { person: Person; mood: Mood; pose: Pose | "chair"; blink: number }) {
   const arm = { stroke: person.skin, strokeWidth: 6, strokeLinecap: "round" as const, fill: "none" };
   const arms = pose === "run" ? ["M-14 -62 L-24 -46", "M14 -62 L23 -72"] : pose === "blind" ? ["M-14 -62 L-27 -70", "M14 -62 L27 -70"] : pose === "chair" ? ["M-14 -62 L-14 -40", "M14 -62 L18 -40"] : ["M-14 -62 L-20 -38", "M14 -62 L20 -38"];
   const headR = person.hair === "hijab" ? 13.5 : 16;
@@ -63,7 +63,7 @@ function Upper({ person, mood, pose }: { person: Person; mood: Mood; pose: Pose 
     <rect x="-4" y="-73" width="8" height="7" fill={person.skin} />
     <circle cx="0" cy="-86" r={headR} fill={person.skin} />
     <HairFront person={person} />
-    <Face mood={mood} />
+    <Face mood={mood} blink={blink} />
     {person.glasses && <g fill="none" stroke={INK} strokeWidth="1.4"><circle cx="-6" cy="-87" r="4.6" /><circle cx="6" cy="-87" r="4.6" /><path d="M-1.4 -87 L1.4 -87" /></g>}
     {pose === "blind" && <rect x="-17" y="-91" width="34" height="7" rx="3" fill="#c0392b" />}
   </g>;
@@ -72,6 +72,7 @@ function Upper({ person, mood, pose }: { person: Person; mood: Mood; pose: Pose 
 export function Figure({ who, mood, pose = "stand", x, ground = GROUND }: { who: string; mood: Mood; pose?: Pose; x: number; ground?: number }) {
   const person = PEOPLE[who];
   if (!person) return null;
+  const blink = -((x * 7) % 50) / 10, breathe = -((x * 3) % 30) / 10;
   const scale = person.size === "small" ? 0.78 : person.size === "adult" ? 1.2 : 1;
   const leg = { stroke: person.dress ? person.skin : person.bottom, strokeWidth: 7, strokeLinecap: "round" as const, fill: "none" };
   const shoe = "#3a2b20";
@@ -81,26 +82,29 @@ export function Figure({ who, mood, pose = "stand", x, ground = GROUND }: { who:
       <circle cx="-2" cy="-20" r="19" fill="none" stroke="#4a4f55" strokeWidth="3" /><path d="M-2 -39 L-2 -1 M-21 -20 L17 -20" stroke="#8a9096" strokeWidth="1.2" /><circle cx="-2" cy="-20" r="3" fill="#4a4f55" />
       <path d="M-16 -64 L-14 -28 L18 -28" fill="none" stroke="#4a4f55" strokeWidth="3.5" strokeLinejoin="round" /><circle cx="24" cy="-4" r="4" fill="#4a4f55" />
       <path d="M-4 -30 L16 -30 L18 -8" {...leg} /><rect x="13" y="-7" width="11" height="4" rx="2" fill={shoe} />
-      <g transform="translate(0 6)"><Upper person={person} mood={mood} pose="chair" /></g>
+      <g transform="translate(0 6)"><Upper person={person} mood={mood} pose="chair" blink={blink} /></g>
     </>;
   } else if (pose === "sit") {
     body = <>
       <path d="M-5 -12 L18 -9 L20 -2" {...leg} /><path d="M5 -12 L24 -6" {...leg} />
-      <g transform="translate(0 24)"><Upper person={person} mood={mood} pose="stand" /></g>
+      <g transform="translate(0 24)"><Upper person={person} mood={mood} pose="stand" blink={blink} /></g>
     </>;
   } else if (pose === "run") {
     body = <g transform="rotate(7 0 -40)">
       <path d="M-4 -34 L-14 -2" {...leg} /><path d="M4 -34 L15 -14 L10 -2" {...leg} />
-      <Upper person={person} mood={mood} pose="run" />
+      <Upper person={person} mood={mood} pose="run" blink={blink} />
     </g>;
   } else {
     body = <>
       <path d="M-5 -34 L-5 -3" {...leg} /><path d="M5 -34 L5 -3" {...leg} />
       <rect x="-11" y="-4" width="10" height="4" rx="2" fill={shoe} /><rect x="1" y="-4" width="10" height="4" rx="2" fill={shoe} />
-      <Upper person={person} mood={mood} pose={pose} />
+      <Upper person={person} mood={mood} pose={pose} blink={blink} />
     </>;
   }
-  return <g transform={`translate(${x} ${ground}) scale(${scale})`}>{body}</g>;
+  return <g transform={`translate(${x} ${ground}) scale(${scale})`}>
+    <ellipse className="gm-shadow" cx={pose === "sit" ? 8 : 0} cy="1" rx={person.wheelchair ? 24 : 15} ry="3.2" fill="#2b1d1433" />
+    <g className="gm-fig" style={{ animationDelay: `${breathe}s` }}>{body}</g>
+  </g>;
 }
 
 function PropArt({ kind }: { kind: Prop[0] }) {
@@ -181,23 +185,82 @@ const SCENES: Record<Place, ReactNode> = {
   </>,
 };
 
-/** One panel as a picture. Decorative for screen readers: the panel text says the same thing. */
-export function Scene({ panel, className }: { panel: Panel; className?: string }) {
+const SKY: Record<Place, string> = { class: "#efdcae", home: "#dfe7d4", uthan: "#bfe0f0", roof: "#b6d9ee", math: "#bfe3f4", goli: "#c6e4f0", stairs: "#ddd0bb" };
+const OUTDOOR = new Set<Place>(["uthan", "roof", "math", "goli"]);
+
+/** A feeling as a small picture, centred on 0 0, about 20 units wide: shape and colour both say it. */
+export function MoodGlyph({ mood }: { mood: Mood }) {
+  switch (mood) {
+    case "happy": return <g><circle r="5" fill="#f6b823" /><g stroke="#f6b823" strokeWidth="1.8" strokeLinecap="round">{[0, 45, 90, 135, 180, 225, 270, 315].map(angle => <path key={angle} d="M0 -7.5 L0 -10" transform={`rotate(${angle})`} />)}</g></g>;
+    case "sad": return <path d="M0 -9 C5 -2 7 1 7 4 A7 7 0 0 1 -7 4 C-7 1 -5 -2 0 -9Z" fill="#4d90d6" stroke="#2f6aa8" strokeWidth="1" />;
+    case "worried": return <g><path d="M-8 3 A4.5 4.5 0 0 1 -6 -5 A6 6 0 0 1 5 -6 A5 5 0 0 1 8 3Z" fill="#a9b4c0" stroke="#7d8996" strokeWidth="1" /><path d="M-3 6 Q-1 8 -3 10 M3 6 Q5 8 3 10" fill="none" stroke="#4d90d6" strokeWidth="1.6" strokeLinecap="round" /></g>;
+    case "surprised": return <path d="M0 -10 L2.6 -3.6 L9.5 -3 L4.2 1.6 L5.9 8.4 L0 4.8 L-5.9 8.4 L-4.2 1.6 L-9.5 -3 L-2.6 -3.6Z" fill="#f08a24" stroke="#c46a12" strokeWidth="1" strokeLinejoin="round" />;
+    case "shy": return <path d="M0 8 C-12 -1 -8 -9 -3.5 -8 C-1.5 -7.5 0 -5.5 0 -4.5 C0 -5.5 1.5 -7.5 3.5 -8 C8 -9 12 -1 0 8Z" fill="#e86a8a" stroke="#c4476a" strokeWidth="1" strokeLinejoin="round" />;
+    default: return <g><path d="M-8 6 C-8 -4 0 -9 8 -9 C8 0 3 7 -8 6Z" fill="#6bb36b" stroke="#4a8d4a" strokeWidth="1" strokeLinejoin="round" /><path d="M-6 4 L4 -5" stroke="#4a8d4a" strokeWidth="1" fill="none" /></g>;
+  }
+}
+
+/** Slow things in the air, in CSS only: clouds outside, dust in the light inside, a leaf under the tree. */
+function Ambient({ place }: { place: Place }) {
+  if (OUTDOOR.has(place)) {
+    return <g className="gm-amb">
+      <g className="gm-cloud"><ellipse cx="60" cy="-28" rx="22" ry="7" fill="#fff" opacity=".85" /><ellipse cx="74" cy="-33" rx="14" ry="7" fill="#fff" opacity=".85" /></g>
+      <g className="gm-cloud gm-cloud-b"><ellipse cx="236" cy="-12" rx="18" ry="5.5" fill="#fff" opacity=".8" /><ellipse cx="246" cy="-17" rx="11" ry="5.5" fill="#fff" opacity=".8" /></g>
+      {place === "uthan" && <ellipse className="gm-leaf" cx="262" cy="64" rx="3.4" ry="1.7" fill="#6ba24a" />}
+    </g>;
+  }
+  const beam = place === "class" ? "M12 26 L58 26 L110 170 L40 170Z" : place === "home" ? "M132 22 L190 22 L228 168 L150 168Z" : "";
+  return <g className="gm-amb">
+    {beam && <path d={beam} fill="#fff6d6" opacity=".28" />}
+    {[[70, 70], [96, 104], [120, 62], [150, 120], [48, 128]].map(([x, y], index) => <circle key={index} className="gm-mote" cx={x} cy={y} r="1.5" fill="#fffbe8" style={{ animationDelay: `${-index * 1.7}s` }} />)}
+  </g>;
+}
+
+/**
+ * One panel as a picture. Decorative for screen readers: the panel text says the same thing.
+ * `tall` shows 44 more units of sky or ceiling above, for a phone held upright. `bubble` names the person whose feeling
+ * shows as a small picture over their head. `view` crops the picture (a cover) and `slice` fills the frame.
+ */
+export function Scene({ panel, className, tall, bubble, view, slice }: { panel: Panel; className?: string; tall?: boolean; bubble?: string; view?: string; slice?: boolean }) {
+  const id = useId().replace(/:/g, "");
   const props = panel.props ?? [];
   const kite = props.find(prop => prop[0] === "kite"), reel = props.find(prop => prop[0] === "latai");
-  return <svg className={className} viewBox="0 0 320 200" aria-hidden="true" focusable="false">
+  const feeling = bubble ? panel.cast.find(actor => actor[0] === bubble) : undefined;
+  const person = feeling ? PEOPLE[feeling[0]] : undefined;
+  let mark: ReactNode = null;
+  if (feeling && person && feeling[1] !== "calm") {
+    const scale = person.size === "small" ? 0.78 : person.size === "adult" ? 1.2 : 1;
+    const top = GROUND - (feeling[3] === "sit" ? 88 : person.wheelchair ? 100 : 112) * scale - 17;
+    const cx = Math.max(16, Math.min(304, feeling[2] + 24 * scale)), cy = Math.max(-26, top);
+    mark = <g transform={`translate(${cx} ${cy})`}><g className="gm-bubble"><path d="M-5 9 L-9 17 L3 11Z" fill="#fff" stroke="#2b211833" /><circle r="13" fill="#fff" stroke="#2b211833" strokeWidth="1.2" /><MoodGlyph mood={feeling[1]} /></g></g>;
+  }
+  return <svg className={className} viewBox={view ?? (tall ? "0 -44 320 244" : "0 0 320 200")} preserveAspectRatio={slice ? "xMidYMax slice" : "xMidYMid meet"} aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id={`${id}l`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#fff9e0" stopOpacity=".42" /><stop offset=".6" stopColor="#fff9e0" stopOpacity="0" /></linearGradient>
+      <linearGradient id={`${id}v`} x1="0" y1="0" x2="0" y2="1"><stop offset=".6" stopColor="#2b1d14" stopOpacity="0" /><stop offset="1" stopColor="#2b1d14" stopOpacity=".2" /></linearGradient>
+    </defs>
+    <rect x="-2" y="-48" width="324" height="50" fill={SKY[panel.place]} />
     {SCENES[panel.place]}
+    <Ambient place={panel.place} />
     {kite && reel && <path d={`M${kite[1]} ${kite[2] + 18} Q${(kite[1] + reel[1]) / 2 + 12} ${(kite[2] + reel[2]) / 2 + 20} ${reel[1]} ${reel[2]}`} fill="none" stroke="#6b5a4a" strokeWidth=".8" />}
     {panel.cast.map(([who, mood, x, pose]: Actor) => <Figure key={who} who={who} mood={mood} x={x} pose={pose} />)}
-    {props.map((prop, index) => <g key={index} transform={`translate(${prop[1]} ${prop[2]}) scale(${prop[3] ?? 1})`}><PropArt kind={prop[0]} /></g>)}
-    {panel.night && <><rect width="320" height="200" fill="#0e1b3a" opacity=".5" /><circle cx="161" cy="40" r="9" fill="#f6e7a1" /></>}
+    {props.map((prop, index) => <g key={index} transform={`translate(${prop[1]} ${prop[2]}) scale(${prop[3] ?? 1})`}><g className={`gm-prop gm-prop-${prop[0]}`}><PropArt kind={prop[0]} /></g></g>)}
+    {panel.night && <><rect x="-2" y="-48" width="324" height="250" fill="#0e1b3a" opacity=".5" /><circle cx="161" cy="40" r="9" fill="#f6e7a1" /></>}
+    <rect x="-2" y="-48" width="324" height="250" fill={`url(#${id}l)`} />
+    <rect x="-2" y="-48" width="324" height="250" fill={`url(#${id}v)`} />
+    {mark}
   </svg>;
 }
 
-/** One person's head and shoulders, big, for the end screen. */
-export function Portrait({ who, mood }: { who: string; mood: Mood }) {
+/** One person's head and shoulders, big, with their feeling as a picture beside them, for the end page. */
+export function Portrait({ who, mood, className }: { who: string; mood: Mood; className?: string }) {
   const person = PEOPLE[who];
   const scale = person?.size === "small" ? 0.78 : person?.size === "adult" ? 1.2 : 1;
-  const cy = (person?.wheelchair ? -78 : -84) * scale, half = 32 * scale;
-  return <svg className="gm-portrait" viewBox={`${-half} ${cy - half} ${half * 2} ${half * 2}`} aria-hidden="true" focusable="false"><Figure who={who} mood={mood} x={0} ground={0} /></svg>;
+  const cy = (person?.wheelchair ? -78 : -84) * scale, half = 34 * scale;
+  return <svg className={className} viewBox={`${-half * 1.2} ${cy - half * 1.75} ${half * 3} ${half * 2.95}`} aria-hidden="true" focusable="false">
+    <clipPath id={`gm-pc-${who}`}><circle cx="0" cy={cy} r={half} /></clipPath>
+    <circle cx="0" cy={cy} r={half} fill="#fff6e3" stroke="#e3cfa0" strokeWidth="1.5" />
+    <g clipPath={`url(#gm-pc-${who})`}><Figure who={who} mood={mood} x={0} ground={0} /></g>
+    <g transform={`translate(${half * 0.95} ${cy - half * 0.95}) scale(${half / 22})`}><g className="gm-bubble"><circle r="14" fill="#fff" stroke="#2b211833" strokeWidth="1.2" /><MoodGlyph mood={mood} /></g></g>
+  </svg>;
 }

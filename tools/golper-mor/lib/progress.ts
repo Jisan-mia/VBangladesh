@@ -1,6 +1,6 @@
 // What this phone remembers: which turns of which stories were read ("পড়া হয়েছে"), and today's stories for the parent card.
 // No stars and no score: a story is read or not yet read, nothing more.
-import { STORY_IDS, type Side } from "./stories";
+import { STORY_IDS, WORLDS, worldOf, type Side, type WorldId } from "./stories";
 
 export const PROGRESS_KEY = "ektukhani-golper-mor";
 export type Progress = { read: Record<string, Side[]>; day: string; today: string[] };
@@ -38,3 +38,23 @@ export const readCount = (progress: Progress) => STORY_IDS.filter(id => isRead(p
 export const todayOf = (progress: Progress, day: string) => progress.day === day ? progress.today : [];
 /** The first story not read yet (where the ghost finger points), or null when all are read. */
 export const nextUnread = (progress: Progress) => STORY_IDS.find(id => !isRead(progress, id)) ?? null;
+
+export const bothCount = (progress: Progress) => STORY_IDS.filter(id => bothRead(progress, id)).length;
+/** A shelf is lit when all three of its stories have been read (either turn). */
+export const shelfLit = (progress: Progress, world: WorldId) => WORLDS.find(item => item.id === world)!.ids.every(id => isRead(progress, id));
+/** The shelf this very story just lit for the first time, or null. */
+export const newlyLit = (before: Progress, after: Progress, id: string): WorldId | null => {
+  const world = worldOf(id).id;
+  return !shelfLit(before, world) && shelfLit(after, world) ? world : null;
+};
+
+/**
+ * A story read to its end. The saved copy is read again at this moment and the new mark goes on top of it, so a tab that
+ * opened earlier can never wipe what another tab saved since. `raw` is the saved text (null when nothing is saved);
+ * `undefined` means storage could not be read at all, so this tab's own copy is all there is.
+ */
+export function recordFinish(raw: string | null | undefined, memory: Progress, id: string, side: Side, day: string): Progress {
+  return finish(raw === undefined ? memory : readProgress(raw), id, side, day);
+}
+/** The story to offer first: one never read, else one with only one path read, else the first. */
+export const nextToRead = (progress: Progress) => nextUnread(progress) ?? STORY_IDS.find(id => !bothRead(progress, id)) ?? STORY_IDS[0];
