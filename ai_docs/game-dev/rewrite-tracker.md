@@ -21,7 +21,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | peoner-cycle | S05 | analysed | done |
 | sap-ludu | S06 | analysed | done |
 | baghbandi | S06 | analysed | done |
-| baicher-nouka | S06 | analysed | rewriting |
+| baicher-nouka | S06 | analysed | done |
 | vo-katta | S07 | analysed | done |
 | bhangti-nai | S07 | analysed | done |
 | jam-chharao | S07 | analysed | done |
