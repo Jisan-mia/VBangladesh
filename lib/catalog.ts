@@ -117,7 +117,7 @@ export const catalog = [
   { slug: "baicher-nouka", name: "বাইচের নৌকা", description: "ঢোলের তালে চাপো, কচুরিপানা এড়াও, তিন নৌকার আগে ঘাটে পৌঁছাও।", category: "গেম", action: "বাইচে নামো" },
   { slug: "vo-katta", name: "ভো-কাট্টা", description: "সাকরাইনের ছাদে প্যাঁচ লাগাও, মাপমতো টানে কাটো, শেষে ওস্তাদকে হারাও।", category: "গেম", action: "প্যাঁচ লাগাও" },
   { slug: "bhangti-nai", name: "ভাংতি নাই!", description: "দোকানে দশজন খদ্দের, সবার হাতে বড় নোট। ঝটপট হিসাব করে ঠিক ভাংতি ফেরত দাও।", category: "গেম", action: "দোকান খোলো" },
-  { slug: "jam-chharao", name: "জ্যাম ছাড়াও", description: "জ্যামে আটকা সবুজ CNG। রিকশা, বাস, ট্রাক সরিয়ে পথ করে দাও, ৪০টা জ্যাম পার করো।", category: "গেম", action: "খেলে দেখো" },
+  { slug: "jam-chharao", name: "জ্যাম ছাড়াও", description: "জ্যামে আটকা সবুজ CNG। রিকশা, বাস, ট্রাক সরিয়ে পথ করো, ৩২টা জ্যাম পার করো।", category: "গেম", action: "খেলে দেখো" },
   { slug: "shobdo-khoja", name: "শব্দ খোঁজা", description: "অক্ষরের গ্রিডে লুকানো ফুল, মাছ বা নদীর নাম খুঁজে কাটো, ৩২টা লেভেল।", category: "গেম", action: "শব্দ খোঁজো" },
   { slug: "carrom", name: "ক্যারম", description: "স্ট্রাইকার টেনে ছাড়ো, গুটি ঢোকাও। ১৫টা বোর্ড একা, নয়তো দুজনে এক ফোনে।", category: "গেম", action: "ক্যারম খেলো" },
   { slug: "pati-buni", name: "পাটি বুনি", description: "১২টা পাটিতে বেতের ফালি বসাও, বরফি থেকে শাপলা নকশা বোনো।", category: "গেম", action: "পাটি বোনো" },

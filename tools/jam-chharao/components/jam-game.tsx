@@ -1,484 +1,558 @@
 "use client";
-// IP: what we avoided — no trademarked puzzle name or its card set, no red car escaping at a right-edge exit, no 6×6 board; ours is a 6×7 Dhaka street with a green CNG leaving through a gap in the top footpath, our own 40 solver-made jams, and no ambulance stuck in the jam.
+// IP: what we avoided — no trademarked puzzle name or its card set, no red car escaping at a right-edge exit, no 6×6 board; ours
+// is a 6×7 Dhaka street with a green CNG leaving through a gap in the top footpath, rickshaws, vans, buses and trucks, bricks and
+// barricades from a dug-up road, a second (blue) CNG, our own solver-made jams, and no ambulance stuck in the jam.
+// The rules, the clock and the unlock are pure (lib/game.ts, lib/session.ts, lib/progress.ts); this file feeds them touches,
+// keys and performance.now(), and draws and plays the result.
 
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import { cardSizes, loadCardFonts, type CardFormat } from "../../../shared/card-canvas";
-import { confetti, fitCanvas, sfx, tone, totalStars, useLevels, useSlowMode, MAX_NAME, buzz } from "../../../shared/game-kit";
-import { LevelGrid, SoundToggle } from "../../../shared/game-ui";
+import { confetti, sfx, totalStars, useBest, useLevels, useSlowMode, MAX_NAME } from "../../../shared/game-kit";
 import { FormatToggle, ShareBar, useInView } from "../../../shared/share-kit";
-import { boardHeight, boardWidth, cellX, cellY, drawPicked, drawStreet, drawVehicle, SIDE, TOP } from "../lib/art";
-import { COLS, ROWS, occupancy, type Car, type Kind } from "../lib/board";
+import { useGamePlayer } from "../../../shared/game-player-client";
+import { solve, solved, isOut } from "../lib/board";
 import { cardBlob, drawCard, type CardData } from "../lib/draw-card";
 import {
-  fewest, hint, readProgress, recordWin, reachOf, slide, startGame, starsFromProgress, starsOf, twoStarMoves, undo, unlocked, LEVEL_COUNT, MAX_LINK_MOVES, type Game, type Progress,
+  clearance, hintCap, movesLeft, onTrack, parOf, reachOf, slide, startGame, starsOf, twoStarMoves, undo, LEVEL_COUNT, type Game,
 } from "../lib/game";
-import { bn, caption, compareLine, feat, fromGame, humanLine, parseShared, sharedHash, type Shared } from "../lib/link";
+import { DIRECTION_WORD, explainHint, NAMES, directionOf, type HintInfo } from "../lib/hint";
+import {
+  bn, caption, compareLine, duration, feat, finaleLine, fromGame, humanLine, jamLabel, levelName, nearMissLine, parseShared, sharedHash, solvedLine, type Shared,
+} from "../lib/link";
+import { massOf } from "../lib/motion";
+import { afterClear, neighbourLevel, playable, readUnlock, recommended, INTRO_KEY, OLD_PROGRESS_KEY, OLD_STARS_KEY, TOOL, UNLOCK_KEY } from "../lib/progress";
+import * as session from "../lib/session";
+import { infoOf, isFinale, worldIndex, worldOf } from "../lib/worlds";
+import { EndScreen, type EndStats } from "./end-screen";
+import { LevelSheet } from "./level-sheet";
+import { sound } from "./sound";
+import { HOLD_SKIP_MS, Story } from "./story";
+import { Street } from "./street";
+import { TitleScreen } from "./title-screen";
 
-const TOOL = "jam-chharao";
-const SAVE_KEY = "ektukhani-jam-chharao-progress";
-const NAMES: Record<Kind, string> = { cng: "তোমার CNG", rickshaw: "রিকশা", van: "ভ্যান", bus: "বাস", truck: "ট্রাক" };
-const SPRITES: Array<Pick<Car, "kind" | "len" | "down">> = [
-  { kind: "cng", len: 2, down: true },
-  ...(["rickshaw", "van"] as const).flatMap(kind => [{ kind, len: 2, down: true }, { kind, len: 2, down: false }]),
-  ...(["bus", "truck"] as const).flatMap(kind => [{ kind, len: 3, down: true }, { kind, len: 3, down: false }]),
-];
-const SPEED = 16; // cells a second when a vehicle glides into place
-const smooth = () => matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" as const : "smooth" as const;
-const stored = (key: string) => { try { return localStorage.getItem(key); } catch { return null; } };
-const readSaved = () => stored(SAVE_KEY);
-/** The CNG's two-stroke ভটভট, `beats` pulses long. */
-const putt = (beats = 2) => { for (let beat = 0; beat < beats; beat++) tone(beat % 2 ? 82 : 70, 0.06, 0.13, "square", beat * 0.085); };
-/** Its squeaky horn on the way out: পিপ পিপ. */
-const horn = () => { tone(640, 0.1, 0.06, "square"); tone(640, 0.15, 0.06, "square", 0.16); };
-/** When each won star pops in, in seconds (the CSS delay and the sound share it). */
-const starAt = (index: number) => 0.55 + index * 0.28;
-const save = (progress: Progress) => { try { localStorage.setItem(SAVE_KEY, JSON.stringify(progress)); } catch { /* private mode: fine */ } };
+const read = (key: string) => { try { return localStorage.getItem(key); } catch { return null; } };
+const write = (key: string, value: string) => { try { localStorage.setItem(key, value); } catch { /* private mode: fine */ } };
+/** Arrows and WASD: 0 up, 1 down, 2 left, 3 right. */
+const KEYS: Record<string, number> = { ArrowUp: 0, w: 0, W: 0, ArrowDown: 1, s: 1, S: 1, ArrowLeft: 2, a: 2, A: 2, ArrowRight: 3, d: 3, D: 3 };
 
-type Drag = { car: number; id: number; x: number; y: number; from: number; low: number; high: number; moved: boolean };
+type Finished = EndStats & { level: number; legacy: boolean; previousBest: number | null; beaten: boolean; firstClear: boolean };
+type Shown = { info: HintInfo; pos: number[] };
 
 export function JamGame() {
-  const [game, setGame] = useState<Game>(() => startGame(1));
-  const [picked, setPicked] = useState(-1);
-  const [paused, setPaused] = useState(false);
+  const [game, setGameState] = useState<Game>(() => startGame(1));
+  const [run, setRunState] = useState<session.Session>(session.title);
+  // The latest of both, for handlers that outlive a render (blur, keys, the player's callbacks).
+  const now = useRef({ game, run });
+  const setGame = (next: Game) => { now.current.game = next; setGameState(next); };
+  const setRun = (next: session.Session) => { now.current.run = next; setRunState(next); };
+
+  const [finish, setFinish] = useState<Finished | null>(null);
+  const [showEnd, setShowEnd] = useState(false);
   const [note, setNote] = useState("");
+  const [arriveKey, setArriveKey] = useState(0);
+  const [picked, setPickedState] = useState(-1);
+  const pickedRef = useRef(-1);
+  const setPicked = (next: number) => { pickedRef.current = next; setPickedState(next); };
+  const [hint, setHint] = useState<Shown | null>(null);
   const [friend, setFriend] = useState<Shared | null>(null);
-  const [progress, setProgress] = useState<Progress>({});
-  const [record, setRecord] = useState<number | null>(null);
-  const [slow, setSlow] = useSlowMode();
+  const [visit, setVisit] = useState(0);
+  const [unlock, setUnlockState] = useState(1);
+  const unlockRef = useRef(1);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [panel, setPanelState] = useState(0);
+  const panelRef = useRef(0);
+  const [holding, setHolding] = useState(false);
+  const [cardOpen, setCardOpen] = useState(false);
+  const [drop, setDrop] = useState(0);
+  const [slow] = useSlowMode();
   const [name, setName] = useState("");
   const [format, setFormat] = useState<CardFormat>("feed");
   const [site, setSite] = useState("");
   const [previewError, setPreviewError] = useState(false);
 
-  const wrap = useRef<HTMLDivElement>(null);
-  const canvas = useRef<HTMLCanvasElement>(null);
+  const booted = useRef(false);
+  const og = useRef(false);
+  const introSeen = useRef(true);
+  const timers = useRef<number[]>([]);
+  const holdTimer = useRef(0);
+  const root = useRef<HTMLDivElement>(null);
   const preview = useRef<HTMLCanvasElement>(null);
   const friendPreview = useRef<HTMLCanvasElement>(null);
-  const resultBox = useRef<HTMLElement>(null);
-  const gameRef = useRef(game), pickedRef = useRef(picked), slowRef = useRef(slow);
-  gameRef.current = game; pickedRef.current = picked; slowRef.current = slow;
-  const view = useRef({ cell: 0, width: 0, height: 0, context: null as CanvasRenderingContext2D | null, street: null as HTMLCanvasElement | null, sprites: {} as Record<string, HTMLCanvasElement[]> });
-  const shown = useRef<number[]>(game.pos.slice());
-  const shownLevel = useRef(game.level);
-  const drag = useRef<Drag | null>(null);
-  const frame = useRef(0), last = useRef(0);
-  const finished = useRef<Game | null>(null);
-  const timers = useRef<number[]>([]);
+  const inView = useInView(root);
   const levels = useLevels(TOOL, LEVEL_COUNT);
-  const boardInView = useInView(wrap);
 
-  const { level, won } = game;
-  const best = fewest(level);
-  const open = Math.max(unlocked(progress), levels.unlocked, friend?.level ?? 1);
-  const total = totalStars(levels.stars);
-  const earned = won ? starsOf(game.moves.length, level, game.helped) : 0;
-  const phase = won ? "over" : paused ? "paused" : game.moves.length ? "playing" : "ready";
-  const rival = friend && friend.level === level ? friend : null;
-  const pickedCar = picked >= 0 ? game.cars[picked] : null;
-  const [low, high] = picked >= 0 && !won ? reachOf(game, picked) : [0, 0];
-  const result: CardData | null = won ? { level, count: game.moves.length, helped: game.helped, name } : null;
-  const state = won && game.moves.length <= MAX_LINK_MOVES ? sharedHash(fromGame(game, name)) : "";
+  const { level, legacy } = game;
+  const par = parOf(level, legacy);
+  const info = legacy ? null : infoOf(level);
+  const worldNo = legacy ? 0 : worldIndex(level);
+  const [best, submitBest] = useBest(legacy ? `jam-chharao-old-${level}` : `${TOOL}-${level}`, false);
+  const player = useGamePlayer({
+    onPause: () => pauseFor("away"),
+    onResume: () => resumeFrom("away"),
+    onRestart: () => toTitle(now.current.game.level, now.current.game.legacy),
+    onLevels: () => openSheet(),
+  });
 
-  // ---- drawing: a cached street, cached vehicle sprites, and frames only while something moves ----
-  function draw() {
-    const { context: c, street, sprites, cell, width, height } = view.current;
-    if (!c || !street) return;
-    const current = gameRef.current;
-    c.drawImage(street, 0, 0, width, height);
-    for (let i = 0; i < current.cars.length; i++) {
-      const car = current.cars[i], at = shown.current[i];
-      const x = cellX(car.down ? car.line : at, cell), y = cellY(car.down ? at : car.line, cell);
-      c.drawImage(sprites[car.kind][car.down ? 0 : 1], x, y, (car.down ? 1 : car.len) * cell, (car.down ? car.len : 1) * cell);
-    }
-    const chosen = pickedRef.current;
-    if (chosen >= 0 && !current.won) {
-      const car = current.cars[chosen], at = shown.current[chosen];
-      drawPicked(c, car, cellX(car.down ? car.line : at, cell), cellY(car.down ? at : car.line, cell), cell);
-    }
+  // ---- timers: every celebration and the end screen's entrance; cleared on every new jam and on unmount ----
+  function clearTimers() { timers.current.forEach(id => window.clearTimeout(id)); timers.current = []; }
+  function later(ms: number, run: () => void) { timers.current.push(window.setTimeout(run, ms)); }
+  function stopHold() { window.clearTimeout(holdTimer.current); holdTimer.current = 0; setHolding(false); }
+
+  function setUnlock(next: number) { unlockRef.current = next; setUnlockState(next); write(UNLOCK_KEY, String(next)); }
+
+  /** A fresh jam, with nothing left over from the last one. */
+  function load(to: number, old = false) {
+    clearTimers();
+    stopHold();
+    setGame(startGame(to, old));
+    setFinish(null);
+    setShowEnd(false);
+    setNote("");
+    setCardOpen(false);
+    setSheetOpen(false);
+    setPicked(-1);
+    setHint(null);
+  }
+  /** A jam on its title screen. */
+  function toTitle(to: number, old = false) { load(to, old); setRun(session.title()); }
+  /** Straight into play (পরের জ্যাম, আরেকবার, a jam from the sheet): the vehicles drive in. */
+  function playLevel(to: number, old = false) { load(to, old); setRun(session.again(performance.now())); arrive(); }
+  function arrive() { setArriveKey(count => count + 1); if (!slow) sound.arrive(); }
+
+  function start() {
+    const r = now.current.run;
+    if (r.phase !== "title") return;
+    const story = !introSeen.current && !friend && !og.current && now.current.game.level === 1 && !now.current.game.legacy;
+    const next = session.begin(r, performance.now(), story);
+    setRun(next);
+    if (next.phase === "story") { panelRef.current = 0; setPanelState(0); return; }
+    arrive();
+  }
+  function endStory() {
+    if (now.current.run.phase !== "story") return;
+    introSeen.current = true;
+    write(INTRO_KEY, "1");
+    stopHold();
+    setRun(session.storyDone(now.current.run, performance.now()));
+    arrive();
+  }
+  function nextPanel() {
+    if (now.current.run.phase !== "story") return;
+    if (panelRef.current + 1 >= 3) { endStory(); return; }
+    panelRef.current += 1;
+    setPanelState(panelRef.current);
+    sfx.tap();
+  }
+  function holdStart() {
+    if (holdTimer.current || now.current.run.phase !== "story") return;
+    setHolding(true);
+    holdTimer.current = window.setTimeout(() => { holdTimer.current = 0; setHolding(false); endStory(); }, HOLD_SKIP_MS);
+  }
+  /** Let go: a short press shows the next panel; a hold that already skipped has nothing left to do. */
+  function holdEnd() {
+    const wasHolding = holdTimer.current !== 0;
+    stopHold();
+    if (wasHolding) nextPanel();
   }
 
-  /** Where each vehicle should rest; once out, your CNG keeps driving up the গলি (unless slow mode keeps it parked at the gap). */
-  const target = (i: number) => {
-    const current = gameRef.current;
-    return i === 0 && current.won && !slowRef.current ? -TOP - 2.2 : current.pos[i];
-  };
-
-  function tick(now: number) {
-    const dt = Math.min(0.05, (now - last.current) / 1000);
-    last.current = now;
-    let moving = false;
-    const positions = shown.current;
-    for (let i = 0; i < positions.length; i++) {
-      if (drag.current?.car === i) continue;
-      const goal = target(i), gap = goal - positions[i];
-      if (gap === 0) continue;
-      const stepSize = (i === 0 && gameRef.current.won ? SPEED * 0.6 : SPEED) * dt;
-      positions[i] = Math.abs(gap) <= stepSize || slowRef.current ? goal : positions[i] + Math.sign(gap) * stepSize;
-      moving ||= positions[i] !== goal;
-    }
-    draw();
-    frame.current = moving ? requestAnimationFrame(tick) : 0;
+  // ---- pause: the player's menu, blur, a hidden tab and the sheet stop the clock ----
+  function pauseFor(why: session.Why) {
+    stopHold();
+    const r = now.current.run, next = session.pause(r, performance.now(), why);
+    if (next !== r) setRun(next);
   }
-
-  function kick() {
-    if (frame.current) return;
-    last.current = performance.now();
-    frame.current = requestAnimationFrame(tick);
+  function resumeFrom(why: session.Why) {
+    const r = now.current.run, next = session.resume(r, performance.now(), why);
+    if (next !== r) setRun(next);
   }
-
-  // A new level brings new vehicles: snap to their places instead of gliding.
-  if (shownLevel.current !== game.level || shown.current.length !== game.pos.length) {
-    shownLevel.current = game.level;
-    shown.current = game.pos.slice();
+  /** The first press after coming back (without the player's menu) only resumes. */
+  function wake() {
+    const r = now.current.run;
+    if (r.phase !== "paused" || r.why !== "away") return false;
+    resumeFrom("away");
+    return true;
   }
-  useEffect(() => { kick(); }, [game, picked, slow]);
+  const live = () => session.canMove(now.current.run);
 
   useEffect(() => {
-    const box = wrap.current, board = canvas.current;
-    if (!box || !board) return;
-    const resize = () => {
-      const cell = Math.floor(box.clientWidth / (COLS + 2 * SIDE) * 4) / 4;
-      if (!cell || cell === view.current.cell) return;
-      const width = boardWidth(cell), height = boardHeight(cell), ratio = Math.min(2, window.devicePixelRatio || 1);
-      const paint = (w: number, h: number, art: (c: CanvasRenderingContext2D) => void) => {
-        const sheet = document.createElement("canvas");
-        sheet.width = Math.ceil(w * ratio); sheet.height = Math.ceil(h * ratio);
-        const c = sheet.getContext("2d")!;
-        c.scale(ratio, ratio);
-        art(c);
-        return sheet;
-      };
-      board.style.height = `${height}px`;
-      view.current = {
-        cell, width, height,
-        context: fitCanvas(board, width, height),
-        street: paint(width, height, c => drawStreet(c, cell)),
-        sprites: {} as Record<string, HTMLCanvasElement[]>,
-      };
-      for (const car of SPRITES) (view.current.sprites[car.kind] ??= [])[car.down ? 0 : 1] = paint((car.down ? 1 : car.len) * cell, (car.down ? car.len : 1) * cell, c => drawVehicle(c, car, 0, 0, cell));
-      draw();
+    const away = () => pauseFor("away");
+    const hide = () => { if (document.hidden) away(); };
+    window.addEventListener("blur", away);
+    document.addEventListener("visibilitychange", hide);
+    return () => {
+      window.removeEventListener("blur", away);
+      document.removeEventListener("visibilitychange", hide);
+      clearTimers();
+      window.clearTimeout(holdTimer.current);
     };
-    resize();
-    const observer = new ResizeObserver(resize);
-    observer.observe(box);
-    return () => { observer.disconnect(); cancelAnimationFrame(frame.current); frame.current = 0; };
+  }, []);
+
+  // ---- boot, once this phone's stars are read: your own unlock (migrated once), then a friend's jam or yours ----
+  useEffect(() => {
+    if (!levels.loaded || booted.current) return;
+    booted.current = true;
+    const { unlock: mine, migrated } = readUnlock(read(UNLOCK_KEY), read(OLD_STARS_KEY), read(OLD_PROGRESS_KEY));
+    if (migrated) write(UNLOCK_KEY, String(mine));
+    unlockRef.current = mine;
+    setUnlockState(mine);
+    introSeen.current = read(INTRO_KEY) === "1";
+    setSite(window.location.host);
+    if (window.location.hash === "#og") { demo(); return; }
+    // A friend's link is a visit: it opens its own jam only, and never moves your own unlock.
+    const fromHash = () => {
+      const got = parseShared(window.location.hash);
+      if (!got) return false;
+      setFriend(got);
+      setVisit(got.legacy ? 0 : got.level);
+      toTitle(got.level, got.legacy);
+      return true;
+    };
+    if (!fromHash()) toTitle(recommended(mine, levels.stars));
+    const onHash = () => { fromHash(); };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, [levels.loaded]);
+
+  /** `#og`, the site's preview image only: a bus-and-truck jam solved in the fewest moves by রাফি, the card open. Nothing is saved. */
+  function demo() {
+    og.current = true;
+    const demoLevel = 12;
+    let won = startGame(demoLevel);
+    for (const move of solve(won.lay, won.pos) ?? []) won = slide(won, move.car, move.to) ?? won;
+    setGame(won);
+    setRun({ ...session.title(), phase: "over" });
+    setFinish({ level: demoLevel, legacy: false, moves: won.moves.length, seconds: 48, helped: 0, undone: 0, stars: starsOf(won.moves.length, parOf(demoLevel)), previousBest: null, beaten: false, firstClear: false });
+    setShowEnd(true);
+    setName("রাফি");
+    setCardOpen(true);
+  }
+
+  // Play-tests only (never in production): the live game, its session, and a shortest way from here.
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    (window as unknown as { __jam?: unknown }).__jam = {
+      game: () => now.current.game, session: () => now.current.run, path: () => solve(now.current.game.lay, now.current.game.pos),
+      go: (to: number, old = false) => playLevel(to, old), title: (to: number, old = false) => toTitle(to, old),
+    };
   }, []);
 
   // ---- moves ----
-  function play(next: Game | null, help = false) {
-    if (!next) return false;
-    const moved = next.pos.findIndex((at, car) => at !== gameRef.current.pos[car]);
-    if (!next.won) { if (moved === 0) putt(); else sfx.drop(); }
+  /** Plays a move the player made. False when it was refused (not playing, or the road isn't clear). */
+  function commit(next: Game | null, car: number) {
+    if (!next || !live()) return false;
+    const before = now.current.game;
+    const kind = before.lay.cars[car].kind;
+    const out = isOut(next.lay, next.pos, car);
+    if (car < next.lay.heroes) {
+      if (out) { sound.horn(); sound.putt(slow ? 2 : 7, 0.18); } else sound.putt(2);
+    } else sound.settle(massOf(kind), slow ? 0.05 : 0.12);
+    if (onTrack(next.moves.length, par, next.helped, legacy).stars < onTrack(before.moves.length, par, before.helped, legacy).stars) setDrop(key => key + 1);
+    setHint(null);
     setGame(next);
-    if (!help) setNote("");
-    if (next.won && !slowRef.current) buzz(20);
+    setNote("");
+    setPicked(out ? -1 : car);
+    if (next.won) cleared(next);
     return true;
   }
 
+  function cleared(won: Game) {
+    const at = performance.now(), r = session.finish(now.current.run, at);
+    setRun(r);
+    const seconds = Math.max(1, Math.round(session.elapsed(r, at) / 1000));
+    const stars = starsOf(won.moves.length, par, won.helped, won.legacy);
+    const firstClear = !won.legacy && !levels.stars[won.level], previousBest = best;
+    let beaten = false;
+    // Saved at the moment of the win, not in a timer a quick tap could cancel. A friend's old jam is never saved to the ladder.
+    if (!og.current && !won.legacy) {
+      levels.record(won.level, stars);
+      const opened = afterClear(unlockRef.current, won.level);
+      if (opened !== unlockRef.current) setUnlock(opened);
+      if (!won.helped) beaten = submitBest(won.moves.length) && previousBest !== null;
+    }
+    setFinish({ level: won.level, legacy: won.legacy, moves: won.moves.length, seconds, helped: won.helped, undone: won.undone, stars, previousBest, beaten, firstClear });
+    const finale = !won.legacy && isFinale(won.level);
+    if (finale) sound.motif(worldIndex(won.level));
+    if (stars === 3 || beaten || (finale && firstClear)) {
+      later(slow ? 0 : 900, () => { sfx.win(); if (!slow) confetti({ colors: ["#2fa84f", "#ffd23f", "#c8372d", "#2f7fd1", "#f0a020"] }); });
+    } else later(slow ? 200 : 900, sfx.good);
+    later(slow ? 250 : 1100, () => setShowEnd(true));
+  }
+
+  function onSlide(car: number, to: number) { return commit(slide(now.current.game, car, to), car); }
+  function onPick(car: number) {
+    if (!live()) return;
+    setPicked(pickedRef.current === car ? -1 : car);
+    sfx.tap();
+  }
+  function onBump(hard: boolean) {
+    if (!live()) return;
+    if (hard) sound.clank(); else sound.bump();
+    setNote(hard ? "ওটা নড়ে না। অন্য দিক দিয়ে ঘোরো।" : "আগে ওই গাড়ি সরাও।");
+  }
+  function onWall() { if (live()) { sound.clank(); setNote("ইটের স্তূপ বা বেড়া নড়ে না। ওর পাশ দিয়ে পথ করো।"); } }
   function nudge(step: -1 | 1) {
-    if (picked < 0 || phase === "paused" || won) return;
-    if (!play(slide(game, picked, game.pos[picked] + step))) { setNote("ওদিকে রাস্তা বন্ধ। অন্য গাড়ি সরাও।"); bump(); }
+    const g = now.current.game, car = pickedRef.current;
+    if (car < 0 || !live() || g.won) return;
+    if (!commit(slide(g, car, g.pos[car] + step), car)) { sound.bump(); setNote("ওদিকে রাস্তা বন্ধ। অন্য গাড়ি সরাও।"); }
   }
-
-  /** A gentle shake for a blocked move (none in slow mode). */
-  function bump() {
-    sfx.wrong();
-    if (!slowRef.current) wrap.current?.animate([{ transform: "translateX(0)" }, { transform: "translateX(-6px)" }, { transform: "translateX(6px)" }, { transform: "translateX(0)" }], { duration: 200, easing: "ease-out" });
-  }
-
-  function showHint() {
-    if (won || paused) return;
-    const move = hint(game);
-    if (!move) return;
-    setPicked(move.car);
-    sfx.pop();
-    play(slide(game, move.car, move.to, true), true);
-    setNote(`${NAMES[game.cars[move.car].kind]} সরিয়ে দিলাম। আবার চাপলে পরের চাল।`);
-  }
-
-  function takeBack() {
-    if (!game.moves.length || won) return;
-    sfx.whoosh();
-    setGame(undo(game));
-    setNote("");
-  }
-
-  function goTo(next: number) {
-    if (next < 1 || next > LEVEL_COUNT) return;
-    timers.current.forEach(clearTimeout); timers.current = [];
-    setGame(startGame(next));
-    setPicked(-1);
-    setPaused(false);
-    setNote("");
-    setRecord(null);
-  }
-
   function cycle(step: 1 | -1) {
-    const count = game.cars.length;
-    setPicked(current => current < 0 ? 0 : (current + step + count) % count);
+    const g = now.current.game;
+    let next = pickedRef.current;
+    for (let k = 0; k < g.lay.cars.length; k++) {
+      next = next < 0 ? (step > 0 ? 0 : g.lay.cars.length - 1) : (next + step + g.lay.cars.length) % g.lay.cars.length;
+      if (!isOut(g.lay, g.pos, next)) break;
+    }
+    setPicked(next);
+    sfx.tap();
+  }
+  function takeBack() {
+    const g = now.current.game;
+    if (!g.moves.length || g.won || !live()) return;
+    const next = undo(g);
+    if (!next) return;
+    sfx.whoosh();
+    setHint(null);
+    setGame(next);
+    setNote("");
+  }
+  /** হিন্ট: first press shows the move and why (and costs a star's worth); pressing again plays it. */
+  function help() {
+    const g = now.current.game;
+    if (g.won || !live()) return;
+    if (hint && hint.pos === g.pos) {
+      const { car, to } = hint.info.move;
+      commit(slide(g, car, to), car);
+      return;
+    }
+    const shown = explainHint(g);
+    if (!shown) return;
+    sfx.pop();
+    setGame({ ...g, helped: g.helped + 1 });
+    setHint({ info: shown, pos: g.pos });
+    setPicked(shown.move.car);
+    setNote("");
   }
 
-  // ---- the end of a level: save this phone's progress once ----
-  useEffect(() => {
-    if (!won || finished.current === game) return;
-    finished.current = game;
-    const before = progress[level];
-    const next = recordWin(progress, game);
-    const beaten = !game.helped && before !== undefined && before > 0 && game.moves.length < before;
-    setRecord(beaten ? before : null);
-    setProgress(next);
-    save(next);
-    levels.record(level, earned);
-    setPicked(-1);
-    // Out through the gap: horn, the engine pulling away, then each star; confetti only for three stars or a new record.
-    horn();
-    putt(slowRef.current ? 2 : 8);
-    const later = (seconds: number, sound: () => void) => timers.current.push(window.setTimeout(sound, seconds * 1000));
-    for (let star = 0; star < earned; star++) later(starAt(star), () => sfx.star(star));
-    later(starAt(earned), earned === 3 || beaten ? () => { sfx.win(); confetti(); } : sfx.good);
-  }, [game]);
+  // ---- the sheet, a choice moment: it pauses play ----
+  function openSheet() { pauseFor("sheet"); setSheetOpen(true); }
+  function closeSheet() { setSheetOpen(false); resumeFrom("sheet"); }
+  function pickLevel(to: number) {
+    if (now.current.run.phase === "title") toTitle(to);
+    else playLevel(to);
+  }
 
+  // ---- what the result offers ----
+  const nextLevel = !legacy && level < LEVEL_COUNT && playable(level + 1, unlockRef.current, levels.stars, visit) ? level + 1 : 0;
+  const yours = recommended(unlockRef.current, levels.stars);
+  const primary = legacy ? { label: "নিজের জ্যামে ফেরো", run: () => toTitle(yours) }
+    : nextLevel ? { label: "পরের জ্যাম", run: () => playLevel(nextLevel) }
+    : level > unlockRef.current ? { label: "তোমার জ্যামে ফেরো", run: () => toTitle(yours) }
+    : { label: "সব জ্যাম", run: openSheet };
+  const secondary = { label: "আরেকবার", run: () => playLevel(level, legacy) };
+
+  // ---- keys: Enter picks the next vehicle, arrows slide it, H a hint, Z undo, P the player's pause ----
+  const keyHandler = useRef<(event: KeyboardEvent) => void>(() => {});
+  keyHandler.current = event => {
+    const element = event.target as HTMLElement | null;
+    if (event.altKey || event.ctrlKey || event.metaKey || !inView || element?.closest?.("input, textarea, select, [contenteditable], .jc-cardpanel")) return;
+    if (sheetOpen) return;
+    const r = now.current.run, key = event.key, enter = key === "Enter" || key === " ";
+    if (enter && element?.closest?.("button, a, summary") && !element.closest(".jc-fit")) return; // a button reached with Tab does its own job
+    if (r.phase === "story") {
+      if (!enter && KEYS[key] === undefined) return;
+      event.preventDefault();
+      if (event.repeat) holdStart(); else nextPanel();
+      return;
+    }
+    if (r.phase === "title") {
+      if (enter) { event.preventDefault(); if (!event.repeat) start(); }
+      else if (key === "ArrowLeft" || key === "ArrowRight") {
+        event.preventDefault();
+        const to = now.current.game.legacy ? 0 : neighbourLevel(level, key === "ArrowLeft" ? -1 : 1, unlockRef.current, levels.stars, visit);
+        if (to) toTitle(to);
+      }
+      return;
+    }
+    if (r.phase === "paused") {
+      if (enter && r.why === "away") { event.preventDefault(); if (!event.repeat) resumeFrom("away"); }
+      return;
+    }
+    if (r.phase === "over") {
+      if (enter) { event.preventDefault(); if (session.resultKey(r, event.timeStamp, event.repeat) && showEnd && !cardOpen) primary.run(); }
+      return;
+    }
+    if (key === "p" || key === "P") { event.preventDefault(); player.requestPause(); return; }
+    const g = now.current.game;
+    if (enter) { event.preventDefault(); if (!event.repeat) cycle(1); return; }
+    if (KEYS[key] !== undefined) {
+      event.preventDefault();
+      const car = pickedRef.current;
+      if (car < 0) { cycle(1); return; }
+      const finger = KEYS[key], vertical = finger < 2;
+      if (vertical === g.lay.cars[car].down) nudge(finger === 0 || finger === 2 ? -1 : 1);
+      else if (!event.repeat) cycle(finger === 0 || finger === 2 ? -1 : 1);
+      return;
+    }
+    if (event.repeat) return;
+    if (key === "z" || key === "Z" || key === "Backspace") { event.preventDefault(); takeBack(); return; }
+    if (key === "h" || key === "H") { event.preventDefault(); help(); }
+  };
   useEffect(() => {
-    const saved = readProgress(readSaved());
-    setProgress(saved);
-    // Once: stars for the jams this phone solved before levels had stars.
-    if (stored(`ektukhani-levels-${TOOL}`) === null) for (const [n, stars] of Object.entries(starsFromProgress(saved))) levels.record(Number(n), stars);
-    setSite(window.location.host);
-    const readFriend = () => {
-      const shared = parseShared(window.location.hash);
-      if (!shared) return false;
-      setFriend(shared);
-      goTo(shared.level);
-      return true;
-    };
-    if (!readFriend()) goTo(unlocked(saved));
-    const onHash = () => { readFriend(); };
-    const hide = () => { const current = gameRef.current; if (document.hidden && current.moves.length && !current.won) setPaused(true); };
-    window.addEventListener("hashchange", onHash);
-    document.addEventListener("visibilitychange", hide);
-    return () => { window.removeEventListener("hashchange", onHash); document.removeEventListener("visibilitychange", hide); timers.current.forEach(clearTimeout); };
+    const listen = (event: KeyboardEvent) => keyHandler.current(event);
+    const release = (event: KeyboardEvent) => { if ((event.key === " " || event.key === "Enter") && holdTimer.current) { window.clearTimeout(holdTimer.current); holdTimer.current = 0; setHolding(false); } };
+    window.addEventListener("keydown", listen);
+    window.addEventListener("keyup", release);
+    return () => { window.removeEventListener("keydown", listen); window.removeEventListener("keyup", release); };
   }, []);
+  /** A finger or mouse click leaves no focused button behind, so the next Enter can't press it again. */
+  function dropFocus(event: MouseEvent<HTMLDivElement>) {
+    if (event.detail === 0) return;
+    const button = (event.target as Element).closest("button");
+    if (button instanceof HTMLButtonElement && !button.closest(".jc-cardpanel")) button.blur();
+  }
 
+  // ---- cards ----
+  const shared = finish ? fromGame(game, name) : null;
+  const state = shared ? sharedHash(shared) : "";
+  const card: CardData | null = finish ? { level, legacy, count: finish.moves, helped: finish.helped, name } : null;
   useEffect(() => {
     let cancelled = false;
-    loadCardFonts("জ্যাম ছাড়াও রাফি ১২৩ চালে").then(() => {
+    loadCardFonts("জ্যাম ছাড়াও রাফি ১২৩ চালে শেষ জ্যাম").then(() => {
       if (cancelled) return;
-      if (result && preview.current) drawCard(preview.current, result, format, site);
+      if (card && preview.current) drawCard(preview.current, card, format, site);
       if (friend && friendPreview.current) drawCard(friendPreview.current, friend, "feed", site);
       setPreviewError(false);
     }).catch(() => { if (!cancelled) setPreviewError(true); });
     return () => { cancelled = true; };
-    // `state` and `name` cover everything the card draws.
-  }, [state, name, format, site, friend, won]);
+    // `state` and `name` cover everything the card draws; the phase brings the friend's canvas back with the title.
+  }, [state, name, format, site, friend, cardOpen, run.phase]);
 
-  // ---- keyboard: Enter picks the next vehicle, arrows slide it, H shows a move, Z takes one back ----
-  const keyHandler = useRef<(event: KeyboardEvent) => void>(() => {});
-  keyHandler.current = event => {
-    const element = event.target as HTMLElement | null;
-    if (event.altKey || event.ctrlKey || event.metaKey || !boardInView || element?.closest?.("input, textarea, select, [contenteditable]")) return;
-    const key = event.key;
-    if (key.startsWith("Arrow")) {
-      event.preventDefault();
-      if (phase === "paused" || won) return;
-      if (picked < 0) { setPicked(0); return; }
-      const car = game.cars[picked], vertical = key === "ArrowUp" || key === "ArrowDown";
-      if (vertical === car.down) nudge(key === "ArrowUp" || key === "ArrowLeft" ? -1 : 1);
-      else cycle(key === "ArrowUp" || key === "ArrowLeft" ? -1 : 1);
-      return;
-    }
-    if (key === "h" || key === "H") { event.preventDefault(); showHint(); return; }
-    if (key === "z" || key === "Z" || key === "Backspace") { event.preventDefault(); takeBack(); return; }
-    if (key === "Escape") { setPicked(-1); return; }
-    if (key !== " " && key !== "Enter") return;
-    if (element?.closest?.("button, a, summary")) return;
-    event.preventDefault();
-    if (phase === "paused") setPaused(false);
-    else if (won) goTo(level < LEVEL_COUNT ? level + 1 : level);
-    else cycle(1);
-  };
-  useEffect(() => {
-    const listen = (event: KeyboardEvent) => keyHandler.current(event);
-    window.addEventListener("keydown", listen);
-    return () => window.removeEventListener("keydown", listen);
-  }, []);
+  // ---- what the HUD shows ----
+  const count = game.moves.length, track = onTrack(count, par, game.helped, legacy);
+  const lineAt = count + track.left;
+  const playing = run.phase === "playing" || run.phase === "paused";
+  const danger = run.phase === "playing" && par >= 5 && track.stars > 1 && Number.isFinite(lineAt) && track.left <= 1;
+  const rival = friend && friend.level === level && friend.legacy === legacy ? friend : null;
+  const clear = clearance(game);
+  const finale = !legacy && isFinale(level);
+  // What one hint would cost this jam, before → after.
+  const hintAfter = Math.min(track.stars, hintCap(game.helped + 1, legacy));
+  const showing = hint && hint.pos === game.pos ? hint.info : null;
+  const car = picked >= 0 ? game.lay.cars[picked] : null;
+  const [low, high] = car && !game.won && picked >= 0 && !isOut(game.lay, game.pos, picked) ? reachOf(game, picked) : [0, 0];
+  const status = note || showing?.line || (info && (count === 0 || !car) ? info.teach : car ? `${NAMES[car.kind]} ধরেছ। টেনে সরাও, বা তীর চাপো।` : "");
+  const allStars = totalStars(levels.stars);
+  const prev = legacy ? 0 : neighbourLevel(level, -1, unlock, levels.stars, visit), next = legacy ? 0 : neighbourLevel(level, 1, unlock, levels.stars, visit);
+  const arrows = car && !car.down ? (["বাঁয়ে", "ডানে"] as const) : (["ওপরে", "নিচে"] as const);
+  const turn = car && !car.down ? [-90, 90] : [0, 180];
 
-  // ---- pointer: drag a vehicle along its lane, or tap it to pick it for the arrow buttons ----
-  function carAt(event: ReactPointerEvent<HTMLCanvasElement>) {
-    const box = event.currentTarget.getBoundingClientRect(), { cell } = view.current;
-    const col = Math.floor((event.clientX - box.left) / cell - SIDE), row = Math.floor((event.clientY - box.top) / cell - TOP);
-    if (col < 0 || col >= COLS || row < 0 || row >= ROWS) return -1;
-    return occupancy(game.cars, game.pos)[row * COLS + col];
-  }
-  function onPointerDown(event: ReactPointerEvent<HTMLCanvasElement>) {
-    if (!event.isPrimary || won || paused) return;
-    const car = carAt(event);
-    if (car < 0) { setPicked(-1); return; }
-    sfx.tap();
-    try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* a pointer that already ended */ }
-    const [from, to] = reachOf(game, car);
-    drag.current = { car, id: event.pointerId, x: event.clientX, y: event.clientY, from: game.pos[car], low: from, high: to, moved: false };
-  }
-  function onPointerMove(event: ReactPointerEvent<HTMLCanvasElement>) {
-    const held = drag.current;
-    if (!held || event.pointerId !== held.id) return;
-    const dx = event.clientX - held.x, dy = event.clientY - held.y;
-    if (!held.moved && Math.hypot(dx, dy) < 8) return;
-    held.moved = true;
-    const along = (game.cars[held.car].down ? dy : dx) / view.current.cell;
-    shown.current[held.car] = Math.min(held.high, Math.max(held.low, held.from + along));
-    draw();
-  }
-  function onPointerUp(event: ReactPointerEvent<HTMLCanvasElement>) {
-    const held = drag.current;
-    if (!held || event.pointerId !== held.id) return;
-    drag.current = null;
-    if (!held.moved) { setPicked(current => current === held.car ? -1 : held.car); return; }
-    setPicked(held.car);
-    if (!play(slide(game, held.car, Math.round(shown.current[held.car])))) kick();
-  }
-  function onPointerCancel() {
-    drag.current = null;
-    kick();
-  }
-
-  function seeCard() { resultBox.current?.scrollIntoView({ behavior: smooth(), block: "start" }); }
-  function playFromCard(next: number) {
-    goTo(next);
-    wrap.current?.scrollIntoView({ behavior: smooth(), block: "center" });
-  }
-
-  function status() {
-    if (note) return note;
-    if (pickedCar) return `${NAMES[pickedCar.kind]} ধরেছ। তীর চাপো, বা টেনে সরাও।`;
-    if (phase === "ready") return "★ দেওয়া সবুজ CNG তোমার। গাড়ি টেনে সরাও, নয়তো গাড়িতে চেপে নিচের তীর চাপো।";
-    return "গাড়ি টেনে সরাও, নয়তো চেপে তীর চাপো।";
-  }
-
-  const mine = progress[level];
-  const arrows = pickedCar && !pickedCar.down ? (["বাঁয়ে", "ডানে"] as const) : (["ওপরে", "নিচে"] as const);
-  const arrowTurn = pickedCar && !pickedCar.down ? [-90, 90] : [0, 180];
+  const endTitle = finish ? (finish.legacy ? `বন্ধুর জ্যাম ছাড়ল, ${bn(finish.moves)} চালে` : isFinale(level) && finish.firstClear ? `${infoOf(level).name} পার` : `জ্যাম ছাড়ল, ${bn(finish.moves)} চালে`) : "";
+  const endLine = finish ? (rival ? compareLine(finish.moves, rival.count, rival.name) : !finish.legacy && isFinale(level) && finish.firstClear ? finaleLine(level) : solvedLine(level, finish.legacy, finish.moves, finish.helped)) : "";
+  const endNote = finish ? [
+    nearMissLine(finish.moves, par, finish.helped, finish.legacy) || (finish.beaten && finish.previousBest !== null ? `নতুন রেকর্ড। আগে লেগেছিল ${bn(finish.previousBest)} চাল।` : ""),
+    best !== null && !rival && !finish.helped && !finish.legacy ? `এই ফোনে সেরা ${bn(Math.min(best, finish.moves))} চাল।` : "",
+  ].filter(Boolean).join(" ") : "";
+  const hintMove = showing ? { car: showing.move.car, to: showing.move.to } : null;
+  const hintWord = showing ? `${DIRECTION_WORD[directionOf(game.lay.cars[showing.move.car].down, showing.move.from, showing.move.to)]}` : "";
 
   return (
-    <div className="jc" data-calm={slow}>
-      {friend && (
-        <section className="jc-friend" aria-labelledby="jc-friend-title">
-          <canvas ref={friendPreview} width={cardSizes.feed.width} height={cardSizes.feed.height} role="img" aria-label={`${feat(friend)}। বন্ধুর কার্ড।`} />
-          <div>
-            <h2 id="jc-friend-title">{feat(friend)}।</h2>
-            <p>একই জ্যাম, এবার তোমার পালা। চালগুলো মিলিয়ে দেখেছি, হিসাব সত্যি।</p>
-          </div>
-        </section>
-      )}
-
-      <div className="jc-bar">
-        <button type="button" className="jc-step" onClick={() => goTo(level - 1)} disabled={level <= 1} aria-label="আগের জ্যাম">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+    <div ref={root} className="jc" data-world={worldNo} data-calm={slow || undefined} data-phase={run.phase} data-danger={danger || undefined} onClick={dropFocus}>
+      <div className="jc-top" aria-hidden="true"><i style={{ transform: `scaleX(${clear.fraction})` }} /></div>
+      <header className="jc-hud" aria-hidden={run.phase === "title" || run.phase === "story" || undefined}>
+        <button type="button" className="jc-badge" onClick={openSheet} aria-haspopup="dialog"
+          aria-label={legacy ? `${jamLabel(level, true)}, বন্ধুর জ্যাম। সব জ্যাম দেখো` : `জ্যাম ${bn(level)}, ${levelName(level)}। সব জ্যাম দেখো`}>
+          <b>{legacy ? "পু" : bn(level)}</b>
+          <span>{legacy ? "পুরোনো জ্যাম" : finale ? "শেষ জ্যাম" : info!.name}<small>{legacy ? `জ্যাম ${bn(level)}` : worldOf(level).name}</small></span>
         </button>
-        <p className="jc-level"><b>জ্যাম {bn(level)}</b><span><span aria-label={`মোট ${bn(total)}টা তারা`}>★ {bn(total)}/{bn(LEVEL_COUNT * 3)}</span><i aria-hidden="true"> · </i><span>সেরা {bn(best)} চাল</span></span></p>
-        <button type="button" className="jc-step" onClick={() => goTo(level + 1)} disabled={level >= open || level >= LEVEL_COUNT} aria-label="পরের জ্যাম">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
-        </button>
-        <p className="jc-moves" aria-live="off"><span>চাল</span><b>{bn(game.moves.length)}</b></p>
-      </div>
-
-      <div className="jc-board" ref={wrap} data-phase={phase}>
-        <canvas
-          ref={canvas} role="application"
-          aria-label={`জ্যাম ${bn(level)}: সবুজ CNG-টাকে ওপরের ফাঁক দিয়ে বের করো। গাড়ি টেনে সরাও, বা চেপে নিচের তীর চাপো। কিবোর্ডে এন্টার দিয়ে গাড়ি বাছো, তীর দিয়ে সরাও, H চাপলে সমাধানের এক চাল।`}
-          onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerCancel}
-        />
-        {phase === "paused" && (
-          <div className="jc-overlay">
-            <div className="jc-note">
-              <p>থেমে আছে। তৈরি হলে চাপো।</p>
-              <button type="button" className="kit-primary" onClick={() => setPaused(false)}>চালিয়ে যাও</button>
-            </div>
-          </div>
+        {finale && (
+          <p className="jc-boss" aria-label={`শেষ জ্যাম ${info!.name}: ${clear.heroes > 1 ? `${bn(clear.out)}/${bn(clear.heroes)}টা CNG বেরিয়েছে` : `বাধা ${bn(clear.blockers)}টা`}`}>
+            <span><span className="jc-boss-name">{info!.name}</span><b>{clear.heroes > 1 ? `CNG ${bn(clear.out)}/${bn(clear.heroes)}` : `বাধা ${bn(clear.blockers)}`}</b></span>
+            <i><em style={{ transform: `scaleX(${clear.fraction})` }} /></i>
+          </p>
         )}
+        <div className="jc-moves" role="status" aria-label={`${bn(count)} চাল, এখন ${bn(track.stars)} তারার পথে`}>
+          <p><span>চাল</span><b>{bn(count)}</b></p>
+          <p className="jc-track" aria-hidden="true">
+            {[0, 1, 2].map(s => <i key={s === track.stars ? `${s}-${drop}` : s} data-on={s < track.stars || undefined} data-fell={(s === track.stars && drop > 0) || undefined}>★</i>)}
+            <small>{track.stars === 3 ? `≤ ${bn(par)}` : track.stars === 2 && Number.isFinite(track.left) ? `≤ ${bn(twoStarMoves(par))}` : ""}</small>
+          </p>
+          {rival && <small className="jc-rival">{rival.name || "বন্ধু"} {bn(rival.count)}</small>}
+        </div>
+      </header>
+
+      <div className="jc-stagebox">
+        <Street game={game} world={worldNo} calm={slow} arriveKey={arriveKey} picked={picked} hint={hintMove} away={run.phase === "paused"} playing={run.phase === "playing"}
+          live={live} wake={wake} onSlide={onSlide} onPick={onPick} onLift={kind => { if (live()) sound.lift(kind); }} onBump={onBump} onWall={onWall} />
       </div>
 
-      {won ? (
-        <div className="jc-over" role="status">
-          <p className="jc-over-score">জ্যাম ছাড়ল! <em>{bn(game.moves.length)} চালে</em></p>
-          <p className="gx-stars jc-over-stars" role="img" aria-label={`৩টার মধ্যে ${bn(earned)}টা তারা`}>
-            {[0, 1, 2].map(star => <span key={star} className={star < earned ? "on gx-pop" : ""} style={{ animationDelay: `${starAt(star)}s` }}>★</span>)}
-          </p>
-          <p className="jc-over-line">
-            {rival ? compareLine(game.moves.length, rival.count, rival.name)
-              : record ? `নতুন রেকর্ড! আগে লেগেছিল ${bn(record)} চাল।`
-              : game.helped ? `${bn(game.helped)} বার সাহায্য নিয়ে। সেরা সমাধান ${bn(best)} চাল।`
-              : game.moves.length <= best ? "একদম সেরা সমাধান!"
-              : `সেরা সমাধান ${bn(best)} চাল${mine ? ` · এই ফোনে তোমার সেরা ${bn(mine)}` : ""}`}
-          </p>
-          {earned < 3 && <p className="jc-over-near">{game.helped ? "নিজে নিজে ছাড়ালে ৩ তারা পর্যন্ত পাবে।"
-            : `আর ${bn(game.moves.length - (earned === 2 ? best : twoStarMoves(level)))} চাল কম হলে ${bn(earned + 1)} তারা।`}</p>}
-          <div className="jc-over-actions">
-            <button type="button" className="kit-secondary jc-again" onClick={() => goTo(level)}>আরেকবার</button>
-            {level < LEVEL_COUNT
-              ? <button type="button" className="kit-primary jc-next" onClick={() => goTo(level + 1)}>পরের জ্যাম</button>
-              : <p className="jc-all">সব জ্যাম ছাড়িয়েছ!</p>}
-          </div>
-          <button type="button" className="kit-link jc-see" onClick={seeCard}>কার্ড দেখো ↓</button>
-        </div>
+      {showEnd && finish ? (
+        <EndScreen stats={finish} slow={slow} title={endTitle} line={endLine} note={endNote} primary={primary} secondary={secondary} onCard={() => setCardOpen(true)} />
       ) : (
         <>
-          <p className="jc-status" role="status" aria-live="polite">{status()}</p>
-          <div className="jc-pad">
+          <p className="jc-status" role="status" aria-live="polite">{playing || run.phase === "over" ? status : ""}</p>
+          <div className="jc-controls">
             {([-1, 1] as const).map((step, index) => (
-              <button
-                key={step} type="button" className="jc-arrow" onClick={() => nudge(step)}
-                disabled={!pickedCar || phase === "paused" || (step < 0 ? game.pos[picked] <= low : game.pos[picked] >= high)}
-                aria-label={pickedCar ? `${NAMES[pickedCar.kind]} ${arrows[index]} সরাও` : `${arrows[index]} সরাও (আগে একটা গাড়ি চাপো)`}
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true" style={{ transform: `rotate(${arrowTurn[index]}deg)` }}><path d="M5 15l7-7 7 7" /></svg>
-                {arrows[index]}
+              <button key={step} type="button" className="jc-arrow" onClick={() => nudge(step)}
+                disabled={!car || !playing || game.won || (step < 0 ? game.pos[picked] <= low : game.pos[picked] >= high)}
+                aria-label={car ? `${NAMES[car.kind]} ${arrows[index]} সরাও` : `${arrows[index]} সরাও (আগে একটা গাড়ি চাপো)`}>
+                <svg viewBox="0 0 24 24" aria-hidden="true" style={{ transform: `rotate(${turn[index]}deg)` }}><path d="M5 15l7-7 7 7" /></svg>
               </button>
             ))}
-            <button type="button" className="jc-help" onClick={showHint} disabled={phase === "paused"}>সমাধান দেখাও</button>
-          </div>
-          <div className="jc-tools">
-            <button type="button" className="jc-tool" onClick={takeBack} disabled={!game.moves.length}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5" /><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" /></svg>ফিরিয়ে আনো
+            <button type="button" className="jc-tool" onClick={takeBack} disabled={!playing || !count || game.won}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5" /><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" /></svg>ফিরিয়ে নাও
             </button>
-            <button type="button" className="jc-tool" onClick={() => goTo(level)} disabled={!game.moves.length}>আবার শুরু</button>
-            <button type="button" className="jc-tool jc-slow" aria-pressed={slow} onClick={() => setSlow(!slow)}>ধীরে খেলো</button>
+            <button type="button" className="jc-tool jc-hint" onClick={help} disabled={!playing || game.won}
+              aria-label={showing ? `হিন্ট দেখানো হয়েছে। আবার চাপলে ${NAMES[game.lay.cars[showing.move.car].kind]} ${hintWord} সরে যাবে` : `একটা চালের হিন্ট। ${hintAfter < track.stars ? `তারা ${bn(track.stars)} থেকে ${bn(hintAfter)}-এ নামবে` : "তারা আর কমবে না"}`}>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z" /></svg>
+              {showing ? <>চালিয়ে দাও</> : <>হিন্ট <small>{hintAfter < track.stars ? `★${bn(track.stars)}→${bn(hintAfter)}` : `★${bn(track.stars)}`}</small></>}
+            </button>
           </div>
-          <SoundToggle className="jc-sound" />
         </>
       )}
 
-      <details className="jc-levels">
-        <summary>সব জ্যাম <span>★ {bn(total)}/{bn(LEVEL_COUNT * 3)}</span></summary>
-        <p>সবচেয়ে কম চালে ছাড়ালে ৩ তারা, কাছাকাছি হলে ২, সাহায্য নিলে ১।</p>
-        <LevelGrid count={LEVEL_COUNT} stars={levels.stars} unlocked={open} current={level} onPick={playFromCard} noun="জ্যাম" />
-      </details>
-
-      {result && (
-        <section className="jc-result" id="result" ref={resultBox} aria-labelledby="jc-result-title">
-          <h2 id="jc-result-title"><em>{bn(level)} নম্বর জ্যাম</em> {bn(result.count)} চালে ছাড়ল</h2>
-          <p>{rival ? compareLine(result.count, rival.count, rival.name) : humanLine(result.count, best, result.helped)}</p>
-          <div className="jc-result-body">
-            <figure className="kit-card" data-format={format}>
-              <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="jc-card-summary" />
-              <figcaption id="jc-card-summary" className="jc-sr">কার্ড: {bn(level)} নম্বর জ্যাম {bn(result.count)} চালে, সেরা {bn(best)}। {humanLine(result.count, best, result.helped)}</figcaption>
-              {previewError && <p className="kit-status" role="alert">কার্ডের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
-            </figure>
-            <div className="jc-share">
-              <label className="jc-name">
-                <span>তোমার নাম <small>কার্ডে বসবে, না দিলেও চলবে</small></span>
-                <input value={name} maxLength={MAX_NAME} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
-              </label>
-              <FormatToggle value={format} onChange={setFormat} />
-              <ShareBar
-                tool={TOOL} fileName={`jam-chharao-${level}.png`} makeImage={() => cardBlob(result, format, site)} imageKey={`${state}|${name}|${format}`}
-                caption={caption(result)} state={state || undefined}
-                hint={state ? "বন্ধু লিংক খুললে এই জ্যামটাই পাবে। চালগুলো মিলিয়ে দেখা হয়, তাই হিসাবটা সত্যি।" : "চাল অনেক বেশি হয়ে গেছে, লিংকে ধরছে না। কম চালে ছাড়িয়ে আবার শেয়ার করো।"}
-              />
-              <button type="button" className="kit-link jc-again-link" onClick={() => playFromCard(level < LEVEL_COUNT ? level + 1 : level)}>{level < LEVEL_COUNT ? "পরের জ্যাম খেলো" : "আবার খেলো"}</button>
-            </div>
-          </div>
-        </section>
+      {run.phase === "title" && (
+        <TitleScreen level={level} legacy={legacy} stars={legacy ? 0 : levels.stars[level] ?? 0} friend={friend} friendCanvas={friendPreview}
+          allStars={allStars} total={LEVEL_COUNT * 3} prev={prev} next={next}
+          onStart={start} onLevel={to => { if (to) toTitle(to); }} onSheet={openSheet} />
       )}
+
+      {run.phase === "story" && <Story panel={panel} holding={holding} onDown={holdStart} onUp={holdEnd} onCancel={stopHold} />}
+
+      {sheetOpen && (
+        <LevelSheet stars={levels.stars} unlock={unlock} visit={visit} current={legacy ? 0 : level} recommended={yours}
+          onPick={pickLevel} onClose={closeSheet} />
+      )}
+
+      {cardOpen && card && finish && (
+        <div className="jc-cardpanel" role="dialog" aria-modal="false" aria-labelledby="jc-card-title">
+          <div className="jc-cardpanel-head">
+            <h2 id="jc-card-title"><em>{jamLabel(level, legacy)}</em> {bn(finish.moves)} চালে, কার্ড তৈরি</h2>
+            <button type="button" className="kit-secondary" onClick={() => setCardOpen(false)}>ফিরে যাও</button>
+          </div>
+          <p>{rival ? compareLine(finish.moves, rival.count, rival.name) : humanLine(finish.moves, par, finish.helped)}</p>
+          <figure className="kit-card" data-format={format}>
+            <canvas ref={preview} width={cardSizes[format].width} height={cardSizes[format].height} role="img" aria-describedby="jc-card-summary" />
+            <figcaption id="jc-card-summary" className="jc-sr">কার্ড: {jamLabel(level, legacy)}, {bn(finish.moves)} চালে, সেরা {bn(par)}, {bn(finish.stars)} তারা, সময় {duration(finish.seconds)}। {humanLine(finish.moves, par, finish.helped)}</figcaption>
+            {previewError && <p className="kit-status" role="alert">কার্ডের ছবিটা দেখানো যাচ্ছে না। পাতাটা একবার রিলোড করে দেখো।</p>}
+          </figure>
+          <div className="jc-share">
+            <label className="jc-name">
+              <span>তোমার নাম <small>কার্ডে বসবে, না দিলেও চলবে</small></span>
+              <input value={name} maxLength={MAX_NAME} onChange={event => setName(event.target.value)} placeholder="যেমন: রাফি" autoComplete="nickname" />
+            </label>
+            <FormatToggle value={format} onChange={setFormat} />
+            <ShareBar
+              tool="jam-chharao" fileName={`jam-chharao-${level}.png`} makeImage={() => cardBlob(card, format, site)} imageKey={`${state}|${name}|${format}|${finish.moves}`}
+              caption={caption(card)} state={state || undefined}
+              hint={state ? "বন্ধু লিংক খুললে এই জ্যামটাই পাবে। চালগুলো মিলিয়ে দেখা হয়, তাই হিসাবটা সত্যি।" : "চাল অনেক বেশি হয়ে গেছে, লিংকে ধরছে না। কম চালে ছাড়িয়ে আবার শেয়ার করো।"}
+            />
+          </div>
+        </div>
+      )}
+      <p className="jc-sr" aria-live="polite">{finish && showEnd ? `জ্যাম ছাড়ল। ${bn(finish.moves)} চাল, ${bn(finish.stars)} তারা। ${endNote}` : ""}</p>
     </div>
   );
 }
+
+void feat;
+void solved;
