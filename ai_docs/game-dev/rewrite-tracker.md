@@ -9,7 +9,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | jhalmuri-sap | S01 | analysed | done |
 | danguli | S02 | analysed | done |
 | sir-ghurlei-thamo | S02 | analysed | done |
-| deri-hoye-gelo | S02 | analysed | rewriting |
+| deri-hoye-gelo | S02 | analysed | done |
 | chor-police | S03 | analysed | done |
 | bostar-pahar | S03 | analysed | done |
 | tarer-fanke-belun | S03 | analysed | done |
