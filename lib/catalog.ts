@@ -126,7 +126,7 @@ export const catalog = [
   { slug: "golokdhadha", name: "গোলকধাঁধা", description: "গলি পেরিয়ে জিলাপির দোকানে যাও। ৩০টা লেভেল, রোজ একটা নতুন ধাঁধা।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "ponero-ghor", name: "১৫ ঘরের ধাঁধা", description: "ঘুঁটি টেনে ১ থেকে সাজাও, ছবি জোড়াও। মেলার টিনের ধাঁধা, ৩০ লেভেল।", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "chhobi-photao", name: "ছবি ফোটাও", description: "সারি-কলামের সংখ্যা মিলিয়ে ঘর ভরো, নানির কাঁথায় ছবি ফোটাও। ৩০টা লেভেল।", category: "গেম", action: "খেলা শুরু করো" },
-  { slug: "ghontar-sur", name: "ঘণ্টার সুর", description: "চার কলসির সুর শোনো, একই ক্রমে বাজাও। প্রতিবার একটা সুর বাড়ে।", category: "গেম", action: "সুর বাজাও" },
+  { slug: "ghontar-sur", name: "ঘণ্টার সুর", description: "ঘণ্টার সুর শোনো, একই ক্রমে বাজাও। ২৪টা সুর, তাল আর উল্টো সুর।", category: "গেম", action: "সুর বাজাও" },
   { slug: "konta-nei", name: "কোনটা নেই?", description: "মুদি দোকানের তাক দেখে রাখো, মামা একটা সরাবে। বলো তো, কোনটা নেই?", category: "গেম", action: "খেলা শুরু করো" },
   { slug: "bhul-kothay", name: "ভুল কোথায়?", description: "দুটো প্রায় একই ছবি, বাজার থেকে লোডশেডিংয়ের রাত। কোথায় আলাদা, চাপ দাও।", category: "গেম", action: "অমিল খোঁজো" },
   { slug: "atir-aam", name: "আঁটি থেকে আম", description: "দুটো এক রকম মেলাও: আঁটি থেকে চারা, আম, শেষে বাগান। তিন মৌসুমে বৃষ্টি, শিল, কাক।", category: "গেম", action: "খেলা শুরু করো" },

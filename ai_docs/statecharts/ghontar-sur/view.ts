@@ -1,45 +1,47 @@
-export const title = "Ghontar sur (pot memory): run, tune, pause and links";
+export const title = "Ghontar sur (bells): run, pause, the level list and links";
 export const state = (v: any) => {
-  if (v.phase === "over") return "Result shows";
-  if (v.phase === "ready") return v.sent && v.from !== v.sent ? "Friend's tune ready, from level ১" : "Ready to start";
   const away = !v.visible || !v.focused;
-  let base = v.cleared ? "Level clear screen" : v.pending === "tune" || v.pending === "gap" ? "The tune plays" : v.pending === "clear" ? "Level done, clear screen coming"
-    : v.phase === "play" ? "Your turn" : "Waiting for a tap";
-  if (v.paused) base = v.pending === "tune" ? "Paused, but the tune plays" : v.cleared ? "Paused on the clear screen" : "Paused";
-  const lost = v.owed && v.pending !== "clear" ? ", clear screen skipped" : "";
-  const where = v.paused ? "" : v.pending === "tune" && away ? ", you're away" : v.pending === "tune" && v.list ? ", level list open" : "";
-  return base + lost + where;
+  if (v.phase === "over") return v.done === "won" ? "End screen: cleared" : "End screen: out of slips";
+  if (v.phase === "ready") return "Title: the big bell";
+  if (v.sheet) return "Level list open (paused)";
+  if (v.why === "away") return "Paused (menu or cover)";
+  const base: Record<string, string> = {
+    lead: "Quiet before the call", call: "The bells ring", answer: "Your turn", miss: "Right bell shown", cheer: v.done === "won" ? "Level cheer" : "Round cheer", encore: "The finale tune plays",
+  };
+  return base[v.phase] + (away ? ", you're away" : "");
 };
 const labels: Record<string, string> = {
-  YouStart: "you press শুরু করো or আরেকবার",
-  TheTuneEnds: "the tune ends",
-  YouRepeatTheTuneOrSlip: "you repeat the tune or slip once",
-  YouClearALevel: "you finish a level's last tune",
-  YouSlipTheThirdTime: "you slip the third time",
-  TheTuneReplays: "the next tune starts",
-  TheClearScreenShows: "the clear screen shows",
-  YouPressNextLevel: "you press পরের লেভেল",
+  YouStart: "you tap the big bell",
+  TheLeadEnds: "the call starts",
+  TheCallEnds: "the call ends",
+  YouFinishARound: "you play the round right",
+  YouFinishTheLevel: "you play the last round right",
+  YouSlip: "you ring a wrong bell",
+  YouSlipTheThirdTime: "you ring a wrong bell the third time",
+  TheCheerEnds: "the cheer ends",
+  TheMissEnds: "the call plays again",
+  TheEncoreEnds: "the tune ends",
+  YouSkipTheEncore: "you tap to skip the tune",
   WindowBlurs: "you click into another window",
   WindowFocuses: "you come back",
   TabHides: "you hide the tab",
   TabShows: "you come back",
   YouResume: "you press চালিয়ে যাও",
   YouOpenTheLevels: "you open সব লেভেল",
+  YouOpenTheLevelsFromTheMenu: "you pick সব লেভেল in the menu",
   YouCloseTheLevels: "you close সব লেভেল",
   YouPickALevel: "you pick a level",
+  YouPlayAgain: "you press আবার খেলো",
+  YouRestart: "you press নতুন করে শুরু",
   AFriendsLinkOpens: "a friend's link opens",
 };
-const shows = (v: any) => (state(v) as string).replace(/^.*, /, "");
-// Hidden: picking a level (a reset every state has), friend links except from a fresh shelf, and the steps that
-// carry an already-open list or an already-away window into a tune (চালিয়ে যাও, পরের লেভেল, the next tune):
-// the chart shows how you get there by opening the list or leaving.
+// Hidden: picking a level and restarting (a reset every state has), friend links except from the title, and the steps that
+// only change who is away (the chart shows how you get away by leaving, and back by চালিয়ে যাও).
 export const step = (action: string, from: any, to: any) => {
-  const lands = shows(to);
-  if ((lands === "level list open" || lands === "you're away") && shows(from) !== lands
-      && ["YouResume", "YouPressNextLevel", "TheTuneReplays", "TabShows", "WindowFocuses"].includes(action)) return null;
-  if (action === "YouPickALevel") return null;
+  if (["YouPickALevel", "YouRestart"].includes(action)) return null;
   if (action === "AFriendsLinkOpens" && from.phase !== "ready") return null;
+  if (["WindowFocuses", "TabShows"].includes(action) && state(from).replace(", you're away", "") === state(to).replace(", you're away", "")) return null;
   return labels[action] ?? action;
 };
-export const group = (v: any) => v.phase === "over" ? "done" : v.paused ? "held" : v.phase === "ready" ? "start" : "play";
+export const group = (v: any) => v.phase === "over" ? "done" : v.sheet || v.why !== "none" ? "held" : v.phase === "ready" ? "start" : "play";
 export const colors = { start: "teal", play: "teal", held: "yellow", done: "blue" };
