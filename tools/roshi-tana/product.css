@@ -1,4 +1,4 @@
-.tool-roshi-tana{--accent:#c2410c;--accent-deep:#8a2e08;--ink:#2a1d14;--muted:#6b5a44;--paper:#f7f0dc;--paper-edge:#e2d4b0;--grass:#5f9e3e;--sky:#eaf4dc;--miss:#c8432f;--gold:#ffd166}
+.tool-roshi-tana{--accent:#c2410c;--accent-deep:#8a2e08;--ink:#2a1d14;--muted:#6b5a44;--paper:#f7f0dc;--paper-edge:#e2d4b0;--grass:#5f9e3e;--sky:#eaf4dc;--miss:#c8432f;--gold:#ffd166;--ease-out:cubic-bezier(0.23,1,0.32,1)}
 .tool-roshi-tana .rt-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* the game fills the player's stage: HUD, the field (as big as fits), the drum or the end screen */
@@ -14,8 +14,8 @@
 .tool-roshi-tana .rt-title-friend b{font-family:var(--font-display)}
 .tool-roshi-tana .rt-title-friend span{display:block;font-size:13px;color:var(--muted)}
 .tool-roshi-tana .rt-title-drum{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * .62);place-items:center;width:100%;min-height:150px}
-.tool-roshi-tana .rt-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:24px;filter:drop-shadow(0 14px 18px #2a1d1433);transition:transform .18s ease-out}
-.tool-roshi-tana .rt-title-start:hover{transform:translateY(-3px) scale(1.01)}
+.tool-roshi-tana .rt-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:24px;filter:drop-shadow(0 14px 18px #2a1d1433);transition:transform 180ms var(--ease-out)}
+@media(hover:hover) and (pointer:fine){.tool-roshi-tana .rt-title-start:hover{transform:translateY(-3px) scale(1.01)}}
 .tool-roshi-tana .rt-title-start:active{transform:translateY(2px) scale(.99)}
 .tool-roshi-tana .rt-title-start:focus-visible{outline:3px solid var(--accent);outline-offset:6px}
 .tool-roshi-tana .rt-title-start canvas{display:block}
@@ -24,7 +24,7 @@
 .tool-roshi-tana .rt-title-level span{font-family:var(--font-display);font-size:18px;font-weight:700}
 .tool-roshi-tana .rt-title-level small{font-size:14px;color:var(--muted);line-height:1.5}
 .tool-roshi-tana .rt-modes{display:flex;gap:6px;justify-content:center}
-.tool-roshi-tana .rt-modes button{min-height:40px;padding:4px 16px;border:1.5px solid var(--paper-edge);border-radius:999px;background:#fff;color:var(--ink);font-size:15px;font-weight:600}
+.tool-roshi-tana .rt-modes button{min-height:40px;padding:4px 16px;border:1.5px solid var(--paper-edge);border-radius:8px;background:#fff;color:var(--ink);font-size:15px;font-weight:600}
 .tool-roshi-tana .rt-modes button[aria-checked=true]{border-color:var(--ink);background:var(--ink);color:#fff}
 .tool-roshi-tana .rt-mode-line{margin:0;max-width:400px;font-size:14px;line-height:1.5;color:var(--muted)}
 .tool-roshi-tana .rt-title-more{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px}
@@ -41,16 +41,16 @@
 .tool-roshi-tana .rt-beats{padding:3px 10px;border-radius:10px;background:var(--ink);color:#fff;font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.25;font-variant-numeric:tabular-nums}
 .tool-roshi-tana .rt-combo{min-height:18px;font-size:13px;font-weight:800;color:var(--accent);line-height:1.3}
 .tool-roshi-tana .rt-combo:not([data-on=on]):not([data-on=pop]){visibility:hidden}
-.tool-roshi-tana .rt-combo[data-on=pop]{animation:rt-pop .3s ease-out}
+.tool-roshi-tana .rt-combo[data-on=pop]{animation:rt-pop 280ms var(--ease-out)}
 .tool-roshi-tana .rt[data-screen=over] .rt-combo{visibility:hidden}
 .tool-roshi-tana .rt-boss{display:grid;gap:3px;justify-items:center;min-width:140px}
 .tool-roshi-tana .rt-boss:not([data-on]){visibility:hidden}
 .tool-roshi-tana .rt-boss b{font-family:var(--font-display);font-size:13px;line-height:1;color:#8a1c1c}
 .tool-roshi-tana .rt-boss em{display:none;font-style:normal;font-size:12px;font-weight:800;color:#fff;background:#d62828;padding:0 8px;border-radius:99px;line-height:1.5}
-.tool-roshi-tana .rt-boss[data-heave="1"] em{display:block;animation:rt-pop .2s ease-out}
+.tool-roshi-tana .rt-boss[data-heave="1"] em{display:block;animation:rt-pop 200ms var(--ease-out)}
 .tool-roshi-tana .rt-boss[data-heave="1"] .rt-meter{display:none}
 .tool-roshi-tana .rt-meter{position:relative;display:block;width:140px;height:9px;border:2px solid #8a1c1c;border-radius:99px;background:#fff1e6;overflow:hidden}
-.tool-roshi-tana .rt-meter i{position:absolute;inset:0 auto 0 0;width:var(--fill,0%);background:linear-gradient(90deg,#f2a531,#d62828);transition:width .1s linear}
+.tool-roshi-tana .rt-meter i{position:absolute;inset:0 auto 0 0;width:100%;background:linear-gradient(90deg,#f2a531,#d62828);transform:scaleX(var(--fill,0));transform-origin:left;transition:transform .1s linear}
 
 /* ---- the play area: the field and the drum both take taps ---- */
 .tool-roshi-tana .rt-board{display:flex;flex:1;flex-direction:column;gap:8px;min-height:0;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
@@ -58,20 +58,20 @@
 .tool-roshi-tana .rt-field canvas{position:absolute;inset:0;display:block}
 .tool-roshi-tana .rt[data-screen=over] .rt-field{flex:1 1 120px;min-height:110px}
 /* danger lives at the edges: their line close (red, stronger nearer), a heave coming (red top), a tempo change, our line close (gold) */
-.tool-roshi-tana .rt-field::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 0 transparent;transition:box-shadow .25s}
-.tool-roshi-tana .rt[data-edge=danger] .rt-field::after{box-shadow:inset 0 0 0 calc(3px + 3px * var(--danger,0)) #e5383b,inset 0 0 calc(18px + 30px * var(--danger,0)) calc(4px + 8px * var(--danger,0)) #e5383bb3;animation:rt-glow .55s ease-in-out infinite alternate}
-.tool-roshi-tana .rt[data-edge=heave] .rt-field::after,.tool-roshi-tana .rt[data-edge=heaving] .rt-field::after{box-shadow:inset 0 5px 0 0 #d62828,inset 0 34px 30px -14px #d62828cc;animation:rt-glow .4s ease-in-out infinite alternate}
-.tool-roshi-tana .rt[data-edge=faster] .rt-field::after,.tool-roshi-tana .rt[data-edge=slower] .rt-field::after{box-shadow:inset 5px 0 0 0 #3a86c8,inset -5px 0 0 0 #3a86c8}
-.tool-roshi-tana .rt[data-edge=near] .rt-field::after{box-shadow:inset 0 -5px 0 0 var(--gold),inset 0 -34px 30px -14px #ffd166cc}
+.tool-roshi-tana .rt-field::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity 250ms var(--ease-out)}
+.tool-roshi-tana .rt[data-edge=danger] .rt-field::after{opacity:1;box-shadow:inset 0 0 0 calc(3px + 3px * var(--danger,0)) #e5383b,inset 0 0 calc(18px + 30px * var(--danger,0)) calc(4px + 8px * var(--danger,0)) #e5383bb3;animation:rt-glow .55s ease-in-out infinite alternate} /* unslop-ignore: their line is close, a danger cue at the field edge */
+.tool-roshi-tana .rt[data-edge=heave] .rt-field::after,.tool-roshi-tana .rt[data-edge=heaving] .rt-field::after{opacity:1;box-shadow:inset 0 5px 0 0 #d62828,inset 0 34px 30px -14px #d62828cc;animation:rt-glow .4s ease-in-out infinite alternate} /* unslop-ignore: a heave is coming, a danger cue at the top edge */
+.tool-roshi-tana .rt[data-edge=faster] .rt-field::after,.tool-roshi-tana .rt[data-edge=slower] .rt-field::after{opacity:1;box-shadow:inset 5px 0 0 0 #3a86c8,inset -5px 0 0 0 #3a86c8}
+.tool-roshi-tana .rt[data-edge=near] .rt-field::after{opacity:1;box-shadow:inset 0 -5px 0 0 var(--gold),inset 0 -34px 30px -14px #ffd166cc} /* unslop-ignore: our line is close, the right-answer cue at the bottom edge */
 .tool-roshi-tana .rt-pill{position:absolute;display:none;padding:3px 10px;border-radius:99px;color:#fff;font-size:13px;font-weight:800;pointer-events:none;white-space:nowrap}
 .tool-roshi-tana .rt-pill-heave{top:10px;left:50%;transform:translateX(-50%);background:#d62828}
 .tool-roshi-tana .rt-pill-faster,.tool-roshi-tana .rt-pill-slower{top:50%;right:8px;background:#1f5f99}
-.tool-roshi-tana .rt[data-edge=heave] .rt-pill-heave,.tool-roshi-tana .rt[data-edge=faster] .rt-pill-faster,.tool-roshi-tana .rt[data-edge=slower] .rt-pill-slower{display:block;animation:rt-pop .2s ease-out}
-.tool-roshi-tana .rt-pad{position:relative;flex:none;display:block;width:100%;height:clamp(112px,calc(var(--stage-h,700px) * .2),172px);padding:0;border:2px solid var(--ink);border-radius:18px;background:#fbf6e9;box-shadow:0 4px 0 var(--paper-edge);cursor:pointer;touch-action:none;transition:transform .08s ease-out}
+.tool-roshi-tana .rt[data-edge=heave] .rt-pill-heave,.tool-roshi-tana .rt[data-edge=faster] .rt-pill-faster,.tool-roshi-tana .rt[data-edge=slower] .rt-pill-slower{display:block;animation:rt-pop 200ms var(--ease-out)}
+.tool-roshi-tana .rt-pad{position:relative;flex:none;display:block;width:100%;height:clamp(112px,calc(var(--stage-h,700px) * .2),172px);padding:0;border:2px solid var(--ink);border-radius:18px;background:#fbf6e9;box-shadow:0 4px 0 var(--paper-edge);cursor:pointer;touch-action:none;transition:transform 100ms var(--ease-out)}
 .tool-roshi-tana .rt-pad:active{transform:translateY(2px);box-shadow:0 2px 0 var(--paper-edge)}
 .tool-roshi-tana .rt-pad canvas{position:absolute;inset:0;display:block}
 .tool-roshi-tana .rt-pad:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-@keyframes rt-pop{from{transform:scale(.85);opacity:.4}}
+@keyframes rt-pop{from{transform:scale(.92);opacity:.4}}
 @keyframes rt-glow{to{opacity:.65}}
 
 /* ---- the story ---- */
@@ -148,7 +148,7 @@
 .tool-roshi-tana .rt-top{top:0;transform:rotate(180deg)}
 .tool-roshi-tana .rt-bottom{bottom:0}
 .tool-roshi-tana .rt-zone p{margin:0;pointer-events:none}
-.tool-roshi-tana .rt-zone-name{padding:3px 10px;border-radius:999px;background:#2a1d14b3;font-size:14px;font-weight:700}
+.tool-roshi-tana .rt-zone-name{padding:3px 10px;border-radius:6px;background:#2a1d14b3;font-size:14px;font-weight:700}
 .tool-roshi-tana .rt-zone-result{padding:6px 14px;border-radius:12px;background:#2a1d14d9;font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.3}
 .tool-roshi-tana .rt-mid{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:flex;align-items:center;justify-content:center;gap:10px;pointer-events:none}
 .tool-roshi-tana .rt-mid>*{pointer-events:auto}
@@ -167,7 +167,9 @@
 .tool-roshi-tana .rt-name input{border:1.5px solid var(--paper-edge);border-radius:12px;font-size:17px}
 
 @media(max-width:350px){.tool-roshi-tana .rt-end-choices button{font-size:13px;padding:6px 4px}.tool-roshi-tana .rt-end-choices kbd{display:none}.tool-roshi-tana .rt-end-line{font-size:15px}.tool-roshi-tana .rt-boss{min-width:110px}.tool-roshi-tana .rt-meter{width:110px}.tool-roshi-tana .rt-modes button{padding:4px 12px}}
+.tool-roshi-tana .rt-modes button,.tool-roshi-tana .rt-link,.tool-roshi-tana .rt-sheet-close,.tool-roshi-tana .rt-story-skip,.tool-roshi-tana .rt-sheet-world button,.tool-roshi-tana .rt-close{transition:transform 120ms var(--ease-out)}
+.tool-roshi-tana .rt-modes button:active:not(:disabled),.tool-roshi-tana .rt-link:active:not(:disabled),.tool-roshi-tana .rt-sheet-close:active:not(:disabled),.tool-roshi-tana .rt-story-skip:active:not(:disabled),.tool-roshi-tana .rt-sheet-world button:active:not(:disabled),.tool-roshi-tana .rt-close:active:not(:disabled){transform:scale(.97)}
 /* slow mode: steady edges, no pops or pulses */
 .tool-roshi-tana .rt[data-slow] .rt-field::after,.tool-roshi-tana .rt[data-slow] .rt-pill,.tool-roshi-tana .rt[data-slow] .rt-combo,.tool-roshi-tana .rt[data-slow] .rt-boss em{animation:none!important}
-.tool-roshi-tana .rt[data-slow] .rt-pad{transition:none}
-@media(prefers-reduced-motion:reduce){.tool-roshi-tana .rt-field::after,.tool-roshi-tana .rt-pill,.tool-roshi-tana .rt-combo,.tool-roshi-tana .rt-boss em{animation:none!important}.tool-roshi-tana .rt-pad,.tool-roshi-tana .rt-title-start{transition:none}.tool-roshi-tana .rt-title-start:hover{transform:none}}
+.tool-roshi-tana .rt[data-slow] .rt-pad,.tool-roshi-tana .rt[data-slow] .rt-meter i,.tool-roshi-tana .rt[data-slow] .rt-field::after{transition:none}.tool-roshi-tana .rt[data-slow] :is(.rt-modes button,.rt-link,.rt-sheet-close,.rt-story-skip,.rt-sheet-world button,.rt-close):active{transform:none}
+@media(prefers-reduced-motion:reduce){.tool-roshi-tana .rt-modes button:active:not(:disabled),.tool-roshi-tana .rt-link:active:not(:disabled),.tool-roshi-tana .rt-sheet-close:active:not(:disabled),.tool-roshi-tana .rt-story-skip:active:not(:disabled),.tool-roshi-tana .rt-sheet-world button:active:not(:disabled),.tool-roshi-tana .rt-close:active:not(:disabled){transform:none}.tool-roshi-tana .rt-meter i,.tool-roshi-tana .rt-field::after{transition:none}.tool-roshi-tana .rt-field::after,.tool-roshi-tana .rt-pill,.tool-roshi-tana .rt-combo,.tool-roshi-tana .rt-boss em{animation:none!important}.tool-roshi-tana .rt-pad,.tool-roshi-tana .rt-title-start{transition:none}.tool-roshi-tana .rt-title-start:hover{transform:none}}

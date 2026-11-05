@@ -433,7 +433,7 @@ export function SatCharaGame() {
           onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={onPointerCancel} onLostPointerCapture={onPointerCancel}
           onContextMenu={event => event.preventDefault()}>
           <canvas ref={canvas} role="img" aria-label={`${roundLabel(kind, level)}। সাতটা চাড়া, পড়েছে ${bn(hud.down)}টা, বল বাকি ${bn(hud.ballsLeft)}টা।`} />
-          <span className="sc-line" aria-hidden="true"><span style={{ width: `${(hud.down / STONES) * 100}%` }} /></span>
+          <span className="sc-line" aria-hidden="true"><span style={{ transform: `scaleX(${hud.down / STONES})` }} /></span>
         </div>
         <p className="sc-news" role="status" aria-live="polite">{screen === "play" ? news : ""}</p>
         {screen === "title" && <TitleScreen kind={kind} level={level} hand={hand} stars={total} friend={friend && friend.kind === kind && friend.level === level ? friend : null} onStart={start} onHand={setHand} onLevels={openList} />}

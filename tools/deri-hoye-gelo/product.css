@@ -29,7 +29,10 @@
 .tool-deri-hoye-gelo .dh-title-level span{font-family:var(--font-display);font-size:18px;font-weight:700}
 .tool-deri-hoye-gelo .dh-title-level small{font-size:14px;color:var(--muted);line-height:1.5}
 .tool-deri-hoye-gelo .dh-modes{display:flex;gap:6px;justify-content:center}
-.tool-deri-hoye-gelo .dh-modes button{min-height:40px;padding:4px 16px;border:1.5px solid var(--paper-edge);border-radius:999px;background:#fff;color:var(--ink);font-size:15px;font-weight:600}
+.tool-deri-hoye-gelo .dh-modes button{min-height:40px;padding:4px 16px;border:1.5px solid var(--paper-edge);border-radius:8px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;transition:transform 120ms var(--ease-out)}
+.tool-deri-hoye-gelo .dh-modes button:active,.tool-deri-hoye-gelo .dh-title-levels:active,.tool-deri-hoye-gelo .dh-sheet-close:active,.tool-deri-hoye-gelo .dh-story-skip:active{transform:scale(.97)}
+.tool-deri-hoye-gelo .dh-title-levels,.tool-deri-hoye-gelo .dh-sheet-close,.tool-deri-hoye-gelo .dh-story-skip,.tool-deri-hoye-gelo .dh-sheet-world button,.tool-deri-hoye-gelo .dh-sheet-endless{transition:transform 120ms var(--ease-out)}
+.tool-deri-hoye-gelo .dh-sheet-world button:active,.tool-deri-hoye-gelo .dh-sheet-endless:active{transform:scale(.985)}
 .tool-deri-hoye-gelo .dh-modes button[aria-checked=true]{border-color:var(--accent-deep);background:var(--accent-deep);color:#fff}
 .tool-deri-hoye-gelo .dh-mode-line{margin:0;max-width:400px;font-size:14px;line-height:1.5;color:var(--muted)}
 .tool-deri-hoye-gelo .dh-title-levels{min-height:44px;padding:6px 14px;border:0;border-radius:12px;background:none;color:var(--accent-deep);font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:4px}
@@ -41,8 +44,8 @@
 .tool-deri-hoye-gelo .gp-stage[data-immersive] .dh-lane{border-radius:12px}
 .tool-deri-hoye-gelo .dh-canvas{position:absolute;inset:0;display:block}
 .tool-deri-hoye-gelo .dh-lane::after{content:"";position:absolute;inset:0;z-index:2;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity 180ms var(--ease-out)}
-.tool-deri-hoye-gelo .dh-lane[data-edge=late]::after{opacity:1;box-shadow:inset 0 0 0 3px var(--near),inset 0 0 44px 10px #ff9d2eb3;animation:dh-glow .5s ease-in-out infinite alternate}
-.tool-deri-hoye-gelo .dh-lane[data-edge=hit]::after{opacity:1;box-shadow:inset 0 0 0 4px var(--danger),inset 0 0 60px 14px #e4574acc}
+.tool-deri-hoye-gelo .dh-lane[data-edge=late]::after{opacity:1;box-shadow:inset 0 0 0 3px var(--near),inset 0 0 44px 10px #ff9d2eb3;animation:dh-glow .5s ease-in-out infinite alternate} /* unslop-ignore: the lane edge lights amber when the jump is late, a danger cue */
+.tool-deri-hoye-gelo .dh-lane[data-edge=hit]::after{opacity:1;box-shadow:inset 0 0 0 4px var(--danger),inset 0 0 60px 14px #e4574acc} /* unslop-ignore: the lane edge lights red on a hit, a danger cue */
 @keyframes dh-glow{from{opacity:.6}to{opacity:1}}
 /* the progress line along the very top edge: how far to the gate */
 .tool-deri-hoye-gelo .dh-progress{position:absolute;left:0;top:0;z-index:3;width:100%;height:4px;background:var(--gold);transform:scaleX(0);transform-origin:left;pointer-events:none}
@@ -193,5 +196,5 @@
 /* slow mode and reduced motion: steady borders, no pulses */
 .tool-deri-hoye-gelo .dh[data-slow] .dh-sheet,.tool-deri-hoye-gelo .dh[data-slow] .dh-end,.tool-deri-hoye-gelo .dh[data-slow] .dh-lane::after,.tool-deri-hoye-gelo .dh[data-slow] .dh-finger,.tool-deri-hoye-gelo .dh[data-slow] .dh-intro,.tool-deri-hoye-gelo .dh[data-slow] .dh-clock,.tool-deri-hoye-gelo .dh[data-slow] .dh-bell-icon,.tool-deri-hoye-gelo .dh[data-slow] .dh-stumbles,.tool-deri-hoye-gelo .dh[data-slow] .dh-pages i{animation:none!important}
 .tool-deri-hoye-gelo .dh[data-slow] .dh-lane::after{transition:none}
-@media(prefers-reduced-motion:reduce){.tool-deri-hoye-gelo .dh-lane::after,.tool-deri-hoye-gelo .dh-finger,.tool-deri-hoye-gelo .dh-title-start,.tool-deri-hoye-gelo .dh-end,.tool-deri-hoye-gelo .dh-sheet,.tool-deri-hoye-gelo .dh-clock,.tool-deri-hoye-gelo .dh-bell-icon{animation:none!important}.tool-deri-hoye-gelo .dh-title-start:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){.tool-deri-hoye-gelo .dh-intro,.tool-deri-hoye-gelo .dh-stumbles,.tool-deri-hoye-gelo .dh-pages i,.tool-deri-hoye-gelo .dh-lane::after,.tool-deri-hoye-gelo .dh-finger,.tool-deri-hoye-gelo .dh-title-start,.tool-deri-hoye-gelo .dh-end,.tool-deri-hoye-gelo .dh-sheet,.tool-deri-hoye-gelo .dh-clock,.tool-deri-hoye-gelo .dh-bell-icon{animation:none!important}.tool-deri-hoye-gelo .dh-title-start:hover{transform:none}.tool-deri-hoye-gelo .dh-modes button:active,.tool-deri-hoye-gelo .dh-title-levels:active,.tool-deri-hoye-gelo .dh-sheet-close:active,.tool-deri-hoye-gelo .dh-story-skip:active,.tool-deri-hoye-gelo .dh-sheet-world button:active,.tool-deri-hoye-gelo .dh-sheet-endless:active,.tool-deri-hoye-gelo .dh-end-choices button:active{transform:none}}
 @media(max-width:430px){.tool-deri-hoye-gelo .dh-end-choices{grid-template-columns:1.25fr 1fr 1fr;gap:5px}.tool-deri-hoye-gelo .dh-end-choices button{padding:6px 4px;font-size:14px;white-space:nowrap}.tool-deri-hoye-gelo .dh-end-choices kbd{display:none}}

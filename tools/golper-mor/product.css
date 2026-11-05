@@ -108,12 +108,12 @@
 .gm-scene .gm-cloud{animation:gm-cloud 18s ease-in-out infinite alternate}
 .gm-scene .gm-cloud-b{animation-duration:24s;animation-direction:alternate-reverse}
 .gm-scene .gm-mote{animation:gm-mote 7s ease-in-out infinite}
-.gm-scene .gm-leaf{animation:gm-leaf 6s ease-in infinite}
+.gm-scene .gm-leaf{animation:gm-leaf 6s linear infinite}
 .gm-scene .gm-prop-kite{transform-box:fill-box;transform-origin:50% 100%;animation:gm-sway 3.4s ease-in-out infinite}
 .gm-bubble{transform-box:fill-box;transform-origin:30% 100%;animation:gm-pop 260ms 200ms var(--gm-out) both}
 
 @keyframes gm-rise{from{opacity:0;transform:translate(var(--dx,12px),var(--dy,0))}to{opacity:1;transform:none}}
-@keyframes gm-pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+@keyframes gm-pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes gm-tap{0%,100%{transform:scale(1);opacity:.95}50%{transform:scale(.72);opacity:.6}}
 @keyframes gm-bob{0%,12%,100%{transform:translateY(0)}6%{transform:translateY(-4px)}}
 @keyframes gm-breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.018)}}

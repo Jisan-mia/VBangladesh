@@ -1,4 +1,4 @@
-.tool-handi-bhanga{--accent:#b4372a;--accent-deep:#7d2117;--ink:#2b1a10;--muted:#5d4a3a;--paper:#fff6e2;--paper-edge:#ecd49c;--sky:#8fd0ea;--sky-low:#fdebc8;--cloth:#fbf0d6;--ball:#2f4a8a}
+.tool-handi-bhanga{--accent:#b4372a;--accent-deep:#7d2117;--ink:#2b1a10;--muted:#5d4a3a;--paper:#fff6e2;--paper-edge:#ecd49c;--sky:#8fd0ea;--sky-low:#fdebc8;--cloth:#fbf0d6;--ball:#2f4a8a;--ease-out:cubic-bezier(0.23,1,0.32,1)}
 .tool-handi-bhanga .hb-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* the play column fills the player's stage: HUD, the stall (as big as fits), and at the end the result under a smaller stall */
@@ -26,7 +26,10 @@
 .tool-handi-bhanga .hb-title-level small{font-size:14px;line-height:1.45;opacity:.88}
 .tool-handi-bhanga .hb-title-level .hb-title-target{font-size:13px;font-weight:600;color:var(--accent-deep);opacity:1}
 .tool-handi-bhanga .hb-modes{display:flex;gap:6px;justify-content:center}
-.tool-handi-bhanga .hb-modes button{min-height:40px;padding:4px 14px;border:1.5px solid #2b1a1033;border-radius:999px;background:#ffffffd9;color:var(--ink);font-size:15px;font-weight:600;cursor:pointer}
+.tool-handi-bhanga .hb-modes button{min-height:40px;padding:4px 14px;border:1.5px solid #2b1a1033;border-radius:8px;background:#ffffffd9;color:var(--ink);font-size:15px;font-weight:600;cursor:pointer}
+.tool-handi-bhanga .hb-modes button,.tool-handi-bhanga .hb-title-more button,.tool-handi-bhanga .hb-badge,.tool-handi-bhanga .hb-story-skip,.tool-handi-bhanga .hb-sheet-close,.tool-handi-bhanga .hb-sheet-world button{transition:transform 120ms var(--ease-out)}
+.tool-handi-bhanga .hb-modes button:active,.tool-handi-bhanga .hb-title-more button:active,.tool-handi-bhanga .hb-badge:active,.tool-handi-bhanga .hb-story-skip:active,.tool-handi-bhanga .hb-sheet-close:active{transform:scale(.97)}
+.tool-handi-bhanga .hb-sheet-world button:active:not(:disabled){transform:scale(.985)}
 .tool-handi-bhanga .hb-modes button[aria-checked=true]{border-color:var(--accent);background:var(--accent);color:#fff}
 .tool-handi-bhanga .hb-mode-line{margin:0;max-width:400px;font-size:13px;line-height:1.45;opacity:.88}
 .tool-handi-bhanga .hb-title-more{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
@@ -42,7 +45,7 @@
 .tool-handi-bhanga .hb-story-dots{display:flex;gap:6px}
 .tool-handi-bhanga .hb-story-dots i{width:8px;height:8px;border-radius:50%;background:#2b1a1033}
 .tool-handi-bhanga .hb-story-dots i[data-on=true]{background:var(--accent)}
-.tool-handi-bhanga .hb-story-skip{position:absolute;top:10px;right:10px;z-index:1;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:4px 12px;border:1.5px solid #2b1a1033;border-radius:999px;background:#fff;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;touch-action:none}
+.tool-handi-bhanga .hb-story-skip{position:absolute;top:10px;right:10px;z-index:1;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:4px 12px;border:1.5px solid #2b1a1033;border-radius:8px;background:#fff;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;touch-action:none}
 .tool-handi-bhanga .hb-story-skip span{width:14px;height:14px;border-radius:50%;background:conic-gradient(var(--accent) 0 0,#2b1a101a 0)}
 .tool-handi-bhanga .hb-story-skip[data-holding] span{animation:hb-hold .6s linear forwards}
 @keyframes hb-hold{from{background:conic-gradient(var(--accent) 0%,#2b1a101a 0)}to{background:conic-gradient(var(--accent) 100%,#2b1a101a 0)}}
@@ -56,39 +59,39 @@
 .tool-handi-bhanga .hb-mid b{font-family:var(--font-display);font-size:14px;color:var(--accent-deep);white-space:nowrap}
 .tool-handi-bhanga .hb-lastcall{padding:1px 12px;border-radius:99px;background:#ffd166;color:var(--ink)!important;animation:gx-pop .4s cubic-bezier(.3,1.6,.5,1) both}
 .tool-handi-bhanga .hb-bossbar{position:relative;display:block;width:clamp(90px,28vw,150px);height:8px;border-radius:99px;background:#2b1a101f;overflow:hidden}
-.tool-handi-bhanga .hb-bossbar i{position:absolute;inset:0;width:var(--fill,100%);border-radius:inherit;background:linear-gradient(90deg,#c1352b,#f2a531);transition:width .2s linear}
+.tool-handi-bhanga .hb-bossbar i{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(90deg,#c1352b,#f2a531);transform:scaleX(var(--fill,1));transform-origin:left;transition:transform .2s linear}
 .tool-handi-bhanga .hb-right{display:grid;justify-items:end;gap:3px}
 .tool-handi-bhanga .hb-score{margin:0;font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums}
 .tool-handi-bhanga .hb-score b{font-family:var(--font-display);font-size:24px;line-height:1;color:var(--ink)}
 .tool-handi-bhanga .hb-balls{display:flex;gap:4px;margin:0;padding:0;list-style:none}
-.tool-handi-bhanga .hb-balls li{width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f2c26b 0 28%,var(--ball) 30%);box-shadow:0 0 0 1.5px #1d2f5e;transition:transform .3s,opacity .3s}
+.tool-handi-bhanga .hb-balls li{width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f2c26b 0 28%,var(--ball) 30%);box-shadow:0 0 0 1.5px #1d2f5e;transition:transform 220ms var(--ease-out),opacity 220ms var(--ease-out)}
 .tool-handi-bhanga .hb-balls li[data-gone]{opacity:.2;transform:translateY(5px) scale(.8)}
 .tool-handi-bhanga .hb-line{display:block;flex:none;height:3px;margin:-3px 2px 0;border-radius:2px;background:#2b1a1020}
-.tool-handi-bhanga .hb-line span{display:block;width:0;height:100%;border-radius:inherit;background:var(--accent);transition:width .3s ease-out}
+.tool-handi-bhanga .hb-line span{display:block;width:100%;height:100%;border-radius:inherit;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform 300ms var(--ease-out)}
 
 /* ---- the stall ---- */
 .tool-handi-bhanga .hb-stage{position:relative;flex:1 1 auto;min-height:260px;border-radius:16px;overflow:hidden;background:linear-gradient(var(--sky),var(--sky-low));box-shadow:0 8px 22px #2b1a1033;touch-action:none;user-select:none;-webkit-user-select:none;cursor:pointer}
 .tool-handi-bhanga .hb-canvas{position:absolute;inset:0;display:block}
-.tool-handi-bhanga .hb-stage::after,.tool-handi-bhanga .hb-stage::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;transition:box-shadow .2s}
+.tool-handi-bhanga .hb-stage::after,.tool-handi-bhanga .hb-stage::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none}
 /* danger: the last ball pulses the whole frame; a ball the লাঠি can't reach glows the bottom edge on its side; wind glows the side it blows from */
-.tool-handi-bhanga .hb-stage[data-edge~=last]::after{box-shadow:inset 0 0 0 4px #e0452c,inset 0 0 38px 4px #f2a531aa;animation:hb-glow .8s ease-in-out infinite alternate}
+.tool-handi-bhanga .hb-stage[data-edge~=last]::after{box-shadow:inset 0 0 0 4px #e0452c,inset 0 0 38px 4px #f2a531aa;animation:hb-glow .8s ease-in-out infinite alternate} /* unslop-ignore: the last ball pulses the frame red, a danger cue */
 .tool-handi-bhanga .hb-stage[data-edge~=fall-l]::before{background:radial-gradient(ellipse 62% 20% at 16% 100%,#e0452ccc,#f2a53155 55%,transparent 80%),linear-gradient(90deg,#e0452c 0 50%,transparent 50%) bottom/100% 5px no-repeat}
 .tool-handi-bhanga .hb-stage[data-edge~=fall-r]::before{background:radial-gradient(ellipse 62% 20% at 84% 100%,#e0452ccc,#f2a53155 55%,transparent 80%),linear-gradient(90deg,transparent 50%,#e0452c 50%) bottom/100% 5px no-repeat}
 .tool-handi-bhanga .hb-stage[data-edge~=wind-l]:not([data-edge~=last])::after{box-shadow:inset 5px 0 0 0 #5aa7d6,inset 30px 0 30px -12px #5aa7d6aa}
 .tool-handi-bhanga .hb-stage[data-edge~=wind-r]:not([data-edge~=last])::after{box-shadow:inset -5px 0 0 0 #5aa7d6,inset -30px 0 30px -12px #5aa7d6aa}
 @keyframes hb-glow{from{opacity:.55}to{opacity:1}}
-.tool-handi-bhanga .hb-gust{position:absolute;top:8px;display:none;padding:3px 9px;border-radius:999px;background:#ffffffe6;color:#1d5f8a;font-size:13px;font-weight:700;pointer-events:none}
+.tool-handi-bhanga .hb-gust{position:absolute;top:8px;display:none;padding:3px 9px;border-radius:6px;background:#ffffffe6;color:#1d5f8a;font-size:13px;font-weight:700;pointer-events:none}
 .tool-handi-bhanga .hb-gust[data-side=l]{left:8px}
 .tool-handi-bhanga .hb-gust[data-side=r]{right:8px}
 .tool-handi-bhanga .hb-stage[data-edge~=wind-l] .hb-gust[data-side=l],.tool-handi-bhanga .hb-stage[data-edge~=wind-r] .hb-gust[data-side=r]{display:block}
-.tool-handi-bhanga .hb-coach{position:absolute;left:8px;right:8px;top:8px;margin:0;padding:4px 10px;border-radius:999px;background:#fff6e2e6;color:var(--ink);font-size:13px;font-weight:600;text-align:center;pointer-events:none}
+.tool-handi-bhanga .hb-coach{position:absolute;left:8px;right:8px;top:8px;margin:0;padding:4px 10px;border-radius:8px;background:#fff6e2e6;color:var(--ink);font-size:13px;font-weight:600;text-align:center;pointer-events:none}
 .tool-handi-bhanga .hb-coach-keys{display:none}
 @media(hover:hover) and (pointer:fine){.tool-handi-bhanga .hb-coach-touch{display:none}.tool-handi-bhanga .hb-coach-keys{display:inline}}
 
 /* ---- the end: a smaller stall, the result under it ---- */
 .tool-handi-bhanga .hb[data-screen=over] .hb-stage{flex:1 1 0;min-height:150px;cursor:default}
 .tool-handi-bhanga .hb[data-screen=over] .hb-end{flex:none}
-.tool-handi-bhanga .hb-end{display:grid;justify-items:center;gap:2px;padding:10px 14px 6px;border-radius:18px;background:var(--paper);border:1.5px solid var(--paper-edge);text-align:center;animation:hb-rise .35s ease-out both}
+.tool-handi-bhanga .hb-end{display:grid;justify-items:center;gap:2px;padding:10px 14px 6px;border-radius:18px;background:var(--paper);border:1.5px solid var(--paper-edge);text-align:center;animation:hb-rise 260ms var(--ease-out) both}
 .tool-handi-bhanga .hb-end[data-slow]{animation:none}
 .tool-handi-bhanga .hb-end p{margin:0}
 .tool-handi-bhanga .hb-end-kicker{font-family:var(--font-display);font-weight:700;color:var(--accent-deep)}
@@ -109,7 +112,7 @@
 .tool-handi-bhanga .hb-end-choices kbd{display:inline-grid;place-items:center;width:20px;height:20px;margin-right:5px;border-radius:6px;background:#ffffff40;font:inherit;font-size:12px}
 .tool-handi-bhanga .hb-end-choices .kit-secondary kbd{background:#2b1a1014}
 .tool-handi-bhanga .hb-end-choices em{position:absolute;top:-9px;right:6px;padding:0 7px;border-radius:99px;background:#ffd166;color:var(--ink);font-size:10px;font-style:normal;font-weight:700;line-height:1.6}
-@keyframes hb-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes hb-rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 /* ---- the level list ---- */
 .tool-handi-bhanga .hb-sheet{position:absolute;inset:0;z-index:5;overflow:auto;padding:14px;border-radius:18px;background:#fffaf0;box-shadow:0 10px 40px #2b1a1040;overscroll-behavior:contain}
@@ -152,4 +155,5 @@
 }
 .tool-handi-bhanga .hb[data-slow] .hb-title-start,.tool-handi-bhanga .hb[data-slow] .hb-stage::after,.tool-handi-bhanga .hb[data-slow] .hb-lastcall{animation:none!important}
 .tool-handi-bhanga .hb[data-slow] .hb-stage[data-edge~=last]::after{opacity:1}
-@media(prefers-reduced-motion:reduce){.tool-handi-bhanga .hb-title-start,.tool-handi-bhanga .hb-stage::after,.tool-handi-bhanga .hb-lastcall,.tool-handi-bhanga .hb-end{animation:none!important}}
+.tool-handi-bhanga .hb[data-slow] :is(.hb-bossbar i,.hb-line span,.hb-balls li,.hb-modes button,.hb-sheet-world button){transition:none}
+@media(prefers-reduced-motion:reduce){.tool-handi-bhanga .hb-bossbar i,.tool-handi-bhanga .hb-line span,.tool-handi-bhanga .hb-balls li{transition:none}.tool-handi-bhanga .hb-balls li[data-gone]{transform:none}.tool-handi-bhanga .hb-modes button:active,.tool-handi-bhanga .hb-title-more button:active,.tool-handi-bhanga .hb-badge:active,.tool-handi-bhanga .hb-story-skip:active,.tool-handi-bhanga .hb-sheet-close:active,.tool-handi-bhanga .hb-sheet-world button:active:not(:disabled){transform:none}.tool-handi-bhanga .hb-title-start,.tool-handi-bhanga .hb-stage::after,.tool-handi-bhanga .hb-lastcall,.tool-handi-bhanga .hb-end{animation:none!important}}

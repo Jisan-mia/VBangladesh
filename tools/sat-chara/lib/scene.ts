@@ -2,6 +2,7 @@
 // the three places, bricks, steps and the stool, mud, the seven pieces, the ball, the thrower's arm and the two cousins.
 // draw.hot.ts puts the cached pieces together every frame.
 import { makeRng, pick } from "../../../shared/game-core";
+import { dressWall, markPiles, shadeAround, wearGround } from "./place";
 import { BALL_R, GROUND, H, HAND_X, HAND_Y, STONES, W, WALL_X, type World } from "./world";
 
 type Ctx = CanvasRenderingContext2D;
@@ -182,6 +183,7 @@ export function drawBackground(c: Ctx, scene: number, w: World, extra: number) {
     c.fillStyle = "#d6a23a"; c.fillRect(194, 128, 14, 16);
     c.fillStyle = "#ffe8a8"; c.beginPath(); c.arc(201, 136, 4, 0, Math.PI * 2); c.fill();
   }
+  dressWall(c, scene);
   rect(c, 0, GROUND - 10, W, 10, p.skirt);
   rect(c, 0, GROUND, W, H - GROUND, p.ground);
   c.fillStyle = p.groundLine;
@@ -194,13 +196,16 @@ export function drawBackground(c: Ctx, scene: number, w: World, extra: number) {
     const rng = makeRng(scene * 31 + 7);
     for (let k = 0; k < 70; k++) c.fillRect(pick(rng, W), GROUND + 3 + pick(rng, H - GROUND - 4), 3 + pick(rng, 6), 1);
   }
+  wearGround(c, scene);
   rect(c, 0, GROUND, W, 1.5, "rgba(0,0,0,0.18)");
   rect(c, WALL_X, -extra, W - WALL_X, GROUND + extra, p.corner);
   rect(c, WALL_X, -extra, 2, GROUND + extra, "rgba(0,0,0,0.15)");
   // A chalk line to throw from.
   rect(c, HAND_X + 12, GROUND + 1, 3, H - GROUND - 6, "rgba(255,255,255,0.75)");
+  markPiles(c, w);
   for (let k = 0; k < w.mud.length; k += 2) drawMud(c, w.mud[k], w.mud[k + 1]);
   for (let b = 0; b < w.blocks.length; b += 4) drawBlock(c, w.blocks[b], w.blocks[b + 1], w.blocks[b + 2], w.blocks[b + 3], w.looks[b / 4]);
+  shadeAround(c, w, extra);
 }
 
 /** A school-shirt sleeve and a hand reaching in from the left; `back` (0–1) draws it pulled back for a throw. */

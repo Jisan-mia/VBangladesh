@@ -374,7 +374,7 @@ export function RoshiGame() {
     const warn = !heaving && ((now & WARN) !== 0 || (coming & (WARN | HEAVE)) !== 0);
     if (bossRef.current && (fill !== v.breath || heaving !== v.heaving)) {
       v.breath = fill; v.heaving = heaving;
-      bossRef.current.style.setProperty("--fill", `${Math.max(0, fill)}%`);
+      bossRef.current.style.setProperty("--fill", `${Math.max(0, fill) / 100}`);
       bossRef.current.dataset.heave = heaving ? "1" : "";
     }
     let edge = "";

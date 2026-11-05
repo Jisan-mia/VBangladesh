@@ -92,7 +92,8 @@
 .ab-tile.wrong .ab-pic,.ab-tile.wrong .ab-letter,.ab-tile.wrong .ab-glyph{opacity:.6}
 .ab-chip-why{position:absolute;right:-6px;top:-12px;display:grid;place-items:center;min-width:42px;height:42px;padding:0 6px;border-radius:50%;background:#fff;border:2.5px solid #6e5444;color:#6e5444;font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1;animation:ab-pop 220ms var(--ease-out)}
 .ab-why-pic{position:absolute;right:-8px;top:-14px;width:46px!important;height:46px!important;padding:2px;border-radius:8px;background:#fff;border:2.5px solid #6e5444;animation:ab-pop 220ms var(--ease-out)}
-.ab-tile.hint{background:#fff3c9;outline:3px dashed #d99a00;outline-offset:5px;animation:ab-glow 1.2s ease-in-out infinite}
+.ab-tile.hint{background:#fff3c9;outline:3px dashed #d99a00;outline-offset:5px}
+.ab-tile.hint::before{content:"";position:absolute;inset:-3px;border-radius:inherit;box-shadow:0 0 0 9px #f2a90055;opacity:0;pointer-events:none;animation:ab-glow 1.2s ease-in-out infinite}
 .ab-tile.right{background:var(--good);border-color:var(--good);box-shadow:0 6px 0 #1c5c39;animation:ab-pop 260ms var(--ease-out)}
 .ab-tile.right .ab-key{color:#fff}
 .ab-tile.right .ab-letter{color:#fff}
@@ -204,26 +205,30 @@ html.ab-printing body>:not(.ab-print-root){display:none!important}
 .ab-more .kk-gate-open a{display:inline-flex;align-items:center;min-height:44px;text-decoration:none}
 
 /* ---- motion ---- */
+.ab-chip,.ab-close{transition:transform 120ms var(--ease-out)}
+.ab-chip:active,.ab-close:active{transform:scale(.97)}
+.ab[data-slow] .ab-chip,.ab[data-slow] .ab-close{transition:none}
+.ab[data-slow] .ab-chip:active,.ab[data-slow] .ab-close:active{transform:none}
 @keyframes ab-pop{0%{transform:scale(.92)}60%{transform:scale(1.06)}100%{transform:none}}
 @keyframes ab-fade{from{opacity:0}to{opacity:1}}
 @keyframes ab-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes ab-swing{0%{transform:translateY(-10px) rotate(-2deg);opacity:0}100%{transform:none;opacity:1}}
 @keyframes ab-wobble{0%,100%{transform:none}20%{transform:translateX(-7px) rotate(-3deg)}50%{transform:translateX(6px) rotate(2.5deg)}80%{transform:translateX(-3px)}}
-@keyframes ab-glow{50%{box-shadow:0 6px 0 var(--w-deep),0 0 0 9px #f2a90055}}
+@keyframes ab-glow{50%{opacity:1}}
 @keyframes ab-bob{50%{transform:translateY(5px)}}
 @keyframes ab-blink{50%{opacity:.35}}
 @keyframes ab-nudge{50%{transform:translateX(5px)}}
 @keyframes ab-tap{0%,100%{transform:translate(8px,10px)}45%,60%{transform:translate(0,0)}}
 @keyframes ab-ripple{0%,40%{opacity:0;r:4}55%{opacity:.5}100%{opacity:0;r:16}}
-@keyframes ab-star{0%{transform:scale(.5) rotate(-20deg);opacity:0}100%{transform:none;opacity:1}}
+@keyframes ab-star{0%{transform:scale(.8) rotate(-20deg);opacity:0}100%{transform:none;opacity:1}}
 
 /* ধীরে খেলো and reduced motion: nothing swings, wobbles, pulses or loops; a short fade stays so a change still reads; rings stay steady */
 .ab[data-slow] .ab-arrow,.ab[data-slow] .ab-blank,.ab[data-slow] .ab-tile.wrong,.ab[data-slow] .ab-tile.right,.ab[data-slow] .ab-tile.hint,.ab[data-slow] .ab-finger,.ab[data-slow] .ab-ripple,.ab[data-slow] .ab-strip li,.ab[data-slow] .ab-basket li,.ab[data-slow] .ab-chip-why,.ab[data-slow] .ab-end-stars .gx-stars .on{animation:none}
 .ab[data-slow] .ab-sign,.ab[data-slow] .ab-word-card,.ab[data-slow] .ab-next{animation:ab-fade 160ms linear both}
 .ab[data-slow] .ab-ripple{opacity:.4}
-.ab[data-slow] .ab-tile.hint{box-shadow:0 6px 0 var(--w-deep),0 0 0 7px #f2a90066}
+.ab[data-slow] .ab-tile.hint::before{animation:none;opacity:.8}
 .ab[data-slow] .ab-stall,.ab[data-slow] .ab-tile{transition:none}
-@media (prefers-reduced-motion:reduce){.ab-arrow,.ab-blank,.ab-tile.wrong,.ab-tile.right,.ab-tile.hint,.ab-finger,.ab-ripple,.ab-strip li,.ab-basket li,.ab-chip-why,.ab-end-stars .gx-stars .on{animation:none}.ab-sign,.ab-word-card,.ab-next{animation:ab-fade 160ms linear both}.ab-ripple{opacity:.4}.ab-tile,.ab-stall{transition:none}}
+@media (prefers-reduced-motion:reduce){.ab-tile.hint::before{animation:none;opacity:.8}.ab-chip:active,.ab-close:active{transform:none}.ab-arrow,.ab-blank,.ab-tile.wrong,.ab-tile.right,.ab-tile.hint,.ab-finger,.ab-ripple,.ab-strip li,.ab-basket li,.ab-chip-why,.ab-end-stars .gx-stars .on{animation:none}.ab-sign,.ab-word-card,.ab-next{animation:ab-fade 160ms linear both}.ab-ripple{opacity:.4}.ab-tile,.ab-stall{transition:none}}
 
 /* short stages and narrow phones: smaller sign, tiles that still keep 96 px */
 @media (max-height:700px){.ab-sign{min-height:96px}.ab-sign-letters{font-size:64px}.ab-sign-pic{grid-template-columns:84px auto}.ab-sign-pic .ab-pic{width:84px;height:84px}.ab-sign-glyph{height:88px}.ab-say{min-height:100px}.ab-say>p{font-size:16px}}

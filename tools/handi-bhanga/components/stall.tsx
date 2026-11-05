@@ -311,10 +311,10 @@ export function HandiStall() {
     // The HUD's live parts, written straight to the DOM only when they change.
     if (g.boss >= 0 && bossBar.current) {
       const fill = Math.round(Math.max(0, g.hits[g.boss]) / g.maxHits[g.boss] * 100);
-      if (fill !== view.boss) { view.boss = fill; bossBar.current.style.setProperty("--fill", `${fill}%`); }
+      if (fill !== view.boss) { view.boss = fill; bossBar.current.style.setProperty("--fill", `${fill / 100}`); }
     }
     const done = g.total ? Math.round(g.broken / g.total * 100) : 0;
-    if (done !== view.line && progress.current) { view.line = done; progress.current.style.width = `${done}%`; }
+    if (done !== view.line && progress.current) { view.line = done; progress.current.style.transform = `scaleX(${done / 100})`; }
     // Danger at the edges: the last ball, a ball the লাঠি won't reach, the wind.
     const playing = g.phase === "aim" || g.phase === "fly";
     const land = sc.land === sc.land ? (sc.land < g.stick ? "fall-l" : "fall-r") : "";

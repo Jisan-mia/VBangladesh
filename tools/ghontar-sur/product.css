@@ -188,7 +188,7 @@
 .gs-story-skip[data-holding] span{animation:gs-fill .6s linear forwards}
 
 /* ---- সব লেভেল ---- */
-.gs-sheet{position:absolute;inset:0;z-index:20;display:grid;align-items:start;background:#33200f59;animation:gs-fade .16s ease-out}
+.gs-sheet{position:absolute;inset:0;z-index:20;display:grid;align-items:start;background:#33200f59;animation:gs-fade 160ms var(--ease-out)}
 .gs-sheet-card{animation:gs-up .22s var(--ease-out) both;display:grid;gap:10px;max-height:min(100%,100svh);overflow:auto;overscroll-behavior:contain;padding:14px 14px 18px;border-radius:6px;background:#fbf8f2;box-shadow:0 20px 40px -20px #000a}
 .gp-stage .gs-sheet-card{max-height:var(--stage-h,100%)}
 .gs-sheet header{position:relative;padding-right:52px}
@@ -258,7 +258,10 @@
 .gs-name small{font-weight:500;color:var(--muted)}
 .gs-name input{min-height:46px;padding:0 12px;border:1.5px solid var(--line);border-radius:6px;font:inherit;font-weight:500}
 
+.gs :is(.gs-badge-btn,.gs-step,.gs-sheet-close,.gs-chip,.gs-all,.gs-world button){transition:transform 120ms var(--ease-out)}
+.gs :is(.gs-badge-btn,.gs-step,.gs-sheet-close,.gs-chip,.gs-all,.gs-world button):active:not(:disabled){transform:scale(.97)}
 /* ---- calm: no swing, no pulse, no float; the lit bell still changes colour and shape ---- */
+.gs[data-calm] :is(.gs-badge-btn,.gs-step,.gs-sheet-close,.gs-chip,.gs-all,.gs-world button):active:not(:disabled){transform:none}
 .gs[data-calm] .gs-bell,.gs[data-calm] .gs-badge,.gs[data-calm] .gs-body{transition:none}
 .gs[data-calm] .gs-bell[data-lit] .gs-badge{transform:none}
 .gs[data-calm] .gs-hearts i,.gs[data-calm] .gs-grade,.gs[data-calm] .gs-ribbon li,.gs[data-calm] .gs-sheet,.gs[data-calm] .gs-sheet-card,.gs[data-calm] .gs-giant[data-gone] .gs-giant-bell,.gs[data-calm] .gs-story-bell .gs-bellsvg,.gs[data-calm] .gs-story-finger{animation:none!important}
@@ -276,4 +279,4 @@
 @keyframes gs-fade{from{opacity:0}to{opacity:1}}
 @keyframes gs-fill{to{background:conic-gradient(var(--trim) 360deg,#ffffff33 0deg)}}
 @keyframes gs-tapfinger{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(0,-8px) scale(.85)}}
-@media (prefers-reduced-motion:reduce){.gs-giant-bell,.gs-hearts i,.gs-ribbon li,.gs-story-bell,.gs-story-finger,.gs-story-bell .gs-bellsvg,.gs-sheet-card,.gs-memo,.gs-memo-tune li{animation:none!important}.gs-bellsvg,.gs-giant-sign,.gs-ribbon li{transition:none!important}.gs-rack:not([data-ready]) .gs-bellsvg{animation:gs-fadein .2s both!important}.gs-bell[data-lit] .gs-badge{transform:none}}
+@media (prefers-reduced-motion:reduce){.gs :is(.gs-badge-btn,.gs-step,.gs-sheet-close,.gs-chip,.gs-all,.gs-world button):active:not(:disabled){transform:none}.gs-giant-bell,.gs-hearts i,.gs-ribbon li,.gs-story-bell,.gs-story-finger,.gs-story-bell .gs-bellsvg,.gs-sheet-card,.gs-memo,.gs-memo-tune li{animation:none!important}.gs-bellsvg,.gs-giant-sign,.gs-ribbon li{transition:none!important}.gs-rack:not([data-ready]) .gs-bellsvg{animation:gs-fadein .2s both!important}.gs-bell[data-lit] .gs-badge{transform:none}}

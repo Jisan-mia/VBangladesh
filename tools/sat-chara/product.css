@@ -1,4 +1,4 @@
-.tool-sat-chara{--accent:#b4472a;--accent-deep:#7d2c17;--ink:#2b1d14;--muted:#6b4f3a;--paper:#fbefd9;--paper-edge:#e7d2ae;--clay:#c46d3f;--ball:#d8473a;--gold:#f2a900;--danger:#e8742c}
+.tool-sat-chara{--accent:#b4472a;--accent-deep:#7d2c17;--ink:#2b1d14;--muted:#6b4f3a;--paper:#fbefd9;--paper-edge:#e7d2ae;--clay:#c46d3f;--ball:#d8473a;--gold:#f2a900;--danger:#e8742c;--ease-out:cubic-bezier(0.23,1,0.32,1)}
 .tool-sat-chara kbd{display:inline-grid;place-items:center;min-width:18px;margin-right:6px;padding:0 5px;border-radius:6px;background:#2b1d1414;font:700 12px/1.5 var(--font-bengali)}
 
 /* The play column fills the player's stage: the HUD row, the lane (as big as fits), one line under it. Nothing scrolls while playing. */
@@ -14,36 +14,36 @@
 .tool-sat-chara .sc-badge b{font-family:var(--font-display);font-size:15px}
 .tool-sat-chara .sc-badge span{color:var(--muted)}
 .tool-sat-chara .sc-badge i{padding:0 7px;border-radius:99px;background:#2b1d1414;font-style:normal;font-size:12px}
-.tool-sat-chara .sc-boss{display:grid;justify-items:center;margin:0;opacity:0;transition:opacity .3s ease-out}
+.tool-sat-chara .sc-boss{display:grid;justify-items:center;margin:0;opacity:0;transition:opacity 300ms var(--ease-out)}
 .tool-sat-chara .sc-boss[data-on]{opacity:1}
 .tool-sat-chara .sc-boss b{font-family:var(--font-display);font-size:14px;color:#a12a1f;white-space:nowrap}
 .tool-sat-chara .sc-boss span{font-size:12px;font-weight:700;color:var(--muted)}
 .tool-sat-chara .sc-tuni{padding:2px 10px;border-radius:99px;background:#e0a93a;color:#2b1d14!important;animation:sc-pulse 1s ease-in-out infinite alternate}
 .tool-sat-chara .sc-count{display:flex;align-items:center;justify-self:end;gap:8px}
 .tool-sat-chara .sc-balls{display:flex;gap:4px;margin:0;padding:7px 8px;border-radius:12px;background:var(--paper)}
-.tool-sat-chara .sc-balls i{width:15px;height:15px;border-radius:50%;border:2px solid var(--ball);background:transparent;transition:transform .2s ease-out,opacity .2s ease-out}
+.tool-sat-chara .sc-balls i{width:15px;height:15px;border-radius:50%;border:2px solid var(--ball);background:transparent;transition:transform 200ms var(--ease-out),opacity 200ms var(--ease-out)}
 .tool-sat-chara .sc-balls i[data-on=true]{background:radial-gradient(circle at 35% 35%,#ffffff80 0 18%,transparent 20%),var(--ball)}
 .tool-sat-chara .sc-balls i[data-on=false]{transform:scale(.75);opacity:.5}
 .tool-sat-chara .sc-down{display:flex;align-items:baseline;gap:2px;min-height:38px;margin:0;padding:4px 11px;border-radius:12px;background:var(--ink);color:#f6e7c8;font-family:var(--font-display);font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
 .tool-sat-chara .sc-down b{display:inline-block;font-size:22px;color:#ffd27a}
 
 /* ---- the lane: press anywhere and pull back; only here does a finger stop the page from scrolling ---- */
-.tool-sat-chara .sc-lane{position:relative;display:flex;flex:1;align-items:flex-end;justify-content:center;min-height:0;border-radius:16px;overflow:hidden;background:#f7dcae;touch-action:none;cursor:crosshair;box-shadow:0 6px 18px #2b1d1422}
-.tool-sat-chara .sc[data-world="1"] .sc-lane{background:#cfe6f2}
-.tool-sat-chara .sc[data-world="2"] .sc-lane{background:#f6c99a}
+.tool-sat-chara .sc-lane{position:relative;display:flex;flex:1;align-items:flex-end;justify-content:center;min-height:0;border-radius:16px;overflow:hidden;background:#a7c1cc;touch-action:none;cursor:crosshair;box-shadow:0 6px 18px #2b1d1422}
+.tool-sat-chara .sc[data-world="1"] .sc-lane{background:#b5c6cf}
+.tool-sat-chara .sc[data-world="2"] .sc-lane{background:#cb8b6a}
 .tool-sat-chara .sc-lane canvas{display:block}
-.tool-sat-chara .sc-lane::after{content:"";position:absolute;inset:0;border-radius:16px;pointer-events:none;transition:box-shadow .3s ease-out}
-.tool-sat-chara .sc-lane[data-danger]::after{box-shadow:inset 0 0 0 3px var(--danger),inset 0 0 30px 8px #ff8a2c55;animation:sc-danger 1s ease-in-out infinite alternate}
-.tool-sat-chara .sc-lane[data-stacking]:not([data-danger])::after{box-shadow:inset -6px 0 0 0 #e0a93a,inset -26px 0 24px -14px #e0a93a88}
+.tool-sat-chara .sc-lane::after{content:"";position:absolute;inset:0;border-radius:16px;pointer-events:none;opacity:0;transition:opacity 300ms var(--ease-out)}
+.tool-sat-chara .sc-lane[data-danger]::after{opacity:1;box-shadow:inset 0 0 0 3px var(--danger),inset 0 0 30px 8px #ff8a2c55;animation:sc-danger 1s ease-in-out infinite alternate} /* unslop-ignore: the last ball lights the lane edge orange, a danger cue */
+.tool-sat-chara .sc-lane[data-stacking]:not([data-danger])::after{opacity:1;box-shadow:inset -6px 0 0 0 #e0a93a,inset -26px 0 24px -14px #e0a93a88}
 .tool-sat-chara .sc[data-slow] .sc-lane::after,.tool-sat-chara .sc[data-slow] .sc-tuni{animation:none}
-@keyframes sc-danger{from{box-shadow:inset 0 0 0 2px var(--danger),inset 0 0 14px 3px #ff8a2c33}to{box-shadow:inset 0 0 0 4px #ff7a2c,inset 0 0 34px 10px #ff8a2c66}}
+@keyframes sc-danger{from{opacity:.55}}
 @keyframes sc-pulse{from{filter:brightness(1)}to{filter:brightness(1.15)}}
 .tool-sat-chara .sc-line{position:absolute;left:6%;right:6%;top:0;height:5px;border-radius:0 0 4px 4px;background:#00000022;overflow:hidden;pointer-events:none}
-.tool-sat-chara .sc-line span{display:block;height:100%;background:var(--gold);transition:width .3s ease-out}
+.tool-sat-chara .sc-line span{display:block;height:100%;background:var(--gold);transform-origin:left;transition:transform 300ms var(--ease-out)}
 .tool-sat-chara .sc-news{display:flex;align-items:center;justify-content:center;min-height:38px;margin:0;padding:0 8px;font-size:15px;font-weight:700;line-height:1.35;text-align:center}
 
 /* ---- title: over the lane; the pile is the start button ---- */
-.tool-sat-chara .sc-title{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 12px 0;border-radius:18px;background:linear-gradient(180deg,#fff7e8f2 0,#fbefd9f2 60%,#fbefd9 100%);text-align:center;overflow:hidden;animation:sc-fade .22s ease-out}
+.tool-sat-chara .sc-title{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 12px 0;border-radius:18px;background:linear-gradient(180deg,#fff7e8f2 0,#fbefd9f2 60%,#fbefd9 100%);text-align:center;overflow:hidden;animation:sc-fade 220ms var(--ease-out)}
 .tool-sat-chara .sc[data-world="1"] .sc-title{background:linear-gradient(180deg,#eef7fbf2 0,#fbefd9f2 60%,#fbefd9 100%)}
 .tool-sat-chara .sc[data-world="2"] .sc-title{background:linear-gradient(180deg,#fde3c6f2 0,#fbefd9f2 60%,#fbefd9 100%)}
 @keyframes sc-fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -53,10 +53,10 @@
 .tool-sat-chara .sc-title-place{margin:0;font-size:13px;font-weight:600;color:var(--muted)}
 .tool-sat-chara .sc-title-art{display:flex;flex:1 1 auto;align-items:center;justify-content:center;width:100%;min-height:140px}
 .tool-sat-chara .sc-title-go{position:relative;display:grid;justify-items:center;padding:0;border:0;background:none;color:inherit;cursor:pointer;touch-action:manipulation}
-.tool-sat-chara .sc-title-go canvas{display:block;filter:drop-shadow(0 10px 12px #2b1d1433);transition:transform .12s ease-out}
-.tool-sat-chara .sc-title-go:hover canvas{transform:translateY(-2px)}
+.tool-sat-chara .sc-title-go canvas{display:block;filter:drop-shadow(0 10px 12px #2b1d1433);transition:transform 120ms var(--ease-out)}
+@media (hover:hover) and (pointer:fine){.tool-sat-chara .sc-title-go:hover canvas{transform:translateY(-2px)}}
 .tool-sat-chara .sc-title-go:active canvas{transform:scale(.97) translateY(2px)}
-.tool-sat-chara .sc-title-go span{margin-top:-14px;padding:8px 52px;border-radius:20px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.3;box-shadow:0 6px 0 var(--accent-deep),0 16px 26px -14px #000a;transition:transform .08s ease-out,box-shadow .08s ease-out}
+.tool-sat-chara .sc-title-go span{margin-top:-14px;padding:8px 52px;border-radius:20px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.3;box-shadow:0 6px 0 var(--accent-deep),0 16px 26px -14px #000a;transition:transform 100ms var(--ease-out)}
 .tool-sat-chara .sc-title-go:active span{transform:translateY(4px);box-shadow:0 2px 0 var(--accent-deep)}
 .tool-sat-chara .sc-title-go:focus-visible span{outline:3px solid var(--ink);outline-offset:3px}
 .tool-sat-chara .sc-title-card{display:grid;justify-items:center;gap:7px;align-self:stretch;margin:0 -12px;padding:10px 12px 14px;background:var(--paper);border-top:3px solid var(--accent)}
@@ -66,8 +66,8 @@
 .tool-sat-chara .sc-title-level span i,.tool-sat-chara .sc-sheet-name i{margin-left:8px;padding:1px 8px;border-radius:99px;background:#a12a1f;color:#fff;font-style:normal;font-size:12px;font-weight:800;vertical-align:middle}
 .tool-sat-chara .sc-title-level small{font-size:14px;line-height:1.45;color:var(--ink);opacity:.85}
 .tool-sat-chara .sc-title-target{font-size:13px!important;font-weight:700;color:var(--accent-deep)!important;opacity:1!important}
-.tool-sat-chara .sc-chips{display:flex;padding:3px;border-radius:999px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--paper-edge)}
-.tool-sat-chara .sc-chips button{display:inline-flex;align-items:center;min-height:40px;padding:0 13px;border:0;border-radius:999px;background:none;color:var(--ink);font-size:15px;font-weight:700;cursor:pointer;transition:background .15s ease-out}
+.tool-sat-chara .sc-chips{display:flex;padding:3px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--paper-edge)}
+.tool-sat-chara .sc-chips button{display:inline-flex;align-items:center;min-height:40px;padding:0 13px;border:0;border-radius:9px;background:none;color:var(--ink);font-size:15px;font-weight:700;cursor:pointer}
 .tool-sat-chara .sc-chips button[aria-checked=true]{background:var(--ink);color:#fff}
 .tool-sat-chara .sc-chips button[aria-checked=true] kbd{background:#ffffff2e}
 .tool-sat-chara .sc-chip-line{margin:0;font-size:13px;line-height:1.4;color:var(--muted)}
@@ -75,8 +75,8 @@
 .tool-sat-chara .sc-title-more span{font-weight:600;color:#ffd27a}
 
 /* ---- the end slip, over the lower lane ---- */
-.tool-sat-chara .sc-end{position:absolute;left:0;right:0;bottom:0;z-index:3;display:grid;justify-items:center;gap:6px;max-height:calc(100% - 50px);padding:14px 14px 12px;overflow:auto;border-radius:18px 18px 16px 16px;background:#fff8ecf7;box-shadow:0 -10px 30px #2b1d1433;text-align:center;animation:sc-rise .28s cubic-bezier(.2,.9,.3,1.1)}
-@keyframes sc-rise{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.tool-sat-chara .sc-end{position:absolute;left:0;right:0;bottom:0;z-index:3;display:grid;justify-items:center;gap:6px;max-height:calc(100% - 50px);padding:14px 14px 12px;overflow:auto;border-radius:18px 18px 16px 16px;background:#fff8ecf7;box-shadow:0 -10px 30px #2b1d1433;text-align:center;animation:sc-rise 260ms var(--ease-out)}
+@keyframes sc-rise{from{transform:translateY(32px);opacity:0}to{transform:none;opacity:1}}
 .tool-sat-chara .sc[data-slow] .sc-end,.tool-sat-chara .sc[data-slow] .sc-title{animation:none}
 .tool-sat-chara .sc-end p{margin:0}
 .tool-sat-chara .sc-end-kicker{font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.35}
@@ -95,7 +95,7 @@
 .tool-sat-chara .sc-end-card{min-height:40px}
 
 /* ---- the level list: a choice screen over everything ---- */
-.tool-sat-chara .sc-sheet{position:absolute;inset:0;z-index:5;padding:10px 12px 14px;overflow:auto;border-radius:18px;background:#fbefd9fa;animation:sc-fade .2s ease-out}
+.tool-sat-chara .sc-sheet{position:absolute;inset:0;z-index:5;padding:10px 12px 14px;overflow:auto;border-radius:18px;background:#fbefd9fa;animation:sc-fade 200ms var(--ease-out)}
 .tool-sat-chara .sc-sheet-head{position:sticky;top:-10px;z-index:1;display:flex;align-items:center;justify-content:space-between;margin:-10px -12px 6px;padding:10px 12px 6px;background:#fbefd9}
 .tool-sat-chara .sc-sheet-head h2{margin:0;font-family:var(--font-display);font-size:22px}
 .tool-sat-chara .sc-sheet-head h2 span{margin-left:6px;font-size:15px;color:var(--muted)}
@@ -134,6 +134,12 @@
   .tool-sat-chara .sc-end-choices{grid-template-columns:1fr 1fr}
   .tool-sat-chara .sc-end-choices li:first-child{grid-column:1/-1}
 }
+.tool-sat-chara .sc-badge,.tool-sat-chara .sc-chips button,.tool-sat-chara .sc-title-more,.tool-sat-chara .sc-sheet-close,.tool-sat-chara .sc-sheet-world button{transition:transform 120ms var(--ease-out),background-color 150ms ease-out}
+.tool-sat-chara .sc-badge:active:not(:disabled),.tool-sat-chara .sc-chips button:active:not(:disabled),.tool-sat-chara .sc-title-more:active:not(:disabled),.tool-sat-chara .sc-sheet-close:active:not(:disabled),.tool-sat-chara .sc-sheet-world button:active:not(:disabled){transform:scale(.97)}
+.tool-sat-chara .sc[data-slow] :is(.sc-line span,.sc-balls i,.sc-boss,.sc-badge,.sc-chips button,.sc-title-more,.sc-sheet-close,.sc-sheet-world button){transition:none}
+.tool-sat-chara .sc[data-slow] :is(.sc-badge,.sc-chips button,.sc-title-more,.sc-sheet-close,.sc-sheet-world button):active{transform:none}
 @media (prefers-reduced-motion:reduce){
-  .tool-sat-chara .sc-lane::after,.tool-sat-chara .sc-tuni,.tool-sat-chara .sc-end,.tool-sat-chara .sc-title{animation:none}
+  .tool-sat-chara .sc-lane::after,.tool-sat-chara .sc-tuni,.tool-sat-chara .sc-end,.tool-sat-chara .sc-title,.tool-sat-chara .sc-sheet{animation:none}
+  .tool-sat-chara .sc-line span,.tool-sat-chara .sc-balls i,.tool-sat-chara .sc-boss,.tool-sat-chara .sc-badge,.tool-sat-chara .sc-chips button,.tool-sat-chara .sc-title-more,.tool-sat-chara .sc-sheet-close,.tool-sat-chara .sc-sheet-world button{transition:none}
+  .tool-sat-chara .sc-badge:active:not(:disabled),.tool-sat-chara .sc-chips button:active:not(:disabled),.tool-sat-chara .sc-title-more:active:not(:disabled),.tool-sat-chara .sc-sheet-close:active:not(:disabled),.tool-sat-chara .sc-sheet-world button:active:not(:disabled),.tool-sat-chara .sc-balls i[data-on=false]{transform:none}
 }

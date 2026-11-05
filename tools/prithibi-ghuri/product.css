@@ -14,7 +14,7 @@
 
 /* ---- title: the envelope is the start button ---- */
 .pg-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:8px 4px;text-align:center}
-.pg-env{position:relative;display:block;width:min(100%,440px);padding:12px 12px 36px;border:0;background:repeating-linear-gradient(-45deg,#c8383a 0 14px,#fff 14px 20px,#1d4f91 20px 34px,#fff 34px 40px);box-shadow:0 9px 0 var(--w-deep);cursor:pointer;transition:transform 140ms var(--ease-out),box-shadow 140ms var(--ease-out)}
+.pg-env{position:relative;display:block;width:min(100%,440px);padding:12px 12px 36px;border:0;background:repeating-linear-gradient(-45deg,#c8383a 0 14px,#fff 14px 20px,#1d4f91 20px 34px,#fff 34px 40px);box-shadow:0 9px 0 var(--w-deep);cursor:pointer;transition:transform 140ms var(--ease-out)}
 .pg-env:active{transform:translateY(5px) scale(.99);box-shadow:0 4px 0 var(--w-deep)}
 .pg-env:focus-visible{outline:4px solid var(--w-deep);outline-offset:6px}
 .pg-env-map{display:block;overflow:hidden;background:#fffdf6;padding:6px}
@@ -44,7 +44,7 @@
 .pg-slots li[data-now]{border-color:var(--w-accent)}
 .pg-slots li[data-got]{border:3px solid var(--w-accent);background:var(--w-soft)}
 .pg-slot-pic{width:28px;height:28px;animation:pg-pop 220ms var(--ease-land) both}
-@keyframes pg-pop{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
+@keyframes pg-pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
 
 /* ---- the map in a plane window ---- */
 .pg-window{overflow:hidden;border:6px solid #fff;border-radius:24px;box-shadow:0 0 0 2px var(--w-edge),0 6px 0 var(--w-edge)}
@@ -62,7 +62,7 @@
 
 /* destinations: three big buttons, at least 96 px tall, 12 px apart */
 .pg-go-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0;padding:0;list-style:none}
-.pg-go{position:relative;display:grid;justify-items:center;align-content:center;gap:6px;width:100%;min-height:112px;padding:10px 4px;border:3px solid var(--w-edge);border-radius:10px;background:#fff;box-shadow:0 5px 0 var(--w-edge);cursor:pointer;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out)}
+.pg-go{position:relative;display:grid;justify-items:center;align-content:center;gap:6px;width:100%;min-height:112px;padding:10px 4px;border:3px solid var(--w-edge);border-radius:10px;background:#fff;box-shadow:0 5px 0 var(--w-edge);cursor:pointer;transition:transform 120ms var(--ease-out)}
 .pg-go:active:not(:disabled){transform:translateY(4px) scale(.97);box-shadow:0 1px 0 var(--w-edge)}
 .pg-go:disabled{cursor:default}
 .pg-go.was{opacity:.6;border-style:dashed;box-shadow:none}
@@ -107,7 +107,7 @@
 .pg-dots li.done{background:var(--w-accent)}
 
 /* ➜: a big picture button, 128 × 104 */
-.pg-next{position:relative;display:grid;place-items:center;justify-self:center;width:128px;height:104px;border:0;border-radius:10px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);cursor:pointer;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out);animation:pg-in 200ms var(--ease-out) backwards}
+.pg-next{position:relative;display:grid;place-items:center;justify-self:center;width:128px;height:104px;border:0;border-radius:10px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);cursor:pointer;transition:transform 120ms var(--ease-out);animation:pg-in 200ms var(--ease-out) backwards}
 .pg-next:active{transform:translateY(4px) scale(.97);box-shadow:0 2px 0 var(--w-deep)}
 .pg-next:focus-visible{outline:4px solid var(--w-deep);outline-offset:4px}
 .pg-next svg{width:56px;height:56px;fill:none;stroke:currentColor;stroke-width:4.4;stroke-linecap:round;stroke-linejoin:round}
@@ -130,7 +130,7 @@
 .pg-n2{grid-template-columns:repeat(2,minmax(112px,150px))}
 .pg-n3{grid-template-columns:repeat(3,minmax(96px,124px))}
 .pg-n4{grid-template-columns:repeat(2,minmax(112px,150px))}
-.pg-choice{position:relative;display:grid;place-items:center;align-content:center;gap:2px;width:100%;aspect-ratio:1;min-height:100px;padding:8px;border:3px solid var(--w-accent);border-radius:12px;background:#fff;box-shadow:0 6px 0 var(--w-deep);cursor:pointer;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out),opacity 200ms var(--ease-out);animation:pg-in 200ms var(--ease-out) backwards;animation-delay:calc(var(--i,0) * 35ms)}
+.pg-choice{position:relative;display:grid;place-items:center;align-content:center;gap:2px;width:100%;aspect-ratio:1;min-height:100px;padding:8px;border:3px solid var(--w-accent);border-radius:12px;background:#fff;box-shadow:0 6px 0 var(--w-deep);cursor:pointer;transition:transform 120ms var(--ease-out),opacity 200ms var(--ease-out);animation:pg-in 200ms var(--ease-out) backwards;animation-delay:calc(var(--i,0) * 35ms)}
 .pg-choice:active{transform:translateY(4px) scale(.97);box-shadow:0 2px 0 var(--w-deep)}
 .pg-choice:focus-visible{outline:4px solid var(--w-deep);outline-offset:3px}
 .pg-choice .pg-pic{width:100%;height:100%}
@@ -140,8 +140,9 @@
 .pg-choice-badge{width:56%;height:auto;aspect-ratio:1}
 .pg-choice-name{font-size:16px;font-weight:700;line-height:1.3}
 .pg-choice.tried{border-style:dashed;opacity:.55}
-.pg-choice.hint{background:#fff6d8;outline:3px dashed var(--gold);outline-offset:5px;animation:pg-glow 1.4s ease-in-out infinite}
-@keyframes pg-glow{50%{box-shadow:0 6px 0 var(--w-deep),0 0 0 9px #f2a90055}}
+.pg-choice.hint{background:#fff6d8;outline:3px dashed var(--gold);outline-offset:5px}
+.pg-choice.hint::before{content:"";position:absolute;inset:-3px;border-radius:inherit;box-shadow:0 0 0 9px #f2a90055;opacity:0;pointer-events:none;animation:pg-glow 1.4s ease-in-out infinite}
+@keyframes pg-glow{50%{opacity:1}}
 
 /* the ghost finger that shows the first tap */
 .pg-finger{position:absolute;right:-8px;bottom:-24px;z-index:3;width:44px;height:58px;pointer-events:none;animation:pg-tap 1.4s ease-in-out infinite}
@@ -160,14 +161,14 @@
 .pg-end-stars .gx-stars .on:nth-child(1){animation-delay:.35s}
 .pg-end-stars .gx-stars .on:nth-child(2){animation-delay:.65s}
 .pg-end-stars .gx-stars .on:nth-child(3){animation-delay:.95s}
-@keyframes pg-star{from{transform:scale(.6) rotate(-20deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes pg-star{from{transform:scale(.8) rotate(-20deg);opacity:0}to{transform:none;opacity:1}}
 .pg-end-count{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;margin:0;font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.5}
 .pg-end-count b{color:var(--w-deep)}
 .pg-end-news{margin:0;font-size:20px;font-weight:700;line-height:1.6;color:var(--w-deep)}
 .pg-end-method{margin:0;font-size:17px;line-height:1.6}
 .pg-end-off{margin:0;max-width:340px;font-size:17px;line-height:1.6;color:var(--muted)}
 .pg-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(340px,100%)}
-.pg-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:0;border-radius:10px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.4;cursor:pointer;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out)}
+.pg-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:0;border-radius:10px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.4;cursor:pointer;transition:transform 120ms var(--ease-out)}
 .pg-big:active{transform:translateY(4px) scale(.97);box-shadow:0 2px 0 var(--w-deep)}
 .pg-big svg{width:48px;height:48px;fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
 .pg-big-done{background:#fff;color:var(--w-deep);box-shadow:inset 0 0 0 3px var(--w-accent),0 6px 0 var(--w-deep)}
@@ -209,9 +210,9 @@
 /* ---- keys skip the ceremony; ধীরে খেলো and reduced motion: nothing drifts, waves, pings or lands ---- */
 .pg[data-instant] .pg-card-wrap,.pg[data-instant] .pg-choice,.pg[data-instant] .pg-next,.pg[data-instant] .pg-stamp{animation:none}
 .pg[data-slow] *,.pg[data-slow] *::before,.pg[data-slow] *::after{animation:none!important;transition:none!important}
-.pg[data-slow] .pg-choice.hint{box-shadow:0 6px 0 var(--w-deep),0 0 0 6px #f2a90066}
+.pg[data-slow] .pg-choice.hint::before{opacity:.8}
 .pg[data-slow] .pg-ripple{opacity:.4}
-@media (prefers-reduced-motion:reduce){.pg *,.pg *::before,.pg *::after{animation:none!important;transition:none!important}.pg-choice.hint{box-shadow:0 6px 0 var(--w-deep),0 0 0 6px #f2a90066}.pg-ripple{opacity:.4}}
+@media (prefers-reduced-motion:reduce){.pg *,.pg *::before,.pg *::after{animation:none!important;transition:none!important}.pg-choice.hint::before{opacity:.8}.pg-ripple{opacity:.4}}
 
 /* short stages and narrow phones: a smaller card and pictures that still keep 96 px */
 @media (max-height:700px){.pg-q{min-height:2.8em;font-size:17px}.pg-lower{min-height:206px}.pg-choice{min-height:96px}.pg-card{min-height:230px;padding:12px}.pg-pic-big{width:min(130px,36vw)}.pg-prompt{min-height:100px}}
