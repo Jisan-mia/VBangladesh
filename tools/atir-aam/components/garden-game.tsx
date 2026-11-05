@@ -242,7 +242,7 @@ export function GardenGame() {
     if (!next) {
       sound.thump();
       const dx = dir === 2 ? -6 : dir === 3 ? 6 : 0, dy = dir === 0 ? -6 : dir === 1 ? 6 : 0;
-      if (!live.current.slow) bedBox.current?.animate?.([{ transform: "translate(0,0)" }, { transform: `translate(${dx}px,${dy}px)` }, { transform: "translate(0,0)" }], { duration: 200, easing: "ease-out" });
+      if (!live.current.slow) bedBox.current?.animate?.([{ transform: "translate(0,0)" }, { transform: `translate(${dx}px,${dy}px)` }, { transform: "translate(0,0)" }], { duration: 200, easing: "cubic-bezier(0.23, 1, 0.32, 1)" });
       return;
     }
     const now = performance.now();
@@ -493,7 +493,7 @@ export function GardenGame() {
               {finale ? (
                 <div className="aa-boss" aria-label={`${finale}: আর ${bn(left)} চাল`}>
                   <b>{finale}</b>
-                  <span className="aa-meter"><i style={{ width: `${Math.round((left / Math.max(1, limit)) * 100)}%` }} /></span>
+                  <span className="aa-meter"><i style={{ transform: `scaleX(${Math.max(0, Math.min(1, left / Math.max(1, limit)))})` }} /></span>
                 </div>
               ) : (
                 <div className="aa-goal" aria-label={levelRun ? `লক্ষ্য: ${goalText(spec.target, spec.count)}` : `পরের ধাপ: ${stageName(nextStage)}`}>

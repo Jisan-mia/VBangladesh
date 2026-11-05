@@ -28,7 +28,7 @@
 .np-key:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
 /* the HUD's one HTML part: the river badge, top-left; it opens সব নদী */
-.np-badge{position:absolute;top:10px;left:10px;z-index:2;display:inline-flex;align-items:center;gap:7px;max-width:30%;min-height:32px;padding:0 11px 0 9px;border:0;border-radius:999px;background:#20282699;color:var(--cream);font-size:13px;font-weight:700;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.np-badge{position:absolute;top:10px;left:10px;z-index:2;display:inline-flex;align-items:center;gap:7px;max-width:30%;min-height:32px;padding:0 11px 0 9px;border:0;border-radius:8px;background:#20282699;color:var(--cream);font-size:13px;font-weight:700;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
 .np-badge i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px #ffd84a33}
 
 /* ---- the title ---- */
@@ -36,12 +36,12 @@
 .np-start[data-finale]{background:linear-gradient(#3a0f0a55 0%,#2a0c12c8 30%,#0f2a2eee 100%)}
 .np-go{display:grid;justify-items:center;width:min(100%,330px);padding:2px 8px 10px;border:0;border-radius:26px;background:none;color:var(--night);font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.1;cursor:pointer}
 .np-go-art{display:block;width:100%;height:clamp(130px,26vh,220px)}
-.np-go span{margin-top:-8px;padding:6px 30px 8px;border-radius:999px;background:var(--gold);box-shadow:0 5px 0 #b8860b,0 16px 30px -12px #000c}
+.np-go span{margin-top:-8px;padding:6px 30px 8px;border-radius:10px;background:var(--gold);box-shadow:0 5px 0 #b8860b,0 16px 30px -12px #000c}
 .np-go:active:not(:disabled){transform:translateY(3px) scale(.97)}
 .np-go:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
 .np-pick{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px;width:min(100%,380px)}
 .np-pick-name h2{margin:0;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.3;color:#fff}
-.np-world-badge{justify-self:center;margin:0 auto 2px;padding:1px 10px;width:max-content;max-width:100%;border-radius:999px;background:#ffffff1a;color:var(--cream);font-size:12px;font-weight:700}
+.np-world-badge{justify-self:center;margin:0 auto 2px;padding:1px 10px;width:max-content;max-width:100%;border-radius:5px;background:#ffffff1a;color:var(--cream);font-size:12px;font-weight:700}
 .np-world-badge[data-finale]{background:#c2361f;color:#fff}
 .np-got{margin:0;color:var(--gold);font-size:15px;letter-spacing:2px}
 .np-got span{color:#ffffff40}
@@ -70,7 +70,7 @@
 .np-dots{display:flex;gap:6px}
 .np-dots i{width:8px;height:8px;border-radius:50%;background:#22302c33}
 .np-dots i[data-on]{background:var(--ink)}
-.np-skip{position:absolute;bottom:14px;right:14px;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border:0;border-radius:999px;background:#0f2a2eb3;color:var(--cream);font-size:13px;font-weight:700;overflow:hidden;cursor:pointer}
+.np-skip{position:absolute;bottom:14px;right:14px;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border:0;border-radius:8px;background:#0f2a2eb3;color:var(--cream);font-size:13px;font-weight:700;overflow:hidden;cursor:pointer}
 .np-skip span{width:14px;height:14px;border-radius:50%;border:2px solid var(--cream);background:linear-gradient(var(--cream),var(--cream)) left/0% 100% no-repeat}
 .np-skip[data-holding] span{background-size:100% 100%;transition:background-size .6s linear}
 
@@ -98,7 +98,7 @@
 .np-choices button{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;font-size:18px}
 .tool-nodi-par .np-choices .kit-secondary{background:transparent;color:var(--cream);border-color:#fff8e688}
 .np-choices kbd{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:#ffffff2e;font-family:inherit;font-size:13px;font-weight:700}
-.np-choices em{padding:1px 8px;border-radius:999px;background:#ffffff33;font-size:11px;font-style:normal;font-weight:800}
+.np-choices em{padding:1px 8px;border-radius:5px;background:#ffffff33;font-size:11px;font-style:normal;font-weight:800}
 @media (pointer:coarse){.np-choices kbd{display:none}}
 .tool-nodi-par .np-see{min-height:44px;color:var(--cream);font-size:15px}
 
@@ -121,7 +121,7 @@
 .np-world button{position:relative;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"key name stars" "key line line";align-items:center;column-gap:10px;row-gap:1px;width:100%;min-height:58px;padding:7px 10px;border:1.5px solid #fff8e62a;border-radius:12px;background:#ffffff10;color:var(--cream);text-align:left;cursor:pointer}
 .np-world button kbd{grid-area:key;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#ffffff1c;font-family:inherit;font-size:13px;font-weight:700}
 .np-row-name{grid-area:name;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:15px}
-.np-row-name em{padding:1px 8px;border-radius:999px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800}
+.np-row-name em{padding:1px 8px;border-radius:5px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800}
 .np-row-line{grid-area:line;font-size:12.5px;line-height:1.4;color:#e6efe9c0}
 .np-row-stars{grid-area:stars;display:flex;align-items:center;gap:1px;font-size:13px;line-height:1}
 .np-row-stars small{margin-right:6px;font-size:11px;font-weight:600;color:#e6efe9aa;font-variant-numeric:tabular-nums}

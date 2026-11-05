@@ -17,7 +17,7 @@
 
 /* ---- title: the card is the start button ---- */
 .sb-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:16px;min-height:0;padding:8px 4px;text-align:center}
-.sb-card{position:relative;display:block;width:min(100%,420px);padding:0 0 3px;border:0;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 3px var(--w-accent),0 10px 0 var(--w-deep);color:inherit;font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 140ms var(--ease-out),box-shadow 140ms var(--ease-out)}
+.sb-card{position:relative;display:block;width:min(100%,420px);padding:0 0 3px;border:0;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 3px var(--w-accent),0 10px 0 var(--w-deep);color:inherit;font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 140ms var(--ease-out)}
 .sb-card:active{transform:translateY(5px) scale(.99);box-shadow:inset 0 0 0 3px var(--w-accent),0 5px 0 var(--w-deep)}
 .sb-card:focus-visible{outline:4px solid var(--w-deep);outline-offset:6px}
 .sb-card-art{position:relative;display:grid;grid-template-columns:34% 1fr;align-items:center;gap:14px;margin:3px 3px 0;padding:22px 16px 34px;border-radius:5px 5px 0 0;background:var(--w-soft)}
@@ -26,7 +26,7 @@
 .sb-card-go{position:absolute;left:50%;bottom:-12px;display:inline-flex;align-items:center;gap:10px;padding:8px 30px 8px 20px;border-radius:8px;background:var(--w-accent);color:#fff;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.4;box-shadow:0 5px 0 var(--w-deep);transform:translateX(-50%);white-space:nowrap}
 .sb-card-go svg{width:30px;height:30px;fill:#fff}
 .sb-chips{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:min(100%,420px);margin-top:8px}
-.sb-chip{display:flex;align-items:center;justify-content:center;gap:10px;min-height:76px;min-width:0;padding:6px 10px;border:0;border-radius:8px;background:#fff;color:var(--ink);font:inherit;text-align:left;box-shadow:inset 0 0 0 2.5px var(--w-edge),0 4px 0 var(--w-edge);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out)}
+.sb-chip{display:flex;align-items:center;justify-content:center;gap:10px;min-height:76px;min-width:0;padding:6px 10px;border:0;border-radius:8px;background:#fff;color:var(--ink);font:inherit;text-align:left;box-shadow:inset 0 0 0 2.5px var(--w-edge),0 4px 0 var(--w-edge);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 120ms var(--ease-out)}
 .sb-chip:active{transform:translateY(3px) scale(.97);box-shadow:inset 0 0 0 2.5px var(--w-edge),0 1px 0 var(--w-edge)}
 .sb-chip:focus-visible{outline:4px solid var(--w-deep);outline-offset:3px}
 .sb-chip-ic{flex:none;width:36px;height:36px;color:var(--w-accent)}
@@ -56,7 +56,7 @@
 
 /* ---- the grid: one column per beat, high notes on top. The cell size follows the stage's height, so grid and controls fit. ---- */
 .sb-grid{display:grid;grid-template-columns:repeat(var(--steps),minmax(0,1fr));gap:6px;width:100%;max-width:min(100%,max(264px,calc((var(--stage-h,700px) - 330px) * var(--steps) / 5.4)));margin-inline:auto;padding:8px;border-radius:8px;background:var(--w-soft);box-shadow:inset 0 0 0 3px var(--w-accent),0 6px 0 var(--w-deep)}
-.sb-cell{position:relative;display:grid;place-items:center;aspect-ratio:1;min-width:0;padding:0;border:0;border-radius:5px;background:#fff;color:color-mix(in srgb,var(--c) 70%,#fff);font:inherit;font-size:16px;font-weight:800;line-height:1;box-shadow:inset 0 0 0 2px var(--w-edge),0 3px 0 var(--w-edge);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 100ms var(--ease-out),box-shadow 100ms var(--ease-out),background-color 120ms var(--ease-out)}
+.sb-cell{position:relative;display:grid;place-items:center;aspect-ratio:1;min-width:0;padding:0;border:0;border-radius:5px;background:#fff;color:color-mix(in srgb,var(--c) 70%,#fff);font:inherit;font-size:16px;font-weight:800;line-height:1;box-shadow:inset 0 0 0 2px var(--w-edge),0 3px 0 var(--w-edge);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 100ms var(--ease-out),background-color 120ms var(--ease-out)}
 .sb-cell span{pointer-events:none}
 .sb-cell:focus-visible{outline:4px solid var(--w-deep);outline-offset:2px;z-index:2}
 .sb-cell:active{transform:translateY(2px) scale(.95);box-shadow:inset 0 0 0 2px var(--w-edge),0 1px 0 var(--w-edge)}
@@ -79,7 +79,7 @@
 @keyframes sb-hint{50%{transform:scale(.96)}}
 @keyframes sb-wobble{25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
 .sb-ghost-at{position:absolute;left:50%;top:58%;width:0;height:0;pointer-events:none;z-index:3}
-.sb-ghost{position:absolute;left:-10px;top:-2px;width:44px;max-width:none;height:auto;filter:drop-shadow(0 2px 2px #0003);animation:sb-ghost 1.8s ease-in-out 2.5s infinite both}
+.sb-ghost{position:absolute;left:-10px;top:-2px;width:44px;max-width:none;height:auto;filter:drop-shadow(0 2px 0 #2b211833);animation:sb-ghost 1.8s ease-in-out 2.5s infinite both}
 @keyframes sb-ghost{0%{transform:translate(30px,40px);opacity:0}30%{transform:translate(0,0);opacity:1}45%{transform:scale(.86)}60%{transform:scale(1)}85%{opacity:1}100%{opacity:0}}
 
 /* one line for a parent or an older child; its height is fixed so the grid never jumps */
@@ -89,7 +89,7 @@
 /* ---- the controls: pictures with one word, at least 72 px; the keys a 3-year-old needs are 96 ---- */
 .sb-actions{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:10px}
 .sb-actions-free{grid-template-columns:1.5fr 1fr .8fr;grid-auto-flow:row}
-.sb-act{position:relative;display:grid;justify-items:center;align-content:center;gap:2px;min-height:84px;min-width:0;padding:6px 4px;border:0;border-radius:8px;background:#fff;color:var(--w-deep);font:inherit;font-family:var(--font-display);font-size:16px;font-weight:800;line-height:1.4;box-shadow:inset 0 0 0 3px var(--w-accent),0 5px 0 var(--w-deep);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out),background-color 120ms var(--ease-out)}
+.sb-act{position:relative;display:grid;justify-items:center;align-content:center;gap:2px;min-height:84px;min-width:0;padding:6px 4px;border:0;border-radius:8px;background:#fff;color:var(--w-deep);font:inherit;font-family:var(--font-display);font-size:16px;font-weight:800;line-height:1.4;box-shadow:inset 0 0 0 3px var(--w-accent),0 5px 0 var(--w-deep);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 120ms var(--ease-out),background-color 120ms var(--ease-out)}
 .sb-act:active{transform:translateY(4px) scale(.97);box-shadow:inset 0 0 0 3px var(--w-accent),0 1px 0 var(--w-deep)}
 .sb-act:focus-visible{outline:4px solid var(--w-deep);outline-offset:3px}
 .sb-act-ic{width:36px;height:36px}
@@ -102,7 +102,7 @@
 .sb-act:disabled{opacity:.42;cursor:default;box-shadow:inset 0 0 0 3px var(--w-edge),0 5px 0 var(--w-edge);background:#fff;color:var(--muted);transform:none}
 .sb-act .sb-ghost-at{top:62%}
 .sb-actions-next{display:flex;justify-content:center}
-.sb-next{display:grid;place-items:center;width:132px;height:104px;border:0;border-radius:8px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out);animation:sb-land 280ms var(--ease-land) 120ms backwards}
+.sb-next{display:grid;place-items:center;width:132px;height:104px;border:0;border-radius:8px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 120ms var(--ease-out);animation:sb-land 280ms var(--ease-land) 120ms backwards}
 .sb-next:active{transform:translateY(4px) scale(.97);box-shadow:0 2px 0 var(--w-deep)}
 .sb-next:focus-visible{outline:4px solid var(--w-deep);outline-offset:4px}
 .sb-next-ic{width:56px;height:56px}
@@ -121,7 +121,7 @@
 /* ---- end of a round: the tune as a picture, stars, counts, two picture buttons ---- */
 .sb-end{display:grid;justify-items:center;gap:10px;padding:4px 0 8px;text-align:center}
 .sb-end-tune{width:min(100%,230px);height:auto;padding:8px;border-radius:8px;background:var(--w-soft);box-sizing:content-box;box-shadow:inset 0 0 0 2px var(--w-edge)}
-.sb-end-tune[data-pop] rect.on{transform-box:fill-box;transform-origin:center;animation:sb-cell 240ms var(--ease-land) both;animation-delay:calc(var(--s) * 40ms)}
+.sb-end-tune[data-pop] rect.on{transform-box:fill-box;transform-origin:center;animation:sb-cell 240ms var(--ease-land) both;animation-delay:calc(min(var(--s),8) * 30ms)}
 @keyframes sb-cell{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
 .sb-end-stars .gx-stars{font-size:46px}
 .sb-end-stars .gx-stars .on{display:inline-block;animation:sb-star 360ms var(--ease-land) both}
@@ -134,7 +134,7 @@
 .sb-end-news{margin:0;font-size:19px;font-weight:700;line-height:1.6;color:var(--w-deep)}
 .sb-end-off{margin:0;max-width:340px;font-size:17px;line-height:1.6;color:var(--muted)}
 .sb-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(340px,100%)}
-.sb-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:0;border-radius:8px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out)}
+.sb-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:0;border-radius:8px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform 120ms var(--ease-out)}
 .sb-big:active{transform:translateY(4px) scale(.97);box-shadow:0 2px 0 var(--w-deep)}
 .sb-big:focus-visible{outline:4px solid var(--w-deep);outline-offset:4px}
 .sb-big-ic{width:48px;height:48px}

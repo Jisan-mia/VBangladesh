@@ -30,6 +30,20 @@ const Ping = ({ snd, at }: { snd: string; at: number }) => <rect className="ki-p
 const SKY = "#dff0fb", GROUND = "#d9c48f", GRASS = "#9ccf5a", WATER = "#3a8fd0", INK = "#33415c";
 const s = (n: number) => ({ animationDelay: `${n}s` });
 
+// Quiet scene dressing, painted in each scene's own colours: it never moves and never sits where the experiment happens.
+/** Grass blades along a ground edge. */
+const Tufts = ({ xs, y, color = "#6fa83a" }: { xs: readonly number[]; y: number; color?: string }) =>
+  <path d={xs.map(x => `M${x - 4} ${y}l2-7M${x} ${y}v-9M${x + 4} ${y}l-2-7`).join("")} stroke={color} strokeWidth="2" strokeLinecap="round" fill="none" />;
+/** Small dots: pebbles, soil specks, flowers. */
+const Specks = ({ pts, r = 2, fill }: { pts: readonly (readonly [number, number])[]; r?: number; fill: string }) =>
+  <>{pts.map(([x, y]) => <circle key={`${x}-${y}`} cx={x} cy={y} r={r} fill={fill} />)}</>;
+/** A flat cloud. */
+const Cloud = ({ x, y, k = 1, fill = "#ffffff" }: { x: number; y: number; k?: number; fill?: string }) =>
+  <path transform={`translate(${x} ${y}) scale(${k})`} d="M-20 8a9 9 0 0 1 6-15a11 11 0 0 1 20-4a9 9 0 0 1 12 10a6 6 0 0 1-2 9Z" fill={fill} opacity=".85" />;
+/** Short light dashes on a water surface. */
+const Glints = ({ pts, w = 14, color = "#e6f2fb" }: { pts: readonly (readonly [number, number])[]; w?: number; color?: string }) =>
+  <path d={pts.map(([x, y]) => `M${x} ${y}h${w}`).join("")} stroke={color} strokeWidth="2" strokeLinecap="round" opacity=".7" />;
+
 function Pond({ item }: { item: Item }) {
   const [a, b] = item.drop!, [fa, fb] = item.floats!;
   const lands = [fa ? "ki-float" : "ki-sink", fb ? "ki-float" : "ki-sink"];
@@ -41,6 +55,12 @@ function Pond({ item }: { item: Item }) {
     <rect y="96" width="320" height="124" fill={WATER} opacity=".62" />
     <path d="M0 96H320" stroke="#e6f2fb" strokeWidth="2" />
     <rect y="172" width="320" height="48" fill="#6d5a3a" opacity=".5" />
+    <Glints pts={[[14, 112], [52, 124], [138, 118], [160, 134], [186, 114], [262, 122], [288, 108], [30, 146], [150, 152], [240, 150]]} />
+    <Specks pts={[[24, 182], [70, 190], [130, 184], [190, 192], [250, 184], [296, 190]]} r={3} fill="#4a3d27" />
+    <path d="M12 96V58M18 96V66M306 96V60M300 96V68" stroke="#4f7a2e" strokeWidth="3" strokeLinecap="round" />
+    <path d="M10 62h5M304 64h5" stroke="#7a4a22" strokeWidth="6" strokeLinecap="round" />
+    <ellipse cx="30" cy="104" rx="11" ry="3.5" fill="#5fae4a" /><ellipse cx="292" cy="106" rx="9" ry="3" fill="#5fae4a" />
+    <Tufts xs={[8, 24, 296, 312]} y={96} color="#6fa83a" />
     {[105, 215].map((x, i) => <g key={x}>
       <At x={x} y={96} className="ki-ripple" style={s(0.75 + i * 0.35)}><ellipse rx="30" ry="6" fill="none" stroke="#ffffff" strokeWidth="2" /></At>
       {[[-14, -22], [0, -30], [14, -22]].map(([dx, dy], k) => <At key={k} x={x} y={94} className="ki-spray" style={{ ...s(0.75 + i * 0.35), "--sx": `${dx}px`, "--sy": `${dy}px` } as CSSProperties}>
@@ -61,6 +81,10 @@ function Ice() {
     <rect x="-10" y="-40" width="340" height="260" fill={SKY} />
     <rect x="160" y="-40" width="160" height="260" fill="#c9d9e3" />
     <rect y="132" width="320" height="88" fill={GROUND} />
+    <Tufts xs={[14, 138, 176, 300]} y={134} color="#8aa84a" />
+    <Specks pts={[[22, 156], [60, 168], [128, 158], [150, 172], [204, 160], [296, 166], [190, 176]]} fill="#b89f66" />
+    <Specks pts={[[40, 150], [270, 154]]} r={3} fill="#a88d54" />
+    <Cloud x={140} y={46} k={0.8} />
     <PicG pic="sun" x={42} y={34} size={58} />
     <PicG pic="shade" x={262} y={52} size={110} />
     <text x="80" y="30" className="ki-tag">রোদ</text><text x="186" y="30" className="ki-tag">ছায়া</text>
@@ -78,7 +102,10 @@ function Fall({ item }: { item: Item }) {
       <path d="M30 20h1M80 44h1M150 14h1M240 50h1M200 24h1M60 70h1M300 80h1" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" />
       <circle cx="280" cy="34" r="14" fill={WATER} /><path d="M272 28c4 0 6 4 4 8s3 6 8 4" stroke="#3f8f4a" strokeWidth="3" fill="none" />
     </>}
+    {!moon && <><Cloud x={42} y={66} k={0.9} /><Cloud x={282} y={44} k={0.7} /></>}
     <rect y="156" width="320" height="64" fill={moon ? "#9a9aa6" : GRASS} />
+    {!moon && <><Tufts xs={[20, 84, 150, 262, 300]} y={158} /><Specks pts={[[50, 168], [196, 172], [232, 164], [290, 174]]} fill="#f3e07a" /></>}
+    {moon && <Specks pts={[[100, 166], [160, 174], [200, 164], [288, 172]]} r={2.5} fill="#85858f" />}
     {moon && <path d="M40 166a14 4 0 0 0 28 0M230 170a18 5 0 0 0 36 0" stroke="#7a7a86" strokeWidth="3" fill="none" />}
     <rect x="70" y="10" width="180" height="6" rx="2" fill={moon ? "#59596a" : "#7a4a22"} />
     <At x={110} y={38} className={way(driftL)}><PicG pic={left} size={40} /></At>
@@ -96,7 +123,10 @@ function Shadow() {
   return <>
     <rect x="-10" y="-40" width="340" height="260" fill={SKY} />
     <At x={0} y={0} className="ki-dusk"><rect x="-10" y="-40" width="340" height="260" fill="#f6c99b" /></At>
+    <path d="M0 132C50 112 100 112 150 126C200 114 270 110 320 128V134H0Z" fill="#b9d98a" />
     <rect y="132" width="320" height="88" fill={GROUND} />
+    <Tufts xs={[20, 96, 232, 300]} y={134} color="#8aa84a" />
+    <Specks pts={[[34, 158], [80, 170], [200, 160], [262, 168], [300, 156]]} fill="#b89f66" />
     <At x={160} y={24} className="ki-sunset"><circle r="14" fill="#f6b93b" /></At>
     <At x={160} y={134} className="ki-shadow"><rect y="-3" width="20" height="7" rx="2" fill="#4a4a4a" opacity=".75" /></At>
     <rect x="156" y="66" width="8" height="70" rx="2" fill="#7a4a22" />
@@ -111,6 +141,10 @@ function Seed() {
     <rect x="208" y="20" width="108" height="200" rx="4" fill="#2d3047" />
     <path d="M208 20h10v160h-10z" fill="#444b6e" />
     <rect y="170" width="320" height="50" fill="#b07a3e" />
+    <path d="M0 172H208" stroke="#c99455" strokeWidth="3" />
+    <Specks pts={[[18, 184], [110, 192], [196, 186], [236, 196], [290, 188], [60, 200]]} r={2.5} fill="#8a5a2a" />
+    <Cloud x={118} y={52} k={0.8} />
+    <path d="M222 40h80M222 62h80" stroke="#444b6e" strokeWidth="2" />
     <PicG pic="potLight" x={60} y={134} size={72} /><PicG pic="potDry" x={160} y={134} size={72} /><PicG pic="potDark" x={262} y={134} size={72} />
     <At x={60} y={139} className="ki-grow" snd="grow"><path d="M0 0V-46" stroke="#3f8f4a" strokeWidth="4" strokeLinecap="round" /><ellipse cx="-11" cy="-40" rx="11" ry="6" fill="#3f8f4a" /><ellipse cx="11" cy="-48" rx="11" ry="6" fill="#4caf50" /></At>
     <At x={262} y={139} className="ki-grow" snd="hop" style={s(0.5)}><path d="M0 0C3 -30 -4 -50 2 -76" stroke="#ddd67a" strokeWidth="2.5" fill="none" strokeLinecap="round" /><ellipse cx="7" cy="-76" rx="6" ry="3" fill="#e8df7c" /></At>
@@ -129,7 +163,10 @@ function Sky() {
     </g>)}
     {[[70, 120], [140, 40], [260, 60], [290, 110], [210, 30]].map(([x, y]) => <circle key={x} cx={x} cy={y} r="3" fill={INK} opacity=".5" />)}
     <PicG pic="sun" x={38} y={32} size={58} />
+    <path d="M0 164C60 150 120 150 180 160C230 152 280 150 320 160V170H0Z" fill="#b9d98a" />
     <rect y="164" width="320" height="56" fill={GRASS} />
+    <Tufts xs={[16, 96, 176, 250, 304]} y={166} />
+    <Specks pts={[[40, 178], [128, 184], [214, 176], [280, 186]]} fill="#f3e07a" />
   </>;
 }
 
@@ -141,14 +178,19 @@ function Sunset() {
     <At x={90} y={46} className="ki-setting" snd="shimmer"><circle r="16" fill="#fff3c4" /></At>
     <path d="M0 150C60 142 120 146 180 150C230 154 280 146 320 150V220H0Z" fill="#3d5a3a" />
     <rect x="236" y="96" width="5" height="60" fill="#2c3e2a" /><path d="M238 96c-22-4-30-22-20-32 10 6 18 14 20 32c2-18 12-28 26-30-2 14-10 26-26 30Z" fill="#2c3e2a" />
-    <path d="M10 176h300" stroke="#2c3e2a" strokeWidth="2" opacity=".0" />
+    <path d="M132 150v-14l18-14l18 14v14Z" fill="#2c3e2a" />
+    <path d="M60 62l5-3l5 3M104 38l4-3l4 3M120 76l4-3l4 3" stroke="#2c3e2a" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+    <Tufts xs={[20, 62, 200, 286, 306]} y={152} color="#2c3e2a" />
   </>;
 }
 
 function Rain() {
   return <>
     <rect x="-10" y="-40" width="340" height="260" fill={SKY} />
+    <path d="M0 136C50 128 110 130 160 138V152H0Z" fill="#b9d98a" />
     <path d="M0 150C40 144 110 146 160 152V220H0Z" fill={WATER} />
+    <Glints pts={[[14, 170], [48, 182], [84, 168], [20, 196], [100, 190]]} />
+    <ellipse cx="30" cy="160" rx="10" ry="3" fill="#5fae4a" /><ellipse cx="96" cy="176" rx="8" ry="2.5" fill="#5fae4a" />
     <path d="M160 152C200 148 260 148 320 150V220H160Z" fill={GRASS} />
     <path d="M180 160v-10M200 162v-12M220 160v-10M240 162v-12M260 160v-10M280 162v-12M300 160v-10" stroke="#3f8f4a" strokeWidth="2.5" strokeLinecap="round" />
     <PicG pic="sun" x={34} y={30} size={50} />
@@ -167,6 +209,8 @@ function Moon() {
   const phases = [0, 0.125, 0.25, 0.375, 0.5];
   return <>
     <rect x="-10" y="-40" width="340" height="260" fill="#141a33" />
+    <path d="M70 -10h1M120 8h1M214 -14h1M258 14h1M300 36h1M40 100h1M96 132h1M226 130h1M290 120h1M270 80h1M60 10h1M200 98h1" stroke="#e6e9f2" strokeWidth="2.5" strokeLinecap="round" opacity=".7" />
+    <path d="M0 196C60 184 120 190 180 192C240 186 290 188 320 192V220H0Z" fill="#1e2548" />
     <path d="M0 30H22M0 60H22M0 90H22M0 120H22" stroke="#f6b93b" strokeWidth="3" strokeLinecap="round" />
     <circle cx="160" cy="74" r="52" fill="none" stroke="#4b5378" strokeWidth="1.5" strokeDasharray="4 5" />
     <circle cx="160" cy="74" r="14" fill={WATER} />
@@ -186,7 +230,12 @@ function Magnet({ item }: { item: Item }) {
   const pulled = item.answer;
   return <>
     <rect x="-10" y="-40" width="340" height="260" fill={SKY} />
+    <Cloud x={52} y={26} k={0.8} /><Cloud x={270} y={30} k={0.7} />
+    <rect y="180" width="320" height="40" fill={GROUND} />
+    <Tufts xs={[14, 102, 206, 306]} y={182} color="#8aa84a" />
+    <ellipse cx="160" cy="182" rx="140" ry="5" fill="#8a5a2a" opacity=".25" />
     <rect x="20" y="140" width="280" height="10" rx="2" fill="#b07a3e" /><path d="M40 150v28M280 150v28" stroke="#8a5a2a" strokeWidth="6" />
+    <path d="M34 145h30M112 145h22M190 145h34M250 145h20" stroke="#8a5a2a" strokeWidth="1.5" strokeLinecap="round" opacity=".7" />
     {item.choices.map((choice, k) => k === pulled ? null : <PicG key={k} pic={choice.pics[0]} x={SLOTS[k]} y={118} size={44} />)}
     <At x={SLOTS[pulled]} y={118} className={`ki-pick ki-pick-${pulled}`}><PicG pic={item.choices[pulled].pics[0]} size={44} /></At>
     <At x={SLOTS[0]} y={58} className="ki-magnet">
@@ -209,7 +258,11 @@ function Phone({ item }: { item: Item }) {
   </g>;
   return <>
     <rect x="-10" y="-40" width="340" height="260" fill={SKY} />
+    <path d="M0 150C60 136 110 140 160 150C210 140 270 136 320 150V160H0Z" fill="#b9d98a" />
     <rect y="158" width="320" height="62" fill={GRASS} />
+    <Cloud x={130} y={30} k={0.9} /><Cloud x={226} y={24} k={0.7} />
+    <Tufts xs={[100, 150, 200, 240]} y={160} />
+    <Specks pts={[[120, 172], [180, 178], [222, 170], [70, 176]]} fill="#f3e07a" />
     {kid(40, false, "#f2c14e", "#2b1d14")}{kid(280, true, "#5bb381", "#1f1a17")}
     <path d={loose ? "M86 80C130 118 190 118 234 80" : "M86 80H234"} stroke="#8a5a14" strokeWidth="2" fill="none" />
     <path d="M62 72h22l-4 16h-14z" fill="#ffffff" stroke={INK} strokeWidth="2" />
@@ -226,6 +279,10 @@ function Drum() {
   return <>
     <rect x="-10" y="-40" width="340" height="260" fill={SKY} />
     <rect y="158" width="320" height="62" fill={GRASS} />
+    <Cloud x={52} y={40} k={0.9} /><Cloud x={276} y={30} k={0.7} />
+    <ellipse cx="160" cy="166" rx="76" ry="7" fill="#7aa648" opacity=".6" />
+    <Tufts xs={[18, 50, 270, 304]} y={160} />
+    <Specks pts={[[30, 176], [92, 180], [226, 178], [290, 172]]} fill="#f3e07a" />
     <path d="M90 112v38a70 18 0 0 0 140 0v-38Z" fill="#c0643a" />
     <path d="M90 124h140M90 140h140" stroke="#8a4a24" strokeWidth="3" />
     <ellipse cx="160" cy="112" rx="70" ry="16" fill="#f2d19c" stroke="#8a5a2a" strokeWidth="3" />
