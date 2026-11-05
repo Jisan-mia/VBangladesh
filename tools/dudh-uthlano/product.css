@@ -1,109 +1,208 @@
-.tool-dudh-uthlano{--accent:#b6462b;--accent-deep:#7d2c19;--ink:#2a211c;--muted:#6b5b4e;--cream:#f7f0e3;--line:#e3d6c3;--spill:#fde3d9}
-.tool-dudh-uthlano .du-page{color:var(--ink)}
+.tool-dudh-uthlano{--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-in-out:cubic-bezier(0.77,0,0.175,1);--accent:#b6462b;--accent-deep:#7d2c19;--ink:#2a211c;--muted:#6b5b4e;--wall:#dcefe8;--paper:#fff8ec;--paper-edge:#e3d6c3;--band:#2a211c;--gold:#ffd166;--warn:#f08a00;--watch:#e5383b}
 .tool-dudh-uthlano .du-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* hero: two short lines, so the stove and the big button both land on the first phone screen */
-.du-hero{padding:10px 0 8px}
-.du-kicker{margin:0;font-size:13px;font-weight:600;color:var(--accent)}
-.du-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(25px,7vw,48px);line-height:1.25;font-weight:700;letter-spacing:0}
-.du-hero h1 span{color:var(--accent)}
-.du-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
-@media (min-width:760px){.du-lead{display:block}}
+/* the game fills the player's stage: HUD, the kitchen (as big as fits), the big button or the end screen */
+.tool-dudh-uthlano .gp-game{min-height:100%}
+.tool-dudh-uthlano .du-wrap{width:100%;max-width:560px;min-width:0}
+.tool-dudh-uthlano .du{position:relative;display:flex;flex-direction:column;gap:8px;height:var(--stage-h,auto);min-height:520px;color:var(--ink)}
+.tool-dudh-uthlano .du[data-world="1"]{--scene:#e3b47f;--wall:#f1d3a8;--accent:#8e3d1d;--accent-deep:#5f2610}
+.tool-dudh-uthlano .du[data-world="2"]{--scene:#2c3b5e;--wall:#cdd5ea;--accent:#2d4a7a;--accent-deep:#1d3256}
 
-.du{display:grid;gap:10px;max-width:480px;min-width:0}
-.du-play{display:grid;gap:8px;min-width:0}
+/* ---- title: the pot is the button ---- */
+.tool-dudh-uthlano .du-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:0;padding:10px;border-radius:8px;background:radial-gradient(120% 70% at 50% 34%,#ffffff 0,var(--wall) 78%);text-align:center}
+.tool-dudh-uthlano .du-title-friend{margin:0;padding:10px 14px;border-radius:8px;background:var(--paper);border-left:5px solid var(--accent);font-size:15px;line-height:1.45;text-align:left}
+.tool-dudh-uthlano .du-title-friend b{font-family:var(--font-display)}
+.tool-dudh-uthlano .du-title-friend span{display:block;font-size:13px;color:var(--muted)}
+.tool-dudh-uthlano .du-title-art{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * .8);place-items:center;width:100%;min-height:150px}
+.tool-dudh-uthlano .du-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:8px;filter:drop-shadow(0 14px 18px #1f2a2440);transition:transform 160ms var(--ease-out)}
+@media (hover:hover) and (pointer:fine){.tool-dudh-uthlano .du-title-start:hover{transform:translateY(-3px) scale(1.01)}}
+.tool-dudh-uthlano .du-title-start:active{transform:translateY(2px) scale(.99)}
+.tool-dudh-uthlano .du-title-start:focus-visible{outline:3px solid var(--accent);outline-offset:6px}
+.tool-dudh-uthlano .du-title-start canvas{display:block}
+.tool-dudh-uthlano .du[data-slow] .du-title-start{transition:none}
+.tool-dudh-uthlano .du-title-level{display:grid;gap:2px;margin:0;max-width:440px}
+.tool-dudh-uthlano .du-title-level span{font-family:var(--font-display);font-size:18px;font-weight:700}
+.tool-dudh-uthlano .du-title-level small{font-size:14px;color:var(--muted);line-height:1.5}
+.tool-dudh-uthlano .du-modes{display:flex;gap:6px;justify-content:center}
+.tool-dudh-uthlano .du-modes button{min-height:40px;padding:4px 16px;border:1.5px solid var(--paper-edge);border-radius:6px;background:#fff;color:var(--ink);font-size:15px;font-weight:600}
+.tool-dudh-uthlano .du-modes button[aria-checked=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.tool-dudh-uthlano .du-mode-line{margin:0;max-width:400px;font-size:14px;line-height:1.5;color:var(--muted)}
+.tool-dudh-uthlano .du-title-more{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px}
+.tool-dudh-uthlano .du-link{min-height:44px;padding:6px 12px;border:0;border-radius:8px;background:none;color:var(--accent-deep);font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:4px}
+.tool-dudh-uthlano .du-link span{margin-left:6px;font-weight:500;color:var(--muted);text-decoration:none}
 
-/* opened from a friend's link: their card, tilted, and whose score it is */
-.du-friend{display:grid;grid-template-columns:50px 1fr;gap:10px;align-items:center;padding:8px 10px;border-radius:14px;background:var(--cream)}
-.du-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 4px 10px #2a211c33;transform:rotate(-3deg)}
-.du-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.35}
-.du-friend p{margin:0;font-size:12px;color:var(--muted)}
+/* ---- the HUD: corners only ---- */
+.tool-dudh-uthlano .du-hud{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;min-height:44px}
+.tool-dudh-uthlano .du-hud p{margin:0}
+.tool-dudh-uthlano .du-badge{display:grid;gap:1px;line-height:1.15}
+.tool-dudh-uthlano .du-badge b{font-family:var(--font-display);font-size:16px}
+.tool-dudh-uthlano .du-badge span{justify-self:start;padding:0 7px;border-radius:6px;background:var(--ink);color:#fff;font-size:11px;font-weight:700}
+.tool-dudh-uthlano .du-badge small{font-size:12px;color:var(--muted)}
 
-/* the kitchen: the canvas plus a few words laid over it */
-.du-stage{position:relative;overflow:hidden;border-radius:18px;box-shadow:0 0 0 1.5px #2a211c1f,0 10px 24px #2a211c1f;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
-.du-stage canvas{display:block;width:100%;height:auto;aspect-ratio:360/300}
-.du-stage p{pointer-events:none}
-.du-tip{position:absolute;top:8px;left:8px;max-width:72%;margin:0;padding:5px 12px;border-radius:14px;background:#2a211cdb;color:#fff;font-size:14px;font-weight:600;line-height:1.4}
-.du-ammu{position:absolute;left:8px;bottom:8px;max-width:52%;margin:0;padding:6px 11px 8px;border-radius:14px 14px 14px 4px;background:#fff;box-shadow:0 2px 0 #2a211c26;font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.3;animation:du-in .3s ease-out}
-.du-ammu small{display:block;font-family:Bangla,sans-serif;font-size:11px;font-weight:600;color:var(--muted)}
-.du-pop{position:absolute;left:0;right:0;top:4%;display:grid;justify-items:center;margin:0;animation:du-pop .35s ease-out}
-.du-pop b{font-family:var(--font-display);font-size:clamp(40px,13vw,56px);line-height:1.1;color:var(--accent-deep);text-shadow:0 2px 0 #fff,0 0 10px #fff}
-.du-pop span{padding:3px 12px;border-radius:999px;background:#fffffff2;font-size:15px;font-weight:700}
-.du-pop[data-spill=true] b{padding:4px 18px 8px;border:3px solid var(--accent);border-radius:16px;background:#fff;color:var(--accent);font-size:clamp(30px,9vw,40px);text-shadow:none;transform:rotate(-4deg)}
-.du-pause{position:absolute;inset:0;display:grid;place-items:center;margin:0;padding:24px;background:#2a211cb8;color:#fff;font-size:17px;font-weight:600;text-align:center}
-.du-over{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:2px;padding:16px;background:#f7f0e3eb;text-align:center;animation:du-in .3s ease-out}
-.du-over p{margin:0;font-size:15px;font-weight:600;color:var(--muted)}
-.du-over strong{font-family:var(--font-display);font-size:clamp(56px,19vw,84px);line-height:1.05;color:var(--accent)}
-.du-over .du-vs{margin-top:6px;padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);font-weight:700}
+/* ---- the play area: the stove and the big button both take the finger ---- */
+.tool-dudh-uthlano .du-board{display:flex;flex:1;flex-direction:column;justify-content:center;gap:8px;min-height:0}
+.tool-dudh-uthlano .du-scene{position:relative;display:grid;flex:1 1 auto;place-items:center;min-height:200px;border-radius:8px;overflow:hidden;background:var(--scene,var(--wall));box-shadow:0 2px 0 #1f2a2414,0 10px 24px #1f2a241f;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:none}
+.tool-dudh-uthlano .du[data-screen=play] .du-scene{cursor:pointer;flex:none;width:100%;aspect-ratio:360/380;min-height:0;max-height:calc(var(--stage-h,700px) - 232px);margin-inline:auto}
+.tool-dudh-uthlano .du-scene canvas{display:block}
+.tool-dudh-uthlano .du[data-screen=over] .du-scene{flex:1 1 120px;min-height:110px}
 
-/* controls: everything you press sits under the stove */
-.du-controls{display:grid;gap:8px}
-.du-row{display:flex;align-items:center;justify-content:space-between;gap:4px 8px;flex-wrap:wrap}
-.du-now{margin:0;font-size:14px;font-weight:600;color:var(--muted)}
-.du-slow{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font-size:14px;font-weight:600;cursor:pointer}
-.du-slow i{position:relative;width:30px;height:18px;border-radius:9px;background:#d5c9b8}
-.du-slow i::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
-.du-slow[aria-pressed=true]{border-color:var(--accent)}
-.du-slow[aria-pressed=true] i{background:var(--accent)}
-.du-slow[aria-pressed=true] i::after{transform:translateX(12px)}
-.du-pots{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0;padding:0;list-style:none}
-.du-pots li{display:grid;justify-items:center;padding:3px 2px 4px;border:1.5px dashed var(--line);border-radius:12px;background:#fff;font-size:12px;line-height:1.3;color:var(--muted)}
-.du-pots li b{font-family:var(--font-display);font-size:16px;line-height:1.25;color:var(--ink);white-space:nowrap}
-.du-pots li[data-now=true]{border-style:solid;border-color:var(--accent)}
-.du-pots li[data-state=ok]{border-style:solid;background:var(--cream)}
-.du-pots li[data-state=spill]{border-style:solid;border-color:#f0b9a5;background:var(--spill)}
-.du-pots li[data-state=spill] b{font-size:13px;color:var(--accent-deep)}
-.du-press{display:grid;place-items:center;gap:0;width:100%;min-height:76px;padding:8px 16px;border:0;border-radius:20px;background:var(--accent);color:#fff;box-shadow:0 5px 0 var(--accent-deep);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
-.du-press b{font-family:var(--font-display);font-size:26px;line-height:1.2}
-.du-press small{font-size:14px;font-weight:600;opacity:.92}
-.du-press:active,.du-press[data-holding=true]{transform:translateY(4px);box-shadow:0 1px 0 var(--accent-deep)}
-.du-press[data-phase=rising][data-holding=false]{background:#c93a1f;animation:du-nudge 1.2s ease-in-out infinite}
-.du-press:disabled{background:#cbbdab;box-shadow:0 5px 0 #a8998a;cursor:default}
-.du-press:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
-.du-hint{margin:0;font-size:13px;line-height:1.5;color:var(--muted);text-align:center}
-.du-hint span{display:none}
-@media (hover:hover) and (pointer:fine){.du-hint span{display:inline}}
-.du-fresh{justify-self:center}
 
-/* result: the card, a name, and sharing right under the game */
-.du-result{display:grid;gap:14px;margin-top:14px;padding-top:16px;border-top:2px solid var(--ink)}
-.du-result h2{margin:0;font-family:var(--font-display);font-size:clamp(20px,5.4vw,28px);line-height:1.4}
-.du-share{display:grid;gap:14px}
-.du-name{display:grid;gap:6px;font-weight:600}
-.du-name small{font-weight:400;color:var(--muted);font-size:13px}
-.du-name input{min-height:48px;padding:8px 12px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:17px}
+/* ---- the story ---- */
+.tool-dudh-uthlano .du-story{position:relative;display:flex;flex:1;flex-direction:column;min-height:0}
+.tool-dudh-uthlano .du-story-panel{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:12px;border:0;border-radius:8px;background:#fffdf6;box-shadow:inset 0 0 0 3px var(--ink);color:var(--ink);cursor:pointer}
+.tool-dudh-uthlano .du-story-art{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * .8);place-items:center;width:100%;min-height:120px}
+.tool-dudh-uthlano .du-story-art canvas{display:block;border:3px solid var(--ink);border-radius:6px}
+.tool-dudh-uthlano .du-story-panel p{margin:0;max-width:420px;font-family:var(--font-display);font-size:clamp(18px,5vw,22px);font-weight:700;line-height:1.45}
+.tool-dudh-uthlano .du-story-dots{display:flex;gap:6px}
+.tool-dudh-uthlano .du-story-dots i{width:8px;height:8px;border-radius:50%;background:var(--paper-edge)}
+.tool-dudh-uthlano .du-story-dots i[data-on=true]{background:var(--ink)}
+.tool-dudh-uthlano .du-story-skip{overflow:hidden;position:absolute;right:10px;top:10px;z-index:1;display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border:0;border-radius:6px;background:var(--ink);color:#fff;font-size:13px;font-weight:700;touch-action:none}
+.tool-dudh-uthlano .du-story-skip span{position:absolute;inset:0;background:#ffd16655;transform:scaleX(0);transform-origin:left;transition:transform 160ms var(--ease-out)}
+.tool-dudh-uthlano .du-story-skip[data-holding] span{transform:scaleX(1);transition:transform 600ms linear}
+.tool-dudh-uthlano .du-story-skip{isolation:isolate}
 
-.du-guide h2{font-family:var(--font-display);margin-bottom:8px}
-.du-guide > p{margin:0 0 16px;color:var(--muted)}
-.du-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.du-guide li{display:flex;gap:14px;align-items:flex-start}
-.du-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--cream);border:2px solid var(--accent);color:var(--accent-deep);font-weight:700}
-.du-guide li p{margin:4px 0 0}
+/* ---- the level list ---- */
+.tool-dudh-uthlano .du-sheet{animation:du-sheet 200ms var(--ease-out);position:absolute;inset:0;z-index:5;overflow:auto;padding:14px;border-radius:8px;background:#fffcf3;box-shadow:0 10px 40px #1f2a2440;overscroll-behavior:contain}
+.tool-dudh-uthlano .du-sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.tool-dudh-uthlano .du-sheet h2{margin:0;font-family:var(--font-display);font-size:22px}
+.tool-dudh-uthlano .du-sheet-close{width:44px;height:44px;border:0;border-radius:8px;background:var(--paper);font-size:18px}
+.tool-dudh-uthlano .du-sheet .du-modes{justify-content:flex-start;margin-bottom:6px}
+.tool-dudh-uthlano .du-sheet-world h3{margin:12px 0 6px;font-size:15px}
+.tool-dudh-uthlano .du-sheet-world h3 small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
+.tool-dudh-uthlano .du-sheet-world ol{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.tool-dudh-uthlano .du-sheet-world button{display:grid;grid-template-columns:36px 1fr auto;grid-template-areas:"num name stars" "num teach teach";gap:0 10px;align-items:center;width:100%;padding:8px 10px;border:1.5px solid var(--paper-edge);border-radius:8px;background:#fff;color:var(--ink);text-align:left}
+.tool-dudh-uthlano .du-sheet-world button[data-next]{border-color:var(--accent);box-shadow:0 0 0 3px #b6462b33}
+.tool-dudh-uthlano .du-sheet-world button[aria-current=true]{background:#fdf1e8}
+.tool-dudh-uthlano .du-sheet-world button:disabled{opacity:.5}
+.tool-dudh-uthlano .du-sheet-num{grid-area:num;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#b6462b;color:#fff;font-size:16px}
+.tool-dudh-uthlano .du-sheet-world[data-world="1"] .du-sheet-num{background:#8e3d1d}
+.tool-dudh-uthlano .du-sheet-world[data-world="2"] .du-sheet-num{background:#2d4a7a}
+.tool-dudh-uthlano .du-sheet-world button:disabled .du-sheet-num{background:#8d8578}
+.tool-dudh-uthlano .du-sheet-num svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.2}
+.tool-dudh-uthlano .du-sheet-name{grid-area:name;font-family:var(--font-display);font-weight:700;font-size:16px}
+.tool-dudh-uthlano .du-sheet-name i,.tool-dudh-uthlano .du-sheet-name em{margin-left:6px;padding:1px 7px;border-radius:6px;font-size:11px;font-style:normal;vertical-align:2px}
+.tool-dudh-uthlano .du-sheet-name i{background:#ffe1e1;color:#8a1c1c}
+.tool-dudh-uthlano .du-sheet-name em{background:var(--accent);color:#fff}
+.tool-dudh-uthlano .du-sheet-teach{grid-area:teach;font-size:13px;line-height:1.45;color:var(--muted)}
+.tool-dudh-uthlano .du-sheet-stars{grid-area:stars;font-size:15px;color:#d8cfbb}
+.tool-dudh-uthlano .du-sheet-stars [data-on=true]{color:#e39b00}
+.tool-dudh-uthlano .du-sheet-note{margin:12px 0 0;font-size:13px;color:var(--muted)}
 
-/* the kitchen, its stars so far, and the sound switch, above the stove */
-.du-top{display:flex;align-items:center;justify-content:space-between;gap:6px 10px;flex-wrap:wrap}
-.du-where{margin:0;font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.3}
-@media(max-width:360px){.du-where i{display:none}}
-.du-where i{font-style:normal}
-.du-where span{font-family:var(--font-bengali);font-size:14px;font-weight:600;color:var(--muted)}
-.du-sound{min-height:40px;border-color:var(--line);background:#fff;color:var(--ink)}
-.du-bell{position:absolute;right:8px;top:8px;margin:0;padding:6px 12px;border-radius:14px 14px 4px 14px;background:#ffd166;box-shadow:0 2px 0 #2a211c33;font-size:14px;font-weight:600;animation:du-ring .5s ease-out}
-.du-bell b{font-family:var(--font-display);font-size:17px}
-.du-stars{font-size:30px;gap:4px;margin:2px 0}
-.du-miss{margin-top:4px!important;padding:3px 10px;border-radius:10px;background:#ffd16655;color:var(--ink)!important;font-weight:700!important}
-.du-stage[data-shake="1"]{animation:du-shake-a .2s ease-out}
-.du-stage[data-shake="2"]{animation:du-shake-b .2s ease-out}
-.du-press:active{transform:translateY(4px) scale(.98)}
-.du-levels{padding:10px 14px;border:1.5px solid var(--line);border-radius:14px;background:#fff}
-.du-levels summary{display:flex;justify-content:space-between;align-items:center;min-height:40px;font-weight:700;cursor:pointer}
-.du-levels summary span{color:var(--muted);font-weight:600}
-.du-levels .gx-levels{margin-top:8px}
-.du-levels p{margin:10px 0 0;font-size:14px;line-height:1.5;color:var(--muted)}
-@keyframes du-ring{0%,100%{transform:none}20%{transform:rotate(-6deg)}40%{transform:rotate(5deg)}60%{transform:rotate(-3deg)}}
-@keyframes du-shake-a{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-@keyframes du-shake-b{25%{transform:translateX(6px)}75%{transform:translateX(-6px)}}
+/* ---- the end of a round ---- */
+.tool-dudh-uthlano .du-end{animation:du-in 220ms var(--ease-out);flex:none;display:grid;justify-items:center;gap:2px;padding:10px 14px 6px;border-radius:8px;background:var(--paper);text-align:center;touch-action:manipulation}
+.tool-dudh-uthlano .du-end p{margin:0}
+.tool-dudh-uthlano .du-end>*{max-width:100%;min-width:0}
+.tool-dudh-uthlano .du-end-kicker{font-weight:700;color:var(--accent-deep)}
+.tool-dudh-uthlano .du-end-stars{margin:0;font-size:36px;line-height:1.1}
+.tool-dudh-uthlano .du-end-stars .du-capped{opacity:.25}
+.tool-dudh-uthlano .du-end-lost{font-family:var(--font-display);font-size:22px;font-weight:800;color:#9c2f2f}
+.tool-dudh-uthlano .du-end-line{font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.4}
+.tool-dudh-uthlano .du-end-near{font-weight:700;color:var(--accent-deep);font-size:14px}
+.tool-dudh-uthlano .du-end-best{font-size:13px;color:var(--muted)}
+.tool-dudh-uthlano .du-end-choices{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:6px;width:100%;margin:8px 0 0;padding:0;list-style:none}
+.tool-dudh-uthlano .du-end-choices[data-count="2"]{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
+.tool-dudh-uthlano .du-end-choices button{position:relative;width:100%;min-height:54px;padding:6px 8px;font-size:15px;line-height:1.2}
+.tool-dudh-uthlano .du-end-choices kbd{display:inline-grid;place-items:center;width:20px;height:20px;margin-right:5px;border-radius:6px;background:#ffffff40;font:inherit;font-size:12px}
+.tool-dudh-uthlano .du-end-choices .kit-secondary kbd{background:#1f2a2414}
+.tool-dudh-uthlano .du-end-choices em{position:absolute;top:-9px;right:6px;padding:0 7px;border-radius:6px;background:var(--gold);color:var(--ink);font-size:10px;font-style:normal;font-weight:700;line-height:1.6}
+.tool-dudh-uthlano .du-see{min-height:40px}
+
+/* ---- the card ---- */
+.tool-dudh-uthlano .du-result{scroll-margin-top:12px;margin-top:22px;padding-top:20px;border-top:2px solid var(--ink)}
+.tool-dudh-uthlano .du-result h2{margin:0 0 14px;font-family:var(--font-display);font-size:clamp(22px,5vw,30px);line-height:1.4}
+.tool-dudh-uthlano .du-result h2 em{font-style:normal;color:var(--accent)}
+.tool-dudh-uthlano .du-result-body{display:grid;gap:20px}
+.tool-dudh-uthlano .du-share{display:grid;gap:16px;align-content:start}
+.tool-dudh-uthlano .du-name{display:grid;gap:6px;font-weight:600}
+.tool-dudh-uthlano .du-name small{font-weight:400;color:var(--muted);font-size:13px}
+.tool-dudh-uthlano .du-name input{border:1.5px solid #e3d6c3;border-radius:8px;font-size:17px}
+.tool-dudh-uthlano .kit-chips button[aria-pressed=true]{border-color:var(--accent-deep);background:var(--accent-deep)}
+
+/* slow mode: the edges are steady borders, nothing pulses or pops */
+.tool-dudh-uthlano .du[data-slow] .du-edge,.tool-dudh-uthlano .du[data-slow] .du-edge::after{transition:none}
+.tool-dudh-uthlano .du[data-slow] .du-edge[data-edge=danger]::after{animation:none}
+
+/* ---- the HUD's top-centre boss bar and the pot count at the right ---- */
+.tool-dudh-uthlano .du-boss{display:grid;gap:3px;justify-items:center;min-width:130px}
+.tool-dudh-uthlano .du-boss:not([data-on]){visibility:hidden}
+.tool-dudh-uthlano .du-boss b{font-family:var(--font-display);font-size:13px;line-height:1;color:#8a1c1c;white-space:nowrap}
+.tool-dudh-uthlano .du-boss-bar{display:block;width:118px;height:8px;border-radius:6px;border:2px solid #8a1c1c;overflow:hidden;background:#fff}
+.tool-dudh-uthlano .du-boss-bar span{display:block;width:100%;height:100%;background:#d62828;transform:scaleX(0);transform-origin:left}
+.tool-dudh-uthlano .du-count{display:grid;justify-items:end;gap:3px}
+.tool-dudh-uthlano .du-count p{padding:3px 10px;border-radius:10px;background:var(--ink);color:#fff;font-size:13px;line-height:1.25}
+.tool-dudh-uthlano .du-count b{font-family:var(--font-display);font-size:15px;font-variant-numeric:tabular-nums}
+.tool-dudh-uthlano .du-bell{min-height:1.4em;padding:0 8px;border-radius:6px;font-size:12px;font-weight:700;line-height:1.5}
+.tool-dudh-uthlano .du-bell[data-on]{background:var(--gold);box-shadow:0 2px 0 #2a211c33;animation:du-ring 450ms var(--ease-out)}
+@keyframes du-ring{0%,100%{transform:none}20%{transform:rotate(-8deg)}40%{transform:rotate(7deg)}60%{transform:rotate(-4deg)}}
+
+/* ---- words laid over the kitchen: a voice from the next room, and the score as the pot comes off ---- */
+.tool-dudh-uthlano .du-scene p{pointer-events:none}
+.tool-dudh-uthlano .du-caller{position:absolute;right:46px;top:6px;max-width:52%;margin:0;padding:6px 11px 8px;border-radius:8px;background:#fff;box-shadow:0 2px 0 #2a211c26;font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.3;text-align:left;animation:du-in 220ms var(--ease-out)}
+.tool-dudh-uthlano .du-caller small{display:block;font-family:Bangla,sans-serif;font-size:11px;font-weight:600;color:var(--muted)}
+.tool-dudh-uthlano .du-pop{position:absolute;left:0;right:0;top:3%;display:grid;justify-items:center;margin:0;animation:du-pop 200ms var(--ease-out)}
+.tool-dudh-uthlano .du-pop b{font-family:var(--font-display);font-size:clamp(40px,13vw,56px);line-height:1.1;color:var(--accent-deep);-webkit-text-stroke:5px #fff;paint-order:stroke fill}
+.tool-dudh-uthlano .du-pop span{padding:3px 12px;border-radius:6px;background:#fffffff2;font-size:15px;font-weight:700}
+.tool-dudh-uthlano .du-pop[data-spill=true] b{padding:4px 18px 8px;border:3px solid var(--accent);border-radius:8px;background:#fff;color:var(--accent);font-size:clamp(30px,9vw,40px);text-shadow:none;transform:rotate(-4deg)}
 @keyframes du-in{from{opacity:0;transform:translateY(6px)}}
-@keyframes du-pop{from{opacity:0;transform:scale(.7)}}
-@keyframes du-nudge{50%{box-shadow:0 5px 0 var(--accent-deep),0 0 0 6px #c93a1f33}}
-.du[data-slow=true] .du-ammu,.du[data-slow=true] .du-pop,.du[data-slow=true] .du-over,.du[data-slow=true] .du-press,.du[data-slow=true] .du-bell,.du[data-slow=true] .du-stage{animation:none}
-@media (prefers-reduced-motion:reduce){.du-ammu,.du-pop,.du-over,.du-press,.du-bell,.du-stage{animation:none}.du-slow i::after{transition:none}}
+@keyframes du-sheet{from{opacity:0;transform:translateY(10px)}}
+@keyframes du-pop{from{opacity:0;transform:scale(.92)}}
+
+/* ---- danger lives at the edges: orange as the foam climbs, red and pulsing just under the rim (steady in slow mode) ---- */
+.tool-dudh-uthlano .du-edge{position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;box-shadow:inset 0 0 0 5px var(--warn),inset 0 0 36px 6px #f08a00b3;transition:opacity 160ms var(--ease-out)} /* unslop-ignore: danger glow is the signal */
+.tool-dudh-uthlano .du-edge::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 7px var(--watch),inset 0 0 44px 8px #e5383bcc;opacity:0;transition:opacity 120ms var(--ease-out)} /* unslop-ignore: danger glow is the signal */
+.tool-dudh-uthlano .du-edge[data-edge=danger]::after{opacity:1;animation:du-glow .35s ease-in-out infinite alternate}
+@keyframes du-glow{to{opacity:.6}}
+
+/* ---- the pots' marks, and the one big control: hold to heat, let go to lift; its words say what to do and why ---- */
+.tool-dudh-uthlano .du-pots{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.tool-dudh-uthlano .du-pots li{display:grid;justify-items:center;padding:2px 2px 3px;border:1.5px dashed var(--paper-edge);border-radius:8px;background:#fff;font-size:12px;line-height:1.3;color:var(--muted)}
+.tool-dudh-uthlano .du-pots li b{font-family:var(--font-display);font-size:15px;line-height:1.25;color:var(--ink);white-space:nowrap}
+.tool-dudh-uthlano .du-pots li[data-now=true]{border-style:solid;border-color:var(--accent)}
+.tool-dudh-uthlano .du-pots li[data-state=ok]{border-style:solid;background:var(--paper)}
+.tool-dudh-uthlano .du-pots li[data-state=spill]{border-style:solid;border-color:#f0b9a5;background:#fde3d9}
+.tool-dudh-uthlano .du-pots li[data-state=spill] b{font-size:12px;color:var(--accent-deep)}
+.tool-dudh-uthlano .du-pots li[data-boss]{box-shadow:0 0 0 2px #d6282855}
+.tool-dudh-uthlano .du-press{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;flex:1 1 auto;width:100%;min-height:96px;max-height:240px;padding:10px 16px;border:0;border-radius:8px;background:var(--accent);background-image:linear-gradient(#ffffff26,#ffffff00 55%);color:#fff;box-shadow:0 5px 0 var(--accent-deep);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer;transition:transform 120ms var(--ease-out)}
+.tool-dudh-uthlano .du-press b{font-family:var(--font-display);font-size:clamp(26px,8vw,34px);line-height:1.2}
+.tool-dudh-uthlano .du-press small{font-size:15px;opacity:.95}
+.tool-dudh-uthlano .du-press[data-held=true]{background:var(--accent-deep);box-shadow:0 2px 0 #3d160c;transform:scale(.97)}
+.tool-dudh-uthlano .du-press[data-status=flare],.tool-dudh-uthlano .du-press[data-status=pop],.tool-dudh-uthlano .du-press[data-status=again]{background:#b26a00;box-shadow:0 5px 0 #7a4800}
+.tool-dudh-uthlano .du-press[data-status=danger]{background:#c0261f;box-shadow:0 5px 0 #7d1612}
+.tool-dudh-uthlano .du-press[data-held=true][data-status]{transform:scale(.97);box-shadow:0 2px 0 #0003}
+.tool-dudh-uthlano .du-press:disabled{background:#cbbdab;box-shadow:0 5px 0 #a8998a;cursor:default;color:#fff}
+.tool-dudh-uthlano .du-press:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+/* ---- the end: the average counts up, the pots' marks, real stats ---- */
+.tool-dudh-uthlano .du-end-avg{font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.1}
+.tool-dudh-uthlano .du-end-avg b{font-size:clamp(40px,12vw,56px);font-variant-numeric:tabular-nums;color:var(--accent)}
+.tool-dudh-uthlano .du-end-pots{display:grid;gap:5px;width:100%;margin:6px 0 2px;padding:0;list-style:none}
+.tool-dudh-uthlano .du-end-pots li{display:grid;padding:2px 2px 3px;border-radius:10px;background:#fff;font-size:11px;color:var(--muted);line-height:1.3}
+.tool-dudh-uthlano .du-end-pots li b{font-family:var(--font-display);font-size:14px;color:var(--ink);white-space:nowrap}
+.tool-dudh-uthlano .du-end-pots li[data-state=spill]{background:#fde3d9}
+.tool-dudh-uthlano .du-end-pots li[data-state=spill] b{font-size:12px;color:var(--accent-deep)}
+.tool-dudh-uthlano .du-end-pots li[data-boss]{box-shadow:0 0 0 2px #d6282855}
+.tool-dudh-uthlano .du-end-stats{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin:6px 0 2px;padding:0;list-style:none}
+.tool-dudh-uthlano .du-end-stats li{display:grid;padding:3px 9px;border-radius:10px;background:#fff;font-size:12px;color:var(--muted);line-height:1.3;border-bottom:3px solid transparent}
+.tool-dudh-uthlano .du-end-stats li[data-tone=gold]{border-bottom-color:#f2b705}
+.tool-dudh-uthlano .du-end-stats li[data-tone=bad]{border-bottom-color:#d9534f}
+.tool-dudh-uthlano .du-end-stats b{font-size:15px;color:var(--ink)}
+.tool-dudh-uthlano .du-title-more{align-items:center}
+
+@media(max-width:350px){.tool-dudh-uthlano .du-end-choices button{font-size:13px;padding:6px 4px}.tool-dudh-uthlano .du-end-choices kbd{display:none}.tool-dudh-uthlano .du-end-line{font-size:15px}.tool-dudh-uthlano .du-boss{min-width:104px}.tool-dudh-uthlano .du-boss-bar{width:96px}.tool-dudh-uthlano .du-press b{font-size:22px}.tool-dudh-uthlano .du-press small{font-size:13px}.tool-dudh-uthlano .du-modes button{padding:4px 12px}.tool-dudh-uthlano .du-badge small{display:none}}
+/* slow mode: the edges are steady borders, nothing pulses or pops */
+.tool-dudh-uthlano .du[data-slow] .du-edge,.tool-dudh-uthlano .du[data-slow] .du-edge::after{transition:none}
+.tool-dudh-uthlano .du[data-slow] .du-edge[data-edge=danger]::after{animation:none}
+.tool-dudh-uthlano .du[data-slow] .du-sheet,.tool-dudh-uthlano .du[data-slow] .du-end,.tool-dudh-uthlano .du[data-slow] .du-press,.tool-dudh-uthlano .du[data-slow] .du-caller,.tool-dudh-uthlano .du[data-slow] .du-pop,.tool-dudh-uthlano .du[data-slow] .du-bell{transition:none;animation:none}
+.tool-dudh-uthlano .du[data-slow] .du-press[data-held=true]{transform:none}
+@media(prefers-reduced-motion:reduce){.tool-dudh-uthlano .du-sheet,.tool-dudh-uthlano .du-end{animation:none}.tool-dudh-uthlano .du-story-skip span{transition-duration:0ms}.tool-dudh-uthlano .du-caller,.tool-dudh-uthlano .du-pop,.tool-dudh-uthlano .du-bell[data-on],.tool-dudh-uthlano .du-edge[data-edge=danger]::after{animation:none}.tool-dudh-uthlano .du-title-start,.tool-dudh-uthlano .du-press{transition:none}.tool-dudh-uthlano .du-title-start:active,.tool-dudh-uthlano .du-press[data-held=true]{transform:none}}
+
+/* press feedback on everything small and pressable: a 160ms squeeze that lets go as fast (one rule, the pot and the big button have their own) */
+.tool-dudh-uthlano :is(.du-modes button,.du-link,.du-sheet-close,.du-story-skip,.du-end-choices button,.du-sheet-world button:not(:disabled)){transition:transform 160ms var(--ease-out)}
+.tool-dudh-uthlano :is(.du-modes button,.du-link,.du-sheet-close,.du-story-skip,.du-end-choices button,.du-sheet-world button:not(:disabled)):active{transform:scale(.97)}
+.tool-dudh-uthlano .du[data-slow] :is(.du-modes button,.du-link,.du-sheet-close,.du-story-skip,.du-end-choices button,.du-sheet-world button){transition:none}
+.tool-dudh-uthlano .du[data-slow] :is(.du-modes button,.du-link,.du-sheet-close,.du-story-skip,.du-end-choices button,.du-sheet-world button):active{transform:none}
+/* the stars arrive from 0.8, never from a dot (the shared gx-pop starts at .4) */
+@keyframes du-star{from{opacity:0;transform:scale(.8)}}
+.tool-dudh-uthlano .gx-pop{animation:du-star 240ms var(--ease-out) both}
+.tool-dudh-uthlano .du[data-slow] .gx-pop{animation:none}
+@media(prefers-reduced-motion:reduce){.tool-dudh-uthlano .gx-pop{animation:none}.tool-dudh-uthlano :is(.du-modes button,.du-link,.du-sheet-close,.du-story-skip,.du-end-choices button,.du-sheet-world button):active{transform:none}}

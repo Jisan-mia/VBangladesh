@@ -1,0 +1,357 @@
+---
+title: "অ-তﬂ°°2503¶ß অজগর (HEAD 6775639): level, pause menu, window, arrow key and levels"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks BasketStopsWhenYouLetGo or InputReleasedWhenAway or UnlockNeverShrinks
+    lg4: Path to the BasketStopsWhenYouLetGo or InputReleasedWhenAway or UnlockNeverShrinks bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 bugPath
+  state "Game Start screen (শ#2497;র#2497; কর#2507;)" as s0 {
+    state "Window You're on the page" as s1 {
+      s2: Basket Basket still
+    }
+    state "Window Another window has focus" as s3 {
+      s4: Basket Basket still
+    }
+    state "Window Tab hidden" as s5 {
+      s6: Basket Basket still
+    }
+  }
+  state "Game Letters falling" as s7 {
+    state "Window You're on the page" as s8 {
+      s9: Basket Basket still
+      s10: Basket Arrow held, basket heads for the edge
+      s11: Basket You let go, the basket still runs to the edge
+    }
+  }
+  state "Game Start screen, menu open" as s12 {
+    state "Window You're on the page" as s13 {
+      s14: Basket Basket still
+    }
+    state "Window Another window has focus" as s15 {
+      s16: Basket Basket still
+    }
+    state "Window Tab hidden" as s17 {
+      s18: Basket Basket still
+    }
+  }
+  state "Game Paused, menu open" as s19 {
+    state "Window Another window has focus" as s20 {
+      s21: Basket Basket still
+      s22: Basket Arrow held, basket heads for the edge
+      s23: Basket You let go, the basket still runs to the edge
+    }
+    state "Window You're on the page" as s24 {
+      s25: Basket Basket still
+      s26: Basket Arrow held, basket heads for the edge
+      s27: Basket You let go, the basket still runs to the edge
+    }
+    state "Window Tab hidden" as s28 {
+      s29: Basket Basket still
+      s30: Basket Arrow held, basket heads for the edge
+      s31: Basket You let go, the basket still runs to the edge
+    }
+  }
+  state "Game Start screen (শ#2497;র#2497; কর#2507;), a level you opened is locked again" as s32 {
+    state "Window You're on the page" as s33 {
+      s34: Basket Basket still
+    }
+    state "Window Another window has focus" as s35 {
+      s36: Basket Basket still
+    }
+    state "Window Tab hidden" as s37 {
+      s38: Basket Basket still
+    }
+  }
+  state "Game Level done, card shows" as s39 {
+    state "Window You're on the page" as s40 {
+      s41: Basket Basket still
+      s42: Basket Arrow held, basket heads for the edge
+      s43: Basket You let go, the basket still runs to the edge
+    }
+  }
+  state "Game Letters falling, a level you opened is locked again" as s44 {
+    state "Window You're on the page" as s45 {
+      s46: Basket Basket still
+      s47: Basket Arrow held, basket heads for the edge
+      s48: Basket You let go, the basket still runs to the edge
+    }
+  }
+  state "Game Start screen, menu open, a level you opened is locked again" as s49 {
+    state "Window You're on the page" as s50 {
+      s51: Basket Basket still
+    }
+    state "Window Another window has focus" as s52 {
+      s53: Basket Basket still
+    }
+    state "Window Tab hidden" as s54 {
+      s55: Basket Basket still
+    }
+  }
+  state "Game Card, menu open" as s56 {
+    state "Window Another window has focus" as s57 {
+      s58: Basket Basket still
+      s59: Basket Arrow held, basket heads for the edge
+      s60: Basket You let go, the basket still runs to the edge
+    }
+    state "Window You're on the page" as s61 {
+      s62: Basket Basket still
+      s63: Basket Arrow held, basket heads for the edge
+      s64: Basket You let go, the basket still runs to the edge
+    }
+    state "Window Tab hidden" as s65 {
+      s66: Basket Basket still
+      s67: Basket Arrow held, basket heads for the edge
+      s68: Basket You let go, the basket still runs to the edge
+    }
+  }
+  state "Game Paused, menu open, a level you opened is locked again" as s69 {
+    state "Window Another window has focus" as s70 {
+      s71: Basket Basket still
+      s72: Basket Arrow held, basket heads for the edge
+      s73: Basket You let go, the basket still runs to the edge
+    }
+    state "Window You're on the page" as s74 {
+      s75: Basket Basket still
+      s76: Basket Arrow held, basket heads for the edge
+      s77: Basket You let go, the basket still runs to the edge
+    }
+    state "Window Tab hidden" as s78 {
+      s79: Basket Basket still
+      s80: Basket Arrow held, basket heads for the edge
+      s81: Basket You let go, the basket still runs to the edge
+    }
+  }
+  [*] --> s2
+  s2 --> s9: you press শ#2497;র#2497; কর#2507;
+  s2 --> s4: you click into another window
+  s2 --> s6: you hide the tab
+  s2 --> s2: a friend's link opens
+  s2 --> s14: you press #9208; or Escape
+  s9 --> s10: you hold #8592; or #8594;
+  s9 --> s21: you click into another window
+  s9 --> s25: you press #9208; or Escape
+  s9 --> s29: you hide the tab
+  s9 --> s41: the last right letter lands
+  s4 --> s2: you come back to the window
+  s4 --> s6: you hide the tab
+  s6 --> s2: the tab shows again
+  s2 --> s34: a friend's link opens
+  s14 --> s2: you press নত#2497;ন কর#2503; শ#2497;র#2497; or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s14 --> s16: you click into another window
+  s14 --> s18: you hide the tab
+  s10 --> s9: you let go
+  s10 --> s22: you click into another window
+  s10 --> s26: you press #9208; or Escape
+  s10 --> s30: you hide the tab
+  s10 --> s42: the last right letter lands
+  s21 --> s25: you come back to the window
+  s21 --> s29: you hide the tab
+  s25 --> s9: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s25 --> s21: you click into another window
+  s25 --> s29: you hide the tab
+  s29 --> s25: the tab shows again
+  s2 --> s16: you click into another window
+  s2 --> s18: you hide the tab
+  s34 --> s2: a friend's link opens
+  s34 --> s46: you press শ#2497;র#2497; কর#2507;
+  s34 --> s36: you click into another window
+  s34 --> s38: you hide the tab
+  s34 --> s51: you press #9208; or Escape
+  s16 --> s14: you come back to the window
+  s16 --> s18: you hide the tab
+  s18 --> s14: the tab shows again
+  s14 --> s51: a friend's link opens
+  s41 --> s58: you click into another window
+  s41 --> s62: you press #9208; or Escape
+  s41 --> s66: you hide the tab
+  s46 --> s41: the last right letter lands
+  s46 --> s47: you hold #8592; or #8594;
+  s46 --> s71: you click into another window
+  s46 --> s75: you press #9208; or Escape
+  s46 --> s79: you hide the tab
+  s22 --> s26: you come back to the window
+  s22 --> s30: you hide the tab
+  s26 --> s10: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s26 --> s22: you click into another window
+  s26 --> s30: you hide the tab
+  s26 --> s27: you let go
+  s30 --> s26: the tab shows again
+  s36 --> s34: you come back to the window
+  s36 --> s38: you hide the tab
+  s34 --> s53: you click into another window
+  s34 --> s55: you hide the tab
+  s38 --> s34: the tab shows again
+  s51 --> s34: you press নত#2497;ন কর#2503; শ#2497;র#2497; or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s51 --> s14: a friend's link opens
+  s51 --> s53: you click into another window
+  s51 --> s55: you hide the tab
+  s42 --> s41: you let go
+  s42 --> s59: you click into another window
+  s42 --> s63: you press #9208; or Escape
+  s42 --> s67: you hide the tab
+  s58 --> s62: you come back to the window
+  s58 --> s66: you hide the tab
+  s62 --> s41: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s62 --> s58: you click into another window
+  s62 --> s66: you hide the tab
+  s66 --> s62: the tab shows again
+  s47 --> s46: you let go
+  s47 --> s42: the last right letter lands
+  s47 --> s72: you click into another window
+  s47 --> s76: you press #9208; or Escape
+  s47 --> s80: you hide the tab
+  s71 --> s75: you come back to the window
+  s71 --> s79: you hide the tab
+  s75 --> s46: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s75 --> s71: you click into another window
+  s75 --> s79: you hide the tab
+  s79 --> s75: the tab shows again
+  s27 --> s11: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s27 --> s23: you click into another window
+  s27 --> s31: you hide the tab
+  s53 --> s51: you come back to the window
+  s53 --> s55: you hide the tab
+  s55 --> s51: the tab shows again
+  s59 --> s63: you come back to the window
+  s59 --> s67: you hide the tab
+  s63 --> s42: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s63 --> s62: you let go
+  s63 --> s59: you click into another window
+  s63 --> s67: you hide the tab
+  s67 --> s63: the tab shows again
+  s11 --> s10: you hold #8592; or #8594;
+  s11 --> s27: you press #9208; or Escape
+  s11 --> s23: you click into another window
+  s11 --> s31: you hide the tab
+  s11 --> s43: the last right letter lands
+  s72 --> s76: you come back to the window
+  s72 --> s80: you hide the tab
+  s76 --> s47: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s76 --> s72: you click into another window
+  s76 --> s80: you hide the tab
+  s76 --> s77: you let go
+  s80 --> s76: the tab shows again
+  s23 --> s27: you come back to the window
+  s23 --> s31: you hide the tab
+  s31 --> s27: the tab shows again
+  s77 --> s48: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s77 --> s73: you click into another window
+  s77 --> s81: you hide the tab
+  s43 --> s60: you click into another window
+  s43 --> s64: you press #9208; or Escape
+  s43 --> s68: you hide the tab
+  s48 --> s47: you hold #8592; or #8594;
+  s48 --> s77: you press #9208; or Escape
+  s48 --> s73: you click into another window
+  s48 --> s81: you hide the tab
+  s48 --> s43: the last right letter lands
+  s73 --> s77: you come back to the window
+  s73 --> s81: you hide the tab
+  s81 --> s77: the tab shows again
+  s60 --> s64: you come back to the window
+  s60 --> s68: you hide the tab
+  s64 --> s43: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s64 --> s60: you click into another window
+  s64 --> s68: you hide the tab
+  s68 --> s64: the tab shows again
+  s39 --> s9: you press আব#2494;র খ#2503;ল#2507;
+  s39 --> s2: you pick a level or a friend's link opens or you press পর#2503;র ল#2503;ভ#2503;ল
+  s24 --> s2: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s61 --> s2: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s61 --> s14: a friend's link opens
+  s74 --> s34: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s2 teal
+  class s2 bugPath
+  class s4 teal
+  class s6 teal
+  class s9 teal
+  class s9 bugPath
+  class s10 teal
+  class s10 bugPath
+  class s11 teal
+  class s11 breaks
+  class s14 teal
+  class s16 teal
+  class s18 teal
+  class s21 yellow
+  class s22 yellow
+  class s22 breaks
+  class s22 bugPath
+  class s23 yellow
+  class s23 breaks
+  class s25 yellow
+  class s26 yellow
+  class s26 bugPath
+  class s27 yellow
+  class s27 breaks
+  class s27 bugPath
+  class s29 yellow
+  class s30 yellow
+  class s30 breaks
+  class s31 yellow
+  class s31 breaks
+  class s34 teal
+  class s34 breaks
+  class s34 bugPath
+  class s36 teal
+  class s36 breaks
+  class s38 teal
+  class s38 breaks
+  class s41 blue
+  class s42 blue
+  class s43 blue
+  class s43 breaks
+  class s46 teal
+  class s46 breaks
+  class s47 teal
+  class s47 breaks
+  class s48 teal
+  class s48 breaks
+  class s51 teal
+  class s51 breaks
+  class s53 teal
+  class s53 breaks
+  class s55 teal
+  class s55 breaks
+  class s58 blue
+  class s59 blue
+  class s59 breaks
+  class s60 blue
+  class s60 breaks
+  class s62 blue
+  class s63 blue
+  class s64 blue
+  class s64 breaks
+  class s66 blue
+  class s67 blue
+  class s67 breaks
+  class s68 blue
+  class s68 breaks
+  class s71 yellow
+  class s71 breaks
+  class s72 yellow
+  class s72 breaks
+  class s73 yellow
+  class s73 breaks
+  class s75 yellow
+  class s75 breaks
+  class s76 yellow
+  class s76 breaks
+  class s77 yellow
+  class s77 breaks
+  class s79 yellow
+  class s79 breaks
+  class s80 yellow
+  class s80 breaks
+  class s81 yellow
+  class s81 breaks

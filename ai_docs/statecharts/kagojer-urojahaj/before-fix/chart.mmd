@@ -1,0 +1,108 @@
+---
+title: "Kagojer Urojahaj (কﬂ°°2494¶ßগজﬂ°°2503¶ßর উডﬂ°°2492¶ßﬂ°°2507¶ßজﬂ°°2494¶ßহﬂ°°2494¶ßজ): wave, window, steering and wind"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks InputReleasedWhenAway or LoopOnlyWhenMeaningful or PausedWhenBlurred or PlaneMovesOnlyWhenHeld in some cases
+    lg4: Path to the InputReleasedWhenAway or LoopOnlyWhenMeaningful or PausedWhenBlurred or PlaneMovesOnlyWhenHeld bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 mayBreak
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: First screen (উড#2492;#2494;ও)
+      s1: Wave in play
+      s2: Result shows
+      s3: Result, cheer coming
+      s4: Paused
+      [*] --> s0
+      s0 --> s1: you press উড#2492;#2494;ও [when You is On the page]
+      s1 --> s0: you play again or pick a level [when You is On the page]
+      s1 --> s2: the wave ends [when You is On the page]
+      s1 --> s3: the wave ends [when You is On the page]
+      s1 --> s4: you hide the tab
+      s1 --> s4: you press থ#2494;ম#2494;ও or P [when You is On the page]
+      s2 --> s0: you play again or pick a level [when You is On the page]
+      s3 --> s0: you play again or pick a level [when You is On the page]
+      s3 --> s2: the cheer plays
+      s4 --> s0: you play again or pick a level [when You is On the page]
+      s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You is On the page]
+    }
+    --
+    state "You" as r1 {
+      s5: On the page
+      s6: Tab hidden
+      s7: Away, sky frozen
+      [*] --> s5
+      s5 --> s6: you hide the tab
+      s5 --> s7: you click into another window
+      s6 --> s5: the tab shows again
+      s7 --> s5: you come back to the window
+      s7 --> s6: you hide the tab
+    }
+    --
+    state "Steering" as r2 {
+      s8: Hands off
+      s9: You steer
+      s10: Holding, game didn't notice
+      s11: Plane steers on its own
+      [*] --> s8
+      s8 --> s9: you hold a side [when Game is Wave in play and You is On the page and Wind is not Wind quiet]
+      s9 --> s8: you let go [when You is On the page]
+      s9 --> s10: the wave ends or you play again or pick a level or you press থ#2494;ম#2494;ও or P [when You is On the page]
+      s9 --> s10: you hide the tab
+      s9 --> s11: you let go [when You is Away, sky frozen]
+      s10 --> s8: you let go
+      s11 --> s8: you hide the tab
+      s11 --> s8: you play again or pick a level or the wave ends or you press থ#2494;ম#2494;ও or P [when You is On the page]
+      s11 --> s9: you hold a side [when You is On the page]
+    }
+    --
+    state "Wind" as r3 {
+      s12: Wind quiet
+      s13: Sound off
+      s14: Wind blows
+      [*] --> s12
+      s12 --> s13: you turn sound off [when You is On the page]
+      s12 --> s14: you press উড#2492;#2494;ও [when Game is First screen (উড#2492;#2494;ও) and You is On the page]
+      s13 --> s12: you turn sound on [when Game is not Wave in play and You is On the page and Steering is one of Hands off, Holding, game didn't notice]
+      s14 --> s12: you play again or pick a level or the wave ends or you press থ#2494;ম#2494;ও or P [when You is On the page]
+      s14 --> s13: you turn sound off [when You is On the page]
+      s14 --> s12: you hide the tab
+      s13 --> s14: you turn sound on [when Game is Wave in play and You is On the page]
+      s12 --> s14: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Game is Paused and You is On the page]
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 blue
+  class s3 blue
+  class s4 yellow
+  class s5 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 teal
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s11 teal
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 bugPath
+  class s13 mayBreak
+  class s14 teal
+  class s14 mayBreak
+  class s14 bugPath

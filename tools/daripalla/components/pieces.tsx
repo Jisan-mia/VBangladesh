@@ -1,4 +1,5 @@
-import { bn, FRUITS, type Piece } from "../lib/game";
+import { bn } from "../lib/levels";
+import { FRUITS, type Piece } from "../lib/puzzle";
 import { FRUIT_ART, StarBagArt, WeightArt } from "./art";
 
 /** A word for a piece, for screen readers and the parent. */

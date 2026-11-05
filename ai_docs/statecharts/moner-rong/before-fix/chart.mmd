@@ -1,0 +1,162 @@
+---
+title: "মনﬂ°°2503¶ßর রﬂ°°2434¶ß: scenes, voice, stars, rest screen and parent gate"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: break
+    lg2: rest
+    lg3: out
+    lg4: Breaks ChildCannotOpenGate or GateNeedsAFullHold or NoDoubleResult or NoReadingNeeded or NoWayOutWithoutGate or RestOnlyAtBreak or StarsMatchPlays or VoiceOnlyWithSound
+    lg5: Breaks ChildCannotOpenGate or GateNeedsAFullHold or NoDoubleResult or NoReadingNeeded or NoWayOutWithoutGate or RestOnlyAtBreak or StarsMatchPlays or VoiceOnlyWithSound in some cases
+    lg6: Path to the ChildCannotOpenGate or GateNeedsAFullHold or NoDoubleResult or NoReadingNeeded or NoWayOutWithoutGate or RestOnlyAtBreak or StarsMatchPlays or VoiceOnlyWithSound bug
+  }
+  class lg0 teal
+  class lg1 blue
+  class lg2 yellow
+  class lg3 pink
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Scene" as r0 {
+      s0: Naming a feeling
+      s1: Picking a kind thing
+      s2: Left the kids' area
+      s3: Talking about it
+      s4: Talking about the last picture
+      s5: Card shows
+      s6: Pictures put away for today
+      s7: Card shows, set counted twice
+      [*] --> s0
+      s0 --> s1: you tap a face that fits [when Rest is not Rest screen shows and Gate is Gate shut]
+      s0 --> s2: the child taps a site link or the search [when Rest is not Rest screen shows and Voice is one of Sound off, Sound on and Gate is Gate shut]
+      s1 --> s0: you start a set
+      s1 --> s3: you pick a kind thing
+      s2 --> s0: they come back
+      s3 --> s0: you start a set or you press পর#2503;র ছব#2495;
+      s1 --> s4: you pick a kind thing
+      s4 --> s0: you start a set
+      s4 --> s5: you press ধ#2494;প শ#2503;ষ
+      s5 --> s0: you start a set [when Rest is not Rest screen shows and Gate is Gate shut]
+      s5 --> s2: the child taps a site link or the search [when Rest is not Rest screen shows]
+      s5 --> s6: you press শ#2503;ষ [when Rest is not Rest screen shows and Gate is Gate shut]
+      s5 --> s7: you Tab to the hidden ধ#2494;প শ#2503;ষ and press Enter
+      s6 --> s0: you start a set
+      s6 --> s7: you Tab to the hidden ধ#2494;প শ#2503;ষ and press Enter
+      s5 --> s0: you Tab to আব#2494;র খ#2503;ল#2507; under the rest screen and press Enter [when Rest is Rest screen shows and Gate is Gate shut]
+      s7 --> s0: you start a set [when Rest is not Rest screen shows and Gate is Gate shut]
+      s7 --> s2: the child taps a site link or the search [when Rest is not Rest screen shows]
+      s7 --> s6: you press শ#2503;ষ [when Rest is not Rest screen shows and Gate is Gate shut]
+      s7 --> s0: you Tab to আব#2494;র খ#2503;ল#2507; under the rest screen and press Enter [when Rest is Rest screen shows and Gate is Gate shut]
+    }
+    --
+    state "Rest" as r1 {
+      s8: Time left today
+      s9: Today's time is up
+      s10: Rest screen shows
+      [*] --> s8
+      s8 --> s9: today's time runs out [when Scene is not Left the kids' area]
+      s9 --> s10: you press ধ#2494;প শ#2503;ষ [when Scene is Talking about the last picture and Gate is Gate shut]
+      s9 --> s10: you Tab to the hidden ধ#2494;প শ#2503;ষ and press Enter [when Scene is one of Card shows, Pictures put away for today and Voice is one of Sound off, Sound on]
+      s10 --> s8: a grown-up gives 10 more minutes [when Gate is one of Child opened the gate, Grown-up opened the gate]
+    }
+    --
+    state "Voice" as r2 {
+      s11: Sound on
+      s12: Sound off
+      s13: Reading a line aloud
+      s14: Reading aloud with sound off
+      [*] --> s11
+      s11 --> s12: you turn sound off [when Scene is not Left the kids' area]
+      s11 --> s13: you tap a face that fits [when Scene is Naming a feeling and Rest is not Rest screen shows and Gate is Gate shut]
+      s12 --> s11: you turn sound on [when Scene is not Left the kids' area]
+      s13 --> s11: you start a set or the line finishes
+      s13 --> s14: you turn sound off
+      s14 --> s12: you start a set or the line finishes
+      s14 --> s13: you turn sound on
+      s14 --> s12: you pick a kind thing [when Scene is Picking a kind thing]
+      s11 --> s13: you pick a kind thing [when Scene is Picking a kind thing and Rest is not Rest screen shows and Gate is Gate shut]
+      s14 --> s12: you press পর#2503;র ছব#2495; [when Scene is Talking about it]
+      s13 --> s11: you tap a face that doesn't fit [when Scene is Naming a feeling]
+      s11 --> s13: you press পর#2503;র ছব#2495; [when Scene is Talking about it and Rest is not Rest screen shows and Gate is Gate shut]
+      s14 --> s12: you tap a face that doesn't fit or you tap a face that fits [when Scene is Naming a feeling]
+      s13 --> s11: you press ধ#2494;প শ#2503;ষ [when Scene is Talking about the last picture]
+      s14 --> s12: you press ধ#2494;প শ#2503;ষ [when Scene is Talking about the last picture]
+    }
+    --
+    state "Gate" as r3 {
+      s15: Gate shut
+      s16: Gate held
+      s17: Sum question shows
+      s18: Child opened the gate
+      s19: Grown-up opened the gate
+      s20: Let go, timer still running
+      s21: Sum question shows without a full hold
+      [*] --> s15
+      s15 --> s16: someone holds বড#2492;দ#2503;র জন#2509;য [when Scene is one of Card shows, Card shows, set counted twice or Rest is Rest screen shows]
+      s16 --> s15: they let go before 2 seconds
+      s16 --> s17: 2 seconds pass
+      s16 --> s15: they come back [when Scene is Left the kids' area and Rest is not Rest screen shows]
+      s17 --> s15: the gate closes
+      s17 --> s18: a child mashes the number pad
+      s17 --> s19: a grown-up answers the sum
+      s16 --> s20: they let go before 2 seconds
+      s17 --> s15: they come back [when Scene is Left the kids' area and Rest is not Rest screen shows]
+      s18 --> s15: the gate closes
+      s19 --> s15: the gate closes
+      s20 --> s21: 2 seconds pass
+      s18 --> s15: they come back [when Scene is Left the kids' area and Rest is not Rest screen shows]
+      s19 --> s15: they come back [when Scene is Left the kids' area and Rest is not Rest screen shows]
+      s20 --> s15: they come back [when Scene is Left the kids' area and Rest is not Rest screen shows]
+      s21 --> s15: the gate closes
+      s21 --> s18: a child mashes the number pad
+      s21 --> s19: a grown-up answers the sum
+      s18 --> s15: a grown-up gives 10 more minutes [when Scene is not Left the kids' area and Rest is Rest screen shows]
+      s19 --> s15: a grown-up gives 10 more minutes [when Scene is not Left the kids' area and Rest is Rest screen shows]
+      s21 --> s15: they come back [when Scene is Left the kids' area and Rest is not Rest screen shows]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 pink
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 teal
+  class s3 mayBreak
+  class s3 bugPath
+  class s4 teal
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 bugPath
+  class s6 blue
+  class s6 mayBreak
+  class s7 breaks
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 yellow
+  class s10 bugPath
+  class s11 bugPath
+  class s13 teal
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 teal
+  class s14 breaks
+  class s14 bugPath
+  class s15 bugPath
+  class s16 bugPath
+  class s17 bugPath
+  class s18 breaks
+  class s18 bugPath
+  class s20 bugPath
+  class s21 breaks
+  class s21 bugPath

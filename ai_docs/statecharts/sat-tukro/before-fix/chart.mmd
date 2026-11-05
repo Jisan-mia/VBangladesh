@@ -1,0 +1,116 @@
+---
+title: "সﬂ°°2494¶ßত টﬂ°°2497¶ßকরﬂ°°2507¶ß: picture, hand, window, daily limit and links"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: between
+    lg2: rest
+    lg3: gone
+    lg4: Breaks ChoiceFreezesPlay or FinishCounts or InputReleasedWhenAway or NoReadingNeeded or ParentGate or PickerKeepsWork
+    lg5: Breaks ChoiceFreezesPlay or FinishCounts or InputReleasedWhenAway or NoReadingNeeded or ParentGate or PickerKeepsWork in some cases
+    lg6: Path to the ChoiceFreezesPlay or FinishCounts or InputReleasedWhenAway or NoReadingNeeded or ParentGate or PickerKeepsWork bug
+  }
+  class lg0 teal
+  class lg1 blue
+  class lg2 yellow
+  class lg3 orange
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Empty shadow
+      s1: Picture list
+      s2: Parent shares the link
+      s3: Left for another page
+      s4: Half built
+      s5: Picture done, cheering
+      s6: End screen
+      s7: Rest screen
+      s8: Picture list, cheer still pending
+      [*] --> s0
+      s0 --> s1: you tap the picture's name (or শ#2503;ষ) [when Hands off or Piece follows the bare pointer]
+      s0 --> s2: a parent opens the gate and shares the link [when Hands off or Piece follows the bare pointer]
+      s0 --> s3: you tap a link around the game [when Hands off or Piece follows the bare pointer]
+      s1 --> s0: you pick another picture or you pick the same picture [when Hands off]
+      s1 --> s2: a parent opens the gate and shares the link [when Hands off]
+      s1 --> s3: you tap a link around the game [when Hands off]
+      s0 --> s4: you drop it in its place [when Dragging a piece]
+      s4 --> s1: you tap the picture's name (or শ#2503;ষ) [when Hands off or Piece follows the bare pointer]
+      s4 --> s2: a parent opens the gate and shares the link [when Hands off or Piece follows the bare pointer]
+      s4 --> s3: you tap a link around the game [when Hands off or Piece follows the bare pointer]
+      s4 --> s5: you drop it in its place [when Dragging a piece]
+      s5 --> s6: the cheer ends and the end screen shows
+      s5 --> s7: the cheer ends and the end screen shows
+      s5 --> s8: you tap the picture's name (or শ#2503;ষ) [when Hands off]
+      s5 --> s2: a parent opens the gate and shares the link [when Hands off]
+      s5 --> s3: you tap a link around the game [when Hands off]
+      s6 --> s0: you press আব#2494;র খ#2503;ল#2507; [when Hands off]
+      s6 --> s2: a parent opens the gate and shares the link [when Hands off]
+      s6 --> s3: you tap a link around the game [when Hands off]
+      s6 --> s1: you tap the picture's name (or শ#2503;ষ) [when Hands off]
+      s7 --> s6: a parent gives 10 more minutes
+      s8 --> s6: the cheer ends and the end screen shows
+      s8 --> s7: the cheer ends and the end screen shows
+      s8 --> s2: a parent opens the gate and shares the link [when Hands off]
+      s8 --> s3: you tap a link around the game [when Hands off]
+      s8 --> s0: you pick another picture or you pick the same picture [when Hands off]
+    }
+    --
+    state "Hand" as r1 {
+      s9: Hands off
+      s10: Away
+      s11: Dragging a piece
+      s12: Away, piece still held
+      s13: Piece follows the bare pointer
+      [*] --> s9
+      s9 --> s10: you click into another window
+      s9 --> s11: you press a piece [when Empty shadow or Half built]
+      s10 --> s9: you come back to the window
+      s11 --> s9: the phone cancels the touch or you drop it in the wrong place or you drop it in its place
+      s11 --> s12: you click into another window
+      s12 --> s10: the phone cancels the touch
+      s12 --> s11: you come back to the window [when Empty shadow or Half built]
+      s12 --> s13: you come back to the window
+      s13 --> s9: the phone cancels the touch
+      s13 --> s9: you tap the picture's name (or শ#2503;ষ) [when Empty shadow or Half built]
+      s13 --> s12: you click into another window
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 blue
+  class s1 breaks
+  class s1 bugPath
+  class s2 orange
+  class s2 mayBreak
+  class s3 orange
+  class s3 breaks
+  class s3 bugPath
+  class s4 teal
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 teal
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 blue
+  class s6 breaks
+  class s7 yellow
+  class s7 breaks
+  class s8 blue
+  class s8 breaks
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s11 teal
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 breaks
+  class s12 bugPath
+  class s13 mayBreak

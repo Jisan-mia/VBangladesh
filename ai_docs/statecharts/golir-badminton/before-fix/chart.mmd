@@ -1,0 +1,125 @@
+---
+title: "গলﬂ°°2495¶ßর বﬂ°°2509¶ßযﬂ°°2494¶ßডমﬂ°°2495¶ßনﬂ°°2509¶ßটন: match, window, racket, wind and result"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks InputReleasedWhenAway or LoopOnlyWhenMeaningful or NoProgressWhileAway or NoTapPastResult or PauseOnlyMidMatch or PausedWhenBlurred
+    lg4: Breaks InputReleasedWhenAway or LoopOnlyWhenMeaningful or NoProgressWhileAway or NoTapPastResult or PauseOnlyMidMatch or PausedWhenBlurred in some cases
+    lg5: Path to the InputReleasedWhenAway or LoopOnlyWhenMeaningful or NoProgressWhileAway or NoTapPastResult or PauseOnlyMidMatch or PausedWhenBlurred bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: First screen
+      s1: Match in play
+      s2: Paused before the first serve
+      s3: Result just appeared
+      s4: Paused
+      s5: Result shows
+      s6: Result skipped by a key
+      [*] --> s0
+      s0 --> s1: you pick a level or play again [when You is not Away, shuttle frozen]
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; [when You is On the page]
+      s0 --> s2: you hide the tab
+      s1 --> s3: someone reaches five points [when You is one of Away, shuttle moving, On the page]
+      s1 --> s4: you hide the tab
+      s3 --> s1: you pick a level or play again [when You is one of Court off screen, On the page]
+      s3 --> s5: a moment passes
+      s3 --> s6: you press Space [when You is On the page]
+      s2 --> s0: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You is one of Court off screen, On the page]
+      s2 --> s1: you pick a level or play again [when You is one of Court off screen, On the page]
+      s5 --> s1: you pick a level or play again [when You is one of Court off screen, On the page]
+      s5 --> s1: you press Space [when You is On the page]
+      s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You is one of Court off screen, On the page]
+    }
+    --
+    state "You" as r1 {
+      s7: On the page
+      s8: Away, shuttle frozen
+      s9: Court off screen
+      s10: Tab hidden
+      s11: Away, shuttle moving
+      [*] --> s7
+      s7 --> s8: you click into another window
+      s7 --> s9: the court scrolls off screen
+      s7 --> s10: you hide the tab
+      s8 --> s7: you come back to the window
+      s8 --> s10: you hide the tab
+      s9 --> s7: the court scrolls back
+      s9 --> s8: you click into another window
+      s9 --> s10: you hide the tab
+      s10 --> s7: the tab shows again
+      s8 --> s9: you come back to the window [when Leftovers is one of Nothing left on, racket up]
+      s10 --> s9: the tab shows again
+      s8 --> s11: the court scrolls back [when Game is one of Match in play, Result skipped by a key and Leftovers is one of Nothing left on, racket up]
+      s11 --> s7: you come back to the window
+      s11 --> s10: you hide the tab
+      s11 --> s8: someone reaches five points or the court scrolls off screen
+    }
+    --
+    state "Leftovers" as r2 {
+      s12: Nothing left on
+      s13: wind howls
+      s14: racket up
+      s15: racket up, wind howls
+      [*] --> s12
+      s12 --> s13: the next shuttle flies [when Game is one of Match in play, Result skipped by a key and You is one of Away, shuttle moving, On the page]
+      s12 --> s14: you press and hold [when Game is one of Match in play, Result skipped by a key and You is On the page]
+      s13 --> s12: someone reaches five points [when You is not Away, shuttle frozen]
+      s13 --> s12: the court scrolls off screen or you hide the tab
+      s13 --> s15: you press and hold [when You is On the page]
+      s14 --> s12: you let go (a swing) [when You is one of Court off screen, On the page]
+      s14 --> s12: you hide the tab
+      s14 --> s15: the next shuttle flies [when Game is one of Match in play, Result skipped by a key and You is one of Away, shuttle moving, On the page]
+      s14 --> s12: you pick a level or play again [when Game is not Match in play and You is one of Court off screen, On the page]
+      s14 --> s12: you press Space [when Game is not Match in play and You is On the page]
+      s15 --> s13: you let go (a swing) [when You is On the page]
+      s15 --> s12: you hide the tab
+      s15 --> s14: someone reaches five points [when You is not Away, shuttle frozen]
+      s15 --> s14: the court scrolls off screen
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 yellow
+  class s2 breaks
+  class s2 bugPath
+  class s3 blue
+  class s3 mayBreak
+  class s3 bugPath
+  class s4 yellow
+  class s5 blue
+  class s5 mayBreak
+  class s6 breaks
+  class s6 bugPath
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 bugPath
+  class s10 bugPath
+  class s11 teal
+  class s11 breaks
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 teal
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 teal
+  class s15 mayBreak

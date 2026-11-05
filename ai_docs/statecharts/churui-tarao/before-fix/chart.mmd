@@ -1,0 +1,139 @@
+---
+title: "চডﬂ°°2492¶ßﬂ°°2497¶ßই তﬂ°°2494¶ßডﬂ°°2492¶ßﬂ°°2494¶ßও: afternoon, window, level list, cheer and link"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks ChoiceFreezesPlay or NoFanfareAfterMovingOn or NoProgressWhileAway or PausedWhenBlurred
+    lg4: Breaks ChoiceFreezesPlay or NoFanfareAfterMovingOn or NoProgressWhileAway or PausedWhenBlurred in some cases
+    lg5: Path to the ChoiceFreezesPlay or NoFanfareAfterMovingOn or NoProgressWhileAway or PausedWhenBlurred bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Waiting for your first tap
+      s1: Sparrows landing
+      s2: Card shows
+      s3: Paused
+      [*] --> s0
+      s0 --> s1: you tap the field [when Window is You're on the page]
+      s1 --> s2: dusk falls or the grain runs out, not passed or dusk falls and the field is passed [when Cheer is No cheer waiting]
+      s1 --> s3: you press থ#2494;ম#2494;ও [when Window is You're on the page]
+      s1 --> s3: you hide the tab
+      s2 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল or a friend's link opens (the friend's level) [when Window is You're on the page and Link is No friend's link]
+      s2 --> s1: you press আব#2494;র খ#2503;ল#2507; [when Window is You're on the page]
+      s3 --> s0: a friend's link opens (the friend's level) [when Window is You're on the page and Link is No friend's link]
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s2 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল (the friend's level) or you press পর#2503;র ল#2503;ভ#2503;ল (another level) [when Window is You're on the page and Link is not No friend's link]
+      s1 --> s0: you pick a level [when Window is You're on the page and Levels is সব ল#2503;ভ#2503;ল open and Link is No friend's link]
+      s1 --> s0: you pick a level (the friend's level) or you pick a level (another level) [when Window is You're on the page and Levels is সব ল#2503;ভ#2503;ল open and Link is not No friend's link]
+      s1 --> s2: dusk falls [when Cheer is Cheer still to come]
+      s2 --> s0: you pick a level [when Window is You're on the page and Levels is সব ল#2503;ভ#2503;ল open and Link is No friend's link]
+      s3 --> s0: you pick a level [when Window is You're on the page and Levels is সব ল#2503;ভ#2503;ল open and Link is No friend's link]
+      s2 --> s0: you pick a level (the friend's level) or you pick a level (another level) [when Window is You're on the page and Levels is সব ল#2503;ভ#2503;ল open and Link is not No friend's link]
+      s3 --> s0: you pick a level (the friend's level) or you pick a level (another level) [when Window is You're on the page and Levels is সব ল#2503;ভ#2503;ল open and Link is not No friend's link]
+    }
+    --
+    state "Window" as r1 {
+      s4: You're on the page
+      s5: Another window has focus
+      s6: Tab hidden
+      [*] --> s4
+      s4 --> s5: you click into another window
+      s4 --> s6: you hide the tab
+      s5 --> s4: you come back to the window
+      s5 --> s6: you hide the tab
+      s6 --> s4: the tab shows again
+    }
+    --
+    state "Levels" as r2 {
+      s7: সব ল#2503;ভ#2503;ল closed
+      s8: সব ল#2503;ভ#2503;ল open
+      [*] --> s7
+      s7 --> s8: you open সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s8 --> s7: you close সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+    }
+    --
+    state "Cheer" as r3 {
+      s9: No cheer waiting
+      s10: Cheer still to come
+      [*] --> s9
+      s9 --> s10: dusk falls and the field is passed [when Game is Sparrows landing and Window is not Tab hidden]
+      s10 --> s9: you press পর#2503;র ল#2503;ভ#2503;ল [when Game is Card shows and Window is You're on the page and Link is No friend's link]
+      s10 --> s9: the cheer plays
+      s10 --> s9: you press পর#2503;র ল#2503;ভ#2503;ল (the friend's level) or you press পর#2503;র ল#2503;ভ#2503;ল (another level) [when Game is Card shows and Window is You're on the page and Link is not No friend's link]
+      s10 --> s9: you pick a level [when Game is not Waiting for your first tap and Window is You're on the page and Levels is সব ল#2503;ভ#2503;ল open and Link is No friend's link]
+      s10 --> s9: you pick a level (the friend's level) or you pick a level (another level) [when Window is You're on the page and Levels is সব ল#2503;ভ#2503;ল open and Link is not No friend's link]
+    }
+    --
+    state "Grain" as r4 {
+      s11: Grain only eaten while you watched
+      s12: Grain was eaten while you were away
+      [*] --> s11
+      s11 --> s12: dusk falls or the grain runs out, not passed or dusk falls and the field is passed [when Game is Sparrows landing and Window is Another window has focus and Cheer is No cheer waiting]
+      s11 --> s12: a sparrow nibbles [when Game is Sparrows landing and Window is Another window has focus]
+      s11 --> s12: dusk falls [when Game is Sparrows landing and Window is Another window has focus and Cheer is Cheer still to come]
+    }
+    --
+    state "Link" as r5 {
+      s13: No friend's link
+      s14: On the friend's field
+      s15: Friend's link, another level
+      s16: Friend's level, a fresh field
+      [*] --> s13
+      [*] --> s14
+      s13 --> s14: a friend's link opens (the friend's level) [when Game is not Sparrows landing and Window is You're on the page]
+      s13 --> s15: a friend's link opens (another level) [when Game is Sparrows landing and Window is You're on the page]
+      s13 --> s16: a friend's link opens (the friend's level) [when Game is Sparrows landing and Window is You're on the page]
+      s14 --> s15: you pick a level (another level) [when Window is You're on the page and Levels is সব ল#2503;ভ#2503;ল open]
+      s14 --> s15: you press পর#2503;র ল#2503;ভ#2503;ল (another level) [when Game is Card shows and Window is You're on the page]
+      s15 --> s14: you pick a level (the friend's level) [when Window is You're on the page and Levels is সব ল#2503;ভ#2503;ল open]
+      s15 --> s14: you press পর#2503;র ল#2503;ভ#2503;ল (the friend's level) [when Game is Card shows and Window is You're on the page]
+      s16 --> s14: you press পর#2503;র ল#2503;ভ#2503;ল (the friend's level) or you press আব#2494;র খ#2503;ল#2507; [when Game is Card shows and Window is You're on the page]
+      s16 --> s15: you press পর#2503;র ল#2503;ভ#2503;ল (another level) [when Game is Card shows and Window is You're on the page]
+      s16 --> s14: you pick a level (the friend's level) [when Window is You're on the page and Levels is সব ল#2503;ভ#2503;ল open]
+      s16 --> s15: you pick a level (another level) [when Window is You're on the page and Levels is সব ল#2503;ভ#2503;ল open]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 blue
+  class s2 bugPath
+  class s3 yellow
+  class s3 mayBreak
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 mayBreak
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 breaks
+  class s12 bugPath
+  class s13 mayBreak
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 mayBreak
+  class s16 mayBreak

@@ -1,7 +1,7 @@
 // The scoreboard link, the lines on the card and the link preview. Server-safe (share.ts imports it).
 import { possessive } from "../../../shared/bangla";
 import { challengeHash, readChallenge } from "../../../shared/game-core";
-import { CHOR, DAKAT, DEFAULT_POINTS, MAX_POINTS, MAX_ROUNDS, PLAYERS, POLICE, bn, cleanPlayer, nameOf, occasionLabel, occasions, standings, type Game, type Role } from "./game";
+import { BABU, CHOR, DAKAT, DEFAULT_POINTS, MAX_POINTS, MAX_ROUNDS, PLAYERS, POLICE, bn, cleanPlayer, deals, nameOf, occasionLabel, occasions, standings, type Game, type Role } from "./game";
 
 /**
  * `s` seed (the chit shuffle), `t` the winner's total, `g` one digit per round (1 = thief caught), `p` the four names,
@@ -95,4 +95,25 @@ export function versusLine(mine: Game, theirs: Game) {
   if (diff === 0) return `ওদের ${them.name} আর তোমাদের ${me.name}, দুজনেই ${bn(me.total)}!`;
   if (diff <= Math.max(...mine.points)) return `আর একটু হলেই! ওদের ${them.name} মাত্র ${bn(diff)} এগিয়ে।`;
   return `ওদের ${them.name} এবার এগিয়ে, ${bn(diff)} বেশি। আরেকবার হোক!`;
+}
+
+export type EveningStats = { rounds: number; caught: number; escaped: number; babu: { name: string; times: number } | null; police: { name: string; caught: number } | null };
+/** Real numbers for the end screen, rebuilt from the deal and the guesses: how often the thief was caught, who was বাবু most, the best police. */
+export function eveningStats(game: Game): EveningStats {
+  const all = deals(game.seed, game.caught.length), babu = [0, 0, 0, 0], catches = [0, 0, 0, 0];
+  game.caught.forEach((caught, round) => {
+    babu[all[round].indexOf(BABU)]++;
+    if (caught) catches[all[round].indexOf(POLICE)]++;
+  });
+  const top = (counts: number[]) => {
+    const most = Math.max(...counts);
+    // A tie names nobody: "সবচেয়ে বেশি" should mean one person.
+    return most > 0 && counts.filter(count => count === most).length === 1 ? counts.indexOf(most) : -1;
+  };
+  const babuSeat = top(babu), policeSeat = top(catches), caught = game.caught.filter(Boolean).length;
+  return {
+    rounds: game.caught.length, caught, escaped: game.caught.length - caught,
+    babu: babuSeat >= 0 && babu[babuSeat] > 1 ? { name: nameOf(game.names, babuSeat), times: babu[babuSeat] } : null,
+    police: policeSeat >= 0 ? { name: nameOf(game.names, policeSeat), caught: catches[policeSeat] } : null,
+  };
 }

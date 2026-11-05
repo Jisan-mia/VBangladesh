@@ -1,7 +1,8 @@
 'use client';
 // The ?print sheet: one A4 page of ten pictures, each word with an empty sign slot to write in. Printed with the browser.
 import { WordPicture, WordSlot } from './word-parts';
-import { KARS, dotted, levelOf } from '../lib/words';
+import { levelOf } from '../lib/levels';
+import { KARS, dotted } from '../lib/words';
 
 export function PrintSheet({ level }: { level: number }) {
   const spec = levelOf(level);

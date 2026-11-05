@@ -1,131 +1,207 @@
-.tool-ponero-ghor{--accent:#c23b22;--accent-deep:#8a2614;--ink:#2a2420;--muted:#6f6253;--paper:#f4ecdc;--line:#dccfb8;--trim:#f2c230;--well:#5e1a0e;--digit:#1d3f8f}
-.tool-ponero-ghor .pg-page{color:var(--ink)}
+.tool-ponero-ghor{--accent:#c23b22;--accent-deep:#8a2614}
 .tool-ponero-ghor .pg-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* hero: one short line, so the plate and its buttons land on the first phone screen */
-.pg-hero{padding:10px 0 4px}
-.pg-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,5.6vw,44px);line-height:1.3;font-weight:700;letter-spacing:0}
-.pg-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+/* One enamel per world (lib/art.ts PALETTES): red at the ghat, blue on the street, green on the roofs, night at the fair. */
+.pg{--paper:#f4ecdc;--ink:#2a2420;--muted:#6f6253;--tray:#c23b22;--tray-deep:#8a2614;--trim:#f2c230;--well:#5e1a0e;--digit:#1d3f8f;--star:#f2a900;--line:#dccfb8}
+.pg[data-world="1"]{--paper:#e7eef7;--ink:#14213d;--muted:#4f5d78;--tray:#2856a6;--tray-deep:#173a78;--well:#0f2350;--digit:#b3261e;--line:#c9d5e6}
+.pg[data-world="2"]{--paper:#eaf2e3;--ink:#1c2a20;--muted:#52654f;--tray:#2f8a5b;--tray-deep:#1d5e3c;--trim:#f6df6e;--well:#123d27;--digit:#8a2614;--star:#e09a00;--line:#cddcc3}
+.pg[data-world="3"]{--paper:#1c1a3a;--ink:#f6efe0;--muted:#b6b0d6;--tray:#3a3375;--tray-deep:#221d52;--trim:#f2b630;--well:#0d0b26;--digit:#3a2a86;--star:#f7c948;--line:#3d3870}
 
-.pg{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;max-width:460px}
+/* The game fills the stage: HUD, the plate (as big as fits), one status line, the controls. Nothing scrolls while playing. */
+.tool-ponero-ghor .gp-stage{overflow:hidden}
+.tool-ponero-ghor .gp-game{height:100%}
+.pg{--pg-ease:cubic-bezier(.23,1,.32,1);position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:8px;width:100%;max-width:520px;height:min(92svh,860px);margin-inline:auto;padding:8px;border-radius:16px;background:var(--paper);color:var(--ink);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:background .3s ease-out}
+.gp-stage .pg{height:100%}
 
-/* opened from a friend's link */
-.pg-friend{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;padding:8px 12px;border-radius:14px;background:var(--paper)}
-.pg-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 14px #2a242033;transform:rotate(-4deg)}
-.pg-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.35}
-.pg-friend p{margin:0;font-size:13px;line-height:1.4;color:var(--muted)}
+/* ---- HUD: level top-left, the finale's bar top-centre, moves and stars top-right ---- */
+.pg-hud{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;min-height:50px}
+.pg-badge{grid-column:1;display:flex;align-items:center;gap:8px;min-width:0;max-width:100%;padding:4px 10px 4px 4px;border:0;border-radius:14px;background:color-mix(in srgb,var(--tray) 13%,transparent);color:var(--ink);text-align:left;cursor:pointer}
+.pg-badge b{display:grid;place-items:center;flex:none;min-width:38px;height:38px;padding:0 4px;border-radius:11px;background:var(--tray);box-shadow:inset 0 -3px 0 #0003;color:#fff;font-family:var(--font-display);font-size:19px;font-weight:800}
+.pg-badge span{display:grid;min-width:0;font-size:14px;font-weight:700;line-height:1.25;white-space:nowrap}
+.pg-badge small{overflow:hidden;font-size:12px;font-weight:500;color:var(--muted);text-overflow:ellipsis}
+.pg-boss{grid-column:2;justify-self:center;display:grid;gap:4px;width:100%;max-width:190px;margin:0;font-size:12px;font-weight:700;line-height:1.3;text-align:center}
+.pg-boss span{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.pg-boss b{color:var(--tray);font-variant-numeric:tabular-nums}
+.pg[data-world="3"] .pg-boss b{color:var(--trim)}
+.pg-boss i{display:block;height:7px;overflow:hidden;border-radius:4px;background:color-mix(in srgb,var(--ink) 16%,transparent)}
+.pg-boss em{display:block;height:100%;background:linear-gradient(90deg,var(--tray),var(--trim));transform-origin:left;transition:transform .3s var(--pg-ease)}
+.pg-moves{grid-column:3;display:grid;justify-items:end;margin:0}
+.pg-moves p{display:flex;align-items:baseline;gap:6px;margin:0}
+.pg-moves span{font-size:13px;color:var(--muted)}
+.pg-moves b{min-width:2ch;font-family:var(--font-display);font-size:28px;font-weight:800;line-height:1.05;text-align:right;font-variant-numeric:tabular-nums}
+.pg-track{gap:1px!important;align-items:center!important;font-size:15px;line-height:1}
+.pg-track i{font-style:normal;color:color-mix(in srgb,var(--muted) 45%,transparent)}
+.pg-track i[data-on]{color:var(--star)}
+.pg-track i[data-fell]{animation:pg-fall .45s var(--pg-ease) both}
+.pg-track small{margin-left:4px;font-size:12px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.pg-rival{font-size:12px;font-weight:700;color:var(--muted)}
+@keyframes pg-fall{0%{color:var(--star);transform:none}60%{color:#e85d04;transform:translateY(8px) rotate(30deg)}100%{transform:none}}
 
-/* level, target and moves */
-.pg-bar{display:grid;grid-template-columns:44px minmax(0,1fr) 44px auto;align-items:center;gap:6px}
-.pg-step{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
-.pg-step:disabled{opacity:.35}
-.pg-step svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-.pg-level{display:grid;justify-items:center;margin:0;line-height:1.25;text-align:center}
-.pg-level b{font-family:var(--font-display);font-size:19px;font-weight:800;white-space:nowrap}
-.pg-level span{font-size:13px;color:var(--muted)}
-.pg-moves{display:flex;align-items:baseline;gap:6px;min-width:80px;justify-content:flex-end;margin:0;padding:4px 12px;border-radius:12px;background:var(--accent-deep);color:#fff}
-.pg-moves span{font-size:13px;opacity:.85}
-.pg-moves b{font-family:var(--font-display);font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--trim)}
-
-/* the tin plate: red enamel, a printed dotted rim, a rivet in each corner */
-.pg-plate{position:relative;justify-self:center;width:min(100%,max(240px,calc(100svh - 390px)));aspect-ratio:1;padding:7.5%;border-radius:6%;
+/* ---- the tin plate: enamel, a printed dotted rim, a rivet in each corner ---- */
+.pg-stagebox{display:grid;place-items:center;min-height:0;container-type:size}
+.pg-plate{position:relative;width:min(100cqw,100cqh);aspect-ratio:1;padding:7.5%;border-radius:6%;
   background:
     radial-gradient(circle at 4.2% 4.2%,#f5f7f6 0 1%,#8f999d 1.6%,transparent 1.8%),
     radial-gradient(circle at 95.8% 4.2%,#f5f7f6 0 1%,#8f999d 1.6%,transparent 1.8%),
     radial-gradient(circle at 4.2% 95.8%,#f5f7f6 0 1%,#8f999d 1.6%,transparent 1.8%),
     radial-gradient(circle at 95.8% 95.8%,#f5f7f6 0 1%,#8f999d 1.6%,transparent 1.8%),
-    var(--accent);
-  box-shadow:inset 0 2px 0 #ffffff40,inset 0 -3px 0 #00000030,0 8px 20px #2a242040}
-.pg:has(.pg-friend) .pg-plate{width:min(100%,max(240px,calc(100svh - 480px)))}
+    linear-gradient(180deg,#ffffff38,#ffffff00 18%,#00000024),
+    var(--tray);
+  box-shadow:inset 0 2px 0 #ffffff40,inset 0 -3px 0 #00000030,0 10px 24px #0000004d}
 .pg-plate::before{content:"";position:absolute;inset:2.6%;border:2px dotted var(--trim);border-radius:4.5%;pointer-events:none}
-.pg-grid{position:relative;width:100%;height:100%;border-radius:3%;background:var(--well);box-shadow:inset 0 3px 6px #00000066;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;container-type:inline-size}
+/* about to lose a star: the rim glows at the edge, never a popup in the middle (a steady border in slow mode) */
+.pg-plate[data-danger]::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:0 0 0 4px #f28c28,0 0 26px 6px #f28c2899;animation:pg-warn .9s ease-in-out infinite alternate} /* unslop-ignore: the orange rim is the about-to-lose-a-star warning, the only glow here */
+.pg[data-calm] .pg-plate[data-danger]::after{animation:none;box-shadow:0 0 0 4px #f28c28}
+@keyframes pg-warn{to{opacity:.55}}
+.pg-progress{position:absolute;top:3.3%;left:12%;right:12%;height:4px;overflow:hidden;border-radius:2px;background:#00000038;pointer-events:none}
+.pg-progress i{display:block;height:100%;background:var(--trim);transform-origin:left;transition:transform .3s var(--pg-ease)}
 
-/* a ঘুঁটি: pressed tin with a raised Bangla digit */
-.pg-tile{position:absolute;top:0;left:0;width:calc(100% / var(--n));height:calc(100% / var(--n));padding:0;border:0;background:none;cursor:pointer;transition:transform .11s ease-out;-webkit-tap-highlight-color:transparent}
+.pg-well{--drag:0;--sx:0;--sy:0;--slide:120ms;position:relative;width:100%;height:100%;border-radius:3%;background:var(--well);box-shadow:inset 0 3px 6px #00000066;touch-action:none;container-type:inline-size;outline:0}
+/* a ঘুঁটি: pressed tin with a raised Bangla digit; it slides with a little overshoot, so it lands with weight */
+.pg-tile{position:absolute;top:0;left:0;width:calc(100% / var(--n));height:calc(100% / var(--n));padding:0;border:0;background:none;cursor:grab;
+  transform:translate3d(calc(var(--c) * 100%),calc(var(--r) * 100%),0);transition:transform var(--slide) var(--pg-ease);-webkit-tap-highlight-color:transparent;will-change:transform}
+.pg-tile[data-drag]{z-index:2;transform:translate3d(calc((var(--c) + var(--drag) * var(--sx)) * 100%),calc((var(--r) + var(--drag) * var(--sy)) * 100%),0);transition:none;cursor:grabbing}
+.pg-tile[data-drag] .pg-face{box-shadow:inset 0 0 0 2px #ffffff8c,inset -2px -3px 0 #0000001f,0 7px 10px #00000059}
+.pg-well[data-scatter] .pg-tile{transform:translate3d(calc(var(--hc) * 100%),calc(var(--hr) * 100%),0);transition:none}
+.pg-well[data-flying] .pg-tile{transition:transform .42s var(--pg-ease) calc(var(--i) * 5ms)}
 .pg-face{position:absolute;inset:3.5%;display:grid;place-items:center;border-radius:14%;
   background:linear-gradient(145deg,#f7f9f8 0%,#d5dadc 45%,#a1aaae 100%);background-size:cover;
-  box-shadow:inset 0 0 0 2px #ffffff8c,inset -2px -3px 0 #0000001f,0 3px 0 #3a0f07;
+  box-shadow:inset 0 0 0 2px #ffffff8c,inset -2px -3px 0 #0000001f,0 3px 0 #00000059;
   font-family:var(--font-display);font-weight:800;line-height:1;color:var(--digit);font-size:28px;font-size:calc(100cqi / var(--n) * .5);
-  text-shadow:-1px -1px 0 #ffffffe6,1px 1.5px 0 #0a143259;transition:transform .08s ease-out}
-.pg-tile:active .pg-face{transform:scale(.95)}
+  text-shadow:-1px -1px 0 #ffffffe6,1px 1.5px 0 #0a143259} /* unslop-ignore: hard emboss edges on the pressed-tin digit, not a glow */
 .pg-tile:focus-visible{outline:none}
 .pg-tile:focus-visible .pg-face{outline:3px solid var(--trim);outline-offset:1px}
-/* a row that's all home turns brass, so progress shows without sound */
-.pg-tile[data-done] .pg-face{background:linear-gradient(145deg,#fff8dc 0%,#f0d27a 50%,#c9a23f 100%)}
-.pg-plate[data-phase=over] .pg-tile{cursor:default}
-/* ছবির ধাঁধা: the picture slice, with the digit small in a corner */
-.pg-plate[data-picture=true] .pg-face{background-size:calc(var(--n) * 100%) calc(var(--n) * 100%);border-radius:8%;box-shadow:inset 0 0 0 1.5px #ffffff66,0 3px 0 #3a0f07}
-.pg-plate[data-picture=true] .pg-tile[data-done] .pg-face{box-shadow:inset 0 0 0 3px var(--trim),0 3px 0 #3a0f07}
-.pg-face small{position:absolute;top:5%;left:6%;min-width:1.6em;padding:1px 4px;border-radius:6px;background:#ffffffd9;color:var(--digit);font-size:13px;text-shadow:none;text-align:center}
-.pg-last{pointer-events:none;animation:pg-fade .5s ease-out both}
+/* home: a brass rivet in the corner; a whole row home turns brass, so progress shows without sound */
+.pg-tile[data-home] .pg-face::after{content:"";position:absolute;right:8%;bottom:8%;width:8%;height:8%;border-radius:50%;background:var(--trim);box-shadow:0 0 0 1px #0000004d}
+.pg-tile[data-done] .pg-face{background-image:linear-gradient(145deg,#fff8dc 0%,#f0d27a 50%,#c9a23f 100%)}
+/* picture levels: the slice, a digit small in a corner (faint, or none on a finale) */
+.pg-well:not([data-look=digits]) .pg-face{background-size:calc(var(--n) * 100%) calc(var(--n) * 100%);border-radius:8%;box-shadow:inset 0 0 0 1.5px #ffffff66,0 3px 0 #00000059}
+.pg-well:not([data-look=digits]) .pg-tile[data-done] .pg-face{background-size:calc(var(--n) * 100%) calc(var(--n) * 100%);box-shadow:inset 0 0 0 3px var(--trim),0 3px 0 #00000059}
+.pg-face small{position:absolute;top:5%;left:6%;min-width:1.6em;padding:1px 4px;border-radius:6px;background:#ffffffde;color:var(--digit);font-size:13px;font-size:max(11px,calc(100cqi / var(--n) * .17));text-shadow:none;text-align:center}
+.pg-well[data-look=faint] .pg-face small{opacity:.42}
+.pg-last{pointer-events:none;animation:pg-drop .3s var(--pg-ease) .1s both}
+.pg-sweep{position:absolute;inset:0;z-index:3;border-radius:3%;background:linear-gradient(105deg,transparent 35%,#ffffff8c 50%,transparent 65%);background-size:250% 100%;pointer-events:none;animation:pg-sweep 1s var(--pg-ease) .35s both}
+.pg-well[data-won] .pg-tile{cursor:default}
+@keyframes pg-drop{from{opacity:0;transform:translate3d(calc(var(--c) * 100%),calc(var(--r) * 100%),0) scale(1.3)}}
+@keyframes pg-sweep{from{background-position:120% 0;opacity:1}80%{opacity:1}to{background-position:-20% 0;opacity:0}}
+.pg-peek{position:absolute;inset:7.5%;z-index:3;padding:0;border:0;border-radius:3%;overflow:hidden;background:var(--well);animation:pg-fade .18s var(--pg-ease)}
+.pg-peek img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* ---- under the plate: one line of help, then the goal picture, undo and the hint with its price ---- */
+.pg-status{display:flex;align-items:center;justify-content:center;min-height:2.9em;margin:0;font-size:14px;font-weight:600;line-height:1.4;color:var(--muted);text-align:center;text-wrap:balance}
+.pg-controls{display:grid;grid-template-columns:56px minmax(0,1fr) minmax(0,1.25fr);gap:8px}
+.pg-goal,.pg-goal-none{width:56px;height:56px}
+.pg-goal{padding:3px;border:2px solid var(--trim);border-radius:12px;background:#fff;cursor:pointer}
+.pg-goal[aria-pressed=true]{outline:3px solid var(--tray);outline-offset:1px}
+.pg-goal img{display:block;width:100%;height:100%;border-radius:8px;object-fit:cover}
+.pg-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:56px;padding:4px 8px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:#2a2420;font-size:15px;font-weight:700;line-height:1.2;white-space:nowrap;box-shadow:0 3px 0 var(--line);transition:transform .1s var(--pg-ease)}
+.pg-tool:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+.pg-tool:disabled{opacity:.45}
+.pg-tool svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.pg-hint{border-color:var(--tray);box-shadow:0 3px 0 var(--tray-deep)}
+.pg-hint small{padding:1px 6px;border-radius:4px;background:#fff3cf;color:#7a5200;font-size:12px;font-weight:800}
+
+/* ---- the end: a tin slip in place of the controls; the plate stays in view ---- */
+.pg-end{grid-row:3 / span 2;display:grid;gap:8px;padding:12px 14px;border:2px solid var(--trim);border-radius:16px;background:#fffdf6;color:#2a2420;box-shadow:0 -6px 18px #0000001f;animation:pg-rise .28s var(--pg-ease) both}
+.pg[data-calm] .pg-end{animation:none}
+.pg-end-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pg-end h2{margin:0;font-family:var(--font-display);font-size:22px;line-height:1.3}
+.pg-end .gx-stars{font-size:30px;line-height:1}
+.pg-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0}
+.pg-stats div{display:grid;justify-items:center;padding:6px 2px;border-radius:10px;background:#f3ecdc}
+.pg-stats dt{font-size:12px;color:#6f6253}
+.pg-stats dd{margin:0;font-family:var(--font-display);font-size:21px;font-weight:800;font-variant-numeric:tabular-nums}
+.pg-end-line{margin:0;font-weight:600;line-height:1.45}
+.pg-end-note{margin:0;font-weight:700;color:#8a2614}
+.pg-end-actions{display:grid;grid-template-columns:1fr 1.35fr;gap:8px}
+.tool-ponero-ghor .pg-end-actions button{min-height:54px;font-size:18px}
+.pg-end-actions kbd{margin-left:8px;padding:1px 5px;border:1px solid #ffffff80;border-radius:5px;font-size:11px;font-family:inherit;opacity:.8}
+@media(hover:none){.pg-end-actions kbd{display:none}}
+.pg-see{justify-self:center;color:#2a2420}
+@keyframes pg-rise{from{opacity:0;transform:translateY(24px)}}
 @keyframes pg-fade{from{opacity:0}}
 
-.pg-overlay{position:absolute;inset:0;display:grid;place-items:center;padding:16px;border-radius:6%;background:#f4ecdcb8}
-.pg-note{display:grid;justify-items:center;gap:10px;max-width:300px;padding:14px 18px;border-radius:16px;background:#fff;box-shadow:0 8px 24px #2a242033;text-align:center}
-.pg-note p{margin:0;font-weight:600}
-.pg-note .kit-primary{min-width:180px;min-height:56px;font-size:19px}
+/* ---- title: the plate is the start button ---- */
+.pg-title{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:12px;overflow:auto;border-radius:16px;background:var(--paper);text-align:center;animation:pg-fade .2s var(--pg-ease)}
+.pg-start{display:grid;justify-items:center;padding:0;border:0;background:none;color:inherit;cursor:pointer;touch-action:manipulation}
+.pg-start-art{display:block;width:min(100%,420px,calc(var(--stage-h,90svh) * .5));aspect-ratio:1}
+.pg-start span{margin-top:-30px;padding:8px 52px;border:3px dashed var(--trim);border-radius:18px;background:var(--tray-deep);color:#fff;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.3;box-shadow:0 6px 0 #0000004d,0 16px 26px -14px #000;transition:transform .1s var(--pg-ease)}
+.pg-start:active span{transform:translateY(4px) scale(.98)}
+.pg-start:focus-visible span{outline:3px solid var(--ink);outline-offset:3px}
+.pg-pick{display:flex;align-items:center;gap:10px}
+.pg-pick b{font-family:var(--font-display);font-size:18px;white-space:nowrap}
+.pg-pick button{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:#2a2420}
+.pg-pick button:disabled{opacity:.35}
+.pg-pick svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.pg-line{max-width:34ch;margin:0;font-size:15px;line-height:1.5}
+.pg-line span{display:block;margin-top:2px;font-size:14px;color:var(--muted)}
+.pg-finale-tag{display:inline-block;margin-right:6px;padding:1px 9px;border-radius:4px;background:var(--tray);color:#fff;font-size:12px;font-style:normal;font-weight:800;vertical-align:2px}
+.pg-calm{margin:0;padding:3px 10px;border-radius:6px;background:#fff;color:#6f6253;font-size:13px}
+.tool-ponero-ghor .pg-all{min-height:40px;font-weight:600;color:var(--ink)}
+.pg-friend{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;max-width:340px;padding:8px 12px;border-radius:14px;background:#fff;color:#2a2420;text-align:left}
+.pg-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 14px #2a242033;transform:rotate(-4deg)}
+.pg-friend h2{margin:0;font-family:var(--font-display);font-size:15px;line-height:1.35}
+.pg-friend p{margin:0;font-size:13px;line-height:1.4;color:#6f6253}
 
-.pg-status{min-height:42px;margin:0;font-size:15px;font-weight:600;line-height:1.4;color:var(--muted);display:flex;align-items:center}
+/* ---- the story: three panels, tap for the next, hold to skip ---- */
+.pg-story{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;border-radius:16px;background:var(--paper);cursor:pointer;touch-action:none}
+.pg-panel{display:block;width:min(100%,360px,calc(var(--stage-h,90svh) * .5));aspect-ratio:1;border-radius:18px;box-shadow:0 0 0 4px #fff,0 0 0 6px var(--ink),0 14px 30px -12px #0006;transform:rotate(-1deg)}
+.pg-caption{max-width:30ch;margin:6px 0 0;font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.45;text-align:center;animation:pg-fade .3s var(--pg-ease)}
+.pg-dots{display:flex;gap:6px;margin:0}
+.pg-dots i{width:8px;height:8px;border-radius:50%;background:color-mix(in srgb,var(--ink) 22%,transparent)}
+.pg-dots i[data-on]{background:var(--tray)}
+.pg-skip{position:absolute;right:14px;bottom:12px;display:flex;align-items:center;gap:6px;margin:0;font-size:12px;font-weight:700;color:var(--muted)}
+.pg-skip span{width:28px;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--ink) 18%,transparent)}
+.pg-skip[data-holding] span{background:linear-gradient(90deg,var(--tray) 0 0) no-repeat 0 0/0 100%,color-mix(in srgb,var(--ink) 18%,transparent);animation:pg-hold .6s linear forwards}
+@keyframes pg-hold{to{background-size:100% 100%,auto}}
 
-.pg-tools{display:grid;grid-template-columns:1fr 1fr 1fr 48px;gap:6px}
-.pg-help{grid-column:span 2}
-.pg-tools .pg-tool:nth-child(2){grid-column:span 2}
-.pg-tools .pg-tool:nth-child(4){grid-column:span 2}
-.pg-tool{display:inline-flex;align-items:center;justify-content:center;min-height:48px;white-space:nowrap;padding:4px 6px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;line-height:1.2;text-align:center}
-.pg-tool:disabled{opacity:.45}
-.pg-tool[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
-.pg-help{border:2px solid var(--accent);color:var(--accent-deep);font-weight:700}
-.pg-sound{color:var(--ink);border-color:var(--line)}
+/* ---- সব লেভেল: a choice moment over the plate ---- */
+.pg-sheet{position:absolute;inset:0;z-index:6;overflow:auto;overscroll-behavior:contain;padding:8px;border-radius:16px;background:color-mix(in srgb,#000 35%,transparent);animation:pg-fade .15s var(--pg-ease)}
+.pg-sheet-card{display:grid;gap:12px;padding:14px;border-radius:16px;background:#fffdf6;color:#2a2420}
+.pg-sheet header{position:relative;padding-right:48px}
+.pg-sheet h2{margin:0;font-family:var(--font-display);font-size:22px}
+.pg-sheet header p{margin:2px 0 0;font-size:14px;color:#6f6253}
+.pg-sheet-close{position:absolute;top:-4px;right:-4px;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:12px;background:#f3ecdc;color:#2a2420}
+.pg-sheet-close svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round}
+.pg-world h3{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin:0 0 8px;font-family:var(--font-display);font-size:17px}
+.pg-world h3 span{font-family:var(--font-bengali);font-size:13px;font-weight:500;color:#6f6253}
+.pg-world h3 i{width:14px;height:14px;border-radius:4px;background:#c23b22;box-shadow:inset 0 0 0 2px #f2c230}
+.pg-world[data-world="1"] h3 i{background:#2856a6}.pg-world[data-world="2"] h3 i{background:#2f8a5b}.pg-world[data-world="3"] h3 i{background:#3a3375}
+.pg-world ol{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0;padding:0;list-style:none}
+.pg-world button{position:relative;display:grid;justify-items:center;align-content:center;gap:2px;width:100%;min-height:56px;padding:4px 2px;border:1.5px solid #dccfb8;border-radius:12px;background:#fff;color:#2a2420}
+.pg-world button b{font-family:var(--font-display);font-size:18px;line-height:1}
+.pg-world button b svg{width:18px;height:18px;fill:none;stroke:#6f6253;stroke-width:2}
+.pg-world button:disabled{background:#f3ecdc;opacity:.7}
+.pg-world button[aria-current=true]{border-color:#2a2420;box-shadow:inset 0 0 0 1.5px #2a2420}
+.pg-world button[data-finale]{border-style:dashed;border-color:#c23b22}
+.pg-world button[data-next]{border-color:#c23b22;background:#fff3cf}
+.pg-world button em{position:absolute;top:-8px;left:50%;padding:0 5px;border-radius:4px;background:#c23b22;color:#fff;font-size:10px;font-style:normal;font-weight:800;white-space:nowrap;transform:translateX(-50%)}
+.pg-mini{display:flex;font-size:11px;line-height:1}
+.pg-mini i{font-style:normal;color:#d5c9b4}.pg-mini i[data-on]{color:#f2a900}
 
-/* solved */
-.pg-over{display:grid;gap:6px;margin:0;padding:10px 12px;border:2px dashed var(--accent);border-radius:14px;background:var(--paper)}
-.pg-over p{margin:0}
-.pg-over-score{font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.25}
-.pg-over-score em{font-style:normal;color:var(--accent)}
-.pg-over-stars{font-size:38px;line-height:1.1}
-.pg-over-line{font-weight:600;line-height:1.45;color:var(--muted)}
-.pg-over-near{font-weight:700;color:var(--accent-deep)}
-.pg-over-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;margin-top:4px}
-.tool-ponero-ghor .pg-over-actions button{min-height:56px;font-size:19px}
-.pg-all{align-self:center;font-weight:700;color:var(--accent-deep)}
-.pg-see{justify-self:center}
-
-/* every level */
-.pg-levels{border:1.5px solid var(--line);border-radius:14px;background:#fff}
-.pg-levels summary{min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;font-weight:700;cursor:pointer}
-.pg-levels summary span{font-weight:500;color:var(--muted);font-size:14px}
-.pg-levels>p{margin:0 14px 10px;font-size:14px;color:var(--muted)}
-.pg-levels .gx-levels{padding:0 10px 12px}
-
-.pg-result{scroll-margin-top:12px;margin-top:16px;padding-top:18px;border-top:2px solid var(--ink)}
-.pg-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,32px);line-height:1.4}
-.pg-result h2 em{font-style:normal;color:var(--accent)}
-.pg-result>p{margin:0 0 16px;color:var(--muted)}
-.pg-result-body{display:grid;gap:22px}
-.pg-share{display:grid;gap:18px;align-content:start}
+/* ---- the card: a panel over the stage, scrolling inside it ---- */
+.pg-cardpanel{position:absolute;inset:0;z-index:7;display:grid;align-content:start;gap:14px;overflow:auto;overscroll-behavior:contain;padding:14px;border-radius:16px;background:#fffdf6;color:#2a2420;user-select:text;-webkit-user-select:text}
+.pg-cardpanel-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pg-cardpanel h2{margin:0;font-family:var(--font-display);font-size:20px;line-height:1.35}
+.pg-cardpanel h2 em{font-style:normal;color:#c23b22}
+.pg-cardpanel>p{margin:0;color:#6f6253}
+.pg-share{display:grid;gap:16px}
 .pg-name{display:grid;gap:6px;font-weight:600}
-.pg-name small{font-weight:400;color:var(--muted);font-size:13px}
-.pg-name input{border:1.5px solid var(--line);border-radius:12px;font-size:17px}
-.pg-again-link{justify-self:start}
-
-.pg-guide h2{font-family:var(--font-display);margin-bottom:12px}
-.pg-guide>p{color:var(--muted);max-width:640px}
-.pg-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.pg-guide li{display:flex;gap:14px;align-items:flex-start}
-.pg-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--trim);color:var(--ink);font-weight:700}
-.pg-guide li p{margin:4px 0 0}
+.pg-name small{font-size:13px;font-weight:400;color:#6f6253}
+.pg-name input{border:1.5px solid #dccfb8;border-radius:12px;font-size:17px}
 
 @media(max-width:360px){
-  .pg-level b{font-size:15px;white-space:normal}
-  .pg-level span{font-size:12px}
-  .pg-moves{min-width:0;padding-inline:8px}
-  .pg-moves span{font-size:12px}
-  .pg-tool{font-size:14px}
+  .pg-badge small{display:none}
+  .pg-tool{font-size:14px;gap:4px;padding-inline:4px}
+  .pg-tool svg{display:none}
+  .pg-stats dd{font-size:18px}
 }
-@media(min-width:720px){
-  .pg-lead{display:block}
-  .pg-page:has(.pg-friend) .pg-lead{display:none}
-  .pg-friend{grid-template-columns:96px 1fr}
-  .pg-friend h2{font-size:20px}
-}
-@media(prefers-reduced-motion:reduce){.pg-tile{transition-duration:.04s}.pg-tile:active .pg-face{transform:none}.pg-last{animation:none}}
+/* every pressable gives a little under the finger (the kit's primary button already sinks) */
+.pg-goal,.pg-world button,.pg-sheet-close,.pg .kit-secondary{transition:transform .14s var(--pg-ease)}
+.pg-goal:active,.pg-world button:active:not(:disabled),.pg-sheet-close:active,.pg .kit-secondary:active:not(:disabled){transform:scale(.97)}
+/* ধীরে খেলো and reduced motion: tiles jump, nothing flies, drops, sweeps or pulses; the danger rim stays, still */
+.pg[data-calm] .pg-tile,.pg[data-calm] .pg-well[data-flying] .pg-tile{transition:none}
+.pg[data-calm] *,.pg[data-calm]{animation:none!important}
+@media(prefers-reduced-motion:reduce){.pg-tile,.pg-well[data-flying] .pg-tile,.pg .kit-secondary,.pg-goal,.pg-world button,.pg-sheet-close,.pg-tool,.pg-start span{transition:none!important}.pg *,.pg-plate::after,.pg-last,.pg-sweep,.pg-end{animation:none!important}}
+/* the hold-to-skip fill is progress, not decoration: it keeps running */
+.pg .pg-skip[data-holding] span{animation:pg-hold .6s linear forwards!important}

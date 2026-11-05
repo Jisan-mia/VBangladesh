@@ -1,0 +1,45 @@
+---
+title: "পﬂ°°2499¶ßথﬂ°°2495¶ßবﬂ°°2496¶ß ঘﬂ°°2497¶ßরﬂ°°2495¶ß: a held Enter on postcards and results"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: done
+  }
+  class lg0 teal
+  class lg1 blue
+  state "At the same time" as all {
+    state "Screen" as r0 {
+      s0: Postcard 1
+      s1: Last postcard
+      s2: The stamp question
+      s3: Right answer, #10140; waits
+      s4: The end screen
+      [*] --> s0
+      s0 --> s1: the child presses Enter [when Key is Keys up]
+      s1 --> s2: the child presses Enter [when Key is Keys up]
+      s2 --> s3: the child taps the right picture
+      s3 --> s4: the child presses Enter [when Key is Keys up]
+      s4 --> s0: the child presses Enter [when Key is Keys up]
+    }
+    --
+    state "Key" as r1 {
+      s5: Keys up
+      s6: Enter held
+      [*] --> s5
+      s5 --> s6: the child presses Enter [when Screen is not The stamp question]
+      s6 --> s5: the child lets go of the key
+      s5 --> s6: the child presses Enter on the question (nothing happens) [when Screen is one of The end screen, The stamp question]
+    }
+    --
+    state "Skipped" as r2 {
+      s7: Nothing skipped
+      [*] --> s7
+    }
+  }
+  class s0 teal
+  class s1 teal
+  class s2 teal
+  class s3 teal
+  class s4 blue

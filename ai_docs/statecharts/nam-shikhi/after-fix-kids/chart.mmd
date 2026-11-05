@@ -1,0 +1,189 @@
+---
+title: "Nam Shikhi: the kids rules (limit, gate, sharing, voice)"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "Round Title" as s0 {
+    state "Screen Launch card" as s1 {
+      s2: Phone The child has the phone
+      s3: Phone A parent has the phone
+      s4: Phone A parent, gate open
+    }
+    state "Screen Game on the stage" as s5 {
+      s6: Phone The child has the phone
+      s7: Phone A parent has the phone
+      s8: Phone A parent, gate open
+    }
+    state "Screen Rest screen on the stage" as s9 {
+      s10: Phone The child has the phone
+      s11: Phone A parent has the phone
+      s12: Phone A parent, gate open
+    }
+  }
+  state "Round A round" as s13 {
+    state "Screen Game on the stage" as s14 {
+      s15: Phone The child has the phone
+      s16: Phone A parent has the phone
+      s17: Phone A parent, gate open
+    }
+    state "Screen Launch card" as s18 {
+      s19: Phone The child has the phone
+      s20: Phone A parent has the phone
+      s21: Phone A parent, gate open
+    }
+  }
+  state "Round Full page" as s22 {
+    state "Screen Game on the stage" as s23 {
+      s24: Phone The child has the phone
+      s25: Phone A parent has the phone
+      s26: Phone A parent, gate open
+    }
+    state "Screen Launch card" as s27 {
+      s28: Phone The child has the phone
+      s29: Phone A parent has the phone
+      s30: Phone A parent, gate open
+    }
+    state "Screen Rest screen on the stage" as s31 {
+      s32: Phone The child has the phone
+      s33: Phone A parent has the phone
+      s34: Phone A parent, gate open
+    }
+  }
+  [*] --> s2
+  s2 --> s3: a parent takes the phone
+  s2 --> s6: খ#2503;ল#2507; on the launch card
+  s3 --> s2: the child takes it back
+  s3 --> s7: খ#2503;ল#2507; on the launch card
+  s6 --> s2: the page opens again or Back to the launch card
+  s6 --> s15: খ#2503;ল#2507; in the game
+  s6 --> s7: a parent takes the phone
+  s6 --> s10: today's time runs out
+  s2 --> s10: খ#2503;ল#2507; on the launch card
+  s15 --> s2: the page opens again
+  s15 --> s6: শ#2503;ষ or a link
+  s15 --> s24: the last sticker lands
+  s15 --> s19: Back to the launch card
+  s15 --> s16: a parent takes the phone
+  s7 --> s3: the page opens again or Back to the launch card
+  s7 --> s6: the child takes it back
+  s7 --> s16: খ#2503;ল#2507; in the game
+  s7 --> s11: today's time runs out
+  s3 --> s11: খ#2503;ল#2507; on the launch card
+  s10 --> s2: the page opens again or Back to the launch card
+  s10 --> s11: a parent takes the phone
+  s24 --> s2: the page opens again
+  s24 --> s6: শ#2503;ষ or a link
+  s24 --> s15: খ#2503;ল#2507; in the game
+  s24 --> s28: Back to the launch card
+  s24 --> s25: a parent takes the phone
+  s24 --> s32: today's time runs out
+  s19 --> s2: the page opens again or শ#2503;ষ or a link
+  s19 --> s15: খ#2503;ল#2507; on the launch card
+  s19 --> s28: the last sticker lands
+  s19 --> s20: a parent takes the phone
+  s16 --> s3: the page opens again
+  s16 --> s15: the child takes it back
+  s16 --> s7: শ#2503;ষ or a link
+  s16 --> s25: the last sticker lands
+  s16 --> s20: Back to the launch card
+  s15 --> s10: শ#2503;ষ or a link
+  s15 --> s32: the last sticker lands
+  s11 --> s3: the page opens again or Back to the launch card
+  s11 --> s10: the child takes it back
+  s11 --> s12: the parent opens the gate
+  s28 --> s2: the page opens again or শ#2503;ষ or a link
+  s28 --> s24: খ#2503;ল#2507; on the launch card
+  s28 --> s29: a parent takes the phone
+  s25 --> s3: the page opens again
+  s25 --> s7: শ#2503;ষ or a link
+  s25 --> s24: the child takes it back
+  s25 --> s16: খ#2503;ল#2507; in the game
+  s25 --> s29: Back to the launch card
+  s25 --> s26: the parent opens the gate
+  s25 --> s33: today's time runs out
+  s32 --> s2: the page opens again
+  s32 --> s28: Back to the launch card
+  s32 --> s33: a parent takes the phone
+  s20 --> s3: the page opens again or শ#2503;ষ or a link
+  s20 --> s19: the child takes it back
+  s20 --> s16: খ#2503;ল#2507; on the launch card
+  s20 --> s29: the last sticker lands
+  s16 --> s11: শ#2503;ষ or a link
+  s16 --> s33: the last sticker lands
+  s12 --> s7: a parent gives more time
+  s12 --> s3: the page opens again
+  s12 --> s10: the child takes it back
+  s12 --> s4: Back to the launch card
+  s29 --> s3: the page opens again or শ#2503;ষ or a link
+  s29 --> s28: the child takes it back
+  s29 --> s25: খ#2503;ল#2507; on the launch card
+  s29 --> s30: the parent opens the gate
+  s26 --> s3: the page opens again
+  s26 --> s24: the child takes it back
+  s26 --> s30: Back to the launch card
+  s26 --> s25: the parent shares the address
+  s26 --> s34: today's time runs out
+  s26 --> s17: খ#2503;ল#2507; in the game
+  s26 --> s8: শ#2503;ষ or a link
+  s28 --> s32: খ#2503;ল#2507; on the launch card
+  s33 --> s3: the page opens again
+  s33 --> s32: the child takes it back
+  s33 --> s29: Back to the launch card
+  s33 --> s34: the parent opens the gate
+  s4 --> s2: the child takes it back
+  s4 --> s3: the page opens again
+  s4 --> s12: খ#2503;ল#2507; on the launch card
+  s30 --> s3: the page opens again
+  s30 --> s28: the child takes it back
+  s30 --> s26: খ#2503;ল#2507; on the launch card
+  s30 --> s29: the parent shares the address
+  s30 --> s4: শ#2503;ষ or a link
+  s29 --> s33: খ#2503;ল#2507; on the launch card
+  s34 --> s3: the page opens again
+  s34 --> s25: a parent gives more time
+  s34 --> s32: the child takes it back
+  s34 --> s30: Back to the launch card
+  s17 --> s3: the page opens again
+  s17 --> s15: the child takes it back
+  s17 --> s26: the last sticker lands
+  s17 --> s8: শ#2503;ষ or a link
+  s17 --> s21: Back to the launch card
+  s8 --> s3: the page opens again
+  s8 --> s6: the child takes it back
+  s8 --> s12: today's time runs out
+  s8 --> s17: খ#2503;ল#2507; in the game
+  s8 --> s4: Back to the launch card
+  s30 --> s34: খ#2503;ল#2507; on the launch card
+  s21 --> s3: the page opens again
+  s21 --> s19: the child takes it back
+  s21 --> s30: the last sticker lands
+  s21 --> s17: খ#2503;ল#2507; on the launch card
+  s21 --> s4: শ#2503;ষ or a link
+  s17 --> s12: শ#2503;ষ or a link
+  s17 --> s34: the last sticker lands
+  s4 --> s8: খ#2503;ল#2507; on the launch card
+  class s6 blue
+  class s7 blue
+  class s8 blue
+  class s10 yellow
+  class s11 yellow
+  class s12 yellow
+  class s15 teal
+  class s16 teal
+  class s17 teal
+  class s19 teal
+  class s20 teal
+  class s21 teal
+  class s24 blue
+  class s25 blue
+  class s26 blue
+  class s32 yellow
+  class s33 yellow
+  class s34 yellow

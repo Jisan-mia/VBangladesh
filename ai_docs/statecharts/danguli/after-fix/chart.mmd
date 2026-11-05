@@ -1,0 +1,48 @@
+---
+title: "Danguli after the rewrite: the round, the window, the play key, the breath, the wind and the star chimes"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  s0: First screen
+  s1: Ready to flick
+  s2: Level list open
+  s3: Kathi in the air
+  s4: Paused (menu)
+  s5: A breath before the kathi moves
+  s6: Result just appeared
+  s7: Result shows
+  [*] --> s0
+  s0 --> s1: you press খ#2503;ল#2507;
+  s0 --> s2: you open the level list
+  s1 --> s3: you press Space or you tap the field
+  s1 --> s4: you leave (another window, or hide the tab) or you press the pause button or P
+  s2 --> s0: you close the level list
+  s2 --> s1: you pick a level or you press নত#2497;ন কর#2503; শ#2497;র#2497; or you start another round
+  s3 --> s4: you leave (another window, or hide the tab) or you press the pause button or P
+  s4 --> s1: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s4 --> s5: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s4 --> s2: you open the level list
+  s3 --> s6: the round ends or you tap the field or you press Space
+  s5 --> s1: the breath ends
+  s5 --> s4: you leave (another window, or hide the tab) or you press the pause button or P
+  s2 --> s5: you close the level list
+  s6 --> s1: you start another round or you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s6 --> s2: you open the level list
+  s5 --> s3: the breath ends
+  s7 --> s1: you start another round or you press a fresh key on the result or you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s7 --> s2: you open the level list
+  s2 --> s6: you close the level list
+  s2 --> s7: you close the level list
+  class s1 teal
+  class s3 teal
+  class s4 yellow
+  class s5 teal
+  class s6 blue
+  class s7 blue

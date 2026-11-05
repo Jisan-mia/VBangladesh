@@ -1,0 +1,132 @@
+---
+title: "সমﬂ°°2494¶ßন ভﬂ°°2494¶ßগ: the table, the last piece, the voice, the rest screen and the parent gate"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: rest
+    lg2: done
+    lg3: Breaks NoReadingNeeded or ParentGate or RestOnlyAtBreak
+    lg4: Breaks NoReadingNeeded or ParentGate or RestOnlyAtBreak in some cases
+    lg5: Path to the NoProgressWhileAway or NoReadingNeeded or ParentGate or RestOnlyAtBreak or SilentWhenMuted bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: First table: share it out
+      s1: র#2497;ট#2495; ক#2494;ট#2494;: how many pieces?
+      s2: First table: everyone served
+      s3: র#2497;ট#2495; ক#2494;ট#2494;: everyone served
+      s4: Last table: share it out
+      s5: Round done: আব#2494;র খ#2503;ল#2507; / শ#2503;ষ / পর#2503;র ধ#2494;প
+      s6: Last table: who gets the last one?
+      s7: ম#2503;হম#2494;নর#2494; ব#2494;ড#2492;#2495; গ#2503;ল
+      s8: Last table: everyone served
+      [*] --> s0
+      s0 --> s1: you pick a step in সব ধ#2494;প [when Window is You're watching and Rest is not Rest screen up]
+      s0 --> s2: you give everyone the same [when Window is You're watching and Rest is not Rest screen up]
+      s1 --> s0: you pick a step in সব ধ#2494;প [when Window is You're watching and Rest is not Rest screen up]
+      s1 --> s3: you cut the র#2497;ট#2495; right and hand out the pieces [when Window is You're watching and Rest is not Rest screen up]
+      s2 --> s0: you pick a step in সব ধ#2494;প [when Window is You're watching]
+      s2 --> s1: you pick a step in সব ধ#2494;প [when Window is You're watching]
+      s2 --> s4: the next guests sit down
+      s3 --> s0: you pick a step in সব ধ#2494;প [when Window is You're watching]
+      s3 --> s1: you pick a step in সব ধ#2494;প [when Window is You're watching]
+      s3 --> s5: the round ends
+      s4 --> s0: you pick a step in সব ধ#2494;প [when Window is You're watching]
+      s4 --> s1: you pick a step in সব ধ#2494;প [when Window is You're watching]
+      s4 --> s6: you give everyone the same [when Window is You're watching]
+      s5 --> s7: you tap শ#2503;ষ [when Window is You're watching and Rest is not Rest screen up]
+      s5 --> s1: you pick a step in সব ধ#2494;প or you tap আব#2494;র খ#2503;ল#2507; or you tap পর#2503;র ধ#2494;প [when Window is You're watching and Rest is not Rest screen up]
+      s5 --> s0: you pick a step in সব ধ#2494;প or you tap আব#2494;র খ#2503;ল#2507; [when Window is You're watching and Rest is not Rest screen up]
+      s6 --> s0: you pick a step in সব ধ#2494;প [when Window is You're watching]
+      s6 --> s1: you pick a step in সব ধ#2494;প [when Window is You're watching]
+      s6 --> s8: you choose who gets the last one [when Window is You're watching]
+      s7 --> s1: you pick a step in সব ধ#2494;প or you tap আব#2494;র খ#2503;ল#2507; [when Window is You're watching]
+      s7 --> s0: you pick a step in সব ধ#2494;প or you tap আব#2494;র খ#2503;ল#2507; [when Window is You're watching]
+      s5 --> s1: you press Tab and Enter behind the rest screen [when Window is You're watching and Rest is Rest screen up]
+      s8 --> s0: you pick a step in সব ধ#2494;প [when Window is You're watching]
+      s8 --> s1: you pick a step in সব ধ#2494;প [when Window is You're watching]
+      s8 --> s5: the round ends
+      s5 --> s0: you press Tab and Enter behind the rest screen [when Window is You're watching and Rest is Rest screen up]
+    }
+    --
+    state "Window" as r1 {
+      s9: You're watching
+      s10: You're away
+      [*] --> s9
+      s9 --> s10: you switch to another app or window
+      s10 --> s9: you come back
+    }
+    --
+    state "Sound" as r2 {
+      s11: Sound on
+      s12: Sound off
+      [*] --> s11
+      s11 --> s12: you turn sound off [when Window is You're watching]
+      s12 --> s11: you turn sound on [when Window is You're watching]
+    }
+    --
+    state "Rest" as r3 {
+      s13: Time left today
+      s14: Today's time used up
+      s15: Rest screen up
+      [*] --> s13
+      s13 --> s14: today's minutes run out
+      s14 --> s15: the round ends [when Game is one of Last table: everyone served, র#2497;ট#2495; ক#2494;ট#2494;: everyone served]
+      s15 --> s13: a parent gives ten more minutes [when Window is You're watching]
+    }
+    --
+    state "Gate" as r4 {
+      s16: Gate closed
+      s17: Gate open, parent holding
+      s18: Gate open, child holding
+      [*] --> s16
+      s16 --> s17: a parent opens বড#2492;দ#2503;র জন#2509;য [when Window is You're watching and Rest is not Rest screen up]
+      s17 --> s16: a parent presses বন#2509;ধ কর#2507; [when Window is You're watching]
+      s17 --> s18: you give everyone the same [when Game is one of First table: share it out, Last table: share it out and Window is You're watching and Rest is not Rest screen up]
+      s17 --> s18: the parent hands the phone back [when Window is You're watching]
+      s17 --> s18: you cut the র#2497;ট#2495; right and hand out the pieces [when Game is র#2497;ট#2495; ক#2494;ট#2494;: how many pieces? and Window is You're watching and Rest is not Rest screen up]
+      s18 --> s16: a parent presses বন#2509;ধ কর#2507; [when Window is You're watching]
+      s17 --> s18: you tap শ#2503;ষ or you tap পর#2503;র ধ#2494;প [when Game is Round done: আব#2494;র খ#2503;ল#2507; / শ#2503;ষ / পর#2503;র ধ#2494;প and Window is You're watching and Rest is not Rest screen up]
+      s17 --> s18: you tap আব#2494;র খ#2503;ল#2507; [when Game is one of Round done: আব#2494;র খ#2503;ল#2507; / শ#2503;ষ / পর#2503;র ধ#2494;প, ম#2503;হম#2494;নর#2494; ব#2494;ড#2492;#2495; গ#2503;ল and Window is You're watching and Rest is not Rest screen up]
+      s17 --> s18: you choose who gets the last one [when Game is Last table: who gets the last one? and Window is You're watching and Rest is not Rest screen up]
+      s17 --> s18: you press Tab and Enter behind the rest screen [when Game is Round done: আব#2494;র খ#2503;ল#2507; / শ#2503;ষ / পর#2503;র ধ#2494;প and Window is You're watching and Rest is Rest screen up]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 bugPath
+  class s1 bugPath
+  class s2 teal
+  class s2 bugPath
+  class s3 teal
+  class s3 bugPath
+  class s4 teal
+  class s4 bugPath
+  class s5 breaks
+  class s5 bugPath
+  class s6 teal
+  class s6 breaks
+  class s6 bugPath
+  class s7 blue
+  class s8 teal
+  class s9 bugPath
+  class s10 bugPath
+  class s11 bugPath
+  class s12 bugPath
+  class s13 bugPath
+  class s14 bugPath
+  class s15 yellow
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 bugPath
+  class s17 bugPath
+  class s18 breaks
+  class s18 bugPath

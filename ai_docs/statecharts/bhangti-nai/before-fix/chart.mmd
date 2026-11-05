@@ -1,0 +1,98 @@
+---
+title: "ভﬂ°°2494¶ßﬂ°°2434¶ßতﬂ°°2495¶ß নﬂ°°2494¶ßই!: the shop day, the window and the clock"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+    lg4: Breaks NothingPendingWhilePaused
+    lg5: Breaks NoProgressWhileAway or NothingPendingWhilePaused or OffScreenMeansPaused or PausedWhenBlurred in some cases
+    lg6: Path to the DayEndsOnlyWhilePlaying or NoProgressWhileAway or NothingPendingWhilePaused or OffScreenMeansPaused or PausedWhenBlurred bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Shop" as r0 {
+      s0: Shop not open yet
+      s1: Customer waits for change
+      s2: Paused
+      s3: Customer leaving
+      s4: Paused, a customer is leaving
+      s5: Card shows
+      [*] --> s0
+      s0 --> s1: you tap শ#2497;র#2497; কর#2507; [when Window is one of Counter scrolled away, You're at the counter]
+      s1 --> s2: you hide the tab
+      s1 --> s2: you scroll the counter away [when Window is not Counter scrolled away]
+      s1 --> s2: you press pause [when Window is not Another window has focus]
+      s1 --> s3: the customer's time runs out [when Clock is Clock on]
+      s1 --> s3: you hand over the right change [when Window is not Another window has focus]
+      s2 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is one of Counter scrolled away, You're at the counter]
+      s3 --> s4: you hide the tab
+      s3 --> s4: you scroll the counter away [when Window is not Counter scrolled away]
+      s3 --> s4: you press pause [when Window is not Another window has focus]
+      s3 --> s1: the next customer steps up
+      s4 --> s2: the next customer steps up
+      s4 --> s3: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is one of Counter scrolled away, You're at the counter]
+      s3 --> s5: the shop closes and the card shows
+      s5 --> s1: you press আব#2494;র খ#2503;ল#2507; [when Window is one of Counter scrolled away, You're at the counter]
+      s4 --> s5: the shop closes and the card shows
+    }
+    --
+    state "Window" as r1 {
+      s6: You're at the counter
+      s7: Tab hidden
+      s8: Another window has focus
+      s9: Counter scrolled away
+      [*] --> s6
+      s6 --> s7: you hide the tab
+      s6 --> s8: you click into another window
+      s6 --> s9: you scroll the counter away
+      s7 --> s6: the tab shows again
+      s8 --> s6: you come back to the window
+      s8 --> s7: you hide the tab
+      s9 --> s6: you scroll the counter back
+      s9 --> s7: you hide the tab
+      s9 --> s8: you click into another window
+      s7 --> s9: the tab shows again
+      s8 --> s9: you come back to the window
+    }
+    --
+    state "Clock" as r2 {
+      s10: Clock on
+      s11: No clock (সময#2492; ন#2495;য#2492;#2503;)
+      [*] --> s10
+      [*] --> s11
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 tan
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 yellow
+  class s3 teal
+  class s3 mayBreak
+  class s3 bugPath
+  class s4 yellow
+  class s4 breaks
+  class s4 bugPath
+  class s5 blue
+  class s5 bugPath
+  class s6 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak

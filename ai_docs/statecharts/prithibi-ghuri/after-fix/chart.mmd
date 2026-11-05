@@ -1,0 +1,675 @@
+---
+title: "পﬂ°°2499¶ßথﬂ°°2495¶ßবﬂ°°2496¶ß ঘﬂ°°2497¶ßরﬂ°°2495¶ß: screens, the plane, postcards, the stamp question, pause and the daily limit"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "Trip The envelope (উড#2492;#2494;ল দ#2494;ও)" as s0 {
+    state "Menu Playing" as s1 {
+      s2: Today Time left today
+      s3: Today Rest screen
+      s4: Today Today's time is up
+    }
+    state "Menu Window away, everything holds" as s5 {
+      s6: Today Time left today
+      s7: Today Rest screen
+      s8: Today Today's time is up
+    }
+    state "Menu Pause menu open" as s9 {
+      s10: Today Time left today
+      s11: Today Rest screen
+      s12: Today Today's time is up
+    }
+  }
+  state "Trip The map, pick a country" as s13 {
+    state "Menu Playing" as s14 {
+      s15: Today Time left today
+      s16: Today Today's time is up
+    }
+    state "Menu Window away, everything holds" as s17 {
+      s18: Today Time left today
+      s19: Today Today's time is up
+    }
+    state "Menu Pause menu open" as s20 {
+      s21: Today Time left today
+      s22: Today Today's time is up
+    }
+    state "Menu Back from away, the next tap only wakes" as s23 {
+      s24: Today Time left today
+      s25: Today Today's time is up
+    }
+  }
+  state "Trip The plane is flying" as s26 {
+    state "Menu Playing" as s27 {
+      s28: Today Time left today
+      s29: Today Today's time is up
+    }
+    state "Menu Window away, everything holds" as s30 {
+      s31: Today Time left today
+      s32: Today Today's time is up
+    }
+    state "Menu Pause menu open" as s33 {
+      s34: Today Time left today
+      s35: Today Today's time is up
+    }
+    state "Menu Back from away, the next tap only wakes" as s36 {
+      s37: Today Time left today
+      s38: Today Today's time is up
+    }
+  }
+  state "Trip The plane is about to land" as s39 {
+    state "Menu Playing" as s40 {
+      s41: Today Time left today
+      s42: Today Today's time is up
+    }
+    state "Menu Window away, everything holds" as s43 {
+      s44: Today Time left today
+      s45: Today Today's time is up
+    }
+    state "Menu Pause menu open" as s46 {
+      s47: Today Time left today
+      s48: Today Today's time is up
+    }
+    state "Menu Back from away, the next tap only wakes" as s49 {
+      s50: Today Time left today
+      s51: Today Today's time is up
+    }
+  }
+  state "Trip Postcard 1 (হ#2509;য#2494;ল#2507;)" as s52 {
+    state "Menu Playing" as s53 {
+      s54: Today Time left today
+      s55: Today Today's time is up
+    }
+    state "Menu Window away, everything holds" as s56 {
+      s57: Today Time left today
+      s58: Today Today's time is up
+    }
+    state "Menu Pause menu open" as s59 {
+      s60: Today Time left today
+      s61: Today Today's time is up
+    }
+    state "Menu Back from away, the next tap only wakes" as s62 {
+      s63: Today Time left today
+      s64: Today Today's time is up
+    }
+  }
+  state "Trip Last postcard" as s65 {
+    state "Menu Playing" as s66 {
+      s67: Today Time left today
+      s68: Today Today's time is up
+    }
+    state "Menu Window away, everything holds" as s69 {
+      s70: Today Time left today
+      s71: Today Today's time is up
+    }
+    state "Menu Pause menu open" as s72 {
+      s73: Today Time left today
+      s74: Today Today's time is up
+    }
+    state "Menu Back from away, the next tap only wakes" as s75 {
+      s76: Today Time left today
+      s77: Today Today's time is up
+    }
+  }
+  state "Trip The stamp question" as s78 {
+    state "Menu Playing" as s79 {
+      s80: Today Time left today
+      s81: Today Today's time is up
+    }
+    state "Menu Window away, everything holds" as s82 {
+      s83: Today Time left today
+      s84: Today Today's time is up
+    }
+    state "Menu Pause menu open" as s85 {
+      s86: Today Time left today
+      s87: Today Today's time is up
+    }
+    state "Menu Back from away, the next tap only wakes" as s88 {
+      s89: Today Time left today
+      s90: Today Today's time is up
+    }
+  }
+  state "Trip Right answer, the stamp lands, #10140; waits" as s91 {
+    state "Menu Playing" as s92 {
+      s93: Today Time left today
+      s94: Today Today's time is up
+    }
+    state "Menu Window away, everything holds" as s95 {
+      s96: Today Time left today
+      s97: Today Today's time is up
+    }
+    state "Menu Pause menu open" as s98 {
+      s99: Today Time left today
+      s100: Today Today's time is up
+    }
+    state "Menu Back from away, the next tap only wakes" as s101 {
+      s102: Today Time left today
+      s103: Today Today's time is up
+    }
+  }
+  state "Trip The map, pick the next country" as s104 {
+    state "Menu Playing" as s105 {
+      s106: Today Time left today
+      s107: Today Today's time is up
+    }
+    state "Menu Window away, everything holds" as s108 {
+      s109: Today Time left today
+      s110: Today Today's time is up
+    }
+    state "Menu Pause menu open" as s111 {
+      s112: Today Time left today
+      s113: Today Today's time is up
+    }
+    state "Menu Back from away, the next tap only wakes" as s114 {
+      s115: Today Time left today
+      s116: Today Today's time is up
+    }
+  }
+  state "Trip Last answer right, stars saved, #10140; waits" as s117 {
+    state "Menu Playing" as s118 {
+      s119: Today Time left today
+      s120: Today Today's time is up
+      s121: Today Time's up, the rest waits for the end screen
+    }
+    state "Menu Window away, everything holds" as s122 {
+      s123: Today Time left today
+      s124: Today Today's time is up
+      s125: Today Time's up, the rest waits for the end screen
+    }
+    state "Menu Pause menu open" as s126 {
+      s127: Today Time left today
+      s128: Today Today's time is up
+      s129: Today Time's up, the rest waits for the end screen
+    }
+    state "Menu Back from away, the next tap only wakes" as s130 {
+      s131: Today Time left today
+      s132: Today Today's time is up
+      s133: Today Time's up, the rest waits for the end screen
+    }
+  }
+  state "Trip The end screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ)" as s134 {
+    state "Menu Playing" as s135 {
+      s136: Today Time left today
+      s137: Today Today's time is up
+      s138: Today Rest screen
+    }
+    state "Menu Window away, everything holds" as s139 {
+      s140: Today Time left today
+      s141: Today Today's time is up
+      s142: Today Rest screen
+    }
+    state "Menu Pause menu open" as s143 {
+      s144: Today Time left today
+      s145: Today Today's time is up
+      s146: Today Rest screen
+    }
+    state "Menu Back from away, the next tap only wakes" as s147 {
+      s148: Today Time left today
+      s149: Today Today's time is up
+      s150: Today Rest screen
+    }
+  }
+  [*] --> s2
+  [*] --> s3
+  s2 --> s15: the child taps উড#2492;#2494;ল দ#2494;ও or আব#2494;র খ#2503;ল#2507;
+  s2 --> s6: the window blurs or the tab hides
+  s2 --> s4: today's play time runs out
+  s2 --> s10: #9208;, P or Esc
+  s3 --> s2: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s3 --> s7: the window blurs or the tab hides
+  s3 --> s11: #9208;, P or Esc
+  s15 --> s28: the child taps a country
+  s15 --> s16: today's play time runs out
+  s15 --> s18: the window blurs or the tab hides
+  s15 --> s21: #9208;, P or Esc
+  s6 --> s2: the window comes back
+  s6 --> s18: the child taps উড#2492;#2494;ল দ#2494;ও or আব#2494;র খ#2503;ল#2507;
+  s6 --> s8: today's play time runs out
+  s6 --> s10: #9208;, P or Esc
+  s4 --> s3: the child taps উড#2492;#2494;ল দ#2494;ও or আব#2494;র খ#2503;ল#2507;
+  s4 --> s8: the window blurs or the tab hides
+  s4 --> s12: #9208;, P or Esc
+  s7 --> s3: the window comes back
+  s7 --> s6: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s7 --> s11: #9208;, P or Esc
+  s10 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s10 --> s12: today's play time runs out
+  s11 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s11 --> s10: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s28 --> s29: today's play time runs out
+  s28 --> s31: the window blurs or the tab hides
+  s28 --> s34: #9208;, P or Esc
+  s18 --> s15: the window comes back
+  s18 --> s19: today's play time runs out
+  s18 --> s21: #9208;, P or Esc
+  s16 --> s29: the child taps a country
+  s16 --> s19: the window blurs or the tab hides
+  s16 --> s22: #9208;, P or Esc
+  s8 --> s4: the window comes back
+  s8 --> s7: the child taps উড#2492;#2494;ল দ#2494;ও or আব#2494;র খ#2503;ল#2507;
+  s8 --> s12: #9208;, P or Esc
+  s18 --> s24: the window comes back
+  s10 --> s6: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s12 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s11 --> s7: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s21 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s21 --> s15: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s21 --> s22: today's play time runs out
+  s41 --> s54: the plane lands
+  s41 --> s42: today's play time runs out
+  s41 --> s44: the window blurs or the tab hides
+  s41 --> s47: #9208;, P or Esc
+  s29 --> s32: the window blurs or the tab hides
+  s29 --> s35: #9208;, P or Esc
+  s31 --> s37: the window comes back
+  s31 --> s32: today's play time runs out
+  s31 --> s34: #9208;, P or Esc
+  s34 --> s28: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s34 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s34 --> s35: today's play time runs out
+  s19 --> s16: the window comes back
+  s19 --> s22: #9208;, P or Esc
+  s24 --> s15: the child taps a country
+  s24 --> s18: the window blurs or the tab hides
+  s24 --> s21: #9208;, P or Esc
+  s24 --> s25: today's play time runs out
+  s19 --> s25: the window comes back
+  s12 --> s8: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s21 --> s6: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s21 --> s18: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s22 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s22 --> s16: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s54 --> s67: the child taps #10140; on a postcard
+  s54 --> s55: today's play time runs out
+  s54 --> s57: the window blurs or the tab hides
+  s54 --> s60: #9208;, P or Esc
+  s42 --> s55: the plane lands
+  s42 --> s45: the window blurs or the tab hides
+  s42 --> s48: #9208;, P or Esc
+  s37 --> s31: the window blurs or the tab hides
+  s37 --> s34: #9208;, P or Esc
+  s37 --> s38: today's play time runs out
+  s44 --> s50: the window comes back
+  s44 --> s45: today's play time runs out
+  s44 --> s47: #9208;, P or Esc
+  s32 --> s38: the window comes back
+  s32 --> s35: #9208;, P or Esc
+  s34 --> s31: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s34 --> s6: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s47 --> s41: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s47 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s47 --> s48: today's play time runs out
+  s35 --> s29: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s35 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s25 --> s16: the child taps a country
+  s25 --> s19: the window blurs or the tab hides
+  s25 --> s22: #9208;, P or Esc
+  s22 --> s8: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s22 --> s19: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s67 --> s80: the child taps #10140; on a postcard
+  s67 --> s68: today's play time runs out
+  s67 --> s70: the window blurs or the tab hides
+  s67 --> s73: #9208;, P or Esc
+  s55 --> s68: the child taps #10140; on a postcard
+  s55 --> s58: the window blurs or the tab hides
+  s55 --> s61: #9208;, P or Esc
+  s57 --> s63: the window comes back
+  s57 --> s58: today's play time runs out
+  s57 --> s60: #9208;, P or Esc
+  s60 --> s54: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s60 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s60 --> s61: today's play time runs out
+  s31 --> s28: the window comes back
+  s50 --> s44: the window blurs or the tab hides
+  s50 --> s47: #9208;, P or Esc
+  s50 --> s63: the plane lands
+  s50 --> s51: today's play time runs out
+  s38 --> s32: the window blurs or the tab hides
+  s38 --> s35: #9208;, P or Esc
+  s45 --> s51: the window comes back
+  s45 --> s48: #9208;, P or Esc
+  s47 --> s44: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s47 --> s6: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s35 --> s32: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s35 --> s8: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s48 --> s42: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s48 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s80 --> s93: the child taps the right picture
+  s80 --> s81: today's play time runs out
+  s80 --> s83: the window blurs or the tab hides
+  s80 --> s86: #9208;, P or Esc
+  s68 --> s81: the child taps #10140; on a postcard
+  s68 --> s71: the window blurs or the tab hides
+  s68 --> s74: #9208;, P or Esc
+  s63 --> s54: the child taps #10140; on a postcard
+  s63 --> s57: the window blurs or the tab hides
+  s63 --> s60: #9208;, P or Esc
+  s63 --> s64: today's play time runs out
+  s70 --> s76: the window comes back
+  s70 --> s71: today's play time runs out
+  s70 --> s73: #9208;, P or Esc
+  s58 --> s64: the window comes back
+  s58 --> s61: #9208;, P or Esc
+  s60 --> s57: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s60 --> s6: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s73 --> s67: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s73 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s73 --> s74: today's play time runs out
+  s61 --> s55: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s61 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s44 --> s41: the window comes back
+  s32 --> s29: the window comes back
+  s51 --> s45: the window blurs or the tab hides
+  s51 --> s48: #9208;, P or Esc
+  s51 --> s64: the plane lands
+  s48 --> s45: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s48 --> s8: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s93 --> s94: today's play time runs out
+  s93 --> s96: the window blurs or the tab hides
+  s93 --> s99: #9208;, P or Esc
+  s93 --> s106: the child taps #10140;
+  s81 --> s94: the child taps the right picture
+  s81 --> s84: the window blurs or the tab hides
+  s81 --> s87: #9208;, P or Esc
+  s83 --> s89: the window comes back
+  s83 --> s84: today's play time runs out
+  s83 --> s86: #9208;, P or Esc
+  s86 --> s80: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s86 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s86 --> s87: today's play time runs out
+  s57 --> s54: the window comes back
+  s76 --> s67: the child taps #10140; on a postcard
+  s76 --> s70: the window blurs or the tab hides
+  s76 --> s73: #9208;, P or Esc
+  s76 --> s77: today's play time runs out
+  s64 --> s55: the child taps #10140; on a postcard
+  s64 --> s58: the window blurs or the tab hides
+  s64 --> s61: #9208;, P or Esc
+  s71 --> s77: the window comes back
+  s71 --> s74: #9208;, P or Esc
+  s73 --> s70: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s73 --> s6: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s61 --> s58: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s61 --> s8: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s74 --> s68: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s74 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s45 --> s42: the window comes back
+  s94 --> s97: the window blurs or the tab hides
+  s94 --> s100: #9208;, P or Esc
+  s94 --> s107: the child taps #10140;
+  s89 --> s80: the child taps a wrong picture or the child taps the right picture
+  s89 --> s83: the window blurs or the tab hides
+  s89 --> s86: #9208;, P or Esc
+  s89 --> s90: today's play time runs out
+  s96 --> s102: the window comes back
+  s96 --> s97: today's play time runs out
+  s96 --> s99: #9208;, P or Esc
+  s84 --> s90: the window comes back
+  s84 --> s87: #9208;, P or Esc
+  s99 --> s93: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s99 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s99 --> s100: today's play time runs out
+  s86 --> s83: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s86 --> s6: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s87 --> s81: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s87 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s70 --> s67: the window comes back
+  s58 --> s55: the window comes back
+  s77 --> s68: the child taps #10140; on a postcard
+  s77 --> s71: the window blurs or the tab hides
+  s77 --> s74: #9208;, P or Esc
+  s74 --> s71: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s74 --> s8: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s106 --> s28: the child taps a country
+  s106 --> s107: today's play time runs out
+  s106 --> s109: the window blurs or the tab hides
+  s106 --> s112: #9208;, P or Esc
+  s83 --> s80: the window comes back
+  s102 --> s96: the window blurs or the tab hides
+  s102 --> s99: #9208;, P or Esc
+  s102 --> s103: today's play time runs out
+  s102 --> s115: the child taps #10140;
+  s90 --> s81: the child taps a wrong picture or the child taps the right picture
+  s90 --> s84: the window blurs or the tab hides
+  s90 --> s87: #9208;, P or Esc
+  s97 --> s103: the window comes back
+  s97 --> s100: #9208;, P or Esc
+  s99 --> s6: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s99 --> s96: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s100 --> s94: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s100 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s87 --> s84: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s87 --> s8: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s71 --> s68: the window comes back
+  s107 --> s29: the child taps a country
+  s107 --> s110: the window blurs or the tab hides
+  s107 --> s113: #9208;, P or Esc
+  s109 --> s115: the window comes back
+  s109 --> s110: today's play time runs out
+  s109 --> s112: #9208;, P or Esc
+  s112 --> s106: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s112 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s112 --> s113: today's play time runs out
+  s96 --> s93: the window comes back
+  s84 --> s81: the window comes back
+  s103 --> s97: the window blurs or the tab hides
+  s103 --> s100: #9208;, P or Esc
+  s103 --> s116: the child taps #10140;
+  s100 --> s8: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s100 --> s97: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s115 --> s106: the child taps a country
+  s115 --> s109: the window blurs or the tab hides
+  s115 --> s112: #9208;, P or Esc
+  s115 --> s116: today's play time runs out
+  s110 --> s116: the window comes back
+  s110 --> s113: #9208;, P or Esc
+  s112 --> s109: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s112 --> s6: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s113 --> s107: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s113 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s97 --> s94: the window comes back
+  s109 --> s106: the window comes back
+  s116 --> s107: the child taps a country
+  s116 --> s110: the window blurs or the tab hides
+  s116 --> s113: #9208;, P or Esc
+  s113 --> s110: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s113 --> s8: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s110 --> s107: the window comes back
+  s80 --> s119: the child taps the right picture
+  s119 --> s136: the child taps #10140;
+  s119 --> s120: today's play time runs out
+  s119 --> s123: the window blurs or the tab hides
+  s119 --> s127: #9208;, P or Esc
+  s81 --> s121: the child taps the right picture
+  s136 --> s15: the child taps উড#2492;#2494;ল দ#2494;ও or আব#2494;র খ#2503;ল#2507;
+  s136 --> s140: the window blurs or the tab hides
+  s136 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s136 --> s137: today's play time runs out
+  s136 --> s144: #9208;, P or Esc
+  s120 --> s137: the child taps #10140;
+  s120 --> s124: the window blurs or the tab hides
+  s120 --> s128: #9208;, P or Esc
+  s121 --> s138: the child taps #10140;
+  s121 --> s125: the window blurs or the tab hides
+  s121 --> s129: #9208;, P or Esc
+  s123 --> s131: the window comes back
+  s123 --> s124: today's play time runs out
+  s123 --> s127: #9208;, P or Esc
+  s127 --> s119: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s127 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s127 --> s128: today's play time runs out
+  s140 --> s18: the child taps উড#2492;#2494;ল দ#2494;ও or আব#2494;র খ#2503;ল#2507;
+  s140 --> s136: the window comes back
+  s140 --> s6: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s140 --> s141: today's play time runs out
+  s140 --> s144: #9208;, P or Esc
+  s137 --> s138: the child taps উড#2492;#2494;ল দ#2494;ও or আব#2494;র খ#2503;ল#2507;
+  s137 --> s141: the window blurs or the tab hides
+  s137 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s137 --> s145: #9208;, P or Esc
+  s138 --> s136: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s138 --> s142: the window blurs or the tab hides
+  s138 --> s146: #9208;, P or Esc
+  s131 --> s123: the window blurs or the tab hides
+  s131 --> s127: #9208;, P or Esc
+  s131 --> s148: the child taps #10140;
+  s131 --> s132: today's play time runs out
+  s124 --> s132: the window comes back
+  s124 --> s128: #9208;, P or Esc
+  s125 --> s133: the window comes back
+  s125 --> s129: #9208;, P or Esc
+  s144 --> s136: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s144 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s144 --> s145: today's play time runs out
+  s127 --> s123: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s127 --> s6: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s128 --> s120: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s128 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s129 --> s121: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s129 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s123 --> s119: the window comes back
+  s141 --> s137: the window comes back
+  s141 --> s142: the child taps উড#2492;#2494;ল দ#2494;ও or আব#2494;র খ#2503;ল#2507;
+  s141 --> s8: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s141 --> s145: #9208;, P or Esc
+  s142 --> s140: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s142 --> s138: the window comes back
+  s142 --> s146: #9208;, P or Esc
+  s148 --> s15: the child taps উড#2492;#2494;ল দ#2494;ও or আব#2494;র খ#2503;ল#2507;
+  s148 --> s140: the window blurs or the tab hides
+  s148 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s148 --> s144: #9208;, P or Esc
+  s148 --> s149: today's play time runs out
+  s132 --> s124: the window blurs or the tab hides
+  s132 --> s128: #9208;, P or Esc
+  s132 --> s149: the child taps #10140;
+  s133 --> s125: the window blurs or the tab hides
+  s133 --> s129: #9208;, P or Esc
+  s133 --> s150: the child taps #10140;
+  s144 --> s140: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s144 --> s6: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s145 --> s137: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s145 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s146 --> s138: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s146 --> s144: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s146 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s128 --> s124: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s128 --> s8: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s129 --> s125: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s129 --> s7: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s124 --> s120: the window comes back
+  s125 --> s121: the window comes back
+  s149 --> s138: the child taps উড#2492;#2494;ল দ#2494;ও or আব#2494;র খ#2503;ল#2507;
+  s149 --> s141: the window blurs or the tab hides
+  s149 --> s4: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s149 --> s145: #9208;, P or Esc
+  s150 --> s142: the window blurs or the tab hides
+  s150 --> s148: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s150 --> s146: #9208;, P or Esc
+  s145 --> s141: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s145 --> s8: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  s146 --> s142: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s146 --> s7: নত#2497;ন কর#2503; শ#2497;র#2497;, or শ#2503;ষ
+  class s2 blue
+  class s3 yellow
+  class s4 blue
+  class s6 blue
+  class s7 yellow
+  class s8 blue
+  class s10 blue
+  class s11 yellow
+  class s12 blue
+  class s15 teal
+  class s16 teal
+  class s18 teal
+  class s19 teal
+  class s21 teal
+  class s22 teal
+  class s24 teal
+  class s25 teal
+  class s28 teal
+  class s29 teal
+  class s31 teal
+  class s32 teal
+  class s34 teal
+  class s35 teal
+  class s37 teal
+  class s38 teal
+  class s41 teal
+  class s42 teal
+  class s44 teal
+  class s45 teal
+  class s47 teal
+  class s48 teal
+  class s50 teal
+  class s51 teal
+  class s54 teal
+  class s55 teal
+  class s57 teal
+  class s58 teal
+  class s60 teal
+  class s61 teal
+  class s63 teal
+  class s64 teal
+  class s67 teal
+  class s68 teal
+  class s70 teal
+  class s71 teal
+  class s73 teal
+  class s74 teal
+  class s76 teal
+  class s77 teal
+  class s80 teal
+  class s81 teal
+  class s83 teal
+  class s84 teal
+  class s86 teal
+  class s87 teal
+  class s89 teal
+  class s90 teal
+  class s93 teal
+  class s94 teal
+  class s96 teal
+  class s97 teal
+  class s99 teal
+  class s100 teal
+  class s102 teal
+  class s103 teal
+  class s106 teal
+  class s107 teal
+  class s109 teal
+  class s110 teal
+  class s112 teal
+  class s113 teal
+  class s115 teal
+  class s116 teal
+  class s119 teal
+  class s120 teal
+  class s121 teal
+  class s123 teal
+  class s124 teal
+  class s125 teal
+  class s127 teal
+  class s128 teal
+  class s129 teal
+  class s131 teal
+  class s132 teal
+  class s133 teal
+  class s136 blue
+  class s137 blue
+  class s138 yellow
+  class s140 blue
+  class s141 blue
+  class s142 yellow
+  class s144 blue
+  class s145 blue
+  class s146 yellow
+  class s148 blue
+  class s149 blue
+  class s150 yellow

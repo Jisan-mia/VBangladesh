@@ -10,7 +10,7 @@ export const metadata = siteMetadata({ title: 'সব টুল — বাংল
 export default function ToolsPage() {
   const origin = publicOrigin(process.env.SITE_URL);
   const schema = { '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'একটুখানির সব টুল', inLanguage: 'bn-BD', ...(origin ? { url: `${origin}/tools` } : {}), mainEntity: { '@type': 'ItemList', itemListElement: catalog.map((tool, index) => ({ '@type': 'ListItem', position: index + 1, name: tool.name, ...(origin ? { url: `${origin}/${tool.slug}` } : {}) })) } };
-  return <HubFrame>
+  return <HubFrame current="/tools">
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeSchema(schema) }} />
     <section className="container all-tools-page">
       <h1>সব টুল, এক জায়গায়</h1>

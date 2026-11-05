@@ -47,3 +47,21 @@ export function windLoop() {
     stop: wind.stop,
   };
 }
+
+/** The ridge creaks when the feet pass four fifths of its width. You see the edge glow and the walker flap. */
+export function creak() {
+  tone(98, 0.3, 0.06, "sawtooth", 0, 70);
+  tone(160, 0.14, 0.035, "square", 0.1, 120);
+}
+
+/** A gust hits: a short rush of air. You see the arrow and the streaks. */
+export function gust() {
+  hiss(0.45, 0.14, 1500, "bandpass");
+  hiss(0.3, 0.08, 700, "lowpass", 0.1);
+}
+
+/** Each world opens with a four-note motif at its own pitch (scheduled tones, so the pause cuts them). */
+const MOTIF = [392, 523, 494, 659];
+export function motif(pitch: number) {
+  MOTIF.forEach((note, at) => tone(note * pitch, 0.14, 0.06, "triangle", 0.1 + at * 0.13));
+}

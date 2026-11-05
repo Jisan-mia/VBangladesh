@@ -1,0 +1,53 @@
+// The round's phase and its clock as a pure reducer. The component passes performance.now() in, so the tests replay every
+// statechart path exactly. There is no time pressure in a sliding plate: the clock is only a stat for the end screen, and
+// it runs exactly while the phase is "playing". Moves are taken only while playing and past `hold` (the shuffle flight).
+import { clockMs } from "./drag.hot";
+
+export type Phase = "title" | "story" | "playing" | "paused" | "over";
+/** Why play is paused: you went away (blur, a hidden tab, the player's menu) or you opened the level sheet. */
+export type Why = "away" | "sheet";
+export type Session = { phase: Phase; why: Why | null; base: number; since: number; hold: number; endedAt: number };
+
+/** How long the ঘুঁটি fly from solved to the level's start; moves wait for it. */
+export const SHUFFLE_MS = 560;
+/** A result-screen key must arrive this long after the result appears, and as a fresh press. */
+export const RESULT_GUARD_MS = 400;
+
+export const title = (): Session => ({ phase: "title", why: null, base: 0, since: 0, hold: 0, endedAt: 0 });
+
+export const elapsed = (s: Session, now: number) => clockMs(s.base, s.since, s.phase === "playing", now);
+
+/** খেলো on the title: the story first (first run only), else straight into play after the shuffle. */
+export function begin(s: Session, now: number, story: boolean, calm: boolean): Session {
+  if (s.phase !== "title") return s;
+  if (story) return { ...s, phase: "story" };
+  return { phase: "playing", why: null, base: 0, since: now, hold: now + (calm ? 0 : SHUFFLE_MS), endedAt: 0 };
+}
+
+/** The story's last panel, or a hold to skip it. */
+export const storyDone = (s: Session, now: number, calm: boolean): Session =>
+  s.phase === "story" ? { phase: "playing", why: null, base: 0, since: now, hold: now + (calm ? 0 : SHUFFLE_MS), endedAt: 0 } : s;
+
+/** A fresh plate straight into play (পরের লেভেল, আবার খেলো, a level from the sheet): no title, no story. */
+export const again = (now: number, calm: boolean): Session => ({ phase: "playing", why: null, base: 0, since: now, hold: now + (calm ? 0 : SHUFFLE_MS), endedAt: 0 });
+
+/** Stops the clock. A sheet pause outranks an away pause, so coming back from another window doesn't close the sheet. */
+export function pause(s: Session, now: number, why: Why): Session {
+  if (s.phase === "playing") return { ...s, phase: "paused", why, base: elapsed(s, now), since: 0 };
+  if (s.phase === "paused" && why === "sheet" && s.why !== "sheet") return { ...s, why };
+  return s;
+}
+
+/** Starts the clock again, but only from the pause this action ends: চালিয়ে যাও ends "away", closing the sheet ends "sheet". */
+export const resume = (s: Session, now: number, why: Why): Session =>
+  s.phase === "paused" && s.why === why ? { ...s, phase: "playing", why: null, since: now, hold: Math.max(s.hold, now) } : s;
+
+/** The last ঘুঁটি landed: the clock stops for good. */
+export const finish = (s: Session, now: number): Session =>
+  s.phase === "playing" ? { ...s, phase: "over", why: null, base: elapsed(s, now), since: 0, endedAt: now } : s;
+
+/** A move counts only while playing, after the shuffle flight. */
+export const canMove = (s: Session, now: number) => s.phase === "playing" && now >= s.hold;
+
+/** Enter or Space on the result: only a fresh press that arrives after the result appeared (a held key never skips it). */
+export const resultKey = (s: Session, at: number, repeat: boolean) => s.phase === "over" && !repeat && at >= s.endedAt + RESULT_GUARD_MS;

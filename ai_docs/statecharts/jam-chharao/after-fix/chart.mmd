@@ -1,0 +1,59 @@
+---
+title: "Jam chharao (traffic jam puzzle) after the rewrite: title, jam, window, finger, hint, sheet, levels and links"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: start
+    lg1: play
+    lg2: held
+    lg3: done
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  s0: Title: the jam is the খ#2503;ল#2507; button
+  s1: Playing
+  s2: Cleared: stars saved, end screen
+  s3: Paused (you're away or in the menu)
+  s4: Paused by সব জ#2509;য#2494;ম
+  s5: Playing, a vehicle under your finger
+  s6: Playing, a hint on show
+  s7: Playing, a vehicle under your finger, a hint on show
+  [*] --> s0
+  s0 --> s1: you press খ#2503;ল#2507;
+  s1 --> s2: you slide with the keys or tap your CNG
+  s1 --> s3: you leave (another window, a tab, the menu)
+  s1 --> s4: you open সব জ#2509;য#2494;ম
+  s1 --> s5: you press a vehicle
+  s1 --> s6: you press হ#2495;ন#2509;ট (it shows the move and why)
+  s2 --> s1: you press পর#2503;র জ#2509;য#2494;ম or আর#2503;কব#2494;র
+  s2 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s4 --> s1: you close সব জ#2509;য#2494;ম or you pick a jam
+  s5 --> s2: you let go (it lands, springs back or your CNG leaves) or you slide with the keys or tap your CNG
+  s5 --> s3: you leave (another window, a tab, the menu)
+  s5 --> s4: you open সব জ#2509;য#2494;ম
+  s5 --> s1: you let go (it lands, springs back or your CNG leaves)
+  s5 --> s7: you press হ#2495;ন#2509;ট (it shows the move and why)
+  s6 --> s2: you slide with the keys or tap your CNG
+  s6 --> s3: you leave (another window, a tab, the menu)
+  s6 --> s4: you open সব জ#2509;য#2494;ম
+  s6 --> s7: you press a vehicle
+  s6 --> s1: you slide with the keys or tap your CNG or you press ফ#2495;র#2495;য#2492;#2503; ন#2494;ও
+  s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s3 --> s4: you open সব জ#2509;য#2494;ম
+  s4 --> s6: you close সব জ#2509;য#2494;ম
+  s7 --> s2: you let go (it lands, springs back or your CNG leaves) or you slide with the keys or tap your CNG
+  s7 --> s3: you leave (another window, a tab, the menu)
+  s7 --> s4: you open সব জ#2509;য#2494;ম
+  s7 --> s1: you let go (it lands, springs back or your CNG leaves)
+  s7 --> s5: you slide with the keys or tap your CNG or you press ফ#2495;র#2495;য#2492;#2503; ন#2494;ও
+  s3 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  class s0 blue
+  class s1 teal
+  class s2 blue
+  class s3 yellow
+  class s4 yellow
+  class s5 teal
+  class s6 teal
+  class s7 teal

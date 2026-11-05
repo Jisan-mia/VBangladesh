@@ -1,12 +1,13 @@
 // The routines and modes, with no React: WHO's handwashing steps over 20 seconds, 2 minutes of brushing zone by zone,
 // where a timer is at any moment, the bedtime check and the card titles.
+import type { ModeId } from "./levels";
+export { MODES, modeFromHash, modeOf, type ModeId } from "./levels";
 
 export type Pose = "palms" | "backs" | "between" | "thumbs" | "nails" | "wrists";
 export type Step = { id: Pose; bn: string; seconds: number };
 export type Row = "up" | "low" | "tongue";
 export type Face = "out" | "in" | "top" | "tongue";
 export type Zone = { id: string; bn: string; row: Row; face: Face; seconds: number };
-export type ModeId = "hat" | "dat" | "kokhon";
 
 /** WHO's rubbing steps (palms, backs, between the fingers, thumbs, fingertips and nails, wrists): 20 seconds in all. */
 export const WASH_STEPS: readonly Step[] = [
@@ -31,15 +32,6 @@ export const BRUSH_ZONES: readonly Zone[] = [
 
 /** Germs per step or zone: two sit on the part being washed, and leave when it's done. */
 export const GERMS_EACH = 2;
-
-export const MODES: readonly { id: ModeId; bn: string; level: number }[] = [
-  { id: "hat", bn: "হাত ধোয়া", level: 1 },
-  { id: "dat", bn: "দাঁত মাজা", level: 2 },
-  { id: "kokhon", bn: "কখন ধোব", level: 3 },
-];
-
-export const modeOf = (id: string | null | undefined) => MODES.find(mode => mode.id === id) ?? MODES[0];
-export const modeFromHash = (hash: string): ModeId | null => { const id = new URLSearchParams(hash.replace(/^#/, "")).get("m"); return MODES.some(mode => mode.id === id) ? id as ModeId : null; };
 
 export const totalSeconds = (steps: readonly { seconds: number }[]) => steps.reduce((sum, step) => sum + step.seconds, 0);
 

@@ -1,0 +1,143 @@
+---
+title: "কﬂ°°2507¶ßনটﬂ°°2494¶ß নﬂ°°2503¶ßই?: shelf, window, hum and level list"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+    lg4: Breaks AwayTimeNeverCharged or HumOnlyWhileLooking or LevelPickerFreezesPlay or PausedWhenBlurred or PausedWhenHidden
+    lg5: Breaks AwayTimeNeverCharged or HumOnlyWhileLooking or LevelPickerFreezesPlay or PausedWhenBlurred or PausedWhenHidden in some cases
+    lg6: Path to the AwayTimeNeverCharged or HumOnlyWhileLooking or LevelPickerFreezesPlay or PausedWhenBlurred or PausedWhenHidden bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Shutter down
+      s1: Looking at the shelf
+      s2: Eyes closing, ম#2494;ম#2494; takes one
+      s3: Paused while looking
+      s4: ক#2507;নট#2494; ন#2503;ই? choices
+      s5: Paused on the question
+      s6: Answer shown
+      s7: Eyes closing before a shelf
+      s8: Level card
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; [when Window is You're on the page]
+      s1 --> s2: the look time runs out
+      s1 --> s3: you hide the tab [when Window is not Tab hidden]
+      s2 --> s3: you hide the tab [when Window is not Tab hidden]
+      s2 --> s4: the eyes open on the shelf with a gap
+      s4 --> s5: you hide the tab [when Window is not Tab hidden]
+      s4 --> s6: you pick an answer [when Window is You're on the page]
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s6 --> s7: you press পর#2503;র ত#2494;ক [when Window is You're on the page]
+      s5 --> s4: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s7 --> s1: the eyes open on a new shelf
+      s4 --> s8: you pick an answer [when Window is You're on the page]
+      s8 --> s7: you press আব#2494;র খ#2503;ল#2507; or পর#2503;র ল#2503;ভ#2503;ল [when Window is You're on the page]
+    }
+    --
+    state "Window" as r1 {
+      s9: You're on the page
+      s10: Tab hidden
+      s11: Another window has focus
+      [*] --> s9
+      s9 --> s10: you hide the tab
+      s9 --> s11: you click into another window
+      s10 --> s9: the tab shows again
+      s11 --> s9: you come back to the window
+      s11 --> s10: you hide the tab
+    }
+    --
+    state "Hum" as r2 {
+      s12: Hum off
+      s13: Hum on
+      [*] --> s12
+      s12 --> s13: you press শ#2497;র#2497; কর#2507; [when Game is Shutter down and Window is You're on the page and Sound is Sound on and Clock is Fair clock]
+      s13 --> s12: you turn sound off [when Game is not Level card and Window is You're on the page]
+      s13 --> s12: the look time runs out [when Game is Looking at the shelf]
+      s13 --> s12: you hide the tab [when Game is one of Eyes closing, ম#2494;ম#2494; takes one, Looking at the shelf and Window is not Tab hidden]
+      s12 --> s13: you turn sound on [when Game is one of Eyes closing, ম#2494;ম#2494; takes one, Looking at the shelf and Window is You're on the page and Sound is Sound off]
+      s12 --> s13: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Game is Paused while looking and Window is You're on the page and Sound is Sound on]
+      s12 --> s13: the eyes open on a new shelf [when Game is Eyes closing before a shelf and Sound is Sound on]
+    }
+    --
+    state "Sound" as r3 {
+      s14: Sound on
+      s15: Sound off
+      [*] --> s14
+      s14 --> s15: you turn sound off [when Game is not Level card and Window is You're on the page]
+      s15 --> s14: you turn sound on [when Game is not Level card and Window is You're on the page]
+    }
+    --
+    state "Clock" as r4 {
+      s16: Fair clock
+      s17: Away time charged
+      [*] --> s16
+      s16 --> s17: you hide the tab [when Game is Paused on the question and Window is not Tab hidden]
+      s17 --> s16: the eyes open on the shelf with a gap [when Game is Eyes closing, ম#2494;ম#2494; takes one]
+    }
+    --
+    state "Levels" as r5 {
+      s18: Level list shut
+      s19: Level list open
+      [*] --> s18
+      s18 --> s19: you open সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s19 --> s18: you close সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 tan
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 teal
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 yellow
+  class s4 teal
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 yellow
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 teal
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 blue
+  class s8 mayBreak
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 mayBreak
+  class s16 bugPath
+  class s17 breaks
+  class s17 bugPath
+  class s18 mayBreak
+  class s18 bugPath
+  class s19 mayBreak
+  class s19 bugPath

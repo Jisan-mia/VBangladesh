@@ -1,0 +1,71 @@
+---
+title: "Sat Chara: the throw, the window, your hand, the hum"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+  }
+  class lg0 teal
+  class lg1 yellow
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Title
+      s1: Aiming
+      s2: Ball in the air
+      s3: Result
+      [*] --> s0
+      s0 --> s1: you press খ#2503;ল#2507; or you press Space or Enter [when Page is On the page]
+      s1 --> s0: you pick a level [when Page is Menu or list open and Hand is Not pulling and Hum is not Hum on]
+      s1 --> s2: you let go or you press Space or Enter [when Page is On the page]
+      s2 --> s1: the ball stops and some pieces stand [when Page is On the page]
+      s2 --> s3: the round ends: all seven down, or the last ball [when Page is On the page]
+      s3 --> s1: you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; or you press Space or Enter [when Page is On the page]
+      s3 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; or you press Space or Enter [when Page is On the page]
+      s2 --> s0: you pick a level [when Page is Menu or list open and Hand is Not pulling and Hum is not Hum on]
+      s2 --> s1: you press নত#2497;ন কর#2503; শ#2497;র#2497; in the menu [when Page is Menu or list open and Hand is Not pulling and Hum is not Hum on]
+      s3 --> s0: you pick a level [when Page is Menu or list open]
+      s3 --> s1: you press নত#2497;ন কর#2503; শ#2497;র#2497; in the menu [when Page is Menu or list open]
+    }
+    --
+    state "Page" as r1 {
+      s4: On the page
+      s5: Menu or list open
+      s6: Away
+      [*] --> s4
+      s4 --> s5: you open সব ল#2503;ভ#2503;ল or you open the pause menu
+      s4 --> s6: you hide the tab or you click into another window
+      s5 --> s4: you close the list or you pick a level or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+      s5 --> s6: you hide the tab or you click into another window
+      s6 --> s5: the tab shows again or you come back to the window
+      s5 --> s4: you press নত#2497;ন কর#2503; শ#2497;র#2497; in the menu [when Game is not Title]
+    }
+    --
+    state "Hand" as r2 {
+      s7: Not pulling
+      s8: Pulling the ball back
+      [*] --> s7
+      s7 --> s8: you pull the ball back [when Game is one of Aiming, Ball in the air and Page is On the page]
+      s8 --> s7: you bring it back to the start, or the touch is cancelled or you open সব ল#2503;ভ#2503;ল or you hide the tab or you click into another window or you open the pause menu or you let go
+      s8 --> s7: the round ends: all seven down, or the last ball [when Game is Ball in the air]
+    }
+    --
+    state "Hum" as r3 {
+      s9: Sound on, no hum
+      s10: Sound off
+      s11: Hum on
+      [*] --> s9
+      s9 --> s10: you turn sound off
+      s10 --> s9: you turn sound on [when Hand is Not pulling]
+      s9 --> s11: you pull the ball back [when Game is one of Aiming, Ball in the air and Page is On the page]
+      s11 --> s9: you bring it back to the start, or the touch is cancelled or you open সব ল#2503;ভ#2503;ল or you hide the tab or you click into another window or you open the pause menu or you let go
+      s11 --> s10: you turn sound off
+      s10 --> s11: you turn sound on [when Game is one of Aiming, Ball in the air and Page is On the page and Hand is Pulling the ball back]
+      s11 --> s9: the round ends: all seven down, or the last ball [when Game is Ball in the air]
+    }
+  }
+  class s5 yellow
+  class s6 yellow
+  class s8 teal
+  class s11 teal

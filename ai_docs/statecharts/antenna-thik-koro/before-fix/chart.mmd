@@ -1,0 +1,103 @@
+---
+title: "অﬂ°°2509¶ßযﬂ°°2494¶ßনﬂ°°2509¶ßটﬂ°°2503¶ßনﬂ°°2494¶ß ঠﬂ°°2495¶ßক করﬂ°°2507¶ß: round, window, hand and static"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks DialStillWhileAway or StaticWhileSearching in some cases
+    lg4: Path to the DialStillWhileAway or StaticWhileSearching bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 mayBreak
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Waiting for your first turn
+      s1: Searching for the signal
+      s2: Picture locked
+      s3: Paused
+      s4: Card shows
+      [*] --> s0
+      s0 --> s1: you hold #8592; or #8594; [when Window is You're on the page]
+      s1 --> s2: the picture locks
+      s1 --> s3: you hide the tab
+      s2 --> s1: the next channel starts
+      s2 --> s4: the last channel locks and the card shows
+      s2 --> s3: you hide the tab
+      s4 --> s0: you play again [when Window is not Tab hidden]
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is not Tab hidden]
+      s3 --> s2: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is not Tab hidden]
+    }
+    --
+    state "Window" as r1 {
+      s5: You're on the page
+      s6: Tab hidden
+      s7: Another window has focus
+      [*] --> s5
+      s5 --> s6: you hide the tab
+      s5 --> s7: you click into another window
+      s6 --> s5: the tab shows again
+      s7 --> s5: you come back to the window
+      s7 --> s6: you hide the tab
+    }
+    --
+    state "Hand" as r2 {
+      s8: Hands off
+      s9: Holding #8592; or #8594;
+      [*] --> s8
+      s8 --> s9: you hold #8592; or #8594; [when Game is none of Card shows, Paused and Window is You're on the page]
+      s9 --> s8: you let go [when Window is You're on the page]
+      s9 --> s8: you play again [when Game is Card shows and Window is not Tab hidden and Static is Static off]
+      s9 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Game is Paused and Window is not Tab hidden and Static is Static off]
+    }
+    --
+    state "Static" as r3 {
+      s10: Static off
+      s11: Static on
+      [*] --> s10
+      s10 --> s11: you hold #8592; or #8594; [when Game is none of Card shows, Paused and Window is You're on the page and Hand is Hands off and Sound is Sound on]
+      s11 --> s10: you turn sound off or you hide the tab
+      s11 --> s10: the last channel locks and the card shows [when Game is Picture locked]
+      s10 --> s11: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Game is Paused and Window is not Tab hidden and Sound is Sound on]
+    }
+    --
+    state "Sound" as r4 {
+      s12: Sound on
+      s13: Sound off
+      [*] --> s12
+      s12 --> s13: you turn sound off
+      s13 --> s12: you turn sound on
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 teal
+  class s2 mayBreak
+  class s3 yellow
+  class s4 blue
+  class s5 mayBreak
+  class s5 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 teal
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath

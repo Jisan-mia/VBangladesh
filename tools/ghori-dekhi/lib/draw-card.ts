@@ -1,6 +1,7 @@
 // The parent card (1080×1350): a clock at the round's last time, the day's times in order, what was done, no name.
 import { cardSizes, drawFooterBand, fitText, renderCard } from "../../../shared/card-canvas";
-import { doneLine, levelOf, say, starsOf, type Item } from "./day";
+import { levelOf, placeOf } from "./levels";
+import { say, type Result } from "./round";
 import { bn, hands, partOf } from "./time";
 
 const colors = { paper: "#f3f8fb", ink: "#1f2d38", muted: "#557083", accent: "#24607a", hand: "#d9480f", rim: "#24607a", star: "#f2a516", starOff: "#cbd8e0", band: "#17475b", ask: "#ffd166" };
@@ -37,32 +38,34 @@ function star(c: CanvasRenderingContext2D, cx: number, cy: number, r: number, fi
   c.closePath(); c.fillStyle = fill; c.fill();
 }
 
-export function drawCard(canvas: HTMLCanvasElement, level: number, items: readonly Item[], mistakes: number, site: string) {
-  const { width, height } = cardSizes.feed;
+/** What the card says about the round, with no name: "আজ ঘড়িতে ৬টা সময় মেলালাম". */
+export const doneLine = (count: number) => `আজ ঘড়িতে ${bn(count)}টা সময় মেলালাম`;
+
+export function drawCard(canvas: HTMLCanvasElement, result: Result, site: string) {
+  const { width, height } = cardSizes.feed, items = result.items, spec = levelOf(result.level);
   canvas.width = width; canvas.height = height;
   const c = canvas.getContext("2d");
   if (!c) throw new Error("এই ব্রাউজারে ছবি বানানো যাচ্ছে না।");
   c.fillStyle = colors.paper; c.fillRect(0, 0, width, height);
 
-  fitText(c, [{ text: `ঘড়ি দেখি · লেভেল ${bn(level)} · ${levelOf(level).title}`, color: colors.muted, weight: 700, display: true }], width / 2, 104, 36, 960, "center");
+  fitText(c, [{ text: `ঘড়ি দেখি · লেভেল ${bn(placeOf(result.level))} · ${spec.title}`, color: colors.muted, weight: 700, display: true }], width / 2, 104, 36, 960, "center");
   fitText(c, [{ text: doneLine(items.length), color: colors.ink, weight: 800, display: true }], width / 2, 200, 68, 980, "center");
-  const stars = starsOf(mistakes);
-  for (let i = 0; i < 3; i++) star(c, width / 2 + (i - 1) * 80, 280, 30, i < stars ? colors.star : colors.starOff);
+  for (let i = 0; i < 3; i++) star(c, width / 2 + (i - 1) * 80, 280, 30, i < result.stars ? colors.star : colors.starOff);
 
   const last = items.at(-1);
   if (last) clock(c, 290, 660, 230, last.time.h * 60 + last.time.m);
 
-  // The day, in order, beside the clock.
-  const top = 450, row = Math.min(96, 540 / Math.max(1, items.length));
+  // The day, in order, beside the clock (two columns of four when a finale brings eight).
+  const rows = Math.min(items.length, 6), top = 450, row = Math.min(96, 540 / Math.max(1, rows));
   items.forEach((item, i) => {
-    const y = top + i * row;
-    c.beginPath(); c.arc(566, y - 12, 12, 0, Math.PI * 2); c.fillStyle = PART_DOT[partOf(item.time.h)]; c.fill();
-    fitText(c, [{ text: say(item.time, 5), color: colors.ink, weight: 800 }], 592, y, 38, 440);
-    fitText(c, [{ text: item.activity.name, color: colors.muted, weight: 600 }], 592, y + 38, 30, 440);
+    const column = i >= 6 ? 1 : 0, y = top + (i % 6) * row, x = column ? 786 : 566;
+    c.beginPath(); c.arc(x, y - 12, 12, 0, Math.PI * 2); c.fillStyle = PART_DOT[partOf(item.time.h)]; c.fill();
+    fitText(c, [{ text: say(item.time, spec), color: colors.ink, weight: 800 }], x + 26, y, 38, column ? 240 : 440);
+    fitText(c, [{ text: item.activity.name, color: colors.muted, weight: 600 }], x + 26, y + 38, 30, column ? 240 : 440);
   });
 
-  fitText(c, [{ text: mistakes ? `${bn(mistakes)}বার আবার দেখে মিলিয়েছি` : "একবারও আটকাইনি", color: colors.muted, weight: 600 }], width / 2, 1090, 38, 960, "center");
+  fitText(c, [{ text: result.misses ? `${bn(result.misses)}বার আবার দেখে মিলিয়েছি` : "একবারও আটকাইনি", color: colors.muted, weight: 600 }], width / 2, 1090, 38, 960, "center");
   drawFooterBand(c, "feed", "আজ খাওয়ার সময় জিজ্ঞেস করো: কয়টা বাজে?", site, { band: colors.band, ask: colors.ask, site: "#ffffff" });
 }
 
-export const cardBlob = (level: number, items: readonly Item[], mistakes: number, site: string) => renderCard(canvas => drawCard(canvas, level, items, mistakes, site));
+export const cardBlob = (result: Result, site: string) => renderCard(canvas => drawCard(canvas, result, site));

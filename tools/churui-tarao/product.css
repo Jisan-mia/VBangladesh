@@ -1,99 +1,148 @@
-.tool-churui-tarao{--accent:#5e6b14;--accent-deep:#3b440a;--ink:#2f1d0f;--muted:#6e5a44;--gold:#ffd257;--paddy:#f6ead0;--dusk:#3a2112}
-.tool-churui-tarao .ct-page{color:var(--ink)}
+/* চড়ুই তাড়াও: the paddy field fills the stage; the title, the story, the end screen and সব ক্ষেত sit over it. One palette per world (lib/paint.ts). */
+.tool-churui-tarao{--accent:#5e6b14;--accent-deep:#434d0c;--ink:#3a1d0e;--muted:#6b5a44;--paper:#fbf1dc;--night:#2a160a;--glow:#f2c230;--cream:#fff4dc;--hurt:#c2413a;--ease-out:cubic-bezier(.23,1,.32,1)}
 .tool-churui-tarao .ct-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* hero: short, so the whole field and its controls land on the first phone screen */
-.tool-churui-tarao .ct-hero{padding:8px 0 6px}
-.tool-churui-tarao .ct-hero-kicker{margin:0;font-size:13px;font-weight:600;color:var(--accent)}
-.tool-churui-tarao .ct-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(26px,7vw,50px);line-height:1.25;font-weight:700;letter-spacing:0}
-.tool-churui-tarao .ct-hero h1 span{color:var(--accent)}
-.tool-churui-tarao .ct-lead{max-width:560px;margin:0;color:var(--muted);font-size:15px;line-height:1.55}
-.tool-churui-tarao .ct-page:has(.ct-friend) .ct-lead{display:none}
+.ct{--panel:#2a160ae6;--gold:#ffd257;position:relative;width:100%;max-width:560px;margin:0 auto;color:var(--cream)}
+.ct[data-look=kuasha]{--panel:#1a262cec;--gold:#ffe08a}
+.ct[data-look=morol]{--panel:#24102cec;--gold:#ffc857}
+.ct button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
-.tool-churui-tarao .ct{display:grid;gap:8px;justify-items:center}
-.tool-churui-tarao .ct>*{width:100%;max-width:480px}
+/* the room: exactly the stage in the player, so nothing scrolls while playing; 3:4 outside it */
+.ct-play{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;border-radius:16px;background:var(--night);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:crosshair}
+.ct[data-player] .ct-play{aspect-ratio:auto;height:var(--stage-h,auto);border-radius:12px}
+.tool-churui-tarao .gp-stage[data-immersive] .ct-play{border-radius:0}
+.tool-churui-tarao .gp-stage,.tool-churui-tarao .gp[data-immersive] .gp-stage{padding:0}
+.ct-play>canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
 
-/* opened from a friend's link: their card, tilted, with the score to beat */
-.tool-churui-tarao .ct-friend{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;padding:8px 12px;border-radius:16px;background:var(--paddy)}
-.tool-churui-tarao .ct-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 6px 14px #2f1d0f33;transform:rotate(-3deg)}
-.tool-churui-tarao .ct-friend-kicker{margin:0;font-size:12px;font-weight:600;color:var(--accent)}
-.tool-churui-tarao .ct-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.35}
-.tool-churui-tarao .ct-friend h2 span{color:var(--accent)}
-.tool-churui-tarao .ct-friend p:last-child{margin:0;font-size:13px;color:var(--muted);line-height:1.4}
+/* the HUD's one HTML part: the রাত badge, top-left; it opens সব রাত */
+.ct-badge{position:absolute;top:10px;left:10px;z-index:2;display:inline-flex;align-items:center;gap:7px;max-width:44%;min-height:32px;padding:0 11px 0 9px;border:0;border-radius:8px;background:#2a160ab3;color:var(--cream);font-size:13px;font-weight:700;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.ct-badge i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px #ffd25733}
 
-/* the play area: only here do touches belong to the game, the rest of the page still scrolls */
-.tool-churui-tarao .ct-stage{position:relative;width:min(100%,480px,max(300px,calc((100svh - 240px) * .8)));max-width:none;border-radius:18px;overflow:hidden;background:#f39a6b;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer;box-shadow:0 10px 26px #2f1d0f38}
-.tool-churui-tarao .ct-stage canvas{display:block;width:100%;height:auto;aspect-ratio:360/450}
-.tool-churui-tarao .ct-stage:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+/* ---- the title ---- */
+.ct-start{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 16px 16px;overflow:auto;overscroll-behavior:contain;background:linear-gradient(#2a160a33 0%,#2a160a99 34%,#2a160ad8 100%);text-align:center;cursor:default;animation:ct-in .25s var(--ease-out)}
+.ct-start[data-finale]{background:linear-gradient(#3a0f0a55 0%,#2a0c12c8 30%,#2a160aee 100%)}
+.ct-go{display:grid;justify-items:center;width:min(100%,320px);padding:2px 8px 10px;border:0;border-radius:26px;background:none;color:var(--night);font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.1;cursor:pointer;transition:transform .12s var(--ease-out)}
+.ct-go-art{display:block;width:100%;height:clamp(130px,26vh,220px)}
+.ct-go span{margin-top:-8px;padding:6px 30px 8px;border-radius:12px;background:var(--gold);box-shadow:0 5px 0 #b8860b,0 16px 30px -12px #000c}
+.ct-go:active{transform:translateY(3px) scale(.98)}
+.ct-go:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+.ct-pick{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px;width:min(100%,380px)}
+.ct-pick-name h2{margin:0;font-family:var(--font-display);font-size:21px;font-weight:800;line-height:1.3;color:#fff}
+.ct-world-badge{justify-self:center;margin:0 auto 2px;padding:1px 10px;width:max-content;max-width:100%;border-radius:4px;background:#ffffff1a;color:#fff4dc;font-size:12px;font-weight:700}
+.ct-world-badge[data-finale]{background:#c2361f;color:#fff}
+.ct-got{margin:0;color:var(--gold);font-size:15px;letter-spacing:2px}
+.ct-got span{color:#ffffff40}
+.ct-step{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid #fff4dc55;border-radius:14px;background:#ffffff14;color:var(--cream);cursor:pointer}
+.ct-step:disabled{opacity:.25;cursor:default}
+.ct-step svg,.ct-sheet-close svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.ct-lesson{max-width:380px;margin:0;padding:8px 12px;border-left:4px solid var(--gold);border-radius:4px 12px 12px 4px;background:#ffffff14;font-size:15px;line-height:1.5;text-align:left}
+.ct-lesson b{margin-right:6px;color:var(--gold)}
+.ct-start[data-finale] .ct-lesson{border-left-color:#ff7a5c}
+.ct-start[data-finale] .ct-lesson b{color:#ffb39e}
+.ct-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;width:min(100%,320px);padding:4px;border-radius:14px;background:#ffffff14}
+.ct-modes button{min-height:40px;border:0;border-radius:10px;background:transparent;color:var(--cream);font-size:15px;font-weight:700;cursor:pointer}
+.ct-modes button[aria-checked=true]{background:var(--cream);color:var(--ink)}
+.ct-mode-line,.ct-targets{margin:0;font-size:13px;line-height:1.45;color:#f1dfc0}
+.ct-targets{color:var(--gold);font-weight:600}
+.ct-targets span{color:#f1dfc0aa;font-weight:500}
+.ct-start-foot{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2px 16px;margin:0;font-size:12px;color:#f1dfc0aa}
+.ct-start-foot .kit-link{min-height:40px;color:var(--cream);font-size:15px;font-weight:700}
+.ct-friend{width:min(100%,380px);padding:8px 12px;border-radius:14px;background:#fff4dc1f;text-align:left}
+.ct-friend p{margin:0;font-size:13px;line-height:1.45;color:#f1dfc0}
+.ct-friend b{color:#fff}
 
-/* the ready card sits in the sky, so the first sparrow stays in view on the paddy below */
-.tool-churui-tarao .ct-overlay{position:absolute;left:50%;top:12%;transform:translateX(-50%);display:grid;justify-items:center;gap:8px;width:min(300px,calc(100% - 24px));padding:12px 14px;border-radius:18px;background:#3a2112d9;color:#fff4dc;text-align:center;pointer-events:none}
-.tool-churui-tarao .ct-overlay button{pointer-events:auto}
-.tool-churui-tarao .ct-how{margin:0;font-family:var(--font-display);font-size:23px;font-weight:700;line-height:1.3;color:#fff4dc}
-.tool-churui-tarao .ct-go{min-width:180px;min-height:56px;font-size:20px;font-family:var(--font-display)}
-.tool-churui-tarao .ct-sub{margin:0;font-size:13px;line-height:1.4;color:#f1dfc0}
+/* ---- the first-run story ---- */
+.ct-story{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:16px 16px 18%;background:#2a160a80;cursor:default}
+.ct-panel{display:grid;gap:10px;justify-items:center;max-width:340px;padding:16px 20px 12px;border:3px solid var(--cream);border-radius:6px;background:var(--cream);color:var(--ink);font-family:var(--font-display);font-size:21px;font-weight:700;line-height:1.45;box-shadow:6px 6px 0 #2a160a;cursor:pointer;animation:ct-in .24s var(--ease-out)}
+.ct-panel p{margin:0}
+.ct-dots{display:flex;gap:6px}
+.ct-dots i{width:8px;height:8px;border-radius:50%;background:#3a1d0e33}
+.ct-dots i[data-on]{background:var(--ink)}
+.ct-skip{position:absolute;bottom:14px;right:14px;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border:0;border-radius:8px;background:#2a160ab3;color:var(--cream);font-size:13px;font-weight:700;overflow:hidden;cursor:pointer}
+.ct-skip span{position:relative;width:14px;height:14px;border-radius:50%;border:2px solid var(--cream);overflow:hidden}
+.ct-skip span::after{content:"";position:absolute;inset:0;background:var(--cream);transform:scaleX(0);transform-origin:left}
+.ct-skip[data-holding] span::after{transform:scaleX(1);transition:transform .6s linear}
 
-.tool-churui-tarao .ct-dim{top:0;left:0;right:0;bottom:0;width:auto;transform:none;align-content:center;border-radius:0;background:#3a2112c4}
-.tool-churui-tarao .ct-over{gap:6px}
-.tool-churui-tarao .ct-kicker{margin:0;max-width:280px;font-size:16px;font-weight:600;line-height:1.4;color:#f6dfbf}
-.tool-churui-tarao .ct-big{display:grid;margin:0;line-height:1.2}
-.tool-churui-tarao .ct-big b{font-family:var(--font-display);font-size:clamp(38px,12vw,52px);color:#fff7e4}
-.tool-churui-tarao .ct-big span{font-size:19px;font-weight:700;color:var(--gold)}
-.tool-churui-tarao .ct-best{min-height:1.4em;margin:0;font-size:15px;color:#f6dfbf}
-.tool-churui-tarao .ct-versus{max-width:290px;margin:0;padding:6px 12px;border-radius:12px;background:#fff7e41f;font-size:15px;font-weight:600;line-height:1.45}
-.tool-churui-tarao .ct-to-card{min-height:44px;padding:0 10px;border:0;background:none;color:#fff4dc;font-size:15px;text-decoration:underline;text-underline-offset:5px}
+/* ---- our own pause cover (outside the player's menu) ---- */
+.ct-cover{position:absolute;inset:0;z-index:3;display:grid;place-content:center;justify-items:center;gap:12px;background:#2a160ac4;text-align:center;cursor:default}
+.ct-cover p{margin:0;font-family:var(--font-display);font-size:20px;font-weight:700}
+.ct-cover .kit-primary{min-width:200px;min-height:56px;font-size:19px}
 
-/* under the stage: the slow-mode toggle and pause */
-.tool-churui-tarao .ct-bar{container-type:inline-size;display:flex;gap:8px;width:min(100%,480px,max(300px,calc((100svh - 240px) * .8)))}
-.tool-churui-tarao .ct-toggle,.tool-churui-tarao .ct-pause{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:6px 14px;border:1.5px solid #dccaa8;border-radius:14px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;line-height:1.2}
-.tool-churui-tarao .ct-toggle{flex:1;justify-content:flex-start;white-space:nowrap}
-@container (max-width:340px){.tool-churui-tarao .ct-toggle small{display:none}}
-.tool-churui-tarao .ct-toggle small{margin-left:auto;font-size:12px;font-weight:500;color:var(--muted)}
-.tool-churui-tarao .ct-toggle i{flex:none;position:relative;width:34px;height:20px;border-radius:99px;background:#dccaa8}
-.tool-churui-tarao .ct-toggle i::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .15s}
-.tool-churui-tarao .ct-toggle[aria-pressed=true]{border-color:var(--accent)}
-.tool-churui-tarao .ct-toggle[aria-pressed=true] i{background:var(--accent)}
-.tool-churui-tarao .ct-toggle[aria-pressed=true] i::after{transform:translateX(14px)}
-.tool-churui-tarao .ct-pause{flex:none;min-width:96px}
+/* ---- the end screen ---- */
+.ct-finish{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;overflow:auto;background:#2a160acc;text-align:center;cursor:default;animation:ct-up .26s var(--ease-out) both}
+.ct-finish[data-won]{background:linear-gradient(#f4c58f30,#2a160ad0 40%)}
+.ct-finish-kicker{margin:0;font-size:13px;font-weight:700;color:#f1dfc0}
+.ct-finish h2{margin:0;font-family:var(--font-display);font-size:clamp(23px,7cqw,30px);font-weight:800;line-height:1.25;color:#fff}
+.ct-finish .gx-reveal{font-size:38px;gap:6px}
+.ct-nostar{margin:0;font-size:30px;letter-spacing:4px;color:#ffffff40}
+.ct-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:min(100%,380px);margin:4px 0 0}
+.ct-stats div{display:grid;gap:1px;padding:7px 4px;border-radius:12px;background:#fff4dc1a}
+.ct-stats dt{font-size:12px;color:#f1dfc0}
+.ct-stats dd{margin:0;font-family:var(--font-display);font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;color:#fff}
+.ct-stats small{font-size:13px;font-weight:600;color:#f1dfc0aa}
+.ct-miss{max-width:340px;margin:0;padding:4px 12px;border-radius:12px;background:#ffd25733;font-size:15px;font-weight:700;color:#fff6e2}
+.ct-versus{max-width:320px;margin:0;font-size:15px;font-weight:600;line-height:1.45}
+.ct-line{max-width:330px;margin:0;font-size:14px;line-height:1.5;color:#f1dfc0}
+.ct-choices{display:grid;gap:8px;width:min(100%,360px);margin:4px 0 0;padding:0;list-style:none}
+.ct-choices button{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:52px;font-size:18px}
+.tool-churui-tarao .ct-choices .kit-secondary{background:transparent;color:var(--cream);border-color:#fff4dc88}
+.ct-choices kbd{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:#ffffff2e;font-family:inherit;font-size:13px;font-weight:700}
+.ct-choices em{padding:1px 8px;border-radius:4px;background:#ffffff33;font-size:11px;font-style:normal;font-weight:800}
+@media (pointer:coarse){.ct-choices kbd{display:none}}
+.tool-churui-tarao .ct-see{min-height:44px;color:var(--cream);font-size:15px}
 
-/* the level and total stars just above the field */
-.tool-churui-tarao .ct-level{display:flex;justify-content:space-between;gap:8px;width:min(100%,480px,max(300px,calc((100svh - 240px) * .8)));margin:0;font-size:14px;color:var(--muted)}
-.tool-churui-tarao .ct-level b{color:var(--ink)}
-.tool-churui-tarao .ct-level span:last-child{flex:none;font-weight:700;color:#a86f00}
-.tool-churui-tarao .ct-near{margin:0;padding:4px 12px;border-radius:10px;background:#ffd25729;font-size:15px;font-weight:700;color:var(--gold)}
-.tool-churui-tarao .ct-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
-.tool-churui-tarao .ct-actions .kit-secondary{min-height:56px;border-color:#fff4dc;background:transparent;color:#fff4dc;font-size:17px}
-.tool-churui-tarao .ct-over .gx-reveal{font-size:38px}
-.tool-churui-tarao .ct-bar .gx-sound{flex:none;border:1.5px solid #dccaa8;border-radius:14px;background:#fff;color:var(--ink)}
-.tool-churui-tarao .ct-levels{width:min(100%,480px,max(300px,calc((100svh - 240px) * .8)));padding:10px 14px;border:1.5px solid #dccaa8;border-radius:14px;background:#fff}
-.tool-churui-tarao .ct-levels summary{display:flex;justify-content:space-between;min-height:32px;align-items:center;font-weight:700;cursor:pointer}
-.tool-churui-tarao .ct-levels summary span{color:#a86f00}
-.tool-churui-tarao .ct-levels p{margin:8px 0 12px;font-size:14px;color:var(--muted);line-height:1.5}
+/* ---- সব রাত ---- */
+.ct-sheet{position:absolute;inset:0;z-index:4;display:grid;align-items:start;padding:8px;background:#1a0d0599;cursor:default;animation:ct-fade .16s var(--ease-out)}
+.ct-sheet-card{display:grid;gap:12px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:14px 12px 16px;border-radius:16px;background:var(--panel);box-shadow:0 20px 40px -20px #000c;animation:ct-in .2s var(--ease-out)}
+.ct-sheet header{position:relative;padding-right:52px}
+.ct-sheet h2{margin:0;font-family:var(--font-display);font-size:24px;color:#fff}
+.ct-sheet header p{margin:2px 0 0;font-size:13px;color:#f1dfc0}
+.ct-sheet-close{position:absolute;top:0;right:0;display:grid;place-items:center;width:46px;height:46px;padding:0;border:1.5px solid #fff4dc55;border-radius:14px;background:#ffffff14;color:var(--cream);cursor:pointer}
+.ct-world{--world:#ffb04a}
+.ct-world[data-look=kuasha]{--world:#9fd3c0}.ct-world[data-look=morol]{--world:#e58aa8}
+.ct-world h3{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin:0 0 6px;font-size:16px;color:#fff}
+.ct-world h3 i{width:11px;height:11px;border-radius:50%;background:var(--world)}
+.ct-world h3 small{font-size:12px;font-weight:600;color:#f1dfc0b0}
+.ct-world ol{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.ct-world button{position:relative;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"key name stars" "key line line";align-items:center;column-gap:10px;row-gap:1px;width:100%;min-height:58px;padding:7px 10px;border:1.5px solid #fff4dc2a;border-radius:12px;background:#ffffff10;color:var(--cream);text-align:left;cursor:pointer}
+.ct-world button kbd{grid-area:key;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#ffffff1c;font-family:inherit;font-size:13px;font-weight:700}
+.ct-row-name{grid-area:name;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:15px}
+.ct-row-name em{padding:1px 8px;border-radius:4px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800}
+.ct-row-line{grid-area:line;font-size:12.5px;line-height:1.4;color:#f1dfc0c0}
+.ct-row-stars{grid-area:stars;display:flex;font-size:13px;line-height:1}
+.ct-row-stars i{font-style:normal;color:#ffffff30}
+.ct-row-stars i[data-on]{color:var(--gold)}
+.ct-row-stars svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.ct-world button:disabled{opacity:.55;cursor:default}
+.ct-world button[data-finale]:not(:disabled){border-color:var(--world)}
+.ct-world button[aria-current]{background:#fff4dc26;border-color:var(--cream)}
+.ct-world button[data-next]{box-shadow:0 0 0 3px var(--gold)}
+.ct-world button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
-/* result */
-.tool-churui-tarao .ct-result{scroll-margin-top:12px;max-width:none;margin-top:24px;padding-top:20px;border-top:2px solid var(--ink)}
-.tool-churui-tarao .ct-result-head h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(24px,5vw,36px);line-height:1.4}
-.tool-churui-tarao .ct-result-head h2 em{font-style:normal;color:var(--accent)}
-.tool-churui-tarao .ct-result-head p{margin:0 0 16px;color:var(--muted)}
-.tool-churui-tarao .ct-result-body{display:grid;gap:22px}
-.tool-churui-tarao .ct-controls{display:grid;gap:18px;align-content:start}
-.tool-churui-tarao .ct-name{display:grid;gap:6px;font-weight:600}
-.tool-churui-tarao .ct-name small{font-weight:400;color:var(--muted);font-size:13px}
-.tool-churui-tarao .ct-name input{border:1.5px solid #dccaa8;border-radius:12px;font-size:17px}
-.tool-churui-tarao .kit-chips button[aria-pressed=true]{border-color:var(--accent);background:var(--accent)}
+/* ---- the card and share, under the room inside the stage ---- */
+.ct-result{scroll-margin-top:12px;margin-top:16px;padding:18px 12px 8px;border-top:2px solid var(--ink);color:var(--ink)}
+.ct-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,30px);line-height:1.4}
+.ct-result h2 em{font-style:normal;color:var(--accent)}
+.ct-result>p{margin:0 0 16px;color:var(--muted)}
+.ct-result-body{display:grid;gap:22px}
+.ct-share{display:grid;gap:18px;align-content:start}
+.ct-name{display:grid;gap:6px;font-weight:600}
+.ct-name small{font-weight:400;color:var(--muted);font-size:13px}
+.ct-name input{border:1.5px solid #d9c9a5;border-radius:12px;font-size:17px}
 
-.tool-churui-tarao .ct-guide h2{font-family:var(--font-display);margin-bottom:18px}
-.tool-churui-tarao .ct-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.tool-churui-tarao .ct-guide li{display:flex;gap:14px;align-items:flex-start}
-.tool-churui-tarao .ct-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--accent);color:#fff;font-weight:700}
-.tool-churui-tarao .ct-guide li p{margin:4px 0 0}
-
-@media(min-width:720px){
-  .tool-churui-tarao .ct-hero{padding:24px 0 14px}
-  .tool-churui-tarao .ct-result{max-width:960px}
-  .tool-churui-tarao .ct-result-body{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start;gap:36px}
-  .tool-churui-tarao .ct-friend{grid-template-columns:96px 1fr;padding:12px 16px}
-  .tool-churui-tarao .ct-friend h2{font-size:20px}
+@keyframes ct-in{from{opacity:0;transform:translateY(10px)}}
+@keyframes ct-up{from{opacity:0;transform:translateY(16px)}}
+@keyframes ct-fade{from{opacity:0}}
+@media (max-height:640px){
+  .ct-go-art{height:clamp(96px,20vh,160px)}
+  .ct-go{font-size:27px}
+  .ct-start{gap:6px}
 }
-@media(max-width:360px){.tool-churui-tarao .ct-how{font-size:20px}}
-@media(prefers-reduced-motion:reduce){.tool-churui-tarao .ct-toggle i::after{transition:none}}
+/* press feedback on everything pressable; low specificity so .kit-primary and .ct-go keep their own */
+:where(.ct button){transition:transform 160ms var(--ease-out)}
+:where(.ct button:not(:disabled):active){transform:scale(.97)}
+/* ধীরে খেলো and reduced motion: no slides, no bounce, no press shrink */
+.ct[data-calm] *{animation:none!important;transition:none!important}
+.ct[data-calm] button:active{transform:none}
+@media (prefers-reduced-motion:reduce){.ct *{animation:none!important;transition:none!important}.ct button:active{transform:none}}
+.ct-targets,.ct-mode-line,.ct-lesson{text-wrap:balance}

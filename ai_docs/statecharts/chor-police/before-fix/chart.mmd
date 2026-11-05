@@ -1,0 +1,137 @@
+---
+title: "চﬂ°°2507¶ßর-ডﬂ°°2494¶ßকﬂ°°2494¶ßত-পﬂ°°2497¶ßলﬂ°°2495¶ßশ-বﬂ°°2494¶ßবﬂ°°2497¶ß: the evening, the chit, the drum and the window"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks DrumStopsWithRound or FinishedStaysFinished or NoTapPastResult
+    lg4: Breaks DrumStopsWithRound or NoTapPastResult in some cases
+    lg5: Path to the DrumStopsWithRound or FinishedStaysFinished or NoTapPastResult bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Setting up
+      s1: Phone handed on
+      s2: Picking a chit
+      s3: Chit folded in hand
+      s4: Chit open
+      s5: Everyone has looked
+      s6: Police choosing
+      s7: Drumroll
+      s8: Chits open, round scored
+      s9: Setting up, drum still beating
+      s10: Scorecard just appeared
+      s11: Paused mid-evening
+      s12: Scorecard
+      s13: Phone handed on, drum still beating
+      s14: Paused, though the evening had ended
+      s15: Everyone has looked, drum still beating
+      s16: Paused mid-evening, drum still beating
+      [*] --> s0
+      s0 --> s1: you press চ#2495;রক#2497;ট ত#2507;ল#2507;
+      s1 --> s2: the next player takes the phone
+      s2 --> s3: you pick a chit
+      s3 --> s4: you hold the chit open [when Window is On the page]
+      s4 --> s1: you press দ#2503;খ#2503;ছ#2495;
+      s4 --> s3: you look away (other window or tab) or you let go
+      s3 --> s1: you press দ#2503;খ#2503;ছ#2495;
+      s4 --> s5: you press দ#2503;খ#2503;ছ#2495;
+      s3 --> s5: you press দ#2503;খ#2503;ছ#2495;
+      s5 --> s6: you press ব#2494;ব#2497;-প#2497;ল#2495;শ ক#2503;, দ#2503;খ#2494;ও
+      s6 --> s7: the police names someone
+      s7 --> s8: the drumroll ends and the chits open
+      s7 --> s9: you press থ#2494;ম#2494;ও
+      s8 --> s10: you press এখ#2494;ন#2503;ই শ#2503;ষ কর#2507; or you press আর#2503;ক দ#2494;ন / ফল দ#2503;খ#2507;
+      s9 --> s0: the last drum beat fades
+      s10 --> s12: half a second passes
+      s10 --> s1: you press আরও ৫ দ#2494;ন খ#2503;ল#2507; or you press Enter again / আর#2503;কব#2494;র
+      s10 --> s14: you reload the page [when Window is On the page]
+      s8 --> s1: you press আর#2503;ক দ#2494;ন / ফল দ#2503;খ#2507;
+      s11 --> s1: you press চ#2495;রক#2497;ট ত#2507;ল#2507;
+      s9 --> s13: you press চ#2495;রক#2497;ট ত#2507;ল#2507;
+      s12 --> s1: you press Enter again / আর#2503;কব#2494;র or you press আরও ৫ দ#2494;ন খ#2503;ল#2507;
+      s12 --> s14: you reload the page [when Window is On the page]
+      s13 --> s1: the last drum beat fades
+      s14 --> s1: you press চ#2495;রক#2497;ট ত#2507;ল#2507;
+      s13 --> s2: the next player takes the phone
+      s4 --> s13: you press দ#2503;খ#2503;ছ#2495;
+      s3 --> s13: you press দ#2503;খ#2503;ছ#2495;
+      s4 --> s15: you press দ#2503;খ#2503;ছ#2495;
+      s15 --> s5: the last drum beat fades
+      s3 --> s15: you press দ#2503;খ#2503;ছ#2495;
+      s15 --> s6: you press ব#2494;ব#2497;-প#2497;ল#2495;শ ক#2503;, দ#2503;খ#2494;ও
+      s7 --> s16: you press থ#2494;ম#2494;ও
+      s16 --> s11: the last drum beat fades
+      s16 --> s13: you press চ#2495;রক#2497;ট ত#2507;ল#2507;
+      s10 --> s0: you reload the page [when Window is On the page]
+      s11 --> s10: you press চ#2495;রক#2497;ট ত#2507;ল#2507;
+      s12 --> s0: you reload the page [when Window is On the page]
+    }
+    --
+    state "Window" as r1 {
+      s17: On the page
+      s18: Away (other window or tab)
+      [*] --> s17
+      s17 --> s18: you look away (other window or tab)
+      s18 --> s17: you come back
+    }
+    --
+    state "Scores" as r2 {
+      s19: Scorecard kept
+      s20: Scorecard skipped by a stray tap
+      [*] --> s19
+      s19 --> s20: you press Enter again / আর#2503;কব#2494;র [when Game is Scorecard just appeared]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 yellow
+  class s0 bugPath
+  class s1 teal
+  class s1 bugPath
+  class s2 teal
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 teal
+  class s3 mayBreak
+  class s3 bugPath
+  class s4 teal
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 teal
+  class s5 bugPath
+  class s6 teal
+  class s6 bugPath
+  class s7 teal
+  class s7 bugPath
+  class s8 teal
+  class s8 bugPath
+  class s9 yellow
+  class s9 breaks
+  class s9 bugPath
+  class s10 blue
+  class s10 bugPath
+  class s11 yellow
+  class s12 blue
+  class s13 teal
+  class s13 breaks
+  class s14 yellow
+  class s14 breaks
+  class s14 bugPath
+  class s15 teal
+  class s15 breaks
+  class s16 yellow
+  class s16 breaks
+  class s17 bugPath
+  class s19 bugPath
+  class s20 breaks
+  class s20 bugPath

@@ -1,0 +1,85 @@
+---
+title: "বﬂ°°2494¶ßইচﬂ°°2503¶ßর নﬂ°°2508¶ßকﬂ°°2494¶ß: a friend's link and whose river the next race is"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: ready
+    lg1: play
+    lg2: held
+    lg3: done
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 yellow
+  class lg3 purple
+  state "Screen Title" as s0 {
+    state "Link No debt" as s1 {
+      s2: River Your river
+      s3: River Their river
+    }
+  }
+  state "Screen ত#2494;ল ম#2503;ল#2494;ও running" as s4 {
+    state "Link No debt" as s5 {
+      s6: River Your river
+      s7: River Their river
+    }
+    state "Link Their river is owed" as s8 {
+      s9: River Your river
+      s10: River Their river
+    }
+  }
+  state "Screen Race on the water" as s11 {
+    state "Link No debt" as s12 {
+      s13: River Your river
+      s14: River Their river
+    }
+    state "Link Their river is owed" as s15 {
+      s16: River Your river
+      s17: River Their river
+    }
+  }
+  state "Screen Result shows" as s18 {
+    state "Link No debt" as s19 {
+      s20: River Your river
+      s21: River Their river
+    }
+    state "Link Their river is owed" as s22 {
+      s23: River Your river
+      s24: River Their river
+    }
+  }
+  [*] --> s2
+  s2 --> s6: you press ত#2494;ল ম#2503;ল#2494;ও
+  s2 --> s3: a friend's link opens
+  s6 --> s2: ত#2494;ল ম#2503;ল#2494;ও ends
+  s6 --> s9: a friend's link opens
+  s13 --> s20: you cross the finish rope
+  s13 --> s16: a friend's link opens
+  s14 --> s21: you cross the finish rope
+  s14 --> s17: a friend's link opens
+  s3 --> s7: you press ত#2494;ল ম#2503;ল#2494;ও
+  s16 --> s23: you cross the finish rope
+  s7 --> s3: ত#2494;ল ম#2503;ল#2494;ও ends
+  s7 --> s10: a friend's link opens
+  s17 --> s24: you cross the finish rope
+  s0 --> s13: you pick a race from সব ব#2494;ইচ or you start a race
+  s0 --> s14: you pick a race from সব ব#2494;ইচ or you start a race
+  s18 --> s13: you pick a race from সব ব#2494;ইচ
+  s18 --> s14: you pick a race from সব ব#2494;ইচ or you start a race
+  s18 --> s3: a friend's link opens
+  s19 --> s13: you start a race
+  s8 --> s3: ত#2494;ল ম#2503;ল#2494;ও ends
+  class s2 blue
+  class s3 blue
+  class s6 blue
+  class s7 blue
+  class s9 yellow
+  class s10 yellow
+  class s13 teal
+  class s14 teal
+  class s16 yellow
+  class s17 yellow
+  class s20 purple
+  class s21 purple
+  class s23 purple
+  class s24 purple

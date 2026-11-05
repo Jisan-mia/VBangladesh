@@ -1,0 +1,119 @@
+---
+title: "আﬂ°°2433¶ßটﬂ°°2495¶ß থﬂ°°2503¶ßকﬂ°°2503¶ß আম: the run, ফﬂ°°2503¶ßরত নﬂ°°2494¶ßও and the পﬂ°°2494¶ßকﬂ°°2494¶ß আম celebration"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+    lg4: Breaks CelebrationMatchesBoard or CheerOncePerRun
+    lg5: Breaks CelebrationMatchesBoard or CheerOncePerRun in some cases
+    lg6: Path to the CelebrationMatchesBoard or CheerOncePerRun bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Run" as r0 {
+      s0: Fresh plot
+      s1: Swiping
+      s2: Fresh plot, tab hidden
+      s3: Run over, card
+      s4: Paused, tab hidden
+      s5: Run over, card, tab hidden
+      s6: Paused, tab back
+      [*] --> s0
+      s0 --> s1: you swipe two ক#2494;#2433;চ#2494; আম into a প#2494;ক#2494; আম or you swipe
+      s0 --> s2: you hide the tab
+      s1 --> s3: the run ends
+      s1 --> s4: you hide the tab
+      s2 --> s0: the tab shows again
+      s3 --> s5: you hide the tab
+      s4 --> s6: the tab shows again
+      s5 --> s3: the tab shows again
+      s6 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+      s6 --> s4: you hide the tab
+    }
+    --
+    state "Board" as r1 {
+      s7: No প#2494;ক#2494; আম yet
+      s8: প#2494;ক#2494; আম just grown (ফ#2503;রত ন#2494;ও removes it)
+      s9: প#2494;ক#2494; আম on the board
+      [*] --> s7
+      s7 --> s8: you swipe two ক#2494;#2433;চ#2494; আম into a প#2494;ক#2494; আম [when Run is one of Fresh plot, Swiping]
+      s8 --> s9: you swipe [when Run is Swiping]
+      s8 --> s7: you press ফ#2503;রত ন#2494;ও [when Run is Swiping]
+    }
+    --
+    state "Celebration" as r2 {
+      s10: Nothing yet
+      s11: banner showing, confetti due
+      s12: banner showing, confetti fell once
+      s13: confetti due
+      s14: confetti fell once
+      s15: banner showing, confetti due again, confetti fell once
+      s16: banner showing, confetti fell twice
+      s17: confetti due again, confetti fell once
+      s18: confetti fell twice
+      s19: banner showing, confetti due again, confetti fell twice
+      s20: confetti due again, confetti fell twice
+      [*] --> s10
+      s10 --> s11: you swipe two ক#2494;#2433;চ#2494; আম into a প#2494;ক#2494; আম [when Run is one of Fresh plot, Swiping]
+      s11 --> s12: the confetti falls
+      s11 --> s13: the banner fades
+      s12 --> s14: the banner fades
+      s13 --> s14: the confetti falls
+      s12 --> s15: you swipe two ক#2494;#2433;চ#2494; আম into a প#2494;ক#2494; আম [when Run is Swiping and Board is No প#2494;ক#2494; আম yet]
+      s13 --> s11: you swipe two ক#2494;#2433;চ#2494; আম into a প#2494;ক#2494; আম [when Run is Swiping and Board is No প#2494;ক#2494; আম yet]
+      s14 --> s15: you swipe two ক#2494;#2433;চ#2494; আম into a প#2494;ক#2494; আম [when Run is Swiping and Board is No প#2494;ক#2494; আম yet]
+      s15 --> s16: the confetti falls
+      s15 --> s17: the banner fades
+      s16 --> s18: the banner fades
+      s17 --> s18: the confetti falls
+      s16 --> s19: you swipe two ক#2494;#2433;চ#2494; আম into a প#2494;ক#2494; আম [when Run is Swiping and Board is No প#2494;ক#2494; আম yet]
+      s17 --> s15: you swipe two ক#2494;#2433;চ#2494; আম into a প#2494;ক#2494; আম [when Run is Swiping and Board is No প#2494;ক#2494; আম yet]
+      s18 --> s19: you swipe two ক#2494;#2433;চ#2494; আম into a প#2494;ক#2494; আম [when Run is Swiping and Board is No প#2494;ক#2494; আম yet]
+      s19 --> s16: the confetti falls
+      s19 --> s20: the banner fades
+      s20 --> s18: the confetti falls
+      s20 --> s19: you swipe two ক#2494;#2433;চ#2494; আম into a প#2494;ক#2494; আম [when Run is Swiping and Board is No প#2494;ক#2494; আম yet]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 tan
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 tan
+  class s3 blue
+  class s3 mayBreak
+  class s4 yellow
+  class s4 mayBreak
+  class s5 blue
+  class s5 mayBreak
+  class s6 yellow
+  class s6 mayBreak
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 bugPath
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s15 breaks
+  class s15 bugPath
+  class s16 breaks
+  class s17 breaks
+  class s18 breaks
+  class s19 breaks
+  class s20 breaks

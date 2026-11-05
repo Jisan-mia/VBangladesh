@@ -2,14 +2,19 @@
 // No name, no photo, no stars (what was done, never a grade). Drawn on the phone; saving it is behind the parent gate.
 import { cardSizes, drawFooterBand, fitText, renderCard } from "../../../shared/card-canvas";
 import { drawWordPicture } from "./art";
-import { bn, dotted, levelOf, type Item } from "./words";
+import { ALL_SIGNS, levelOf, signsOf } from "./levels";
+import { bn, dotted, type Item } from "./words";
 
 const colors = { bg: "#fff7e8", rule: "#f1e3c4", ink: "#3b2a17", muted: "#7a6a52", accent: "#a8326a", band: "#5c1d3c", ask: "#ffd9ea" };
 
 export type CardRound = { level: number; items: readonly Item[] };
 
 export const cardLine = (round: CardRound) => `আজ ${bn(round.items.length)}টা কার-চিহ্ন বসালাম`;
-const signLine = (round: CardRound) => { const kar = levelOf(round.level).kar; return kar ? `${levelOf(round.level).title} ${dotted(kar)}` : "সব কার একসাথে"; };
+const signLine = (round: CardRound) => {
+  const level = levelOf(round.level);
+  if (level.kar) return `${level.title} ${dotted(level.kar)}`;
+  return level.id === ALL_SIGNS ? "সব কার একসাথে" : `${level.title} · ${signsOf(level.id).map(dotted).join(" ")}`;
+};
 
 export function drawCard(canvas: HTMLCanvasElement, round: CardRound, site: string) {
   const { width, height } = cardSizes.feed;

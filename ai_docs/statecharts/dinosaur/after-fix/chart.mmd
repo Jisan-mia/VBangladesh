@@ -1,0 +1,310 @@
+---
+title: "ডﬂ°°2494¶ßইনﬂ°°2507¶ßসর খﬂ°°2497¶ßﬂ°°2433¶ßজﬂ°°2495¶ß: the pit, the finger, pause, the book, the rest screen and the parent gate"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: rest
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "Game The pit (খ#2497;#2433;ড#2492;#2495;)" as s0 {
+    state "Window On the page" as s1 {
+      state "Hand Hands off" as s2 {
+        s3: Cover Nothing over the stage
+        s4: Cover The book is open
+        s5: Cover Parent gate open
+        s6: Cover Rest screen
+      }
+    }
+    state "Window Another window has focus" as s7 {
+      state "Hand Hands off" as s8 {
+        s9: Cover Nothing over the stage
+        s10: Cover The book is open
+        s11: Cover Parent gate open
+        s12: Cover Rest screen
+      }
+    }
+  }
+  state "Game Digging" as s13 {
+    state "Window On the page" as s14 {
+      state "Hand Hands off" as s15 {
+        s16: Cover Nothing over the stage
+        s17: Cover The book is open
+      }
+      state "Hand Finger on the sand" as s18 {
+        s19: Cover Nothing over the stage
+      }
+    }
+    state "Window Pause menu open" as s20 {
+      state "Hand Hands off" as s21 {
+        s22: Cover Nothing over the stage
+        s23: Cover The book is open
+      }
+    }
+  }
+  state "Game The level list" as s24 {
+    state "Window On the page" as s25 {
+      state "Hand Hands off" as s26 {
+        s27: Cover Nothing over the stage
+        s28: Cover The book is open
+        s29: Cover Rest screen
+      }
+    }
+    state "Window Another window has focus" as s30 {
+      state "Hand Hands off" as s31 {
+        s32: Cover Nothing over the stage
+        s33: Cover The book is open
+        s34: Cover Rest screen
+      }
+    }
+  }
+  state "Game Last bone lifting out" as s35 {
+    state "Window On the page" as s36 {
+      state "Hand Finger on the sand" as s37 {
+        s38: Cover Nothing over the stage
+      }
+      state "Hand Hands off" as s39 {
+        s40: Cover Nothing over the stage
+        s41: Cover The book is open
+      }
+    }
+    state "Window Pause menu open" as s42 {
+      state "Hand Hands off" as s43 {
+        s44: Cover Nothing over the stage
+        s45: Cover The book is open
+      }
+    }
+  }
+  state "Game Building the skeleton" as s46 {
+    state "Window On the page" as s47 {
+      state "Hand Hands off" as s48 {
+        s49: Cover Nothing over the stage
+        s50: Cover The book is open
+      }
+    }
+    state "Window Pause menu open" as s51 {
+      state "Hand Hands off" as s52 {
+        s53: Cover Nothing over the stage
+        s54: Cover The book is open
+      }
+    }
+  }
+  state "Game What did it eat?" as s55 {
+    state "Window On the page" as s56 {
+      state "Hand Hands off" as s57 {
+        s58: Cover Nothing over the stage
+        s59: Cover The book is open
+      }
+    }
+    state "Window Pause menu open" as s60 {
+      state "Hand Hands off" as s61 {
+        s62: Cover Nothing over the stage
+        s63: Cover The book is open
+      }
+    }
+  }
+  state "Game Facts, #9654; waits" as s64 {
+    state "Window On the page" as s65 {
+      state "Hand Hands off" as s66 {
+        s67: Cover Nothing over the stage
+        s68: Cover The book is open
+      }
+    }
+    state "Window Pause menu open" as s69 {
+      state "Hand Hands off" as s70 {
+        s71: Cover Nothing over the stage
+        s72: Cover The book is open
+      }
+    }
+  }
+  state "Game Facts: round won, stars saved, #9654; waits" as s73 {
+    state "Window On the page" as s74 {
+      state "Hand Hands off" as s75 {
+        s76: Cover Nothing over the stage
+        s77: Cover The book is open
+      }
+    }
+    state "Window Pause menu open" as s78 {
+      state "Hand Hands off" as s79 {
+        s80: Cover Nothing over the stage
+        s81: Cover The book is open
+      }
+    }
+  }
+  state "Game End: #8635; / house" as s82 {
+    state "Window On the page" as s83 {
+      state "Hand Hands off" as s84 {
+        s85: Cover Nothing over the stage
+        s86: Cover The book is open
+        s87: Cover Rest screen
+      }
+    }
+    state "Window Another window has focus" as s88 {
+      state "Hand Hands off" as s89 {
+        s90: Cover Nothing over the stage
+        s91: Cover The book is open
+        s92: Cover Rest screen
+      }
+    }
+  }
+  [*] --> s3
+  s3 --> s16: you tap খ#2497;#2433;ড#2492;#2495; or আব#2494;র খ#2503;ল#2507;
+  s3 --> s27: the level list opens
+  s3 --> s9: you click into another window: the menu opens, the stroke ends
+  s3 --> s4: you open the finder's book
+  s3 --> s5: a parent opens বড#2492;দ#2503;র জন#2509;য
+  s16 --> s17: you open the finder's book
+  s16 --> s19: you press the sand
+  s16 --> s22: #9208;, P or Escape or you click into another window: the menu opens, the stroke ends
+  s27 --> s16: you tap খ#2497;#2433;ড#2492;#2495; or আব#2494;র খ#2503;ল#2507;
+  s27 --> s32: you click into another window: the menu opens, the stroke ends
+  s27 --> s28: you open the finder's book
+  s9 --> s3: you come back to the window
+  s9 --> s11: a parent opens বড#2492;দ#2503;র জন#2509;য
+  s3 --> s6: you tap খ#2497;#2433;ড#2492;#2495; with today's time used up
+  s4 --> s3: you close the book
+  s4 --> s10: you click into another window: the menu opens, the stroke ends
+  s5 --> s16: you tap খ#2497;#2433;ড#2492;#2495; or আব#2494;র খ#2503;ল#2507;
+  s5 --> s27: the level list opens
+  s5 --> s4: you open the finder's book
+  s5 --> s11: you click into another window: the menu opens, the stroke ends
+  s17 --> s16: you close the book
+  s17 --> s23: #9208;, P or Escape or you click into another window: the menu opens, the stroke ends
+  s19 --> s16: the phone cancels the touch or you lift your finger
+  s19 --> s38: the last bone of the pit comes out
+  s19 --> s17: you open the finder's book
+  s19 --> s22: #9208;, P or Escape or you click into another window: the menu opens, the stroke ends
+  s22 --> s16: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s22 --> s27: the level list opens
+  s32 --> s27: you come back to the window
+  s27 --> s29: you tap খ#2497;#2433;ড#2492;#2495; with today's time used up
+  s28 --> s27: you close the book
+  s28 --> s33: you click into another window: the menu opens, the stroke ends
+  s10 --> s4: you come back to the window
+  s11 --> s5: you come back to the window
+  s5 --> s6: you tap খ#2497;#2433;ড#2492;#2495; with today's time used up
+  s6 --> s12: you click into another window: the menu opens, the stroke ends
+  s6 --> s3: a parent gives ten more minutes
+  s38 --> s49: the beat ends: the bones come up to the board
+  s38 --> s40: the phone cancels the touch or you lift your finger
+  s38 --> s41: you open the finder's book
+  s38 --> s44: #9208;, P or Escape or you click into another window: the menu opens, the stroke ends
+  s23 --> s17: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s23 --> s22: you close the book
+  s33 --> s28: you come back to the window
+  s29 --> s34: you click into another window: the menu opens, the stroke ends
+  s29 --> s27: a parent gives ten more minutes
+  s12 --> s6: you come back to the window
+  s12 --> s9: a parent gives ten more minutes
+  s49 --> s50: you open the finder's book
+  s49 --> s53: #9208;, P or Escape or you click into another window: the menu opens, the stroke ends
+  s49 --> s58: you place the last bone: the dinosaur stands
+  s40 --> s49: the beat ends: the bones come up to the board
+  s40 --> s41: you open the finder's book
+  s40 --> s44: #9208;, P or Escape or you click into another window: the menu opens, the stroke ends
+  s41 --> s40: you close the book
+  s41 --> s45: #9208;, P or Escape or you click into another window: the menu opens, the stroke ends
+  s44 --> s27: the level list opens
+  s44 --> s40: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s34 --> s29: you come back to the window
+  s34 --> s32: a parent gives ten more minutes
+  s50 --> s49: you close the book
+  s50 --> s54: #9208;, P or Escape or you click into another window: the menu opens, the stroke ends
+  s53 --> s27: the level list opens
+  s53 --> s49: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s45 --> s41: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s45 --> s44: you close the book
+  s58 --> s67: you pick the right food
+  s58 --> s59: you open the finder's book
+  s58 --> s62: #9208;, P or Escape or you click into another window: the menu opens, the stroke ends
+  s54 --> s50: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s54 --> s53: you close the book
+  s67 --> s16: #9654;
+  s67 --> s68: you open the finder's book
+  s67 --> s71: #9208;, P or Escape or you click into another window: the menu opens, the stroke ends
+  s59 --> s58: you close the book
+  s59 --> s63: #9208;, P or Escape or you click into another window: the menu opens, the stroke ends
+  s62 --> s27: the level list opens
+  s62 --> s58: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s68 --> s67: you close the book
+  s68 --> s72: #9208;, P or Escape or you click into another window: the menu opens, the stroke ends
+  s71 --> s67: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s71 --> s27: the level list opens
+  s63 --> s59: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s63 --> s62: you close the book
+  s72 --> s68: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s72 --> s71: you close the book
+  s58 --> s76: you pick the right food
+  s76 --> s85: #9654;
+  s76 --> s77: you open the finder's book
+  s76 --> s80: #9208;, P or Escape or you click into another window: the menu opens, the stroke ends
+  s85 --> s16: you tap খ#2497;#2433;ড#2492;#2495; or আব#2494;র খ#2503;ল#2507;
+  s85 --> s90: you click into another window: the menu opens, the stroke ends
+  s85 --> s86: you open the finder's book
+  s85 --> s27: the level list opens
+  s85 --> s3: you tap the house (শ#2503;ষ)
+  s77 --> s76: you close the book
+  s77 --> s81: #9208;, P or Escape or you click into another window: the menu opens, the stroke ends
+  s76 --> s87: #9654;
+  s80 --> s76: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s80 --> s27: the level list opens
+  s90 --> s85: you come back to the window
+  s85 --> s87: you tap খ#2497;#2433;ড#2492;#2495; with today's time used up
+  s86 --> s85: you close the book
+  s86 --> s91: you click into another window: the menu opens, the stroke ends
+  s87 --> s92: you click into another window: the menu opens, the stroke ends
+  s87 --> s85: a parent gives ten more minutes
+  s81 --> s77: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s81 --> s80: you close the book
+  s91 --> s86: you come back to the window
+  s92 --> s87: you come back to the window
+  s92 --> s90: a parent gives ten more minutes
+  class s3 blue
+  class s4 blue
+  class s5 blue
+  class s6 yellow
+  class s9 blue
+  class s10 blue
+  class s11 blue
+  class s12 yellow
+  class s16 teal
+  class s17 teal
+  class s19 teal
+  class s22 teal
+  class s23 teal
+  class s27 blue
+  class s28 blue
+  class s29 yellow
+  class s32 blue
+  class s33 blue
+  class s34 yellow
+  class s38 teal
+  class s40 teal
+  class s41 teal
+  class s44 teal
+  class s45 teal
+  class s49 teal
+  class s50 teal
+  class s53 teal
+  class s54 teal
+  class s58 teal
+  class s59 teal
+  class s62 teal
+  class s63 teal
+  class s67 teal
+  class s68 teal
+  class s71 teal
+  class s72 teal
+  class s76 teal
+  class s77 teal
+  class s80 teal
+  class s81 teal
+  class s85 blue
+  class s86 blue
+  class s87 yellow
+  class s90 blue
+  class s91 blue
+  class s92 yellow

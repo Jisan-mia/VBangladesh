@@ -1,0 +1,118 @@
+---
+title: "রশﬂ°°2495¶ß টﬂ°°2494¶ßনﬂ°°2494¶ßটﬂ°°2494¶ßনﬂ°°2495¶ß: the match, the window, the beat clock and the crowd"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+    lg4: Breaks LoopComesBack or LoopOnlyWhenMeaningful or NoProgressWhileAway or PausedWhenBlurred
+    lg5: Breaks LoopComesBack or LoopOnlyWhenMeaningful or NoProgressWhileAway or PausedWhenBlurred in some cases
+    lg6: Path to the LoopComesBack or LoopOnlyWhenMeaningful or NoProgressWhileAway or PausedWhenBlurred bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Match" as r0 {
+      s0: Drum waiting for your tap
+      s1: Pulling on the beat
+      s2: Card shows
+      s3: Paused
+      s4: Beats going by unseen
+      [*] --> s0
+      s0 --> s1: you tap the drum to start [when Window is You're on the field]
+      s1 --> s2: the ribbon reaches their line or the ribbon reaches our line [when Window is You're on the field]
+      s1 --> s3: you hide the tab
+      s1 --> s3: you scroll the field away [when Window is You're on the field]
+      s2 --> s1: you tap the drum to start [when Window is You're on the field]
+      s1 --> s4: a beat goes by while the loop is frozen [when Window is Another window has focus]
+      s4 --> s3: you hide the tab
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the field]
+      s4 --> s1: the game catches up all the missed beats at once [when Window is You're on the field]
+      s4 --> s3: you scroll the field away [when Window is You're on the field]
+      s3 --> s4: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the field]
+    }
+    --
+    state "Window" as r1 {
+      s5: You're on the field
+      s6: Tab hidden
+      s7: Another window has focus
+      s8: Field scrolled away
+      [*] --> s5
+      s5 --> s6: you hide the tab
+      s5 --> s7: you click into another window
+      s5 --> s8: you scroll the field away
+      s6 --> s5: the tab shows again
+      s7 --> s5: you come back to the window
+      s7 --> s6: you hide the tab
+      s8 --> s5: you scroll the field back
+      s8 --> s6: you hide the tab
+      s8 --> s7: you click into another window
+      s6 --> s8: the tab shows again
+      s7 --> s8: you come back to the window [when Match is none of Beats going by unseen, Pulling on the beat and Crowd is No crowd]
+    }
+    --
+    state "Crowd" as r2 {
+      s9: No crowd
+      s10: Crowd silent (made while muted)
+      s11: Crowd playing
+      [*] --> s9
+      s9 --> s10: you tap the drum to start [when Match is one of Card shows, Drum waiting for your tap and Window is You're on the field and Sound is Sound off]
+      s9 --> s11: you tap the drum to start [when Match is one of Card shows, Drum waiting for your tap and Window is You're on the field and Sound is Sound on]
+      s10 --> s9: the ribbon reaches their line or the ribbon reaches our line [when Match is Pulling on the beat and Window is You're on the field]
+      s10 --> s9: you hide the tab
+      s10 --> s9: you scroll the field away [when Window is You're on the field]
+      s11 --> s9: the ribbon reaches their line or the ribbon reaches our line [when Match is Pulling on the beat and Window is You're on the field]
+      s11 --> s9: you turn sound off or you scroll the field away [when Window is You're on the field]
+      s11 --> s9: you hide the tab
+      s9 --> s11: you turn sound on [when Match is one of Beats going by unseen, Pulling on the beat and Window is You're on the field and Sound is Sound off]
+      s10 --> s9: you turn sound off [when Window is You're on the field and Sound is Sound on]
+      s9 --> s10: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Match is Paused and Window is You're on the field and Sound is Sound off]
+      s9 --> s11: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Match is Paused and Window is You're on the field and Sound is Sound on]
+    }
+    --
+    state "Sound" as r3 {
+      s12: Sound off
+      s13: Sound on
+      [*] --> s12
+      [*] --> s13
+      s12 --> s13: you turn sound on [when Window is one of Field scrolled away, You're on the field]
+      s13 --> s12: you turn sound off [when Window is one of Field scrolled away, You're on the field]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 tan
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 blue
+  class s3 yellow
+  class s3 mayBreak
+  class s4 teal
+  class s4 breaks
+  class s4 bugPath
+  class s5 mayBreak
+  class s5 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 teal
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 teal
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath

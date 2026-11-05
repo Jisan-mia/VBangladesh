@@ -1,0 +1,156 @@
+---
+title: "Dosh ghater nouka (boat race): screens, the race, pause, the mode chips, the share gate and the daily limit"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "Race The river (খ#2503;ল#2507;)" as s0 {
+    state "Menu Playing" as s1 {
+      s2: Today Time left today
+      s3: Today Rest screen
+    }
+    state "Menu Menu open or away, the boats wait" as s4 {
+      s5: Today Time left today
+      s6: Today Rest screen
+    }
+  }
+  state "Race The level list" as s7 {
+    state "Menu Playing" as s8 {
+      s9: Today Time left today
+    }
+    state "Menu Menu open or away, the boats wait" as s10 {
+      s11: Today Time left today
+    }
+  }
+  state "Race Press the চরক#2495;" as s12 {
+    state "Menu Playing" as s13 {
+      s14: Today Time left today
+    }
+    state "Menu Menu open or away, the boats wait" as s15 {
+      s16: Today Time left today
+    }
+  }
+  state "Race The চরক#2495; turning" as s17 {
+    state "Menu Playing" as s18 {
+      s19: Today Time left today
+    }
+    state "Menu Menu open or away, the boats wait" as s20 {
+      s21: Today Time left today
+    }
+  }
+  state "Race Tap the ghats" as s22 {
+    state "Menu Playing" as s23 {
+      s24: Today Time left today
+    }
+    state "Menu Menu open or away, the boats wait" as s25 {
+      s26: Today Time left today
+    }
+  }
+  state "Race Your boat at the last ghat, stars saved, the page in 1.3 s" as s27 {
+    state "Menu Playing" as s28 {
+      s29: Today Time left today
+      s30: Today Time's up, the rest waits for the end page
+    }
+    state "Menu Menu open or away, the boats wait" as s31 {
+      s32: Today Time left today
+      s33: Today Time's up, the rest waits for the end page
+    }
+  }
+  state "Race The end page (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ)" as s34 {
+    state "Menu Playing" as s35 {
+      s36: Today Time left today
+      s37: Today Rest screen
+    }
+    state "Menu Menu open or away, the boats wait" as s38 {
+      s39: Today Time left today
+      s40: Today Rest screen
+    }
+  }
+  [*] --> s2
+  [*] --> s3
+  s2 --> s9: the child opens the level list
+  s2 --> s5: #9208; / P / Esc or the window blurs or hides
+  s2 --> s14: the child taps খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507;
+  s3 --> s2: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s3 --> s6: #9208; / P / Esc or the window blurs or hides
+  s9 --> s14: the child picks a level
+  s9 --> s11: #9208; / P / Esc or the window blurs or hides
+  s2 --> s3: the page opens again or the child taps খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507;
+  s5 --> s2: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s6 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s6 --> s5: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s14 --> s19: the child presses the চরক#2495;
+  s14 --> s16: #9208; / P / Esc or the window blurs or hides
+  s19 --> s24: the চরক#2495; stops
+  s19 --> s21: #9208; / P / Esc or the window blurs or hides
+  s9 --> s3: the child picks a level
+  s11 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s11 --> s9: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s16 --> s14: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s16 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s24 --> s14: the child taps the right ghat
+  s24 --> s29: the child taps the right ghat
+  s24 --> s26: #9208; / P / Esc or the window blurs or hides
+  s21 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s21 --> s19: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s29 --> s2: the page opens again
+  s29 --> s36: the end page comes
+  s29 --> s32: #9208; / P / Esc or the window blurs or hides
+  s24 --> s30: the child taps the right ghat
+  s26 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s26 --> s24: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s36 --> s2: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s36 --> s14: the child taps খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507;
+  s36 --> s9: the child opens the level list
+  s36 --> s39: #9208; / P / Esc or the window blurs or hides
+  s30 --> s37: the end page comes
+  s30 --> s33: #9208; / P / Esc or the window blurs or hides
+  s32 --> s2: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s32 --> s29: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s36 --> s37: the child taps খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507;
+  s37 --> s36: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s37 --> s40: #9208; / P / Esc or the window blurs or hides
+  s39 --> s2: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s39 --> s36: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s33 --> s30: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s33 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s40 --> s37: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s40 --> s39: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s40 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s7 --> s2: the page opens again
+  s7 --> s3: the page opens again
+  s12 --> s2: the page opens again
+  s12 --> s3: the page opens again
+  s17 --> s2: the page opens again
+  s17 --> s3: the page opens again
+  s22 --> s2: the page opens again
+  s22 --> s3: the page opens again
+  s27 --> s3: the page opens again
+  s34 --> s3: the page opens again
+  s4 --> s3: the page opens again
+  class s2 blue
+  class s3 yellow
+  class s5 blue
+  class s6 yellow
+  class s9 blue
+  class s11 blue
+  class s14 teal
+  class s16 teal
+  class s19 teal
+  class s21 teal
+  class s24 teal
+  class s26 teal
+  class s29 teal
+  class s30 teal
+  class s32 teal
+  class s33 teal
+  class s36 blue
+  class s37 yellow
+  class s39 blue
+  class s40 yellow

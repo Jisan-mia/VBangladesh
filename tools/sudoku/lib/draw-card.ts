@@ -1,7 +1,8 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, type CardFormat } from "../../../shared/card-canvas";
 import { cleanName } from "../../../shared/game-core";
 import { starsEarned } from "./game";
-import { bn, duration, humanLine, puzzleLabel, puzzleOf, type Shared } from "./link";
+import { paperFor } from "./art";
+import { bn, duration, finaleName, humanLine, puzzleLabel, puzzleOf, type Shared } from "./link";
 
 /** Newsprint, black print, and the blue of an ordinary ballpoint pen. */
 export const palette = { paper: "#f4efe3", ink: "#1f1d1a", muted: "#6a6358", rule: "#cfc6b4", pen: "#24439a", penSoft: "#dfe5f4", star: "#f2a900", starOff: "#d6cdbb" };
@@ -70,14 +71,26 @@ export function drawCard(canvas: HTMLCanvasElement, data: Shared, format: CardFo
   const starY = top + (story ? 262 : 232), r = story ? 34 : 30;
   for (let i = 0; i < 3; i++) star(c, cx + (i - 1) * r * 2.5, starY, r, i < stars ? palette.star : palette.starOff);
   if (data.hints) fitText(c, [{ text: `${bn(data.hints)}টা ঘর সাহায্য নিয়ে`, color: palette.muted, weight: 600 }], cx, starY + r + 50, 34, 800, "center");
+  const finale = finaleName(data.level), ink = paperFor(data.level).card;
 
   const side = story ? 820 : 700, gridY = story ? top + 400 : top + (data.hints ? 330 : 300);
   c.fillStyle = "rgba(31,29,26,0.16)";
   c.fillRect(cx - side / 2 + 12, gridY + 14, side, side);
   drawGrid(c, puzzle.puzzle, puzzle.shape.rows, puzzle.shape.cols, cx - side / 2, gridY, side);
+  // A world's finale gets a rubber stamp across the grid's corner: "ছোট মামার ধাঁধা · মেলানো".
+  if (finale) {
+    c.save();
+    c.translate(cx + side / 2 - 150, gridY + 70);
+    c.rotate(-0.16);
+    c.strokeStyle = ink; c.lineWidth = 6;
+    c.globalAlpha = 0.9;
+    c.strokeRect(-190, -52, 380, 104);
+    fitText(c, [{ text: `${finale} · মেলানো`, color: ink, weight: 800, display: true }], 0, 14, 40, 350, "center");
+    c.restore();
+  }
 
   fitText(c, [{ text: humanLine(stars, data.hints, puzzle.empty), color: palette.ink, weight: 700 }], cx, gridY + side + (story ? 110 : 90), story ? 48 : 42, 940, "center");
-  drawFooterBand(c, format, "তুমি কত মিনিটে পারবে?", site, { band: palette.pen, ask: "#ffd166", site: "#ffffff" });
+  drawFooterBand(c, format, "তুমি কত মিনিটে পারবে?", site, { band: ink, ask: "#ffd166", site: "#ffffff" });
 }
 
 export const cardBlob = (data: Shared, format: CardFormat, site: string) => renderCard(canvas => drawCard(canvas, data, format, site));

@@ -1,0 +1,98 @@
+---
+title: "Jhalmuri Sap: the level list, a friend's link and the unlock"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+  }
+  class lg0 teal
+  state "Game Title or level list" as s0 {
+    state "Level Your own level" as s1 {
+      s2: Unlock Only level 1 open
+      s3: Unlock Levels 1#8211;2 open
+      s4: Unlock Levels 1#8211;3 open
+    }
+    state "Level Friend's level, friend's ঠ#2507;ঙ#2494;" as s5 {
+      s6: Unlock Only level 1 open
+      s7: Unlock Levels 1#8211;2 open
+      s8: Unlock Levels 1#8211;3 open
+    }
+  }
+  state "Game Snake moving" as s9 {
+    state "Level Your own level" as s10 {
+      s11: Unlock Only level 1 open
+      s12: Unlock Levels 1#8211;2 open
+      s13: Unlock Levels 1#8211;3 open
+    }
+    state "Level Friend's level, friend's ঠ#2507;ঙ#2494;" as s14 {
+      s15: Unlock Only level 1 open
+      s16: Unlock Levels 1#8211;2 open
+      s17: Unlock Levels 1#8211;3 open
+    }
+  }
+  state "Game Card (or level list)" as s18 {
+    state "Level Your own level" as s19 {
+      s20: Unlock Only level 1 open
+      s21: Unlock Levels 1#8211;2 open
+      s22: Unlock Levels 1#8211;3 open
+    }
+    state "Level Friend's level, friend's ঠ#2507;ঙ#2494;" as s23 {
+      s24: Unlock Only level 1 open
+      s25: Unlock Levels 1#8211;2 open
+      s26: Unlock Levels 1#8211;3 open
+    }
+  }
+  [*] --> s2
+  s2 --> s11: you press খ#2503;ল#2507;
+  s2 --> s6: a friend's link opens or you pick the friend's level
+  s11 --> s6: a friend's link opens
+  s11 --> s20: the snake crashes
+  s11 --> s21: you clear your furthest level
+  s6 --> s2: you pick a level
+  s6 --> s15: you press খ#2503;ল#2507;
+  s20 --> s2: you pick a level
+  s20 --> s11: you press আব#2494;র খ#2503;ল#2507;
+  s20 --> s6: a friend's link opens or you pick the friend's level
+  s21 --> s12: you press আব#2494;র খ#2503;ল#2507; or you press পর#2503;র ল#2503;ভ#2503;ল
+  s21 --> s3: you pick a level
+  s21 --> s7: a friend's link opens or you pick the friend's level
+  s15 --> s24: you clear the friend's level or the snake crashes
+  s12 --> s21: you clear a level or the snake crashes
+  s12 --> s7: a friend's link opens
+  s3 --> s12: you press খ#2503;ল#2507;
+  s3 --> s7: a friend's link opens or you pick the friend's level
+  s12 --> s22: you clear your furthest level
+  s24 --> s6: you pick the friend's level
+  s24 --> s2: you pick a level
+  s24 --> s15: you press আব#2494;র খ#2503;ল#2507;
+  s24 --> s11: you press পর#2503;র ল#2503;ভ#2503;ল
+  s7 --> s3: you pick a level
+  s7 --> s16: you press খ#2503;ল#2507;
+  s22 --> s13: you press পর#2503;র ল#2503;ভ#2503;ল or you press আব#2494;র খ#2503;ল#2507;
+  s22 --> s4: you pick a level
+  s22 --> s8: a friend's link opens or you pick the friend's level
+  s20 --> s15: you press পর#2503;র ল#2503;ভ#2503;ল
+  s21 --> s16: you press পর#2503;র ল#2503;ভ#2503;ল
+  s16 --> s25: you clear the friend's level or the snake crashes
+  s13 --> s8: a friend's link opens
+  s13 --> s22: you clear a level or the snake crashes
+  s4 --> s13: you press খ#2503;ল#2507;
+  s4 --> s8: a friend's link opens or you pick the friend's level
+  s25 --> s7: you pick the friend's level
+  s25 --> s3: you pick a level
+  s25 --> s16: you press আব#2494;র খ#2503;ল#2507;
+  s25 --> s12: you press পর#2503;র ল#2503;ভ#2503;ল
+  s8 --> s4: you pick a level
+  s8 --> s17: you press খ#2503;ল#2507;
+  s22 --> s17: you press পর#2503;র ল#2503;ভ#2503;ল
+  s17 --> s26: the snake crashes or you clear the friend's level
+  s26 --> s8: you pick the friend's level
+  s26 --> s4: you pick a level
+  s26 --> s17: you press আব#2494;র খ#2503;ল#2507;
+  s26 --> s13: you press পর#2503;র ল#2503;ভ#2503;ল
+  class s11 teal
+  class s12 teal
+  class s13 teal
+  class s15 teal
+  class s16 teal
+  class s17 teal

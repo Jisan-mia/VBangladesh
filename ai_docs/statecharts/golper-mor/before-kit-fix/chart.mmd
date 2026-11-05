@@ -1,0 +1,126 @@
+---
+title: "Golper mor (story turns): reading, read marks across tabs, daily limit and gates"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: rest
+    lg2: done
+    lg3: Breaks NoStoryAfterTimeIsUp or ReadMarksNeverVanish
+    lg4: Path to the NoStoryAfterTimeIsUp or ReadMarksNeverVanish bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Story" as r0 {
+      s0: Shelf
+      s1: Reading up to the ম#2507;ড#2492;
+      s2: Shelf, বড#2492;দ#2503;র জন#2509;য open
+      s3: Reading turn ১
+      s4: Reading turn ২
+      s5: Reading up to the ম#2507;ড#2492; after today's time is up
+      s6: End page
+      s7: Reading turn ১ after today's time is up
+      s8: Reading turn ২ after today's time is up
+      s9: Rest screen after a story
+      s10: আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও
+      [*] --> s0
+      s0 --> s1: you open the story or press আব#2494;র পড#2492;#2507; [when Today is Time left today]
+      s0 --> s2: a grown-up opens বড#2492;দ#2503;র জন#2509;য
+      s1 --> s0: you press #8592; সব গল#2509;প or শ#2503;ষ
+      s1 --> s3: you pick a turn at the ম#2507;ড#2492;
+      s1 --> s4: you pick a turn at the ম#2507;ড#2492;
+      s0 --> s5: you open the story or press আব#2494;র পড#2492;#2507; [when Today is Today's time is up]
+      s2 --> s0: you press বন#2509;ধ কর#2507;
+      s2 --> s1: you open the story or press আব#2494;র পড#2492;#2507; [when Today is Time left today]
+      s3 --> s0: you press #8592; সব গল#2509;প or শ#2503;ষ
+      s3 --> s6: you press গল#2509;প শ#2503;ষ [when Today is Time left today]
+      s4 --> s6: you press গল#2509;প শ#2503;ষ [when Today is Time left today]
+      s4 --> s0: you press #8592; সব গল#2509;প or শ#2503;ষ
+      s5 --> s0: you press #8592; সব গল#2509;প or শ#2503;ষ
+      s5 --> s7: you pick a turn at the ম#2507;ড#2492;
+      s5 --> s8: you pick a turn at the ম#2507;ড#2492;
+      s2 --> s5: you open the story or press আব#2494;র পড#2492;#2507; [when Today is Today's time is up]
+      s6 --> s1: you open the story or press আব#2494;র পড#2492;#2507; [when Today is Time left today]
+      s6 --> s1: you press অন#2509;যট#2494; ব#2503;ছ#2503; দ#2503;খ#2507;
+      s6 --> s0: you press #8592; সব গল#2509;প or শ#2503;ষ
+      s6 --> s10: you press আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও
+      s3 --> s9: you press গল#2509;প শ#2503;ষ [when Today is Today's time is up]
+      s4 --> s9: you press গল#2509;প শ#2503;ষ [when Today is Today's time is up]
+      s7 --> s0: you press #8592; সব গল#2509;প or শ#2503;ষ
+      s7 --> s9: you press গল#2509;প শ#2503;ষ [when Today is Today's time is up]
+      s8 --> s9: you press গল#2509;প শ#2503;ষ [when Today is Today's time is up]
+      s8 --> s0: you press #8592; সব গল#2509;প or শ#2503;ষ
+      s6 --> s5: you open the story or press আব#2494;র পড#2492;#2507; [when Today is Today's time is up]
+      s9 --> s6: a grown-up gives ১০ more minutes
+      s10 --> s6: you press দ#2503;খ#2494;ন#2507; শ#2503;ষ
+      s6 --> s5: you press অন#2509;যট#2494; ব#2503;ছ#2503; দ#2503;খ#2507;
+      s7 --> s6: you press গল#2509;প শ#2503;ষ [when Marks is none of Saved: nothing, Saved: turn ২, this tab shows nothing and Today is Time left today]
+      s8 --> s6: you press গল#2509;প শ#2503;ষ [when Marks is none of Saved: nothing, Saved: turn ২, this tab shows nothing and Today is Time left today]
+    }
+    --
+    state "Marks" as r1 {
+      s11: Saved: nothing
+      s12: Saved: turn ২, this tab shows nothing
+      s13: Saved: turn ২
+      s14: Saved: turn ১
+      s15: A turn you read lost its mark. Saved: turn ১
+      s16: A turn you read lost its mark. Saved: turn ২, this tab shows turn ১
+      s17: Saved: both turns
+      s18: A turn you read lost its mark. Saved: turn ২, this tab shows both turns
+      [*] --> s11
+      s11 --> s12: in another tab you finish turn ২
+      s11 --> s14: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ১, Reading turn ১ after today's time is up]
+      s11 --> s13: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ২, Reading turn ২ after today's time is up]
+      s14 --> s16: in another tab you finish turn ২
+      s12 --> s15: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ১, Reading turn ১ after today's time is up]
+      s12 --> s13: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ২, Reading turn ২ after today's time is up]
+      s13 --> s17: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ১, Reading turn ১ after today's time is up]
+      s14 --> s17: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ২, Reading turn ২ after today's time is up]
+      s17 --> s18: in another tab you finish turn ২
+      s16 --> s15: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ১, Reading turn ১ after today's time is up]
+      s15 --> s17: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ২, Reading turn ২ after today's time is up]
+      s16 --> s17: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ২, Reading turn ২ after today's time is up]
+      s18 --> s17: you press গল#2509;প শ#2503;ষ [when Story is one of Reading turn ১, Reading turn ১ after today's time is up, Reading turn ২, Reading turn ২ after today's time is up]
+    }
+    --
+    state "Today" as r2 {
+      s19: Time left today
+      s20: Today's time is up
+      [*] --> s19
+      s19 --> s20: today's time runs out
+      s20 --> s19: a grown-up gives ১০ more minutes [when Story is Rest screen after a story and Marks is none of Saved: nothing, Saved: turn ২, this tab shows nothing]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 blue
+  class s0 bugPath
+  class s1 teal
+  class s1 bugPath
+  class s2 blue
+  class s3 teal
+  class s3 bugPath
+  class s4 teal
+  class s5 teal
+  class s5 breaks
+  class s5 bugPath
+  class s6 blue
+  class s6 bugPath
+  class s7 teal
+  class s7 breaks
+  class s8 teal
+  class s8 breaks
+  class s9 yellow
+  class s10 blue
+  class s11 bugPath
+  class s14 bugPath
+  class s15 breaks
+  class s16 breaks
+  class s16 bugPath
+  class s18 breaks
+  class s19 bugPath
+  class s20 bugPath

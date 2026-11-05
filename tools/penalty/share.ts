@@ -1,7 +1,8 @@
 import type { ToolShare } from "../../shared/share-types";
-import { parseShared, previewTitle, sharedHash } from "./lib/link";
+import { parseShared, sharedHash } from "./lib/challenge";
+import { previewTitle } from "./lib/lines";
 
-// No tally: a link only re-opens one match (its seed replays the same keeper and kicks) with the friend's own score.
+// No tally: a link only re-opens one match (its seed replays the same keeper, wind and kicks) with the friend's own score.
 export const share: ToolShare = {
   normalize(state) {
     const shared = parseShared(state);

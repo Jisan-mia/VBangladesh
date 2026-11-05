@@ -1,0 +1,79 @@
+---
+title: "Ghontar sur (bells): run, pause, the level list and links"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: start
+    lg1: play
+    lg2: held
+    lg3: done
+  }
+  class lg0 teal
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  s0: Title: the big bell
+  s1: Quiet before the call
+  s2: The bells ring
+  s3: Paused (menu or cover)
+  s4: Level list open (paused)
+  s5: Your turn
+  s6: Round cheer
+  s7: Right bell shown
+  s8: Level cheer
+  s9: The finale tune plays
+  s10: End screen: cleared
+  s11: End screen: out of slips
+  [*] --> s0
+  s0 --> s1: you tap the big bell
+  s1 --> s2: the call starts
+  s1 --> s3: you hide the tab or you click into another window
+  s1 --> s4: you open সব ল#2503;ভ#2503;ল
+  s2 --> s5: the call ends
+  s2 --> s3: you hide the tab or you click into another window
+  s2 --> s4: you open সব ল#2503;ভ#2503;ল
+  s4 --> s1: you close সব ল#2503;ভ#2503;ল
+  s5 --> s3: you hide the tab or you click into another window
+  s5 --> s4: you open সব ল#2503;ভ#2503;ল
+  s5 --> s6: you play the round right
+  s5 --> s7: you ring a wrong bell or you ring a wrong bell the third time
+  s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s3 --> s4: you open সব ল#2503;ভ#2503;ল or you pick সব ল#2503;ভ#2503;ল in the menu
+  s4 --> s5: you close সব ল#2503;ভ#2503;ল
+  s6 --> s3: you hide the tab or you click into another window
+  s6 --> s4: you open সব ল#2503;ভ#2503;ল
+  s6 --> s1: the cheer ends
+  s7 --> s1: the call plays again
+  s7 --> s3: you hide the tab or you click into another window
+  s7 --> s4: you open সব ল#2503;ভ#2503;ল
+  s3 --> s5: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s4 --> s6: you close সব ল#2503;ভ#2503;ল
+  s4 --> s7: you close সব ল#2503;ভ#2503;ল
+  s3 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s3 --> s7: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s5 --> s8: you play the last round right
+  s8 --> s3: you hide the tab or you click into another window
+  s8 --> s4: you open সব ল#2503;ভ#2503;ল
+  s8 --> s9: the cheer ends
+  s8 --> s10: the cheer ends
+  s4 --> s8: you close সব ল#2503;ভ#2503;ল
+  s9 --> s10: the tune ends or you tap to skip the tune
+  s9 --> s3: you hide the tab or you click into another window
+  s9 --> s4: you open সব ল#2503;ভ#2503;ল
+  s10 --> s0: you press আব#2494;র খ#2503;ল#2507;
+  s3 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s4 --> s9: you close সব ল#2503;ভ#2503;ল
+  s3 --> s9: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s7 --> s11: the call plays again
+  s11 --> s0: you press আব#2494;র খ#2503;ল#2507;
+  class s1 teal
+  class s2 teal
+  class s3 yellow
+  class s4 yellow
+  class s5 teal
+  class s6 teal
+  class s7 teal
+  class s8 teal
+  class s9 teal
+  class s10 blue
+  class s11 blue

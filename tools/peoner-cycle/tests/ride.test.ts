@@ -1,384 +1,199 @@
+// The ride's rules against the pure game: lanes, bumps and the allowance, delivery, pickups, bells, mud, vans, walkers, dogs,
+// gusts, the finale bar, points and stars. Every one runs the very code the component runs (stepGame).
 import assert from "node:assert/strict";
 import test from "node:test";
-import { site } from "../content";
+import { makeCourse } from "../lib/course";
+import { AHEAD, DELIVERED, EV, EVENT_RING, MISSED, RUNNING, WAITING, createGame, fullMeters, pointsOf, starsFor, steer, type Game, type Piece } from "../lib/game";
 import {
-  createRun, fair, inPath, laneX, migrateBest, nextMark, pieceAt, planRoad, reachIn, scoreOf, speedAt, starsOf, steer, stepRun, LEVEL_COUNT, ROUTES,
-  AHEAD, BELL, BIKE_LEN, BIKE_W, CART, COW, CRASH, FIRST_Y, FRONT_Y, GOAT, GOT_LETTER, HIT, LANE_W, LETTER, PASSED, PUDDLE, RING,
-  SLACK, SLOW_CAP, SPEC, START, SWITCH_T, TAKEN, TOP, UNIT, W, type Piece, type Run,
-} from "../lib/ride";
-import { bands, banner, bellsOf, bumpLine, caption, compareLine, detailLine, humanLine, parseShareHash, previewTitle, shareHash, MAX_METERS, MAX_SCORE } from "../lib/result";
-import { share } from "../share";
+  laneX, BIKE_LEN, CART, COW, DOG, LETTER, MUD_T, PUDDLE, SWITCH_T, UNIT, VAN, WALK_COW, WALK_GOAT,
+} from "../lib/geometry";
+import { stepGame } from "../lib/step.hot";
+import { CAREFUL, makeBot, rideWith } from "./bot";
 
 const DT = 1 / 60;
+const run = (game: Game, seconds: number, each?: (game: Game) => void) => { for (let i = 0; i < Math.round(seconds * 60) && !game.over; i++) { each?.(game); stepGame(game, DT); } return game; };
+const events = (game: Game) => { const out: number[] = []; for (let i = Math.max(0, game.eventCount - EVENT_RING); i < game.eventCount; i++) out.push(game.evKind[i % EVENT_RING]); return out; };
+const first = (game: Game, kind: number): Piece => game.pieces.find(piece => piece.kind === kind)!;
+/** Puts the bike's front wheel `ahead` units before `y`, in `lane`, at its lane's x. */
+const place = (game: Game, y: number, ahead: number, lane: number) => { game.d = y - ahead; game.lane = lane; game.x = laneX(lane); };
 
-type Row = { y: number; end: number; blocked: number; things: Piece[] };
-function rows(pieces: Piece[]) {
-  const list: Row[] = [];
-  for (const piece of pieces) {
-    if (piece.kind === LETTER) continue;
-    let row = list.at(-1);
-    if (!row || row.things[0].row !== piece.row) list.push(row = { y: piece.y, end: 0, blocked: 0, things: [] });
-    row.things.push(piece);
-    row.y = Math.min(row.y, piece.y);
-    row.end = Math.max(row.end, piece.y + piece.len);
-    row.blocked |= 1 << piece.lane;
-  }
-  return list;
-}
-
-/** Is any obstacle beside the bike right now? Then a lane change could clip it, so a careful rider waits. */
-function beside(run: Run) {
-  for (let index = run.first; index < run.count; index++) {
-    const piece = pieceAt(run, index);
-    if (piece.kind === LETTER || piece.state === TAKEN) continue;
-    if (piece.y <= run.d && piece.y + piece.len >= run.d - BIKE_LEN) return true;
-  }
-  return false;
-}
-
-/** The next row still ahead of the bike's front wheel, as a bitmask of blocked lanes. */
-function nextBlocked(run: Run) {
-  let row = -1, blocked = 0;
-  for (let index = run.first; index < run.count; index++) {
-    const piece = pieceAt(run, index);
-    if (piece.kind === LETTER || piece.state !== AHEAD || piece.y <= run.d) continue;
-    if (row === -1) row = piece.row;
-    if (piece.row !== row) break;
-    blocked |= 1 << piece.lane;
-  }
-  return blocked;
-}
-
-/**
- * A careful rider: waits until nothing is beside the bike (plus `delay` seconds, a human's reaction), then heads for the
- * nearest open lane of the next row. Taps one lane at a time, like a thumb.
- */
-function careful(delay = 0) {
-  let clearSince = 0;
-  return (run: Run) => {
-    if (beside(run)) { clearSince = run.t; return; }
-    if (run.t - clearSince < delay) return;
-    const blocked = nextBlocked(run);
-    if (!(blocked & (1 << run.lane))) return;
-    let best = -1;
-    for (const lane of [run.lane - 1, run.lane + 1, run.lane - 2, run.lane + 2]) if (lane >= 0 && lane < 3 && !(blocked & (1 << lane))) { best = lane; break; }
-    if (best >= 0 && Math.abs(run.x - laneX(run.lane)) < 1) steer(run, best < run.lane ? -1 : 1);
-  };
-}
-
-function ride(run: Run, meters: number, player: (run: Run) => void, timeScale = 1) {
-  for (let steps = 0; !run.over && run.d < meters * UNIT && steps < 500_000; steps++) {
-    player(run);
-    stepRun(run, DT * timeScale);
-    assert.ok(run.count - run.first <= RING, "the ring never overwrites a piece still in play");
-  }
-  return run;
-}
-
-test("the same seed lays the same road; another seed lays another", () => {
-  assert.deepEqual(planRoad(4821, 1500), planRoad(4821, 1500));
-  assert.notDeepEqual(planRoad(4821, 1500), planRoad(4822, 1500));
-  const first = ride(createRun(77), 900, careful()), second = ride(createRun(77), 900, careful());
-  assert.deepEqual([first.d, first.t, first.letters, first.bells, first.score], [second.d, second.t, second.letters, second.bells, second.score]);
+test("the same seed and the same taps give the very same ride; another seed another ride", () => {
+  const play = (seed: number) => { const game = createGame(makeCourse(seed, 5), 1), bot = makeBot(CAREFUL, 1); run(game, 30, bot); return JSON.stringify([game.d, game.score, game.delivered, game.bumps, game.lane, game.eventCount, game.t]); };
+  assert.equal(play(4242), play(4242));
+  assert.notEqual(play(4242), play(4243));
 });
 
-test("slow mode rides the very same road (the road never depends on the real speed)", () => {
-  const seen = (run: Run) => { const list: string[] = []; for (let index = 0; index < run.count; index++) list.push(`${pieceAt(run, index).kind}/${pieceAt(run, index).lane}@${pieceAt(run, index).y}`); return list; };
-  const fast = ride(createRun(31), 300, careful()), slow = ride(createRun(31, SLOW_CAP), 300, careful(), 0.7);
-  assert.deepEqual(seen(fast).slice(0, 20), seen(slow).slice(0, 20));
+test("a tap moves one lane and the bike is there 0.12 s later; two quick taps cross two lanes; the edges hold", () => {
+  const game = createGame(makeCourse(4242, 3), 1);
+  steer(game, -1);
+  assert.equal(game.lane, 0);
+  run(game, SWITCH_T + 0.03);
+  assert.equal(game.x, laneX(0), "in its lane after 0.12 s");
+  steer(game, -1); steer(game, -1);
+  assert.equal(game.lane, 0, "no lane left of the left lane");
+  steer(game, 1); steer(game, 1);
+  assert.equal(game.lane, 2);
+  run(game, 2 * SWITCH_T + 0.03);
+  assert.equal(game.x, laneX(2));
 });
 
-test("speed starts gentle, ramps slowly and is capped; slow mode caps it lower", () => {
-  assert.equal(speedAt(0), START);
-  assert.ok(speedAt(500) > speedAt(100) && speedAt(500) < TOP);
-  assert.equal(speedAt(1_000_000), TOP);
-  const run = ride(createRun(5, SLOW_CAP), 1200, careful(), 0.7);
-  assert.equal(run.over, false);
-  assert.ok(run.speed <= SLOW_CAP);
-  // A row coming in at the top of the screen is in view for most of a second even at top speed.
-  assert.ok(FRONT_Y / TOP >= 0.9);
+test("the first row is a puddle in the middle lane: riding straight bumps it, costs a letter, halves the speed, and counts against the allowance", () => {
+  const game = createGame(makeCourse(4242, 2), 1), bag = game.bag;
+  run(game, 4);
+  assert.equal(game.bumps, 1);
+  assert.equal(game.bag, bag - 1);
+  assert.equal(game.lost, 1);
+  assert.ok(events(game).includes(EV.bump));
+  assert.ok(game.recover > 0 || game.v > 0);
+  assert.ok(!game.over, "one bump does not end a স্বাভাবিক ride");
 });
 
-test("every road is fair: never three lanes shut, never overlapping, and an open lane is always in reach in time", () => {
-  for (let seed = 1; seed <= 400; seed++) {
-    const pieces = planRoad(seed, 3000), list = rows(pieces);
-    assert.equal(list[0].y, FIRST_Y);
-    assert.deepEqual([list[0].blocked, list[0].things[0].kind, list[0].things[0].hint], [0b010, PUDDLE, 1], `seed ${seed}: a puddle in your own lane comes first`);
-    assert.ok(FIRST_Y / START > 2.5, "time to read the first hint");
-    let open = 0b010;
-    for (let index = 0; index < list.length; index++) {
-      const row = list[index];
-      assert.ok(row.blocked !== 0b111, `seed ${seed}: row ${index} shuts every lane`);
-      assert.equal(row.things.length, new Set(row.things.map(piece => piece.lane)).size, "one thing a lane");
-      if (index > 0) {
-        const before = list[index - 1];
-        assert.ok(row.y > before.end, `seed ${seed}: rows overlap`);
-        const time = (row.y - before.end - BIKE_LEN) / speedAt(row.y / UNIT);
-        assert.ok(time >= SLACK + SWITCH_T, `seed ${seed}: row ${index} leaves ${time.toFixed(2)}s`);
-        assert.ok(fair(open, 0b111 & ~row.blocked, reachIn(time)), `seed ${seed}: row ${index} can trap a rider`);
-      }
-      const meters = row.y / UNIT;
-      for (const piece of row.things) {
-        if (meters < 60) assert.ok(piece.kind === PUDDLE || piece.kind === GOAT, `seed ${seed}: only puddles and goats at first`);
-        if (piece.kind === COW) assert.ok(meters >= 130);
-        if (piece.kind === CART) assert.ok(meters >= 60);
-        // In the next lane, a thing never touches a bike riding the middle of its lane.
-        assert.ok(LANE_W - piece.w / 2 - BIKE_W / 2 > 10);
-      }
-      open = 0b111 & ~row.blocked;
-    }
-    const letters = pieces.filter(piece => piece.kind === LETTER);
-    assert.ok(letters.length > 10, `seed ${seed}: letters along the way`);
-    assert.equal(letters[0].hint, 2);
-    for (const letter of letters) {
-      const after = list.find(row => row.y > letter.y)!, before = list.filter(row => row.y < letter.y).at(-1)!;
-      assert.ok(letter.y > before.end && letter.y + letter.len < after.y, "a letter sits in a gap, never on a thing");
-      if (after.y / UNIT < 150) assert.ok(!(after.blocked & (1 << letter.lane)), "early letters are free to take");
-    }
+test("the allowance: সহজ ends on the 5th bump, স্বাভাবিক on the 3rd, কঠিন on the 1st; the stopped bike is wrecked, not finished", () => {
+  for (const [mode, limit] of [[0, 5], [1, 3], [2, 1]] as const) {
+    const game = createGame(makeCourse(4242, 9), mode);
+    run(game, 60);
+    assert.equal(game.over, 1, `mode ${mode} ends`);
+    assert.equal(game.bumps, limit);
+    assert.equal(game.wrecked, 1);
+    assert.equal(game.finished, 0);
+    assert.ok(events(game).includes(EV.wreck));
+    assert.equal(starsFor(false, game.delivered, game.course.houses.length, game.course.spec.goal), 0, "no stars for a stop short of the place");
   }
 });
 
-test("a careful rider never crashes: full speed, slow mode, and with a human's reaction time", () => {
-  for (let seed = 1; seed <= 150; seed++) {
-    for (const [cap, scale, delay] of [[TOP, 1, 0], [SLOW_CAP, 0.7, 0], [TOP, 1, 0.2], [TOP, 1, SLACK - 0.08], [SLOW_CAP, 0.7, 0.25]] as const) {
-      const run = ride(createRun(seed, cap), 1600, careful(delay), scale);
-      assert.equal(run.over, false, `seed ${seed} cap ${cap} delay ${delay}: hit kind ${run.hitKind} at ${run.meters} m`);
-    }
+test("a gate takes its letter when the bike rides the lane beside it; a gate passed from another lane is missed and its hand drops", () => {
+  const course = makeCourse(4242, 1), house = course.houses[0], lane = house.side ? 2 : 0;
+  const ok = createGame(course, 1); place(ok, house.y, 120, lane); ok.houseNext = 0;
+  run(ok, 1, game => { game.bag = 3; });
+  assert.equal(ok.houseState[0], DELIVERED);
+  assert.equal(ok.delivered, 1);
+  assert.ok(events(ok).includes(EV.deliver));
+  const missed = createGame(course, 1); place(missed, house.y, 120, 1);
+  run(missed, 1);
+  assert.equal(missed.houseState[0], MISSED);
+  assert.equal(missed.streak, 0);
+  assert.ok(events(missed).includes(EV.miss));
+});
+
+test("with no letter in the bag a gate waits for nothing: the hand drops", () => {
+  const course = makeCourse(4242, 1), house = course.houses[0];
+  const game = createGame(course, 1); place(game, house.y, 120, house.side ? 2 : 0); game.bag = 0;
+  run(game, 1);
+  assert.equal(game.houseState[0], MISSED);
+});
+
+test("a letter lying on the road is picked up by riding over it, and a bump loses one from the bag but never makes the bag negative", () => {
+  const course = makeCourse(4242, 2), letter = first(createGame(course, 1), LETTER);
+  const game = createGame(course, 1); place(game, letter.y, 60, letter.lane);
+  const bag = game.bag;
+  run(game, 1);
+  assert.equal(game.picked >= 1, true);
+  assert.ok(game.bag >= bag);
+  const empty = createGame(makeCourse(4242, 2), 1); empty.bag = 0;
+  run(empty, 4);
+  assert.equal(empty.bag, 0);
+  assert.equal(empty.lost, 0);
+});
+
+test("a late dodge rings the bell (ক্রিং): the thing was beside you within 0.3 s and you did not touch it", () => {
+  const game = createGame(makeCourse(4242, 3), 1), puddle = game.pieces[0];
+  assert.equal(puddle.kind, PUDDLE);
+  place(game, puddle.y, 40, puddle.lane);
+  // One step: the puddle is within the near window and in the bike's lane; then the bike is already clear of it.
+  stepGame(game, DT);
+  assert.equal(game.pieces[0].close, 1);
+  game.lane = 0; game.x = laneX(0);
+  run(game, 0.5);
+  assert.equal(game.bumps, 0);
+  assert.equal(game.bells, 1);
+  assert.ok(events(game).includes(EV.bell));
+});
+
+test("mud: a lane change takes 0.3 s in it, not 0.12 s", () => {
+  const course = makeCourse(4242, 6), zone = course.mud[0];
+  const game = createGame(course, 1); place(game, zone.y0 + 300, 0, 1);
+  game.d = zone.y0 + 60; game.bag = 9;
+  stepGame(game, DT);
+  steer(game, -1);
+  run(game, SWITCH_T + 0.03);
+  assert.notEqual(game.x, laneX(0), "still sliding after 0.15 s in mud");
+  run(game, MUD_T);
+  assert.equal(game.x, laneX(0));
+});
+
+test("a ভ্যান sets off from far ahead and comes towards you; its lane is open at the start so the first sight is fair", () => {
+  const course = makeCourse(4242, 5), van = first(createGame(course, 1), VAN);
+  const game = createGame(course, 1); place(game, van.y, 640, van.lane === 1 ? 0 : 1);
+  const y0 = game.pieces.find(piece => piece.kind === VAN)!.y;
+  run(game, 0.5, g => { g.bag = 9; });
+  const moved = game.pieces.find(piece => piece.kind === VAN)!;
+  assert.ok(moved.moving === 1 && moved.y < y0, "it rolls towards the bike");
+  assert.ok(events(game).includes(EV.van));
+});
+
+test("a crossing goat or cow walks into the next lane once you are close, and blocks it", () => {
+  const course = makeCourse(4242, 7), walker = createGame(course, 1).pieces.find(piece => piece.kind === WALK_GOAT || piece.kind === WALK_COW)!;
+  const game = createGame(course, 1); place(game, walker.y, 440, walker.to === 1 ? 0 : 1); game.bag = 9;
+  run(game, 1.2);
+  const moved = game.pieces.find(piece => piece.kind === WALK_GOAT || piece.kind === WALK_COW)!;
+  assert.ok(Math.abs(moved.x - laneX(moved.to)) < 1, "it has walked to its new lane");
+  assert.ok(events(game).includes(EV.walk));
+});
+
+test("a dog barks and chases from behind, and bumps you if you stay in your lane", () => {
+  const course = makeCourse(4242, 10);
+  const game = createGame(course, 0);
+  place(game, course.dogs[0].at, -10, 1); game.bag = 9;
+  run(game, 4);
+  assert.ok(events(game).includes(EV.dog));
+  assert.ok(game.dogState[0] === RUNNING || game.dogState[0] === 2);
+  assert.ok(game.bumps >= 1, "a dog in your lane catches the bike");
+  assert.ok(game.hitKind === DOG || game.bumps >= 1);
+});
+
+test("a gust warns a second ahead, then shoves the bike one lane (two in the storm)", () => {
+  const course = makeCourse(4242, 11), gust = course.gusts[0];
+  const game = createGame(course, 0); place(game, gust.y, 380, 1); game.bag = 9;
+  const kinds: number[] = [];
+  for (let i = 0; i < 180 && !game.over; i++) { stepGame(game, DT); for (let n = 0; n < game.eventCount; n++) kinds.push(game.evKind[n % EVENT_RING]); if (game.gustState[0] === 2) break; }
+  assert.equal(game.gustState[0], 2);
+  assert.ok(kinds.includes(EV.gustWarn) && kinds.includes(EV.gust));
+  assert.equal(game.lane, Math.max(0, Math.min(2, 1 + gust.dir)));
+});
+
+test("the finale's bar fills a notch for each gate, cow or gust, well or badly", () => {
+  for (const level of [4, 8, 12]) {
+    const bot = makeBot(CAREFUL, 3), game = createGame(makeCourse(3, level), 1);
+    run(game, 80, bot);
+    assert.ok(game.finished, `route ${level}`);
+    assert.equal(game.bossDone, game.course.bossCount, `route ${level}: every notch is done`);
+    for (let i = 0; i < game.course.bossCount; i++) assert.equal(game.boss[i], 1, `notch ${i} of route ${level} well done`);
   }
 });
 
-test("a rider who never taps stops at the first puddle, with a sane score", () => {
-  const run = ride(createRun(9), 5000, () => {});
-  assert.deepEqual([run.over, run.hitKind], [true, PUDDLE]);
-  assert.ok(run.meters >= 20 && run.meters <= 27, `${run.meters}`);
-  assert.equal(run.score, run.meters);
-  assert.equal(run.events[(run.eventCount - 1) % run.events.length].type, CRASH);
-  assert.equal(pieceAt(run, run.hitAt).state, HIT);
+test("points are exactly মিটার + 10 a letter + 5 a pickup + 5 a bell, and stars are ★ place, ★★ the goal, ★★★ every gate", () => {
+  assert.equal(pointsOf(100, 4, 2, 3), 100 + 40 + 10 + 15);
+  const ride = rideWith(CAREFUL, 7919, 4);
+  assert.equal(ride.score, pointsOf(ride.meters, ride.delivered, ride.picked, ride.game.bells));
+  assert.equal(starsFor(true, 0, 5, 4), 1);
+  assert.equal(starsFor(true, 4, 5, 4), 2);
+  assert.equal(starsFor(true, 5, 5, 4), 3);
+  assert.equal(starsFor(false, 5, 5, 4), 0);
+  assert.equal(ride.meters, fullMeters(ride.game.course));
 });
 
-test("a random tapper ends sanely with a plausible score and a link that parses", () => {
-  let state = 12345;
-  const random = () => (state = (state * 1103515245 + 12345) % 2147483648) / 2147483648;
-  for (let seed = 1; seed <= 40; seed++) {
-    const run = ride(createRun(seed), 8000, current => { const roll = random(); if (roll < 0.015) steer(current, -1); else if (roll < 0.03) steer(current, 1); });
-    assert.equal(run.over, true);
-    assert.ok(run.meters >= 20 && run.meters < 3000, `seed ${seed}: ${run.meters}`);
-    assert.equal(run.score, scoreOf(run.meters, run.letters, run.bells));
-    assert.ok(run.x >= laneX(0) && run.x <= laneX(2));
-    const shared = { seed, score: run.score, meters: run.meters, letters: run.letters, name: "", level: 1 };
-    assert.deepEqual(parseShareHash(shareHash(shared)), shared);
+test("a bump costs a letter, so ★★★ needs no bump (or spares picked up): the stars never exceed what was delivered", () => {
+  for (const seed of [7919, 15838, 23757]) {
+    const ride = rideWith(CAREFUL, seed, 2);
+    if (ride.stars === 3) assert.equal(ride.delivered, ride.houses);
+    assert.ok(ride.delivered <= ride.houses);
   }
 });
 
-test("a long careful ride scores in a believable range", () => {
-  const run = ride(createRun(2024), 1000, careful(0.1));
-  assert.equal(run.over, false);
-  assert.ok(run.letters >= 5 && run.letters <= 60, `letters ${run.letters}`);
-  assert.ok(run.score >= 1000 && run.score < 2500, `score ${run.score}`);
-  const types = run.events.map(event => event.type);
-  assert.ok(types.length > 0);
-});
-
-/** One obstacle (or letter) placed by hand right in front of a fresh run, after one step so the road exists. */
-function runWith(piece: Partial<Piece>) {
-  const run = createRun(1);
-  stepRun(run, DT);
-  for (let index = run.first; index < run.count; index++) pieceAt(run, index).state = PASSED;
-  const slot = pieceAt(run, run.first);
-  Object.assign(slot, { kind: GOAT, lane: 1, x: laneX(1), w: SPEC[GOAT].w, y: run.d + 2, len: SPEC[GOAT].len, row: 99, state: AHEAD, close: 0, hint: 0, look: 0 }, piece);
-  return { run, slot };
-}
-
-test("collisions: the same lane hits, the next lane is clear, and a half-way lane change clips", () => {
-  const ahead = runWith({});
-  assert.ok(inPath(ahead.run, ahead.slot));
-  stepRun(ahead.run, DT);
-  assert.deepEqual([ahead.run.over, ahead.run.hitKind, ahead.slot.state], [true, GOAT, HIT]);
-  assert.match(bumpLine(GOAT), /ছাগল/);
-
-  const side = runWith({ lane: 2, x: laneX(2), kind: COW, w: SPEC[COW].w, len: SPEC[COW].len });
-  for (let index = 0; index < 30; index++) stepRun(side.run, DT);
-  assert.equal(side.run.over, false);
-
-  const clip = runWith({ lane: 2, x: laneX(2), kind: CART, w: SPEC[CART].w, y: 0, len: 4000 });
-  clip.run.d = 200;
-  steer(clip.run, 1);
-  for (let index = 0; index < 20 && !clip.run.over; index++) stepRun(clip.run, DT);
-  assert.deepEqual([clip.run.over, clip.run.hitKind], [true, CART], "steering into a cart beside you clips it");
-  assert.ok(clip.run.x < laneX(2), "it clips on the way, before the lane is reached");
-});
-
-test("steering: one tap is one lane, two quick taps two, the edges hold, and a lane change takes SWITCH_T", () => {
-  const run = createRun(3);
-  steer(run, -1); steer(run, -1);
-  assert.equal(run.lane, 0);
-  steer(run, 1); steer(run, 1); steer(run, 1);
-  assert.equal(run.lane, 2);
-  const fresh = createRun(3);
-  steer(fresh, 1);
-  let steps = 0;
-  while (fresh.x !== laneX(2)) { stepRun(fresh, DT); steps++; }
-  assert.ok(Math.abs(steps * DT - SWITCH_T) <= DT, `${steps} steps`);
-  assert.ok(laneX(0) - LANE_W / 2 >= 60 && laneX(2) + LANE_W / 2 <= W - 60, "grass verges on both sides");
-});
-
-test("letters: riding through one takes it (+10); a late dodge rings the bell (+5); an early dodge doesn't", () => {
-  const letter = runWith({ kind: LETTER, w: SPEC[LETTER].w, len: SPEC[LETTER].len });
-  stepRun(letter.run, DT);
-  assert.deepEqual([letter.run.letters, letter.slot.state, letter.run.over], [1, TAKEN, false]);
-  assert.equal(letter.run.events[(letter.run.eventCount - 1) % 8].type, GOT_LETTER);
-  assert.equal(letter.run.score, letter.run.meters + 10);
-
-  const late = runWith({ y: 0 });
-  late.slot.y = late.run.d + late.run.speed * 0.2;
-  stepRun(late.run, DT);
-  assert.equal(late.slot.close, 1, "in its path inside the bell window");
-  steer(late.run, -1);
-  for (let index = 0; index < 60; index++) stepRun(late.run, DT);
-  assert.deepEqual([late.run.over, late.run.bells, late.slot.state], [false, 1, PASSED]);
-  assert.ok(late.run.events.slice(0, late.run.eventCount).some(event => event.type === BELL));
-  assert.equal(late.run.score, scoreOf(late.run.meters, 0, 1));
-
-  const early = runWith({ y: 0 });
-  early.slot.y = early.run.d + early.run.speed * 0.8;
-  steer(early.run, 1);
-  for (let index = 0; index < 90; index++) stepRun(early.run, DT);
-  assert.deepEqual([early.run.over, early.run.bells], [false, 0]);
-});
-
-test("score bands and lines", () => {
-  assert.equal(humanLine(0), bands[0].line);
-  assert.equal(humanLine(149), bands[0].line);
-  assert.equal(humanLine(150), bands[1].line);
-  assert.equal(humanLine(799), bands[2].line);
-  assert.equal(humanLine(60000), bands[4].line);
-  for (const kind of [PUDDLE, GOAT, CART, COW]) assert.ok(bumpLine(kind).length > 8);
-  assert.equal(compareLine(642, 522, "রাফি"), "রাফির চেয়ে ১২০ বেশি!");
-  assert.match(compareLine(500, 522, "রাফি"), /^আর একটু হলেই!/);
-  assert.match(compareLine(100, 900, ""), /^বন্ধু এবার/);
-  assert.equal(compareLine(300, 300, "নীলা"), "নীলা আর তুমি একদম সমান সমান!");
-  const shared = { seed: 1, score: 527, meters: 387, letters: 12, name: "রাফি", level: 1 };
-  assert.equal(bellsOf(shared), 4);
-  assert.equal(detailLine(shared), "৩৮৭ মিটার · ১২টা চিঠি · ৪ বার ক্রিং");
-  assert.equal(detailLine({ score: 507, meters: 387, letters: 12 }), "৩৮৭ মিটার · ১২টা চিঠি");
-  assert.equal(banner(shared), "রাফি ৫২৭ করেছে। একই রাস্তা, এবার তোমার পালা।");
-  assert.match(caption(shared), /৩৮৭ মিটার/);
-});
-
-test("challenge links round-trip, add up, and refuse hostile or impossible input", () => {
-  const shared = { seed: 4821, score: 527, meters: 387, letters: 12, name: "রাফি", level: 1 };
-  assert.equal(shareHash(shared), "s=4821&t=527&m=387&c=12&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF");
-  assert.deepEqual(parseShareHash(`#${shareHash(shared)}`), shared);
-  for (const bad of [
-    "", "#", "s=abc&t=10&m=10&c=0", "s=1&t=-5&m=20&c=0", "s=1&t=30.5&m=30&c=0", "s=0&t=100&m=100&c=0",
-    "s=1&t=100", "s=1&t=100&m=100", "s=1&t=5&m=5&c=0", `s=1&t=${MAX_SCORE + 1}&m=100&c=0`, `s=1&t=30000&m=${MAX_METERS + 1}&c=0`,
-    "s=1&t=103&m=100&c=0", "s=1&t=90&m=100&c=0", "s=1&t=600&m=100&c=50", "s=1&t=1000&m=100&c=0", "s=1&t=120&m=1e2&c=2",
-    "s=99999999999&t=100&m=100&c=0", `s=1&t=100&m=100&c=0&n=${"x".repeat(700)}`,
-  ]) assert.equal(parseShareHash(bad), null, bad);
-  const odd = parseShareHash("s=7&t=300&m=300&c=0&n=%E2%80%AE%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF%20%20%20%E0%A6%AD%E0%A6%BE%E0%A6%87%00&evil=1")!;
-  assert.equal(odd.name, "রাফি ভাই");
-  assert.equal(parseShareHash(`s=7&t=300&m=300&c=0&n=${"ক".repeat(40)}`)!.name.length, 20);
-
-  assert.equal(share.normalize("c=12&m=387&t=527&n=%E0%A6%B0%E0%A6%BE%E0%A6%AB%E0%A6%BF&s=4821&x=1"), shareHash(shared));
-  assert.equal(share.normalize("s=1&t=999999&m=10&c=0"), null);
-  assert.equal(share.normalize("<script>alert(1)</script>"), null);
-  assert.equal(share.preview(shareHash(shared)).title, "রাফি ৫২৭ করেছে। তুমি পারবে?");
-  assert.equal(previewTitle({ ...shared, name: "" }), "পিয়নের সাইকেলে ৫২৭! তুমি পারবে?");
-  assert.ok(share.preview("nope").title.length > 0);
-});
-
-test("content meets the SEO limits and keeps clear of famous names", () => {
-  assert.ok([...site.title].length <= 45, `title ${[...site.title].length}`);
-  const description = [...site.description].length;
-  assert.ok(description >= 120 && description <= 160, `description ${description}`);
-  assert.ok(site.faq.length >= 5);
-  assert.ok(site.steps.length >= 3 && site.privacy.some(line => line.includes("লিংক")));
-  assert.doesNotMatch(JSON.stringify(site), /road rash|need for speed|subway|tetris|nokia|ডাক বিভাগ|বাংলাদেশ ডাক|আপনি|করুন/i);
-});
-
-test("routes: route 1 is the original road; later routes start faster and denser", () => {
-  assert.equal(LEVEL_COUNT, 10);
-  assert.deepEqual(planRoad(4821, 1500, 1), planRoad(4821, 1500), "route 1 lays the old road");
-  for (let level = 2; level <= LEVEL_COUNT; level++) {
-    const [before, now] = [ROUTES[level - 2], ROUTES[level - 1]];
-    assert.ok(now.boost >= before.boost && now.goal >= before.goal, `route ${level} never gets easier`);
-    assert.ok(now.goal < now.stars[0] && now.stars[0] < now.stars[1]);
-    const run = createRun(7, TOP, level);
-    stepRun(run, DT);
-    assert.ok(run.speed > createRun(7).speed, `route ${level} rides off faster`);
-  }
-  assert.ok(ROUTES[0].goal <= 100, "the first route ends within half a minute");
-});
-
-test("every route's road is fair: an open lane is always in reach in time, at the route's own speed", () => {
-  for (let level = 2; level <= LEVEL_COUNT; level++) {
-    const boost = ROUTES[level - 1].boost;
-    for (let seed = 1; seed <= 60; seed++) {
-      const list = rows(planRoad(seed, 1200, level));
-      let open = 0b010;
-      for (let index = 0; index < list.length; index++) {
-        const row = list[index];
-        assert.ok(row.blocked !== 0b111, `route ${level} seed ${seed}: row ${index} shuts every lane`);
-        if (index > 0) {
-          const time = (row.y - list[index - 1].end - BIKE_LEN) / speedAt(row.y / UNIT + boost);
-          assert.ok(time >= SLACK + SWITCH_T, `route ${level} seed ${seed}: row ${index} leaves ${time.toFixed(2)}s`);
-          assert.ok(fair(open, 0b111 & ~row.blocked, reachIn(time)), `route ${level} seed ${seed}: row ${index} can trap a rider`);
-        }
-        open = 0b111 & ~row.blocked;
-      }
-    }
-  }
-});
-
-test("every route can be finished with three stars: a careful rider never crashes, at full speed, slow, and with a human's reaction", () => {
-  for (let level = 1; level <= LEVEL_COUNT; level++) {
-    const far = ROUTES[level - 1].stars[1] + 20;
-    for (let seed = 1; seed <= 25; seed++) {
-      for (const [cap, scale, delay] of [[TOP, 1, 0], [SLOW_CAP, 0.7, 0], [TOP, 1, 0.2]] as const) {
-        const run = ride(createRun(seed, cap, level), far, careful(delay), scale);
-        assert.equal(run.over, false, `route ${level} seed ${seed} cap ${cap} delay ${delay}: hit at ${run.meters} m`);
-        assert.equal(starsOf(run.meters, level), 3);
-      }
-    }
-  }
-});
-
-test("stars and marks by মিটার; the letter streak climbs and a missed letter resets it", () => {
-  assert.equal(starsOf(99, 1), 0);
-  assert.equal(starsOf(100, 1), 1);
-  assert.equal(starsOf(200, 1), 2);
-  assert.equal(starsOf(320, 1), 3);
-  assert.equal(nextMark(40, 1), 100);
-  assert.equal(nextMark(150, 1), 200);
-  assert.equal(nextMark(400, 1), 0);
-  const first = runWith({ kind: LETTER, w: SPEC[LETTER].w, len: SPEC[LETTER].len });
-  stepRun(first.run, DT);
-  assert.equal(first.run.streak, 1);
-  const missed = runWith({ kind: LETTER, lane: 2, x: laneX(2), w: SPEC[LETTER].w, len: SPEC[LETTER].len });
-  missed.run.streak = 4;
-  for (let index = 0; index < 30; index++) stepRun(missed.run, DT);
-  assert.deepEqual([missed.run.streak, missed.slot.state, missed.run.over], [0, PASSED, false], "riding past a letter ends the streak");
-});
-
-test("the old best moves into route 1's stars once, counting only the মিটার it must have had", () => {
-  assert.equal(migrateBest({}, "340"), 1, "340 could be 100 m with letters and bells");
-  assert.equal(migrateBest({}, "1000"), 3);
-  assert.equal(migrateBest({}, "300"), 0, "300 might be under 100 m: no unearned star");
-  assert.equal(migrateBest({}, null), 0);
-  assert.equal(migrateBest({}, "x"), 0);
-  assert.equal(migrateBest({ 1: 1 }, "1000"), 0, "already moved");
-  for (const score of [340, 527, 999]) {
-    // The bound holds: no ride that scores this has fewer মিটার than the migration assumes.
-    const meters = Math.floor((score - 40) / 3);
-    assert.ok(scoreOf(meters - 1, Math.floor((meters - 1) / 10) + 2, Math.floor((meters - 1) / 5) + 4) < score);
-  }
-});
-
-test("links carry the route; old links without it open route 1; bad routes are refused", () => {
-  const shared = { seed: 4821, score: 527, meters: 387, letters: 12, name: "", level: 3 };
-  assert.equal(shareHash(shared), "s=4821&t=527&m=387&c=12&l=3");
-  assert.deepEqual(parseShareHash(shareHash(shared)), shared);
-  assert.equal(parseShareHash("s=4821&t=527&m=387&c=12")?.level, 1);
-  assert.equal(shareHash({ ...shared, level: 1 }), "s=4821&t=527&m=387&c=12");
-  for (const bad of ["s=1&t=100&m=100&c=0&l=0", "s=1&t=100&m=100&c=0&l=11", "s=1&t=100&m=100&c=0&l=03", "s=1&t=100&m=100&c=0&l=x"]) assert.equal(parseShareHash(bad), null, bad);
+test("nothing is allocated while riding: the piece pool and the event ring keep their size", () => {
+  const game = createGame(makeCourse(4242, 5), 1), pieces = game.pieces.length;
+  run(game, 20, makeBot(CAREFUL, 1));
+  assert.equal(game.pieces.length, pieces);
+  assert.equal(game.evKind.length, EVENT_RING);
+  assert.ok(game.first <= pieces && BIKE_LEN === 46 && UNIT === 24 && COW === 3 && AHEAD === 0 && WAITING === 0);
 });

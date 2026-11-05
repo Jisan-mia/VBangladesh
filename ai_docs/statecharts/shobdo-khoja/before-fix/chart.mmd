@@ -1,0 +1,126 @@
+---
+title: "শবﬂ°°2509¶ßদ খﬂ°°2507¶ßﬂ°°2433¶ßজﬂ°°2494¶ß: round, window, finger and levels"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks InputReleasedWhenAway or NoProgressWhileAway or NoStrokeUnderThePauseCard or UnlockOnlyByClearing
+    lg4: Breaks InputReleasedWhenAway or NoProgressWhileAway or NoStrokeUnderThePauseCard or UnlockOnlyByClearing in some cases
+    lg5: Path to the InputReleasedWhenAway or NoProgressWhileAway or NoStrokeUnderThePauseCard or UnlockOnlyByClearing bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Grid waiting, clock stopped
+      s1: Hunting, clock running
+      s2: Pause card, clock stopped
+      s3: Hunting, clock running, 1 of 2 struck
+      s4: Pause card, clock stopped, 1 of 2 struck
+      s5: All words struck, card shows
+      [*] --> s0
+      s0 --> s1: you touch a letter [when Window is You're on the page]
+      s1 --> s2: you hide the tab
+      s1 --> s3: you let go on a listed word [when Finger is Dragging a stroke]
+      s1 --> s0: you pick a level [when Window is You're on the page and Finger is Finger off the grid]
+      s1 --> s0: you open a friend's level-2 link [when Window is You're on the page and Finger is Finger off the grid and Levels is one of Level 1 cleared, level 2 open, Nothing cleared]
+      s2 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s3 --> s0: you pick a level [when Window is You're on the page and Finger is Finger off the grid]
+      s3 --> s0: you open a friend's level-2 link [when Window is You're on the page and Finger is Finger off the grid and Levels is one of Level 1 cleared, level 2 open, Nothing cleared]
+      s3 --> s4: you hide the tab
+      s2 --> s4: you let go on a listed word [when Window is not Tab hidden and Finger is Dragging a stroke]
+      s2 --> s0: you pick a level [when Window is You're on the page and Finger is Finger off the grid]
+      s2 --> s0: you open a friend's level-2 link [when Window is You're on the page and Finger is Finger off the grid and Levels is one of Level 1 cleared, level 2 open, Nothing cleared]
+      s4 --> s0: you pick a level [when Window is You're on the page and Finger is Finger off the grid]
+      s4 --> s0: you open a friend's level-2 link [when Window is You're on the page and Finger is Finger off the grid and Levels is one of Level 1 cleared, level 2 open, Nothing cleared]
+      s4 --> s3: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s3 --> s5: you strike the last word of level 1 [when Finger is Dragging a stroke]
+      s5 --> s0: you pick a level or you press আব#2494;র খ#2503;ল#2507; [when Window is You're on the page]
+      s5 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল or you open a friend's level-2 link [when Window is You're on the page and Levels is Level 1 cleared, level 2 open]
+      s3 --> s5: you strike the last word of level 2 [when Finger is Dragging a stroke and Levels is not Nothing cleared]
+      s4 --> s5: you strike the last word of level 1 [when Window is not Tab hidden and Finger is Dragging a stroke]
+      s4 --> s5: you strike the last word of level 2 [when Window is not Tab hidden and Finger is Dragging a stroke and Levels is not Nothing cleared]
+    }
+    --
+    state "Window" as r1 {
+      s6: You're on the page
+      s7: Tab hidden
+      s8: Another window has focus
+      [*] --> s6
+      s6 --> s7: you hide the tab
+      s6 --> s8: you click into another window
+      s7 --> s6: the tab shows again
+      s8 --> s6: you come back to the window
+      s8 --> s7: you hide the tab
+    }
+    --
+    state "Finger" as r2 {
+      s9: Finger off the grid
+      s10: Finger on a letter
+      s11: Dragging a stroke
+      [*] --> s9
+      s9 --> s10: you touch a letter [when Game is one of Grid waiting, clock stopped, Hunting, clock running, Hunting, clock running, 1 of 2 struck and Window is You're on the page]
+      s10 --> s11: you drag across letters [when Window is not Tab hidden]
+      s10 --> s9: you let go without a word [when Window is not Tab hidden]
+      s11 --> s9: you let go without a word [when Window is not Tab hidden]
+      s11 --> s9: you let go on a listed word [when Game is one of Hunting, clock running, Pause card, clock stopped and Window is not Tab hidden]
+      s11 --> s9: you strike the last word of level 1 [when Game is one of Hunting, clock running, 1 of 2 struck, Pause card, clock stopped, 1 of 2 struck and Window is not Tab hidden]
+      s11 --> s9: you strike the last word of level 2 [when Game is one of Hunting, clock running, 1 of 2 struck, Pause card, clock stopped, 1 of 2 struck and Window is not Tab hidden and Levels is not Nothing cleared]
+    }
+    --
+    state "Levels" as r3 {
+      s12: Nothing cleared
+      s13: Nothing cleared, friend's level 2 open
+      s14: Level 1 cleared, level 2 open
+      s15: Only level 2 cleared, level 2 open for good
+      [*] --> s12
+      s12 --> s13: you open a friend's level-2 link [when Window is You're on the page and Finger is Finger off the grid]
+      s12 --> s14: you strike the last word of level 1 [when Game is one of Hunting, clock running, 1 of 2 struck, Pause card, clock stopped, 1 of 2 struck and Window is not Tab hidden and Finger is Dragging a stroke]
+      s13 --> s15: you strike the last word of level 2 [when Game is one of Hunting, clock running, 1 of 2 struck, Pause card, clock stopped, 1 of 2 struck and Window is not Tab hidden and Finger is Dragging a stroke]
+      s13 --> s14: you strike the last word of level 1 [when Game is one of Hunting, clock running, 1 of 2 struck, Pause card, clock stopped, 1 of 2 struck and Window is not Tab hidden and Finger is Dragging a stroke]
+      s15 --> s14: you strike the last word of level 1 [when Game is one of Hunting, clock running, 1 of 2 struck, Pause card, clock stopped, 1 of 2 struck and Window is not Tab hidden and Finger is Dragging a stroke]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 yellow
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 teal
+  class s3 mayBreak
+  class s3 bugPath
+  class s4 yellow
+  class s4 mayBreak
+  class s5 blue
+  class s5 bugPath
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s15 breaks
+  class s15 bugPath

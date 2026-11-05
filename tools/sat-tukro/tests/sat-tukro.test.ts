@@ -4,8 +4,9 @@ import { join } from "node:path";
 import test from "node:test";
 import { site, parentNote } from "../content";
 import { share } from "../share";
-import { FIGURES, LEVEL_COUNT, PRINT_IDS, bandOf } from "../lib/figures";
-import { HINT_AFTER, drop, figureView, flipPiece, hintFor, newRound, solutionOf, starsOf, tapPiece, toModel, toView, type Round } from "../lib/game";
+import { FIGURES, PRINT_IDS } from "../lib/figures";
+import { HINT_AFTER, LOST_AFTER, drop, figureView, flipPiece, hintFor, newRound, solutionOf, starsOf, tapPiece, toModel, toView, turnPiece, type Round } from "../lib/game";
+import { LEVEL_COUNT } from "../lib/levels";
 import { AREA, SET, cellsOf, corners, makeBoard, sameTurn, solve, type Point, type Pose } from "../lib/tangram";
 
 const sorted = (list: readonly string[]) => [...list].sort().join("");
@@ -21,7 +22,7 @@ function touching(a: Point[], b: Point[]) {
 }
 
 test("every silhouette is one full set, on the lattice, with no overlap, filling 16 square units, in one piece", () => {
-  assert.ok(FIGURES.length >= 20 && FIGURES.length <= 25, `${FIGURES.length} figures`);
+  assert.equal(FIGURES.length, 22);
   assert.equal(new Set(FIGURES.map(f => f.id)).size, FIGURES.length, "duplicate id");
   assert.equal(new Set(FIGURES.map(f => f.name)).size, FIGURES.length, "duplicate name");
   for (const figure of FIGURES) {
@@ -35,7 +36,6 @@ test("every silhouette is one full set, on the lattice, with no overlap, filling
       for (const cell of cells) { assert.ok(!seen.has(cell), `${figure.id}: pieces overlap`); seen.add(cell); }
     }
     assert.equal(seen.size, 64, `${figure.id}: silhouette area`);
-    // The outline is derived from the pieces: the board is exactly their union.
     assert.deepEqual(makeBoard(solution).cells, [...seen].sort((a, b) => a - b));
     const shapes = solution.map(corners), reached = new Set([0]);
     for (let again = true; again;) {
@@ -58,17 +58,6 @@ test("the mix: Bangladeshi and world pictures, including the ones parents asked 
   for (const id of PRINT_IDS) assert.ok(FIGURES.some(f => f.id === id), id);
 });
 
-test("difficulty steps: outlines and a ready turn, then turned pieces, then only the shadow", () => {
-  assert.deepEqual(bandOf(1), { step: 0, outlines: true, turned: false });
-  assert.deepEqual(bandOf(7), { step: 1, outlines: true, turned: true });
-  assert.deepEqual(bandOf(13), { step: 2, outlines: false, turned: false });
-  assert.deepEqual(bandOf(LEVEL_COUNT), { step: 3, outlines: false, turned: true });
-  for (let level = 1; level <= 6; level++) {
-    const round = newRound(level, 7);
-    for (const piece of round.pieces) assert.ok(round.solution.some(slot => sameTurn(slot, { ...slot, rot: piece.rot, flip: piece.flip })), `level ${level}: ${piece.kind} starts turned wrong`);
-  }
-});
-
 test("view and model frames round-trip, and the tray sits under the picture", () => {
   for (const point of [[1, 2], [-3.5, 7]] as Point[]) {
     const back = toModel(true, toView(true, point));
@@ -76,7 +65,7 @@ test("view and model frames round-trip, and the tray sits under the picture", ()
   }
   for (let level = 1; level <= LEVEL_COUNT; level++) {
     const round = newRound(level, level), [left, top, width, height] = round.layout.box;
-    for (const piece of round.pieces) {
+    for (const piece of round.pieces.filter(p => !p.done)) {
       const [x, y] = toView(round.upright, piece.home);
       assert.ok(x > left && x < left + width && y > round.layout.trayTop && y < top + height, `level ${level}: piece ${piece.id} outside the tray`);
     }
@@ -85,20 +74,20 @@ test("view and model frames round-trip, and the tray sits under the picture", ()
 });
 
 /** Turn a piece by taps until it matches the slot, then drop it a little off the spot (generous snapping). */
-function place(round: Round, slot: Pose): Round {
+export function place(round: Round, slot: Pose): Round {
   const piece = round.pieces.find(p => !p.done && p.kind === slot.kind)!;
   round = tapPiece(round, piece.id).round;
   for (let taps = 0; !sameTurn(slot, { ...slot, rot: round.pieces[piece.id].rot, flip: round.pieces[piece.id].flip }); taps++) {
-    if (slot.kind === "P" && taps === 4) round = flipPiece(round, piece.id).round;
+    if (slot.kind === "P" && round.pieces[piece.id].flip !== slot.flip) round = flipPiece(round, piece.id).round;
     else round = tapPiece(round, piece.id).round;
-    assert.ok(taps < 10, "never matched the turn");
+    assert.ok(taps < 12, "never matched the turn");
   }
   const result = drop(round, piece.id, slot.x + 0.5, slot.y - 0.4);
   assert.ok(result.outcome === "fit" || result.outcome === "done", `${slot.kind}: ${result.outcome}`);
   return result.round;
 }
 
-test("a whole round on every level: follow the shown outline, piece by piece, and it finishes with three stars", () => {
+test("a whole round on every level: follow the shown spots, piece by piece, and it finishes with three stars", () => {
   for (let level = 1; level <= LEVEL_COUNT; level++) {
     let round = newRound(level, 100 + level);
     while (round.shown.length) round = place(round, round.shown[0]);
@@ -108,44 +97,62 @@ test("a whole round on every level: follow the shown outline, piece by piece, an
   }
 });
 
-test("a wrong spot sends the piece home and counts; three in a row light up the right spot", () => {
-  let round = newRound(1, 3);
-  while (round.shown.length > 1) round = place(round, round.shown[0]);
-  const last = round.shown[0], piece = round.pieces.find(p => !p.done)!;
-  // The far end of the picture from the one empty spot.
-  const far = round.solution.map(pose => ({ pose, d: Math.hypot(pose.x - last.x, pose.y - last.y) })).sort((a, b) => b.d - a.d)[0].pose;
-  for (let i = 0; i < HINT_AFTER; i++) {
-    const result = drop(round, piece.id, far.x, far.y);
-    assert.equal(result.outcome, "miss");
-    round = result.round;
-    assert.ok(round.pieces[piece.id].inTray);
+test("a wrong spot sends the piece home and counts; three in a row light up the right spot (two after a hard round)", () => {
+  for (const ease of [0, 1]) {
+    let round = newRound(11, 3, ease);
+    while (round.shown.length > 1) round = place(round, round.shown[0]);
+    const last = round.shown[0], piece = round.pieces.find(p => !p.done)!;
+    const far = round.solution.map(pose => ({ pose, d: Math.hypot(pose.x - last.x, pose.y - last.y) })).sort((a, b) => b.d - a.d)[0].pose;
+    const need = ease ? HINT_AFTER - 1 : HINT_AFTER;
+    for (let i = 0; i < need; i++) {
+      assert.equal(hintFor(round), null, `hint too early (${i})`);
+      const result = drop(round, piece.id, far.x, far.y);
+      assert.equal(result.outcome, "miss");
+      round = result.round;
+      assert.ok(round.pieces[piece.id].inTray);
+    }
+    assert.equal(round.misses, need);
+    assert.equal(hintFor(round)?.kind, piece.kind);
+    round = place(round, last);
+    assert.equal(round.missRun, 0);
+    assert.equal(hintFor(round), null);
   }
-  assert.equal(round.misses, HINT_AFTER);
-  assert.equal(hintFor(round)?.kind, piece.kind);
-  round = place(round, last);
-  assert.equal(round.missRun, 0);
-  assert.equal(hintFor(round), null);
+});
+
+test("gap 5 (a lost child): pieces let go on nothing, and a long quiet, also light the spot", () => {
+  let round = newRound(1, 4);
+  const piece = round.pieces.find(p => !p.done)!, [left, top] = round.layout.box;
+  const aside = toModel(round.upright, [left + 0.4, top + 0.4]);
+  assert.equal(hintFor(round, true)?.kind !== undefined, true, "idle hint");
+  for (let i = 0; i < LOST_AFTER; i++) {
+    assert.equal(hintFor(round), null);
+    const result = drop(round, piece.id, ...aside);
+    assert.equal(result.outcome, "park");
+    round = result.round;
+  }
+  assert.equal(round.misses, 0, "a drop on nothing is not a wrong try");
+  assert.ok(hintFor(round));
 });
 
 test("let go away from the picture: the piece waits there; in the tray it goes home; turning it into place clicks it in", () => {
-  let round = newRound(1, 5);
+  let round = newRound(8, 5);
   const piece = round.pieces[0], [left, top] = round.layout.box;
   const aside = toModel(round.upright, [left + 0.4, top + 0.4]);
   let result = drop(round, piece.id, ...aside);
   assert.equal(result.outcome, "park");
   result = drop(round, piece.id, ...piece.home);
   assert.equal(result.outcome, "home");
-  // Drop a large triangle right on its spot but turned 45°: it waits (or is told to turn); one more tap clicks it in.
   const slot = round.shown.find(s => s.kind === "L")!;
   round = { ...round, pieces: round.pieces.map(p => p.id === piece.id ? { ...p, rot: slot.rot + 1 } : p) };
   result = drop(round, piece.id, slot.x, slot.y);
   assert.equal(result.outcome, "turn");
   round = result.round;
-  for (let i = 0; i < 7 && !round.pieces[piece.id].done; i++) round = tapPiece(round, piece.id).round;
+  for (let i = 0; i < 7 && !round.pieces[piece.id].done; i++) round = turnPiece(round, piece.id).round;
   assert.ok(round.pieces[piece.id].done);
+  assert.ok(round.turned >= 1);
 });
 
-test("stars: 0–2 wrong tries → 3, up to 5 → 2, more → 1", () => {
+test("stars: 0–2 wrong tries → 3, up to 5 → 2, more → 1; never from time", () => {
   assert.deepEqual([0, 2, 3, 5, 6, 20].map(starsOf), [3, 3, 2, 2, 1, 1]);
 });
 
@@ -168,12 +175,13 @@ function files(dir: string): string[] {
   return readdirSync(dir).flatMap(name => { const path = join(dir, name); return statSync(path).isDirectory() ? (name === "tests" ? [] : files(path)) : [path]; });
 }
 
-test("the tool never calls the network or the share client", () => {
+test("the tool never calls the network, the share client or speech", () => {
   const root = join(import.meta.dirname, "..");
   for (const path of [...files(root), join(root, "../../app/sat-tukro/page.tsx")]) {
     const source = readFileSync(path, "utf8");
     assert.ok(!/\bfetch\s*\(/.test(source), `${path} calls fetch`);
     assert.ok(!/share-client|\/api\//.test(source), `${path} reaches the share client or an API`);
+    assert.ok(!/\bspeak\(|SpeakButton|speechSynthesis|useBanglaVoice/.test(source), `${path} uses a voice`);
   }
 });
 

@@ -1,0 +1,76 @@
+---
+title: "Danguli: a friend's field, from the first screen, the end screen and the level list"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: done
+    lg2: wait
+  }
+  class lg0 teal
+  class lg1 blue
+  class lg2 tan
+  state "Page First screen" as s0 {
+    state "Link No challenge" as s1 {
+      s2: Field A new field (level 1)
+    }
+    state "Link Friend's challenge up" as s3 {
+      s4: Field Friend's field (level 1)
+    }
+  }
+  state "Page Playing a round" as s5 {
+    state "Link No challenge" as s6 {
+      s7: Field A new field (level 1)
+      s8: Field A new field (level 2)
+    }
+    state "Link Friend's challenge up" as s9 {
+      s10: Field Friend's field (level 1)
+      s11: Field A new field (level 2)
+    }
+  }
+  state "Page Result card" as s12 {
+    state "Link No challenge" as s13 {
+      s14: Field A new field (level 1)
+      s15: Field A new field (level 2)
+    }
+    state "Link Friend's challenge up" as s16 {
+      s17: Field Friend's field (level 1)
+      s18: Field A new field (level 2)
+    }
+  }
+  [*] --> s2
+  s2 --> s4: you open a friend's link
+  s2 --> s7: you pick a level from the list or you press খ#2503;ল#2507;
+  s2 --> s8: you pick a level from the list
+  s4 --> s10: you pick a level from the list or you press খ#2503;ল#2507;
+  s4 --> s11: you pick a level from the list
+  s7 --> s8: you pick a level from the list
+  s7 --> s14: the round ends
+  s8 --> s7: you pick a level from the list
+  s8 --> s15: the round ends
+  s10 --> s11: you pick a level from the list
+  s10 --> s17: the round ends
+  s14 --> s7: you press আব#2494;র খ#2503;ল#2507;
+  s14 --> s8: you press পর#2503;র ল#2503;ভ#2503;ল
+  s15 --> s8: you press আব#2494;র খ#2503;ল#2507;
+  s11 --> s10: you pick a level from the list
+  s11 --> s18: the round ends
+  s17 --> s10: you press আব#2494;র খ#2503;ল#2507;
+  s17 --> s11: you press পর#2503;র ল#2503;ভ#2503;ল
+  s18 --> s11: you press আব#2494;র খ#2503;ল#2507;
+  s5 --> s4: you open a friend's link
+  s12 --> s4: you open a friend's link
+  s13 --> s7: you pick a level from the list
+  s13 --> s8: you pick a level from the list
+  s16 --> s10: you pick a level from the list
+  s16 --> s11: you pick a level from the list
+  class s2 tan
+  class s4 tan
+  class s7 teal
+  class s8 teal
+  class s10 teal
+  class s11 teal
+  class s14 blue
+  class s15 blue
+  class s17 blue
+  class s18 blue

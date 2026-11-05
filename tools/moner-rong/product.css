@@ -1,90 +1,158 @@
-.tool-moner-rong{--accent:#a2477a;--accent-deep:#6e2a52;--ink:#3b2a20;--muted:#6f5d4a;--paper:#fbf4ea;--glow:#ffd166}
-.tool-moner-rong .mr-page{color:var(--ink)}
+.tool-moner-rong{--accent:#a2477a;--accent-deep:#6e2a52;--ink:#3b2a20;--muted:#6f5d4a;--glow:#ffd166}
 
-.mr-hero{padding:8px 0 2px}
-.mr-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,40px);line-height:1.4;font-weight:800}
-.mr-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
+.mr{--mr-paper:#fff6e0;--mr-edge:#ecd9a6;--mr-deep:#8a5a00;--mr-glow:#f2a900;position:relative;display:flex;flex-direction:column;gap:8px;max-width:520px;margin-inline:auto;color:var(--ink)}
+.mr{--ease-out:cubic-bezier(.23,1,.32,1)}
+.mr *{-webkit-tap-highlight-color:transparent}
 
-.mr{display:grid;gap:12px;max-width:520px;margin-top:8px}
-.mr-play{position:relative;display:grid;gap:10px;padding:10px 10px 14px;border-radius:18px;background:var(--paper)}
+/* corners: where you are, and the colours filling in */
+.mr-top{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:36px}
+.mr-badge{display:flex;align-items:baseline;gap:8px;min-width:0;margin:0;line-height:1.4;white-space:nowrap}
+.mr-badge b{font-family:var(--font-display);font-size:17px;font-weight:800}
+.mr-badge span{overflow:hidden;text-overflow:ellipsis;font-size:15px;font-weight:600;color:var(--muted)}
+.mr-total{flex:none;margin:0;font-weight:700;color:var(--ink)}
+.mr-strip{display:flex;flex:none;gap:6px;margin:0;padding:0;list-style:none}
+.mr-strip li{width:26px;height:26px;border:2px dashed var(--mr-edge);border-radius:50%;background:#ffffff8c;transition:background .24s ease,border-color .24s ease}
+.mr-strip li.now{border:3px solid var(--mr-deep);background:#fff}
+.mr-strip li.on{border-style:solid;animation:mr-pop .24s .18s var(--ease-out) both}
 
-.mr-top{display:flex;align-items:center;gap:8px;min-width:0}
-.mr-level{flex:1;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;line-height:1.6}
-.mr-level b{font-family:var(--font-display)}
-.mr-level span{color:var(--muted)}
-.mr-pill{flex:none;min-height:44px;padding:6px 12px;border:1.5px solid var(--ink);border-radius:999px;background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:700;cursor:pointer}
-.mr-pill[aria-pressed=true]{background:var(--ink);color:#fff}
-.mr-dots{display:flex;justify-content:center;gap:8px;margin:0;padding:0;list-style:none}
-.mr-dots li{width:12px;height:12px;border-radius:50%;background:#e2d5c2}
-.mr-dots .done{background:var(--accent)}
-.mr-dots .now{background:var(--accent);box-shadow:0 0 0 4px #a2477a40}
+/* the page: every screen lives in here */
+.mr-stage{position:relative;display:flex;flex:1 1 auto;flex-direction:column;min-height:0;padding:10px;border-radius:12px;background:var(--mr-paper);box-shadow:inset 0 0 0 2px var(--mr-edge);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 
-/* the scene: its picture and the child whose face we read */
-.mr-stage{display:flex;align-items:center;justify-content:center;gap:16px;padding:10px;border-radius:16px;background:#fff;transition:background .4s ease}
-.mr-prop{flex:none;width:min(124px,34vw)}
+/* the title: the ring of faces is the start button */
+.mr-title{display:flex;flex:1;flex-direction:column;gap:12px}
+.mr-start{display:flex;flex:1 1 auto;flex-direction:column;align-items:center;justify-content:center;gap:0;min-height:230px;padding:10px 10px 8px;border:0;border-radius:12px;background:#fff;box-shadow:0 0 0 3px var(--mr-deep),0 6px 0 var(--mr-deep);color:var(--mr-deep);font:inherit;cursor:pointer;touch-action:manipulation;transition:transform .12s var(--ease-out)}
+.mr-start:active{transform:translateY(4px) scale(.99);box-shadow:0 0 0 3px var(--mr-deep),0 2px 0 var(--mr-deep)}
+.mr-start:focus-visible{outline:3px solid var(--mr-glow);outline-offset:4px}
+.mr-ring{display:block;flex:1 1 0;width:100%;min-height:0}
+.mr-ring-face{transform-box:fill-box;transform-origin:center;animation:mr-bob 2.6s ease-in-out infinite}
+.mr-start-label{font-family:var(--font-display);font-size:clamp(34px,10vw,46px);font-weight:800;line-height:1.3}
+.mr-worlds{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0;padding:0;list-style:none}
+.mr-worlds button{display:grid;justify-items:center;align-content:center;gap:0;width:100%;min-height:96px;padding:6px 4px;border:2px solid var(--mr-edge);border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-size:16px;font-weight:700;line-height:1.4;cursor:pointer;touch-action:manipulation;transition:transform .12s var(--ease-out)}
+.mr-worlds button:active{transform:scale(.97)}
+.mr-worlds button[aria-pressed=true]{border-color:var(--mr-deep);box-shadow:0 0 0 2px var(--mr-deep)}
+.mr-world-pic{display:block;width:54px;height:54px}
+.mr-world-pic svg{display:block;width:100%;height:100%}
+.mr-level-chip{display:flex;align-items:baseline;justify-content:center;gap:6px;min-height:48px;padding:8px 14px;border:1.5px solid var(--mr-edge);border-radius:8px;background:#fff;color:var(--ink);font:inherit;font-size:16px;cursor:pointer;touch-action:manipulation;transition:transform .12s var(--ease-out)}
+.mr-level-chip:active{transform:scale(.97)}
+.mr-level-chip span{margin-left:4px;font-size:14px;font-weight:700;color:var(--mr-deep);text-decoration:underline}
+.mr-line{margin:0;text-align:center;font-size:16px;line-height:1.6;color:var(--muted)}
+
+/* the level list: a choice screen, nothing runs under it */
+.mr-list{display:flex;flex:1;flex-direction:column;gap:10px;min-height:0;overflow:auto;animation:mr-fade .15s var(--ease-out)}
+.mr-list-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mr-list h2{margin:0;font-family:var(--font-display);font-size:20px;line-height:1.4}
+.mr-list ol{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.mr-list li button{position:relative;display:grid;grid-template-columns:28px 52px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-height:76px;padding:8px 12px 8px 10px;border:1.5px solid var(--mr-edge);border-radius:10px;background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer;touch-action:manipulation;transition:transform .12s var(--ease-out)}
+.mr-list li button:active{transform:scale(.98)}
+.mr-list li button[aria-current=true]{box-shadow:0 0 0 3px var(--mr-deep)}
+.mr-list li button.next{border:2px solid var(--mr-glow);background:#fffbe8}
+.mr-list-n{font-family:var(--font-display);font-size:22px;text-align:center}
+.mr-list-face{display:block;width:48px;height:48px}
+.mr-list-face svg{display:block;width:100%;height:100%}
+.mr-list-text{display:grid;min-width:0;line-height:1.45}
+.mr-list-text strong{font-size:17px}
+.mr-list-text small{font-size:14px;color:var(--muted)}
+.mr-list em{position:absolute;top:-10px;right:12px;padding:0 8px;border-radius:4px;background:var(--mr-glow);color:#2b2416;font-size:12px;font-style:normal;font-weight:800;line-height:1.7}
+.mr-stars{font-size:14px;letter-spacing:1px;color:#d8cba6;white-space:nowrap}
+.mr-stars i{font-style:normal}
+.mr-stars .on{color:#f2a900}
+
+/* play: the picture and the child, the line for the grown-up, then what to do */
+.mr-play{display:flex;flex:1;flex-direction:column;gap:8px;min-height:0}
+.mr-scene{position:relative;display:flex;flex:1 1 0;align-items:center;justify-content:center;gap:12px;min-height:130px;overflow:hidden;border-radius:10px;background:#fff;box-shadow:0 0 0 2px var(--mr-edge);container-type:size}
+.mr-wash{position:absolute;left:64%;top:50%;z-index:0;width:260%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%);animation:mr-wash .5s var(--ease-out) both;pointer-events:none}
+.mr-prop,.mr-child{position:relative;z-index:1}
+.mr-prop{flex:none;width:min(38cqw,92cqh,150px)}
 .mr-prop svg{display:block;width:100%;height:auto}
-.mr-child{display:grid;justify-items:center;margin:0;animation:mr-pop .35s ease-out}
-.mr-child svg{display:block;width:min(120px,32vw);height:auto}
+.mr-prop[data-nudge]{animation:mr-nudge .3s var(--ease-out)}
+.mr-child{display:grid;justify-items:center;margin:0;animation:mr-pop .22s var(--ease-out) both}
+.mr-child svg{display:block;width:min(36cqw,78cqh,150px);height:auto}
 .mr-child figcaption{font-family:var(--font-display);font-size:18px;font-weight:800;line-height:1.5}
-.mr-text{display:flex;align-items:center;gap:10px;margin:0;font-size:20px;line-height:1.6}
-.mr-text .kk-speak{flex:none}
-.mr-q{margin:0;font-family:var(--font-display);font-size:20px;line-height:1.6;color:var(--accent-deep)}
+.mr-text{margin:0;font-size:17px;line-height:1.55;text-align:center}
+.mr-do{display:grid;flex:none;align-content:start;gap:6px;min-height:236px;animation:mr-in .18s var(--ease-out) both}
+.mr-play[data-n="4"] .mr-do,.mr-play[data-n="6"] .mr-do{min-height:300px}
+.mr-q{margin:0;font-family:var(--font-display);font-size:19px;line-height:1.5;text-align:center;color:var(--accent-deep)}
+.mr-msg{min-height:1.6em;margin:0;text-align:center;font-size:16px;line-height:1.6;color:var(--muted)}
+.mr-said{margin:0;font-family:var(--font-display);font-size:19px;font-weight:800;line-height:1.5;text-align:center}
 
-/* the faces: 2 or 3 in a row for the youngest, 2×2, then 3×2 */
-.mr-faces{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-.mr-faces[data-n="3"],.mr-faces[data-n="6"]{grid-template-columns:repeat(3,1fr);gap:12px}
-.mr-face{position:relative;display:grid;justify-items:center;gap:2px;min-height:96px;padding:8px 4px;border:3px solid transparent;border-radius:16px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation;transition:transform .08s}
-.mr-face svg{width:min(96px,100%);height:auto}
-.mr-faces[data-n="6"] .mr-face svg{width:min(72px,100%)}
-.mr-face span{font-size:18px;font-weight:700;line-height:1.5;color:var(--feel)}
-.mr-face:active{transform:scale(.95)}
-.mr-face.is-glow{border-color:var(--glow);animation:mr-glow 1.4s ease-in-out infinite}
-.mr-msg{min-height:1.6em;margin:0;font-size:18px;line-height:1.6;color:var(--muted)}
-.mr-said{margin:0;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.6}
+/* the faces: 2 or 3 in a row, 2×2, then 3×2 */
+.mr-faces{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.mr-faces[data-n="3"],.mr-faces[data-n="6"]{grid-template-columns:repeat(3,1fr)}
+.mr-face{position:relative;display:grid;justify-items:center;align-content:center;gap:0;min-height:100px;padding:6px 4px;border:3px solid transparent;border-radius:10px;background:#fff;color:var(--ink);font:inherit;box-shadow:0 0 0 2px var(--mr-edge),0 4px 0 var(--mr-edge);cursor:pointer;touch-action:manipulation;transition:transform .12s var(--ease-out)}
+.mr-faces[data-n="2"] .mr-face{min-height:140px}
+.mr-face svg{width:min(84px,100%);height:auto}
+.mr-faces[data-n="2"] .mr-face svg{width:min(104px,100%)}
+.mr-faces[data-n="6"] .mr-face svg{width:min(62px,100%)}
+.mr-face span{font-size:17px;font-weight:800;line-height:1.4;color:var(--feel)}
+.mr-face:active{transform:translateY(3px) scale(.97);box-shadow:0 0 0 2px var(--mr-edge),0 1px 0 var(--mr-edge)}
+.mr-face:focus-visible,.mr-kind:focus-visible,.mr-next:focus-visible{outline:3px solid var(--mr-deep);outline-offset:3px}
+.mr-face.is-glow{border-color:var(--mr-glow);outline:3px dashed var(--mr-glow);outline-offset:4px;animation:mr-glow 1.3s ease-in-out infinite}
+.mr-face.is-glow:active{animation:none}
+.mr-face[disabled]{opacity:.6}
+.mr-key{position:absolute;top:5px;left:9px;font-size:12px;font-style:normal;font-weight:700;color:#b8ad95;line-height:1}
+@media (hover:none){.mr-key{display:none}}
 
-/* what would help: two big choices with a picture each */
-.mr-kinds{display:grid;gap:12px}
-.mr-kind{position:relative;display:flex;align-items:center;gap:14px;min-height:80px;padding:10px 14px;border:2px solid #e2d5c2;border-radius:16px;background:#fff;color:var(--ink);font:inherit;font-size:18px;font-weight:700;line-height:1.5;text-align:left;cursor:pointer;touch-action:manipulation;transition:transform .08s}
-.mr-kind svg{flex:none;width:52px;height:52px}
-.mr-kind:active{transform:scale(.97)}
-.mr-ask{padding:10px 14px;border-left:5px solid var(--accent);border-radius:8px;background:#fff}
-.mr-ask small{display:block;font-size:16px;color:var(--muted)}
-.mr-ask p{margin:0;font-size:20px;line-height:1.6;font-weight:700}
-.mr-next{position:relative;min-height:72px;font-size:20px}
+/* what would help: two big pictures */
+.mr-kinds{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mr-kind{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:150px;padding:10px 8px;border:0;border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-size:16px;font-weight:700;line-height:1.45;text-align:center;box-shadow:0 0 0 2px var(--mr-edge),0 4px 0 var(--mr-edge);cursor:pointer;touch-action:manipulation;transition:transform .12s var(--ease-out)}
+.mr-kind svg{flex:none;width:72px;height:72px}
+.mr-kind:active{transform:translateY(3px) scale(.97)}
+.mr-ask{padding:8px 12px;border-left:5px solid var(--accent);border-radius:8px;background:#fff}
+.mr-ask small{display:block;font-size:14px;color:var(--muted)}
+.mr-ask p{margin:0;font-size:17px;line-height:1.5;font-weight:700}
+.mr-next{position:relative;justify-self:center;display:grid;place-items:center;width:104px;height:96px;margin-top:2px;border:0;border-radius:48px;background:var(--mr-deep);color:#fff;box-shadow:0 5px 0 #0003;cursor:pointer;touch-action:manipulation;transition:transform .12s var(--ease-out)}
+.mr-next svg{width:48px;height:48px}
+.mr-next:active{transform:translateY(3px);box-shadow:0 2px 0 #0003}
 
-.mr-ghost{position:absolute;z-index:3;left:56%;top:12%;width:44px;height:55px;pointer-events:none;filter:drop-shadow(0 2px 2px #0004);animation:mr-tap 1.4s ease-in-out infinite}
+/* the ghost finger: shows the first tap */
+.mr-ghost{position:absolute;z-index:3;left:56%;top:44%;width:44px;height:55px;max-width:none;pointer-events:none;filter:drop-shadow(0 2px 2px #0004);animation:mr-tap 1.4s ease-in-out infinite}
 
-.mr-over{position:absolute;inset:0;z-index:5;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px 24px;border-radius:18px;background:var(--paper);text-align:center}
-.mr-over .gx-stars{font-size:40px}
-.mr-end-line{margin:0;font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1.6}
-.mr-end-note{margin:0;font-size:18px;line-height:1.6}
-.mr-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;max-width:340px}
-.mr-end-actions button{width:100%;min-height:72px;font-size:20px}
+/* the strokes of a face draw themselves; the dots pop in */
+.mr-stroke{animation:mr-draw .36s var(--ease-out) both}
+.mr-dot{transform-box:fill-box;transform-origin:center;animation:mr-dotpop .24s var(--ease-out) both}
 
-.mr-drawer{border:1.5px solid #e6d9c4;border-radius:14px;background:#fff}
-.mr-drawer summary{display:flex;align-items:center;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
-.mr-drawer[open]{padding-bottom:12px}
-.mr-drawer .gx-levels{padding:0 10px}
-.mr-drawer p{margin:8px 14px 0;font-size:16px;line-height:1.6;color:var(--muted)}
-.mr-parent{display:grid;gap:8px;justify-items:start}
-.mr-parent p{margin:0;font-size:16px;line-height:1.6;color:var(--muted)}
+/* the end: stars, a swatch per picture, counts, two big pictures of equal size */
+.mr-end{display:flex;flex:1;flex-direction:column;align-items:center;gap:10px;min-height:0;overflow:auto;text-align:center}
+.mr-end .gx-stars{font-size:40px}
+.mr-end h2{display:grid;margin:0;font-family:var(--font-display);font-size:clamp(20px,5.6vw,26px);line-height:1.45}
+.mr-end h2 small{font-size:15px;font-weight:700;color:var(--mr-deep)}
+.mr-swatches{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;width:100%;margin:0;padding:0;list-style:none}
+.mr-swatches li{display:grid;justify-items:center;gap:0;width:76px;line-height:1.35;animation:mr-pop .24s var(--ease-out) both}
+.mr-swatch{display:grid;place-items:center;width:68px;height:68px;border-radius:50%;box-shadow:0 0 0 3px var(--feel)}
+.mr-swatch svg{display:block;width:58px;height:58px}
+.mr-swatches small{font-size:15px;font-weight:700;color:var(--feel)}
+.mr-counts{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 14px;margin:0;font-weight:700;color:var(--muted)}
+.mr-counts b{color:var(--ink)}
+.mr-away{max-width:340px;margin:0;font-size:17px;line-height:1.6}
+.mr-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(272px,100%)}
+.mr-big{display:grid;place-items:center;gap:2px;min-height:112px;padding:10px 6px;border:0;border-radius:12px;background:var(--mr-deep);color:#fff;font:inherit;font-family:var(--font-display);font-size:18px;font-weight:800;box-shadow:0 5px 0 #0003;cursor:pointer;touch-action:manipulation;transition:transform .12s var(--ease-out)}
+.mr-big-done{background:#fff;color:var(--mr-deep);box-shadow:0 0 0 2.5px var(--mr-deep),0 5px 0 #0003}
+.mr-big svg{width:46px;height:46px}
+.mr-big:active{transform:translateY(3px) scale(.98)}
+.mr-big:focus-visible{outline:3px solid var(--mr-glow);outline-offset:3px}
+.mr-end .kk-show-button{min-height:56px;font-size:17px}
+.kk-show-body .kit-card canvas{display:block;width:100%;height:auto}
 
-.mr-guide h2{margin-bottom:12px;font-family:var(--font-display)}
-.mr-guide>p{max-width:640px;color:var(--muted);line-height:1.7}
-.mr-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.mr-guide li{display:flex;gap:14px;align-items:flex-start}
-.mr-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
-.mr-guide li p{margin:4px 0 0;line-height:1.7}
-
-@keyframes mr-glow{0%,100%{box-shadow:0 0 0 3px var(--glow)}50%{box-shadow:0 0 0 6px var(--glow),0 0 16px 4px var(--glow)}}
-@keyframes mr-pop{0%{transform:scale(.85)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes mr-in{from{opacity:0;transform:translateY(6px)}}
+@keyframes mr-fade{from{opacity:0}}
+@keyframes mr-pop{from{opacity:0;transform:scale(.92)}}
+@keyframes mr-wash{from{opacity:0;transform:translate(-50%,-50%) scale(.25)}}
+@keyframes mr-draw{from{stroke-dasharray:1;stroke-dashoffset:1}to{stroke-dasharray:1;stroke-dashoffset:0}}
+@keyframes mr-dotpop{from{opacity:0;transform:scale(.5)}}
+@keyframes mr-bob{50%{transform:translateY(-5px) rotate(-3deg)}}
+@keyframes mr-nudge{30%{transform:rotate(-5deg)}65%{transform:rotate(4deg)}}
+@keyframes mr-glow{50%{transform:scale(1.04)}}
 @keyframes mr-tap{0%,100%{transform:translate(8px,10px)}50%{transform:translate(0,0) scale(.9)}}
 
-/* ধীরে খেলো and reduced motion: nothing moves on its own */
-.mr[data-slow] .mr-child,.mr[data-slow] .mr-ghost,.mr[data-slow] .mr-face,.mr[data-slow] .mr-kind,.mr[data-slow] .mr-stage{animation:none;transition:none}
-.mr[data-slow] .mr-face.is-glow{box-shadow:0 0 0 5px var(--glow)}
-@media (prefers-reduced-motion:reduce){
-  .mr-child,.mr-ghost,.mr-face,.mr-kind,.mr-stage{animation:none;transition:none}
-  .mr-face.is-glow{box-shadow:0 0 0 5px var(--glow)}
-}
-@media (min-width:640px){.mr-lead{display:block}}
+/* short phones: the picture gives way first; faces and pictures stay ≥ 96 px */
+@media (max-height:720px){.mr-do{min-height:220px}.mr-play[data-n="4"] .mr-do,.mr-play[data-n="6"] .mr-do{min-height:270px}.mr-kind{min-height:130px}.mr-kind svg{width:60px;height:60px}.mr-text{font-size:16px}}
+@media (max-width:400px){.mr-stage{padding:8px}.mr-faces{gap:10px}.mr-worlds{gap:8px}}
+@media (max-width:340px){.mr-badge span{display:none}.mr-swatches li{width:68px}}
+
+/* ধীরে খেলো and reduced motion: nothing sweeps, draws, wobbles or pulses; the glow is a steady ring */
+.mr[data-slow] *,.mr[data-slow] *::before,.mr[data-slow] *::after{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.mr *,.mr *::before,.mr *::after{animation:none!important;transition:none!important}}
+
+/* in the game player: the page fills the stage, portrait first, no scroll while playing */
+.gp-stage .mr{min-height:calc(var(--stage-h,0px) - 24px);height:calc(var(--stage-h,0px) - 24px)}
+@media (max-height:600px){.gp-stage .mr{height:auto}}

@@ -1,109 +1,177 @@
-.tool-jam-chharao{--accent:#1d7a3e;--accent-deep:#125429;--ink:#26221d;--muted:#6b6255;--paper:#f3ecdf;--line:#d9cfbd;--road:#454a53;--sun:#ffd23f}
-.tool-jam-chharao .jc-page{color:var(--ink)}
+.tool-jam-chharao{--accent:#1d7a3e;--accent-deep:#125429;--ease-out:cubic-bezier(.23,1,.32,1)}
 .tool-jam-chharao .jc-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* hero: one short line, so the street and its buttons land on the first phone screen */
-.jc-hero{padding:10px 0 4px}
-.jc-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,5.6vw,44px);line-height:1.3;font-weight:700;letter-spacing:0}
-.jc-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+/* One look per street (lib/art.ts LOOKS): the lane in the afternoon, the main road by day, the dug-up road in dust, the night before Eid. */
+.jc{--paper:#f6ead2;--ink:#2b2118;--muted:#6e5f4b;--tray:#c2561e;--tray-deep:#8a3a10;--star:#f2a900;--line:#e0cfae;--gold:#ffd23f}
+.jc[data-world="1"]{--paper:#e4edf5;--ink:#14213d;--muted:#4f5d78;--tray:#1f6fb2;--tray-deep:#144b7b;--line:#c9d5e6}
+.jc[data-world="2"]{--paper:#f1e1c9;--ink:#33241a;--muted:#7a6246;--tray:#d97706;--tray-deep:#8f4a02;--line:#e0c9a4}
+.jc[data-world="3"]{--paper:#1a1d36;--ink:#f4ecd8;--muted:#aab0d6;--tray:#f2b630;--tray-deep:#b57f0a;--star:#f7c948;--line:#3d4272}
 
-.jc{display:grid;gap:8px;max-width:440px}
+/* The game fills the stage: HUD, the street (as big as fits), one status line, the controls. Nothing scrolls while playing. */
+.tool-jam-chharao .gp-stage{overflow:hidden}
+.tool-jam-chharao .gp-game{height:100%}
+.jc{position:relative;display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:8px;width:100%;max-width:520px;height:min(92svh,860px);margin-inline:auto;padding:8px;border-radius:16px;background:var(--paper);color:var(--ink);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:background .3s var(--ease-out)}
+.gp-stage .jc{height:100%}
+.jc{container-type:size}
+/* the thin line along the very top edge: how clear the street is */
+.jc-top{position:absolute;top:0;left:12px;right:12px;height:3px;overflow:hidden;border-radius:0 0 3px 3px;background:color-mix(in srgb,var(--ink) 14%,transparent);pointer-events:none}
+.jc-top i{display:block;height:100%;background:var(--tray);transform-origin:left;transition:transform .3s var(--ease-out)}
 
-/* opened from a friend's link: their card and the honest note */
-.jc-friend{display:grid;grid-template-columns:56px 1fr;gap:12px;align-items:center;padding:8px 12px;border-radius:14px;background:var(--paper)}
-.jc-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 14px #26221d33;transform:rotate(-4deg)}
-.jc-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.35}
-.jc-friend p{margin:0;font-size:13px;line-height:1.4;color:var(--muted)}
+/* ---- HUD: jam top-left, the finale's bar top-centre, moves and stars top-right ---- */
+.jc-hud{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;min-height:50px;padding-top:2px}
+.jc-badge{grid-column:1;display:flex;align-items:center;gap:8px;min-width:0;max-width:100%;padding:4px 10px 4px 4px;border:0;border-radius:14px;background:color-mix(in srgb,var(--tray) 14%,transparent);color:var(--ink);text-align:left;cursor:pointer}
+.jc-badge b{display:grid;place-items:center;flex:none;min-width:38px;height:38px;padding:0 4px;border-radius:11px;background:var(--tray);box-shadow:inset 0 -3px 0 #0003;color:#fff;font-family:var(--font-display);font-size:19px;font-weight:800}
+.jc[data-world="3"] .jc-badge b{color:#1a1d36}
+.jc-badge span{display:grid;min-width:0;font-size:14px;font-weight:700;line-height:1.25;white-space:nowrap}
+.jc-badge small{overflow:hidden;font-size:12px;font-weight:500;color:var(--muted);text-overflow:ellipsis}
+.jc-boss{grid-column:2;justify-self:center;display:grid;gap:4px;width:100%;max-width:190px;margin:0;font-size:12px;font-weight:700;line-height:1.3;text-align:center}
+.jc-boss>span{display:flex;justify-content:center;gap:6px;min-width:0;white-space:nowrap}
+.jc-boss-name{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.jc-boss b{flex:none;color:var(--tray);font-variant-numeric:tabular-nums}
+.jc-boss i{display:block;height:7px;overflow:hidden;border-radius:4px;background:color-mix(in srgb,var(--ink) 16%,transparent)}
+.jc-boss em{display:block;height:100%;background:linear-gradient(90deg,var(--tray),var(--gold));transform-origin:left;transition:transform .3s var(--ease-out)}
+.jc-moves{grid-column:3;display:grid;justify-items:end;margin:0}
+.jc-moves p{display:flex;align-items:baseline;gap:6px;margin:0}
+.jc-moves span{font-size:13px;color:var(--muted)}
+.jc-moves b{min-width:2ch;font-family:var(--font-display);font-size:28px;font-weight:800;line-height:1.05;text-align:right;font-variant-numeric:tabular-nums}
+.jc-track{gap:1px!important;align-items:center!important;font-size:15px;line-height:1}
+.jc-track i{font-style:normal;color:color-mix(in srgb,var(--muted) 45%,transparent)}
+.jc-track i[data-on]{color:var(--star)}
+.jc-track i[data-fell]{animation:jc-fall .5s var(--ease-out) both}
+.jc-track small{margin-left:4px;font-size:12px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums}
+.jc-rival{font-size:12px;font-weight:700;color:var(--muted)}
+@keyframes jc-fall{0%{color:var(--star);transform:none}60%{color:#e85d04;transform:translateY(8px) rotate(30deg)}100%{transform:none}}
 
-/* level and moves */
-.jc-bar{display:grid;grid-template-columns:44px 1fr 44px auto;align-items:center;gap:6px}
-.jc-step{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
-.jc-step:disabled{opacity:.35}
-.jc-step svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-.jc-level{display:grid;justify-items:center;margin:0;line-height:1.2}
-.jc-level b{font-family:var(--font-display);font-size:20px;font-weight:800}
-.jc-level span{font-size:13px;color:var(--muted);white-space:nowrap}
-.jc-level i{font-style:normal}
-.jc-moves{display:flex;align-items:baseline;gap:6px;min-width:84px;justify-content:flex-end;margin:0;padding:4px 12px;border-radius:12px;background:var(--road);color:#fff}
-.jc-moves span{font-size:13px;opacity:.8}
-.jc-moves b{font-family:var(--font-display);font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--sun)}
+/* ---- the street: one canvas, centred in the room the stage leaves ---- */
+.jc-stagebox{position:relative;min-height:0}
+.jc-fit{position:absolute;inset:0;display:grid;place-items:center}
+.jc-canvas{display:block;border-radius:14px;touch-action:none;cursor:grab;box-shadow:0 10px 24px #0000004d;outline:0}
+.jc-canvas:active{cursor:grabbing}
+.jc-canvas:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+/* about to lose a star: the street's rim glows at the edge, never a popup in the middle (a steady border in slow mode) */
+.jc[data-danger] .jc-canvas{box-shadow:0 0 0 4px #f28c28,0 0 22px 5px #f28c2880} /* unslop-ignore: the one-star-left warning, a steady rim so it never animates a shadow */
+.jc[data-calm][data-danger] .jc-canvas{box-shadow:0 0 0 4px #f28c28}
 
-/* the street: only here does a finger stop the page from scrolling */
-.jc-board{position:relative;justify-self:center;width:min(100%,max(250px,calc((100svh - 370px) * .815)));border-radius:14px;overflow:hidden;box-shadow:0 8px 22px #26221d33}
-.jc:has(.jc-friend) .jc-board{width:min(100%,max(250px,calc((100svh - 470px) * .815)))}
-.jc-board canvas{display:block;width:100%;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:grab}
-.jc-board[data-phase=over] canvas{cursor:default}
-.jc-overlay{position:absolute;inset:0;display:grid;place-items:center;padding:16px;background:#f3ecdfb3}
-.jc-note{display:grid;justify-items:center;gap:10px;max-width:300px;padding:14px 18px;border-radius:16px;background:#fff;box-shadow:0 8px 24px #26221d33;text-align:center}
-.jc-note p{margin:0;font-weight:600}
-.jc-note .kit-primary{min-width:180px;min-height:56px;font-size:19px}
+/* ---- under the street: one line of help, then the arrows, undo and the hint with its price ---- */
+.jc-status{display:flex;align-items:center;justify-content:center;min-height:2.9em;margin:0;font-size:14px;font-weight:600;line-height:1.4;color:var(--muted);text-align:center;text-wrap:balance}
+.jc-controls{display:grid;grid-template-columns:48px 48px minmax(0,1fr) minmax(0,1.3fr);gap:8px}
+.jc-arrow,.jc-tool{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:56px;padding:4px 8px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:#2b2118;font-size:15px;font-weight:700;line-height:1.2;white-space:nowrap;box-shadow:0 3px 0 var(--line);transition:transform .1s var(--ease-out)}
+.jc-arrow{padding:0}
+.jc-arrow:active:not(:disabled),.jc-tool:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+.jc-arrow:disabled,.jc-tool:disabled{opacity:.42}
+.jc-arrow svg,.jc-tool svg{flex:none;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.jc-hint{border-color:var(--tray);box-shadow:0 3px 0 var(--tray-deep)}
+.jc-hint small{padding:1px 6px;border-radius:4px;background:#fff3cf;color:#7a5200;font-size:12px;font-weight:800}
 
-.jc-status{min-height:42px;margin:0;font-size:15px;font-weight:600;line-height:1.4;color:var(--muted);display:flex;align-items:center}
+/* ---- the end: a slip in place of the controls; the street stays in view ---- */
+.jc-end{grid-row:3 / span 2;display:grid;gap:8px;padding:12px 14px;border:2px solid var(--gold);border-radius:16px;background:#fffdf6;color:#2b2118;box-shadow:0 -6px 18px #0000001f;animation:jc-rise .26s var(--ease-out) both}
+.jc[data-calm] .jc-end{animation:none}
+.jc-end-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.jc-end h2{margin:0;font-family:var(--font-display);font-size:22px;line-height:1.3}
+.jc-end .gx-stars{font-size:30px;line-height:1}
+.jc-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0}
+.jc-stats div{display:grid;justify-items:center;padding:6px 2px;border-radius:10px;background:#f3ecdc}
+.jc-stats dt{font-size:12px;color:#6e5f4b}
+.jc-stats dd{margin:0;font-family:var(--font-display);font-size:21px;font-weight:800;font-variant-numeric:tabular-nums}
+.jc-end-line{margin:0;font-weight:600;line-height:1.45}
+.jc-end-note{margin:0;font-weight:700;color:#8a3a10}
+.jc-end-actions{display:grid;grid-template-columns:1fr 1.35fr;gap:8px}
+.tool-jam-chharao .jc-end-actions button{min-height:54px;font-size:18px}
+.jc-end-actions kbd{margin-left:8px;padding:1px 5px;border:1px solid #ffffff80;border-radius:5px;font-size:11px;font-family:inherit;opacity:.8}
+@media(hover:none){.jc-end-actions kbd{display:none}}
+.jc-see{justify-self:center;color:#2b2118}
+@keyframes jc-rise{from{opacity:0;transform:translateY(16px)}}
+@keyframes jc-fade{from{opacity:0}}
 
-/* the tap alternative to dragging: two big arrows for the picked vehicle, and the hint */
-.jc-pad{display:grid;grid-template-columns:1fr 1fr 1.15fr;gap:6px}
-.jc-arrow,.jc-help{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:56px;padding:4px 6px;border-radius:14px;font-size:16px;font-weight:700;white-space:nowrap}
-.jc-arrow{border:0;background:var(--road);color:#fff;box-shadow:0 4px 0 #2b2f36}
-.jc-arrow:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 #2b2f36}
-.jc-arrow:disabled{background:#c9c2b5;box-shadow:none;color:#fff}
-.jc-arrow svg{flex:none;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
-.jc-help{border:2px solid var(--accent);background:#fff;color:var(--accent-deep)}
-.jc-tools{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:6px}
-.jc-tool{display:inline-flex;align-items:center;justify-content:center;gap:4px;min-height:46px;padding:4px 6px;white-space:nowrap;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);font-size:15px;font-weight:600;line-height:1.2}
-.jc-tool svg{flex:none;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
-.jc-tool:disabled,.jc-help:disabled{opacity:.45}
-.jc-slow[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+/* ---- title: the jam is the start button ---- */
+.jc-title{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:10px;padding:12px;overflow:auto;border-radius:16px;background:var(--paper);text-align:center;animation:jc-fade .2s var(--ease-out)}
+.jc-title>:first-child{margin-top:auto}
+.jc-title>:last-child{margin-bottom:auto}
+.jc-start{display:grid;justify-items:center;padding:0;border:0;background:none;color:inherit;cursor:pointer;touch-action:manipulation}
+.jc-start-art{display:block;width:max(150px,min(100%,360px,calc((100cqh - 270px) * .8148)));aspect-ratio:6.6/8.1}
+.jc-title:has(.jc-friend) .jc-start-art{width:max(150px,min(100%,360px,calc((100cqh - 380px) * .8148)))}
+/* the start stamp: a number plate across the foot of the picture */
+.jc-start span{position:relative;margin-top:-34px;padding:6px 46px 8px;border:4px solid #26221d;border-radius:12px;background:var(--gold);color:#26221d;font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1.3;box-shadow:0 6px 0 #0000004d,0 16px 26px -14px #000;transition:transform .1s var(--ease-out)}
+.jc-start span::before,.jc-start span::after{content:"";position:absolute;top:50%;width:7px;height:7px;margin-top:-3px;border-radius:50%;background:#26221d}
+.jc-start span::before{left:12px}.jc-start span::after{right:12px}
+.jc-start:active span{transform:translateY(4px) scale(.98)}
+.jc-start:focus-visible span{outline:3px solid var(--ink);outline-offset:3px}
+.jc-pick{display:flex;align-items:center;gap:10px}
+.jc-pick b{font-family:var(--font-display);font-size:18px;white-space:nowrap}
+.jc-pick i{font-style:normal;color:var(--star)}
+.jc-pick button{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:#2b2118}
+.jc-pick button:disabled{opacity:.35}
+.jc-pick svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.jc-line{display:grid;gap:2px;max-width:34ch;margin:0;font-size:15px;line-height:1.5}
+.jc-line span{display:block;font-size:14px;color:var(--muted)}
+.jc-line .jc-new{display:inline;color:var(--tray);font-weight:700}
+.jc[data-world="3"] .jc-line .jc-new{color:var(--gold)}
+.jc-finale-tag{justify-self:center;display:inline-block;padding:1px 9px;border-radius:4px;background:var(--tray);color:#fff;font-size:12px;font-style:normal;font-weight:800}
+.jc[data-world="3"] .jc-finale-tag{color:#1a1d36}
+.tool-jam-chharao .jc-all{min-height:40px;font-weight:600;color:var(--ink)}
+.jc-friend{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;max-width:340px;padding:8px 12px;border-radius:14px;background:#fff;color:#2b2118;text-align:left}
+.jc-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 14px #2b211833;transform:rotate(-4deg)}
+.jc-friend h2{margin:0;font-family:var(--font-display);font-size:15px;line-height:1.35}
+.jc-friend p{margin:0;font-size:13px;line-height:1.4;color:#6e5f4b}
 
-/* solved */
-.jc-over{display:grid;gap:6px;margin:0;padding:10px 12px;border:2px dashed var(--accent);border-radius:14px;background:var(--paper)}
-.jc-over p{margin:0}
-.jc-over-score{font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.25}
-.jc-over-score em{font-style:normal;color:var(--accent)}
-.jc-over-line{font-weight:600;line-height:1.45;color:var(--muted)}
-.jc-over-stars{font-size:38px;line-height:1.1}
-.jc-over-near{font-weight:700;color:var(--accent-deep)}
-.jc-sound{justify-self:start}
-.jc-over-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;margin-top:4px}
-.tool-jam-chharao .jc-over-actions button{min-height:56px;font-size:19px}
-.jc-all{align-self:center;font-weight:700;color:var(--accent-deep)}
-.jc-see{justify-self:center}
+/* ---- the story: three panels, tap for the next, hold to skip ---- */
+.jc-story{position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;border-radius:16px;background:var(--paper);cursor:pointer;touch-action:none}
+.jc-panel{display:block;width:max(150px,min(100%,360px,calc(100cqh - 190px)));aspect-ratio:1;border-radius:18px;box-shadow:0 0 0 4px #fff,0 0 0 6px var(--ink),0 14px 30px -12px #0006;transform:rotate(-1deg)}
+.jc-caption{max-width:30ch;margin:6px 0 0;font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.45;text-align:center;animation:jc-fade .2s var(--ease-out)}
+.jc-dots{display:flex;gap:6px;margin:0}
+.jc-dots i{width:8px;height:8px;border-radius:50%;background:color-mix(in srgb,var(--ink) 22%,transparent)}
+.jc-dots i[data-on]{background:var(--tray)}
+.jc-skip{position:absolute;right:14px;bottom:12px;display:flex;align-items:center;gap:6px;margin:0;font-size:12px;font-weight:700;color:var(--muted)}
+.jc-skip span{position:relative;width:28px;height:4px;overflow:hidden;border-radius:2px;background:color-mix(in srgb,var(--ink) 18%,transparent)}
+.jc-skip span::after{content:"";position:absolute;inset:0;background:var(--tray);transform:scaleX(0);transform-origin:left}
+.jc-skip[data-holding] span::after{transform:scaleX(1);transition:transform .6s linear}
 
-/* every level */
-.jc-levels{border:1.5px solid var(--line);border-radius:14px;background:#fff}
-.jc-levels summary{min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;font-weight:700;cursor:pointer}
-.jc-levels summary span{font-weight:500;color:var(--muted);font-size:14px}
-.jc-levels>p{margin:0 14px 10px;font-size:14px;color:var(--muted)}
-.jc-levels .gx-levels{padding:0 10px 12px}
+/* ---- সব জ্যাম: a choice moment over the street ---- */
+.jc-sheet{position:absolute;inset:0;z-index:6;overflow:auto;overscroll-behavior:contain;padding:8px;border-radius:16px;background:color-mix(in srgb,#000 35%,transparent);animation:jc-fade .15s var(--ease-out)}
+.jc-sheet-card{display:grid;gap:12px;padding:14px;border-radius:16px;background:#fffdf6;color:#2b2118}
+.jc-sheet header{position:relative;padding-right:48px}
+.jc-sheet h2{margin:0;font-family:var(--font-display);font-size:22px}
+.jc-sheet header p{margin:2px 0 0;font-size:14px;color:#6e5f4b}
+.jc-sheet-close{position:absolute;top:-4px;right:-4px;display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:12px;background:#f3ecdc;color:#2b2118}
+.jc-sheet-close svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round}
+.jc-world h3{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin:0 0 8px;font-family:var(--font-display);font-size:17px}
+.jc-world h3 span{font-family:var(--font-bengali);font-size:13px;font-weight:500;color:#6e5f4b}
+.jc-world h3 i{width:14px;height:14px;border-radius:4px;background:#c2561e;box-shadow:inset 0 0 0 2px #ffd23f}
+.jc-world[data-world="1"] h3 i{background:#1f6fb2}.jc-world[data-world="2"] h3 i{background:#d97706}.jc-world[data-world="3"] h3 i{background:#232744}
+.jc-world ol{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:0;padding:0;list-style:none}
+.jc-world button{position:relative;display:grid;justify-items:center;align-content:center;gap:2px;width:100%;min-height:56px;padding:4px 2px;border:1.5px solid #e0cfae;border-radius:12px;background:#fff;color:#2b2118}
+.jc-world button b{font-family:var(--font-display);font-size:18px;line-height:1}
+.jc-world button b svg{width:18px;height:18px;fill:none;stroke:#6e5f4b;stroke-width:2}
+.jc-world button:disabled{background:#f3ecdc;opacity:.7}
+.jc-world button[aria-current=true]{border-color:#2b2118;box-shadow:inset 0 0 0 1.5px #2b2118}
+.jc-world button[data-finale]{border-style:dashed;border-color:#1d7a3e}
+.jc-world button[data-next]{border-color:#1d7a3e;background:#e7f6ea}
+.jc-world button em{position:absolute;top:-8px;left:50%;padding:0 5px;border-radius:4px;background:#1d7a3e;color:#fff;font-size:10px;font-style:normal;font-weight:800;white-space:nowrap;transform:translateX(-50%)}
+.jc-mini{display:flex;font-size:11px;line-height:1}
+.jc-mini i{font-style:normal;color:#d5c9b4}.jc-mini i[data-on]{color:#f2a900}
 
-.jc-result{scroll-margin-top:12px;margin-top:16px;padding-top:18px;border-top:2px solid var(--ink)}
-.jc-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,32px);line-height:1.4}
-.jc-result h2 em{font-style:normal;color:var(--accent)}
-.jc-result>p{margin:0 0 16px;color:var(--muted)}
-.jc-result-body{display:grid;gap:22px}
-.jc-share{display:grid;gap:18px;align-content:start}
+/* ---- the card: a panel over the stage, scrolling inside it ---- */
+.jc-cardpanel{position:absolute;inset:0;z-index:7;display:grid;align-content:start;gap:14px;overflow:auto;overscroll-behavior:contain;padding:14px;border-radius:16px;background:#fffdf6;color:#2b2118;user-select:text;-webkit-user-select:text}
+.jc-cardpanel-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.jc-cardpanel h2{margin:0;font-family:var(--font-display);font-size:20px;line-height:1.35}
+.jc-cardpanel h2 em{font-style:normal;color:#1d7a3e}
+.jc-cardpanel>p{margin:0;color:#6e5f4b}
+.jc-share{display:grid;gap:16px}
 .jc-name{display:grid;gap:6px;font-weight:600}
-.jc-name small{font-weight:400;color:var(--muted);font-size:13px}
-.jc-name input{border:1.5px solid var(--line);border-radius:12px;font-size:17px}
-.jc-again-link{justify-self:start}
-
-.jc-guide h2{font-family:var(--font-display);margin-bottom:12px}
-.jc-guide>p{color:var(--muted);max-width:640px}
-.jc-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.jc-guide li{display:flex;gap:14px;align-items:flex-start}
-.jc-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--sun);color:var(--ink);font-weight:700}
-.jc-guide li p{margin:4px 0 0}
+.jc-name small{font-size:13px;font-weight:400;color:#6e5f4b}
+.jc-name input{border:1.5px solid #e0cfae;border-radius:12px;font-size:17px}
 
 @media(max-width:360px){
-  .jc-level i{display:none}
-  .jc-level span span{display:block;text-align:center}
-  .jc-arrow,.jc-help{font-size:14px}
-  .jc-tool{font-size:13px}
-  .jc-moves{min-width:70px;padding-inline:8px}
+  .jc-badge small{display:none}
+  .jc-tool{font-size:14px;gap:4px;padding-inline:4px}
+  .jc-tool svg{display:none}
+  .jc-controls{grid-template-columns:44px 44px minmax(0,1fr) minmax(0,1.3fr)}
+  .jc-stats dd{font-size:18px}
 }
-@media(min-width:720px){
-  .jc-lead{display:block}
-  .jc-page:has(.jc-friend) .jc-lead{display:none}
-  .jc-friend{grid-template-columns:96px 1fr}
-  .jc-friend h2{font-size:20px}
-}
-@media(prefers-reduced-motion:reduce){.jc-arrow:active:not(:disabled){transform:none}}
+/* press feedback on everything pressable; low specificity so the arrows, tools and the start stamp keep their own */
+:where(.jc button:not(.jc-start,.jc-arrow,.jc-tool)){transition:transform 160ms var(--ease-out)}
+:where(.jc button:not(:disabled,.jc-start,.jc-arrow,.jc-tool):active){transform:scale(.97)}
+/* ধীরে খেলো and reduced motion: nothing slides, pops or presses in */
+.jc[data-calm] *{animation:none!important;transition:none!important}
+.jc[data-calm] button:active,.jc[data-calm] .jc-start:active span{transform:none}
+@media(prefers-reduced-motion:reduce){.jc *{animation:none!important;transition:none!important}.jc button:active,.jc .jc-start:active span{transform:none}}

@@ -1,0 +1,131 @@
+---
+title: "Dudh uthlano: screen, pot, window, hand, hum, celebration and link"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: wait
+    lg1: play
+    lg2: done
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Title
+      s1: Pot waiting on the stove
+      s2: Milk rising
+      s3: Pot's score shows
+      s4: End screen
+      [*] --> s0
+      s0 --> s1: you tap the pot to start [when Choice is No menu or list and Window is You're on the page]
+      s0 --> s1: you pick a level from the list [when Choice is Level list open and Window is You're on the page]
+      s1 --> s0: a friend's link opens [when Window is You're on the page and Link is No friend's link]
+      s1 --> s2: you press and hold the big button [when Choice is No menu or list and Window is You're on the page and Hand is Hands off]
+      s2 --> s0: a friend's link opens [when Window is You're on the page and Link is No friend's link]
+      s2 --> s3: the milk boils over [when Choice is No menu or list and Window is You're on the page and Hand is not Hands off, a breath after coming back]
+      s2 --> s3: you let go after holding [when Choice is No menu or list and Window is You're on the page and Hand is Holding Space or a finger]
+      s3 --> s0: a friend's link opens [when Window is You're on the page and Link is No friend's link]
+      s3 --> s1: the next pot comes [when Choice is No menu or list and Window is You're on the page and Hand is not Hands off, a breath after coming back]
+      s3 --> s4: the last pot is scored and the level is not cleared or the last pot is scored and the level is cleared [when Choice is No menu or list and Window is You're on the page and Hand is not Hands off, a breath after coming back]
+      s2 --> s1: you pick a level from the list [when Choice is Level list open and Window is You're on the page and Hand is Hands off and Hum is No hum]
+      s2 --> s3: you press the big button to lift the pot [when Choice is No menu or list and Window is You're on the page and Hand is Hands off]
+      s4 --> s0: a friend's link opens [when Window is You're on the page and Link is No friend's link]
+      s4 --> s1: you press play again or you press next level [when Choice is No menu or list and Window is You're on the page]
+      s3 --> s1: you pick a level from the list [when Choice is Level list open and Window is You're on the page and Hand is Hands off]
+      s4 --> s1: you pick a level from the list [when Choice is Level list open and Window is You're on the page]
+    }
+    --
+    state "Choice" as r1 {
+      s5: No menu or list
+      s6: Level list open
+      s7: Player menu open
+      [*] --> s5
+      s5 --> s6: you open the level list [when Window is You're on the page]
+      s6 --> s5: you close the list
+      s6 --> s5: you pick a level from the list [when Window is You're on the page]
+      s5 --> s7: the player's menu opens [when Game is not Title and Window is You're on the page]
+      s7 --> s5: you press resume
+    }
+    --
+    state "Window" as r2 {
+      s8: You're on the page
+      s9: Another window has focus
+      s10: Tab hidden
+      [*] --> s8
+      s8 --> s9: you click into another window
+      s8 --> s10: you hide the tab
+      s9 --> s8: you come back to the window
+      s9 --> s10: you hide the tab
+      s10 --> s8: the tab shows again
+    }
+    --
+    state "Hand" as r3 {
+      s11: Hands off
+      s12: Holding Space or a finger
+      s13: Hands off, a breath after coming back
+      [*] --> s11
+      s11 --> s12: you press and hold the big button [when Game is Pot waiting on the stove and Choice is No menu or list and Window is You're on the page and Hum is No hum and Celebration is Nothing queued]
+      s12 --> s11: a friend's link opens [when Link is No friend's link]
+      s12 --> s11: the milk boils over or you let go after holding [when Game is Milk rising]
+      s12 --> s11: you click into another window or you hide the tab or you open the level list or the player's menu opens or you let go quickly
+      s11 --> s13: you come back to the window [when Game is none of End screen, Title and Choice is No menu or list and Window is Another window has focus and Hum is No hum and Celebration is Nothing queued]
+      s11 --> s13: the tab shows again [when Game is none of End screen, Title and Choice is No menu or list and Window is Tab hidden and Hum is No hum and Celebration is Nothing queued]
+      s11 --> s13: you close the list [when Game is none of End screen, Title and Choice is Level list open and Window is You're on the page and Hum is No hum and Celebration is Nothing queued]
+      s11 --> s13: you press resume [when Game is none of End screen, Title and Choice is Player menu open and Window is You're on the page and Hum is No hum and Celebration is Nothing queued]
+      s11 --> s12: you press the big button to lift the pot [when Game is Milk rising and Choice is No menu or list and Window is You're on the page and Celebration is Nothing queued]
+      s13 --> s11: a friend's link opens [when Link is No friend's link]
+      s13 --> s11: the breath after coming back passes or you click into another window or you hide the tab or you open the level list or the player's menu opens
+      s12 --> s11: the last pot is scored and the level is not cleared or the last pot is scored and the level is cleared [when Game is Pot's score shows and Hum is No hum]
+    }
+    --
+    state "Hum" as r4 {
+      s14: No hum
+      s15: Stove hums
+      [*] --> s14
+      s14 --> s15: you press and hold the big button [when Game is Pot waiting on the stove and Choice is No menu or list and Window is You're on the page and Hand is Hands off and Sound is Sound on and Celebration is Nothing queued]
+      s15 --> s14: a friend's link opens [when Link is No friend's link]
+      s15 --> s14: you turn sound off or you click into another window or you hide the tab or you open the level list or the player's menu opens
+      s15 --> s14: the milk boils over [when Hand is not Hands off, a breath after coming back]
+      s15 --> s14: you let go after holding [when Hand is Holding Space or a finger]
+      s14 --> s15: you turn sound on [when Game is Milk rising and Choice is No menu or list and Window is You're on the page and Sound is Sound off and Celebration is Nothing queued]
+      s14 --> s15: you come back to the window [when Game is Milk rising and Choice is No menu or list and Window is Another window has focus and Hand is Hands off and Sound is Sound on and Celebration is Nothing queued]
+      s14 --> s15: the tab shows again [when Game is Milk rising and Choice is No menu or list and Window is Tab hidden and Hand is Hands off and Sound is Sound on and Celebration is Nothing queued]
+      s14 --> s15: you close the list [when Game is Milk rising and Choice is Level list open and Window is You're on the page and Hand is Hands off and Sound is Sound on and Celebration is Nothing queued]
+      s14 --> s15: you press resume [when Game is Milk rising and Choice is Player menu open and Window is You're on the page and Hand is Hands off and Sound is Sound on and Celebration is Nothing queued]
+      s15 --> s14: you press the big button to lift the pot [when Hand is Hands off]
+    }
+    --
+    state "Sound" as r5 {
+      s16: Sound on
+      s17: Sound off
+      [*] --> s16
+      s16 --> s17: you turn sound off
+      s17 --> s16: you turn sound on
+    }
+    --
+    state "Celebration" as r6 {
+      s18: Nothing queued
+      s19: Confetti queued
+      [*] --> s18
+      s18 --> s19: the last pot is scored and the level is cleared [when Game is Pot's score shows and Choice is No menu or list and Window is You're on the page and Hand is not Hands off, a breath after coming back and Hum is No hum]
+      s19 --> s18: a friend's link opens [when Window is You're on the page and Link is No friend's link]
+      s19 --> s18: you press play again or you press next level [when Choice is No menu or list and Window is You're on the page]
+      s19 --> s18: the confetti plays
+      s19 --> s18: you pick a level from the list [when Choice is Level list open and Window is You're on the page]
+    }
+    --
+    state "Link" as r7 {
+      s20: No friend's link
+      s21: Friend's pots
+      s22: Another level open
+      [*] --> s20
+      s20 --> s21: a friend's link opens [when Window is You're on the page]
+      s21 --> s22: you pick a level from the list [when Choice is Level list open and Window is You're on the page and Hand is Hands off and Hum is No hum]
+      s21 --> s22: you press next level [when Game is End screen and Choice is No menu or list and Window is You're on the page and Hand is Hands off and Hum is No hum]
+    }
+  }
+  class s4 blue
+  class s15 teal
+  class s19 blue

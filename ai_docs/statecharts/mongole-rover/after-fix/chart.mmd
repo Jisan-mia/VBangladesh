@@ -1,0 +1,85 @@
+---
+title: "মঙﬂ°°2509¶ßগলﬂ°°2503¶ß রﬂ°°2507¶ßভﬂ°°2494¶ßর: the plan, the run, the story, the rest screen and you"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: plan
+    lg1: run
+    lg2: rest
+  }
+  class lg0 teal
+  class lg1 orange
+  class lg2 yellow
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: The hill (start)
+      s1: Level list
+      s2: First-run story
+      s3: Planning
+      s4: Rover driving
+      s5: Last rock lifted, stars saved
+      s6: The bad block glows, fix the plan
+      s7: Level won: stars and a Mars fact
+      [*] --> s0
+      s0 --> s1: you open the level list [when Rest is not Rest screen up]
+      s0 --> s2: you tap the hill (খ#2503;ল#2507;) [when Rest is Time left today]
+      s1 --> s0: the page reloads
+      s1 --> s0: you close the level list [when Rest is not Rest screen up]
+      s1 --> s3: you pick a level [when Rest is Time left today]
+      s2 --> s0: the page reloads
+      s2 --> s1: you open the level list
+      s2 --> s3: you finish or skip the story
+      s3 --> s0: the page reloads [when You is Here]
+      s3 --> s1: you open the level list [when You is not Looking away]
+      s3 --> s4: you tap চ#2494;ল#2494;ও [when You is Here]
+      s0 --> s3: you tap the hill (খ#2503;ল#2507;) [when Rest is Time left today]
+      s1 --> s0: you pick a level [when Rest is Today's minutes are up]
+      s4 --> s0: the page reloads [when You is Here]
+      s4 --> s1: you open the level list [when You is not Looking away]
+      s4 --> s3: you tap থ#2494;ম#2494;ও [when You is Here]
+      s4 --> s6: the rover bumps and stops [when You is Here]
+      s4 --> s5: the rover lifts the last rock (stars saved) [when You is Here]
+      s5 --> s0: the page reloads [when You is Here]
+      s5 --> s1: you open the level list [when You is not Looking away]
+      s5 --> s7: the end screen shows [when You is Here]
+      s6 --> s0: the page reloads [when You is Here]
+      s6 --> s3: you add or remove arrows [when Rest is not Rest screen up and You is Here]
+      s6 --> s4: you tap চ#2494;ল#2494;ও [when Rest is not Rest screen up and You is Here]
+      s6 --> s1: you open the level list [when Rest is not Rest screen up and You is not Looking away]
+      s7 --> s0: the page reloads
+      s7 --> s1: you open the level list [when Rest is not Rest screen up]
+      s7 --> s3: you press আব#2494;র খ#2503;ল#2507; or you press পর#2503;র ল#2503;ভ#2503;ল [when Rest is Time left today]
+      s7 --> s0: you press শ#2503;ষ [when Rest is not Rest screen up]
+    }
+    --
+    state "Rest" as r1 {
+      s8: Time left today
+      s9: Today's minutes are up
+      s10: Rest screen up
+      [*] --> s8
+      s8 --> s9: today's minutes run out [when Game is not First-run story and You is Here]
+      s9 --> s10: the page reloads
+      s9 --> s10: you pick a level [when Game is Level list]
+      s9 --> s10: you tap the hill (খ#2503;ল#2507;) [when Game is The hill (start)]
+      s10 --> s8: a grown-up gives 10 more minutes [when Game is not Last rock lifted, stars saved]
+      s9 --> s10: the rover bumps and stops or the rover lifts the last rock (stars saved) [when Game is Rover driving]
+      s9 --> s10: you press পর#2503;র ল#2503;ভ#2503;ল or you press আব#2494;র খ#2503;ল#2507; [when Game is Level won: stars and a Mars fact]
+    }
+    --
+    state "You" as r2 {
+      s11: Here
+      s12: Looking away
+      s13: Menu open
+      [*] --> s11
+      s11 --> s12: you look away [when Game is one of Last rock lifted, stars saved, Planning, Rover driving, The bad block glows, fix the plan and Rest is Time left today]
+      s11 --> s13: the pause menu opens [when Game is one of Last rock lifted, stars saved, Planning, Rover driving, The bad block glows, fix the plan and Rest is Time left today]
+      s12 --> s11: you come back
+      s12 --> s13: the pause menu opens
+      s13 --> s11: you open the level list or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+    }
+  }
+  class s2 teal
+  class s3 teal
+  class s4 orange
+  class s10 yellow

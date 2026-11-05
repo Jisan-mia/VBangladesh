@@ -1,131 +1,219 @@
-.tool-prithibi-ghuri{--accent:#1f6f8b;--accent-deep:#134a5e;--ink:#23303a;--muted:#55636d;--paper:#eef3ea;--edge:#cfdccb;--good:#2e9e44;--glow:#f5b400;--sky:#bfe3ee}
-.tool-prithibi-ghuri .pg-page{color:var(--ink)}
+/* পৃথিবী ঘুরি. Look: a paper airmail envelope and a passport stamp book, in flat ink-outlined art. One palette a world:
+   paddy green (কাছের এশিয়া), desert ochre (দূর পুব আর মরুভূমি), sea blue (সাগরের ওপারে). Green means "found it" and
+   gold means "look here"; both also differ in shape (a solid ring, a dashed ring). No glow except that gold hint. */
+.tool-prithibi-ghuri{--ink:#23303a;--muted:#55636d;--good:#2e9e44;--gold:#d99a00;--ease-out:cubic-bezier(.23,1,.32,1);--ease-land:cubic-bezier(.2,1.25,.4,1)}
+.tool-prithibi-ghuri .gp-game{min-height:100%}
 
-.pg-hero{padding:8px 0 0}
-.pg-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,40px);line-height:1.4;font-weight:700;letter-spacing:0}
-.pg-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
-.pg-hero .kk-note{margin:8px 0}
+/* ---- the game fills the player's stage ---- */
+.pg{--w-accent:#2f7d3a;--w-deep:#1d5226;--w-soft:#eef6e6;--w-edge:#c4dcb4;position:relative;display:flex;flex-direction:column;gap:10px;width:100%;max-width:520px;min-height:calc(var(--stage-h,640px) - 8px);margin:0 auto;color:var(--ink);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.pg[data-world="1"]{--w-accent:#b4571c;--w-deep:#7a3a10;--w-soft:#fbefd9;--w-edge:#efd1a0}
+.pg[data-world="2"]{--w-accent:#1d4f91;--w-deep:#12376a;--w-soft:#eaf1fa;--w-edge:#b9cfe9}
+.pg-visit,.pg-map-screen,.pg-end{flex:1;align-content:center}
+@keyframes pg-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pg :where(button){font:inherit;color:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
-.pg{display:grid;gap:12px;max-width:520px;margin-inline:auto;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-.pg-stage{position:relative;display:grid;gap:10px;padding:12px;border-radius:20px;background:var(--paper);box-shadow:inset 0 0 0 2px var(--edge)}
-.pg-tools{position:absolute;right:10px;top:8px;z-index:3;display:flex;gap:8px;align-items:center}
-.pg-pill{min-height:44px;padding:4px 12px;border:1.5px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink);font:inherit;font-size:15px;font-weight:700}
-.pg-pill[aria-pressed=true]{background:var(--ink);color:#fff}
-.pg-tools .gx-sound{min-height:44px;min-width:44px;border-radius:999px;background:#fff;color:var(--ink)}
+/* ---- title: the envelope is the start button ---- */
+.pg-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:8px 4px;text-align:center}
+.pg-env{position:relative;display:block;width:min(100%,440px);padding:12px 12px 36px;border:0;background:repeating-linear-gradient(-45deg,#c8383a 0 14px,#fff 14px 20px,#1d4f91 20px 34px,#fff 34px 40px);box-shadow:0 9px 0 var(--w-deep);cursor:pointer;transition:transform 140ms var(--ease-out)}
+.pg-env:active{transform:translateY(5px) scale(.99);box-shadow:0 4px 0 var(--w-deep)}
+.pg-env:focus-visible{outline:4px solid var(--w-deep);outline-offset:6px}
+.pg-env-map{display:block;overflow:hidden;background:#fffdf6;padding:6px}
+.pg-env-map .pg-map{border-radius:0}
+.pg-env-go{position:absolute;left:50%;bottom:-12px;display:inline-flex;align-items:center;gap:12px;padding:8px 28px 8px 20px;background:var(--w-accent);color:#fff;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.4;box-shadow:0 5px 0 var(--w-deep);transform:translateX(-50%);white-space:nowrap}
+.pg-plane-icon{width:34px;height:34px;fill:#fff;stroke:#fff;stroke-width:.1;stroke-linejoin:round}
+.pg-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:8px}
+.pg-chip{display:flex;align-items:center;gap:10px;min-height:64px;max-width:100%;padding:6px 14px 6px 10px;border:2px solid var(--w-edge);border-radius:8px;background:#fff;text-align:left;cursor:pointer;transition:transform 120ms var(--ease-out)}
+.pg-chip:active{transform:scale(.97)}
+.pg-chip-icon{flex:none;width:44px;height:44px}
+.pg-chip b{display:block;font-family:var(--font-display);font-size:17px;line-height:1.5}
+.pg-chip small{display:block;font-size:16px;line-height:1.4;color:var(--muted)}
+.pg-title-line{margin:0;font-size:18px;line-height:1.6;color:var(--muted)}
+.pg-grown{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px}
+.pg-grown .kk-gate-open>div{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.pg-icon-flag{display:grid;place-items:center}
+.pg-icon-flag .pg-badge-flag{width:100%}
 
-.pg-trip{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;min-height:44px;margin:0;padding-right:120px;font-size:18px;line-height:1.6}
-.pg-trip b{color:var(--accent-deep)}
-.pg-say{margin:0;font-size:20px;font-weight:700;line-height:1.6;text-align:center}
+/* ---- HUD: the level top-left, the passport slots top-right ---- */
+.pg-hud{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 10px;min-height:44px}
+.pg-badge{display:flex;align-items:center;gap:8px;margin:0;padding:2px 12px 2px 6px;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--w-edge)}
+.pg-badge-icon{flex:none;width:34px;height:34px}
+.pg-badge b{display:block;font-family:var(--font-display);font-size:16px;line-height:1.4}
+.pg-badge small{display:block;font-size:14px;line-height:1.3;color:var(--muted)}
+.pg-slots{display:flex;gap:6px;margin:0;padding:0;list-style:none}
+.pg-slots li{display:grid;place-items:center;width:40px;height:40px;border:2px dashed var(--w-edge);border-radius:50%;background:#fff}
+.pg-slots li[data-now]{border-color:var(--w-accent)}
+.pg-slots li[data-got]{border:3px solid var(--w-accent);background:var(--w-soft)}
+.pg-slot-pic{width:28px;height:28px;animation:pg-pop 220ms var(--ease-land) both}
+@keyframes pg-pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
 
-/* The map in a plane window: rounded, with a frame. */
-.pg-window{overflow:hidden;border:6px solid #fff;border-radius:26px;box-shadow:0 0 0 2px var(--edge),0 6px 0 var(--edge)}
-.pg-map{display:block;width:100%;height:auto;aspect-ratio:16/10;background:var(--sky)}
+/* ---- the map in a plane window ---- */
+.pg-window{overflow:hidden;border:6px solid #fff;border-radius:24px;box-shadow:0 0 0 2px var(--w-edge),0 6px 0 var(--w-edge)}
+.pg-map{position:relative;display:block;width:100%;aspect-ratio:16/10;background:#bfe3ee;touch-action:manipulation}
+.pg-map svg{display:block;width:100%;height:100%}
+.pg-map-live{position:absolute;inset:0}
 .pg-map-label{font-family:var(--font-display),sans-serif;font-weight:700;fill:var(--ink);paint-order:stroke;stroke:#fff;stroke-width:.6px;stroke-linejoin:round}
-.pg-route{fill:var(--ink)}
-.pg-trail{fill:var(--ink);opacity:.35}
-.pg-pin.now circle{animation:pg-pulse 1.2s ease-in-out infinite}
-@keyframes pg-pulse{50%{opacity:.6}}
+.pg-pin-ring{opacity:0;transform-box:fill-box;transform-origin:center}
+.pg-pin.now .pg-pin-ring{animation:pg-ping 900ms ease-out infinite}
+.pg-pin.here .pg-pin-ring{animation:pg-ping 700ms ease-out 2}
+@keyframes pg-ping{from{opacity:.9;transform:scale(1)}to{opacity:0;transform:scale(2.6)}}
+.pg-pin-hit{cursor:pointer}
+.pg-say{margin:0;font-size:20px;font-weight:700;line-height:1.6;text-align:center}
+.pg-map-screen{display:grid;gap:10px}
 
-/* Destinations: three big buttons, at least 96px tall, 12–16px apart. */
+/* destinations: three big buttons, at least 96 px tall, 12 px apart */
 .pg-go-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0;padding:0;list-style:none}
-.pg-go{position:relative;display:grid;justify-items:center;align-content:center;gap:6px;width:100%;min-height:112px;padding:10px 4px;border:3px solid var(--edge);border-radius:20px;background:#fff;color:var(--ink);font:inherit;box-shadow:0 5px 0 var(--edge);transition:transform .08s}
-.pg-go:active{transform:translateY(4px);box-shadow:0 1px 0 var(--edge)}
+.pg-go{position:relative;display:grid;justify-items:center;align-content:center;gap:6px;width:100%;min-height:112px;padding:10px 4px;border:3px solid var(--w-edge);border-radius:10px;background:#fff;box-shadow:0 5px 0 var(--w-edge);cursor:pointer;transition:transform 120ms var(--ease-out)}
+.pg-go:active:not(:disabled){transform:translateY(4px) scale(.97);box-shadow:0 1px 0 var(--w-edge)}
 .pg-go:disabled{cursor:default}
 .pg-go.was{opacity:.6;border-style:dashed;box-shadow:none}
 .pg-go-name{font-size:16px;font-weight:700;line-height:1.4;text-align:center}
-.pg-pin-dot{position:absolute;left:8px;top:8px;display:grid;place-items:center;width:20px;height:20px;border:2px solid #fff;border-radius:50%;color:#fff;font-size:12px;font-weight:800;box-shadow:0 0 0 1px #0002}
-.pg-badge-flag{width:56px;height:auto;border-radius:4px;box-shadow:0 0 0 1px #0003}
+.pg-pin-dot{position:absolute;left:8px;top:8px;display:grid;place-items:center;width:20px;height:20px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #0002}
+.pg-pin-dot svg{width:12px;height:12px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pg-key{position:absolute;right:8px;top:4px;font-size:15px;font-weight:700;color:var(--muted);opacity:.7}
+.pg-badge-flag{width:56px;height:auto;box-shadow:0 0 0 1px #0003}
 .pg-badge-pic{width:46px;height:46px}
 
-/* Visit: a postcard with one thing on it. */
+/* ---- a visit: the country on top, then one postcard ---- */
 .pg-visit{display:grid;gap:10px}
-.pg-where{display:flex;gap:12px;align-items:center;min-height:56px;padding-right:120px}
+.pg-where{display:flex;gap:12px;align-items:center;min-height:56px}
 .pg-where h2{margin:0;font-family:var(--font-display);font-size:24px;line-height:1.4}
 .pg-where p{margin:0;color:var(--muted);font-size:16px;line-height:1.5}
-.pg-flag{flex:none;width:64px;height:auto;border-radius:4px;box-shadow:0 0 0 1px #0003}
-.pg-card-wrap{animation:pg-in .3s ease-out both}
-@keyframes pg-in{from{opacity:0;transform:translateX(18px) rotate(1deg)}}
-.pg-card{display:grid;justify-items:center;gap:6px;min-height:300px;align-content:center;padding:16px;border-radius:18px;background:#fffdf6;box-shadow:0 2px 0 var(--edge),0 10px 24px #23303a14;text-align:center}
-.pg-card h3{margin:0;font-family:var(--font-display);font-size:26px;line-height:1.4}
-.pg-tag{margin:0;padding:2px 12px;border-radius:999px;background:var(--accent);color:#fff;font-size:16px;font-weight:700;line-height:1.6}
+.pg-where-flag{flex:none;width:64px;height:auto;box-shadow:0 0 0 1px #0003}
+.pg-where-pic{flex:none;width:52px;height:52px}
+.pg-card-wrap{animation:pg-in 200ms var(--ease-out) both}
+.pg-card{position:relative;display:grid;justify-items:center;align-content:center;gap:6px;min-height:300px;padding:18px 16px;background:#fffdf6;box-shadow:inset 0 0 0 2px var(--w-edge),0 6px 0 var(--w-edge);text-align:center}
+.pg-card h3{margin:0;font-family:var(--font-display);font-size:28px;line-height:1.4}
+.pg-stamp-corner{position:absolute;right:10px;top:10px;display:grid;place-items:center;width:58px;height:58px;padding:4px;border:3px dotted var(--w-accent);background:#fff}
+.pg-corner-flag{width:100%;height:auto}
+.pg-corner-pic{width:100%;height:100%}
 .pg-pic{display:block;width:100%;height:100%}
-.pg-pic-big{width:min(150px,40vw);height:auto;aspect-ratio:1}
+.pg-pic-big{width:min(170px,42vw);height:auto;aspect-ratio:1}
 .pg-note{max-width:400px;margin:0;font-size:18px;line-height:1.6}
-.pg-big{font-size:20px;font-weight:700}
-.pg-word{display:flex;gap:8px;align-items:center;justify-content:center;margin:10px 0;font-family:var(--font-display);font-size:clamp(34px,10vw,48px);font-weight:800;line-height:1.5;color:var(--accent-deep)}
-.pg-word .kk-speak{font-size:22px}
-.pg-pair-flags{display:flex;gap:12px;align-items:center;font-size:24px;font-weight:700}
-.pg-pair-flags .pg-flag,.pg-pair-flags .pg-badge-flag{width:72px}
-.pg-pair-flags .pg-badge-pic{width:64px;height:64px}
+.pg-big{font-weight:700}
+.pg-card .pg-big{font-size:20px}
+.pg-small-note{font-size:16px;color:var(--muted)}
+.pg-hello{padding-top:26px}
+.pg-wave{width:64px;height:64px;transform-origin:50% 90%;animation:pg-wave 700ms ease-in-out 250ms 1 both}
+@keyframes pg-wave{0%,100%{transform:rotate(0)}25%{transform:rotate(14deg)}60%{transform:rotate(-12deg)}}
+.pg-bubble{position:relative;display:grid;place-items:center;min-width:180px;max-width:100%;margin:6px 0 14px;padding:10px 24px;border:3px solid var(--ink);border-radius:28px;background:#fff}
+.pg-bubble::after{content:"";position:absolute;left:44px;bottom:-14px;width:22px;height:22px;border:3px solid var(--ink);border-width:0 3px 3px 0;background:#fff;transform:rotate(45deg) skew(10deg,10deg)}
+.pg-bubble span{font-family:var(--font-display);font-size:clamp(34px,10vw,46px);font-weight:800;line-height:1.5;color:var(--w-deep)}
+.pg-pair-pics{display:flex;gap:12px;align-items:center}
+.pg-pair-flag{width:68px;height:auto;max-height:68px;box-shadow:0 0 0 1px #0003}
+.pg-equals{font-size:30px;font-weight:800;color:var(--w-accent)}
 .pg-dots{display:flex;justify-content:center;gap:8px;margin:0;padding:0;list-style:none}
 .pg-dots li{width:12px;height:12px;border-radius:50%;background:#0002}
-.pg-dots li.now{background:var(--glow);box-shadow:0 0 0 2px #fff}
-.pg-dots li.done{background:var(--accent)}
-.tool-prithibi-ghuri .pg-next{position:relative;justify-self:center;min-width:220px;min-height:64px;font-size:20px}
+.pg-dots li.now{background:var(--gold);box-shadow:0 0 0 2px #fff}
+.pg-dots li.done{background:var(--w-accent)}
 
-/* The stamp question: picture buttons, at least 104px, 16px apart. */
-.pg-q{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:4px 0;font-size:22px;font-weight:700;line-height:1.6;text-align:center}
-.pg-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0;padding:0;list-style:none}
-.pg-choices.n2{grid-template-columns:repeat(2,minmax(0,150px));justify-content:center}
-.pg-choices.n4{grid-template-columns:repeat(2,minmax(0,150px));justify-content:center}
-.pg-choice{display:grid;place-items:center;width:100%;aspect-ratio:1;min-height:96px;padding:8px;border:3px solid var(--edge);border-radius:20px;background:#fff;box-shadow:0 5px 0 var(--edge);transition:transform .08s}
-.pg-choice:active{transform:translateY(4px);box-shadow:0 1px 0 var(--edge)}
+/* ➜: a big picture button, 128 × 104 */
+.pg-next{position:relative;display:grid;place-items:center;justify-self:center;width:128px;height:104px;border:0;border-radius:10px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);cursor:pointer;transition:transform 120ms var(--ease-out);animation:pg-in 200ms var(--ease-out) backwards}
+.pg-next:active{transform:translateY(4px) scale(.97);box-shadow:0 2px 0 var(--w-deep)}
+.pg-next:focus-visible{outline:4px solid var(--w-deep);outline-offset:4px}
+.pg-next svg{width:56px;height:56px;fill:none;stroke:currentColor;stroke-width:4.4;stroke-linecap:round;stroke-linejoin:round}
+.pg-next[data-last] svg path{fill:currentColor}
+
+/* ---- the stamp question ---- */
+.pg-prompt{display:flex;align-items:center;justify-content:center;gap:16px;min-height:116px}
+.pg-stamp{display:grid;justify-items:center;align-content:center;width:112px;height:112px;border:5px solid var(--ink);border-radius:50%;outline:2px solid var(--ink);outline-offset:-12px;background:#fffdf6;color:var(--ink);transform:rotate(-6deg);animation:pg-thud 240ms var(--ease-land) both}
+.pg-stamp .pg-pic{width:52px;height:52px}
+.pg-stamp span{font-family:var(--font-display);font-size:14px;font-weight:800;line-height:1.3}
+.pg-stamp-empty{border:4px dashed var(--w-edge);outline:0;background:#fff;animation:none;transform:none}
+.pg-stamp-empty span{font-size:54px;font-weight:800;color:var(--w-accent);line-height:1}
+@keyframes pg-thud{from{opacity:0;transform:rotate(-6deg) scale(1.5)}to{opacity:1;transform:rotate(-6deg) scale(1)}}
+.pg-bubble-ask{margin:0 0 14px;min-width:0}
+.pg-q{display:flex;align-items:center;justify-content:center;margin:0;min-height:3.4em;padding:0 8px;font-size:18px;font-weight:600;line-height:1.6;text-align:center}
+.pg-q[data-kind=try]{color:#7a5200}
+.pg-q[data-kind=why]{color:var(--w-deep)}
+.pg-lower{display:grid;align-content:center;justify-items:center;min-height:224px}
+.pg-choices{display:grid;gap:16px;justify-content:center;width:100%;margin:0;padding:0 0 6px;list-style:none}
+.pg-n2{grid-template-columns:repeat(2,minmax(112px,150px))}
+.pg-n3{grid-template-columns:repeat(3,minmax(96px,124px))}
+.pg-n4{grid-template-columns:repeat(2,minmax(112px,150px))}
+.pg-choice{position:relative;display:grid;place-items:center;align-content:center;gap:2px;width:100%;aspect-ratio:1;min-height:100px;padding:8px;border:3px solid var(--w-accent);border-radius:12px;background:#fff;box-shadow:0 6px 0 var(--w-deep);cursor:pointer;transition:transform 120ms var(--ease-out),opacity 200ms var(--ease-out);animation:pg-in 200ms var(--ease-out) backwards;animation-delay:calc(var(--i,0) * 35ms)}
+.pg-choice:active{transform:translateY(4px) scale(.97);box-shadow:0 2px 0 var(--w-deep)}
+.pg-choice:focus-visible{outline:4px solid var(--w-deep);outline-offset:3px}
 .pg-choice .pg-pic{width:100%;height:100%}
-.pg-choice-flag{width:100%;height:auto;border-radius:4px;box-shadow:0 0 0 1px #0003}
-.pg-choice.right{border-color:var(--good);background:#eef8e8;box-shadow:0 5px 0 #a6d79a}
-.pg-choice.wrong{border-style:dashed;opacity:.55}
-.pg-choice:disabled{opacity:.4}
-.pg-choice.right:disabled{opacity:1}
-.pg-choice.hint{border-color:var(--glow);animation:pg-hint 1.2s ease-in-out infinite}
-@keyframes pg-hint{50%{box-shadow:0 0 0 7px color-mix(in srgb,var(--glow) 45%,transparent)}}
-.pg-why{min-height:32px;margin:0;font-size:18px;line-height:1.6;text-align:center;color:var(--muted)}
+.pg-choice-key{position:absolute;left:9px;top:5px;font-size:15px;font-weight:700;line-height:1;color:var(--muted);opacity:.7}
+.pg-choice-flag{width:100%;height:auto;box-shadow:0 0 0 1px #0003}
+.pg-choice-flag-sm{width:72%}
+.pg-choice-badge{width:56%;height:auto;aspect-ratio:1}
+.pg-choice-name{font-size:16px;font-weight:700;line-height:1.3}
+.pg-choice.tried{border-style:dashed;opacity:.55}
+.pg-choice.hint{background:#fff6d8;outline:3px dashed var(--gold);outline-offset:5px}
+.pg-choice.hint::before{content:"";position:absolute;inset:-3px;border-radius:inherit;box-shadow:0 0 0 9px #f2a90055;opacity:0;pointer-events:none;animation:pg-glow 1.4s ease-in-out infinite}
+@keyframes pg-glow{50%{opacity:1}}
 
-/* The stamp lands on the passport page. */
-.pg-stamp-page{display:grid;justify-items:center;gap:14px;padding:24px 8px 8px;min-height:360px;align-content:center;border-radius:18px;background:repeating-linear-gradient(170deg,#fffdf6 0 22px,#f2efe2 22px 24px)}
-.pg-stamp{display:grid;justify-items:center;align-content:center;width:190px;height:190px;border:8px solid var(--ink);border-radius:50%;outline:3px solid var(--ink);outline-offset:-18px;background:#fffdf6;color:var(--ink);transform:rotate(-6deg);animation:pg-thud .45s cubic-bezier(.2,1.6,.4,1) both}
-.pg-stamp .pg-pic{width:96px;height:96px}
-.pg-stamp span{font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.4}
-@keyframes pg-thud{from{opacity:0;transform:rotate(-6deg) scale(1.7)}to{opacity:1;transform:rotate(-6deg) scale(1)}}
+/* the ghost finger that shows the first tap */
+.pg-finger{position:absolute;right:-8px;bottom:-24px;z-index:3;width:44px;height:58px;pointer-events:none;animation:pg-tap 1.4s ease-in-out infinite}
+.pg-ripple{fill:var(--w-accent);opacity:0;animation:pg-ripple 1.4s ease-out infinite}
+@keyframes pg-tap{0%,100%{transform:translate(8px,10px)}45%,60%{transform:translate(0,0)}}
+@keyframes pg-ripple{0%,40%{opacity:0;r:4}55%{opacity:.5}100%{opacity:0;r:16}}
 
-.pg-done{padding-top:44px;display:grid;justify-items:center;gap:12px;text-align:center}
-.pg-done h2{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,28px);line-height:1.45}
-.pg-method{margin:0;font-size:18px;line-height:1.6}
-.pg-mini-stamps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;margin:0;padding:0;list-style:none}
-.pg-mini-stamps li{display:grid;justify-items:center;padding:8px 4px;border:3px solid var(--ink);border-radius:18px;background:#fffdf6;font-size:16px;font-weight:700;line-height:1.5}
-.pg-mini-stamps .pg-pic{width:60px;height:60px}
-.pg-mini-stamps small{font-size:16px;font-weight:600;color:var(--muted)}
-.pg-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(100%,340px)}
-.tool-prithibi-ghuri .pg-pair button{min-height:64px;min-width:0;font-size:20px;font-weight:700}
-.pg-idle{margin:0;padding:48px 16px;text-align:center;font-size:20px;font-weight:600;line-height:1.6}
+/* ---- the end of a trip ---- */
+.pg-end{display:grid;justify-items:center;gap:10px;padding:4px 0 8px;text-align:center}
+.pg-end-stamps{display:flex;justify-content:center;gap:10px;width:100%;margin:0;padding:0;list-style:none}
+.pg-end-stamps li{display:grid;justify-items:center;align-content:center;width:104px;height:104px;border:4px solid var(--ink);border-radius:50%;outline:2px solid var(--ink);outline-offset:-10px;padding-top:4px;background:#fffdf6;transform:rotate(calc(-5deg + var(--i,0) * 5deg));animation:pg-thud 260ms var(--ease-land) both;animation-delay:calc(var(--i,0) * 90ms)}
+.pg-end-stamps .pg-pic{width:44px;height:44px}
+.pg-end-stamps span{font-family:var(--font-display);font-size:13px;font-weight:800;line-height:1.2}
+.pg-end-stars .gx-stars{font-size:46px}
+.pg-end-stars .gx-stars .on{display:inline-block;animation:pg-star .45s var(--ease-land) both}
+.pg-end-stars .gx-stars .on:nth-child(1){animation-delay:.35s}
+.pg-end-stars .gx-stars .on:nth-child(2){animation-delay:.65s}
+.pg-end-stars .gx-stars .on:nth-child(3){animation-delay:.95s}
+@keyframes pg-star{from{transform:scale(.8) rotate(-20deg);opacity:0}to{transform:none;opacity:1}}
+.pg-end-count{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;margin:0;font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.5}
+.pg-end-count b{color:var(--w-deep)}
+.pg-end-news{margin:0;font-size:20px;font-weight:700;line-height:1.6;color:var(--w-deep)}
+.pg-end-method{margin:0;font-size:17px;line-height:1.6}
+.pg-end-off{margin:0;max-width:340px;font-size:17px;line-height:1.6;color:var(--muted)}
+.pg-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(340px,100%)}
+.pg-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:0;border-radius:10px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.4;cursor:pointer;transition:transform 120ms var(--ease-out)}
+.pg-big:active{transform:translateY(4px) scale(.97);box-shadow:0 2px 0 var(--w-deep)}
+.pg-big svg{width:48px;height:48px;fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.pg-big-done{background:#fff;color:var(--w-deep);box-shadow:inset 0 0 0 3px var(--w-accent),0 6px 0 var(--w-deep)}
+.pg-end .kk-show-button{min-height:56px}
+.pg-parent-line{max-width:520px;margin:12px auto 0;font-size:16px;line-height:1.7;text-align:left}
 
-.pg-levels .gx-levels{grid-template-columns:repeat(6,minmax(0,1fr))}
-.pg-passport{padding:8px 12px;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 2px var(--edge)}
-.pg-passport summary{min-height:44px;display:flex;align-items:center;justify-content:space-between;font-size:18px;font-weight:700;cursor:pointer}
-.pg-passport summary span{color:var(--muted);font-size:16px}
-.pg-passport ul{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;margin:8px 0;padding:0;list-style:none}
-.pg-passport li{display:grid;justify-items:center;align-content:center;min-height:96px;padding:6px 2px;border:2px dashed var(--edge);border-radius:50%;aspect-ratio:1;font-size:16px;font-weight:700;line-height:1.3;text-align:center}
-.pg-passport li.has{border:3px solid var(--ink);background:#fffdf6}
-.pg-passport li .pg-pic{width:44px;height:44px}
-.pg-passport li span{max-width:80px;font-size:16px}
-.pg-empty{color:#0003;font-size:28px}
+/* ---- the level list and the passport: choice screens ---- */
+.pg-levels,.pg-passport{position:relative;display:grid;gap:14px;align-content:start;max-height:var(--stage-h,none);overflow:auto;overscroll-behavior:contain;padding:0 2px 12px}
+.pg-levels-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 0 6px;background:#fff}
+.pg-levels-head p{margin:0;font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.5}
+.pg-levels-head small{font-size:18px;color:var(--muted)}
+.pg-close{display:grid;place-items:center;width:56px;height:56px;border:2px solid var(--w-edge);border-radius:10px;background:#fff;cursor:pointer;transition:transform 120ms var(--ease-out)}
+.pg-close:active{transform:scale(.95)}
+.pg-close svg{width:28px;height:28px;fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.pg-band{--w-accent:#2f7d3a;--w-deep:#1d5226;--w-soft:#eef6e6;--w-edge:#c4dcb4;display:grid;gap:8px;padding:10px;border-radius:10px;background:var(--w-soft);box-shadow:inset 0 0 0 1.5px var(--w-edge)}
+.pg-band[data-world="1"]{--w-accent:#b4571c;--w-deep:#7a3a10;--w-soft:#fbefd9;--w-edge:#efd1a0}
+.pg-band[data-world="2"]{--w-accent:#1d4f91;--w-deep:#12376a;--w-soft:#eaf1fa;--w-edge:#b9cfe9}
+.pg-band h3{margin:0 4px;font-family:var(--font-display);font-size:18px;line-height:1.5;color:var(--w-deep)}
+.pg-band ol{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px;margin:0;padding:0;list-style:none}
+.pg-lcard{position:relative;display:grid;justify-items:center;gap:0;width:100%;min-height:128px;padding:8px 4px 6px;border:2px solid var(--w-edge);border-radius:10px;background:#fff;cursor:pointer;transition:transform 120ms var(--ease-out)}
+.pg-lcard:active{transform:scale(.97)}
+.pg-band li:has(.finale){grid-column:span 2}
+.pg-lcard.finale{border-color:var(--w-accent);background:var(--w-soft)}
+.pg-lcard[data-next]{border-color:var(--w-accent);box-shadow:0 0 0 4px #f2a90055}
+.pg-lcard[aria-current=true]{outline:3px solid var(--w-deep);outline-offset:2px}
+.pg-lcard-n{position:absolute;left:8px;top:4px;font-size:16px;font-weight:800;color:var(--muted)}
+.pg-lcard-icon{width:52px;height:52px}
+.pg-lcard-name{font-size:16px;font-weight:700;line-height:1.4}
+.pg-lcard .gx-stars{font-size:16px}
+.pg-lcard-next{position:absolute;right:-4px;top:-10px;padding:1px 8px;border-radius:5px;background:#f2a900;color:#3b2a17;font-size:13px;font-weight:800;line-height:1.6}
+.pg-passport ul{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:10px;margin:0;padding:0;list-style:none}
+.pg-passport li{display:grid;justify-items:center;align-content:center;aspect-ratio:1;min-height:88px;padding:6px 2px;border:2px dashed var(--w-edge);border-radius:50%;text-align:center}
+.pg-passport li.has{border:3px solid var(--ink);outline:2px solid var(--ink);outline-offset:-8px;background:#fffdf6}
+.pg-passport li .pg-pic{width:40px;height:40px}
+.pg-passport li span{max-width:80px;font-size:14px;font-weight:700;line-height:1.2}
+.pg-passport li svg{width:30px;height:30px;fill:none;stroke:var(--w-edge);stroke-width:2;stroke-linejoin:round}
 .pg-small{margin:0;font-size:16px;color:var(--muted)}
 
-.pg-parent-line{max-width:520px;margin:12px auto 0;font-size:16px;line-height:1.6;text-align:left}
-.pg-gate{display:flex;justify-content:flex-start}
+/* ---- keys skip the ceremony; ধীরে খেলো and reduced motion: nothing drifts, waves, pings or lands ---- */
+.pg[data-instant] .pg-card-wrap,.pg[data-instant] .pg-choice,.pg[data-instant] .pg-next,.pg[data-instant] .pg-stamp{animation:none}
+.pg[data-slow] *,.pg[data-slow] *::before,.pg[data-slow] *::after{animation:none!important;transition:none!important}
+.pg[data-slow] .pg-choice.hint::before{opacity:.8}
+.pg[data-slow] .pg-ripple{opacity:.4}
+@media (prefers-reduced-motion:reduce){.pg *,.pg *::before,.pg *::after{animation:none!important;transition:none!important}.pg-choice.hint::before{opacity:.8}.pg-ripple{opacity:.4}}
 
-.pg-ghost-at{position:absolute;left:58%;top:58%;width:0;height:0;pointer-events:none;z-index:3}
-.pg-ghost{position:absolute;left:-10px;top:-2px;width:50px;max-width:none;height:auto;filter:drop-shadow(0 2px 2px #0003);animation:pg-ghost 1.8s ease-in-out 3 both}
-@keyframes pg-ghost{0%{transform:translate(34px,46px);opacity:0}30%{transform:translate(0,0);opacity:1}45%{transform:scale(.86)}60%{transform:scale(1)}85%{opacity:1}100%{opacity:0}}
-
-.pg-guide h2{font-family:var(--font-display);margin-bottom:12px}
-.pg-guide>p{color:var(--muted);max-width:640px}
-.pg-guide ol{display:grid;gap:14px;margin:0 0 18px;padding:0;list-style:none}
-.pg-guide li{display:flex;gap:14px;align-items:flex-start}
-.pg-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
-.pg-guide li p{margin:4px 0 0}
-.pg-privacy{font-size:15px}
-
-@media (max-width:360px){.pg-stage{padding:10px}.pg-go{min-height:104px}.pg-go-name{font-size:16px}.pg-choices{gap:12px}.pg-trip{padding-right:110px;font-size:16px}}
-@media (min-width:720px){.pg-lead{display:block}}
-.pg-slow *,.pg-slow *::before,.pg-slow *::after{animation:none!important;transition:none!important}
-@media (prefers-reduced-motion:reduce){.tool-prithibi-ghuri *{animation:none!important;transition:none!important}}
+/* short stages and narrow phones: a smaller card and pictures that still keep 96 px */
+@media (max-height:700px){.pg-q{min-height:2.8em;font-size:17px}.pg-lower{min-height:206px}.pg-choice{min-height:96px}.pg-card{min-height:230px;padding:12px}.pg-pic-big{width:min(130px,36vw)}.pg-prompt{min-height:100px}}
+@media (max-width:360px){.pg-go-name{font-size:15px}.pg-choices{gap:12px}.pg-env-go{font-size:28px}.pg-end-stamps li{width:92px;height:92px}}

@@ -1,5 +1,4 @@
 // Original art, drawn with plain canvas paths: painted clay pots in the spirit of Rajshahi's শখের হাঁড়ি, a cloth ball, a bamboo লাঠি and a fair stall. Shared by the board and the card.
-import { BALL_R, CELL, COLS, H, POT_DROP, ROPE_Y, ROW_GAP, ROWS, STICK_H, STICK_Y, TOP, W, WALL } from "./game";
 
 export const palette = {
   cloth: "#fbf0d6", clothStripe: "#f4e4c1",
@@ -17,7 +16,7 @@ export const DESIGN_PAINT = ["#c1352b", "#c1352b", "#2b1a10", "#2f6b3a", "#fff4d
 const TAU = Math.PI * 2;
 
 /** The pot's outline in local units: 40 wide, rim at y 0, belly bottom at y 39. */
-function silhouette(c: CanvasRenderingContext2D) {
+export function silhouette(c: CanvasRenderingContext2D) {
   c.beginPath();
   c.moveTo(-10, 4);
   c.lineTo(-9, 8.5);
@@ -28,9 +27,9 @@ function silhouette(c: CanvasRenderingContext2D) {
   c.closePath();
 }
 
-function dot(c: CanvasRenderingContext2D, x: number, y: number, r: number) { c.moveTo(x + r, y); c.arc(x, y, r, 0, TAU); }
+export function dot(c: CanvasRenderingContext2D, x: number, y: number, r: number) { c.moveTo(x + r, y); c.arc(x, y, r, 0, TAU); }
 
-function motif(c: CanvasRenderingContext2D, design: number, paint: string, line: string, accent: string) {
+export function motif(c: CanvasRenderingContext2D, design: number, paint: string, line: string, accent: string) {
   c.lineCap = "round"; c.lineJoin = "round";
   // A painted band under the shoulder, as on the real pots.
   c.strokeStyle = line; c.lineWidth = 1.4;
@@ -183,60 +182,3 @@ export function drawStick(c: CanvasRenderingContext2D, x: number, top: number, w
   c.fillStyle = palette.cream;
   c.fillRect(x - width * 0.02, top + 0.8, width * 0.04, height - 1.6);
 }
-
-/** Static stall: striped tent cloth, a scalloped awning, bamboo poles, ropes with a string per pot, and the earth floor. In world units. */
-export function drawStall(c: CanvasRenderingContext2D) {
-  c.fillStyle = palette.cloth; c.fillRect(0, 0, W, H);
-  c.fillStyle = palette.clothStripe;
-  for (let x = WALL; x < W - WALL; x += 48) c.fillRect(x + 24, TOP, 24, H - TOP);
-
-  // Earth floor under the stick.
-  const floor = STICK_Y + STICK_H + 6;
-  c.fillStyle = palette.ground; c.fillRect(0, floor, W, H - floor);
-  c.fillStyle = palette.groundDark;
-  for (const [x, y, r] of [[40, 8, 2], [96, 18, 1.5], [150, 10, 2.2], [214, 22, 1.6], [262, 9, 1.8], [318, 17, 2.2], [70, 26, 1.4], [190, 28, 1.3]]) { c.beginPath(); c.arc(x, floor + y, r, 0, TAU); c.fill(); }
-  c.fillStyle = "rgba(60,30,0,0.18)"; c.fillRect(0, floor, W, 2);
-
-  // Ropes, each with a short string and knot per pot.
-  c.strokeStyle = palette.rope; c.lineCap = "round";
-  for (let row = 0; row < ROWS; row++) {
-    const y = ROPE_Y + row * ROW_GAP;
-    c.lineWidth = 1.6;
-    c.beginPath(); c.moveTo(WALL, y - 1); c.quadraticCurveTo(W / 2, y + 3, W - WALL, y - 1); c.stroke();
-    c.lineWidth = 1.1;
-    c.beginPath();
-    for (let col = 0; col < COLS; col++) { const x = WALL + CELL * (col + 0.5); c.moveTo(x, y + 0.5); c.lineTo(x, y + POT_DROP + 1); }
-    c.stroke();
-    c.fillStyle = palette.rope;
-    for (let col = 0; col < COLS; col++) { c.beginPath(); c.arc(WALL + CELL * (col + 0.5), y + 1, 1.6, 0, TAU); c.fill(); }
-  }
-
-  // Bamboo poles: the side walls.
-  for (const x of [0, W - WALL]) {
-    const g = c.createLinearGradient(x, 0, x + WALL, 0);
-    g.addColorStop(0, palette.bambooDark); g.addColorStop(0.4, "#efd394"); g.addColorStop(1, palette.bambooDark);
-    c.fillStyle = g; c.fillRect(x, 0, WALL, H);
-    c.fillStyle = palette.bambooNode;
-    for (let y = 70; y < H; y += 92) c.fillRect(x, y, WALL, 2.5);
-  }
-
-  // The awning: red and cream stripes ending in scallops that stop right at the ceiling.
-  const band = TOP - 12;
-  for (let x = 0, i = 0; x < W; x += 24, i++) {
-    c.fillStyle = i % 2 ? palette.awningLight : palette.awning;
-    c.fillRect(x, 0, 24, band);
-    c.beginPath(); c.arc(x + 12, band, 12, 0, Math.PI); c.fill();
-  }
-  c.strokeStyle = palette.awningDeep; c.lineWidth = 1.5;
-  c.beginPath(); for (let x = 0; x < W; x += 24) { c.moveTo(x + 24, band); c.arc(x + 12, band, 12, 0, Math.PI); } c.stroke();
-  c.fillStyle = palette.awningDeep; c.fillRect(0, 0, W, 4);
-}
-
-/** The resting-ball aim: a few dots along the launch direction. */
-export function drawAim(c: CanvasRenderingContext2D, x: number, y: number, dx: number, dy: number) {
-  c.fillStyle = "rgba(43,26,16,0.35)";
-  c.beginPath();
-  for (let k = 1; k <= 4; k++) dot(c, x + dx * (BALL_R * 2.6 * k + 4), y + dy * (BALL_R * 2.6 * k + 4), 2.2 - k * 0.3);
-  c.fill();
-}
-

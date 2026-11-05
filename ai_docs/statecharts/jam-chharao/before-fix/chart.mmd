@@ -1,0 +1,101 @@
+---
+title: "জﬂ°°2509¶ßযﬂ°°2494¶ßম ছﬂ°°2494¶ßডﬂ°°2492¶ßﬂ°°2494¶ßও: the jam, the pause, the window and your finger"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks InputReleasedWhenAway in some cases
+    lg4: Path to the InputReleasedWhenAway or NoDropCountsWhilePaused or NothingMovesWhilePaused bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 mayBreak
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Jam" as r0 {
+      s0: no moves yet
+      s1: one move made
+      s2: CNG is out, result shows
+      s3: two moves made
+      s4: Paused, one move made
+      s5: Paused, two moves made
+      s6: Paused, no moves yet
+      [*] --> s0
+      s0 --> s1: you slide a car with the arrows or a hint [when Window is You're on the page and Finger is Finger off]
+      s0 --> s2: you slide a car with the arrows or a hint [when Window is You're on the page and Finger is Finger off]
+      s0 --> s1: you lift your finger [when Window is not Tab hidden and Finger is Dragging a car]
+      s0 --> s2: you lift your finger [when Window is not Tab hidden and Finger is Dragging a car]
+      s1 --> s0: you start a jam or you press ফ#2495;র#2495;য#2492;#2503; আন#2507; [when Window is You're on the page and Finger is Finger off]
+      s1 --> s3: you slide a car with the arrows or a hint [when Window is You're on the page and Finger is Finger off]
+      s1 --> s4: you hide the tab
+      s1 --> s2: you slide a car with the arrows or a hint [when Window is You're on the page and Finger is Finger off]
+      s2 --> s0: you start a jam [when Window is You're on the page]
+      s1 --> s3: you lift your finger [when Finger is Dragging a car]
+      s1 --> s2: you lift your finger [when Finger is Dragging a car]
+      s3 --> s0: you start a jam [when Window is You're on the page and Finger is Finger off]
+      s3 --> s1: you press ফ#2495;র#2495;য#2492;#2503; আন#2507; [when Window is You're on the page and Finger is Finger off]
+      s3 --> s2: you slide a car with the arrows or a hint [when Window is You're on the page and Finger is Finger off]
+      s3 --> s5: you hide the tab
+      s3 --> s2: you lift your finger [when Finger is Dragging a car]
+      s4 --> s0: you start a jam [when Window is You're on the page and Finger is Finger off]
+      s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s4 --> s6: you press ফ#2495;র#2495;য#2492;#2503; আন#2507; [when Window is You're on the page and Finger is Finger off]
+      s6 --> s0: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you start a jam [when Window is You're on the page]
+      s4 --> s5: you lift your finger [when Window is not Tab hidden and Finger is Dragging a car]
+      s4 --> s2: you lift your finger [when Window is not Tab hidden and Finger is Dragging a car]
+      s5 --> s0: you start a jam [when Window is You're on the page and Finger is Finger off]
+      s5 --> s3: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s5 --> s4: you press ফ#2495;র#2495;য#2492;#2503; আন#2507; [when Window is You're on the page and Finger is Finger off]
+      s5 --> s2: you lift your finger [when Window is not Tab hidden and Finger is Dragging a car]
+    }
+    --
+    state "Window" as r1 {
+      s7: You're on the page
+      s8: Tab hidden
+      s9: Another window has focus
+      [*] --> s7
+      s7 --> s8: you hide the tab
+      s7 --> s9: you click into another window
+      s8 --> s7: the tab shows again
+      s9 --> s7: you come back to the window
+      s9 --> s8: you hide the tab
+    }
+    --
+    state "Finger" as r2 {
+      s10: Finger off
+      s11: Dragging a car
+      [*] --> s10
+      s10 --> s11: you press on a car [when Jam is one of no moves yet, one move made, two moves made and Window is You're on the page]
+      s11 --> s10: you lift your finger [when Window is not Tab hidden]
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 blue
+  class s3 teal
+  class s3 mayBreak
+  class s4 yellow
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 yellow
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 yellow
+  class s6 bugPath
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath

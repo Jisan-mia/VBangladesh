@@ -1,53 +1,49 @@
-// Writes lib/levels.ts: node --import tsx tools/churir-bazar/scripts/make-levels.ts
-// Goals are authored here. For each level, nine seeds are played by the greedy bot and the median one is kept, so no level
-// rides on a lucky tray. The move limit is the bot's count plus room (less room each মেলা), and the stars come from
-// fifteen looser runs (lib/bot.ts thresholds). The tests replay the bot on every level and check the same numbers.
-import { writeFileSync } from "node:fs";
-import { RAINBOW as R, SPARKLE as S } from "../lib/board";
-import { botGame, peopleScores, thresholds } from "../lib/bot";
-import type { LevelSpec } from "../lib/levels";
+// Writes lib/ladder-seeds.ts: node --import tsx tools/churir-bazar/scripts/make-levels.ts [first [last]]
+// The goals are authored in lib/ladder.ts. For each level, nine seeds are played by the greedy bot and the median one is kept,
+// so no level rides on a lucky tray. The move limit is the bot's count plus room (less room each মেলা, less on a tight level),
+// and the stars come from fifteen looser runs (lib/hint.ts thresholds). tests/levels.test.ts replays the bot on every level
+// and checks the same numbers.
+import { readFileSync, writeFileSync } from "node:fs";
+import { botGame, peopleScores, thresholds } from "../lib/hint";
+import { DEFS, PER_WORLD, worldOf, type Seeded } from "../lib/ladder";
+import { newRun } from "../lib/rules";
 
-type Spec = [colours: number, goals: Array<[number, number]>];
-// colours: 0 লাল, 1 সবুজ, 2 নীল, 3 হলুদ, 4 বেগুনি, 5 সাদা
-const SPECS: Spec[] = [
-  // ১ গ্রামের মেলা: one colour at a time, then two goals, then the first ঝিকমিক
-  [4, [[0, 10]]], [5, [[1, 15]]], [5, [[2, 20]]], [5, [[3, 25]]], [5, [[0, 18], [1, 18]]],
-  [5, [[4, 28]]], [5, [[S, 1], [0, 15]]], [5, [[2, 25], [3, 25]]], [5, [[S, 2], [1, 22]]], [5, [[0, 30], [4, 30]]],
-  // ২ বৈশাখী মেলা: the রংধনু, three goals
-  [5, [[R, 1]]], [5, [[3, 35]]], [5, [[S, 2], [2, 25]]], [5, [[0, 22], [1, 22], [3, 22]]], [5, [[R, 1], [4, 25]]],
-  [5, [[S, 3]]], [5, [[1, 32], [2, 32]]], [5, [[S, 2], [R, 1]]], [5, [[0, 35], [3, 35]]], [5, [[S, 3], [4, 28], [0, 28]]],
-  // ৩ চুড়িপট্টি: a sixth colour, সাদা
-  [6, [[5, 15]]], [6, [[0, 20], [5, 20]]], [6, [[S, 2], [2, 20]]], [6, [[1, 20], [3, 20]]], [6, [[R, 1], [5, 20]]],
-  [6, [[S, 3], [4, 20]]], [6, [[0, 22], [2, 22], [5, 22]]], [6, [[R, 1], [S, 2]]], [6, [[3, 22], [4, 22]]], [6, [[S, 3], [R, 1], [1, 25]]],
-  // ৪ রাতের মেলা: bigger goals, tighter moves
-  [6, [[0, 28], [1, 28]]], [6, [[S, 4]]], [6, [[2, 24], [5, 24]]], [6, [[R, 1], [5, 25]]], [6, [[3, 25], [4, 25], [0, 25]]],
-  [6, [[S, 3], [2, 22]]], [6, [[R, 1], [S, 3]]], [6, [[1, 26], [5, 26]]], [6, [[R, 1], [0, 30]]], [6, [[S, 2], [R, 1], [4, 20]]],
-];
-const ROOM = [1.8, 1.55, 1.4, 1.3], EXTRA = [5, 4, 3, 3], LEAST = [15, 16, 18, 18];
+const ROOM = [1.8, 1.6, 1.5, 1.45], EXTRA = [5, 4, 4, 4], LEAST = [12, 16, 18, 18];
+const first = Number(process.argv[2] ?? 1), last = Number(process.argv[3] ?? DEFS.length);
+const file = new URL("../lib/ladder-seeds.ts", import.meta.url);
+const old: Seeded[] = [];
+try {
+  const text = readFileSync(file, "utf8");
+  for (const match of text.matchAll(/\{ seed: (\d+), moves: (\d+), three: (\d+), two: (\d+), bot: (\d+), botScore: (\d+) \}/g)) old.push({ seed: +match[1], moves: +match[2], three: +match[3], two: +match[4], bot: +match[5], botScore: +match[6] });
+} catch { /* first run */ }
 
-const rows: string[] = [];
-SPECS.forEach(([colours, goals], index) => {
-  const world = Math.floor(index / 10), tries: Array<{ seed: number; moves: number }> = [];
-  for (let seed = (index + 1) * 1000 + 1; tries.length < 9; seed++) {
-    const game = botGame({ colours, goals, moves: 150, seed, three: 0, two: 0, bot: 0, botScore: 0 });
+const rows: Seeded[] = [];
+DEFS.forEach((def, index) => {
+  const level = index + 1;
+  if (level < first || level > last) { rows.push(old[index] ?? { seed: level * 1000 + 1, moves: 30, three: 0, two: 0, bot: 0, botScore: 0 }); return; }
+  const world = worldOf(level);
+  const tries: Array<{ seed: number; moves: number }> = [];
+  let seed = level * 1000 + 1;
+  for (let attempts = 0; tries.length < 9 && attempts < 300; seed++, attempts++) {
+    const game = botGame(newRun(level), { ...def, moves: 150, seed, three: 0, two: 0, bot: 0, botScore: 0 });
     if (game.won) tries.push({ seed, moves: game.moves.length });
   }
+  if (tries.length < 9) throw new Error(`level ${level} (${def.name}): the greedy bot clears only ${tries.length} of 300 trays`);
   tries.sort((x, y) => x.moves - y.moves || x.seed - y.seed);
-  const { seed, moves: bot } = tries[4];
-  // Room for a person: at least half the looser runs must clear it.
-  const spec: LevelSpec = { colours, goals, moves: Math.max(LEAST[world], Math.ceil(bot * ROOM[world]) + EXTRA[world]), seed, three: 0, two: 0, bot, botScore: 0 };
-  while (!thresholds(spec).three) spec.moves += 2;
-  const game = botGame(spec);
-  if (!game.won || game.moves.length !== bot) throw new Error(`level ${index + 1}: the bot changed its mind`);
-  const { three, two } = thresholds(spec), moves = spec.moves, botScore = game.score;
-  rows.push(`  { colours: ${colours}, goals: [${goals.map(([t, c]) => `[${t}, ${c}]`).join(", ")}], moves: ${moves}, seed: ${seed}, three: ${three}, two: ${two}, bot: ${bot}, botScore: ${botScore} },`);
-  console.log(index + 1, { seed, bot, moves, botScore, three, two, people: peopleScores(spec).join(",") });
+  const pick = tries[4], room = ROOM[world] - (def.tight ? 0.3 : 0), extra = def.tight ? 2 : EXTRA[world];
+  const spec = { ...def, seed: pick.seed, moves: Math.max(LEAST[world], Math.ceil(pick.moves * room) + extra), three: 0, two: 0, bot: pick.moves, botScore: 0 };
+  while (!thresholds(level, spec).three) spec.moves += 2;
+  const game = botGame(newRun(level), spec);
+  if (!game.won || game.moves.length !== pick.moves) throw new Error(`level ${level}: the bot changed its mind`);
+  const { three, two } = thresholds(level, spec);
+  rows.push({ seed: spec.seed, moves: spec.moves, three, two, bot: pick.moves, botScore: game.score });
+  console.log(level, def.name, { seed: spec.seed, bot: pick.moves, moves: spec.moves, botScore: game.score, three, two, people: peopleScores(level, { ...spec, three, two }).join(",") });
 });
 
-writeFileSync(new URL("../lib/levels.ts", import.meta.url), `// Generated by scripts/make-levels.ts: don't edit by hand. 40 levels in four মেলা: গ্রামের মেলা, বৈশাখী মেলা, চুড়িপট্টি, রাতের মেলা.
+writeFileSync(file, `// Generated by scripts/make-levels.ts: don't edit by hand. ${DEFS.length} levels in ${DEFS.length / PER_WORLD} মেলা.
 // \`bot\` is the greedy bot's move count to clear the goals and \`botScore\` its final score; moves and stars are set from them.
-export type LevelSpec = { colours: number; goals: ReadonlyArray<readonly [number, number]>; moves: number; seed: number; three: number; two: number; bot: number; botScore: number };
-export const LEVELS: readonly LevelSpec[] = [
-${rows.join("\n")}
+import type { Seeded } from "./ladder";
+export const SEEDS: readonly Seeded[] = [
+${rows.map(row => `  { seed: ${row.seed}, moves: ${row.moves}, three: ${row.three}, two: ${row.two}, bot: ${row.bot}, botScore: ${row.botScore} },`).join("\n")}
 ];
 `);

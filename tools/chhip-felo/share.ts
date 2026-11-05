@@ -1,7 +1,8 @@
 import type { ToolShare } from "../../shared/share-types";
-import { parseShared, previewTitle, sharedHash } from "./lib/link";
+import { parseShared, sharedHash } from "./lib/challenge";
+import { previewTitle } from "./lib/lines";
 
-// No tally: a link only re-opens one trip (rebuilt from seed and level) with the friend's own basket weight.
+// No tally: a link only re-opens one trip (rebuilt from seed, level and mode) with the friend's own basket weight.
 export const share: ToolShare = {
   normalize(state) {
     const shared = parseShared(state);

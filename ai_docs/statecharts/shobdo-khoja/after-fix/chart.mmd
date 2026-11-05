@@ -1,0 +1,68 @@
+---
+title: "Shobdo khoja after the rewrite: page, pen, window, choices and levels"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Start card, grid hidden
+      s1: Hunting, clock running
+      s2: সব ল#2503;ভ#2503;ল open, nothing started
+      s3: Paused (থ#2503;ম#2503; আছ#2503;), pen lifted
+      s4: সব ল#2503;ভ#2503;ল open, clock stopped
+      s5: Hunting, pen on the grid
+      s6: Ask card: এই প#2494;ত#2494; ছ#2503;ড#2492;#2503; য#2494;ব#2503;? (clock stopped)
+      s7: All words struck, result shows
+      [*] --> s0
+      s0 --> s1: you press খ#2507;#2433;জ#2494; শ#2497;র#2497; [when Window is You're on the page]
+      s0 --> s2: you open সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s1 --> s3: you click into another window
+      s1 --> s4: you open সব ল#2503;ভ#2503;ল
+      s1 --> s5: you touch a letter
+      s2 --> s0: you close the sheet or you pick a level [when Window is You're on the page]
+      s4 --> s1: you close the sheet [when Window is You're on the page]
+      s4 --> s6: you pick a level [when Window is You're on the page]
+      s5 --> s1: you let go without a word or you let go on a listed word
+      s5 --> s3: you click into another window
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s3 --> s4: you open সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s6 --> s0: you press ছ#2503;ড#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s6 --> s1: you press এখ#2494;ন#2503;ই থ#2494;ক#2507; [when Window is You're on the page]
+      s5 --> s7: you strike the last word, the next level opens [when Levels is Only level 1 open (a friend's level only visits)]
+      s7 --> s2: you open সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s7 --> s0: you press আব#2494;র খ#2503;ল#2507; [when Window is You're on the page]
+      s7 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল [when Window is You're on the page and Levels is Level 2 open by your own clear]
+      s5 --> s7: you strike the last word
+      s2 --> s7: you close the sheet [when Window is You're on the page]
+    }
+    --
+    state "Window" as r1 {
+      s8: You're on the page
+      s9: Away (another window or tab)
+      [*] --> s8
+      s8 --> s9: you click into another window
+      s9 --> s8: you come back to the window
+    }
+    --
+    state "Levels" as r2 {
+      s10: Only level 1 open (a friend's level only visits)
+      s11: Level 2 open by your own clear
+      [*] --> s10
+      s10 --> s11: you strike the last word, the next level opens [when Game is Hunting, pen on the grid and Window is You're on the page]
+    }
+  }
+  class s0 teal
+  class s1 teal
+  class s3 yellow
+  class s4 yellow
+  class s5 teal
+  class s6 yellow
+  class s7 blue

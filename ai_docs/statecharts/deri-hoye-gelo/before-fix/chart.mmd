@@ -1,0 +1,85 @@
+---
+title: "Deri hoye gelo: the run, the window, the keys and the result"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks CelebrationOnlyOnResult or InputMatchesHand or InputReleasedWhenAway or PausedWhenBlurred or ReplayIsExact or ResultStaysUntilYouChoose
+    lg4: Breaks InputMatchesHand or InputReleasedWhenAway in some cases
+    lg5: Path to the CelebrationOnlyOnResult or InputMatchesHand or InputReleasedWhenAway or PausedWhenBlurred or ReplayIsExact or ResultStaysUntilYouChoose bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  s0: Ready
+  s1: Running
+  s2: Result
+  s3: Paused
+  s4: Running while you're away
+  s5: Ducking
+  s6: Your road under the friend's banner
+  s7: Space let go: a new run started by itself
+  s8: Running ducked while you're away
+  s9: Ready, the old confetti still to come
+  s10: Running, the old confetti still to come
+  s11: Ducked with no key held
+  [*] --> s0
+  s0 --> s1: you press Space
+  s1 --> s2: the kid bumps into something or the kid reaches the gate
+  s1 --> s3: you press P or you hide the tab
+  s1 --> s4: you click into another window
+  s1 --> s1: you let go
+  s2 --> s2: আর#2503;কব#2494;র takes focus or you let go
+  s4 --> s1: you come back
+  s4 --> s2: the kid bumps into something or the kid reaches the gate
+  s1 --> s5: you hold #8595;
+  s1 --> s6: you open a friend's link
+  s2 --> s0: you open a friend's link or you pick a day
+  s2 --> s9: you open a friend's link or you pick a day
+  s2 --> s7: you let go
+  s3 --> s1: you press Space or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s5 --> s1: you let go
+  s5 --> s2: the kid bumps into something or the kid reaches the gate
+  s5 --> s8: you click into another window
+  s6 --> s2: the kid bumps into something or the kid reaches the gate
+  s2 --> s10: you press আর#2503;কব#2494;র or you let go
+  s7 --> s1: you press Space or you press আর#2503;কব#2494;র
+  s8 --> s2: the kid bumps into something or the kid reaches the gate
+  s8 --> s11: you come back
+  s9 --> s0: the confetti falls
+  s10 --> s1: the confetti falls
+  s11 --> s2: the kid bumps into something or the kid reaches the gate
+  s11 --> s5: you hold #8595;
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 bugPath
+  class s2 blue
+  class s2 bugPath
+  class s3 yellow
+  class s4 teal
+  class s4 breaks
+  class s4 bugPath
+  class s5 teal
+  class s5 bugPath
+  class s6 breaks
+  class s6 bugPath
+  class s7 breaks
+  class s7 bugPath
+  class s8 teal
+  class s8 breaks
+  class s8 bugPath
+  class s9 teal
+  class s9 breaks
+  class s9 bugPath
+  class s10 breaks
+  class s11 teal
+  class s11 breaks

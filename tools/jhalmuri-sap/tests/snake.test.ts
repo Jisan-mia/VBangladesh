@@ -4,7 +4,7 @@ import { site } from "../content";
 import { share } from "../share";
 import { banner, caption, parseShared, previewTitle, sharedHash, MAX_SCORE, POINTS } from "../lib/link";
 import {
-  bands, cellOf, compareLine, createGame, heading, humanLine, interval, step, turn, turnSide,
+  bands, bodyCells, cellOf, compareLine, createGame, headCell, heading, humanLine, interval, queuedTurns, setBody, step, turn, turnSide,
   BONUS_EVERY, BONUS_LIFE, BONUS_POINTS, CELLS, COLS, DX, DY, ROWS, START, type Dir, type Game, type Kind,
 } from "../lib/snake";
 
@@ -13,9 +13,10 @@ const xy = (cell: number) => [cell % COLS, Math.floor(cell / COLS)] as const;
 /** A simple bot: breadth-first to the food (or the golden chilli if it's closer), else any move that doesn't crash. `vertical` flips its tie-breaking so two bots take different paths. */
 function botMove(game: Game, vertical = false): Dir | null {
   const order: Dir[] = vertical ? [0, 2, 1, 3] : [1, 3, 0, 2];
-  const blocked = new Set(game.body.slice(0, -1));
+  const body = bodyCells(game);
+  const blocked = new Set(body.slice(0, -1));
   const goals = new Set([game.food, game.bonus].filter(cell => cell >= 0));
-  const head = game.body[0];
+  const head = body[0];
   const firstStep = new Map<number, Dir>([[head, game.dir]]);
   const queue = [head];
   while (queue.length) {
@@ -47,7 +48,7 @@ function play(seed: number, vertical = false, limit = 4000) {
 
 test("the same seed gives the same game, move for move", () => {
   const one = play(48213), two = play(48213);
-  assert.deepEqual(one.game.body, two.game.body);
+  assert.deepEqual(bodyCells(one.game), bodyCells(two.game));
   assert.equal(one.game.score, two.game.score);
   assert.deepEqual(one.kinds, two.kinds);
   const other = createGame(48214), first = createGame(48213);
@@ -56,7 +57,7 @@ test("the same seed gives the same game, move for move", () => {
 
 test("the seed alone fixes the order of the food, whatever path the snake takes", () => {
   const sideways = play(777, false, 600), upright = play(777, true, 600);
-  assert.notDeepEqual(sideways.game.body, upright.game.body);
+  assert.notDeepEqual(bodyCells(sideways.game), bodyCells(upright.game));
   const shared = Math.min(sideways.kinds.length, upright.kinds.length);
   assert.ok(shared > 10);
   assert.deepEqual(sideways.kinds.slice(0, shared), upright.kinds.slice(0, shared));
@@ -72,7 +73,7 @@ test("a turn can never fold the snake back on itself, however fast the taps", ()
   assert.equal(step(game), "move");
   assert.equal(step(game), "move");
   assert.equal(game.over, false);
-  assert.deepEqual(xy(game.body[0]), [4, 12]);
+  assert.deepEqual(xy(headCell(game)), [4, 12]);
   // Taps turn relative to where the snake will be heading after the queued turns.
   const tapper = createGame(1);
   assert.equal(turnSide(tapper, 1), true);
@@ -81,7 +82,7 @@ test("a turn can never fold the snake back on itself, however fast the taps", ()
   assert.equal(heading(tapper), 2);
   assert.equal(turnSide(tapper, -1), true);
   assert.equal(turnSide(tapper, -1), false, "the buffer holds three turns");
-  assert.deepEqual(tapper.queue, [1, 2, 1]);
+  assert.deepEqual(queuedTurns(tapper), [1, 2, 1]);
 });
 
 test("the tin fence ends the game; the snake gets 11 free moves straight up", () => {
@@ -91,40 +92,41 @@ test("the tin fence ends the game; the snake gets 11 free moves straight up", ()
   assert.equal(step(game), "crash");
   assert.equal(game.over, true);
   assert.equal(step(game), "none");
-  assert.deepEqual(xy(game.body[0]), [5, 0]);
+  assert.deepEqual(xy(headCell(game)), [5, 0]);
+  assert.equal(game.crash, "fence");
 });
 
 test("biting its own body ends it, but chasing its own tail is fine", () => {
   const ring = createGame(2);
   ring.food = cellOf(0, 0); ring.bonus = -1;
-  ring.body = [cellOf(5, 5), cellOf(5, 6), cellOf(6, 6), cellOf(6, 5)];
+  setBody(ring, [cellOf(5, 5), cellOf(5, 6), cellOf(6, 6), cellOf(6, 5)]);
   ring.dir = 0;
   turn(ring, 1);
   assert.equal(step(ring), "move", "the tail leaves (6,5) as the head arrives");
   const coil = createGame(2);
   coil.food = cellOf(0, 0); coil.bonus = -1;
-  coil.body = [cellOf(5, 5), cellOf(5, 6), cellOf(6, 6), cellOf(6, 5), cellOf(7, 5)];
+  setBody(coil, [cellOf(5, 5), cellOf(5, 6), cellOf(6, 6), cellOf(6, 5), cellOf(7, 5)]);
   coil.dir = 0;
   turn(coil, 1);
   assert.equal(step(coil), "crash");
+  assert.equal(coil.crash, "tail");
 });
 
 test("food scores 10, a golden chilli 30, and the chilli comes after every 4th food and fades after 45 moves", () => {
   const game = createGame(9);
-  const eatNext = () => { game.food = game.body[0] - COLS; game.dir = 0; return step(game); };
-  game.body = [cellOf(5, 12), cellOf(5, 13), cellOf(5, 14)];
+  const eatNext = () => { game.food = headCell(game) - COLS; game.dir = 0; return step(game); };
   for (let i = 1; i <= BONUS_EVERY; i++) {
-    game.body = [cellOf(5, 12), cellOf(5, 13), cellOf(5, 14)];
+    setBody(game, [cellOf(5, 12), cellOf(5, 13), cellOf(5, 14)]);
     assert.equal(eatNext(), "eat");
     assert.equal(game.score, i * POINTS);
     assert.equal(game.bonus >= 0, i === BONUS_EVERY);
   }
   assert.equal(game.bonusLife, BONUS_LIFE);
-  const length = game.body.length;
-  game.bonus = game.body[0] - COLS;
+  const length = game.length;
+  game.bonus = headCell(game) - COLS;
   assert.equal(step(game), "bonus");
   assert.equal(game.score, BONUS_POINTS + BONUS_EVERY * POINTS);
-  assert.equal(game.body.length, length + 1);
+  assert.equal(game.length, length + 1);
 
   const fading = createGame(9);
   fading.food = cellOf(0, 15); fading.bonus = cellOf(11, 0); fading.bonusLife = 3;
@@ -138,12 +140,12 @@ test("filling the whole ঠোঙা is a win, not a crash", () => {
   const path: number[] = [];
   for (let y = 0; y < ROWS; y++) for (let i = 0; i < COLS; i++) path.push(cellOf(y % 2 ? COLS - 1 - i : i, y));
   const game = createGame(3);
-  game.body = path.slice(0, CELLS - 1).reverse();
+  setBody(game, path.slice(0, CELLS - 1).reverse());
   game.food = path[CELLS - 1]; game.bonus = -1;
   game.dir = 3;
   assert.equal(step(game), "win");
   assert.equal(game.won, true);
-  assert.equal(game.body.length, CELLS);
+  assert.equal(game.length, CELLS);
 });
 
 test("speed rises gently and ধীরে খেলো caps it", () => {
@@ -162,11 +164,12 @@ test("a headless run ends sanely with a plausible score", () => {
   for (const seed of [1, 48213, 999_999_999]) {
     const { game } = play(seed);
     assert.equal(game.score, game.eaten * POINTS + game.golden * BONUS_POINTS);
-    assert.equal(game.body.length, START.length + game.eaten + game.golden);
+    assert.equal(game.length, START.length + game.eaten + game.golden);
     assert.ok(game.score >= 200, `seed ${seed}: ${game.score}`);
     assert.ok(game.score <= MAX_SCORE);
     assert.ok(game.golden <= Math.floor(game.eaten / BONUS_EVERY));
-    assert.equal(new Set(game.body).size, game.body.length, "no cell holds two segments");
+    assert.equal(new Set(bodyCells(game)).size, game.length, "no cell holds two segments");
+    assert.equal(game.occ.reduce((sum, cell) => sum + cell, 0), game.length, "the occupancy grid matches the body");
   }
 });
 
@@ -211,7 +214,7 @@ test("previews and captions are personal and honest", () => {
 test("content meets the SEO limits and never names a trademark", () => {
   assert.ok(site.title.length <= 45, String(site.title.length));
   assert.ok(site.description.length >= 120 && site.description.length <= 160, String(site.description.length));
-  assert.ok(site.faq.length >= 5);
+  assert.ok(site.faq.length >= 6);
   assert.ok(site.steps.length >= 3);
   assert.match(site.privacy.join(" "), /স্কোর/);
   const everything = JSON.stringify(site) + share.preview("").description;

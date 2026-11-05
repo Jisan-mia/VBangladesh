@@ -1,5 +1,5 @@
 import { cardSizes, drawFooterBand, fitText, renderCard } from "../../../shared/card-canvas";
-import { cardLines, type Today } from "./game";
+import { cardLines, type Today } from "./round";
 import { FISH_BODY, FISH_EYE, FISH_FIN, FISH_TAIL, FISH_TINTS } from "./shapes";
 
 const colors = { bg: "#eef7f4", ink: "#1f3a3d", muted: "#5a7275", accent: "#0f7c78", pond: "#8fd0d6", pondEdge: "#4fa9b2", band: "#123b40", ask: "#ffd166" };

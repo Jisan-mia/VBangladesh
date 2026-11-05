@@ -1,16 +1,16 @@
 import type { ToolShare } from "../../shared/share-types";
-import { cardHash, parseCard, previewTitle } from "./lib/result";
+import { parseShared, previewTitle, sharedHash } from "./lib/link";
 
 export const share: ToolShare = {
   normalize(state) {
-    const card = parseCard(state);
-    return card ? cardHash(card) : null;
+    const shared = parseShared(state);
+    return shared ? sharedHash(shared) : null;
   },
   preview(state) {
-    const card = parseCard(state);
+    const shared = parseShared(state);
     return {
-      title: card ? previewTitle(card) : "তারের ফাঁকে বেলুন: কয়টা ফাঁক পার হবে?",
-      description: "ঢাকার গলির তারের জটে বেলুনওয়ালার বেলুন। চাপ দিলে ওঠে, না দিলে নামে। একই তারের জটে খেলে দেখো কে বেশি ফাঁক পার হয়। ফ্রি, অ্যাকাউন্ট লাগে না।",
+      title: shared ? previewTitle(shared) : "তারের ফাঁকে বেলুন: কয়টা ফাঁক পার হবে?",
+      description: "ঢাকার গলির তারের জটে বেলুনওয়ালার বেলুন। চেপে ধরলে ওঠে, ছাড়লে নামে। একই তার, একই কাক, একই হাওয়ায় খেলে দেখো কে বেশি ফাঁক পার হয়। ফ্রি, অ্যাকাউন্ট লাগে না।",
     };
   },
 };

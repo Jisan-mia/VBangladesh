@@ -1,7 +1,8 @@
 // The village paintings: a seed picks the layers (sky, sun or moon, river, boat, hut, palms, banana trees, paddy, birds, hill, fog),
 // and drawPainting paints them on any 2D context. Pure: no DOM, nothing per frame. The game paints once per level into an offscreen canvas.
 import { makeRng, pick } from "../../../shared/game-core";
-import type { World } from "./game";
+import { levelSeed, worldOf, type World } from "./game";
+import { infoOf, isFinale } from "./levels";
 
 type Rgb = readonly [number, number, number];
 const hex = (value: string): Rgb => [parseInt(value.slice(1, 3), 16), parseInt(value.slice(3, 5), 16), parseInt(value.slice(5, 7), 16)];
@@ -52,7 +53,14 @@ export type Painting = {
   gold: boolean; fog: number;
   kash: { x: number; y: number; w: number } | null;
   fireflies: { x: number; y: number }[];
+  /** A finale's own scene: a bamboo ghat with a second boat, red sails going home, or sky lanterns under a full moon. */
+  extra: Extra;
+  /** Extra boats on the water (the sails finale), each at a depth t along the river. */
+  fleet: { t: number; shift: number; s: number; dir: 1 | -1 }[];
+  lanterns: { x: number; y: number; s: number }[];
 };
+export type Extra = "ghat" | "sails" | "lanterns" | null;
+const EXTRAS: readonly Extra[] = ["ghat", "sails", "lanterns"];
 
 const between = (rng: () => number, low: number, high: number) => low + rng() * (high - low);
 
@@ -65,7 +73,7 @@ export function riverAt({ horizon, river }: Pick<Painting, "horizon" | "river">,
 const depthOf = (horizon: number, y: number) => (y - horizon) / (1 - horizon);
 
 /** The painting for a seed and world. Same seed, same painting on every phone. */
-export function paintingOf(seed: number, world: World): Painting {
+export function paintingOf(seed: number, world: World, finale = false): Painting {
   const rng = makeRng((seed * 2654435761) >>> 0);
   const palette = pick(rng, 3), horizon = between(rng, 0.4, 0.48);
   const river = { top: between(rng, 0.32, 0.68), bottom: 0, width: between(rng, 0.36, 0.5), bend: between(rng, -0.17, 0.17) };
@@ -118,10 +126,29 @@ export function paintingOf(seed: number, world: World): Painting {
   if (hills.length) features.push("পাহাড়ের কোলে নদী");
   if (kash) features.push("কাশবন");
   if (hut.stack) features.push("খড়ের গাদা");
-  const name = `${["ভোরের", "গোধূলির", "জোছনার"][world]} ${features[pick(rng, features.length)]}`;
+  let name = `${["ভোরের", "গোধূলির", "জোছনার"][world]} ${features[pick(rng, features.length)]}`;
 
-  return { seed, world, palette, horizon, name, orb, clouds, birds, stars, hills, river, hut, palms, bananas, boat, gold, fog, kash, fireflies };
+  // A finale adds its own scene on top of the same village, drawn from the rng after everything else, so the rest stays put.
+  const extra = finale ? EXTRAS[world] : null;
+  const fleet: Painting["fleet"] = [], lanterns: Painting["lanterns"] = [];
+  if (extra === "sails") {
+    boat.sail = true;
+    for (const t of [0.12, 0.22]) fleet.push({ t: t + between(rng, 0, 0.05), shift: between(rng, -0.5, 0.5), s: 0.07 + t * 0.12, dir: boat.dir });
+  }
+  if (extra === "ghat") boat.sail = false;
+  if (extra === "lanterns") {
+    orb.r = 0.075;
+    for (let index = 0; index < 11; index++) lanterns.push({ x: 0.06 + (index + between(rng, 0.1, 0.9)) * 0.08, y: between(rng, 0.06, horizon - 0.08), s: between(rng, 0.018, 0.034) });
+  }
+  if (extra) name = ["খেয়াঘাটের ভোর", "পাল তুলে বাড়ি ফেরা", "পূর্ণিমার ফানুস"][world];
+
+  return { seed, world, palette, horizon, name, orb, clouds, birds, stars, hills, river, hut, palms, bananas, boat, gold, fog, kash, fireflies, extra, fleet, lanterns };
 }
+
+/** The painting a level shows: its own seed and world, and a finale's own scene. */
+export const paintingFor = (level: number) => paintingOf(levelSeed(level), worldOf(level), isFinale(level));
+/** A level's painting name, for the title, the result and the card. */
+export const nameFor = (level: number) => (isFinale(level) ? infoOf(level).name : paintingFor(level).name);
 
 export const paletteOf = (painting: Painting) => PALETTES[painting.world][painting.palette];
 
@@ -271,7 +298,10 @@ export function drawPainting(c: Ink, painting: Painting, left: number, top: numb
     ...painting.bananas.map(tree => ({ y: tree.y, draw: () => drawBanana(c, tree, p, X, Y, L, rng) })),
     ...(painting.kash ? [{ y: painting.kash.y, draw: () => drawKash(c, painting.kash!, p, X, Y, L, rng) }] : []),
   ];
+  if (painting.extra === "ghat") things.push({ y: painting.hut.y + 0.02, draw: () => drawGhat(c, painting, p, X, Y, L) });
+  for (const other of painting.fleet) things.push({ y: riverAt(painting, other.t).y, draw: () => drawBoat(c, { ...painting, boat: { ...other, sail: true } }, p, X, Y, L) });
   things.sort((a, b) => a.y - b.y).forEach(thing => thing.draw());
+  for (const lantern of painting.lanterns) drawLantern(c, lantern, X, Y, L);
 
   // Birds heading home.
   c.strokeStyle = p.ink; c.lineWidth = Math.max(1, L(0.004));
@@ -364,7 +394,7 @@ function drawBoat(c: Ink, painting: Painting, p: Palette, X: Scale, Y: Scale, L:
     const mast = bx + dir * s * 0.12;
     c.strokeStyle = p.hull; c.lineWidth = Math.max(1, L(s * 0.02));
     c.beginPath(); c.moveTo(X(mast), Y(by)); c.lineTo(X(mast), Y(by - s * 0.82)); c.stroke();
-    c.fillStyle = night ? "#c9c4b4" : "#f0e2c2";
+    c.fillStyle = painting.extra === "sails" ? "#c8452c" : night ? "#c9c4b4" : "#f0e2c2";
     c.beginPath(); c.moveTo(X(mast + dir * s * 0.02), Y(by - s * 0.8));
     c.quadraticCurveTo(X(mast - dir * s * 0.18), Y(by - s * 0.45), X(mast - dir * s * 0.36), Y(by - s * 0.1));
     c.lineTo(X(mast + dir * s * 0.02), Y(by - s * 0.08)); c.closePath(); c.fill();
@@ -477,4 +507,35 @@ function drawKash(c: Ink, kash: NonNullable<Painting["kash"]>, p: Palette, X: Sc
     c.fillStyle = rgba(p.plume, 0.85); c.beginPath(); c.ellipse(0, -L(0.012), L(0.006), L(0.022), 0, 0, Math.PI * 2); c.fill();
     c.restore();
   }
+}
+
+/** The bamboo ghat (খেয়াঘাট) reaching from the hut's bank into the river, with a small boat tied at its end. */
+function drawGhat(c: Ink, painting: Painting, p: Palette, X: Scale, Y: Scale, L: Scale) {
+  const t = Math.min(0.85, painting.boat.t + 0.18), at = riverAt(painting, t), hutLeft = painting.hut.x < at.x;
+  const bank = at.x + (hutLeft ? -1 : 1) * at.half, tip = at.x + (hutLeft ? -1 : 1) * at.half * 0.25, y = at.y, w = 0.012 + t * 0.012;
+  c.strokeStyle = mix(p.trunk, "#000000", 0.25); c.lineWidth = Math.max(1, L(0.004 + t * 0.003));
+  c.beginPath();
+  for (let index = 0; index <= 4; index++) { const x = bank + (tip - bank) * (index / 4); c.moveTo(X(x), Y(y - w * 0.2)); c.lineTo(X(x), Y(y + w * 2.2)); }
+  c.stroke();
+  c.fillStyle = mix(p.thatch, p.trunk, 0.45);
+  c.fillRect(X(Math.min(bank, tip)), Y(y - w), L(Math.abs(tip - bank)), L(w));
+  c.strokeStyle = rgba("#000000", 0.2); c.lineWidth = Math.max(0.5, L(0.0015));
+  c.beginPath();
+  for (let index = 1; index < 10; index++) { const x = bank + (tip - bank) * (index / 10); c.moveTo(X(x), Y(y - w)); c.lineTo(X(x), Y(y)); }
+  c.stroke();
+  const small = { t: t + 0.04, shift: hutLeft ? -0.05 : 0.05, s: 0.07 + t * 0.08, sail: false, dir: (hutLeft ? 1 : -1) as 1 | -1 };
+  drawBoat(c, { ...painting, boat: small }, p, X, Y, L);
+}
+
+/** A sky lantern (ফানুস): a paper shade lit from inside, with a soft glow around it. */
+function drawLantern(c: Ink, lantern: Painting["lanterns"][number], X: Scale, Y: Scale, L: Scale) {
+  const { x, y, s } = lantern;
+  const glow = c.createRadialGradient(X(x), Y(y), 0, X(x), Y(y), L(s * 2.4));
+  glow.addColorStop(0, "rgba(255,190,90,0.55)"); glow.addColorStop(1, "rgba(255,170,70,0)");
+  c.fillStyle = glow; c.fillRect(X(x - s * 2.4), Y(y - s * 2.4), L(s * 4.8), L(s * 4.8));
+  const shade = c.createLinearGradient(0, Y(y - s), 0, Y(y + s));
+  shade.addColorStop(0, "#f6c46a"); shade.addColorStop(1, "#ffe9b0");
+  c.fillStyle = shade;
+  c.beginPath(); c.moveTo(X(x - s * 0.55), Y(y - s)); c.lineTo(X(x + s * 0.55), Y(y - s)); c.lineTo(X(x + s * 0.4), Y(y + s * 0.8)); c.lineTo(X(x - s * 0.4), Y(y + s * 0.8)); c.closePath(); c.fill();
+  c.fillStyle = "#fff6d8"; c.beginPath(); c.ellipse(X(x), Y(y + s * 0.8), L(s * 0.4), L(s * 0.12), 0, 0, Math.PI * 2); c.fill();
 }

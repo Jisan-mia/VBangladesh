@@ -1,111 +1,207 @@
-.tool-nam-shikhi{--accent:#1f6f5c;--accent-deep:#14524a;--ink:#2b2416;--muted:#6b604c;--paper:#fff8e8;--edge:#efdcb4;--good:#2e9e44;--glow:#f59e0b}
-.tool-nam-shikhi .ns-page{color:var(--ink)}
+.tool-nam-shikhi{--accent:#1f6f5c;--accent-deep:#14524a;--ink:#2b2416;--muted:#6b604c;--good:#2e9e44}
 
-.ns-hero{padding:8px 0 0}
-.ns-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,5.8vw,40px);line-height:1.35;font-weight:700;letter-spacing:0}
-.ns-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
-.ns-hero .kk-note{margin:8px 0}
-
-.ns{display:grid;gap:8px;max-width:520px;margin-inline:auto}
-.ns-bar{display:flex;align-items:center;gap:8px;min-width:0}
-.ns-where{display:flex;align-items:baseline;gap:8px;flex:1;min-width:0;margin:0;line-height:1.5;white-space:nowrap}
-.ns-where b{font-family:var(--font-display);font-size:18px}
-.ns-where span{overflow:hidden;text-overflow:ellipsis;font-size:14px;font-weight:600;color:var(--muted)}
-.ns-pill{min-height:44px;padding:6px 14px;border:1.5px solid currentColor;border-radius:999px;background:transparent;color:var(--ink);font-size:14px;font-weight:700}
-.ns-pill[aria-pressed=true]{background:var(--ink);color:#fff}
-.ns-bar .gx-sound{color:var(--ink)}
-
-.ns-board{display:grid;gap:12px;padding:12px;border-radius:18px;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--edge);scroll-margin-top:12px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-.ns-dots{display:flex;justify-content:center;gap:8px;margin:0;padding:0;list-style:none}
-.ns-dots li{width:12px;height:12px;border-radius:50%;background:#e8dcbc}
-.ns-dots li.now{box-shadow:0 0 0 2px var(--accent);background:#fff}
-.ns-dots li.on{background:var(--good)}
-
-.ns-prompt{display:flex;align-items:center;justify-content:center;gap:12px;min-height:84px;text-align:center}
-.ns-ask{display:grid;min-width:0}
-.ns-word{margin:0;font-family:var(--font-display);font-size:clamp(34px,10vw,48px);font-weight:800;line-height:1.3;overflow-wrap:anywhere}
-.ns-q{margin:0;font-size:20px;font-weight:600;line-height:1.6;color:var(--muted)}
+.ns{--ease-out:cubic-bezier(.23,1,.32,1);--ns-paper:#fff6e0;--ns-edge:#ecd9a6;--ns-deep:#3f6b2a;--ns-glow:#f2a900;position:relative;display:flex;flex-direction:column;gap:8px;max-width:520px;margin-inline:auto;color:var(--ink)}
+.ns *{-webkit-tap-highlight-color:transparent}
 .ns-pic{display:block;width:100%;height:auto;aspect-ratio:1}
-.ns-pic-big{width:min(46vw,190px)}
-.ns-pic-mid{flex:none;width:min(30vw,120px)}
-.ns-read{flex-direction:column;gap:0}
-.ns-home,.ns-thing{justify-content:flex-start}
-.ns-home .ns-ask,.ns-thing .ns-ask{text-align:left}
 
-.ns-choices{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:0;padding:0;list-style:none}
-.ns-choices li{flex:1 1 96px;max-width:160px}
-.ns-choices.n4 li{flex-basis:40%}
-.ns-choice{position:relative;display:grid;justify-items:center;align-content:start;gap:2px;width:100%;min-height:96px;padding:8px 6px 6px;border:2.5px solid var(--edge);border-radius:18px;background:#fff;color:var(--ink);font:inherit;box-shadow:0 4px 0 var(--edge);transition:transform .08s}
-.ns-choice:active{transform:translateY(3px);box-shadow:0 1px 0 var(--edge)}
-.ns-choice.right{border-color:var(--good);background:#eef8e8;box-shadow:0 4px 0 #a6d79a}
-.ns-choice.wrong{border-style:dashed;opacity:.6}
-.ns-choice:disabled{opacity:.85;cursor:default}
-.ns-choice.hint{border-color:var(--glow);animation:ns-glow 1.2s ease-in-out infinite}
-.ns-name{display:grid;justify-items:center;min-height:52px;line-height:1.35;text-align:center}
-.ns-name b{font-size:18px}
-.ns-name small,.ns-names small{font-size:16px;color:var(--muted)}
-.ns-names .ns-choice{min-height:72px;align-content:center;padding:10px}
-.ns-names .ns-choice b{font-family:var(--font-display);font-size:26px;line-height:1.4}
-@keyframes ns-glow{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--glow) 40%,transparent)}}
+/* corners: where you are, and the page filling up */
+.ns-top{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:36px}
+.ns-badge{display:flex;align-items:baseline;gap:8px;min-width:0;margin:0;line-height:1.4;white-space:nowrap}
+.ns-badge b{font-family:var(--font-display);font-size:17px;font-weight:800}
+.ns-badge span{overflow:hidden;text-overflow:ellipsis;font-size:15px;font-weight:600;color:var(--muted)}
+.ns-total{flex:none;margin:0;font-weight:700;color:var(--ink)}
+.ns-strip{display:flex;flex:none;gap:4px;margin:0;padding:0;list-style:none}
+.ns-strip li{display:grid;place-items:center;width:30px;height:30px;overflow:hidden;border:1.5px dashed var(--ns-edge);border-radius:9px;background:#ffffff8c}
+.ns-strip li.now{border:2.5px solid var(--ns-deep);background:#fff}
+.ns-strip li.on{border:1.5px solid var(--ns-edge);background:#fff;animation:ns-pop .25s var(--ease-out)}
+.ns-strip .ns-pic,.ns-strip .ns-figure{width:26px;height:26px}
 
-.ns-figure-wrap{position:relative;margin:0 auto;touch-action:manipulation}
-.ns-figure-wrap.ns-face{width:min(100%,300px)}
-.ns-figure-wrap.ns-body{width:min(60%,210px)}
-.ns-figure{display:block;width:100%;height:auto;cursor:pointer}
-.ns-figure-small{width:min(46vw,190px)}
+/* the page of the book: every screen lives in here */
+.ns-stage{position:relative;display:flex;flex:1 1 auto;flex-direction:column;min-height:0;padding:12px;border-radius:22px;background:var(--ns-paper);box-shadow:inset 0 0 0 2px var(--ns-edge);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+
+/* the title: the open book is the start button */
+.ns-title{display:flex;flex:1;flex-direction:column;gap:12px;animation:ns-in .25s var(--ease-out)}
+.ns-start{display:flex;flex:1 1 auto;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:190px;padding:10px 10px 8px;border:0;border-radius:24px;background:#fff;box-shadow:0 0 0 3px var(--ns-deep),0 6px 0 var(--ns-deep);color:var(--ink);font:inherit;cursor:pointer;transition:transform .1s var(--ease-out)}
+.ns-start:active{transform:translateY(4px);box-shadow:0 0 0 3px var(--ns-deep),0 2px 0 var(--ns-deep)}
+.ns-start:focus-visible{outline:3px solid var(--ns-glow);outline-offset:4px}
+.ns-book{display:block;flex:1 1 0;width:100%;min-height:0}
+.ns-book-name{font-family:var(--font-display);font-size:22px;font-weight:800;fill:var(--ink)}
+.ns-book-small{font-family:var(--font-display);font-size:17px;font-weight:800;fill:var(--ink)}
+.ns-book-faint{filter:grayscale(1);opacity:.35}
+.ns-book-sticker{animation:ns-bob 2.6s ease-in-out infinite;transform-origin:88px 100px}
+.ns-start-label{font-family:var(--font-display);font-size:clamp(30px,9vw,42px);font-weight:800;line-height:1.3;color:var(--ns-deep)}
+.ns-worlds{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0;padding:0;list-style:none}
+.ns-worlds button{display:grid;justify-items:center;align-content:center;gap:0;width:100%;min-height:96px;padding:6px 4px;border:2px solid var(--ns-edge);border-radius:18px;background:#fff;color:var(--ink);font:inherit;font-size:16px;font-weight:700;line-height:1.4;cursor:pointer;transition:transform .12s var(--ease-out)}
+.ns-worlds button:active,.ns-level-chip:active,.ns-list li button:active{transform:scale(.97)}
+.ns-worlds button[aria-pressed=true]{border-color:var(--ns-deep);box-shadow:0 0 0 2px var(--ns-deep)}
+.ns-world-pic{width:54px;height:54px}
+.ns-level-chip{display:flex;align-items:baseline;justify-content:center;gap:6px;min-height:48px;padding:8px 14px;border:1.5px solid var(--ns-edge);border-radius:14px;background:#fff;color:var(--ink);font:inherit;font-size:16px;cursor:pointer;transition:transform .12s var(--ease-out)}
+.ns-level-chip span{margin-left:4px;font-size:14px;font-weight:700;color:var(--ns-deep);text-decoration:underline}
+.ns-line{margin:0;text-align:center;font-size:16px;line-height:1.6;color:var(--muted)}
+
+/* the level list: a choice screen, nothing runs under it */
+.ns-list{display:flex;flex:1;flex-direction:column;gap:10px;min-height:0;overflow:auto;animation:ns-in .2s var(--ease-out)}
+.ns-list-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ns-list h2{margin:0;font-family:var(--font-display);font-size:20px;line-height:1.4}
+.ns-list ol{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.ns-list li button{position:relative;display:grid;grid-template-columns:30px 52px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-height:72px;padding:8px 12px 8px 10px;border:1.5px solid var(--ns-edge);border-radius:16px;background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer;transition:transform .12s var(--ease-out)}
+.ns-list li button[aria-current=true]{box-shadow:0 0 0 3px var(--ns-deep)}
+.ns-list li button.next{border:2px solid var(--ns-glow);background:#fffbe8}
+.ns-list-n{font-family:var(--font-display);font-size:22px;text-align:center}
+.ns-list-text{display:grid;min-width:0;line-height:1.45}
+.ns-list-text strong{font-size:17px}
+.ns-list-text small{font-size:14px;color:var(--muted)}
+.ns-list em{position:absolute;top:-10px;right:12px;padding:0 8px;border-radius:8px;background:var(--ns-glow);color:#2b2416;font-size:12px;font-style:normal;font-weight:800;line-height:1.7}
+.ns-stars{font-size:14px;letter-spacing:1px;color:#d8cba6;white-space:nowrap}
+.ns-stars i{font-style:normal}
+.ns-stars .on{color:#f2a900}
+.ns-kind{display:grid;place-items:center;width:52px;height:52px;overflow:hidden;border-radius:12px;background:var(--ns-paper)}
+.ns-kind .ns-pic,.ns-kind .ns-peek{width:46px;height:46px}
+.ns-kind-faint .ns-pic{filter:grayscale(1);opacity:.4}
+.ns-kind-word{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--ns-deep)}
+.ns-kind-lens{border-radius:50%;box-shadow:inset 0 0 0 3px var(--ns-deep)}
+.ns-kind-finale{font-size:28px;color:#f2a900}
+
+/* play: the big card, then the stickers (or the figure), then what happens next */
+.ns-play{display:flex;flex:1;flex-direction:column;gap:12px;min-height:0}
+.ns-card{position:relative;display:flex;flex:1 1 0;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:190px;padding:10px;border-radius:22px;background:#fff;box-shadow:0 0 0 2px var(--ns-edge),0 4px 0 var(--ns-edge);container-type:size;animation:ns-deal .28s var(--ease-out)}
+.ns-card.solved{cursor:pointer}
+.ns-slot{position:relative;flex:none;width:min(86cqw,calc(100cqh - 52px),300px);aspect-ratio:1}
+.ns-slot-bn,.ns-slot-en,.ns-slot-role{width:min(50cqw,calc(100cqh - 150px),170px);border:3px dashed var(--ns-edge);border-radius:20px}
+.ns-slot-match{border:3px dashed var(--ns-edge);border-radius:24px}
+.ns-slot-match .ns-pic,.ns-slot-paint .ns-pic{transition:opacity .3s}
+.ns-faint{filter:grayscale(1);opacity:.32}
+.ns-grey{filter:grayscale(1) brightness(1.12) contrast(.85)}
+.ns-card.solved .ns-faint,.ns-card.solved .ns-grey{opacity:0}
+.ns-slot-home{border-radius:20px;overflow:hidden}
+.ns-slot-home::after{content:"";position:absolute;left:30%;right:30%;bottom:8%;height:40%;border:3px dashed #ffffffd9;border-radius:50%}
+.ns-card.solved .ns-slot-home::after{opacity:0}
+.ns-slot-splat{width:min(70cqw,calc(100cqh - 52px),220px)}
+.ns-peek .ns-peek-art{animation:ns-peek 2.4s ease-in-out infinite}
+.ns-bush{transition:transform .35s var(--ease-out),opacity .35s var(--ease-out)}
+.ns-bush.away{transform:translateY(64px);opacity:0}
+.ns-card.solved .ns-peek-art{animation:none}
+
+/* the sticker that lands on the card: it flies from where the finger was, then wiggles */
+.ns-landed{position:absolute;inset:0;animation:ns-land .4s var(--ease-out) both}
+.ns-landed .ns-pic{width:100%;height:100%;animation:ns-wiggle .7s .4s ease-in-out}
+.ns-slot-home .ns-landed{inset:auto 22% 4% 22%;aspect-ratio:1}
+.ns-slot-splat .ns-landed{inset:18%}
+.ns-slot-bn .ns-landed,.ns-slot-en .ns-landed,.ns-slot-role .ns-landed{inset:8px}
+
+.ns-word{margin:4px 0 0;max-width:100%;font-family:var(--font-display);font-size:clamp(40px,min(16cqw,18cqh),72px);font-weight:800;line-height:1.3;text-align:center;overflow-wrap:anywhere}
+.ns-word.long{font-size:clamp(30px,min(10cqw,13cqh),52px)}
+.ns-ask{margin:2px 0 0;font-size:17px;font-weight:600;line-height:1.5;color:var(--muted)}
+
+.ns-ask-box{display:grid;justify-items:center;min-width:0}
+.ns-slot-word{display:grid;place-items:center;width:min(32cqw,calc(100cqh - 24px),120px);border:3px dashed var(--ns-edge);border-radius:50%}
+.ns-play[data-figure][data-kind=bn] .ns-card,.ns-play[data-figure][data-kind=en] .ns-card{flex-direction:row;gap:16px}
+.ns-play[data-figure][data-kind=bn] .ns-card.solved,.ns-play[data-figure][data-kind=en] .ns-card.solved{flex-direction:column}
+.ns-slot-lens{width:min(60cqw,calc(100cqh - 46px),170px)}
+.ns-lens{position:absolute;inset:0;overflow:hidden;border-radius:50%;background:#fff;box-shadow:0 3px 0 var(--ns-edge);animation:ns-pop .3s var(--ease-out)}
+.ns-lens::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 0 6px var(--ns-deep),inset 0 0 0 9px #ffffffb0;pointer-events:none}
+.ns-lens .ns-pic{width:100%;height:100%}
+
+/* the stickers */
+.ns-bottom{display:flex;flex:none;flex-direction:column;justify-content:center;gap:6px;min-height:160px}
+.ns-bottom[data-n="4"]{min-height:270px}
+.ns-tray{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0;padding:0;list-style:none}
+.ns-tray.n2{grid-template-columns:repeat(2,minmax(0,150px));justify-content:center}
+.ns-tray.n4{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ns-sticker{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;min-height:104px;padding:8px 6px;border:0;border-radius:20px;background:#fff;color:var(--ink);font:inherit;box-shadow:0 0 0 2px var(--ns-edge),0 5px 0 var(--ns-edge);cursor:pointer;touch-action:manipulation;transition:transform .1s var(--ease-out),opacity .2s ease;animation:ns-pop .22s var(--ease-out) backwards}
+.ns-tray li:nth-child(2) .ns-sticker{animation-delay:.05s}
+.ns-tray li:nth-child(3) .ns-sticker{animation-delay:.1s}
+.ns-tray li:nth-child(4) .ns-sticker{animation-delay:.15s}
+.ns-sticker:active{transform:translateY(3px);box-shadow:0 0 0 2px var(--ns-edge),0 2px 0 var(--ns-edge)}
+.ns-sticker:focus-visible{outline:3px solid var(--ns-deep);outline-offset:3px}
+.ns-sticker .ns-pic{width:min(86px,100%)}
+.ns-tray.n2 .ns-sticker{min-height:140px}
+.ns-tray.n2 .ns-sticker .ns-pic{width:min(112px,100%)}
+.ns-tray.n4 .ns-sticker{min-height:118px}
+.ns-name{font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.4;text-align:center;overflow-wrap:anywhere}
+.ns-sticker.tried{opacity:.62;box-shadow:0 0 0 2px #b8ad95;border:0;background:#fbf7ee}
+.ns-sticker.tried .ns-name{font-size:16px;color:var(--muted)}
+.ns-sticker.glow{box-shadow:0 0 0 4px var(--ns-glow),0 5px 0 var(--ns-edge);outline:3px dashed var(--ns-glow);outline-offset:5px}
+/* the hint ring breathes through opacity, not box-shadow */
+.ns-sticker.glow::after{content:"";position:absolute;inset:-4px;border-radius:inherit;box-shadow:0 0 0 8px color-mix(in srgb,var(--ns-glow) 40%,transparent);pointer-events:none;animation:ns-pulse 1.2s ease-in-out infinite}
+.ns-key{position:absolute;top:6px;left:9px;font-size:12px;font-style:normal;font-weight:700;color:#b8ad95;line-height:1}
+@media (hover:none){.ns-key{display:none}}
+.ns-try{min-height:28px;margin:0;text-align:center;font-size:17px;font-weight:600;line-height:1.6;color:var(--muted)}
+
+/* after a sticker lands: its name, then → */
+.ns-after{display:grid;justify-items:center;align-content:center;gap:6px;text-align:center}
+.ns-tag{display:grid;margin:0;line-height:1.3}
+.ns-tag b{font-family:var(--font-display);font-size:clamp(28px,8.6vw,42px);font-weight:800}
+.ns-tag span{font-size:21px;font-weight:600;color:var(--muted)}
+.ns-fact{max-width:340px;margin:0;font-size:16px;line-height:1.6;color:var(--muted)}
+.ns-next{position:relative;display:grid;place-items:center;width:96px;height:96px;margin-top:4px;border:0;border-radius:50%;background:var(--ns-deep);color:#fff;box-shadow:0 5px 0 #0003;cursor:pointer;transition:transform .1s var(--ease-out);animation:ns-pop .25s .2s var(--ease-out) backwards}
+.ns-next svg{width:46px;height:46px}
+.ns-next:active{transform:translateY(3px);box-shadow:0 2px 0 #0003}
+
+/* শরীর: the figure is tapped */
+.ns-play[data-figure] .ns-card{flex:0 0 auto;height:clamp(140px,22%,190px);min-height:0}
+.ns-play[data-figure] .ns-word{font-size:clamp(28px,min(12cqw,22cqh),44px)}
+.ns-play[data-figure] .ns-bottom{min-height:28px}
+.ns-play[data-figure] .ns-card .ns-after{grid-template-columns:minmax(0,1fr) auto;align-items:center;width:100%;padding:0 6px;text-align:left}
+.ns-play[data-figure] .ns-card .ns-next{margin:0}
+.ns-figure-wrap{display:grid;flex:1 1 0;place-items:center;min-height:180px;container-type:size;touch-action:manipulation}
+.ns-figure-box{position:relative;aspect-ratio:1}
+.ns-figure-box.ns-face{width:min(100cqw,100cqh,320px)}
+.ns-figure-box.ns-body{width:min(100cqw,60cqh,240px);aspect-ratio:120/200}
+.ns-figure{display:block;width:100%;height:100%;cursor:pointer}
 .ns-ring{fill:none;stroke-width:2.4}
-.ns-ring.right{stroke:var(--good);stroke-width:3}
+.ns-ring.right{stroke:var(--good);stroke-width:3.2}
 .ns-ring.wrong{stroke:#8a7d66;stroke-dasharray:3 2}
-.ns-ring.hint,.ns-ring.show{stroke:var(--glow);stroke-width:3}
-.ns-ring.hint{animation:ns-pulse 1.2s ease-in-out infinite}
-@keyframes ns-pulse{50%{opacity:.35}}
-.ns-parts button{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border:0;border-radius:50%;background:transparent;pointer-events:none}
-.ns-parts button:focus-visible{outline:3px solid var(--accent)}
+.ns-ring.hint{stroke:var(--ns-glow);stroke-width:3;animation:ns-pulse 1.2s ease-in-out infinite}
+.ns-parts button{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;padding:0;border:0;border-radius:50%;background:transparent;pointer-events:none}
+.ns-parts button:focus-visible{outline:3px solid var(--ns-deep)}
 
-.ns-ghost-at{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none;z-index:2}
-.ns-ghost{position:absolute;left:-21px;top:-2px;width:44px;max-width:none;height:auto;filter:drop-shadow(0 2px 2px #0003);animation:ns-ghost 1.8s ease-in-out 3 both}
+/* the ghost finger: shows the very first tap */
+.ns-ghost-at{position:absolute;left:50%;top:50%;z-index:2;width:0;height:0;pointer-events:none}
+.ns-ghost{position:absolute;left:-21px;top:-2px;width:44px;max-width:none;height:auto;filter:drop-shadow(0 2px 2px #0003);animation:ns-ghost 1.8s ease-in-out .6s 3 both}
+
+/* the end: the full page, stars, counts, two big pictures of equal size */
+.ns-end{display:flex;flex:1;flex-direction:column;align-items:center;gap:10px;min-height:0;overflow:auto;text-align:center;animation:ns-in .25s var(--ease-out)}
+.ns-end .gx-stars{font-size:40px}
+.ns-end h2{display:grid;margin:0;font-family:var(--font-display);font-size:clamp(20px,5.6vw,26px);line-height:1.45}
+.ns-end h2 small{font-size:15px;font-weight:700;color:var(--ns-deep)}
+.ns-page{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;margin:0;padding:0;list-style:none}
+.ns-page li{display:grid;justify-items:center;gap:0;padding:6px 4px;border-radius:14px;background:#fff;box-shadow:0 0 0 1.5px var(--ns-edge);line-height:1.35;animation:ns-pop .25s var(--ease-out) backwards}
+.ns-page .ns-pic,.ns-page .ns-figure{width:min(100%,72px);height:auto;aspect-ratio:1}
+.ns-page b{font-size:17px}
+.ns-page small{font-size:15px;color:var(--muted)}
+.ns-counts{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 14px;margin:0;font-weight:700;color:var(--muted)}
+.ns-counts b{color:var(--ink)}
+.ns-away{max-width:340px;margin:0;font-size:17px;line-height:1.6}
+.ns-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(272px,100%)}
+.ns-big{display:grid;place-items:center;gap:2px;min-height:112px;padding:10px 6px;border:0;border-radius:22px;background:var(--ns-deep);color:#fff;font:inherit;font-family:var(--font-display);font-size:18px;font-weight:800;box-shadow:0 5px 0 #0003;cursor:pointer;transition:transform .1s var(--ease-out);animation:ns-arm .7s step-end}
+.ns-big-done{background:#fff;color:var(--ns-deep);box-shadow:0 0 0 2.5px var(--ns-deep),0 5px 0 #0003}
+.ns-big svg{width:46px;height:46px}
+.ns-big:active{transform:translateY(3px)}
+.ns-end .kk-show-button{min-height:56px;font-size:17px}
+.kk-show-body .kit-card canvas{display:block;width:100%;height:auto}
+
+@keyframes ns-in{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}
+@keyframes ns-deal{from{opacity:0;transform:translateX(28px) rotate(1.5deg)}to{opacity:1;transform:none}}
+@keyframes ns-pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+@keyframes ns-land{from{transform:translate(var(--dx,0),var(--dy,0)) scale(.7) rotate(-8deg)}70%{transform:translate(0,0) scale(1.04) rotate(2deg)}to{transform:none}}
+@keyframes ns-wiggle{25%{transform:rotate(-6deg)}50%{transform:rotate(5deg)}75%{transform:rotate(-3deg)}}
+@keyframes ns-bob{50%{transform:translateY(-4px) rotate(-2deg)}}
+@keyframes ns-peek{0%,100%{transform:translateY(4px)}50%{transform:translateY(-2px)}}
+@keyframes ns-pulse{50%{opacity:.35}}
+@keyframes ns-arm{from{opacity:.5}to{opacity:1}}
 @keyframes ns-ghost{0%{transform:translate(34px,46px);opacity:0}30%{transform:translate(0,0);opacity:1}45%{transform:scale(.86)}60%{transform:scale(1)}85%{opacity:1}100%{opacity:0}}
 
-.ns-after{display:grid;justify-items:center;gap:10px;min-height:56px;text-align:center}
-.ns-learned-line{display:grid;margin:0;line-height:1.5}
-.ns-learned-line b{font-family:var(--font-display);font-size:24px}
-.ns-learned-line span{font-size:17px;color:var(--muted)}
-.ns-try{margin:0;font-size:18px;font-weight:600;color:var(--muted)}
-.tool-nam-shikhi .ns-next{min-height:64px;min-width:200px;font-size:20px}
+/* short phones (360 × 640 and the like): the card gives way first, stickers stay ≥ 96 px */
+@media (max-height:720px){.ns-card{min-height:140px}.ns-tray{gap:10px}.ns-tray.n4 .ns-sticker{min-height:100px}.ns-tray.n4 .ns-sticker .ns-pic{width:min(72px,100%)}.ns-bottom{min-height:140px}.ns-bottom[data-n="4"]{min-height:236px}.ns-try{font-size:16px;min-height:24px}}
+/* small phones: three stickers stay in one row */
+@media (max-width:400px){.ns-stage{padding:8px}.ns-tray{gap:10px}.ns-worlds{gap:8px}}
+@media (max-width:340px){.ns-name{font-size:16px}.ns-page b{font-size:16px}.ns-strip li{width:26px;height:26px}.ns-strip .ns-pic{width:22px;height:22px}}
 
-.ns-done,.ns-idle{display:grid;justify-items:center;gap:12px;text-align:center}
-.ns-done h2{margin:0;font-family:var(--font-display);font-size:clamp(21px,5.6vw,28px);line-height:1.45}
-.ns-learned{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;margin:0;padding:0;list-style:none}
-.ns-learned li{display:grid;justify-items:center;gap:0;padding:6px;border-radius:14px;background:#fff;line-height:1.4}
-.ns-learned .ns-pic{width:min(100%,84px)}
-.ns-learned b{font-size:17px}
-.ns-learned small{font-size:15px;color:var(--muted)}
-.ns-away{margin:0;max-width:340px;font-size:18px;line-height:1.6}
-.ns-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:min(100%,340px)}
-.tool-nam-shikhi .ns-pair button{min-height:60px;min-width:0;font-size:19px;font-weight:700}
-.ns-idle p{margin:0;font-size:19px;font-weight:600}
+/* ধীরে খেলো and reduced motion: nothing flies, wiggles, slides or pulses; the glow is a steady ring */
+.ns[data-slow] *,.ns[data-slow] *::before,.ns[data-slow] *::after{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.ns *,.ns *::before,.ns *::after{animation:none!important;transition:none!important}}
 
-.ns-packs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;margin:0;padding:0;list-style:none}
-.ns-packs button{display:grid;justify-items:center;gap:2px;width:100%;min-height:96px;padding:8px 4px;border:2px solid var(--edge);border-radius:16px;background:#fff;color:var(--ink);font:inherit;font-weight:700;font-size:16px;line-height:1.4}
-.ns-packs button[aria-pressed=true]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
-.ns-pack-pic{width:56px;height:56px}
-.ns-more{display:grid;gap:12px;margin-top:20px}
-.ns-more h2{margin:0;font-size:22px}
-.ns-more h3{margin:6px 0 0;font-size:18px}
-.ns-level-names{display:flex;flex-wrap:wrap;gap:4px 16px;margin:0;padding:0;list-style:none;font-size:15px;color:var(--muted)}
-.ns-gate{display:flex;justify-content:flex-start;margin-top:4px}
-
-.ns-guide h2{font-family:var(--font-display);margin-bottom:12px}
-.ns-guide>p{color:var(--muted);max-width:640px}
-.ns-guide ol{display:grid;gap:14px;margin:0 0 18px;padding:0;list-style:none}
-.ns-guide li{display:flex;gap:14px;align-items:flex-start}
-.ns-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
-.ns-guide li p{margin:4px 0 0}
-.ns-privacy{font-size:15px}
-
-/* Three pictures stay in one row on 360px phones; on 320px each card dips to 80px rather than push one below the fold. */
-@media (max-width:400px){.ns-board{padding:8px}.ns-choices{gap:10px}}
-@media (max-width:340px){.ns-choices li{flex-basis:80px}.ns-learned b{font-size:16px}}
-@media (min-width:720px){.ns-lead{display:block}}
-.ns-slow *,.ns-slow *::before,.ns-slow *::after{animation:none!important;transition:none!important}
-@media (prefers-reduced-motion:reduce){.tool-nam-shikhi *{animation:none!important;transition:none!important}}
+/* in the game player: the page fills the stage, portrait first, no scroll while playing */
+.gp-stage .ns{min-height:calc(var(--stage-h,0px) - 24px);height:calc(var(--stage-h,0px) - 24px)}
+@media (max-height:600px){.gp-stage .ns{height:auto}}

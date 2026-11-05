@@ -1,0 +1,86 @@
+---
+title: "গলﬂ°°2495¶ßর বﬂ°°2509¶ßযﬂ°°2494¶ßডমﬂ°°2495¶ßনﬂ°°2509¶ßটন after the rewrite: the match, the window, the finger, the breath and the wind"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: First screen
+      s1: Rally in play
+      s2: Level list open
+      s3: Result just appeared
+      s4: Paused (menu)
+      s5: Result shows
+      s6: A breath before the shuttle moves
+      [*] --> s0
+      s0 --> s1: you start a match [when Window is You're on the court]
+      s0 --> s2: you open the level list [when Window is You're on the court]
+      s1 --> s3: someone reaches the points
+      s1 --> s4: you leave (another window, or hide the tab) or you press #9208; or P
+      s2 --> s0: you close the level list [when Window is You're on the court]
+      s2 --> s1: you start a match [when Window is You're on the court]
+      s3 --> s1: you start a match [when Window is You're on the court]
+      s3 --> s5: a moment passes
+      s3 --> s2: you open the level list [when Window is You're on the court]
+      s4 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the court]
+      s5 --> s1: you press a key on the result or you start a match [when Window is You're on the court]
+      s5 --> s2: you open the level list [when Window is You're on the court]
+      s2 --> s3: you close the level list [when Window is You're on the court]
+      s6 --> s1: the breath ends
+      s6 --> s4: you leave (another window, or hide the tab) or you press #9208; or P
+      s2 --> s5: you close the level list [when Window is You're on the court]
+    }
+    --
+    state "Window" as r1 {
+      s7: You're away
+      s8: You're on the court
+      [*] --> s7
+      [*] --> s8
+      s7 --> s8: you come back
+      s8 --> s7: you leave (another window, or hide the tab)
+    }
+    --
+    state "Finger" as r2 {
+      s9: Nothing held
+      s10: Finger on the shuttle
+      [*] --> s9
+      s9 --> s10: you touch as the ring turns gold [when Game is Rally in play and Window is You're on the court]
+      s10 --> s9: you lift or pull (the shot) or someone reaches the points or you leave (another window, or hide the tab) or you press #9208; or P
+    }
+    --
+    state "Wind" as r3 {
+      s11: No wind
+      s12: Wind blowing
+      [*] --> s11
+      s11 --> s12: you start a match [when Game is none of A breath before the shuttle moves, Paused (menu), Rally in play and Window is You're on the court and Finger is Nothing held and Sound is Sound on]
+      s12 --> s11: someone reaches the points [when Game is Rally in play]
+      s12 --> s11: you leave (another window, or hide the tab) or you press #9208; or P
+      s11 --> s12: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Game is Paused (menu) and Window is You're on the court and Finger is Nothing held and Sound is Sound on]
+      s11 --> s12: you press a key on the result [when Game is Result shows and Window is You're on the court and Finger is Nothing held and Sound is Sound on]
+    }
+    --
+    state "Sound" as r4 {
+      s13: Sound off
+      s14: Sound on
+      [*] --> s13
+      [*] --> s14
+    }
+  }
+  class s0 tan
+  class s1 teal
+  class s3 blue
+  class s4 yellow
+  class s5 blue
+  class s6 teal
+  class s10 teal
+  class s12 teal

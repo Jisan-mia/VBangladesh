@@ -1,7 +1,9 @@
 // Draws a puzzle's picture on a canvas, for the game and for the share card. Browser only (Path2D), called from components and the card.
 import { DISPLAY_FONT } from "../../../shared/card-canvas";
-import type { Puzzle } from "./game";
-import { matrixOf, SCENE_H, SCENE_W, type Shape } from "./shapes";
+import { matrixOf, SCENE_H, SCENE_W, type Item, type Look, type Shape } from "./shapes";
+
+/** Anything with items and the two sides' looks: a ladder puzzle or an old one. */
+export type Picture = { items: readonly Item[]; looks: readonly [readonly Look[], readonly Look[]] };
 
 const paths = new Map<string, Path2D>();
 const pathOf = (d: string) => { let found = paths.get(d); if (!found) { found = new Path2D(d); paths.set(d, found); } return found; };
@@ -29,20 +31,22 @@ function drawShape(c: CanvasRenderingContext2D, shape: Shape) {
   }
 }
 
-/** One side (0 or 1) of the puzzle, its top-left at (x, y), `scale` canvas units per scene unit. */
-export function drawScene(c: CanvasRenderingContext2D, puzzle: Puzzle, side: 0 | 1, x = 0, y = 0, scale = 1) {
+/** One item as it looks on one side, in scene units on a context already set to scene space. */
+export function drawItem(c: CanvasRenderingContext2D, item: Item, look: Look) {
+  if (look.hidden) return;
+  const [a, b, cc, d, e, f] = matrixOf(item, look);
+  c.save();
+  c.transform(a, b, cc, d, e, f);
+  for (const shape of item.draw(look)) drawShape(c, shape);
+  c.restore();
+}
+
+/** One side (0 or 1) of the picture, its top-left at (x, y), `scale` canvas units per scene unit; items [from, to) only, if given. */
+export function drawScene(c: CanvasRenderingContext2D, picture: Picture, side: 0 | 1, x = 0, y = 0, scale = 1, from = 0, to = picture.items.length) {
   c.save();
   c.translate(x, y); c.scale(scale, scale);
   c.beginPath(); c.rect(0, 0, SCENE_W, SCENE_H); c.clip();
   c.lineJoin = "round"; c.lineCap = "round";
-  puzzle.items.forEach((item, index) => {
-    const look = puzzle.looks[side][index];
-    if (look.hidden) return;
-    const [a, d, e, f] = matrixOf(item, look);
-    c.save();
-    c.transform(a, 0, 0, d, e, f);
-    for (const shape of item.draw(look)) drawShape(c, shape);
-    c.restore();
-  });
+  for (let index = from; index < to; index++) drawItem(c, picture.items[index], picture.looks[side][index]);
   c.restore();
 }

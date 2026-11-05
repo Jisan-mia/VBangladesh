@@ -5,7 +5,7 @@ import { site } from "../content";
 import { share } from "../share";
 import {
   cellAt, ghostOf, isDone, isUpright, judgeDrop, levelSeed, makePuzzle, parFor, pieceCount, placePiece, planOf, reslot, shortBy, sidesOf, snapReach,
-  startLevel, startTable, starsFor, turnPiece, worldOf, LEVEL_COUNT, type Table,
+  startLevel, startTable, starsFor, toPlace, turnPiece, worldOf, LEVEL_COUNT, type Table,
 } from "../lib/game";
 import { bannerNote, caption, cardLine, clearLine, compareLine, feat, gridText, nearMiss, paintingName, parseShared, previewTitle, sharedHash, timeText, MAX_SECONDS } from "../lib/link";
 import { drawPainting, paintingOf, riverAt } from "../lib/painting";
@@ -70,7 +70,7 @@ test("every level is solvable from any tray size, and each piece goes in exactly
   for (const level of levels) for (const slots of [10, 12]) {
     const { table, moves } = solve(level, slots);
     assert.ok(table.placed.every(Boolean) && table.queue.length === 0 && table.slots.every(slot => slot === -1));
-    assert.ok(moves >= pieceCount(level) && moves <= pieceCount(level) * 4);
+    assert.ok(moves >= toPlace(level) && moves <= toPlace(level) * 4);
   }
 });
 
@@ -124,18 +124,22 @@ test("piece outlines: knobs stay inside the canvas margin, the frame side is str
 });
 
 test("stars come from time: par per level, twice par for 2, a finished picture always earns 1", () => {
-  assert.equal(parFor(1), 23);
-  assert.equal(starsFor(1, 23), 3); assert.equal(starsFor(1, 24), 2); assert.equal(starsFor(1, 46), 2); assert.equal(starsFor(1, 47), 1); assert.equal(starsFor(1, 5999), 1);
+  assert.equal(parFor(1), 10, "level 1: four pieces to place");
+  assert.equal(parFor(2), 23);
+  assert.equal(starsFor(2, 23), 3); assert.equal(starsFor(2, 24), 2); assert.equal(starsFor(2, 46), 2); assert.equal(starsFor(2, 47), 1); assert.equal(starsFor(2, 5999), 1);
   for (const level of levels) {
-    assert.ok(parFor(level) >= pieceCount(level) * 2, `level ${level} par too tight`);
-    if (level > 1) assert.ok(parFor(level) >= parFor(level - 1) || planOf(level).n === planOf(level - 1).n, `level ${level} par drops`);
+    assert.ok(parFor(level) >= toPlace(level) * 2, `level ${level} par too tight`);
+    // Par only grows along the ladder, finales (a quarter more time, no picture on the board) aside.
+    const before = level > 2 && level % 10 === 1 ? level - 2 : level - 1;
+    if (level > 1) assert.ok(parFor(level) >= parFor(before) || planOf(level).n === planOf(before).n, `level ${level} par drops`);
   }
   assert.ok(parFor(11) > parFor(10), "turned pieces get more time");
-  assert.equal(shortBy(1, 20), null);
-  assert.deepEqual(shortBy(1, 30), { stars: 3, seconds: 7 });
-  assert.deepEqual(shortBy(1, 50), { stars: 2, seconds: 4 });
-  assert.equal(nearMiss(1, 30), "আর ৭ সেকেন্ড আগে পারলে ৩ তারা।");
-  assert.equal(nearMiss(1, 10), "");
+  assert.ok(parFor(10) > toPlace(10) * 2.5, "a finale (no picture on the board) gets more time");
+  assert.equal(shortBy(2, 20), null);
+  assert.deepEqual(shortBy(2, 30), { stars: 3, seconds: 7 });
+  assert.deepEqual(shortBy(2, 50), { stars: 2, seconds: 4 });
+  assert.equal(nearMiss(2, 30), "আর ৭ সেকেন্ড আগে পারলে ৩ তারা।");
+  assert.equal(nearMiss(2, 10), "");
 });
 
 test("a headless run: a scripted player with think time and a few wrong drops ends sanely", () => {
@@ -146,7 +150,7 @@ test("a headless run: a scripted player with think time and a few wrong drops en
       step++;
       const id = table.slots.find(slot => slot >= 0)!;
       seconds += 1.6;
-      if (step % 5 === 0) {
+      if (step % 3 === 0) {
         // A wrong drop: one cell to the side. It costs time, never the piece.
         const [x, y] = home(puzzle.n, id, size), other = id % puzzle.n ? -size / puzzle.n : size / puzzle.n;
         assert.notEqual(judgeDrop(puzzle.n, id, table.turns[id], x + other, y, size), "snap");
@@ -157,7 +161,7 @@ test("a headless run: a scripted player with think time and a few wrong drops en
       table = placePiece(table, id);
     }
     assert.ok(isDone(table), `level ${level} finished`);
-    assert.equal(step, pieceCount(level));
+    assert.equal(step, toPlace(level));
     const stars = starsFor(level, Math.round(seconds));
     assert.ok(stars >= 2, `level ${level}: a steady player earns at least 2 stars (${Math.round(seconds)}s, par ${parFor(level)})`);
     assert.ok(wrong > 0);

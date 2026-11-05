@@ -1,0 +1,76 @@
+---
+title: "Sir ghurlei thamo: the class, the window, the chit and its hum"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks CelebrationOnlyOnResult or FriendLinkOpensTheirClass or InputReleasedWhenAway or LoopComesBack or PausedWhenBlurred or ResultStaysUntilYouChoose
+    lg4: Path to the CelebrationOnlyOnResult or FriendLinkOpensTheirClass or InputReleasedWhenAway or LoopComesBack or PausedWhenBlurred or ResultStaysUntilYouChoose bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 bugPath
+  s0: Ready
+  s1: Passing the chit
+  s2: Friend's link ignored
+  s3: Result
+  s4: Teacher looking, chit moving
+  s5: Clock running while you're away
+  s6: Chit still
+  s7: Paused
+  s8: Chit moving while you're away
+  s9: Enter held: the result was skipped
+  s10: New class, the old confetti still to come
+  s11: Chit moving in silence
+  [*] --> s0
+  s0 --> s1: you press Enter
+  s0 --> s0: you turn sound off or you switch to one-tap
+  s0 --> s2: you open a friend's link in this tab
+  s1 --> s3: the chit reaches the last bench
+  s1 --> s4: the teacher turns
+  s1 --> s5: you click into another window
+  s1 --> s6: you let go or you switch to one-tap or you press Enter
+  s1 --> s7: you hide the tab
+  s3 --> s9: the held key repeats
+  s4 --> s6: you let go or the teacher catches the chit or you switch to one-tap or you press Enter
+  s1 --> s8: you click into another window
+  s5 --> s6: you come back
+  s6 --> s1: you press Enter
+  s3 --> s10: you press Enter or you press আর#2503;কব#2494;র
+  s1 --> s1: you let go
+  s7 --> s6: you press Enter or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s3 --> s0: you press আর#2503;কব#2494;র or you press Enter
+  s1 --> s11: you turn sound on
+  s8 --> s5: the teacher catches the chit
+  s10 --> s0: the confetti falls
+  s9 --> s0: you let go or you hide the tab or you click into another window
+  s11 --> s6: you press Enter or you switch to one-tap or the teacher catches the chit
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 teal
+  class s0 bugPath
+  class s1 teal
+  class s1 bugPath
+  class s2 breaks
+  class s2 bugPath
+  class s3 blue
+  class s3 bugPath
+  class s4 teal
+  class s5 teal
+  class s5 breaks
+  class s5 bugPath
+  class s6 teal
+  class s7 yellow
+  class s8 teal
+  class s8 breaks
+  class s8 bugPath
+  class s9 teal
+  class s9 breaks
+  class s9 bugPath
+  class s10 breaks
+  class s11 teal
+  class s11 breaks
+  class s11 bugPath

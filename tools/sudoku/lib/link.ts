@@ -1,7 +1,7 @@
 // Challenge links and every line of result text. Server-safe: share.ts loads this.
 import { possessive } from "../../../shared/bangla";
 import { challengeHash, cleanName, readChallenge } from "../../../shared/game-core";
-import { LEVELS } from "./levels";
+import { DAILIES, LEVELS, WORLDS, isFinale, type DailyKind } from "./levels";
 import { dailyPuzzle, levelPuzzle, tierOf, type Puzzle } from "./game";
 
 const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
@@ -10,37 +10,50 @@ export const bn = (value: number) => digits.format(value);
 export const MAX_SECONDS = 99 * 60 + 59;
 const MONTHS = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
 
-/** A solved puzzle someone shares: which one, the time on their phone, hints taken, an optional first name. */
-export type Shared = { level: number; day: number; seconds: number; hints: number; name: string };
+/**
+ * A solved puzzle someone shares: which one, the time on their phone, hints taken, an optional first name.
+ * `kind` is the daily's difficulty when it isn't the classic কঠিন one (absent on old links and on level links).
+ */
+export type Shared = { level: number; day: number; seconds: number; hints: number; name: string; kind?: "e" | "m" };
+type Which = Pick<Shared, "level" | "day" | "kind">;
 
+const kindOf = (shared: Which): DailyKind => shared.kind ?? "h";
 /** The puzzle a shared result points at (built fresh, so a link can't bring its own grid). */
-export const puzzleOf = (shared: Pick<Shared, "level" | "day">) => shared.level ? levelPuzzle(shared.level) : dailyPuzzle(shared.day);
+export const puzzleOf = (shared: Which) => shared.level ? levelPuzzle(shared.level) : dailyPuzzle(shared.day, kindOf(shared));
 
 /**
- * `#s=<seed>&t=<seconds>&l=<level>&h=<hints>&n=<name>`. A level link must carry that level's seed; without `l`, the seed
- * is a date (20261012) and means that day's puzzle. The puzzle is rebuilt and re-checked. The time can't be proven,
- * so it's shown as the friend's own.
+ * `#s=<seed>&t=<seconds>&l=<level>&h=<hints>&z=<e|m>&n=<name>`. A level link must carry that level's seed; without `l`,
+ * the seed is a date (20261012) and means that day's puzzle, at the difficulty `z` names (none: the classic কঠিন daily).
+ * `h` is 0 up to the puzzle's blanks, written without a leading zero. The puzzle is rebuilt and re-checked. The time
+ * can't be proven, so it's shown as the friend's own.
  */
 export function parseShared(hash: string): Shared | null {
-  const read = readChallenge(hash, { maxTarget: MAX_SECONDS, extraKeys: ["l", "h"] });
+  const read = readChallenge(hash, { maxTarget: MAX_SECONDS, extraKeys: ["l", "h", "z"] });
   if (!read) return null;
-  const { l = "", h = "0" } = read.extra;
+  const { l = "", h = "0", z } = read.extra;
   if (l && !/^[1-9]\d?$/.test(l)) return null;
-  if (!/^\d$/.test(h)) return null;
-  const level = Number(l), hints = Number(h);
+  if (!/^(0|[1-9]\d?)$/.test(h)) return null;
+  if (z !== undefined && (l || (z !== "e" && z !== "m"))) return null;
+  const level = Number(l), hints = Number(h), kind: Shared["kind"] = z === "e" || z === "m" ? z : undefined;
   if (level && LEVELS[level - 1]?.[2] !== read.seed) return null;
-  const puzzle = puzzleOf({ level, day: level ? 0 : read.seed });
+  const which: Which = { level, day: level ? 0 : read.seed, ...(kind ? { kind } : {}) };
+  const puzzle = puzzleOf(which);
   if (!puzzle || hints > puzzle.empty || read.target < 1) return null;
-  return { level, day: level ? 0 : read.seed, seconds: read.target, hints, name: read.name };
+  return { ...which, seconds: read.target, hints, name: read.name };
 }
 
-export function sharedHash({ level, day, seconds, hints, name }: Shared) {
+export function sharedHash({ level, day, seconds, hints, name, kind }: Shared) {
   const seed = level ? LEVELS[level - 1][2] : day;
-  return challengeHash({ seed, target: seconds, name, extra: { ...(level ? { l: level } : {}), ...(hints ? { h: hints } : {}) } });
+  return challengeHash({ seed, target: seconds, name, extra: { ...(level ? { l: level } : {}), ...(hints ? { h: hints } : {}), ...(!level && kind ? { z: kind } : {}) } });
 }
 
-export const fromPuzzle = (puzzle: Puzzle, seconds: number, hints: number, name: string): Shared =>
-  ({ level: "level" in puzzle ? puzzle.level : 0, day: "day" in puzzle ? puzzle.day : 0, seconds: Math.min(MAX_SECONDS, Math.round(seconds)), hints, name: cleanName(name) });
+export function fromPuzzle(puzzle: Puzzle, seconds: number, hints: number, name: string): Shared {
+  const kind = "kind" in puzzle && puzzle.kind !== "h" ? puzzle.kind : undefined;
+  return {
+    level: "level" in puzzle ? puzzle.level : 0, day: "day" in puzzle ? puzzle.day : 0,
+    seconds: Math.min(MAX_SECONDS, Math.max(1, Math.round(seconds))), hints, name: cleanName(name), ...(kind ? { kind } : {}),
+  };
+}
 
 /** "০৪:১২" for the running clock. */
 export const clock = (seconds: number) => {
@@ -61,14 +74,20 @@ export const dayLabel = (day: number) => `${bn(day % 100)} ${MONTHS[Math.floor(d
 /** "১২ অক্টোবরের", "৩ জুলাইয়ের". */
 const dayOf = (day: number) => { const label = dayLabel(day); return label.endsWith("ই") ? `${label}য়ের` : possessive(label); };
 
-/** "লেভেল ১২ · মাঝারি" or "১২ অক্টোবরের ধাঁধা". */
-export const puzzleLabel = ({ level, day }: Pick<Shared, "level" | "day">) =>
-  level ? `লেভেল ${bn(level)} · ${tierOf(level).name}` : `${dayOf(day)} ধাঁধা`;
+/** "সহজ " for the easy and medium dailies; nothing for the classic one, whose words stay as they were. */
+const kindWord = (shared: Which) => shared.kind ? `${DAILIES[shared.kind].name} ` : "";
+
+/** "লেভেল ১২ · মাঝারি", "১২ অক্টোবরের ধাঁধা" or "১২ অক্টোবরের সহজ ধাঁধা". */
+export const puzzleLabel = (shared: Which) =>
+  shared.level ? `লেভেল ${bn(shared.level)} · ${tierOf(shared.level).name}` : `${dayOf(shared.day)} ${kindWord(shared)}ধাঁধা`;
+
+/** A world's finale has a name: "ছোট মামার ধাঁধা". Empty for other puzzles. */
+export const finaleName = (level: number) => isFinale(level) ? WORLDS[level / 10 - 1].finale : "";
 
 /** "রাফি লেভেল ১২ মিলিয়েছে ৪ মিনিট ১২ সেকেন্ডে" */
 export function feat(shared: Shared) {
   const who = cleanName(shared.name) || "এক বন্ধু";
-  const what = shared.level ? `সুডোকুর লেভেল ${bn(shared.level)}` : `${dayOf(shared.day)} সুডোকু`;
+  const what = shared.level ? `সুডোকুর লেভেল ${bn(shared.level)}` : `${dayOf(shared.day)} ${kindWord(shared)}সুডোকু`;
   return `${who} ${what} মিলিয়েছে ${duration(shared.seconds)}ে${shared.hints ? `, ${bn(shared.hints)}টা ঘর সাহায্য নিয়ে` : ""}`;
 }
 
@@ -92,7 +111,7 @@ export function compareLine(mine: number, theirs: number, name: string) {
 }
 
 export function caption(shared: Shared) {
-  const what = shared.level ? `লেভেল ${bn(shared.level)} (${tierOf(shared.level).name})` : `${dayOf(shared.day)} ধাঁধা`;
+  const what = shared.level ? `লেভেল ${bn(shared.level)} (${tierOf(shared.level).name})` : `${dayOf(shared.day)} ${kindWord(shared)}ধাঁধা`;
   return `বাংলা সুডোকুর ${what} মেলালাম ${duration(shared.seconds)}ে${shared.hints ? `, ${bn(shared.hints)}টা ঘর সাহায্য নিয়ে` : ""}। তুমি কত মিনিটে পারবে?`;
 }
 

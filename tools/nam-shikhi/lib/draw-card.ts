@@ -1,9 +1,9 @@
-// The "আব্বু-আম্মুকে দেখাও" card: what was learned today, picture by picture, with no name. 1080×1350.
+// The "আব্বু-আম্মুকে দেখাও" card: the finished page of the name book, sticker by sticker with both names, and no name of the child. 1080×1350.
 import { cardSizes, drawFooterBand, fitText, roundedRect } from "../../../shared/card-canvas";
 import { bodyDocument, svgDocument } from "./art";
-import type { cardCell } from "./round";
+import type { pageCell } from "./book";
 
-export type Cell = ReturnType<typeof cardCell>;
+export type Cell = ReturnType<typeof pageCell>;
 export type CardData = { label: string; title: string; stars: number; cells: Cell[] };
 
 const colors = { bg: "#fff8e8", tile: "#ffffff", edge: "#efdcb4", ink: "#2b2416", muted: "#7a6a52", accent: "#1f6f5c", star: "#f2a900", starOff: "#e8dcbc", ring: "#f59e0b" };
@@ -59,5 +59,5 @@ export function drawCard(canvas: HTMLCanvasElement, data: CardData, pictures: Ma
     fitText(c, [{ text: cell.bottom, color: colors.muted, weight: 600 }], cx, top + tile + 128, 40, cellWidth - 24, "center");
   });
 
-  drawFooterBand(c, "feed", "ছবি দেখে নাম শেখা, বাংলা আর ইংরেজিতে", site, { band: "#1f4f45", ask: "#ffd166", site: "#ffffff" });
+  drawFooterBand(c, "feed", "ছবির খাতায় স্টিকার বসিয়ে নাম শেখা", site, { band: "#1f4f45", ask: "#ffd166", site: "#ffffff" });
 }

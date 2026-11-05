@@ -1,0 +1,31 @@
+---
+title: "Ghontar sur: links"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: start
+    lg1: play
+  }
+  class lg0 teal
+  class lg1 teal
+  s0: Title
+  s1: Endless title
+  s2: Playing
+  s3: Friend's level ready
+  [*] --> s0
+  s0 --> s1: a friend's endless link opens
+  s0 --> s2: you tap the big bell
+  s0 --> s3: a friend's level link opens
+  s1 --> s0: you pick a level
+  s1 --> s3: a friend's level link opens
+  s1 --> s2: you tap the big bell
+  s2 --> s0: you pick a level or you play again
+  s2 --> s1: a friend's endless link opens or you play again
+  s2 --> s3: a friend's level link opens or you play again
+  s3 --> s0: you pick a level
+  s3 --> s1: a friend's endless link opens
+  s3 --> s2: you tap the big bell
+  class s0 teal
+  class s1 teal
+  class s2 teal
+  class s3 teal

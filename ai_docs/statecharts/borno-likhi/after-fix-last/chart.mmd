@@ -1,0 +1,58 @@
+---
+title: "বরﬂ°°2509¶ßণ লﬂ°°2495¶ßখﬂ°°2495¶ß: the last letter, writing it again, and a key held through the result"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+  }
+  class lg0 teal
+  class lg1 yellow
+  state "At the same time" as all {
+    state "Letter" as r0 {
+      s0: Tracing the last letter
+      s1: The last letter's picture
+      s2: The end card
+      [*] --> s0
+      s0 --> s1: the finger writes the last stroke
+      s1 --> s2: the child taps শ#2503;ষ
+      s1 --> s0: the child taps আব#2494;র ল#2495;খ#2495;
+      s2 --> s0: the child taps আব#2494;র খ#2503;ল#2507; [when Today is Time left today]
+    }
+    --
+    state "Set" as r1 {
+      s3: Stars not saved yet
+      s4: Stars saved once
+      [*] --> s3
+      s3 --> s4: the finger writes the last stroke
+      s4 --> s3: the child taps আব#2494;র খ#2503;ল#2507; [when Letter is The end card and Today is Time left today]
+    }
+    --
+    state "Key" as r2 {
+      s5: Keys up
+      s6: Enter held down
+      [*] --> s5
+      s5 --> s6: the child presses Enter
+      s6 --> s5: the child lets go of the key
+    }
+    --
+    state "Today" as r3 {
+      s7: Time left today
+      s8: Today's time is up
+      s9: Time's up, the rest waits
+      s10: Rest screen
+      [*] --> s7
+      [*] --> s8
+      s7 --> s8: today's play time runs out
+      s8 --> s9: the finger writes the last stroke [when Letter is Tracing the last letter and Set is Stars not saved yet]
+      s9 --> s10: the child taps শ#2503;ষ [when Letter is The last letter's picture]
+      s10 --> s7: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+      s8 --> s10: the child taps আব#2494;র খ#2503;ল#2507; [when Letter is The end card and Set is Stars saved once]
+    }
+  }
+  class s0 teal
+  class s1 teal
+  class s3 teal
+  class s9 teal
+  class s10 yellow

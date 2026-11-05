@@ -1,0 +1,44 @@
+---
+title: "Ponero ghor (15 puzzle) after the rewrite: title, plate, window, finger, sheet, levels and links"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: start
+    lg1: play
+    lg2: held
+    lg3: done
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  s0: Title: the plate is the খ#2503;ল#2507; button
+  s1: Playing
+  s2: Solved: stars saved, end screen
+  s3: Paused (you're away or in the menu)
+  s4: Paused by সব ল#2503;ভ#2503;ল
+  s5: Playing, a line under your finger
+  [*] --> s0
+  s0 --> s1: you press খ#2503;ল#2507;
+  s1 --> s2: you slide with the keys (it may solve it)
+  s1 --> s3: you leave (another window, a tab, the menu)
+  s1 --> s4: you open সব ল#2503;ভ#2503;ল
+  s1 --> s5: you press the plate
+  s2 --> s1: you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507;
+  s2 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s4 --> s1: you close সব ল#2503;ভ#2503;ল or you pick a level
+  s5 --> s1: you let go (it lands, springs back or solves it)
+  s5 --> s2: you let go (it lands, springs back or solves it) or you slide with the keys (it may solve it)
+  s5 --> s3: you leave (another window, a tab, the menu)
+  s5 --> s4: you open সব ল#2503;ভ#2503;ল
+  s2 --> s5: you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507;
+  s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s3 --> s4: you open সব ল#2503;ভ#2503;ল
+  s4 --> s5: you close সব ল#2503;ভ#2503;ল or you pick a level
+  s0 --> s5: you press খ#2503;ল#2507;
+  class s0 blue
+  class s1 teal
+  class s2 blue
+  class s3 yellow
+  class s4 yellow
+  class s5 teal

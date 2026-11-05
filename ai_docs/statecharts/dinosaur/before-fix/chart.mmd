@@ -1,0 +1,143 @@
+---
+title: "ডﬂ°°2494¶ßইনﬂ°°2507¶ßসর খﬂ°°2497¶ßﬂ°°2433¶ßজﬂ°°2495¶ß: the dig, the hand, the rest screen and the parent gate"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: rest
+    lg2: done
+    lg3: Breaks InputReleasedWhenAway or NoReadingNeeded or ParentGate or RestOnlyAtBreak or SandClearsOnlyUnderAFinger
+    lg4: Breaks InputReleasedWhenAway or NoReadingNeeded or ParentGate or RestOnlyAtBreak or SandClearsOnlyUnderAFinger in some cases
+    lg5: Path to the InputReleasedWhenAway or NoReadingNeeded or ParentGate or RestOnlyAtBreak or SandClearsOnlyUnderAFinger bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Brushing the sand
+      s1: Bones lifting out of the sand
+      s2: Building the skeleton
+      s3: Skeleton complete
+      s4: What did it eat?
+      s5: Fact card
+      s6: Level done: আব#2494;র খ#2503;ল#2507; / শ#2503;ষ
+      s7: Pick a level
+      [*] --> s0
+      s0 --> s1: the sand clears off the bones [when Hand is not Hands off]
+      s1 --> s0: you pick a level [when Rest is not Rest screen up]
+      s1 --> s2: the bones come up
+      s2 --> s0: you pick a level [when Rest is not Rest screen up]
+      s2 --> s3: you place the last bone [when Rest is not Rest screen up]
+      s3 --> s0: you pick a level
+      s3 --> s4: the dinosaur stands up
+      s4 --> s0: you pick a level
+      s4 --> s5: you pick the right food
+      s5 --> s0: you pick a level
+      s5 --> s6: you press বইয#2492;#2503; র#2494;খ#2507; on the last dinosaur
+      s6 --> s0: you pick a level or you tap আব#2494;র খ#2503;ল#2507; [when Rest is not Rest screen up]
+      s6 --> s7: you tap শ#2503;ষ [when Rest is not Rest screen up]
+      s6 --> s0: you press Tab and Enter behind the rest screen [when Rest is Rest screen up and Gate is one of Child holding, Gate open, child holding]
+      s7 --> s0: you pick a level
+    }
+    --
+    state "Window" as r1 {
+      s8: You're on the page
+      s9: Another window has focus
+      [*] --> s8
+      s8 --> s9: you click into another window
+      s9 --> s8: you come back to the window
+    }
+    --
+    state "Hand" as r2 {
+      s10: Hands off
+      s11: Finger on the sand
+      s12: No finger, sand still listening
+      [*] --> s10
+      s10 --> s11: you touch the sand [when Game is one of Bones lifting out of the sand, Brushing the sand and Window is You're on the page]
+      s11 --> s10: the phone cancels the touch
+      s11 --> s10: you lift your finger [when Window is You're on the page]
+      s11 --> s10: you pick a level [when Rest is not Rest screen up]
+      s11 --> s12: you let go in the other window [when Window is Another window has focus]
+      s11 --> s10: the bones come up [when Game is Bones lifting out of the sand]
+      s12 --> s10: you pick a level [when Rest is not Rest screen up]
+      s12 --> s10: the bones come up [when Game is Bones lifting out of the sand]
+      s12 --> s11: you touch the sand [when Window is You're on the page]
+    }
+    --
+    state "Rest" as r3 {
+      s13: Time left today
+      s14: Today's time used up
+      s15: Rest screen up
+      [*] --> s13
+      s13 --> s14: today's minutes run out
+      s14 --> s15: you press বইয#2492;#2503; র#2494;খ#2507; on the last dinosaur [when Game is Fact card and Hand is Hands off]
+      s15 --> s13: a parent gives ten more minutes
+    }
+    --
+    state "Gate" as r4 {
+      s16: Child holding
+      s17: Gate open, parent holding
+      s18: Gate open, child holding
+      s19: Parent holding
+      [*] --> s16
+      s16 --> s17: a parent opens বড#2492;দ#2503;র জন#2509;য [when Rest is not Rest screen up]
+      s17 --> s18: the parent hands the phone back or you pick a level
+      s17 --> s19: a parent presses বন#2509;ধ কর#2507;
+      s18 --> s16: a parent presses বন#2509;ধ কর#2507;
+      s19 --> s16: the parent hands the phone back or you pick a level
+      s19 --> s17: a parent opens বড#2492;দ#2503;র জন#2509;য
+      s17 --> s18: you place the last bone [when Game is Building the skeleton and Hand is Hands off]
+      s19 --> s16: you place the last bone [when Game is Building the skeleton and Hand is Hands off]
+      s17 --> s18: you pick the right food [when Game is What did it eat? and Hand is Hands off]
+      s17 --> s18: you press বইয#2492;#2503; র#2494;খ#2507; on the last dinosaur [when Game is Fact card and Hand is Hands off]
+      s19 --> s16: you pick the right food [when Game is What did it eat? and Hand is Hands off]
+      s17 --> s18: you tap আব#2494;র খ#2503;ল#2507; or you tap শ#2503;ষ [when Game is Level done: আব#2494;র খ#2503;ল#2507; / শ#2503;ষ and Hand is Hands off]
+      s16 --> s19: a parent gives ten more minutes [when Game is one of Bones lifting out of the sand, Brushing the sand, Building the skeleton, Level done: আব#2494;র খ#2503;ল#2507; / শ#2503;ষ and Rest is Rest screen up]
+      s19 --> s16: you press বইয#2492;#2503; র#2494;খ#2507; on the last dinosaur [when Game is Fact card and Hand is Hands off]
+      s19 --> s16: you tap আব#2494;র খ#2503;ল#2507; or you tap শ#2503;ষ [when Game is Level done: আব#2494;র খ#2503;ল#2507; / শ#2503;ষ and Hand is Hands off]
+      s18 --> s17: a parent gives ten more minutes [when Game is one of Bones lifting out of the sand, Brushing the sand, Building the skeleton, Level done: আব#2494;র খ#2503;ল#2507; / শ#2503;ষ and Rest is Rest screen up]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 bugPath
+  class s3 teal
+  class s3 bugPath
+  class s4 teal
+  class s4 bugPath
+  class s5 teal
+  class s5 bugPath
+  class s6 breaks
+  class s6 bugPath
+  class s7 blue
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 breaks
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 yellow
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 mayBreak
+  class s16 bugPath
+  class s17 mayBreak
+  class s17 bugPath
+  class s18 breaks
+  class s18 bugPath
+  class s19 mayBreak

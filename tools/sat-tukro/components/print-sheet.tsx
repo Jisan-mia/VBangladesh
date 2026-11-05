@@ -1,5 +1,6 @@
 'use client';
 // The ?print sheet: the seven pieces as one 10 cm square to cut out, and six shadows to build on the table. Printed with the browser.
+import { bn } from '../../../shared/kids-kit';
 import { FIGURES, PRINT_IDS } from '../lib/figures';
 import { PIECE_COLOR, figureView } from '../lib/game';
 import { SET, corners, placed, type Point } from '../lib/tangram';
@@ -19,7 +20,7 @@ export function PrintSheet() {
     <svg className="st-sheet-square" viewBox="-0.1 -0.1 4.2 4.2" role="img" aria-label="সাত টুকরোর বর্গ, কেটে নেওয়ার জন্য">
       {SQUARE.map((pose, index) => <polygon key={index} points={points(corners(pose))} fill={PIECE_COLOR[index]} fillOpacity={0.35} stroke="#000" strokeWidth={0.03} strokeLinejoin="round" />)}
     </svg>
-    <p className="st-sheet-kinds">{SET.length}টা টুকরো: ২টা বড় ত্রিভুজ, ১টা মাঝারি ত্রিভুজ, ২টা ছোট ত্রিভুজ, ১টা বর্গ, ১টা সামান্তরিক।</p>
+    <p className="st-sheet-kinds">{bn(SET.length)}টা টুকরো: ২টা বড় ত্রিভুজ, ১টা মাঝারি ত্রিভুজ, ২টা ছোট ত্রিভুজ, ১টা বর্গ, ১টা সামান্তরিক।</p>
     <ol className="st-sheet-grid">
       {PRINT_IDS.map(id => {
         const figure = FIGURES.find(f => f.id === id)!, view = figureView(figure);

@@ -1,0 +1,76 @@
+---
+title: "Dudh uthlano levels: cleared, a friend's far level, and what is open"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: done
+  }
+  class lg0 teal
+  class lg1 blue
+  state "At the same time" as all {
+    state "Cleared" as r0 {
+      s0: none
+      s1: 1
+      s2: 3
+      s3: 1 3
+      s4: 1 2
+      s5: 1 2 3
+      [*] --> s0
+      s0 --> s1: you clear it [when Level is Level 1]
+      s0 --> s2: you clear it [when Level is Level 3]
+      s1 --> s4: you clear it [when Level is Level 2]
+      s1 --> s3: you clear it [when Level is Level 3]
+      s2 --> s3: you clear it [when Level is Level 1]
+      s3 --> s5: you clear it [when Level is Level 2]
+      s4 --> s5: you clear it [when Level is Level 3]
+    }
+    --
+    state "Ahead" as r1 {
+      s6: none
+      s7: 3
+      [*] --> s6
+      s6 --> s7: you clear it [when Cleared is one of 1, none and Level is Level 3]
+      s7 --> s6: you clear it [when Cleared is 1 2 3 and Level is Level 3]
+    }
+    --
+    state "Level" as r2 {
+      s8: Level 1
+      s9: Level 3
+      s10: Level 1 done
+      s11: Level 3 done
+      s12: Level 2
+      s13: Level 2 done
+      [*] --> s8
+      s8 --> s9: you open the friend's level 3
+      s8 --> s10: you clear it or you do not clear it
+      s9 --> s8: you pick level 1
+      s9 --> s11: you clear it or you do not clear it
+      s10 --> s8: you pick level 1
+      s10 --> s12: you pick level 2 [when Cleared is none of 3, none]
+      s10 --> s9: you open the friend's level 3
+      s11 --> s8: you pick level 1
+      s11 --> s9: you open the friend's level 3
+      s8 --> s12: you pick level 2 [when Cleared is none of 3, none]
+      s12 --> s8: you pick level 1
+      s12 --> s9: you open the friend's level 3
+      s12 --> s13: you clear it or you do not clear it
+      s9 --> s12: you pick level 2 [when Cleared is none of 3, none]
+      s11 --> s12: you pick level 2 [when Cleared is none of 3, none]
+      s13 --> s8: you pick level 1
+      s13 --> s12: you pick level 2
+      s13 --> s9: you open the friend's level 3
+      s13 --> s9: you pick level 3 [when Cleared is one of 1 2, 1 2 3]
+      s8 --> s9: you pick level 3 [when Cleared is one of 1 2, 1 2 3]
+      s12 --> s9: you pick level 3 [when Cleared is one of 1 2, 1 2 3]
+      s10 --> s9: you pick level 3 [when Cleared is one of 1 2, 1 2 3]
+      s11 --> s9: you pick level 3 [when Cleared is one of 1 2, 1 2 3]
+    }
+  }
+  class s8 teal
+  class s9 teal
+  class s10 blue
+  class s11 blue
+  class s12 teal
+  class s13 blue

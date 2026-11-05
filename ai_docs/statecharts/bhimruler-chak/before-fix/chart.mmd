@@ -1,0 +1,114 @@
+---
+title: "ভﬂ°°2495¶ßমরﬂ°°2497¶ßলﬂ°°2503¶ßর চﬂ°°2494¶ßক: round, clock, window, finger and levels"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks ClockStillWhileAway or InputReleasedWhenAway or LinkOpensOnlyItsLevel or SavedUnlockIsEarned
+    lg4: Breaks ClockStillWhileAway or InputReleasedWhenAway or LinkOpensOnlyItsLevel or SavedUnlockIsEarned in some cases
+    lg5: Path to the ClockStillWhileAway or InputReleasedWhenAway or LinkOpensOnlyItsLevel or SavedUnlockIsEarned bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Waiting for your first tap
+      s1: Playing, clock running
+      s2: Friend's orchard, clock not started
+      s3: Hit a nest
+      s4: Paused, clock stopped
+      s5: Orchard cleared, card shows
+      [*] --> s0
+      s0 --> s1: you clear a bush, tie a গ#2494;মছ#2494; or take a hint [when Window is You're on the page]
+      s0 --> s2: you open a friend's link to level 3 [when Window is You're on the page and Finger is Hands off and Levels is No friend link#59; levels open as you clear them]
+      s1 --> s3: you tap a nest [when Window is You're on the page]
+      s1 --> s4: you hide the tab
+      s1 --> s5: you clear the last safe bush [when Window is You're on the page and Levels is not Friend's link#59; levels 2#8211;3 open, level 1 not cleared]
+      s2 --> s3: you tap a nest [when Window is You're on the page]
+      s2 --> s1: you clear a bush, tie a গ#2494;মছ#2494; or take a hint [when Window is You're on the page]
+      s2 --> s5: you clear level 2 or 3 before level 1 [when Window is You're on the page and Levels is Friend's link#59; levels 2#8211;3 open, level 1 not cleared]
+      s3 --> s0: you start a level [when Window is You're on the page and Finger is Hands off]
+      s0 --> s2: you start a level [when Window is You're on the page and Finger is Hands off and Levels is not No friend link#59; levels open as you clear them]
+      s5 --> s0: you start a level [when Window is You're on the page and Finger is Hands off]
+      s2 --> s1: the long press ties a গ#2494;মছ#2494; [when Window is not Tab hidden and Finger is Finger held on a bush]
+      s3 --> s2: you start a level [when Window is You're on the page and Finger is Hands off and Levels is not No friend link#59; levels open as you clear them]
+      s1 --> s5: you clear level 2 or 3 before level 1 [when Window is You're on the page and Levels is Friend's link#59; levels 2#8211;3 open, level 1 not cleared]
+      s5 --> s2: you start a level [when Window is You're on the page and Finger is Hands off and Levels is not No friend link#59; levels open as you clear them]
+      s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s1 --> s5: you clear level 1 [when Window is You're on the page and Levels is one of Friend's level cleared#59; levels 2#8211;3 saved open, level 1 never cleared, Friend's link#59; levels 2#8211;3 open, level 1 not cleared]
+      s2 --> s5: you clear the last safe bush [when Window is You're on the page and Levels is not Friend's link#59; levels 2#8211;3 open, level 1 not cleared]
+    }
+    --
+    state "Window" as r1 {
+      s6: You're on the page
+      s7: Another window has focus
+      s8: Tab hidden
+      [*] --> s6
+      s6 --> s7: you click into another window
+      s6 --> s8: you hide the tab
+      s7 --> s6: you come back to the window
+      s7 --> s8: you hide the tab
+      s8 --> s6: the tab shows again
+    }
+    --
+    state "Finger" as r2 {
+      s9: Hands off
+      s10: Finger held on a bush
+      [*] --> s9
+      s9 --> s10: you press and hold a bush [when Game is one of Friend's orchard, clock not started, Playing, clock running, Waiting for your first tap and Window is You're on the page]
+      s10 --> s9: the long press ties a গ#2494;মছ#2494; [when Game is none of Hit a nest, Orchard cleared, card shows]
+      s10 --> s9: you lift your finger [when Window is You're on the page]
+      s10 --> s9: you hide the tab
+    }
+    --
+    state "Levels" as r3 {
+      s11: No friend link#59; levels open as you clear them
+      s12: Friend's link#59; levels 2#8211;3 open, level 1 not cleared
+      s13: Friend's level cleared#59; levels 2#8211;3 saved open, level 1 never cleared
+      s14: Friend's link#59; level 1 cleared
+      [*] --> s11
+      s11 --> s12: you open a friend's link to level 3 [when Game is Waiting for your first tap and Window is You're on the page and Finger is Hands off]
+      s12 --> s13: you clear level 2 or 3 before level 1 [when Game is one of Friend's orchard, clock not started, Playing, clock running and Window is You're on the page]
+      s12 --> s14: you clear level 1 [when Game is Playing, clock running and Window is You're on the page]
+      s11 --> s14: you open a friend's link to level 3 [when Game is Waiting for your first tap and Window is You're on the page and Finger is Hands off]
+      s13 --> s14: you clear level 1 [when Game is Playing, clock running and Window is You're on the page]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 teal
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 blue
+  class s3 mayBreak
+  class s4 yellow
+  class s5 blue
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 breaks
+  class s12 bugPath
+  class s13 breaks
+  class s13 bugPath
+  class s14 mayBreak

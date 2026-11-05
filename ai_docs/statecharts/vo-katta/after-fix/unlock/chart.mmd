@@ -1,0 +1,40 @@
+---
+title: "ভﬂ°°2507¶ß-কﬂ°°2494¶ßটﬂ°°2509¶ßটﬂ°°2494¶ß: which levels open, with a friend's link in the mix"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+  }
+  class lg0 teal
+  state "Cleared 0 of 3 cleared" as s0 {
+    s1: Friend no far level
+  }
+  state "Cleared 1 of 3 cleared" as s2 {
+    s3: Friend a friend's far level kept apart
+    s4: Friend no far level
+  }
+  state "Cleared 2 of 3 cleared" as s5 {
+    s6: Friend a friend's far level kept apart
+    s7: Friend no far level
+  }
+  state "Cleared 3 of 3 cleared" as s8 {
+    s9: Friend a friend's far level kept apart
+    s10: Friend no far level
+  }
+  [*] --> s1
+  s1 --> s3: you clear a friend's far level
+  s1 --> s4: you clear an open level
+  s3 --> s6: you clear an open level
+  s4 --> s7: you clear an open level
+  s6 --> s9: you clear an open level
+  s6 --> s7: you clear an open level
+  s9 --> s10: you clear an open level
+  s2 --> s6: you clear a friend's far level
+  s5 --> s10: you clear an open level
+  class s1 teal
+  class s3 teal
+  class s4 teal
+  class s6 teal
+  class s7 teal
+  class s9 teal
+  class s10 teal

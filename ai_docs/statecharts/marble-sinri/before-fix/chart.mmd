@@ -1,0 +1,135 @@
+---
+title: "Marble Sinri (মﬂ°°2494¶ßরﬂ°°2509¶ßবﬂ°°2503¶ßল-সﬂ°°2495¶ßﬂ°°2433¶ßডﬂ°°2492¶ßﬂ°°2495¶ß): run, window, held side, hum and chime"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks InputReleasedWhenAway or LoopComesBack or LoopOnlyWhenMeaningful or MarbleRollsOnlyWhenHeld or NoChimeAfterLeaving or PausedWhenBlurred
+    lg4: Breaks InputReleasedWhenAway or LoopComesBack or LoopOnlyWhenMeaningful or MarbleRollsOnlyWhenHeld or NoChimeAfterLeaving or PausedWhenBlurred in some cases
+    lg5: Path to the InputReleasedWhenAway or LoopComesBack or LoopOnlyWhenMeaningful or MarbleRollsOnlyWhenHeld or NoChimeAfterLeaving or PausedWhenBlurred bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: First screen
+      s1: Marble rolling down
+      s2: Result shows
+      s3: Paused
+      [*] --> s0
+      s0 --> s1: you hold a side [when You is On the page and Side is one of Hands off, Marble rolls on its own]
+      s1 --> s2: you lose the last chance [when You is On the page]
+      s1 --> s0: you play again or pick a floor [when You is On the page]
+      s1 --> s3: you hide the tab
+      s1 --> s3: you press থ#2494;ম#2494;ও or P [when You is On the page]
+      s2 --> s0: you play again or pick a floor [when You is On the page]
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when You is On the page]
+      s3 --> s0: you play again or pick a floor [when You is On the page]
+    }
+    --
+    state "You" as r1 {
+      s4: On the page
+      s5: Tab hidden
+      s6: Away, stairs frozen
+      [*] --> s4
+      s4 --> s5: you hide the tab
+      s4 --> s6: you click into another window
+      s5 --> s4: the tab shows again
+      s6 --> s4: you come back to the window
+      s6 --> s5: you hide the tab
+    }
+    --
+    state "Side" as r2 {
+      s7: Hands off
+      s8: You hold a side
+      s9: Holding, game didn't notice
+      s10: Marble rolls on its own
+      [*] --> s7
+      s7 --> s8: you hold a side [when Game is one of First screen, Marble rolling down and You is On the page]
+      s8 --> s7: you let go [when You is On the page]
+      s8 --> s9: you lose the last chance [when Game is Marble rolling down and You is On the page and Hum is not Hum off]
+      s8 --> s9: you hide the tab
+      s8 --> s10: you let go [when You is Away, stairs frozen]
+      s9 --> s7: you let go
+      s10 --> s7: you hide the tab
+      s10 --> s8: you hold a side [when Game is not Paused and You is On the page]
+      s10 --> s7: you lose the last chance [when Game is Marble rolling down and You is On the page and Hum is not Hum off]
+    }
+    --
+    state "Hum" as r3 {
+      s11: Hum off
+      s12: Sound off
+      s13: Hum on
+      s14: Hum stuck silent
+      [*] --> s11
+      s11 --> s12: you turn sound off [when You is On the page]
+      s11 --> s13: you hold a side [when Game is First screen and You is On the page and Side is one of Hands off, Marble rolls on its own]
+      s12 --> s11: you turn sound on [when Game is not Marble rolling down and You is On the page]
+      s13 --> s12: you turn sound off [when You is On the page]
+      s13 --> s11: you lose the last chance or you play again or pick a floor or you press থ#2494;ম#2494;ও or P [when You is On the page]
+      s13 --> s11: you hide the tab
+      s12 --> s13: you turn sound on [when Game is Marble rolling down and You is On the page]
+      s12 --> s14: you turn sound on [when Game is Marble rolling down and You is On the page]
+      s11 --> s13: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Game is Paused and You is On the page]
+      s14 --> s12: you turn sound off [when You is On the page]
+      s14 --> s11: you lose the last chance or you play again or pick a floor or you press থ#2494;ম#2494;ও or P [when You is On the page]
+      s14 --> s11: you hide the tab
+    }
+    --
+    state "Chime" as r4 {
+      s15: No chime due
+      s16: Chime coming
+      s17: Chime played out of place
+      [*] --> s15
+      s15 --> s16: you clear a floor without a fall [when Game is Marble rolling down and You is On the page and Hum is not Hum off]
+      s16 --> s15: the chime plays [when Game is Marble rolling down and You is not Tab hidden and Hum is not Hum off]
+      s16 --> s17: the chime plays [when Game is not Marble rolling down and Hum is one of Hum off, Sound off]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 blue
+  class s2 bugPath
+  class s3 yellow
+  class s3 mayBreak
+  class s4 mayBreak
+  class s4 bugPath
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 teal
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 teal
+  class s14 breaks
+  class s14 bugPath
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 mayBreak
+  class s16 bugPath
+  class s17 breaks
+  class s17 bugPath

@@ -1,13 +1,23 @@
-// The board and the discs, drawn fresh: a dark walnut frame with inlaid corner blocks, a honey-teak surface,
-// green painted lines and an alpona rosette in the middle, netted pockets, and flat cartoon discs.
-import { BASE_MAX, BASE_MIN, BOARD, CENTRE, POCKET_R, POCKET_X, POCKET_Y, RAIL, TOTAL } from "./physics";
+// The boards and the discs, drawn in code and pre-rendered once per size. One look per world:
+// the club room's honey teak, the tea stall's old blue-painted board, the tournament hall's pale maple with gold inlay.
+import { BASE_MAX, BASE_MIN, BOARD, CENTRE, POCKET_R, POCKET_X, POCKET_Y, RAIL, TOTAL } from "./table";
 
-export const palette = {
-  frame: "#3b2314", frameDeep: "#24140a", frameLight: "#5c3a22",
-  wood: "#d9a362", woodLight: "#e8bd80", woodDeep: "#bf8547", grain: "#8a5a2b",
-  paint: "#1d5c41", cream: "#f6e8c8", red: "#b8322a", pocket: "#1a110b",
-  ink: "#2a1a10", accent: "#1f6b4a",
+export type Look = {
+  frame: string; frameDeep: string; frameLight: string; stud: string;
+  wood: string; woodLight: string; woodDeep: string; grain: string;
+  paint: string; cream: string; red: string; petal: string; pocket: string;
 };
+
+export const LOOKS: readonly Look[] = [
+  // পাড়ার ক্লাবঘর: dark walnut frame, honey teak, green paint, a cream alpona.
+  { frame: "#3b2314", frameDeep: "#24140a", frameLight: "#5c3a22", stud: "#f6e8c8", wood: "#d9a362", woodLight: "#e8bd80", woodDeep: "#bf8547", grain: "#8a5a2b", paint: "#1d5c41", cream: "#f6e8c8", red: "#b8322a", petal: "#f6e8c8", pocket: "#1a110b" },
+  // চায়ের দোকান: a frame painted stall blue, older amber varnish, maroon lines, a turmeric alpona.
+  { frame: "#22536a", frameDeep: "#123747", frameLight: "#3a7690", stud: "#f2c14e", wood: "#c48a4a", woodLight: "#d6a160", woodDeep: "#9f6a34", grain: "#5e3a1c", paint: "#7a1f1f", cream: "#f3e3c0", red: "#c0392b", petal: "#f2c14e", pocket: "#160e08" },
+  // টুর্নামেন্ট: black lacquer with gold, pale maple, black lines, a red-and-gold rosette.
+  { frame: "#191512", frameDeep: "#070605", frameLight: "#b8913a", stud: "#e9c46a", wood: "#ead0a0", woodLight: "#f6e3bf", woodDeep: "#d1b07c", grain: "#9c7a4a", paint: "#1c1a18", cream: "#fff6e0", red: "#b3261e", petal: "#b3261e", pocket: "#0d0a08" },
+];
+
+export const accentOf = (world: number) => ["#1f6b4a", "#22536a", "#8a6a1e"][world] ?? "#1f6b4a";
 
 export type DiscKind = "white" | "black" | "queen" | "striker";
 const DISC = {
@@ -19,7 +29,7 @@ const DISC = {
 
 const TAU = Math.PI * 2;
 
-/** A flat disc with a turned ring and a soft drop shadow; cheap enough to pre-render once as a sprite. */
+/** A flat disc with a turned ring and a soft drop shadow; pre-rendered once as a sprite. */
 export function paintDisc(c: CanvasRenderingContext2D, kind: DiscKind, x: number, y: number, r: number) {
   const look = DISC[kind];
   c.fillStyle = "rgba(40,20,6,.32)";
@@ -37,11 +47,11 @@ export function paintDisc(c: CanvasRenderingContext2D, kind: DiscKind, x: number
   c.lineCap = "butt";
 }
 
-/** Eight alpona petals with red dots between them: symmetric when the board turns round for the other player. */
-function paintAlpona(c: CanvasRenderingContext2D) {
+/** Eight alpona petals with dots between them: symmetric when the board turns round for the other player. */
+function paintAlpona(c: CanvasRenderingContext2D, look: Look) {
   c.save();
   c.translate(CENTRE, CENTRE);
-  c.fillStyle = palette.cream;
+  c.fillStyle = look.petal;
   c.globalAlpha = 0.9;
   for (let k = 0; k < 8; k++) {
     c.save();
@@ -54,12 +64,12 @@ function paintAlpona(c: CanvasRenderingContext2D) {
     c.restore();
   }
   c.globalAlpha = 1;
-  c.fillStyle = palette.red;
+  c.fillStyle = look.red;
   for (let k = 0; k < 8; k++) {
     const a = ((k + 0.5) * TAU) / 8;
     c.beginPath(); c.arc(Math.cos(a) * 48, Math.sin(a) * 48, 4.5, 0, TAU); c.fill();
   }
-  c.fillStyle = palette.paint;
+  c.fillStyle = look.paint;
   for (let k = 0; k < 24; k++) {
     const a = (k * TAU) / 24;
     c.beginPath(); c.arc(Math.cos(a) * 77, Math.sin(a) * 77, 1.8, 0, TAU); c.fill();
@@ -67,12 +77,11 @@ function paintAlpona(c: CanvasRenderingContext2D) {
   c.restore();
 }
 
-/** The whole board, frame included, in a TOTAL × TOTAL box at the origin. Drawn once per size, then reused. */
-export function paintBoard(c: CanvasRenderingContext2D) {
-  // The frame.
-  c.fillStyle = palette.frameDeep;
+/** The whole board, frame included, in a TOTAL × TOTAL box at the origin. Drawn once per size and world, then reused. */
+export function paintBoard(c: CanvasRenderingContext2D, look: Look = LOOKS[0]) {
+  c.fillStyle = look.frameDeep;
   c.beginPath(); c.roundRect(0, 0, TOTAL, TOTAL, 22); c.fill();
-  c.fillStyle = palette.frame;
+  c.fillStyle = look.frame;
   c.beginPath(); c.roundRect(4, 4, TOTAL - 8, TOTAL - 8, 19); c.fill();
   c.strokeStyle = "rgba(255,220,170,.08)"; c.lineWidth = 2;
   for (let k = 0; k < 5; k++) {
@@ -82,22 +91,20 @@ export function paintBoard(c: CanvasRenderingContext2D) {
     c.beginPath(); c.moveTo(o, RAIL); c.lineTo(o + 2, TOTAL - RAIL); c.stroke();
     c.beginPath(); c.moveTo(TOTAL - o, RAIL); c.lineTo(TOTAL - o - 2, TOTAL - RAIL); c.stroke();
   }
-  // Inlaid corner blocks, each with a little cream stud.
   for (const [cx, cy] of [[0, 0], [TOTAL - RAIL, 0], [0, TOTAL - RAIL], [TOTAL - RAIL, TOTAL - RAIL]]) {
-    c.fillStyle = palette.frameLight;
+    c.fillStyle = look.frameLight;
     c.beginPath(); c.roundRect(cx + 6, cy + 6, RAIL - 12, RAIL - 12, 8); c.fill();
-    c.fillStyle = palette.cream;
+    c.fillStyle = look.stud;
     c.beginPath(); c.arc(cx + RAIL / 2, cy + RAIL / 2, 5, 0, TAU); c.fill();
   }
 
-  // The surface: honey teak, lighter in the middle, with a little grain.
   c.save();
   c.translate(RAIL, RAIL);
   const glow = c.createRadialGradient(CENTRE, CENTRE, 60, CENTRE, CENTRE, BOARD * 0.75);
-  glow.addColorStop(0, palette.woodLight); glow.addColorStop(0.6, palette.wood); glow.addColorStop(1, palette.woodDeep);
+  glow.addColorStop(0, look.woodLight); glow.addColorStop(0.6, look.wood); glow.addColorStop(1, look.woodDeep);
   c.fillStyle = glow;
   c.fillRect(0, 0, BOARD, BOARD);
-  c.strokeStyle = palette.grain; c.lineWidth = 1.2;
+  c.strokeStyle = look.grain; c.lineWidth = 1.2;
   for (let k = 0; k < 46; k++) {
     const y = 8 + k * 16 + ((k * 37) % 9);
     c.globalAlpha = 0.06 + ((k * 13) % 5) * 0.015;
@@ -106,7 +113,6 @@ export function paintBoard(c: CanvasRenderingContext2D) {
     c.stroke();
   }
   c.globalAlpha = 1;
-  // A soft shadow under the cushions.
   const shade = 14;
   for (const [x, y, w, h, x0, y0, x1, y1] of [[0, 0, BOARD, shade, 0, 0, 0, shade], [0, BOARD - shade, BOARD, shade, 0, BOARD, 0, BOARD - shade], [0, 0, shade, BOARD, 0, 0, shade, 0], [BOARD - shade, 0, shade, BOARD, BOARD, 0, BOARD - shade, 0]]) {
     const g = c.createLinearGradient(x0, y0, x1, y1);
@@ -114,34 +120,33 @@ export function paintBoard(c: CanvasRenderingContext2D) {
     c.fillStyle = g; c.fillRect(x, y, w, h);
   }
 
-  // Painted lines: four baselines with their end circles, the corner arrows, the centre circles.
-  c.strokeStyle = palette.paint; c.fillStyle = palette.paint; c.lineWidth = 2.6;
+  c.strokeStyle = look.paint; c.fillStyle = look.paint; c.lineWidth = 2.6;
   for (let side = 0; side < 4; side++) {
     c.save();
     c.translate(CENTRE, CENTRE); c.rotate((side * TAU) / 4); c.translate(-CENTRE, -CENTRE);
     const yIn = BOARD - 134, yOut = BOARD - 102, yMid = (yIn + yOut) / 2;
     c.beginPath(); c.moveTo(BASE_MIN, yIn); c.lineTo(BASE_MAX, yIn); c.moveTo(BASE_MIN, yOut); c.lineTo(BASE_MAX, yOut); c.stroke();
     for (const x of [BASE_MIN, BASE_MAX]) {
-      c.fillStyle = palette.paint; c.beginPath(); c.arc(x, yMid, 16, 0, TAU); c.fill();
-      c.fillStyle = palette.cream; c.beginPath(); c.arc(x, yMid, 5, 0, TAU); c.fill();
+      c.fillStyle = look.paint; c.beginPath(); c.arc(x, yMid, 16, 0, TAU); c.fill();
+      c.fillStyle = look.cream; c.beginPath(); c.arc(x, yMid, 5, 0, TAU); c.fill();
     }
-    // The corner arrow, pointing at the pocket.
     c.beginPath(); c.moveTo(92, 92); c.lineTo(236, 236); c.stroke();
     c.beginPath(); c.moveTo(92, 92); c.lineTo(110, 94); c.moveTo(92, 92); c.lineTo(94, 110); c.stroke();
+    c.fillStyle = look.paint;
     c.beginPath(); c.arc(236, 236, 5, 0, TAU); c.fill();
     c.restore();
   }
   c.lineWidth = 2.6;
   c.beginPath(); c.arc(CENTRE, CENTRE, 85, 0, TAU); c.stroke();
-  paintAlpona(c);
+  paintAlpona(c, look);
+  c.strokeStyle = look.paint;
   c.beginPath(); c.arc(CENTRE, CENTRE, 16, 0, TAU); c.stroke();
 
-  // Netted pockets.
   for (let p = 0; p < 4; p++) {
     const px = POCKET_X[p], py = POCKET_Y[p];
     c.save();
     c.beginPath(); c.arc(px, py, POCKET_R, 0, TAU);
-    c.fillStyle = palette.pocket; c.fill();
+    c.fillStyle = look.pocket; c.fill();
     c.clip();
     c.strokeStyle = "rgba(236,214,180,.3)"; c.lineWidth = 1;
     c.beginPath();
@@ -154,7 +159,7 @@ export function paintBoard(c: CanvasRenderingContext2D) {
     hole.addColorStop(0, "rgba(0,0,0,.65)"); hole.addColorStop(1, "rgba(0,0,0,0)");
     c.fillStyle = hole; c.fillRect(px - POCKET_R, py - POCKET_R, POCKET_R * 2, POCKET_R * 2);
     c.restore();
-    c.strokeStyle = palette.frameDeep; c.lineWidth = 3;
+    c.strokeStyle = look.frameDeep; c.lineWidth = 3;
     c.beginPath(); c.arc(px, py, POCKET_R, 0, TAU); c.stroke();
   }
   c.restore();

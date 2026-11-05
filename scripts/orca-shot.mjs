@@ -3,7 +3,7 @@
 // Usage: node scripts/orca-shot.mjs <url> <out.png> [--device="Pixel 9"] [--wait=ms] [--eval="js; may await; throw to fail"] [--keep]
 // shortcut: Orca repeats the image below its pane in phone mode, so only the top ~1000 device px are kept; full-page and 320px images come from scripts/shot.mjs.
 import { execFileSync } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 
 const args = process.argv.slice(2);
 const flags = Object.fromEntries(args.filter(a => a.startsWith('--')).map(a => { const [k, ...v] = a.slice(2).split('='); return [k, v.join('=') || true]; }));
@@ -32,7 +32,9 @@ try {
     if (result.startsWith('error:')) throw new Error(`--eval ${result}`);
     await sleep(600);
   }
-  const png = Buffer.from(orca('screenshot', '--page', page, '--format', 'png').data, 'base64');
+  const shot = orca('screenshot', '--page', page, '--format', 'png');
+  // Newer Orca returns a temp file path; older builds returned base64 data.
+  const png = shot.path ? readFileSync(shot.path) : Buffer.from(shot.data, 'base64');
   writeFileSync(out, png);
   const [width, height] = [png.readUInt32BE(16), png.readUInt32BE(20)];
   const keep = Math.min(paneHeight, 1000);

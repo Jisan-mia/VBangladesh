@@ -1,65 +1,142 @@
-.tool-golper-mor{--accent:#9a4b12;--accent-deep:#6b3209;--ink:#2e2218;--muted:#6e5d4b;--paper:#fff6e3;--paper-edge:#ecdcb8}
-.tool-golper-mor .gm-page{color:var(--ink)}
+/* Look: a Bangladeshi school exercise book (খাতা) and its shelf: flat printed covers in the shelf's own ink (chalk blue, clay, grass), square-ish corners like card and paper, a wooden plank. Only the play button, the dots, the lamps, the number badges and the portrait are round, because they are round things. The gold ring and the lamp glow mean something (a road not yet read, a shelf lit). unslop-ignore: the palette is the three shelves' own. */
+.tool-golper-mor{--accent:#9a4b12;--accent-deep:#6b3209;--ink:#2e2218;--muted:#6e5d4b;--gm-out:cubic-bezier(.23,1,.32,1)}
 
-.gm-hero{padding:8px 0 0}
-.gm-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,5.8vw,36px);line-height:1.4;font-weight:700}
+/* the book: one stage, three screens (the shelf, a story, the end). The world's colours come in on --paper/--edge/--deep/--glow. */
+.gm{--paper:#fff6e3;--edge:#ecdcb8;--deep:#9a4b12;--glow:#f2b632;position:relative;display:flex;flex-direction:column;max-width:480px;min-height:420px;margin-inline:auto;color:var(--ink)}
+.gm *{-webkit-tap-highlight-color:transparent}
+.gm :where(button){font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+.gm :where(button){transition:transform 140ms var(--gm-out)}
+.gm button:active:not(:disabled){transform:scale(.97)}
+.gm button:focus-visible{outline:3px solid var(--glow);outline-offset:3px}
 
-.gm{display:grid;gap:12px;max-width:480px;margin:0 auto 8px;scroll-margin-top:8px}
+.gm-top{display:flex;align-items:center;gap:10px;min-height:52px}
+.gm-lamps{display:flex;gap:4px;margin:0}
+.gm-count{margin:0 0 0 auto;font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--deep)}
+.gm-count small{font-size:16px;font-weight:700;color:var(--muted)}
 
-/* the shelf: every story as a picture book */
-.gm-shelf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:0;padding:0;list-style:none}
-.gm-book{position:relative;display:grid;width:100%;min-height:96px;padding:0 0 8px;border:0;border-radius:14px;background:var(--paper);box-shadow:inset 0 0 0 1.5px var(--paper-edge),0 4px 0 var(--book);color:var(--ink);font:inherit;text-align:left;cursor:pointer;overflow:hidden;touch-action:manipulation;transition:transform .08s}
-.gm-book:active{transform:translateY(2px)}
-.gm-thumb{display:block;width:100%;height:auto;aspect-ratio:16/10;border-bottom:4px solid var(--book)}
-.gm-book-title{padding:6px 10px 0;font-family:var(--font-display);font-size:17px;font-weight:700;line-height:1.5}
-.gm-mark{justify-self:start;margin:4px 10px 0;padding:0 8px;border-radius:999px;background:#e5f2dc;color:#2f5d2a;font-size:13px;font-weight:700;line-height:1.7}
-.gm-count{margin:0;color:var(--muted);font-size:16px;text-align:center}
-.gm-grown{display:grid;justify-items:center;gap:8px;padding-top:4px}
+/* the shelf: the big book to read next, then three shelves of three */
+.gm-shelf-screen{display:flex;flex:1;flex-direction:column;gap:8px;min-height:0;overflow:auto;padding:6px 10px 12px;border-radius:6px;background:#fff6e3;box-shadow:inset 0 0 0 2px #ecdcb8}
+.gm-hero{flex:none;display:block;width:100%;padding:0;border:0;border-radius:6px;overflow:hidden;background:#fff;text-align:left;box-shadow:0 0 0 3px var(--deep),0 6px 0 var(--deep)}
+.gm-hero-pic{display:block;width:100%;height:clamp(104px,16svh,140px)}
+.gm-hero-strip{display:flex;align-items:center;gap:12px;padding:8px 12px 10px 16px}
+.gm-hero-title{display:grid;flex:1;min-width:0;font-family:var(--font-display);font-size:clamp(21px,6vw,26px);font-weight:800;line-height:1.4}
+.gm-hero-title small{font-size:16px;font-weight:700;color:var(--deep)}
+.gm-play{position:relative;display:grid;flex:none;place-items:center;width:76px;height:76px;border-radius:50%;background:var(--deep);color:#fff;box-shadow:0 4px 0 #0003}
+.gm-play>svg{width:40px;height:40px;margin-left:4px}
+.gm-world{flex:none}
+.gm-world h2{display:flex;align-items:center;gap:6px;margin:0 0 2px;font-family:var(--font-display);font-size:19px;line-height:1.4}
+.gm-world ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0;padding:0 2px 8px;list-style:none;border-bottom:8px solid #b98a55;border-radius:0 0 5px 5px}
+.gm-lamp{display:grid;place-items:center;width:30px;height:30px}
+.gm-lamp svg{width:30px;height:30px}
+.gm-lamp.lit{filter:drop-shadow(0 0 5px #f2b632)}
+.gm-book{position:relative;display:flex;flex-direction:column;gap:5px;width:100%;min-height:118px;padding:5px 5px 5px 9px;border:0;border-radius:2px 5px 5px 2px;background:var(--book);text-align:left;box-shadow:inset 6px 0 0 #0003,0 3px 0 #0003}
+.gm-book.next{box-shadow:inset 6px 0 0 #0003,0 0 0 3px var(--glow),0 3px 0 #0003;animation:gm-bob 7s 2.5s var(--gm-out) infinite}
+.gm-book.finale::after{content:"";position:absolute;top:-5px;right:9px;width:15px;height:24px;background:#f2b632;clip-path:polygon(0 0,100% 0,100% 100%,50% 76%,0 100%)}
+.gm-cover{display:block;width:100%;height:58px;border-radius:3px;background:#fff}
+.gm-book-title{display:grid;align-content:center;min-height:calc(2.7em + 4px);padding:2px 5px;border-radius:3px;background:#fffdf6;font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.35;color:var(--ink)}
+.gm-marks{display:flex;justify-content:center;gap:6px;padding:2px 0;border-radius:3px;background:#fffdf6}
+.gm-marks svg{width:16px;height:22px}
+.gm-grown{display:grid;justify-items:center;gap:8px;padding-top:2px}
 .gm-grown .kk-gate-open{display:grid;gap:10px;justify-items:center}
 
-/* the reader: one picture, its words, one big button */
-.gm-bar{display:flex;align-items:center;gap:8px;min-height:48px}
-.gm-back{min-height:48px;padding:6px 12px;border:1.5px solid var(--paper-edge);border-radius:12px;background:#fff;color:var(--ink);font:inherit;font-size:16px;font-weight:700;cursor:pointer}
-.gm-dots{display:flex;gap:6px;margin-left:auto}
-.gm-dots i{width:10px;height:10px;border-radius:50%;background:var(--paper-edge)}
-.gm-dots i.past{background:color-mix(in srgb,var(--accent) 45%,#fff)}
-.gm-dots i.now{background:var(--accent);transform:scale(1.25)}
-.gm-panel{display:grid;gap:8px;animation:gm-in .22s ease-out}
-.gm-scene{display:block;width:100%;height:auto;aspect-ratio:16/10;border-radius:14px;box-shadow:0 0 0 1.5px var(--paper-edge)}
-.gm-words{display:flex;align-items:flex-start;gap:10px}
-.gm-words p{flex:1;margin:0;font-size:clamp(19px,5.2vw,22px);line-height:1.65}
-.gm-nav{display:grid;grid-template-columns:72px 1fr;gap:16px}
-.gm-prev{min-height:72px;border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff;color:var(--ink);font:inherit;font-size:22px;font-weight:700;cursor:pointer}
-.gm-prev:disabled{opacity:.35;cursor:default}
-.gm-ask .gm-prev{min-height:52px;width:100%;font-size:16px}
-.gm-next{position:relative;min-height:72px;font-size:21px}
-.gm-ask{display:grid;gap:12px}
-.gm-question{margin:0;font-family:var(--font-display);font-size:clamp(21px,6vw,25px);font-weight:800;line-height:1.5;text-align:center}
-.gm-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.gm-choice{display:grid;align-content:start;gap:4px;min-height:96px;padding:0 0 10px;border:2.5px solid var(--accent);border-radius:16px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;overflow:hidden;touch-action:manipulation;transition:transform .08s}
-.gm-choice:active{transform:scale(.97)}
-.gm-choice-pic{display:block;width:100%;height:auto;aspect-ratio:16/10}
-.gm-choice span{padding:2px 8px 0;font-size:18px;font-weight:700;line-height:1.5}
-.gm-choice small{color:var(--muted);font-size:14px}
+/* a story: the picture takes what the words and buttons leave */
+.gm-read{display:flex;flex:1;flex-direction:column;gap:8px;min-height:0;overflow:auto;padding:6px 10px 12px;border-radius:6px;background:var(--paper);box-shadow:inset 0 0 0 2px var(--edge)}
+.gm-shelf-btn{flex:none;display:grid;place-items:center;width:56px;height:56px;padding:0;border:2px solid var(--edge);border-radius:4px;background:#fff;color:var(--deep)}
+.gm-shelf-btn svg{width:34px;height:34px}
+.gm-dots{display:flex;gap:7px;margin-inline:auto}
+.gm-dots i{width:11px;height:11px;border-radius:50%;background:var(--edge);transition:transform 160ms var(--gm-out),background-color 160ms ease}
+.gm-dots i.past{background:color-mix(in srgb,var(--deep) 45%,#fff)}
+.gm-dots i.now{background:var(--deep);transform:scale(1.35)}
+.gm-story-name{flex:0 1 34%;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;font-weight:700;color:var(--muted)}
+.gm-panel{display:flex;flex:1 1 auto;flex-direction:column;justify-content:center;gap:12px;min-height:0}
+.gm-art{display:grid;flex:0 1 auto;place-items:center;min-height:0;border-radius:4px}
+.gm-scene{display:block;width:auto;height:auto;max-width:100%;max-height:max(150px,calc(var(--stage-h,100svh) - var(--gm-chrome,330px)));border-radius:4px;box-shadow:0 0 0 2px var(--edge);animation:gm-rise 220ms var(--gm-out) both}
+.gm-text{flex:none;margin:0;font-size:clamp(19px,5.2vw,23px);line-height:1.6;animation:gm-rise 200ms 70ms var(--gm-out) both;--dx:0px;--dy:6px}
+.gm-nav{flex:none;display:grid;grid-template-columns:72px 1fr;gap:16px}
+.gm-prev{display:grid;place-items:center;min-height:88px;padding:0;border:2px solid var(--edge);border-radius:6px;background:#fff;color:var(--deep)}
+.gm-prev svg{width:36px;height:36px}
+.gm-prev:disabled{opacity:.3;cursor:default}
+.gm-next{position:relative;display:flex;align-items:center;justify-content:center;gap:12px;min-height:88px;border:0;border-radius:6px;background:var(--deep);color:#fff;font-family:var(--font-display);font-size:23px;font-weight:800;box-shadow:0 5px 0 #0003}
+.gm-next svg{width:38px;height:38px}
+.gm-next.last{background:var(--glow);color:var(--ink)}
+.gm-read[data-asking]{--gm-chrome:560px}
+.gm-ask{flex:none;display:flex;flex-direction:column;gap:8px}
+.gm-ask-head{display:grid;grid-template-columns:64px 1fr;align-items:center;gap:8px}
+.gm-ask-head .gm-prev{min-height:64px}
+.gm-question{animation:gm-rise 200ms 110ms var(--gm-out) both;--dx:0px;--dy:6px;display:flex;align-items:center;gap:8px;margin:0;font-family:var(--font-display);font-size:clamp(20px,5.8vw,25px);font-weight:800;line-height:1.45}
+.gm-question svg{flex:none;width:34px;height:34px;color:var(--deep)}
+.gm-choices{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.gm-choice:nth-child(2){animation-delay:190ms}
+.gm-choice{animation:gm-rise 220ms 130ms var(--gm-out) both;--dx:0px;--dy:10px;position:relative;display:flex;flex-direction:column;gap:6px;min-height:150px;padding:0 0 8px;border:3px solid var(--deep);border-radius:6px;overflow:hidden;background:#fff}
+.gm-choice.glow{box-shadow:0 0 0 5px #f2b632aa}
+.gm-choice-pic{display:block;width:100%;height:clamp(76px,13svh,128px)}
+.gm-choice>span{padding:0 8px;font-size:18px;font-weight:700;line-height:1.5;text-align:center}
+.gm-key{position:absolute;top:6px;left:6px;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#fff;box-shadow:0 0 0 2px var(--deep);font-size:16px;font-style:normal;font-weight:800;color:var(--deep)}
+.gm-seen{position:absolute;top:6px;right:6px;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#2f7d3a;color:#fff}
+.gm-seen svg{width:20px;height:20px}
 
-/* the end: the other child's face, one question, then three calm ways on */
-.gm-end{justify-items:center;text-align:center}
+/* the end: the other child's face and feeling, one question, counts, three picture buttons */
+.gm-end-wrap{display:flex;flex-direction:column;flex:1;min-height:0;overflow:auto;padding:12px;border-radius:6px;background:var(--paper);box-shadow:inset 0 0 0 2px var(--edge)}
+.gm-end{display:flex;flex-direction:column;align-items:center;gap:10px;margin-block:auto;text-align:center}
+.gm-end>*{animation:gm-rise 240ms var(--gm-out) both;--dx:0px;--dy:10px}
+.gm-end>:nth-child(2){animation-delay:60ms}.gm-end>:nth-child(3){animation-delay:120ms}.gm-end>:nth-child(4){animation-delay:150ms}.gm-end>:nth-child(n+5){animation-delay:200ms}
 .gm-end-title{margin:0;color:var(--muted);font-size:16px;font-weight:700}
-.gm-portrait{width:140px;height:140px;border-radius:50%;background:var(--paper);box-shadow:inset 0 0 0 3px var(--paper-edge)}
+.gm-portrait{display:block;width:min(210px,52vw);height:auto}
 .gm-talk-label{margin:0;color:var(--muted);font-size:16px;line-height:1.6}
 .gm-talk{margin:0;font-family:var(--font-display);font-size:clamp(21px,6vw,25px);font-weight:700;line-height:1.5}
-.gm-big{width:100%;min-height:64px;font-size:19px}
-.gm-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%}
-.gm-end .kk-show-button{width:100%}
+.gm-lit{display:flex;align-items:center;gap:8px;margin:0;font-family:var(--font-display);font-size:19px;font-weight:800}
+.gm-counts{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 14px;margin:0;font-weight:700;color:var(--muted)}
+.gm-counts b{color:var(--ink)}
+.gm-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;width:100%}
+.gm-actions.one{grid-template-columns:minmax(130px,170px);justify-content:center}
+.gm-big{display:grid;place-items:center;align-content:center;gap:2px;min-width:96px;min-height:108px;padding:10px 6px;border:0;border-radius:6px;background:#fff;color:var(--deep);box-shadow:0 0 0 2.5px var(--deep),0 5px 0 #0003;font-family:var(--font-display);font-size:18px;font-weight:800}
+.gm-big svg{width:46px;height:46px}
+.gm-big-main{background:var(--deep);color:#fff;box-shadow:0 5px 0 #0003}
+.gm-big-main.glow{box-shadow:0 0 0 5px #f2b632aa,0 5px 0 #0003}
+.gm-big-done{min-height:108px}
+.gm-end .kk-show-button{width:100%;min-height:56px;font-size:17px}
+@media (max-width:379px){.gm-actions:not(.one){grid-template-columns:1fr 1fr}.gm-actions:not(.one) .gm-big-main{grid-column:1/-1}}
 
-/* the ghost finger: a soft tap ring on the first move, once a second and a half */
-.gm-finger{position:absolute;right:18px;bottom:14px;width:40px;height:40px;border-radius:50%;background:#ffffffcc;box-shadow:0 0 0 3px var(--accent);pointer-events:none;animation:gm-tap 1.6s ease-in-out infinite}
-.gm-book .gm-finger{right:auto;left:50%;top:28%;bottom:auto;margin-left:-20px}
+/* the ghost finger: a soft tap ring on the first move */
+.gm-finger{position:absolute;right:-4px;bottom:-16px;width:46px;height:46px;color:var(--deep);pointer-events:none;animation:gm-tap 1.6s ease-in-out infinite}
+.gm-finger svg{display:block;width:100%;height:100%}
+.gm-play .gm-finger{right:-14px;bottom:-14px}
 
-.gm-guide ol{display:grid;gap:8px;padding-left:22px;line-height:1.7}
+/* the story picture breathes (CSS only, so ধীরে খেলো can stop it all). Covers and thumbnails stay still: about 30 moving figures on a shelf is wasted work on a cheap phone. */
+.gm-scene .gm-fig{transform-box:fill-box;transform-origin:50% 100%;animation:gm-breathe 3.8s ease-in-out infinite}
+.gm-scene .gm-eyes{transform-box:fill-box;transform-origin:50% 50%;animation:gm-blink 5s ease-in-out infinite}
+.gm-scene .gm-cloud{animation:gm-cloud 18s ease-in-out infinite alternate}
+.gm-scene .gm-cloud-b{animation-duration:24s;animation-direction:alternate-reverse}
+.gm-scene .gm-mote{animation:gm-mote 7s ease-in-out infinite}
+.gm-scene .gm-leaf{animation:gm-leaf 6s linear infinite}
+.gm-scene .gm-prop-kite{transform-box:fill-box;transform-origin:50% 100%;animation:gm-sway 3.4s ease-in-out infinite}
+.gm-bubble{transform-box:fill-box;transform-origin:30% 100%;animation:gm-pop 260ms 200ms var(--gm-out) both}
 
-@keyframes gm-in{from{opacity:0;transform:translateX(14px)}to{opacity:1;transform:none}}
-@keyframes gm-tap{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(.7);opacity:.6}}
-.gm-still .gm-panel,.gm-still .gm-finger{animation:none}
-.gm-still .gm-choice,.gm-still .gm-book{transition:none}
-@media (prefers-reduced-motion:reduce){.gm-panel,.gm-finger{animation:none}.gm-choice,.gm-book{transition:none}.gm-choice:active,.gm-book:active{transform:none}}
+@keyframes gm-rise{from{opacity:0;transform:translate(var(--dx,12px),var(--dy,0))}to{opacity:1;transform:none}}
+@keyframes gm-pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+@keyframes gm-tap{0%,100%{transform:scale(1);opacity:.95}50%{transform:scale(.72);opacity:.6}}
+@keyframes gm-bob{0%,12%,100%{transform:translateY(0)}6%{transform:translateY(-4px)}}
+@keyframes gm-breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.018)}}
+@keyframes gm-blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+@keyframes gm-cloud{from{transform:translateX(-14px)}to{transform:translateX(26px)}}
+@keyframes gm-mote{0%,100%{transform:translate(0,0);opacity:.15}50%{transform:translate(7px,-11px);opacity:.9}}
+@keyframes gm-leaf{0%{transform:translate(0,0) rotate(0);opacity:0}15%{opacity:1}100%{transform:translate(-26px,96px) rotate(200deg);opacity:0}}
+@keyframes gm-sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+
+/* the picture comes from the side you are going: forward from the right, back from the left */
+.gm[data-dir=back] .gm-scene{--dx:-12px}
+.gm[data-dir=fwd] .gm-scene{--dx:12px}
+/* a key press is a 100-times-a-day action: no motion at all */
+.gm[data-input=key] .gm-scene,.gm[data-input=key] .gm-text,.gm[data-input=key] .gm-question,.gm[data-input=key] .gm-choice,.gm[data-input=key] .gm-bubble{animation:none}
+
+/* under the player's menu nothing moves */
+.gm[data-paused] *{animation-play-state:paused!important}
+
+/* ধীরে খেলো and reduced motion: nothing moves, nothing fades in */
+.gm-still *,.gm-still *::before,.gm-still *::after{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.gm *,.gm *::before,.gm *::after{animation:none!important;transition:none!important}.gm-scene,.gm-text,.gm-question,.gm-choice,.gm-end>*{animation:gm-fade 150ms ease both!important}}
+@keyframes gm-fade{from{opacity:0}to{opacity:1}}
+
+/* inside the player: the book fills the stage's height (24 px = the stage's own padding) */
+.gp-stage .gm{height:calc(var(--stage-h,0px) - 24px)}
+@media (max-height:600px){.gp-stage .gm{height:auto}}

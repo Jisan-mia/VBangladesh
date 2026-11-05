@@ -84,6 +84,10 @@ export const POSES: Record<Pose, { art: string; germs: [number, number][] }> = {
   },
 };
 
+const sparkle = (x: number, y: number, k: number) => `<path transform="translate(${x} ${y}) scale(${k})" d="M0 -10 Q2 -2 10 0 Q2 2 0 10 Q-2 2 -10 0 Q-2 -2 0 -10Z" fill="${GLOW}" stroke="#c49a00" stroke-width="1.2"/>`;
+/** A round bubble with a question mark drawn as a path (no text): the picture of the quiz's question. */
+const questionBubble = (x: number, y: number, k: number) => `<g transform="translate(${x} ${y}) scale(${k})"><circle r="30" fill="#fff" stroke="${FOAM_EDGE}" stroke-width="3"/><path d="M-10 -8 Q-10 -20 0 -20 Q11 -20 11 -9 Q11 -2 2 2 Q0 4 0 9" fill="none" stroke="#0f7c8c" stroke-width="6" stroke-linecap="round"/><circle cx="0" cy="19" r="4" fill="#0f7c8c"/></g>`;
+
 const TAP = `<rect x="34" y="20" width="86" height="13" rx="6" fill="#aab6c2" stroke="#5f6b78" stroke-width="2"/><rect x="106" y="22" width="16" height="26" rx="6" fill="#aab6c2" stroke="#5f6b78" stroke-width="2"/>`;
 const STREAM = `<rect class="hd-flow" x="109" y="48" width="10" height="60" rx="5" fill="#8fd3f4" opacity=".85"/>`;
 const SOAP = `<g transform="rotate(-12 50 82)"><rect x="32" y="72" width="38" height="22" rx="9" fill="#f6a5c0" stroke="#b5567a" stroke-width="2"/></g>`;
@@ -94,6 +98,10 @@ export const SCENES = {
   wet: TAP + STREAM + hand({ x: 90, y: 136, r: 22, s: 0.78, view: "palm" }) + hand({ x: 128, y: 136, r: -22, s: 0.78, flip: true, view: "palm" }) + SOAP + bubbles([[48, 60, 4], [60, 52, 3], [70, 62, 5]]),
   rinse: TAP + STREAM + hand({ x: 98, y: 132, r: 14, s: 0.8, view: "palm", cls: "hd-a" }) + hand({ x: 130, y: 132, r: -14, s: 0.8, flip: true, view: "palm", cls: "hd-b" }) + `<g fill="#8fd3f4">${[[84, 100], [140, 98], [100, 168], [130, 172]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="3.5" ry="5"/>`).join("")}</g>`,
   dry: hand({ x: 80, y: 104, r: 10, s: 0.8, view: "back" }) + hand({ x: 120, y: 104, r: -10, s: 0.8, flip: true, view: "back" }) + GAMCHHA,
+  /** The title picture of কখন ধোব: soap and hands under a question bubble. */
+  ask: hand({ x: 84, y: 138, r: 18, s: 0.58, view: "palm" }) + hand({ x: 122, y: 138, r: -18, s: 0.58, flip: true, view: "palm" }) + SOAP + bubbles([[52, 104, 5], [150, 120, 6], [64, 62, 4]]) + questionBubble(122, 58, 1.1),
+  /** The finished hand wash: two clean hands under sparkles. */
+  clean: hand({ x: 80, y: 122, r: 8, s: 0.9, view: "back" }) + hand({ x: 122, y: 122, r: -8, s: 0.9, flip: true, view: "back" }) + sparkle(54, 56, 1.3) + sparkle(146, 62, 1.1) + sparkle(100, 36, 0.9) + sparkle(160, 128, 0.8),
 } as const;
 
 // The mouth: lips, inside, tongue, then six teeth on each row following the curve.
@@ -167,6 +175,9 @@ export const ICONS: Record<string, string> = {
   chand: `<path d="M36 6 A26 26 0 1 0 60 38 A20 20 0 1 1 36 6Z" fill="${GLOW}" ${ink}/><circle cx="50" cy="16" r="2.5" fill="${GLOW}"/><circle cx="54" cy="32" r="2" fill="${GLOW}"/>`,
   golpo: `<path d="M32 16 Q20 10 6 14 V50 Q20 46 32 52Z" fill="#fff" ${ink}/><path d="M32 16 Q44 10 58 14 V50 Q44 46 32 52Z" fill="#fff" ${ink}/><path d="M12 24 h12 M12 32 h12 M40 24 h12 M40 32 h12" stroke="#9aa6b2" stroke-width="2"/>`,
   rongdhonu: ["#e04a3a", "#f2a33a", "#f2d23a", "#5cb85c", "#4aa3df"].map((c, i) => `<path d="M${8 + i * 4} 46 A${24 - i * 4} ${24 - i * 4} 0 0 1 ${56 - i * 4} 46" stroke="${c}" stroke-width="4" fill="none"/>`).join("") + `<g fill="#fff" stroke="#9aa6b2" stroke-width="1.5"><circle cx="12" cy="48" r="7"/><circle cx="52" cy="48" r="7"/></g>`,
+  ask: `<rect x="6" y="36" width="30" height="18" rx="8" fill="#f6a5c0" stroke="#b5567a" stroke-width="2.2"/>${bubbles([[22, 28, 5], [32, 22, 3.5]])}` + questionBubble(44, 22, 0.55),
+  germ: germ(32, 32, 1.7, 0),
+  half: `<circle cx="32" cy="32" r="26" fill="#fff" stroke="#0f7c8c" stroke-width="3"/><path d="M32 6 A26 26 0 0 1 32 58 Z" fill="#0f7c8c"/>` + sparkle(32, 32, 1.2),
   "tab-hat": `<rect x="10" y="30" width="40" height="22" rx="9" fill="#f6a5c0" stroke="#b5567a" stroke-width="2.4"/>${bubbles([[40, 20, 7], [52, 12, 4.5], [24, 18, 5]])}`,
   "tab-dat": `<path d="M14 20 Q14 6 26 6 Q32 10 38 6 Q50 6 50 20 L48 40 Q46 58 40 60 Q36 50 32 50 Q28 50 24 60 Q18 58 16 40 Z" fill="#fff" stroke="#3a3040" stroke-width="2.5" stroke-linejoin="round"/><path transform="translate(50 12) scale(.8)" d="M0 -10 Q2 -2 10 0 Q2 2 0 10 Q-2 2 -10 0 Q-2 -2 0 -10Z" fill="${GLOW}" stroke="#c49a00" stroke-width="1.5"/>`,
   "tab-kokhon": `<circle cx="32" cy="34" r="24" fill="#fff" ${ink}/><path d="M32 34 V18 M32 34 L44 40" stroke="#3a3040" stroke-width="3.4" stroke-linecap="round"/><circle cx="32" cy="34" r="3" fill="#3a3040"/>`,

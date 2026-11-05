@@ -1,0 +1,117 @@
+---
+title: "Sourojogot (solar system tour): round, daily limit, parent gate and header search"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: rest
+    lg2: done
+    lg3: Breaks GateAsksOnlyAfterAFullHold or NoFreeTextForKids or NoRoundAfterTimeIsUp or NothingLoadsAfterStart or RestOnlyAtBreak or ShareNeverLeftOpenForTheChild
+    lg4: Path to the GateAsksOnlyAfterAFullHold or NoFreeTextForKids or NoRoundAfterTimeIsUp or NothingLoadsAfterStart or RestOnlyAtBreak or ShareNeverLeftOpenForTheChild bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Playing a round
+      s1: Round finished
+      s2: Rest screen at the end of a round
+      s3: আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও
+      s4: Playing a round after today's time is up
+      s5: Level menu
+      s6: আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও, save open
+      s7: Rest screen over a round in play
+      [*] --> s0
+      s0 --> s1: you finish the round [when Today is Time left today]
+      s1 --> s0: you press আব#2494;র খ#2503;ল#2507; or pick a level [when Today is Time left today]
+      s1 --> s3: you press আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও
+      s1 --> s5: you press শ#2503;ষ
+      s0 --> s2: you finish the round [when Today is Today's time is up]
+      s0 --> s4: you press আব#2494;র খ#2503;ল#2507; or pick a level [when Today is Today's time is up]
+      s1 --> s4: you press আব#2494;র খ#2503;ল#2507; or pick a level [when Today is Today's time is up]
+      s2 --> s1: a grown-up gives ১০ more minutes
+      s2 --> s7: you Tab to সব ল#2503;ভ#2503;ল behind the rest screen and press Enter
+      s3 --> s1: you press দ#2503;খ#2494;ন#2507; শ#2503;ষ
+      s3 --> s6: a grown-up opens ছব#2495;ট#2494; র#2494;খ#2507;
+      s4 --> s2: you finish the round [when Today is Today's time is up]
+      s5 --> s0: you press আব#2494;র খ#2503;ল#2507; or pick a level [when Today is Time left today]
+      s6 --> s1: you press দ#2503;খ#2494;ন#2507; শ#2503;ষ
+      s7 --> s2: you finish the round
+      s7 --> s4: a grown-up gives ১০ more minutes
+      s5 --> s4: you press আব#2494;র খ#2503;ল#2507; or pick a level [when Today is Today's time is up]
+      s4 --> s0: you press আব#2494;র খ#2503;ল#2507; or pick a level [when Today is Time left today]
+      s4 --> s1: you finish the round [when Today is Time left today]
+    }
+    --
+    state "Today" as r1 {
+      s8: Time left today
+      s9: Today's time is up
+      [*] --> s8
+      s8 --> s9: today's time runs out
+      s9 --> s8: a grown-up gives ১০ more minutes [when Game is one of Rest screen at the end of a round, Rest screen over a round in play]
+    }
+    --
+    state "Gate" as r2 {
+      s10: বড#2492;দ#2503;র জন#2509;য closed
+      s11: Holding বড#2492;দ#2503;র জন#2509;য
+      s12: Sum question
+      s13: Let go, a hold timer still running
+      s14: Share link open for a grown-up
+      s15: Sum question opened by a short press
+      s16: Share link left open for the child
+      [*] --> s10
+      s10 --> s11: you hold বড#2492;দ#2503;র জন#2509;য
+      s11 --> s10: you let go before 2 s
+      s11 --> s12: 2 s pass
+      s12 --> s10: you press থ#2494;ক or বন#2509;ধ কর#2507;
+      s12 --> s14: a grown-up answers the sum
+      s11 --> s13: you let go before 2 s
+      s13 --> s15: 2 s pass
+      s14 --> s10: you press থ#2494;ক or বন#2509;ধ কর#2507;
+      s14 --> s16: you press আব#2494;র খ#2503;ল#2507; or pick a level [when Game is one of Level menu, Playing a round, Playing a round after today's time is up, Round finished]
+      s15 --> s10: you press থ#2494;ক or বন#2509;ধ কর#2507;
+      s15 --> s14: a grown-up answers the sum
+      s16 --> s10: you press থ#2494;ক or বন#2509;ধ কর#2507;
+      s14 --> s16: you Tab to সব ল#2503;ভ#2503;ল behind the rest screen and press Enter [when Game is one of Rest screen at the end of a round, Rest screen over a round in play and Today is Today's time is up]
+    }
+    --
+    state "Search" as r3 {
+      s17: Search untouched
+      s18: Typing in the site search
+      [*] --> s17
+      s17 --> s18: you type in the site search [when Game is one of Level menu, Playing a round, Playing a round after today's time is up, Round finished]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 teal
+  class s0 bugPath
+  class s1 blue
+  class s2 yellow
+  class s2 bugPath
+  class s3 blue
+  class s4 teal
+  class s4 breaks
+  class s4 bugPath
+  class s5 blue
+  class s6 blue
+  class s7 yellow
+  class s7 breaks
+  class s7 bugPath
+  class s8 bugPath
+  class s9 bugPath
+  class s10 bugPath
+  class s11 bugPath
+  class s12 bugPath
+  class s13 bugPath
+  class s14 bugPath
+  class s15 breaks
+  class s15 bugPath
+  class s16 breaks
+  class s16 bugPath
+  class s17 bugPath
+  class s18 breaks
+  class s18 bugPath

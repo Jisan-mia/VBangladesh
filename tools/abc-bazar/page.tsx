@@ -1,33 +1,20 @@
 import "./product.css";
-import { ParentNote } from "../../shared/kids-kit";
-import { Faq, JsonLd, PageFrame } from "../../shared/site-shell";
-import { AbcGame } from "./components/abc-game";
-import { site } from "./content";
+import { GamePage } from "../../shared/game-player";
+import { ParentGate, ParentNote } from "../../shared/kids-kit";
+import { AbcGame } from "./components/game";
+import { parentNote, site } from "./content";
 
 export default function AbcBazarPage() {
   return (
-    <PageFrame site={site}>
-      <JsonLd site={site} />
-      <div className="ab-page">
-        <section className="ab-hero container" aria-labelledby="ab-title">
-          <h1 id="ab-title">{site.headline}</h1>
-          <p className="ab-lead">{site.lead}</p>
-          <ParentNote slug={site.slug}
-            learns="ইংরেজি ২৬টা অক্ষর, বড় হাতের আর ছোট হাতের রূপ, প্রথম অক্ষর, আর b d p q আলাদা করা। শব্দগুলো চেনা জিনিসের: Mango, Boat।"
-            age="৪–৭ বছর। ৪–৫ বছরে প্রথম দুই লেভেলই যথেষ্ট, পড়তে জানতে হয় না।"
-            together="খেলার পর রান্নাঘর থেকে একটা ডিম বা লেবু হাতে নাও। জিজ্ঞেস করো, ‘ইংরেজিতে এটা কী? কোন অক্ষর দিয়ে শুরু?’"
-            school="প্রথম-দ্বিতীয় শ্রেণির ইংরেজি বর্ণমালা।" />
-        </section>
-        <section className="container" id="tool" aria-label="এবিসি বাজার খেলো"><AbcGame /></section>
-        <section className="container section ab-guide" id="guide" aria-labelledby="guide-title">
-          <h2 id="guide-title">{site.guideTitle}</h2>
-          <p>{site.guideIntro}</p>
-          <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{new Intl.NumberFormat("bn-BD").format(index + 1)}</span><p>{step}</p></li>)}</ol>
-          <p className="ab-print-link">খাতার পাশে রাখার জন্য: <a href="/abc-bazar?print">A–Z রং করার পাতা</a> (A4), ২৬টা অক্ষর আর ছবি।</p>
-          <p className="ab-privacy">{site.privacy[0]}</p>
-        </section>
-        <Faq items={site.faq} />
-      </div>
-    </PageFrame>
+    <GamePage site={site} kids title={site.headline} note={<ParentNote slug={site.slug} {...parentNote} />}
+      more={<section className="ab-more" aria-labelledby="ab-print-title">
+        <h3 id="ab-print-title">খাতার পাশে রাখার জন্য</h3>
+        <p>A4 পাতায় ২৬টা অক্ষর আর সাদা ছবি, রং করার জন্য। পাতাটা বড়দের জন্য।</p>
+        <ParentGate label="বড়দের জন্য">
+          <a className="kit-secondary" href="/abc-bazar?print">A–Z রং করার পাতা</a>
+        </ParentGate>
+      </section>}>
+      <AbcGame />
+    </GamePage>
   );
 }

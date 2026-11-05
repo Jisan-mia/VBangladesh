@@ -198,7 +198,7 @@ test("links: a level or a date, re-checked; anything odd is refused", () => {
   const bad = [
     "", "junk", "s=20261012", "t=40", `s=${seed}&t=40&l=13`, `s=${seed}&t=40&l=0`, `s=${seed}&t=40&l=41`, `s=${seed}&t=40&l=012`,
     `s=${LEVELS[40 - 1][2]}&t=40&l=4x`, "s=20260231&t=40", "s=12345&t=40", "s=20261012&t=0", "s=20261012&t=6000", "s=20261012&t=1.5",
-    "s=20261012&t=-3", "s=20261012&t=40&h=10", "s=20261012&t=40&h=-1", "s=20261012&t=40&h=01", "s=20261012&t=40&h=<b>",
+    "s=20261012&t=-3", "s=20261012&t=40&h=100", "s=20261012&t=40&h=47", "s=20261012&t=40&h=-1", "s=20261012&t=40&h=01", "s=20261012&t=40&h=<b>",
     `s=${LEVELS[0][2]}&t=40&l=1&h=5`, `s=20261012&t=40&n=${"ক".repeat(700)}`, "s=9999999999&t=40",
   ];
   for (const state of bad) assert.equal(share.normalize(state), null, state);

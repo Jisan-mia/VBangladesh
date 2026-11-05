@@ -1,0 +1,97 @@
+---
+title: "পﬂ°°2499¶ßথﬂ°°2495¶ßবﬂ°°2496¶ß ঘﬂ°°2497¶ßরﬂ°°2495¶ß: the level list and the trip under it"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "Screen The envelope" as s0 {
+    s1: Dropped Nothing dropped
+  }
+  state "Screen The level list" as s2 {
+    s3: Dropped Nothing dropped
+    s4: Dropped A trip replaced from the list
+  }
+  state "Screen A trip just begun" as s5 {
+    s6: Dropped Nothing dropped
+    s7: Dropped A trip replaced from the list
+  }
+  state "Screen A trip under way" as s8 {
+    s9: Dropped Nothing dropped
+    s10: Dropped A trip replaced from the list
+  }
+  state "Screen Trip, pause menu open" as s11 {
+    s12: Dropped Nothing dropped
+    s13: Dropped A trip replaced from the list
+  }
+  state "Screen The level list, the trip waiting under it" as s14 {
+    s15: Dropped Nothing dropped
+    s16: Dropped A trip replaced from the list
+  }
+  state "Screen Nearly done" as s17 {
+    s18: Dropped Nothing dropped
+    s19: Dropped A trip replaced from the list
+  }
+  state "Screen The end screen" as s20 {
+    s21: Dropped Nothing dropped
+    s22: Dropped A trip replaced from the list
+  }
+  [*] --> s1
+  s1 --> s3: the child opens the level list
+  s1 --> s6: the child taps উড#2492;#2494;ল দ#2494;ও or আব#2494;র খ#2503;ল#2507;
+  s3 --> s1: ফ#2495;র#2503; য#2494;ও
+  s3 --> s6: the child picks a level
+  s6 --> s9: the trip moves on
+  s6 --> s12: #9208;, P, Esc, or the window blurs
+  s9 --> s18: the trip moves on
+  s9 --> s12: #9208;, P, Esc, or the window blurs
+  s12 --> s6: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s12 --> s15: সব ল#2503;ভ#2503;ল in the pause menu
+  s15 --> s6: ফ#2495;র#2503; য#2494;ও or the child picks a level
+  s18 --> s21: the last answer, #10140;
+  s18 --> s12: #9208;, P, Esc, or the window blurs
+  s12 --> s9: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s15 --> s9: ফ#2495;র#2503; য#2494;ও
+  s21 --> s6: the child taps উড#2492;#2494;ল দ#2494;ও or আব#2494;র খ#2503;ল#2507;
+  s21 --> s3: the child opens the level list
+  s12 --> s18: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s3 --> s21: ফ#2495;র#2503; য#2494;ও
+  s7 --> s10: the trip moves on
+  s7 --> s13: #9208;, P, Esc, or the window blurs
+  s15 --> s18: ফ#2495;র#2503; য#2494;ও
+  s10 --> s19: the trip moves on
+  s10 --> s13: #9208;, P, Esc, or the window blurs
+  s13 --> s7: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s13 --> s16: সব ল#2503;ভ#2503;ল in the pause menu
+  s19 --> s22: the last answer, #10140;
+  s19 --> s13: #9208;, P, Esc, or the window blurs
+  s16 --> s7: ফ#2495;র#2503; য#2494;ও
+  s13 --> s10: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s22 --> s7: the child taps উড#2492;#2494;ল দ#2494;ও or আব#2494;র খ#2503;ল#2507;
+  s22 --> s4: the child opens the level list
+  s16 --> s10: ফ#2495;র#2503; য#2494;ও
+  s13 --> s19: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s4 --> s7: the child picks a level
+  s4 --> s22: ফ#2495;র#2503; য#2494;ও
+  s16 --> s19: ফ#2495;র#2503; য#2494;ও
+  s14 --> s7: the child picks a level
+  class s1 blue
+  class s3 yellow
+  class s4 yellow
+  class s6 teal
+  class s7 teal
+  class s9 teal
+  class s10 teal
+  class s12 teal
+  class s13 teal
+  class s15 yellow
+  class s16 yellow
+  class s18 teal
+  class s19 teal
+  class s21 blue
+  class s22 blue

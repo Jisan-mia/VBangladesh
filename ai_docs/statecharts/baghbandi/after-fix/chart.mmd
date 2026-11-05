@@ -1,0 +1,59 @@
+---
+title: "Baghbandi (after the rewrite): the game, the bot's beat, the pause menu, the window and the level sheet"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: held
+    lg1: done
+    lg2: start
+  }
+  class lg0 yellow
+  class lg1 blue
+  class lg2 purple
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Start card
+      s1: Your move
+      s2: Bot's turn, it moves a beat later
+      s3: Level sheet open, play held
+      s4: Result, just shown
+      s5: Result
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; [when You're on the page]
+      s1 --> s2: you move a piece [when You're on the page]
+      s1 --> s3: you open সব ল#2503;ভ#2503;ল [when You're on the page]
+      s1 --> s4: you move a piece [when You're on the page]
+      s0 --> s2: you press শ#2497;র#2497; কর#2507; [when You're on the page]
+      s2 --> s1: the bot moves [when Just came back or You're on the page]
+      s2 --> s1: you press ফ#2495;র#2495;য#2492;#2503; আন#2507; [when You're on the page]
+      s2 --> s3: you open সব ল#2503;ভ#2503;ল [when You're on the page]
+      s2 --> s4: the bot moves [when Just came back or You're on the page]
+      s3 --> s0: you pick a level from the sheet [when Just came back or You're on the page]
+      s3 --> s1: you close the sheet [when Just came back or You're on the page]
+      s4 --> s5: a moment passes
+      s4 --> s1: you take back a lost lesson's last move [when You're on the page]
+      s5 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল / আব#2494;র খ#2503;ল#2507; (or a fresh Enter) [when You're on the page]
+      s5 --> s1: you take back a lost lesson's last move [when You're on the page]
+      s3 --> s2: you close the sheet [when Just came back or You're on the page]
+    }
+    --
+    state "Window" as r1 {
+      s6: You're on the page
+      s7: Away, pause menu up
+      s8: Pause menu
+      s9: Just came back
+      [*] --> s6
+      s6 --> s7: you look away (other window or tab) [when Bot's turn, it moves a beat later or Level sheet open, play held or Your move]
+      s6 --> s8: you press #9208;, P or Escape [when Bot's turn, it moves a beat later or Level sheet open, play held or Your move]
+      s7 --> s8: you come back
+      s8 --> s9: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+      s8 --> s7: you look away (other window or tab) [when Bot's turn, it moves a beat later or Level sheet open, play held or Your move]
+      s9 --> s8: you press #9208;, P or Escape [when Bot's turn, it moves a beat later or Level sheet open, play held or Your move]
+      s9 --> s7: you look away (other window or tab) [when Bot's turn, it moves a beat later or Level sheet open, play held or Your move]
+    }
+  }
+  class s0 purple
+  class s3 yellow
+  class s4 blue
+  class s5 blue

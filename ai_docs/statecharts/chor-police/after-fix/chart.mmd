@@ -1,0 +1,71 @@
+---
+title: "Chor-Dakat-Police-Babu (after the rewrite): the evening, the chit, the drum and the pause menu"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+  }
+  class lg0 teal
+  class lg1 yellow
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Title screen
+      s1: Phone handed on
+      s2: Chit in hand
+      s3: Chit open
+      s4: Everyone has looked
+      s5: Police choosing
+      s6: Drumroll
+      s7: Chits open, round scored
+      s8: Drumroll, silent
+      s9: Evening waiting to continue
+      s10: Scorecard
+      [*] --> s0
+      s0 --> s1: you tap the থ#2494;ল#2494; [when Window is Playing]
+      s1 --> s2: the next player taps a chit [when Window is Playing]
+      s2 --> s3: you hold the chit open [when Window is Playing]
+      s3 --> s2: you let go or you look away (other window or tab) or you press #9208; or Escape
+      s3 --> s1: you press দ#2503;খ#2503;ছ#2495;
+      s2 --> s1: you press দ#2503;খ#2503;ছ#2495; [when Window is Playing]
+      s3 --> s4: you press দ#2503;খ#2503;ছ#2495;
+      s2 --> s4: you press দ#2503;খ#2503;ছ#2495; [when Window is Playing]
+      s4 --> s5: you press ব#2494;ব#2497;-প#2497;ল#2495;শ, চ#2495;রক#2497;ট খ#2507;ল#2507; [when Window is Playing]
+      s5 --> s6: the police names someone [when Window is Playing]
+      s6 --> s7: the drumroll ends and the chits open
+      s6 --> s8: you look away (other window or tab) or you press #9208; or Escape
+      s8 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is Pause menu]
+      s7 --> s10: you press এখ#2494;ন#2503;ই শ#2503;ষ কর#2507; or you press আর#2503;ক দ#2494;ন / ফল দ#2503;খ#2507; [when Window is Playing]
+      s7 --> s1: you press আর#2503;ক দ#2494;ন / ফল দ#2503;খ#2507; [when Window is Playing]
+      s9 --> s1: you tap the থ#2494;ল#2494; [when Window is Playing]
+      s10 --> s0: you reload the page [when Window is not Away, game paused]
+      s10 --> s0: you press আর#2503;ক সন#2509;ধ#2509;য#2494; [when Window is Playing]
+      s10 --> s1: you press আরও ৫ দ#2494;ন [when Window is Playing]
+    }
+    --
+    state "Window" as r1 {
+      s11: Playing
+      s12: Away, game paused
+      s13: Pause menu
+      [*] --> s11
+      s12 --> s13: you come back
+      s13 --> s11: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+      s11 --> s12: you look away (other window or tab) [when Game is one of Chit in hand, Chit open, Drumroll]
+      s11 --> s13: you press #9208; or Escape [when Game is one of Chit in hand, Chit open, Drumroll]
+      s13 --> s12: you look away (other window or tab) [when Game is one of Chit in hand, Drumroll, silent]
+      s13 --> s11: you reload the page [when Game is Scorecard]
+    }
+    --
+    state "Scores" as r2 {
+      s14: Scorecard kept
+      [*] --> s14
+    }
+  }
+  class s0 yellow
+  class s3 teal
+  class s6 teal
+  class s8 yellow
+  class s9 yellow
+  class s12 yellow
+  class s13 yellow

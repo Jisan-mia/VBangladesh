@@ -1,61 +1,25 @@
-// Scoring, challenge links and preview text. Server-safe: the share routes load this file, so it imports only pure modules.
+// Challenge links, the kite looks, saved-progress migration and the lines around a result.
+// Server-safe: share.ts (and so /api/share) imports this, so it reaches only pure modules, never React.
 import { possessive } from "../../../shared/bangla";
-import { challengeHash, readChallenge, starsFor, type LevelStars } from "../../../shared/game-core";
+import { challengeHash, readChallenge, type LevelStars } from "../../../shared/game-core";
 import { colorOf, colors, patternOf, patterns, type ColorId, type PatternId } from "../../ghuri/lib/ghuri";
+import { isMode, LEVEL_COUNT, levelDef, MODE_INFO, starsOf, type Mode } from "./levels";
 
-export const ROUNDS = 3;
-/** Each round has at most this many rival kites, so a higher score is a forged link. */
-export const RIVALS_PER_ROUND = 10;
-export const MAX_CUTS = ROUNDS * RIVALS_PER_ROUND;
-
-/**
- * Ten Old Dhaka পাড়া, one evening of three rounds each, every one a step harder: quicker rival kites (`speed`), a steadier rival pull
- * (`steady` shrinks its swing in and out of the green), stronger hands (`strength`), the first roof coming to hook you (`attack0`, seconds
- * between tries), more frequent hooks (`attack` scales the gap), and gustier wind (`wind`). Level 1 is the original evening, so old links
- * replay unchanged. `pass` cuts clear the level (1 star); `two` and `three` are the marks for 2 and 3 stars.
- */
-export const LEVELS = [
-  { name: "সূত্রাপুর", note: "তিন ছাদ, তিন রাউন্ড। প্রথম ছাদ সহজ।", speed: 1, steady: 1, strength: 0, attack0: 0, attack: 1, wind: 1, pass: 1, two: 4, three: 7 },
-  { name: "লক্ষ্মীবাজার", note: "ঘুড়িগুলো ছোটে আরেকটু জোরে।", speed: 1.15, steady: 1, strength: 0, attack0: 0, attack: 1, wind: 1, pass: 2, two: 5, three: 8 },
-  { name: "শাঁখারীবাজার", note: "প্রথম ছাদও প্যাঁচ লাগাতে আসে।", speed: 1.15, steady: 1, strength: 0, attack0: 6, attack: 1, wind: 1, pass: 2, two: 5, three: 9 },
-  { name: "তাঁতীবাজার", note: "ওদের টান আরও মাপা।", speed: 1.15, steady: 0.85, strength: 0, attack0: 6, attack: 1, wind: 1, pass: 2, two: 6, three: 10 },
-  { name: "গেণ্ডারিয়া", note: "ওদের হাতে জোর বেশি।", speed: 1.15, steady: 0.85, strength: 0.05, attack0: 6, attack: 1, wind: 1, pass: 2, two: 6, three: 10 },
-  { name: "ফরাশগঞ্জ", note: "দমকা বাতাস, ঘুড়ি সরে বেশি।", speed: 1.15, steady: 0.85, strength: 0.05, attack0: 6, attack: 1, wind: 1.3, pass: 2, two: 6, three: 11 },
-  { name: "বাংলাবাজার", note: "প্যাঁচ লাগাতে আসে ঘন ঘন।", speed: 1.15, steady: 0.85, strength: 0.05, attack0: 5, attack: 0.8, wind: 1.3, pass: 3, two: 7, three: 11 },
-  { name: "নারিন্দা", note: "ঘুড়ি ছোটে আরও জোরে।", speed: 1.3, steady: 0.85, strength: 0.05, attack0: 5, attack: 0.8, wind: 1.3, pass: 3, two: 7, three: 12 },
-  { name: "কলতাবাজার", note: "টান মাপা, হাতেও জোর।", speed: 1.3, steady: 0.7, strength: 0.1, attack0: 5, attack: 0.8, wind: 1.3, pass: 3, two: 6, three: 11 },
-  { name: "ওয়ারী", note: "পাড়ার সেরা ওস্তাদেরা, সব একসঙ্গে।", speed: 1.4, steady: 0.7, strength: 0.15, attack0: 4, attack: 0.7, wind: 1.5, pass: 3, two: 6, three: 12 },
-] as const;
-export const LEVEL_COUNT = LEVELS.length;
-const levelOf = (level: number) => LEVELS[Math.min(LEVEL_COUNT, Math.max(1, level)) - 1];
-
-/** Stars for the kites cut on a level: 0 below its pass mark. */
-export function starsOf(cuts: number, level: number) {
-  const { pass, two, three } = levelOf(level);
-  return cuts < pass ? 0 : starsFor(cuts, three, two);
-}
-
-/** The near miss with the exact gap: kites to the next star, or (at 3 stars) to this phone's best on the level. */
-export function nearLine(cuts: number, level: number, best: number | null) {
-  const { pass, two, three } = levelOf(level), stars = starsOf(cuts, level);
-  const mark = [pass, two, three].find(value => cuts < value);
-  if (mark !== undefined) return `আর ${bn(mark - cuts)}টা কাটলেই ${stars ? `${bn(stars + 1)} তারা` : "এই পাড়া পার"}।`;
-  return best !== null && cuts <= best && best < MAX_CUTS ? `আর ${bn(best - cuts + 1)}টা কাটলেই নতুন সেরা।` : "";
-}
-
-/** Before levels this phone kept one best count for the one evening there was (now level 1). Its stars, or 0 when there is nothing to move. */
-export function migrateBest(stars: LevelStars, oldBest: string | null) {
-  const cuts = Number(oldBest);
-  if (Object.keys(stars).length || oldBest === null || oldBest === "" || !Number.isInteger(cuts) || cuts < 0 || cuts > MAX_CUTS) return 0;
-  return starsOf(cuts, 1);
-}
+export const SLUG = "vo-katta";
+/** Before the rewrite an evening was three rounds of at most ten rivals, so no old link claims more. */
+export const MAX_CUTS = 30;
+const OLD_LEVELS = 10;
+export const MAX_TENTHS = 36000;
 
 const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
+const decimal = new Intl.NumberFormat("bn-BD", { minimumFractionDigits: 1, maximumFractionDigits: 1, useGrouping: false });
 export const bn = (value: number) => digits.format(value);
+/** 423 → "৪২.৩" */
+export const seconds = (tenths: number) => decimal.format(tenths / 10);
 
 /** A kite's look, in ঘুড়ি আর ফানুস's own ids, so a kite made there can fly here. */
 export type Look = { pattern: PatternId; color: ColorId };
-/** Six ready kites, one per pattern, each in its own colour; "ঘুড়ি বদলাও" walks through them. */
+/** Six ready kites, one per pattern, each in its own colour. */
 export const LOOKS: readonly Look[] = patterns.map((pattern, index) => ({ pattern: pattern.id, color: colors[index].id }));
 
 export function readLook(pattern: string | null | undefined, color: string | null | undefined): Look | null {
@@ -70,45 +34,109 @@ export function lookFromGhuri(hash: string): Look | null {
   return params.get("o") === "kite" ? readLook(params.get("p"), params.get("c")) : null;
 }
 
-export type Shared = { seed: number; cuts: number; name: string; look: Look | null; level: number };
+/**
+ * A friend's evening. `old`: a link from before the rewrite (no `v`), which carries only the count of a three-round
+ * evening; it opens the same seed on the same level number, and its count shows as the friend's claim from the old game.
+ */
+export type Shared = {
+  seed: number; cuts: number; name: string; look: Look | null; level: number; mode: Mode;
+  /** v=2 only: kites lost, tenths of a second, and whether the list was cleared. */
+  lost: number; tenths: number; won: boolean;
+  old: boolean;
+};
 
 /**
- * s = seed, t = kites cut, n = name, p and c = the sharer's kite, l = the পাড়া (links from before levels have none and open level 1).
- * A bad kite is dropped; a bad score or level rejects the link.
+ * `#s=<seed>&t=<cuts>&p=&c=&l=<level>&v=2&d=<mode>&k=<lost>&m=<tenths>&n=<name>`. Unknown keys are dropped, a bad kite is
+ * dropped, and anything impossible (more cuts than the level has rivals, more kites lost than the নাটাই holds) rejects the link.
  */
 export function parseShared(hash: string): Shared | null {
-  const challenge = readChallenge(hash, { maxTarget: MAX_CUTS, extraKeys: ["p", "c", "l"] });
+  const challenge = readChallenge(hash, { maxTarget: MAX_CUTS, extraKeys: ["p", "c", "l", "v", "d", "k", "m"] });
   if (!challenge) return null;
-  const rawLevel = challenge.extra.l ?? "1", level = Number(rawLevel);
-  if (!/^[1-9]\d?$/.test(rawLevel) || level > LEVEL_COUNT) return null;
-  return { seed: challenge.seed, cuts: challenge.target, name: challenge.name, look: readLook(challenge.extra.p, challenge.extra.c), level };
+  const { extra } = challenge, raw = extra.l ?? "1", level = Number(raw), look = readLook(extra.p, extra.c);
+  if (!/^[1-9]\d?$/.test(raw)) return null;
+  if (extra.v === undefined) {
+    if (level > OLD_LEVELS || extra.d !== undefined) return null;
+    return { seed: challenge.seed, cuts: challenge.target, name: challenge.name, look, level, mode: "n", lost: 0, tenths: 0, won: false, old: true };
+  }
+  if (extra.v !== "2" || level > LEVEL_COUNT) return null;
+  const mode = extra.d ?? "n", lost = Number(extra.k ?? "x"), tenths = Number(extra.m ?? "x");
+  if (!isMode(mode) || !/^\d$/.test(extra.k ?? "") || !/^[1-9]\d{0,4}$/.test(extra.m ?? "") || tenths > MAX_TENTHS) return null;
+  const rivals = levelDef(level).roster.length, kites = MODE_INFO[mode].kites;
+  if (challenge.target > rivals || lost > kites) return null;
+  const won = challenge.target === rivals && lost < kites;
+  // A run ends either with every rival cut or with every kite gone.
+  if (!won && lost !== kites) return null;
+  return { seed: challenge.seed, cuts: challenge.target, name: challenge.name, look, level, mode, lost, tenths, won, old: false };
 }
 
-export const sharedHash = ({ seed, cuts, name, look, level }: Shared) =>
-  challengeHash({ seed, target: cuts, name, extra: { ...(look && { p: look.pattern, c: look.color }), ...(level > 1 && { l: level }) } });
+/** Old links write exactly the old format; new ones add v=2 with the mode (off normal), kites lost and time. */
+export const sharedHash = ({ seed, cuts, name, look, level, mode, lost, tenths, old }: Omit<Shared, "won">) => challengeHash({
+  seed, target: cuts, name,
+  extra: {
+    ...(look && { p: look.pattern, c: look.color }),
+    ...(old ? (level > 1 ? { l: level } : {}) : { l: level, v: 2, ...(mode === "n" ? {} : { d: mode }), k: lost, m: tenths }),
+  },
+});
 
-export const bands = [
-  { below: 1, line: "প্রথম সাকরাইনে সবারই সুতা জড়ায়। আরেকবার?" },
-  { below: 3, line: "হাত খুলছে! পাশের ছাদ টের পেয়ে গেছে।" },
-  { below: 6, line: "আশপাশের ছাদে এখন তোমার নাম।" },
-  { below: 9, line: "পাড়ার ওস্তাদও এবার তোমার নাটাই দেখতে চাইবে।" },
-  { below: Infinity, line: "আজ সাকরাইনের আকাশটা তোমার!" },
-] as const;
-export const humanLine = (cuts: number) => bands.find(band => cuts < band.below)!.line;
+export const starsOfShared = (shared: Shared) => shared.old ? 0 : starsOf(shared.won, shared.lost, shared.mode);
+
+/* ---------- saved progress ---------- */
+
+/** Before levels this phone kept one best count for the one evening there was (now level 1): 1, 4 and 7 cuts were its stars. */
+export function migrateBest(stars: LevelStars, oldBest: string | null) {
+  const cuts = Number(oldBest);
+  if (Object.keys(stars).length || oldBest === null || oldBest === "" || !Number.isInteger(cuts) || cuts < 1 || cuts > MAX_CUTS) return 0;
+  return cuts >= 7 ? 3 : cuts >= 4 ? 2 : 1;
+}
+
+/* ---------- words ---------- */
+
+/** One dry line for a result, by how it went. */
+export function humanLine(won: boolean, lost: number, cuts: number) {
+  if (!won) return cuts ? `${bn(cuts)}টা কেটেছ, তারপর নাটাই খালি। আরেকবার?` : "প্রথম সাকরাইনে সবারই সুতা জড়ায়। আরেকবার?";
+  if (lost === 0) return "একটাও ঘুড়ি হারাওনি। ছাদের সবাই তোমার নাটাই দেখছে।";
+  if (lost === 1) return "একটা ঘুড়ি গেছে, বাকি আকাশটা তোমার।";
+  return "নাটাইয়ে শেষ ঘুড়িটা নিয়ে পার হলে।";
+}
+
+const levelWord = (level: number) => `লেভেল ${bn(level)}`;
+
+/** The friend's claim, said honestly: their own phone's play (or the old game's count). */
+export function friendLine(shared: Shared) {
+  const who = shared.name || "বন্ধু";
+  if (shared.old) return `${who} আগের ভো-কাট্টায় ${bn(shared.cuts)}টা ঘুড়ি কেটেছিল।`;
+  const def = levelDef(shared.level);
+  if (!shared.won) return shared.cuts ? `${who} ${def.at} ${bn(shared.cuts)}টা ঘুড়ি কেটেছে।` : `${who} ${def.at} একটাও ঘুড়ি কাটতে পারেনি।`;
+  return `${who} ${def.name} পার করেছে ${seconds(shared.tenths)} সেকেন্ডে${shared.lost === 0 ? ", একটাও ঘুড়ি না হারিয়ে" : ""}।`;
+}
+export const friendClaim = (shared: Shared) => shared.old
+  ? `একই আকাশ, ${levelWord(shared.level)}। আগের খেলার স্কোর, ${possessive(shared.name || "বন্ধু")} নিজের ফোনে খেলা।`
+  : `একই আকাশ, একই বাতাস। ${possessive(shared.name || "বন্ধু")} নিজের ফোনের স্কোর।`;
+
+/** Your evening against the friend's on the same sky: who cleared, then fewer kites lost, then the time. */
+export function compareLine(you: { won: boolean; lost: number; tenths: number; cuts: number }, friend: Shared) {
+  const who = friend.name || "বন্ধু";
+  if (friend.old) return "";
+  if (you.won && !friend.won) return `${who} পার হতে পারেনি, তুমি পারলে।`;
+  if (!you.won && friend.won) return `${who} পার হয়েছে। আরেকবার?`;
+  if (!you.won) return you.cuts > friend.cuts ? `${possessive(who)} চেয়ে ${bn(you.cuts - friend.cuts)}টা বেশি কেটেছ।` : you.cuts === friend.cuts ? `${who}ও ${bn(friend.cuts)}টা কেটেছে। সমান।` : `${who} এখনো ${bn(friend.cuts - you.cuts)}টা এগিয়ে।`;
+  if (you.lost !== friend.lost) return you.lost < friend.lost ? `${possessive(who)} চেয়ে ${bn(friend.lost - you.lost)}টা ঘুড়ি কম হারিয়েছ।` : `${who} ${bn(you.lost - friend.lost)}টা ঘুড়ি কম হারিয়েছে।`;
+  const gap = friend.tenths - you.tenths;
+  if (gap > 0) return `${possessive(who)} চেয়ে ${seconds(gap)} সেকেন্ড আগে!`;
+  if (gap === 0) return `একদম সমান সময়, ${seconds(you.tenths)} সেকেন্ড।`;
+  return -gap <= 30 ? `আর একটু হলেই! মাত্র ${seconds(-gap)} সেকেন্ড পিছিয়ে।` : `${who} এখনো ${seconds(-gap)} সেকেন্ড এগিয়ে।`;
+}
+
+export const previewTitle = (shared: Shared) => {
+  if (shared.old) return shared.name ? `${shared.name} ${bn(shared.cuts)}টা ঘুড়ি কেটেছে। তুমি পারবে?` : `সাকরাইনের ছাদে ${bn(shared.cuts)}টা ঘুড়ি কাটা! তুমি পারবে?`;
+  const who = shared.name || "এক বন্ধু", def = levelDef(shared.level);
+  return shared.won
+    ? `${who} ${def.of} ${bn(shared.cuts)}টা ঘুড়িই কেটেছে, ${seconds(shared.tenths)} সেকেন্ডে। তুমি পারবে?`
+    : `${who} ${def.at} ${bn(shared.cuts)}টা ঘুড়ি কেটেছে। তুমি পারবে?`;
+};
+
+export const caption = (shared: Pick<Shared, "cuts" | "level" | "won">) => shared.cuts > 0
+  ? `সাকরাইনের ছাদে ${bn(shared.cuts)}টা ঘুড়ি কাটলাম, ভো-কাট্টা! ${levelDef(shared.level).of} একই আকাশ তোমার জন্য রাখলাম, দেখি কয়টা কাটো।`
+  : "সাকরাইনের ছাদে প্যাঁচ খেলতে গিয়ে এবার একটাও কাটতে পারিনি! একই আকাশ তোমার জন্য রাখলাম, দেখি তুমি পারো কি না।";
 
 export const cutLine = (cuts: number, name = "") => name ? `${name} ${bn(cuts)}টা ঘুড়ি কাটল` : `${bn(cuts)}টা ঘুড়ি কাটলাম`;
-
-export function compareLine(cuts: number, target: number, name: string) {
-  const who = name || "বন্ধু", gap = cuts - target;
-  if (gap > 0) return `${possessive(who)} চেয়ে ${bn(gap)}টা বেশি!`;
-  if (gap === 0) return `একদম সমান! ${who}ও ${bn(target)}টা কেটেছে।`;
-  if (-gap <= 2) return `আর একটু হলেই! মাত্র ${bn(-gap)}টা কম।`;
-  return `${who} এখনো ${bn(-gap)}টা এগিয়ে। আরেকবার?`;
-}
-
-export const banner = ({ cuts, name }: Pick<Shared, "cuts" | "name">) => `${name || "বন্ধু"} ${bn(cuts)}টা ঘুড়ি কেটেছে। একই আকাশ, একই বাতাস, এবার তোমার পালা।`;
-export const previewTitle = ({ cuts, name }: Pick<Shared, "cuts" | "name">) =>
-  name ? `${name} ${bn(cuts)}টা ঘুড়ি কেটেছে। তুমি পারবে?` : `সাকরাইনের ছাদে ${bn(cuts)}টা ঘুড়ি কাটা! তুমি পারবে?`;
-export const caption = ({ cuts }: Pick<Shared, "cuts">) => cuts > 0
-  ? `সাকরাইনের ছাদে ${bn(cuts)}টা ঘুড়ি কাটলাম, ভো-কাট্টা! একই আকাশ আর একই বাতাস তোমার জন্য রাখলাম, দেখি কয়টা কাটো।`
-  : "সাকরাইনের ছাদে প্যাঁচ খেলতে গিয়ে এবার একটাও কাটতে পারিনি! একই আকাশ তোমার জন্য রাখলাম, দেখি তুমি পারো কি না।";

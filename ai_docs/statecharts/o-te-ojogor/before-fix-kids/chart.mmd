@@ -1,0 +1,95 @@
+---
+title: "অ-তﬂ°°2503¶ß অজগর (HEAD 6775639) against the kids' rules"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: done
+    lg2: Breaks NoChildDataLeaves or NoNameField or NoNetworkCalls or NoNewRoundPastLimit or NoShareForKids or RestAtTheBreak
+    lg3: Breaks NoChildDataLeaves or NoNameField or NoNetworkCalls or NoNewRoundPastLimit or NoShareForKids or RestAtTheBreak in some cases
+    lg4: Path to the NoChildDataLeaves or NoNameField or NoNetworkCalls or NoNewRoundPastLimit or NoShareForKids or RestAtTheBreak bug
+  }
+  class lg0 teal
+  class lg1 blue
+  class lg2 breaks
+  class lg3 mayBreak
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Start screen
+      s1: Letters falling
+      s2: Letters falling, started after today's time ran out
+      s3: Card with শ#2503;য#2492;#2494;র কর#2507; and a name field
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; [when Today is Time left today]
+      s1 --> s3: the level ends
+      s0 --> s2: you press শ#2497;র#2497; কর#2507; [when Today is Today's kids' time is up]
+      s2 --> s3: the level ends
+      s3 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল
+      s3 --> s1: you press আব#2494;র খ#2503;ল#2507; [when Today is Time left today]
+      s3 --> s2: you press আব#2494;র খ#2503;ল#2507; [when Today is Today's kids' time is up]
+    }
+    --
+    state "Today" as r1 {
+      s4: Time left today
+      s5: Today's kids' time is up
+      [*] --> s4
+      s4 --> s5: today's kids' time runs out
+    }
+    --
+    state "Phone" as r2 {
+      s6: The child has the phone
+      s7: A parent has the phone
+      [*] --> s6
+      s6 --> s7: a parent takes the phone
+      s7 --> s6: the child takes the phone back
+    }
+    --
+    state "Name" as r3 {
+      s8: No name
+      s9: A name typed on the card
+      [*] --> s8
+      s8 --> s9: someone types a name under the card [when Game is Card with শ#2503;য#2492;#2494;র কর#2507; and a name field]
+    }
+    --
+    state "Server" as r4 {
+      s10: Nothing sent
+      s11: The card went to /api/share
+      s12: The name went to /api/share
+      [*] --> s10
+      s10 --> s11: someone taps শ#2503;য#2492;#2494;র কর#2507; or ল#2495;#2434;ক কপ#2495; কর#2507; [when Game is Card with শ#2503;য#2492;#2494;র কর#2507; and a name field and Name is No name]
+      s10 --> s12: someone taps শ#2503;য#2492;#2494;র কর#2507; or ল#2495;#2434;ক কপ#2495; কর#2507; [when Game is Card with শ#2503;য#2492;#2494;র কর#2507; and a name field and Name is A name typed on the card]
+      s11 --> s12: someone taps শ#2503;য#2492;#2494;র কর#2507; or ল#2495;#2434;ক কপ#2495; কর#2507; [when Game is Card with শ#2503;য#2492;#2494;র কর#2507; and a name field and Name is A name typed on the card]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 bugPath
+  class s2 teal
+  class s2 breaks
+  class s2 bugPath
+  class s3 blue
+  class s3 mayBreak
+  class s3 bugPath
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 mayBreak
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 breaks
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 breaks
+  class s11 bugPath
+  class s12 breaks
+  class s12 bugPath

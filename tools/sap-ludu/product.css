@@ -1,146 +1,249 @@
-.tool-sap-ludu{--accent:#1f6f5c;--accent-deep:#124a3d;--ink:#3a2412;--muted:#6f5640;--paper:#fff4dc;--line:#ead7b5;--frame:#7a1f2b;--up:#2b8a3e;--down:#c92a2a;--stuck:#b35c00}
-.tool-sap-ludu .sl-page{color:var(--ink)}
+.tool-sap-ludu{--accent:#1f6f5c;--accent-deep:#124a3d;--ink:#3a2412;--muted:#6f5640;--paper:#fff8ea;--line:#ead7b5;--up:#2b8a3e;--down:#c92a2a;--stuck:#b35c00;--gold:#e0a400;--ease-out:cubic-bezier(.23,1,.32,1)}
 .tool-sap-ludu .sl-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* hero: two short lines, so the board and the dice land on the first phone screen */
-.tool-sap-ludu .sl-hero{padding:8px 0 4px}
-.tool-sap-ludu .sl-hero-kicker{margin:0;font-size:13px;font-weight:600;color:var(--accent)}
-.tool-sap-ludu .sl-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,5.8vw,44px);line-height:1.3;font-weight:700;letter-spacing:0}
-.tool-sap-ludu .sl-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
-@media (min-width:760px){.tool-sap-ludu .sl-lead{display:block}}
+/* the stage is the world: red clay, a blue afternoon, the printed board's cream */
+.tool-sap-ludu .gp-stage{position:relative;background:#f3dfb3}
+/* the danger rim lives on a pseudo-element so it can pulse by opacity; the stage's own shadow only ever holds the still finale rim */
+.tool-sap-ludu .gp-stage::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .2s var(--ease-out)}
+.tool-sap-ludu .gp-stage:has(.sl[data-world="0"]){background:radial-gradient(120% 80% at 50% 0,#f0cfa8,#dca77a)}
+.tool-sap-ludu .gp-stage:has(.sl[data-world="1"]){background:linear-gradient(#bfe0f6,#eaf6fd 70%)}
+.tool-sap-ludu .gp-stage:has(.sl[data-world="2"]){background-color:#f3dfb3;background-image:linear-gradient(45deg,#ecd29f 25%,transparent 25%,transparent 75%,#ecd29f 75%),linear-gradient(45deg,#ecd29f 25%,transparent 25%,transparent 75%,#ecd29f 75%);background-size:32px 32px;background-position:0 0,16px 16px}
+/* danger at the edge: a snake's head is one roll away; a bite flashes red, a ladder flashes gold; the finale wears a dark rim */
+.tool-sap-ludu .gp-stage:has(.sl[data-finale]){box-shadow:inset 0 0 0 4px #1b1b1bb3}
+.tool-sap-ludu .gp-stage:has(.sl[data-danger])::after{opacity:1;box-shadow:inset 0 0 0 4px #e03131aa,inset 0 0 34px #e0313155;animation:sl-edge 1.1s ease-in-out infinite alternate} /* unslop-ignore: the red rim says a snake's head is one roll away */
+.tool-sap-ludu .gp-stage:has(.sl[data-flash=bite])::after{opacity:1;box-shadow:inset 0 0 0 7px #e03131,inset 0 0 60px #e0313188;animation:none} /* unslop-ignore: the bite flash */
+.tool-sap-ludu .gp-stage:has(.sl[data-flash=climb])::after{opacity:1;box-shadow:inset 0 0 0 6px #fab005,inset 0 0 50px #ffd43b88;animation:none} /* unslop-ignore: the ladder flash */
+.tool-sap-ludu .gp-stage:has(.sl[data-slow])::after{animation:none}
 
-.tool-sap-ludu .sl{--seat:var(--accent);display:grid;gap:8px;max-width:440px;min-width:0}
+.tool-sap-ludu .sl{position:relative;width:100%;max-width:560px;margin:0 auto;color:var(--ink)}
+.tool-sap-ludu .sl-main{position:relative;display:flex;flex-direction:column;justify-content:center;gap:clamp(8px,1.6vh,16px);height:var(--stage-h,auto);min-height:440px}
+.tool-sap-ludu .sl[data-screen=over] .sl-board{max-height:none}
+.tool-sap-ludu .sl[data-screen=title] .sl-main{gap:10px}
 
-/* opened from a friend's link: their card, tilted, and what they did */
-.tool-sap-ludu .sl-friend{display:grid;grid-template-columns:50px 1fr;gap:10px;align-items:center;padding:8px 10px;border-radius:14px;background:var(--paper);border:1.5px solid var(--line)}
-.tool-sap-ludu .sl-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 4px 10px #3a241233;transform:rotate(-3deg)}
-.tool-sap-ludu .sl-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.35}
-.tool-sap-ludu .sl-friend p{margin:0;font-size:12px;color:var(--muted)}
-
-/* who is where: one chip a seat, the one whose turn it is lit in their colour */
-.tool-sap-ludu .sl-seats{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
-.tool-sap-ludu .sl-seats li{flex:1 1 0;display:flex;align-items:center;gap:5px;min-width:0;min-height:34px;padding:3px 8px;border:2px solid var(--line);border-radius:12px;background:#fff;font-size:14px;transition:border-color .2s,background .2s}
-.tool-sap-ludu .sl-seats li[data-on=true]{border-color:var(--seat);background:color-mix(in srgb,var(--seat) 12%,#fff)}
+/* HUD: the level top-left, the rolls top-right, then one thin row of seats */
+.tool-sap-ludu .sl-hud{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;flex:none}
+.tool-sap-ludu .sl-badge,.tool-sap-ludu .sl-count{margin:0;padding:3px 10px;border-radius:6px;background:#fff8eae6;font-size:13px;line-height:1.5;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tool-sap-ludu .sl-badge b,.tool-sap-ludu .sl-count b{color:var(--ink);font-weight:800}
+.tool-sap-ludu .sl-count small{font-size:12px}
+.tool-sap-ludu .sl[data-finale] .sl-badge{background:#1b1b1b;color:#ffd8d8}
+.tool-sap-ludu .sl[data-finale] .sl-badge b{color:#fff}
+.tool-sap-ludu .sl-seats{grid-column:1/-1;display:flex;gap:6px;margin:0;padding:0;list-style:none;min-width:0}
+.tool-sap-ludu .sl-seats li{flex:1 1 0;display:flex;align-items:center;gap:4px;min-width:0;min-height:32px;padding:2px 8px;border:2px solid transparent;border-radius:12px;background:#fff8eae6;font-size:13px;transition:border-color .2s var(--ease-out),background-color .2s var(--ease-out),transform .2s var(--ease-out)}
+.tool-sap-ludu .sl-seats li[data-on]{border-color:var(--seat);background:color-mix(in srgb,var(--seat) 14%,#fff);transform:translateY(-1px)}
+.tool-sap-ludu .sl-seats li[data-home]{background:#fff3bf}
 .tool-sap-ludu .sl-seats .sl-shape{flex:none}
 .tool-sap-ludu .sl-seat-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
-.tool-sap-ludu .sl-seats b{flex:none;font-weight:700}
-.tool-sap-ludu .sl-seats small{flex:none;margin-left:6px;color:var(--muted);font-size:13px}
-@media (max-width:479px){.tool-sap-ludu .sl-seats:is([data-count="3"],[data-count="4"]) li{flex-basis:calc(50% - 3px)}}
+.tool-sap-ludu .sl-seats b{flex:none;font-weight:800;font-variant-numeric:tabular-nums}
+@media (max-width:420px){.tool-sap-ludu .sl-seats[data-count="4"] .sl-seat-name{display:none}.tool-sap-ludu .sl-seats[data-count="3"] .sl-seat-name{max-width:3.6em}}
 
-/* the board: the printed back of a ludo board, in a maroon frame that takes the colour of whoever's turn it is at the rim */
-.tool-sap-ludu .sl-board{position:relative;padding:5px;border-radius:14px;background:var(--frame);box-shadow:0 0 0 3px color-mix(in srgb,var(--seat) 55%,#fff),0 10px 24px #3a24122b;transition:box-shadow .25s}
-.tool-sap-ludu .sl-canvas-wrap{position:relative;width:100%;line-height:0;border-radius:9px;overflow:hidden}
-/* the caption of a ladder or snake, said on the square where the piece landed */
-.tool-sap-ludu .sl-bubble{position:absolute;z-index:1;margin:0;padding:3px 10px 4px;border:2.5px solid var(--up);border-radius:12px;background:#fff;color:var(--up);font-family:var(--font-display);font-size:16px;font-weight:800;line-height:1.3;white-space:nowrap;pointer-events:none;transform:translate(-50%,-120%) rotate(-3deg);animation:sl-say 2.4s ease-out forwards}
-.tool-sap-ludu .sl-bubble[data-tone=down]{border-color:var(--down);color:var(--down)}
-.tool-sap-ludu .sl-canvas-wrap canvas{display:block;width:100%;touch-action:manipulation;cursor:pointer;-webkit-tap-highlight-color:transparent}
+/* the board fills what's left; the canvas is sized from it in JS and framed here */
+/* capped at the board's own shape (--ratio = rows / cols), so a tall phone centres HUD, board and tray as one unit */
+.tool-sap-ludu .sl-board{position:relative;flex:1 1 0;min-height:180px;max-height:calc((min(var(--stage-w,560px),560px) - 30px) * var(--ratio,1.1) + 30px);display:grid;place-items:center;padding:7px}
+.tool-sap-ludu .sl-board canvas{display:block;border-radius:8px;box-shadow:0 0 0 5px var(--frame,#7a1f2b),0 0 0 8px color-mix(in srgb,var(--seat) 70%,#fff),0 14px 30px #3a24123d;touch-action:manipulation;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tool-sap-ludu .sl[data-world="0"]{--frame:#7a3b1c}
+.tool-sap-ludu .sl[data-world="1"]{--frame:#1d4f7a}
+.tool-sap-ludu .sl[data-world="2"]{--frame:#7a1f2b}
+.tool-sap-ludu .sl[data-screen=title] .sl-board canvas{filter:saturate(.85) brightness(.9);cursor:default}
 
-.tool-sap-ludu .sl-cover{position:absolute;inset:0;z-index:2;display:grid;place-content:center;justify-items:center;gap:6px;padding:16px;border-radius:14px;background:#fff4dcde;text-align:center;animation:sl-in .25s ease-out}
-.tool-sap-ludu .sl-cover p{margin:0;font-size:15px;font-weight:600;color:var(--muted)}
-.tool-sap-ludu .sl-over .sl-kicker{color:var(--accent-deep);font-family:var(--font-display);font-size:21px;font-weight:700}
-.tool-sap-ludu .sl-over strong{font-family:var(--font-display);font-size:clamp(60px,20vw,88px);font-weight:800;line-height:1.05;color:var(--accent)}
-.tool-sap-ludu .sl-over strong small{font-size:.36em;color:var(--ink)}
-.tool-sap-ludu .sl-over .sl-winner{font-size:clamp(34px,10vw,48px);line-height:1.25}
-.tool-sap-ludu .sl-over .sl-vs{padding:4px 12px;border-radius:999px;background:#fff;color:var(--ink);font-weight:700}
-.tool-sap-ludu .sl-big{min-height:58px;min-width:190px;margin-top:6px;padding:0 30px;border:0;border-radius:999px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:24px;font-weight:700;box-shadow:0 5px 0 var(--accent-deep);cursor:pointer;touch-action:manipulation}
-.tool-sap-ludu .sl-big:active{transform:translateY(4px);box-shadow:0 1px 0 var(--accent-deep)}
-.tool-sap-ludu .sl-link{min-height:44px;padding:0 10px;border:0;background:none;color:var(--accent-deep);font:inherit;font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+/* the title: the big die on the board is the start button */
+.tool-sap-ludu .sl[data-screen=title] .sl-board{container-type:size}
+.tool-sap-ludu .sl-title-cover{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.tool-sap-ludu .sl-go{pointer-events:auto;display:grid;justify-items:center;gap:clamp(2px,1.5cqh,6px);padding:clamp(8px,3.5cqh,16px) clamp(16px,5cqw,26px) clamp(8px,3cqh,14px);border:0;border-radius:28px;background:#fff8eaf0;box-shadow:0 10px 0 #00000014,0 18px 40px #3a241240;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .12s var(--ease-out)}
+.tool-sap-ludu .sl-go .sl-die{--die:clamp(48px,min(24cqw,27cqh),118px);margin:clamp(2px,1.5cqh,6px) 0 clamp(4px,2.5cqh,10px)}
+.tool-sap-ludu .sl-go:active{transform:scale(.96)}
+.tool-sap-ludu .sl-go:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+.tool-sap-ludu .sl-go-label{padding:clamp(5px,2cqh,10px) 26px;border-radius:12px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:clamp(19px,min(6.6cqw,7cqh),28px);font-weight:800;line-height:1.25;box-shadow:0 5px 0 var(--accent-deep)}
+.tool-sap-ludu .sl-go small{font-size:13px;font-weight:600;color:var(--muted)}
 
-/* the dice and what just happened */
-.tool-sap-ludu .sl-play{display:grid;grid-template-columns:112px minmax(0,1fr);gap:10px;align-items:stretch}
-.tool-sap-ludu .sl-dice{display:grid;justify-items:center;align-content:center;gap:3px;min-height:96px;padding:8px 6px 6px;border:0;border-radius:20px;background:var(--seat);color:#fff;box-shadow:0 5px 0 color-mix(in srgb,var(--seat) 60%,#000);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background .2s}
-.tool-sap-ludu .sl-dice:active{transform:translateY(4px);box-shadow:0 1px 0 color-mix(in srgb,var(--seat) 60%,#000)}
-.tool-sap-ludu .sl-dice:disabled{opacity:.55;cursor:default}
-.tool-sap-ludu .sl-die{display:block;width:56px;height:56px}
-.tool-sap-ludu .sl-die[data-rolled=true]{animation:sl-roll .42s ease-out}
-.tool-sap-ludu .sl-face{display:block;width:100%;height:100%}
-.tool-sap-ludu .sl-cowries{border-radius:12px;background:#e9cf9f;box-shadow:inset 0 0 0 2.5px #6b4a1f}
-.tool-sap-ludu .sl-dice-label{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.3}
-.tool-sap-ludu .sl-news{display:grid;align-content:center;gap:1px;min-width:0;padding:8px 12px;border:2px solid var(--line);border-radius:16px;background:#fff;animation:sl-in .25s ease-out}
-.tool-sap-ludu .sl-news p{margin:0}
-.tool-sap-ludu .sl-news-title{font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.3}
-.tool-sap-ludu .sl-news-sub{font-size:14px;line-height:1.45;color:var(--muted)}
-.tool-sap-ludu .sl-news[data-tone=up]{border-color:var(--up);background:#ebfbee}
-.tool-sap-ludu .sl-news[data-tone=up] .sl-news-title{color:var(--up)}
-.tool-sap-ludu .sl-news[data-tone=down]{border-color:var(--down);background:#fff0f0}
-.tool-sap-ludu .sl-news[data-tone=down] .sl-news-title{color:var(--down)}
-.tool-sap-ludu .sl-news[data-tone=stuck]{border-color:var(--stuck);background:#fff6e5}
-.tool-sap-ludu .sl-news[data-tone=up],.tool-sap-ludu .sl-news[data-tone=down]{animation:sl-pop .35s ease-out}
+.tool-sap-ludu .sl-setup{flex:none;display:grid;gap:10px}
+.tool-sap-ludu .sl-modes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tool-sap-ludu .sl-modes button{display:grid;gap:0;min-height:52px;padding:6px 10px;border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);text-align:center;cursor:pointer;transition:transform .14s var(--ease-out),border-color .14s var(--ease-out)}
+.tool-sap-ludu .sl-modes b{font-family:var(--font-display);font-size:17px}
+.tool-sap-ludu .sl-modes small{font-size:12px;color:var(--muted)}
+.tool-sap-ludu .sl-modes button[aria-checked=true]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,#fff);box-shadow:inset 0 0 0 1px var(--accent)}
+.tool-sap-ludu .sl-level{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:4px 6px;align-items:center;padding:8px 6px;border-radius:16px;background:#fff8eaf2}
+.tool-sap-ludu .sl-level[data-finale]{background:#2b2b2b;color:#fff}
+.tool-sap-ludu .sl-level[data-finale] .sl-lesson,.tool-sap-ludu .sl-level[data-finale] .sl-stars-line{color:#f1d9c0}
+.tool-sap-ludu .sl-step{display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:#fff;color:var(--ink);cursor:pointer;box-shadow:0 2px 0 #0000001a;transition:transform .14s var(--ease-out)}
+.tool-sap-ludu .sl-step svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.tool-sap-ludu .sl-step:disabled{opacity:.35;cursor:default}
+.tool-sap-ludu .sl-level-text{display:grid;gap:2px;text-align:center;min-width:0}
+.tool-sap-ludu .sl-level-text p{margin:0}
+.tool-sap-ludu .sl-level-name{font-size:14px}
+.tool-sap-ludu .sl-level-name b{font-family:var(--font-display);font-size:18px}
+.tool-sap-ludu .sl-level-name em{display:inline-block;margin-right:6px;padding:0 8px;border-radius:6px;background:#e03131;color:#fff;font-style:normal;font-size:12px;font-weight:700;vertical-align:2px}
+.tool-sap-ludu .sl-lesson{margin:0;font-size:14px;line-height:1.5;color:var(--ink)}
+.tool-sap-ludu .sl-stars-line{font-size:12px;color:var(--muted)}
+.tool-sap-ludu .sl-got{margin-left:6px;letter-spacing:1px}
+.tool-sap-ludu .sl-got i,.tool-sap-ludu .sl-mini i{font-style:normal;color:#d9cbbb}
+.tool-sap-ludu .sl-got i[data-on],.tool-sap-ludu .sl-mini i[data-on]{color:var(--gold)}
+.tool-sap-ludu .sl-all{grid-column:1/-1;justify-self:center;min-height:36px;font-size:14px}
+.tool-sap-ludu .sl-level[data-finale] .sl-all{color:#f1d9c0}
 
-/* two pieces: which one moves */
-.tool-sap-ludu .sl-choose{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
-.tool-sap-ludu .sl-choose > p{grid-column:1/-1;margin:0;font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.3}
-.tool-sap-ludu .sl-pick{display:grid;align-content:center;gap:2px;min-height:72px;padding:6px 12px;border:3px solid var(--seat);border-radius:18px;background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer;touch-action:manipulation;animation:sl-glow 1.4s ease-in-out infinite}
-.tool-sap-ludu .sl-pick-top{display:flex;align-items:center;gap:6px}
-.tool-sap-ludu .sl-pick b{font-family:var(--font-display);font-size:17px;font-weight:700}
-.tool-sap-ludu .sl-pick span:not(.sl-pick-top){font-size:20px;font-weight:700}
-.tool-sap-ludu .sl-pick em{font-style:normal;font-size:14px;font-weight:700}
-.tool-sap-ludu .sl-pick[data-tone=up] em{color:var(--up)}
-.tool-sap-ludu .sl-pick[data-tone=down] em{color:var(--down)}
-
-/* players, options, motion */
-.tool-sap-ludu .sl-controls{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
-.tool-sap-ludu .sl-sound{border-color:var(--line);background:#fff;color:var(--ink)}
-.tool-sap-ludu .sl-over .sl-near{color:var(--accent-deep);font-weight:700}
-.tool-sap-ludu .sl-seg{display:inline-flex;padding:3px;border:1.5px solid var(--line);border-radius:999px;background:#fff}
-.tool-sap-ludu .sl-seg button{min-height:40px;padding:0 10px;border:0;border-radius:999px;background:none;color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
-.tool-sap-ludu .sl-seg button[aria-pressed=true]{background:var(--accent);color:#fff}
-.tool-sap-ludu .sl-seg button:disabled{opacity:.45;cursor:default}
-.tool-sap-ludu .sl-toggle{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:0 10px;border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
-.tool-sap-ludu .sl-toggle:disabled{opacity:.6;cursor:default}
+.tool-sap-ludu .sl-group{display:grid;gap:6px;padding:8px 10px;border-radius:16px;background:#fff8eaf2}
+.tool-sap-ludu .sl-seg{display:inline-flex;justify-self:center;padding:3px;border:1.5px solid var(--line);border-radius:10px;background:#fff}
+.tool-sap-ludu .sl-seg button{min-height:38px;padding:0 16px;border:0;border-radius:7px;background:none;color:var(--ink);font-size:15px;font-weight:700;cursor:pointer;transition:transform .14s var(--ease-out)}
+.tool-sap-ludu .sl-seg button[aria-checked=true]{background:var(--accent);color:#fff}
+.tool-sap-ludu .sl-seat-setup{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.tool-sap-ludu .sl-seat-setup li{display:flex;align-items:center;gap:8px;min-width:0;padding:2px 4px 2px 10px;border:1.5px solid var(--line);border-left:5px solid var(--seat);border-radius:12px;background:#fff}
+.tool-sap-ludu .sl-seat-setup input{flex:1;min-width:0;min-height:40px;border:0;background:transparent;font-size:16px;outline:none}
+.tool-sap-ludu .sl-bot-name{flex:1;display:grid;min-width:0;min-height:40px;align-content:center;font-weight:700;line-height:1.3}
+.tool-sap-ludu .sl-bot-name small{font-weight:400;font-size:12px;color:var(--muted)}
+.tool-sap-ludu button.sl-kind{min-height:36px;padding:0 12px;border:1.5px solid var(--line);border-radius:8px;background:#f7f1e6;color:var(--ink);font-size:13px;font-weight:700;cursor:pointer;transition:transform .14s var(--ease-out)}
+.tool-sap-ludu button.sl-kind[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.tool-sap-ludu .sl-group-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.tool-sap-ludu .sl-group-row .sl-lesson{flex:1 1 180px;font-size:13px}
+.tool-sap-ludu .sl-toggle{display:inline-flex;align-items:center;justify-self:start;gap:8px;min-height:40px;padding:0 12px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-size:14px;font-weight:700;cursor:pointer;transition:transform .14s var(--ease-out)}
 .tool-sap-ludu .sl-toggle i{position:relative;flex:none;width:30px;height:18px;border-radius:9px;background:#d9cbbb}
-.tool-sap-ludu .sl-toggle i::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
-.tool-sap-ludu .sl-toggle[aria-pressed=true]{border-color:var(--accent)}
+.tool-sap-ludu .sl-toggle i::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s var(--ease-out)}
 .tool-sap-ludu .sl-toggle[aria-pressed=true] i{background:var(--accent)}
 .tool-sap-ludu .sl-toggle[aria-pressed=true] i::after{transform:translateX(12px)}
-.tool-sap-ludu :is(.sl-seg button,.sl-toggle,.sl-dice,.sl-pick,.sl-big,.sl-link):focus-visible{outline:3px solid var(--ink);outline-offset:2px}
-.tool-sap-ludu .sl-rule{margin:0;font-size:13px;line-height:1.5;color:var(--muted)}
 
-.tool-sap-ludu .sl-names{border:1.5px solid var(--line);border-radius:14px;background:#fff}
-.tool-sap-ludu .sl-names summary{min-height:44px;display:flex;align-items:center;gap:6px;padding:0 12px;font-weight:600;cursor:pointer}
-.tool-sap-ludu .sl-names summary small{font-weight:400;color:var(--muted);font-size:13px}
-.tool-sap-ludu .sl-names > div{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 10px 10px}
-.tool-sap-ludu .sl-names label{position:relative;display:block;min-width:0}
-.tool-sap-ludu .sl-names .sl-shape{position:absolute;left:10px;top:50%;margin-top:-9px}
-.tool-sap-ludu .sl-names input{width:100%;min-height:46px;padding:8px 10px 8px 34px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:16px}
+/* a friend's card, small, above the choices */
+.tool-sap-ludu .sl-friend{display:grid;grid-template-columns:46px 1fr;gap:10px;align-items:center;padding:8px 10px;border-radius:14px;background:#fff;border:1.5px solid var(--line)}
+.tool-sap-ludu .sl-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 4px 10px #3a241233;transform:rotate(-3deg)}
+.tool-sap-ludu .sl-friend h2{margin:0;font-family:var(--font-display);font-size:15px;line-height:1.4}
+.tool-sap-ludu .sl-friend p{margin:0;font-size:12px;color:var(--muted)}
 
-/* result: the card, a name, and sharing right under the game */
-.tool-sap-ludu .sl-result{display:grid;gap:14px;margin-top:8px;padding-top:16px;border-top:2px solid var(--ink)}
-.tool-sap-ludu .sl-result h2{margin:0;font-family:var(--font-display);font-size:clamp(20px,5.4vw,28px);line-height:1.4}
+/* the die: a CSS 3D cube, tossed and turned onto its face */
+.tool-sap-ludu .sl-die{--die:64px;--half:calc(var(--die) / 2);position:relative;display:block;width:var(--die);height:var(--die);perspective:calc(var(--die) * 7)}
+.tool-sap-ludu .sl-die-shadow{position:absolute;left:12%;right:12%;bottom:-16%;height:20%;border-radius:50%;background:#0000003a;filter:blur(2px)}
+.tool-sap-ludu .sl-die-body{position:absolute;inset:0;transform-style:preserve-3d;transform:rotateX(-16deg) rotateY(22deg)}
+.tool-sap-ludu .sl-die-cube{position:absolute;inset:0;transform-style:preserve-3d;transition-property:transform;transition-timing-function:cubic-bezier(.2,.75,.25,1.06)}
+.tool-sap-ludu .sl-face{position:absolute;inset:0;display:block;border-radius:19%;background:radial-gradient(circle at 32% 26%,#fffefa,#f3e8cf 70%,#e6d5b0);box-shadow:inset 0 0 0 1.5px #cdb88d,inset -2px -3px 6px #0000001c;backface-visibility:hidden}
+.tool-sap-ludu .sl-face svg{display:block;width:100%;height:100%}
+.tool-sap-ludu .sl-face[data-face="1"]{transform:translateZ(var(--half))}
+.tool-sap-ludu .sl-face[data-face="6"]{transform:rotateY(180deg) translateZ(var(--half))}
+.tool-sap-ludu .sl-face[data-face="2"]{transform:rotateY(90deg) translateZ(var(--half))}
+.tool-sap-ludu .sl-face[data-face="5"]{transform:rotateY(-90deg) translateZ(var(--half))}
+.tool-sap-ludu .sl-face[data-face="3"]{transform:rotateX(90deg) translateZ(var(--half))}
+.tool-sap-ludu .sl-face[data-face="4"]{transform:rotateX(-90deg) translateZ(var(--half))}
+.tool-sap-ludu .sl-die[data-toss=a] .sl-die-body{animation:sl-toss-a var(--toss) cubic-bezier(.3,.6,.4,1)}
+.tool-sap-ludu .sl-die[data-toss=b] .sl-die-body{animation:sl-toss-b var(--toss) cubic-bezier(.3,.6,.4,1)}
+.tool-sap-ludu .sl-die[data-toss=a] .sl-die-shadow{animation:sl-shadow-a var(--toss) ease-out}
+.tool-sap-ludu .sl-die[data-toss=b] .sl-die-shadow{animation:sl-shadow-b var(--toss) ease-out}
+.tool-sap-ludu .sl-die[data-idle] .sl-die-body{animation:sl-bob 2.6s ease-in-out infinite}
+.tool-sap-ludu .sl-die[data-idle] .sl-die-cube{animation:sl-wobble 5.2s ease-in-out infinite}
+
+/* the tray under the board: the die in the colour of whoever's turn it is, and what just happened */
+.tool-sap-ludu .sl-tray{flex:none;display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:center;min-height:112px;padding:8px 12px 8px 8px;border-radius:20px;background:#fff8eaf2;box-shadow:inset 0 0 0 2.5px var(--seat),0 6px 16px #3a241221}
+.tool-sap-ludu .sl-tray{position:relative}
+.tool-sap-ludu .sl-tray[data-handoff]::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:0 0 0 6px color-mix(in srgb,var(--seat) 30%,transparent);animation:sl-call 1s ease-in-out infinite alternate}
+.tool-sap-ludu .sl-roll{--die:54px;display:grid;place-items:center;width:96px;height:96px;padding:0;border:0;border-radius:22px;background:radial-gradient(circle at 40% 30%,color-mix(in srgb,var(--seat) 70%,#fff),var(--seat));box-shadow:0 5px 0 color-mix(in srgb,var(--seat) 55%,#000),inset 0 -6px 12px #00000026;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:background-color .2s var(--ease-out),transform .08s var(--ease-out)}
+.tool-sap-ludu .sl-roll:active{transform:translateY(4px);box-shadow:0 1px 0 color-mix(in srgb,var(--seat) 55%,#000),inset 0 -6px 12px #00000026}
+.tool-sap-ludu .sl-roll:disabled{cursor:default;opacity:.85}
+.tool-sap-ludu .sl-roll:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.tool-sap-ludu .sl-turn{display:grid;gap:4px;min-width:0}
+.tool-sap-ludu .sl-who{margin:0;font-family:var(--font-display);font-size:clamp(18px,5.2vw,22px);font-weight:800;line-height:1.25;color:color-mix(in srgb,var(--seat) 75%,#000);overflow-wrap:anywhere}
+.tool-sap-ludu p.sl-who small{display:block;font-family:var(--font-bengali,inherit);font-size:12px;font-weight:600;color:var(--muted)}
+.tool-sap-ludu .sl-tray[data-bot] .sl-who{font-style:italic}
+.tool-sap-ludu .sl-news{display:grid;gap:0;min-width:0;padding:4px 10px;border-left:4px solid var(--line);border-radius:4px;animation:sl-in .22s var(--ease-out)}
+.tool-sap-ludu .sl-news p{margin:0}
+.tool-sap-ludu .sl-news-title{font-size:15px;font-weight:800;line-height:1.35}
+.tool-sap-ludu .sl-news-sub{font-size:13px;line-height:1.4;color:var(--muted)}
+.tool-sap-ludu .sl-news[data-tone=up]{border-color:var(--up);background:#ebfbee}
+.tool-sap-ludu .sl-news[data-tone=up] .sl-news-title{color:var(--up)}
+.tool-sap-ludu .sl-news[data-tone=down]{border-color:var(--down);background:#fff0f0;animation:sl-pop .26s var(--ease-out)}
+.tool-sap-ludu .sl-news[data-tone=down] .sl-news-title{color:var(--down)}
+.tool-sap-ludu .sl-news[data-tone=stuck]{border-color:var(--stuck);background:#fff6e5}
+.tool-sap-ludu .sl-news[data-tone=six]{border-color:var(--gold);background:#fff9db}
+.tool-sap-ludu .sl-news[data-tone=home]{border-color:var(--accent);background:#e6fcf5}
+
+/* two pieces: the choice. Play waits; each card says before → after, and the sensible one is marked */
+.tool-sap-ludu .sl-choose{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;min-height:112px}
+.tool-sap-ludu .sl-choose > p{grid-column:1/-1;margin:0;font-family:var(--font-display);font-size:17px;font-weight:800;line-height:1.3}
+.tool-sap-ludu .sl-pick{position:relative;display:grid;align-content:center;gap:1px;min-height:84px;padding:6px 10px;border:3px solid var(--seat);border-radius:16px;background:#fff;color:var(--ink);text-align:left;cursor:pointer;touch-action:manipulation;box-shadow:0 4px 0 color-mix(in srgb,var(--seat) 40%,#0000)}
+.tool-sap-ludu .sl-pick:active{transform:translateY(3px);box-shadow:none}
+.tool-sap-ludu .sl-pick[data-recommended]::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:0 0 0 6px color-mix(in srgb,var(--gold) 45%,transparent);animation:sl-glow 1.4s ease-in-out infinite alternate} /* unslop-ignore: the ring marks the sensible piece */
+.tool-sap-ludu .sl-pick-top{display:flex;align-items:center;gap:5px}
+.tool-sap-ludu .sl-pick kbd{display:grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--ink);color:#fff;font:inherit;font-size:12px;font-weight:800}
+.tool-sap-ludu .sl-pick b{font-size:14px;font-weight:700}
+.tool-sap-ludu .sl-pick-move{font-family:var(--font-display);font-size:21px;font-weight:800}
+.tool-sap-ludu .sl-pick em{font-style:normal;font-size:13px;font-weight:700;color:var(--muted)}
+.tool-sap-ludu .sl-pick[data-tone=up] em{color:var(--up)}
+.tool-sap-ludu .sl-pick[data-tone=down] em{color:var(--down)}
+.tool-sap-ludu .sl-rec{position:absolute;top:-10px;right:8px;padding:1px 8px;border-radius:6px;background:var(--gold);color:#3a2412;font-size:11px;font-weight:800;line-height:1.6}
+
+/* the end screen covers the board; the card and share sit below it, inside the stage */
+.tool-sap-ludu .sl-cover{position:absolute;inset:0;z-index:2;display:grid;place-items:center;padding:10px;overflow:auto;border-radius:14px;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(2px);animation:sl-in .24s var(--ease-out)}
+.tool-sap-ludu .sl-finish{display:grid;justify-items:center;gap:8px;width:100%;max-width:400px;text-align:center}
+.tool-sap-ludu .sl-finish > *{margin:0}
+.tool-sap-ludu .sl-finish-kicker{font-size:13px;font-weight:700;color:var(--muted)}
+.tool-sap-ludu .sl-finish h2{font-family:var(--font-display);font-size:clamp(30px,9vw,42px);line-height:1.15;color:color-mix(in srgb,var(--seat) 80%,#000)}
+.tool-sap-ludu .sl-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;width:100%}
+.tool-sap-ludu .sl-stats div{display:grid;padding:6px 2px;border-radius:12px;background:#fff;box-shadow:0 2px 0 #0000000f}
+.tool-sap-ludu .sl-stats dt{font-size:12px;color:var(--muted)}
+.tool-sap-ludu .sl-stats dd{margin:0;font-family:var(--font-display);font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.tool-sap-ludu .sl-standings{display:grid;gap:3px;width:100%;margin:0;padding:6px 10px;border-radius:12px;background:#fff;list-style:none}
+.tool-sap-ludu .sl-standings li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:0 8px;align-items:center;text-align:left;font-size:14px}
+.tool-sap-ludu .sl-standings li span{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tool-sap-ludu .sl-standings li b{font-family:var(--font-display);font-size:17px}
+.tool-sap-ludu .sl-standings li small{grid-column:2/-1;font-size:12px;color:var(--muted)}
+.tool-sap-ludu .sl-standings li[data-first] span{color:var(--accent-deep)}
+.tool-sap-ludu .sl-finish-line{font-size:14px;line-height:1.5}
+.tool-sap-ludu .sl-finish-note{padding:3px 12px;border-radius:6px;background:#fff3bf;font-size:13px;font-weight:700}
+.tool-sap-ludu .sl-finish-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:4px}
+.tool-sap-ludu .sl-finish-actions .kit-primary{min-width:170px;font-size:18px}
+.tool-sap-ludu .sl-see{min-height:36px;font-size:14px}
+
+/* সব লেভেল: a sheet over the whole game */
+.tool-sap-ludu .sl-sheet{position:absolute;inset:0;z-index:4;display:grid;place-items:start center;padding:6px;overflow:auto;border-radius:14px;background:#3a2412b3;animation:sl-in .2s var(--ease-out)}
+.tool-sap-ludu .sl-sheet-card{position:relative;display:grid;gap:12px;width:100%;max-width:440px;padding:14px;border-radius:18px;background:var(--paper)}
+.tool-sap-ludu .sl-sheet-card header h2{margin:0;font-family:var(--font-display);font-size:22px}
+.tool-sap-ludu .sl-sheet-card header p{margin:0;font-size:13px;color:var(--muted)}
+.tool-sap-ludu .sl-sheet-close{position:absolute;top:8px;right:8px;display:grid;place-items:center;width:44px;height:44px;border:0;border-radius:50%;background:#fff;cursor:pointer;transition:transform .14s var(--ease-out)}
+.tool-sap-ludu .sl-sheet-close svg{width:20px;height:20px;fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linecap:round}
+.tool-sap-ludu .sl-world h3{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin:0 0 6px;font-family:var(--font-display);font-size:17px}
+.tool-sap-ludu .sl-world h3 i{width:12px;height:12px;border-radius:3px;background:#c4703f}
+.tool-sap-ludu .sl-world[data-world="1"] h3 i{background:#1d4f7a}
+.tool-sap-ludu .sl-world[data-world="2"] h3 i{background:#7a1f2b}
+.tool-sap-ludu .sl-world h3 span{font-family:var(--font-bengali,inherit);font-size:12px;font-weight:400;color:var(--muted)}
+.tool-sap-ludu .sl-world ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:0;padding:0;list-style:none}
+.tool-sap-ludu .sl-world button{position:relative;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;gap:0 8px;align-items:center;width:100%;min-height:52px;padding:6px 8px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);text-align:left;cursor:pointer;transition:transform .14s var(--ease-out)}
+.tool-sap-ludu .sl-world button b{grid-row:1/3;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#f3e8d2;font-weight:800}
+.tool-sap-ludu .sl-world button b svg{width:16px;height:16px;fill:none;stroke:var(--muted);stroke-width:2}
+.tool-sap-ludu .sl-sheet-name{font-size:14px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tool-sap-ludu .sl-world button[data-finale]{border-color:#1b1b1b}
+.tool-sap-ludu .sl-world button[aria-current]{box-shadow:inset 0 0 0 2px var(--accent)}
+.tool-sap-ludu .sl-world button:disabled{opacity:.5;cursor:default}
+.tool-sap-ludu .sl-world button em{position:absolute;top:-9px;right:6px;padding:0 6px;border-radius:6px;background:var(--accent);color:#fff;font-size:10px;font-style:normal;font-weight:800;line-height:1.7}
+
+/* the card, a name, and sharing, under the end screen */
+.tool-sap-ludu .sl-result{scroll-margin-top:8px;display:grid;gap:14px;margin-top:12px;padding:16px 14px;border-radius:16px;background:#fffdf7;box-shadow:0 8px 20px #3a24122b}
+.tool-sap-ludu .sl-result h2{margin:0;font-family:var(--font-display);font-size:clamp(19px,5vw,25px);line-height:1.4}
 .tool-sap-ludu .sl-share{display:grid;gap:14px}
 .tool-sap-ludu .sl-name{display:grid;gap:6px;font-weight:600}
 .tool-sap-ludu .sl-name small{font-weight:400;color:var(--muted);font-size:13px}
 .tool-sap-ludu .sl-name input{min-height:48px;padding:8px 12px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:17px}
-
-.tool-sap-ludu .sl-board-note{display:grid;gap:4px;margin-top:18px;padding:12px 14px;border-radius:14px;background:var(--paper);border:1.5px solid var(--line);max-width:440px}
-.tool-sap-ludu .sl-board-note p{margin:0;font-size:15px;line-height:1.55}
-.tool-sap-ludu .sl-board-note a{font-weight:700;color:var(--accent-deep)}
-.tool-sap-ludu .sl-guide h2{font-family:var(--font-display);margin-bottom:8px}
-.tool-sap-ludu .sl-guide > p{margin:0 0 16px;color:var(--muted)}
-.tool-sap-ludu .sl-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.tool-sap-ludu .sl-guide li{display:flex;gap:14px;align-items:flex-start}
-.tool-sap-ludu .sl-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--paper);border:2px solid var(--accent);color:var(--accent-deep);font-weight:700}
-.tool-sap-ludu .sl-guide li p{margin:4px 0 0}
+.tool-sap-ludu .sl-friend-note{margin:0;font-size:13px;color:var(--muted)}
+.tool-sap-ludu :is(.sl-modes button,.sl-seg button,.sl-toggle,.sl-kind,.sl-pick,.sl-step,.sl-world button):focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 
 @media (max-width:360px){
-  .tool-sap-ludu .sl-play{grid-template-columns:96px minmax(0,1fr)}
-  .tool-sap-ludu .sl-news-title{font-size:17px}
-  .tool-sap-ludu .sl-seats li{font-size:13px;padding:3px 6px}
+  .tool-sap-ludu .sl-roll{width:84px;height:84px;--die:54px}
+  .tool-sap-ludu .sl-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tool-sap-ludu .sl-level{grid-template-columns:36px minmax(0,1fr) 36px}
+  .tool-sap-ludu .sl-step{width:36px;height:36px}
 }
 
 @keyframes sl-in{from{opacity:0;transform:translateY(6px)}}
-@keyframes sl-pop{0%{transform:scale(.92)}60%{transform:scale(1.03)}}
-@keyframes sl-roll{0%{transform:rotate(-30deg) scale(.7)}55%{transform:rotate(14deg) scale(1.08)}100%{transform:none}}
-@keyframes sl-say{0%{opacity:0;transform:translate(-50%,-90%) rotate(-3deg) scale(.7)}12%{opacity:1;transform:translate(-50%,-120%) rotate(-3deg) scale(1.05)}75%{opacity:1}100%{opacity:0;transform:translate(-50%,-135%) rotate(-3deg)}}
-@keyframes sl-fade{0%,75%{opacity:1}100%{opacity:0}}
-@keyframes sl-glow{50%{box-shadow:0 0 0 5px color-mix(in srgb,var(--seat) 25%,transparent)}}
-/* ধীরে খেলো and reduced motion: nothing rolls, pops or glows */
-.tool-sap-ludu .sl[data-slow=true] :is(.sl-die,.sl-news,.sl-pick,.sl-cover){animation:none}
-.tool-sap-ludu .sl[data-slow=true] :is(.sl-board,.sl-seats li,.sl-dice){transition:none}
-.tool-sap-ludu .sl[data-slow=true] .sl-bubble{animation:sl-fade 3.2s linear forwards}
-@media (prefers-reduced-motion:reduce){
-  .tool-sap-ludu :is(.sl-die,.sl-news,.sl-pick,.sl-cover){animation:none}
-  .tool-sap-ludu .sl-bubble{animation:sl-fade 3.2s linear forwards}
-  .tool-sap-ludu :is(.sl-board,.sl-seats li,.sl-dice),.tool-sap-ludu .sl-toggle i::after{transition:none}
-}
-.tool-sap-ludu .sl-hero h1 .sl-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;color:var(--accent)}
+@keyframes sl-pop{from{transform:scale(.96)}}
+@keyframes sl-glow{from{opacity:.25}to{opacity:1}}
+@keyframes sl-edge{from{opacity:.55}to{opacity:1}}
+@keyframes sl-call{from{opacity:0}to{opacity:1}}
+@keyframes sl-toss-a{0%{transform:rotateX(-16deg) rotateY(22deg) translateY(0) scale(1)}38%{transform:rotateX(-16deg) rotateY(22deg) translateY(-48%) scale(1.12)}74%{transform:rotateX(-16deg) rotateY(22deg) translateY(0) scale(1.04,.92)}86%{transform:rotateX(-16deg) rotateY(22deg) translateY(-8%) scale(1)}100%{transform:rotateX(-16deg) rotateY(22deg) translateY(0) scale(1)}}
+@keyframes sl-toss-b{0%{transform:rotateX(-16deg) rotateY(22deg) translateY(0) scale(1)}38%{transform:rotateX(-16deg) rotateY(22deg) translateY(-48%) scale(1.12)}74%{transform:rotateX(-16deg) rotateY(22deg) translateY(0) scale(1.04,.92)}86%{transform:rotateX(-16deg) rotateY(22deg) translateY(-8%) scale(1)}100%{transform:rotateX(-16deg) rotateY(22deg) translateY(0) scale(1)}}
+@keyframes sl-shadow-a{38%{transform:scale(.55);opacity:.5}74%{transform:scale(1.08);opacity:1}}
+@keyframes sl-shadow-b{38%{transform:scale(.55);opacity:.5}74%{transform:scale(1.08);opacity:1}}
+@keyframes sl-bob{0%,100%{transform:rotateX(-16deg) rotateY(22deg) translateY(0)}50%{transform:rotateX(-16deg) rotateY(22deg) translateY(-7%)}}
+@keyframes sl-wobble{0%,100%{transform:rotateX(-24deg) rotateY(32deg)}50%{transform:rotateX(-30deg) rotateY(48deg)}}
+/* ধীরে খেলো and reduced motion: nothing tosses, bobs, pulses or flashes; borders stay still */
+.tool-sap-ludu .sl[data-slow] *{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.tool-sap-ludu .sl *,.tool-sap-ludu .sl ::after,.tool-sap-ludu .gp-stage,.tool-sap-ludu .gp-stage::after{animation:none!important;transition:none!important}}
+.tool-sap-ludu .sl[data-slow] ::after{animation:none!important;transition:none!important}
+
+/* press feedback on everything pressable */
+.tool-sap-ludu .kit-secondary{transition:transform .14s var(--ease-out)}
+.tool-sap-ludu :is(.sl-modes button,.sl-seg button,.sl-kind,.sl-toggle,.sl-step,.sl-world button,.sl-sheet-close,.kit-secondary):not(:disabled):active{transform:scale(.97)}
+
+.tool-sap-ludu .sl-more{margin:12px 0 0;font-size:15px;line-height:1.6}
+.tool-sap-ludu .sl-more a{font-weight:700;color:var(--accent-deep)}

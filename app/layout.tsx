@@ -6,6 +6,7 @@ import '../shared/hub-shell.css';
 import '../shared/share-kit.css';
 import '../shared/game-ui.css';
 import '../shared/kids-kit.css';
+import '../shared/game-player.css';
 import '../components/home.css';
 
 export const viewport: Viewport = { themeColor: '#1d2b53', width: 'device-width', initialScale: 1 };

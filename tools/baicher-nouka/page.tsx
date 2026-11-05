@@ -1,24 +1,12 @@
 import "./product.css";
-import { Faq, JsonLd, PageFrame } from "../../shared/site-shell";
+import { GamePage } from "../../shared/game-player";
+import { RiverGame } from "./components/river";
 import { site } from "./content";
-import { BaichGame } from "./components/baich-game";
 
 export default function BaicherNoukaPage() {
   return (
-    <PageFrame site={site}>
-      <JsonLd site={site} />
-      <div className="bn-page">
-        <section className="bn-hero container" aria-labelledby="bn-title">
-          <h1 id="bn-title"><span className="bn-hero-kicker">নৌকাবাইচ গেম · ছোটবেলার রেসিং, এবার নদীতে</span> ঢোলের তালে বৈঠা, <span>সবার আগে ঘাটে!</span></h1>
-          <p className="bn-lead">{site.lead}</p>
-        </section>
-        <section className="container" id="tool" aria-label="বাইচের নৌকা খেলো"><BaichGame /></section>
-        <section className="container section bn-guide" id="guide" aria-labelledby="guide-title">
-          <h2 id="guide-title">{site.guideTitle}</h2>
-          <ol>{site.steps.map((step, index) => <li key={step}><span aria-hidden="true">{new Intl.NumberFormat("bn-BD").format(index + 1)}</span><p>{step}</p></li>)}</ol>
-        </section>
-        <Faq items={site.faq} />
-      </div>
-    </PageFrame>
+    <GamePage site={site} kicker="নৌকাবাইচ গেম · ছোটবেলার রেসিং, এবার নদীতে" title={<>ঢোলের তালে বৈঠা, <span>সবার আগে ঘাটে!</span></>}>
+      <RiverGame />
+    </GamePage>
   );
 }

@@ -1,0 +1,77 @@
+---
+title: "রশﬂ°°2495¶ß টﬂ°°2494¶ßনﬂ°°2494¶ßটﬂ°°2494¶ßনﬂ°°2495¶ß after the rewrite: the match, the window, the list, the clock and the crowd"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  state "At the same time" as all {
+    state "Match" as r0 {
+      s0: Title drum waiting
+      s1: Pulling on the beat
+      s2: Card shows
+      s3: Level list open
+      s4: Paused (menu)
+      [*] --> s0
+      s0 --> s1: you tap the drum to start [when Window is You're on the field]
+      s1 --> s2: the ribbon reaches their line or the ribbon reaches our line
+      s1 --> s3: you open the level list
+      s1 --> s4: you hide the tab or you click into another window or you scroll the stage away or you press #9208; or P
+      s2 --> s1: you tap the drum to start [when Window is You're on the field]
+      s3 --> s1: you close the level list [when Window is You're on the field]
+      s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও (a fresh ৩-২-১) [when Window is You're on the field]
+    }
+    --
+    state "Window" as r1 {
+      s5: You're on the field
+      s6: Tab hidden
+      s7: Another window has focus
+      s8: Stage scrolled away
+      [*] --> s5
+      s5 --> s6: you hide the tab
+      s5 --> s7: you click into another window
+      s5 --> s8: you scroll the stage away
+      s6 --> s5: the tab shows again
+      s7 --> s5: you come back to the window
+      s7 --> s6: you hide the tab
+      s8 --> s5: you scroll the stage back
+      s8 --> s6: you hide the tab
+      s8 --> s7: you click into another window
+      s6 --> s8: the tab shows again
+      s7 --> s8: you come back to the window
+    }
+    --
+    state "Crowd" as r2 {
+      s9: No crowd
+      s10: Crowd playing
+      [*] --> s9
+      s9 --> s10: you tap the drum to start [when Match is one of Card shows, Title drum waiting and Window is You're on the field and Sound is Sound on]
+      s9 --> s10: you turn sound on [when Match is Pulling on the beat and Window is You're on the field and Sound is Sound off]
+      s10 --> s9: you turn sound off or the ribbon reaches their line or the ribbon reaches our line or you open the level list or you hide the tab or you click into another window or you scroll the stage away or you press #9208; or P
+      s9 --> s10: you close the level list [when Match is Level list open and Window is You're on the field and Sound is Sound on]
+      s9 --> s10: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও (a fresh ৩-২-১) [when Match is Paused (menu) and Window is You're on the field and Sound is Sound on]
+    }
+    --
+    state "Sound" as r3 {
+      s11: Sound off
+      s12: Sound on
+      [*] --> s11
+      [*] --> s12
+      s11 --> s12: you turn sound on
+      s12 --> s11: you turn sound off
+    }
+  }
+  class s0 tan
+  class s1 teal
+  class s2 blue
+  class s3 yellow
+  class s4 yellow
+  class s10 teal

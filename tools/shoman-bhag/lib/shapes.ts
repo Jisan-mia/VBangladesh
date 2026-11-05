@@ -1,6 +1,6 @@
 // Our own code art on a 100-unit square: food, guests' faces and a রুটি cut into equal (or unequal) pieces.
 // Each picture is a list of SVG path layers, so the game draws them as <svg> and the parent card as canvas Path2D.
-import type { Food, Guest, Mood } from "./game";
+import type { Food, Guest, Mood } from "./people";
 
 export type Layer = { d: string; fill?: string; stroke?: string; w?: number };
 
@@ -127,3 +127,31 @@ export function paint(c: CanvasRenderingContext2D, layers: Layer[], x: number, y
   }
   c.restore();
 }
+
+// ---- the last-piece choices, drawn: nobody has to read "ভেঙে সবাইকে দিই" ----
+const PLATE = { fill: "#ffffff", stroke: "#cdbfa8", w: 3 };
+const BIT = "#fbf3e2";
+/** A piece broken into three bits, one over each plate. */
+const SHARE_ALL: Layer[] = [
+  { d: [24, 50, 76].map(x => circle(x, 78, 14)).join(""), ...PLATE },
+  { d: [24, 50, 76].map(x => circle(x, 76, 5)).join(""), fill: BIT, stroke: "#d9c39a", w: 1.5 },
+  { d: circle(50, 22, 15), fill: BIT, stroke: "#d9c39a", w: 3 },
+  { d: "M44 38L28 60M50 39V60M56 38L72 60", stroke: "#8a7a62", w: 3 },
+];
+/** A covered dish, kept back with a heart over it: for আম্মু. */
+const KEEP: Layer[] = [
+  { d: "M10 78H90", stroke: "#7d8a94", w: 5 },
+  { d: "M18 76C18 50 34 40 50 40C66 40 82 50 82 76Z", fill: "#d5dce2", stroke: "#7d8a94", w: 3 },
+  { d: circle(50, 36, 5), fill: "#7d8a94" },
+  { d: "M50 28C44 14 28 18 34 30C38 38 50 44 50 44C50 44 62 38 66 30C72 18 56 14 50 28Z", fill: "#d8456b", stroke: "#a02a4a", w: 2 },
+];
+export const CHOICE_ART: Record<"share" | "keep", Layer[]> = { share: SHARE_ALL, keep: KEEP };
+
+/** An arrow up and out of a plate: "take one back". */
+export const BACK_ART: Layer[] = [{ d: "M50 82V22M28 44L50 22L72 44", stroke: "#8a4b00", w: 9 }];
+
+/** The middle of wedge `index` of `parts`, where a counting number sits. */
+export const wedgeCenter = (parts: number, index: number): [number, number] => {
+  const angle = angleOf(parts, index + 0.5);
+  return [r1(50 + Math.cos(angle) * RUTI_R * 0.58), r1(50 + Math.sin(angle) * RUTI_R * 0.58)];
+};

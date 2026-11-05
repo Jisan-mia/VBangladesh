@@ -2,7 +2,8 @@
 import { possessive } from "../../../shared/bangla";
 import { challengeHash, cleanName, readChallenge } from "../../../shared/game-core";
 import { isLevel, levelSeed, pieceCount, planOf, shortBy, starsFor, worldOf, LEVEL_COUNT, WORLDS } from "./game";
-import { paintingOf } from "./painting";
+import { isFinale } from "./levels";
+import { nameFor } from "./painting";
 
 const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
 export const bn = (value: number) => digits.format(value);
@@ -33,7 +34,7 @@ export function timeText(seconds: number) {
 /** The ticking clock: "১:০৫" */
 export const clockText = (seconds: number) => `${bn(Math.floor(seconds / 60))}:${bn(seconds % 60).padStart(2, "০")}`;
 
-export const paintingName = (level: number) => paintingOf(levelSeed(level), worldOf(level)).name;
+export const paintingName = (level: number) => nameFor(level);
 export const levelLabel = (level: number) => `লেভেল ${bn(level)} · ${WORLDS[worldOf(level)]}`;
 /** "৩×৩, ৯ টুকরো" or "৫×৫, ২৫ টুকরো, ঘোরানো" */
 export function gridText(level: number) {
@@ -47,7 +48,14 @@ const CLEAR_LINES = [
   ["সূর্য ডোবার আগেই ছবি পুরো হলো।", "পাখিরা ঘরে ফিরছে, তোমার ছবিও জোড়া লাগল।", "নদীর পানিতে কমলা আলো, একটা ফাঁকও নেই।"],
   ["চাঁদের আলোয় নদী চিকচিক করছে। ছবি পুরো।", "জোনাকিরাও এসে গেছে, শেষ টুকরো বসল।", "ঘরের দরজায় কুপির আলো, ছবিটা পুরো।"],
 ] as const;
-export function clearLine(level: number) {
+/** The finales' own lines, said the first time each is whole. */
+const FINALE_LINES = [
+  "খেয়ার মাঝি বাঁশের ঘাটে নৌকা বাঁধল। ভোরের ছবি শেষ।",
+  "তিনটা লাল পাল বাড়ির দিকে। গোধূলির ছবি শেষ।",
+  "পূর্ণিমার আকাশে এগারোটা ফানুস। নানার বাক্সের ৩০টা ছবিই জোড়া লাগল।",
+] as const;
+export function clearLine(level: number, firstClear = false) {
+  if (isFinale(level) && firstClear) return FINALE_LINES[worldOf(level)];
   const line = CLEAR_LINES[worldOf(level)][level % 3];
   return level === LEVEL_COUNT ? `${line} ৩০টা ছবিই জোড়া লাগিয়েছ।` : line;
 }
@@ -57,6 +65,9 @@ export function nearMiss(level: number, seconds: number) {
   const gap = shortBy(level, seconds);
   return gap ? `আর ${timeText(Math.max(1, gap.seconds))} আগে পারলে ${bn(gap.stars)} তারা।` : "";
 }
+
+/** "৪×৪" */
+export const sizeText = (level: number) => `${bn(planOf(level).n)}×${bn(planOf(level).n)}`;
 
 /** The card's line under the headline, first person, by star band. */
 export function cardLine({ level, seconds }: Pick<Shared, "level" | "seconds">) {

@@ -1,0 +1,147 @@
+---
+title: "যﬂ°°2497¶ßকﬂ°°2509¶ßতবরﬂ°°2509¶ßণ ভﬂ°°2494¶ßঙﬂ°°2495¶ß-জﬂ°°2497¶ßডﬂ°°2492¶ßﬂ°°2495¶ß: round, voice, rest screen and parent gate"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: break
+    lg2: rest
+    lg3: out
+    lg4: Breaks ChildCannotOpenGate or GateNeedsAFullHold or NoWayOutWithoutGate or RestOnlyAtBreak or VoiceOnlyWithSound
+    lg5: Breaks ChildCannotOpenGate or GateNeedsAFullHold or NoWayOutWithoutGate or RestOnlyAtBreak or VoiceOnlyWithSound in some cases
+    lg6: Path to the ChildCannotOpenGate or GateNeedsAFullHold or NoWayOutWithoutGate or RestOnlyAtBreak or VoiceOnlyWithSound bug
+  }
+  class lg0 teal
+  class lg1 blue
+  class lg2 yellow
+  class lg3 pink
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Round" as r0 {
+      s0: Building a word
+      s1: Left the kids' area
+      s2: Word built
+      s3: Last word built
+      s4: Round card shows
+      s5: Factory closed for today
+      [*] --> s0
+      s0 --> s1: the child taps a site link or the search [when Rest is not Rest screen shows and Gate is Gate shut]
+      s0 --> s2: you put in the last right letter [when Rest is not Rest screen shows and Gate is Gate shut]
+      s1 --> s0: they come back
+      s2 --> s0: you press পর#2503;রট#2494;
+      s0 --> s3: you put in the last right letter [when Rest is not Rest screen shows and Voice is one of Sound off, Sound on and Gate is Gate shut]
+      s3 --> s4: you press শ#2503;ষ on the last word
+      s4 --> s0: you start a round [when Rest is not Rest screen shows and Gate is Gate shut]
+      s4 --> s1: the child taps a site link or the search [when Rest is not Rest screen shows]
+      s4 --> s5: you press শ#2503;ষ on the card [when Rest is not Rest screen shows and Gate is Gate shut]
+      s5 --> s0: you start a round
+      s4 --> s0: you Tab to আব#2494;র খ#2503;ল#2507; under the rest screen and press Enter [when Rest is Rest screen shows and Gate is Gate shut]
+    }
+    --
+    state "Rest" as r1 {
+      s6: Time left today
+      s7: Today's time is up
+      s8: Rest screen shows
+      [*] --> s6
+      s6 --> s7: today's time runs out [when Round is not Left the kids' area]
+      s7 --> s8: you press শ#2503;ষ on the last word [when Round is Last word built and Gate is Gate shut]
+      s8 --> s6: a grown-up gives 10 more minutes [when Gate is one of Child opened the gate, Grown-up opened the gate]
+    }
+    --
+    state "Voice" as r2 {
+      s9: Sound on
+      s10: Sound off
+      s11: Reading the word aloud
+      s12: Reading aloud with sound off
+      [*] --> s9
+      s9 --> s10: you turn sound off [when Round is not Left the kids' area]
+      s9 --> s11: you put in the last right letter [when Round is Building a word and Rest is not Rest screen shows and Gate is Gate shut]
+      s10 --> s9: you turn sound on [when Round is not Left the kids' area]
+      s11 --> s12: you turn sound off
+      s11 --> s9: you press পর#2503;রট#2494; [when Round is Word built]
+      s11 --> s9: the word finishes
+      s12 --> s11: you turn sound on
+      s12 --> s10: the word finishes
+      s12 --> s10: you press পর#2503;রট#2494; [when Round is Word built]
+      s11 --> s9: the child taps a site link or the search [when Round is Building a word]
+      s12 --> s10: the child taps a site link or the search or you put in the last right letter [when Round is Building a word]
+      s11 --> s9: you press শ#2503;ষ on the last word [when Round is Last word built]
+      s12 --> s10: you press শ#2503;ষ on the last word [when Round is Last word built]
+    }
+    --
+    state "Gate" as r3 {
+      s13: Gate shut
+      s14: Gate held
+      s15: Sum question shows
+      s16: Child opened the gate
+      s17: Grown-up opened the gate
+      s18: Let go, timer still running
+      s19: Sum question shows without a full hold
+      [*] --> s13
+      s13 --> s14: someone holds বড#2492;দ#2503;র জন#2509;য [when Round is Round card shows or Rest is Rest screen shows]
+      s14 --> s13: they let go before 2 seconds
+      s14 --> s15: 2 seconds pass
+      s14 --> s13: they come back [when Round is Left the kids' area and Rest is not Rest screen shows]
+      s15 --> s13: the gate closes
+      s15 --> s16: a child mashes the number pad
+      s15 --> s17: a grown-up answers the sum
+      s14 --> s18: they let go before 2 seconds
+      s15 --> s13: they come back [when Round is Left the kids' area and Rest is not Rest screen shows]
+      s16 --> s13: the gate closes
+      s17 --> s13: the gate closes
+      s18 --> s19: 2 seconds pass
+      s16 --> s13: they come back [when Round is Left the kids' area and Rest is not Rest screen shows]
+      s17 --> s13: they come back [when Round is Left the kids' area and Rest is not Rest screen shows]
+      s18 --> s13: they come back [when Round is Left the kids' area and Rest is not Rest screen shows]
+      s19 --> s13: the gate closes
+      s19 --> s16: a child mashes the number pad
+      s19 --> s17: a grown-up answers the sum
+      s16 --> s13: a grown-up gives 10 more minutes [when Round is not Left the kids' area and Rest is Rest screen shows]
+      s17 --> s13: a grown-up gives 10 more minutes [when Round is not Left the kids' area and Rest is Rest screen shows]
+      s19 --> s13: they come back [when Round is Left the kids' area and Rest is not Rest screen shows]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 pink
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 teal
+  class s2 bugPath
+  class s3 teal
+  class s3 bugPath
+  class s4 bugPath
+  class s5 blue
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 yellow
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s11 teal
+  class s11 bugPath
+  class s12 teal
+  class s12 breaks
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 breaks
+  class s16 bugPath
+  class s17 mayBreak
+  class s18 mayBreak
+  class s18 bugPath
+  class s19 breaks
+  class s19 bugPath

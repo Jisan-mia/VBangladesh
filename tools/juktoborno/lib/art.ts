@@ -162,7 +162,7 @@ const PICTURES: Record<string, (c: C) => void> = {
     c.beginPath(); c.moveTo(-40, 10); c.quadraticCurveTo(0, -46, 40, 10); c.closePath(); c.fillStyle = "#c9b6d9"; c.fill();
     for (let i = -3; i <= 3; i++) line(c, [i * 10, 8, i * 6, -22], "#b09bc4", 2);
     c.beginPath(); c.moveTo(-40, 14); c.quadraticCurveTo(0, 52, 40, 14); c.closePath(); c.fillStyle = "#b09bc4"; c.fill();
-    circle(c, 0, 14, 11, "#fbf7f0"); circle(c, -3, 10, 3.5, "#ffffff");
+    circle(c, 0, 14, 11, "#fbf7f0"); circle(c, -3, 10, 3.5, "#ffffff"); // unslop-ignore: painted object colour in the canvas art, not a page background
   },
   slate(c) {
     box(c, -44, -34, 88, 68, "#a8743d", 6);

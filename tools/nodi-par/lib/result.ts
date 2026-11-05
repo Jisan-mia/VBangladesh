@@ -2,7 +2,8 @@
 // so it uses game-core and plain strings only.
 import { possessive } from "../../../shared/bangla";
 import { challengeHash, readChallenge } from "../../../shared/game-core";
-import { levelSeed, mangoCount, minTenths, specOf, LEVEL_COUNT, MAX_TENTHS, PAR } from "./river";
+import { FINALES, PLACES, isFinale, lessonOf, DEFAULT_MODE } from "./levels";
+import { levelSeed, mangoCount, minTenths, LEVEL_COUNT, MAX_TENTHS, PAR } from "./river";
 
 const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
 export const bn = (value: number) => digits.format(value);
@@ -10,42 +11,35 @@ export const bn = (value: number) => digits.format(value);
 export const secs = (tenths: number) => `${bn(Math.floor(tenths / 10))}.${bn(tenths % 10)}`;
 
 /** What a challenge link carries: the river, its time in tenths, the mangoes, the splashes, an optional first name. */
-export type Shared = { level: number; seed: number; tenths: number; mangoes: number; splashes: number; name: string };
+export type Shared = { level: number; seed: number; tenths: number; mangoes: number; splashes: number; name: string; /** 0 সহজ, 1 স্বাভাবিক (the default; not in the link), 2 কঠিন. */ mode: number };
 export const MAX_SPLASHES = 999;
 
-/** What waits across each river. The first and the last are নানুবাড়ি. */
-export const PLACES = [
-  "নানুবাড়ির ঘাট", "স্কুলের মাঠ", "বড় আমগাছ", "মুদি দোকান", "খালার বাড়ি", "ধানখেত", "বটতলা", "হাটখোলা", "কামারবাড়ি", "মেলার মাঠ",
-  "চরের কাশবন", "খেয়াঘাট", "লঞ্চঘাট", "জেলেপাড়া", "ইটভাটা", "চায়ের দোকান", "বাঁশঝাড়", "কুমারপাড়া", "পাটখেত", "উপজেলা সদর",
-  "বৃষ্টিভেজা হাট", "নৌকাবাইচের ঘাট", "তালগাছের সারি", "নতুন চর", "হিজল বন", "শাপলা বিল", "পুরোনো জমিদারবাড়ি", "রেলস্টেশন", "বড় বাজার", "নানুবাড়ি",
-] as const;
-export const WORLDS = ["গ্রামের খাল", "বড় নদী", "বর্ষার নদী"] as const;
+export { PLACES, WORLDS } from "./levels";
 
 /** "নদী ৭ · ওপারে বটতলা" */
 export const riverLabel = (level: number) => `নদী ${bn(level)} · ওপারে ${PLACES[level - 1]}`;
 
 /** The one new thing a river brings, said on its start screen. */
-export function newsOf(level: number) {
-  const news: Record<number, string> = {
-    1: "ভেলা থেকে ভেলায় লাফাও, ওপারের ঘাটে ওঠো।",
-    2: "নতুন: নৌকা। লম্বা, দাঁড়ানোর জায়গা বেশি।",
-    3: "নতুন: কচুরিপানা।",
-    4: "এবার দুটো আম। দুটোই তুলতে পারলে একটা তারা।",
-    11: "নতুন: মাঝনদীতে চর। পানিতে পড়লে চর থেকেই আবার।",
-    13: "নতুন: ফেরি। ভোঁ শুনলে বুঝবে আসছে।",
-    15: "নতুন: ফেরির ঢেউ। ঢেউয়ে কচুরিপানা ডোবে, ডোবার আগে ছোট হয়ে আসে।",
-    21: "নতুন: বর্ষা। স্রোত আরও জোরে।",
-    24: "নদী চওড়া, মাঝে দুটো চর।",
-    25: "ফেরির দুই পাশেই এখন ঢেউ।",
-    27: "কচুরিপানা এবার ছোট। মাঝখানে নামো।",
-  };
-  return news[level] ?? `${bn(specOf(level).water)} সারি পানি, ${bn(mangoCount(level))}টা আম। ${bn(PAR[level - 1])} সেকেন্ডে পারলে একটা তারা।`;
+export const newsOf = lessonOf;
+
+/** The end screen's heading: a finale names itself; else by stars. */
+export function heading(level: number, stars: number) {
+  if (isFinale(level)) return `${FINALES[level]} পার!`;
+  return stars >= 3 ? `ঢং! নদী ${bn(level)} একদম ঠিকঠাক পার` : `ঢং! নদী ${bn(level)} পার`;
+}
+
+/** What the next river is, said under a finale's stars: the world turns. */
+export function worldLine(level: number) {
+  if (level === 10) return "গ্রামের খাল শেষ। সামনে বড় নদী, মাঝে চর আর ফেরি।";
+  if (level === 20) return "বড় নদী শেষ। সামনে বর্ষা, নানুবাড়ি আর দশটা নদী দূরে।";
+  if (level === 30) return "নানুবাড়ির ঘাটে ঘণ্টা বাজল। নানু দাঁড়িয়ে আছেন।";
+  return "";
 }
 
 const whole = (value: string | undefined, max: number) => value !== undefined && /^\d{1,3}$/.test(value) && Number(value) <= max ? Number(value) : -1;
 
 export function parseShareHash(hash: string): Shared | null {
-  const challenge = readChallenge(hash, { maxTarget: MAX_TENTHS, extraKeys: ["l", "a", "p"] });
+  const challenge = readChallenge(hash, { maxTarget: MAX_TENTHS, extraKeys: ["l", "a", "p", "d"] });
   if (!challenge) return null;
   const rawLevel = challenge.extra.l ?? "";
   if (!/^[1-9]\d?$/.test(rawLevel) || Number(rawLevel) > LEVEL_COUNT) return null;
@@ -54,11 +48,13 @@ export function parseShareHash(hash: string): Shared | null {
   if (challenge.seed !== levelSeed(level) || challenge.target < minTenths(level)) return null;
   const mangoes = whole(challenge.extra.a, mangoCount(level)), splashes = whole(challenge.extra.p, MAX_SPLASHES);
   if (mangoes < 0 || splashes < 0) return null;
-  return { level, seed: challenge.seed, tenths: challenge.target, mangoes, splashes, name: challenge.name };
+  const d = challenge.extra.d, mode = d === undefined ? DEFAULT_MODE : /^[0-2]$/.test(d) ? Number(d) : -1;
+  if (mode < 0) return null;
+  return { level, seed: challenge.seed, tenths: challenge.target, mangoes, splashes, name: challenge.name, mode };
 }
 
 export const shareHash = (shared: Shared) =>
-  challengeHash({ seed: shared.seed, target: shared.tenths, name: shared.name, extra: { l: shared.level, a: shared.mangoes, p: shared.splashes } });
+  challengeHash({ seed: shared.seed, target: shared.tenths, name: shared.name, extra: { l: shared.level, a: shared.mangoes, p: shared.splashes, ...(shared.mode !== DEFAULT_MODE && { d: shared.mode }) } });
 
 /** The kind line on the card, by splashes (and every mango, when there was no splash at all). */
 export function humanLine(shared: Pick<Shared, "splashes" | "mangoes" | "level">) {

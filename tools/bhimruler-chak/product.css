@@ -1,142 +1,269 @@
-.tool-bhimruler-chak{--accent:#2f6b2a;--accent-deep:#1f4a1c;--ink:#24301c;--muted:#5b6b46;--grass:#86bb5c;--grass-deep:#6aa84f;--leaf:#2f6b2a;--leaf-mid:#3f8a36;--leaf-light:#58a144;--earth:#f3e7c6;--earth-edge:#e2d2a4;--gamchha:#c8322b;--mango:#f2b632;--nest:#c99a5b;--nest-line:#9a6d36;--sky:#fdf3cf}
-.tool-bhimruler-chak .bc-page{color:var(--ink)}
+/* ভিমরুলের চাক: a mango orchard in three lights. lib/art.ts WORLD_ART holds the same values for the card. */
+.tool-bhimruler-chak{--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-in-out:cubic-bezier(0.77,0,0.175,1);--accent:#2f6b2a;--accent-deep:#1f4a1c;--gamchha:#c8322b;--mango:#f2b632;--mango-blush:#e07b28;--nest:#c99a5b;--nest-line:#9a6d36;--bark:#7a4b26;--bamboo:#d8b66a;--bamboo-dark:#9c7a35;--star:#f2a900;--danger:#c0392b}
 
-/* hero: one short line, so the orchard and its controls land on the first phone screen */
-.bc-hero{padding:10px 0 4px}
-.bc-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(20px,5.6vw,40px);line-height:1.3;font-weight:700;letter-spacing:0}
-.bc-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+/* the world's light: বাড়ির পেছনে a green morning, রাজশাহী a gold noon, চাঁপাইনবাবগঞ্জ a dusk */
+.bc{--ground:#eef5df;--card:#fbfdf4;--edge:#d6e4bd;--ink:#24301c;--muted:#5b6b46;--sky:#fdf3cf;--grass:#86bb5c;--grass-deep:#6aa84f;--leaf:#2f6b2a;--leaf-mid:#3f8a36;--leaf-light:#58a144;--earth:#f3e7c6;--earth-edge:#e2d2a4;--num-ink:#24301c}
+.bc[data-world="2"]{--ground:#fbf0cf;--card:#fffaea;--edge:#ecd79a;--ink:#3a2a0e;--muted:#76602e;--sky:#fff1b8;--grass:#b2c457;--grass-deep:#8fa83c;--leaf:#3d6b1f;--leaf-mid:#4f7d24;--leaf-light:#6e9a33;--earth:#f6e6b8;--earth-edge:#e6cf8e}
+.bc[data-world="3"]{--ground:#2a2238;--card:#352c47;--edge:#4d4166;--ink:#fbeedd;--muted:#d4c3e0;--sky:#f6b17a;--grass:#5f7d4a;--grass-deep:#465e36;--leaf:#2c4a2a;--leaf-mid:#3a5c33;--leaf-light:#4f7a43;--earth:#eddcc2;--earth-edge:#cdb592}
 
-.bc{display:grid;gap:8px;max-width:480px}
+.bc{position:relative;display:grid;align-content:start;gap:8px;width:100%;max-width:520px;margin-inline:auto;padding:8px;border-radius:12px;background:var(--ground);color:var(--ink);container:bc/inline-size;-webkit-tap-highlight-color:transparent}
+.bc[data-world="2"]{background:radial-gradient(120% 50% at 50% 0%,#fff6d2 0,transparent 60%),var(--ground)}
+.bc[data-world="3"]{background:radial-gradient(130% 45% at 50% 0%,#5a3d58 0,transparent 62%),linear-gradient(180deg,#3a2c48 0,var(--ground) 240px)}
+.gp-stage .bc{min-height:var(--stage-h,100svh)}
+.bc button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;font-family:inherit}
+.bc kbd{margin-inline-start:6px;padding:0 5px;border:1px solid currentColor;border-radius:5px;font-size:11px;font-weight:600;line-height:1.5;font-family:inherit;opacity:.55}
+@media (hover:none){.bc kbd{display:none}}
+@keyframes bc-in{from{opacity:0;transform:translateY(8px)}}
+@keyframes bc-fade{from{opacity:0}}
 
-.bc-friend{padding:10px 14px;border-radius:14px;background:var(--sky);border-left:5px solid var(--gamchha)}
-.bc-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.4}
-.bc-friend p{margin:2px 0 0;font-size:13px;line-height:1.45;color:var(--muted)}
+/* danger lives at the edge: amber once the hornets wake, red when one more mistake brings the swarm */
+.bc::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .3s var(--ease-out)}
+.bc[data-danger="1"]::after{opacity:1;box-shadow:inset 0 0 0 3px #e9a23b,inset 0 0 26px #e9a23b80} /* unslop-ignore: danger glow is the signal */
+.bc[data-danger="2"]::after{opacity:1;box-shadow:inset 0 0 0 4px var(--danger),inset 0 0 36px #c0392b90;animation:bc-edge 1.1s ease-in-out infinite} /* unslop-ignore: danger glow is the signal */
+@keyframes bc-edge{50%{opacity:.55}}
 
-/* level, nests left, clock */
-.bc-hud{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px}
+/* ---- the start card ---- */
+.bc-start{display:flex;flex-direction:column;gap:10px;animation:bc-in .22s var(--ease-out)}
+.gp-stage .bc-start{min-height:calc(var(--stage-h,100svh) - 16px)}
+.bc-start .bc-go{margin-block:auto}
+.bc-mast{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:40px}
+.gp-stage[data-immersive] .bc-mast{padding-inline-start:44px}
+.bc-mast p{margin:0;font-family:var(--font-display);font-weight:800;font-size:16px}
+.bc-mast-stars{font-size:14px!important;color:var(--muted)}
+.bc-friend{padding:10px 14px;border-radius:14px;background:var(--card);border-left:5px solid var(--gamchha)}
+.bc-friend p{margin:0;font-size:13.5px;line-height:1.5;color:var(--muted)}
+.bc-friend p b{font-family:var(--font-display);font-size:15.5px;color:var(--ink)}
+.bc-pick{display:grid;grid-template-columns:46px 1fr 46px;align-items:center;gap:6px;text-align:center}
+.bc-pick-name h2{margin:0;font-family:var(--font-display);font-size:clamp(22px,6.4cqw,28px);line-height:1.25}
+.bc-pick-name p{margin:2px 0 0;font-size:13.5px;color:var(--muted)}
+.bc-finale-badge{display:inline-block;margin:0 0 3px!important;padding:2px 10px;border-radius:4px;background:var(--danger);color:#fff!important;font-size:12.5px!important;font-weight:700}
+.bc-step,.bc-sheet-close{display:grid;place-items:center;width:46px;height:46px;padding:0;border:1.5px solid var(--edge);border-radius:14px;background:var(--card);color:var(--ink)}
+.bc-step:disabled{opacity:.3}
+.bc-step svg,.bc-sheet-close svg,.bc-hint svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+
+/* the biggest thing: the level's own orchard, still covered, with the wooden sign across it */
+.bc-go{position:relative;display:grid;place-items:center;align-self:center;width:100%;padding:8px;border:0;border-radius:12px;background:var(--grass);box-shadow:0 6px 0 var(--grass-deep),0 14px 30px -16px #0008;cursor:pointer;transition:transform 120ms var(--ease-out)}
+.bc-go:active{transform:translateY(4px);box-shadow:0 2px 0 var(--grass-deep)}
+.bc-go-board{display:block;width:100%;pointer-events:none;filter:saturate(1.05)}
+.bc-go-board .bc-grid{--reserve:300px}
+.gp-stage .bc-go-board .bc-grid{--reserve:330px}
+.bc-go-sign{position:absolute;left:50%;top:50%;display:flex;align-items:center;gap:4px;padding:14px 26px 16px;border-radius:14px;background:linear-gradient(180deg,#b97a3f,#8a5428);box-shadow:inset 0 2px 0 #ffffff40,inset 0 -4px 0 #0003,0 8px 0 #5c3516,0 16px 24px -8px #000a;color:#fff7e6;transform:translate(-50%,-50%) rotate(-2deg);white-space:nowrap}
+.bc-go-sign::before,.bc-go-sign::after{content:"";position:absolute;top:-34px;width:6px;height:36px;background:#5c3516;border-radius:3px}
+.bc-go-sign::before{left:22%}.bc-go-sign::after{right:22%}
+.bc-go-sign b{font-family:var(--font-display);font-size:clamp(28px,9cqw,40px);font-weight:800;line-height:1.1;text-shadow:0 2px 0 #0004} /* unslop-ignore: a hard 2px engraving offset on the wooden sign, not a glow */
+.bc-go-sign kbd{color:#fff7e6}
+@media (hover:hover) and (pointer:fine){.bc-go:hover .bc-go-sign{transform:translate(-50%,-52%) rotate(-2deg)}}
+.bc-go:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.bc-rule{display:flex;align-items:center;gap:10px;margin:0;padding:8px 12px;border-radius:12px;background:var(--card);font-size:14px;line-height:1.45}
+.bc-rule b{font-family:var(--font-display)}
+.bc-rule-ico{flex:none;display:grid;place-items:center;width:34px;height:34px;border-radius:8px;background:var(--earth);font:800 18px/1 var(--font-display);color:#24301c;font-style:normal;position:relative}
+.bc-lesson{margin:0;font-size:15px;line-height:1.5;text-align:center}
+.bc-lesson b{display:inline-block;margin-inline-end:6px;padding:1px 9px;border-radius:4px;background:var(--mango);color:#3a2a0e;font-size:12.5px;vertical-align:2px}
+.bc-start-foot{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 12px;margin:0;font-size:13.5px;color:var(--muted)}
+.bc-start-foot .kit-link{color:var(--ink);font-weight:700}
+
+/* ---- the HUD: corners only; the orchard in the middle stays clear ---- */
+.bc-play{display:flex;flex-direction:column;gap:6px;--reserve:212px;animation:bc-fade .18s var(--ease-out)}
+.gp-stage .bc-play{min-height:calc(var(--stage-h,100svh) - 16px)}
+.bc-play>.bc-board{margin-block:auto}
+.bc[data-screen=over] .bc-play>.bc-board{margin-block:0}
+.bc[data-finale] .bc-play{--reserve:236px}
+.bc[data-screen=over] .bc-play{--reserve:420px}
+.bc-hud{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;align-items:center;gap:8px;padding-bottom:7px}
+.gp-stage[data-immersive] .bc-hud{padding-inline-start:46px}
 .bc-hud p{margin:0}
-.bc-level{display:grid;line-height:1.25}
-.bc-level b{font-family:var(--font-display);font-size:17px;font-weight:800}
-.bc-level span{font-size:13px;font-weight:600;color:var(--muted)}
-.bc-left{display:flex;align-items:center;gap:6px;min-height:40px;padding:4px 12px 4px 8px;border-radius:12px;background:var(--sky);font-family:var(--font-display);font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
-.bc-chip-nest{width:18px;height:22px;border-radius:50% 50% 46% 46%;background:repeating-linear-gradient(0deg,var(--nest) 0 4px,var(--nest-line) 4px 5.5px);box-shadow:inset 0 -2px 0 #0002}
-.bc-clock{min-width:74px;padding:6px 10px;border-radius:12px;background:var(--ink);text-align:center}
-.bc-clock b{font-family:var(--font-display);font-size:21px;font-weight:700;color:var(--mango);font-variant-numeric:tabular-nums;line-height:1.2}
+.bc-badge{display:grid;justify-items:start;justify-self:start;max-width:100%;min-width:0;overflow:hidden;white-space:nowrap;min-height:44px;padding:4px 10px;border:1.5px solid var(--edge);border-radius:12px;background:var(--card);color:var(--ink);text-align:start;line-height:1.25}
+.bc-badge b{font-family:var(--font-display);font-size:15px}
+.bc-badge span{font-size:12px;color:var(--muted)}
+.bc-badge:disabled{opacity:1}
+.bc-wake{display:flex;gap:4px}
+.bc-wake{position:relative;padding-top:4px}
+/* one small hornet per mistake the orchard allows, plus the one that brings the swarm: grey asleep, striped awake */
+.bc-wake i{position:relative;width:15px;height:10px;border-radius:50%;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--muted) 45%,transparent) 0 3px,color-mix(in srgb,var(--muted) 25%,transparent) 3px 5px)}
+.bc-wake i::before{content:"";position:absolute;left:4px;top:-5px;width:7px;height:6px;border-radius:50%;background:color-mix(in srgb,var(--muted) 22%,transparent)}
+.bc-wake i[data-last]{outline:1.5px solid color-mix(in srgb,var(--danger) 50%,transparent);outline-offset:1px}
+.bc-wake i[data-on]{background:repeating-linear-gradient(90deg,#f5b700 0 3px,#2b2416 3px 5px);animation:bc-pip .24s var(--ease-out)}
+.bc-wake i[data-on]::before{background:#ffffffe0;box-shadow:0 0 0 1px #2b241640}
+@keyframes bc-pip{from{transform:scale(.7);opacity:0}}
+.bc-left{display:flex;align-items:center;gap:6px;min-height:40px;padding:4px 10px 4px 7px;border-radius:12px;background:var(--card);font-family:var(--font-display);font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+.bc-chip-nest{width:16px;height:20px;border-radius:50% 50% 46% 46%;background:repeating-linear-gradient(0deg,var(--nest) 0 4px,var(--nest-line) 4px 5.5px);box-shadow:inset 0 -2px 0 #0002}
+.bc-clock{display:grid;justify-items:center;min-width:70px;padding:3px 8px;border-radius:12px;background:#24301c}
+.bc-clock b{font-family:var(--font-display);font-size:19px;font-weight:700;color:var(--mango);font-variant-numeric:tabular-nums;line-height:1.2}
+.bc-track{display:flex;gap:1px;font-size:11px;line-height:1;color:#ffffff38}
+.bc-track i{font-style:normal;transition:color .3s var(--ease-out)}
+.bc-track i[data-on]{color:var(--star)}
+.bc-bar{position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:2px;background:color-mix(in srgb,var(--edge) 70%,transparent);overflow:hidden}
+.bc-bar i{display:block;height:100%;background:var(--mango);transform-origin:left;transition:transform .3s var(--ease-out)}
+.bc-boss{display:flex;align-items:center;justify-content:center;gap:8px;margin:0;font-size:13px;color:var(--muted)}
+.bc-boss b{font-family:var(--font-display);font-size:15px;color:var(--danger)}
+.bc[data-world="3"] .bc-boss b{color:#ff8a70}
+.bc-boss-bar{width:min(140px,30cqw);height:8px;border-radius:5px;background:color-mix(in srgb,var(--danger) 22%,transparent);overflow:hidden}
+.bc-boss-bar i{display:block;height:100%;background:var(--danger);transform-origin:left;transition:transform .35s var(--ease-out)}
 
-/* the orchard: grass between the bushes, earth where a bush is cleared */
-.bc-board-wrap{position:relative}
-.bc-board{position:relative;padding:6px;border-radius:16px;background:var(--grass);box-shadow:0 5px 0 var(--grass-deep);transition:box-shadow .15s ease-out}
+/* ---- the orchard: grass between the bushes, earth where a bush is cleared ---- */
+.bc-board{position:relative;justify-self:center;width:100%;padding:6px;border-radius:12px;background:var(--grass);box-shadow:0 5px 0 var(--grass-deep);}
 .bc-board[data-marking]{box-shadow:0 5px 0 var(--grass-deep),0 0 0 3px var(--gamchha)}
-.bc-grid{container-type:inline-size;display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:2px;width:min(100%,calc(var(--cols) * max(34px,(100svh - 340px) / var(--rows))));margin:0 auto;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-.bc-cell{--a:var(--leaf-mid);--b:var(--leaf);--c:var(--leaf-light);position:relative;aspect-ratio:1;min-width:0;padding:0;border:0;border-radius:8px;background:transparent;color:var(--ink);font-family:var(--font-display);font-size:calc(100cqw / var(--cols) * .56);font-weight:800;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.bc-cell[data-v="1"]{--a:var(--leaf);--b:var(--leaf-mid);--c:#4c9640}
-.bc-cell[data-v="2"]{--a:#367a30;--b:#2a6126;--c:var(--leaf-light)}
-.bc-cell[data-state=covered],.bc-cell[data-state=marked],.bc-cell[data-state=wrong]{
+.bc-grid{container-type:inline-size;display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:2px;width:min(100%,calc((var(--stage-h,100svh) - var(--reserve,212px)) * var(--cols) / var(--rows)));min-width:min(100%,240px);margin:0 auto;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.bc-play .bc-grid{--reserve:inherit}
+.bc-cell{--a:var(--leaf-mid);--b:var(--leaf);--c:var(--leaf-light);position:relative;display:grid;place-items:center;aspect-ratio:1;min-width:0;padding:0;border:0;border-radius:8px;background:transparent;color:#24301c;font-family:var(--font-display);font-size:calc(100cqw / var(--cols) * .54);font-weight:800;line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.bc-cell[data-v="1"]{--a:var(--leaf);--b:var(--leaf-mid);--c:color-mix(in srgb,var(--leaf-light) 80%,#4c9640)}
+.bc-cell[data-v="2"]{--a:color-mix(in srgb,var(--leaf) 70%,var(--leaf-mid));--b:color-mix(in srgb,var(--leaf) 85%,#000);--c:var(--leaf-light)}
+.bc-cell[data-state=covered],.bc-cell[data-state=tied],.bc-cell[data-state=wrong]{
   background:radial-gradient(circle at 40% 30%,#ffffff40 0 7%,transparent 8%),radial-gradient(circle at 27% 64%,var(--a) 0 29%,transparent 30%),radial-gradient(circle at 73% 64%,var(--b) 0 29%,transparent 30%),radial-gradient(circle at 50% 40%,var(--c) 0 35%,transparent 36%);
-  transition:transform .09s ease-out}
-.bc-cell[data-state=covered]:active{transform:scale(.92)}
-.bc-cell[data-state=open]{background:var(--earth);box-shadow:inset 0 -2px 0 var(--earth-edge);cursor:default;animation:bc-open .22s ease-out var(--d,0ms) both}
+  transition:transform 100ms var(--ease-out)}
+.bc-cell[data-state=covered]:active,.bc-cell[data-held]{transform:scale(.9)}
+.bc-cell[data-state=open]{background:var(--earth);box-shadow:inset 0 -2px 0 var(--earth-edge);cursor:default;animation:bc-open .22s var(--ease-out) var(--d,0ms) both}
 .bc-cell[data-n]{cursor:pointer}
 .bc-cell[data-n="1"]{color:#2f6b2a}.bc-cell[data-n="2"]{color:#3049a0}.bc-cell[data-n="3"]{color:#b5521b}.bc-cell[data-n="4"]{color:#7b2d6b}
 .bc-cell[data-n="5"]{color:#8a5a00}.bc-cell[data-n="6"]{color:#126e6a}.bc-cell[data-n="7"],.bc-cell[data-n="8"]{color:#24301c}
-@keyframes bc-open{from{transform:scale(.55);opacity:0}}
+@keyframes bc-open{from{transform:scale(.85);opacity:0}}
+.bc-grid[data-preview] .bc-cell{cursor:inherit}
+
+/* a fallen mango hides its number: a ripe mango on the earth, with its leaf */
+.bc-cell[data-kind=mango]::before{content:"";position:absolute;left:24%;right:22%;top:26%;bottom:20%;border-radius:55% 45% 50% 50%/60% 55% 45% 40%;background:radial-gradient(circle at 35% 30%,#fff3 0 12%,transparent 13%),radial-gradient(circle at 70% 70%,var(--mango-blush) 0 30%,transparent 55%),var(--mango);transform:rotate(-24deg);box-shadow:0 2px 0 #0002}
+.bc-cell[data-kind=mango]::after{content:"";position:absolute;left:52%;top:14%;width:26%;height:14%;border-radius:0 100% 0 100%;background:var(--leaf-mid);transform:rotate(-20deg)}
+.bc-rule-ico[data-kind=mango]::before{content:"";position:absolute;inset:7px 6px 6px 8px;border-radius:55% 45% 50% 50%;background:radial-gradient(circle at 70% 70%,var(--mango-blush) 0 30%,transparent 55%),var(--mango);transform:rotate(-24deg)}
+/* a bamboo post: its number counts only the four sides, so it stands on a cross of four short marks */
+.bc-cell[data-kind=post],.bc-rule-ico[data-kind=post]{background:linear-gradient(90deg,transparent 30%,var(--bamboo) 30% 70%,transparent 70%),var(--earth);box-shadow:inset 0 -2px 0 var(--earth-edge)}
+.bc-cell[data-kind=post]::before,.bc-rule-ico[data-kind=post]::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(var(--bamboo-dark),var(--bamboo-dark)) 50% 0/14% 10% no-repeat,linear-gradient(var(--bamboo-dark),var(--bamboo-dark)) 50% 100%/14% 10% no-repeat,linear-gradient(var(--bamboo-dark),var(--bamboo-dark)) 0 50%/10% 14% no-repeat,linear-gradient(var(--bamboo-dark),var(--bamboo-dark)) 100% 50%/10% 14% no-repeat,linear-gradient(var(--bamboo-dark),var(--bamboo-dark)) 50% 30%/40% 4% no-repeat}
+.bc-cell[data-kind=post]{z-index:0}
+.bc-cell[data-kind=post]>*{position:relative}
 
 /* a গামছা tied round the bush: red with a white check, and the knot's tail */
-.bc-cell[data-state=marked]::after,.bc-cell[data-state=wrong]::after{content:"";position:absolute;left:8%;right:8%;top:42%;height:24%;border-radius:3px;background:repeating-linear-gradient(90deg,#ffffffa0 0 2px,transparent 2px 6px),repeating-linear-gradient(0deg,#ffffffa0 0 2px,transparent 2px 6px),var(--gamchha);box-shadow:0 1px 0 #7a1b16;transform:rotate(-9deg);animation:bc-tie .18s ease-out}
-.bc-cell[data-state=marked]::before{content:"";position:absolute;right:6%;top:56%;width:16%;height:26%;border-radius:40% 40% 50% 50%;background:var(--gamchha);transform:rotate(-24deg)}
+.bc-cell[data-state=tied]::after,.bc-cell[data-state=wrong]::after{content:"";position:absolute;left:8%;right:8%;top:42%;height:24%;border-radius:3px;background:repeating-linear-gradient(90deg,#ffffffa0 0 2px,transparent 2px 6px),repeating-linear-gradient(0deg,#ffffffa0 0 2px,transparent 2px 6px),var(--gamchha);box-shadow:0 1px 0 #7a1b16;transform:rotate(-9deg);animation:bc-tie .18s var(--ease-out)}
+.bc-cell[data-state=tied]::before{content:"";position:absolute;right:6%;top:56%;width:16%;height:26%;border-radius:40% 40% 50% 50%;background:var(--gamchha);transform:rotate(-24deg)}
 @keyframes bc-tie{from{transform:rotate(-9deg) scaleX(.2)}}
 .bc-cell[data-state=wrong]{opacity:.75}
 .bc-cell[data-state=wrong]::before{content:"";position:absolute;inset:12%;background:linear-gradient(45deg,transparent 45%,#fff 45% 55%,transparent 55%),linear-gradient(-45deg,transparent 45%,#fff 45% 55%,transparent 55%);z-index:1}
+/* a finger held on a bush: the গামছা ring closes as the long press runs */
+.bc-cell[data-held]::after{content:"";position:absolute;inset:-2px;border-radius:10px;border:3px solid var(--gamchha);animation:bc-hold .4s linear forwards}
+.bc[data-calm] .bc-cell[data-held]::after{animation:none}
+@keyframes bc-hold{from{opacity:.15;transform:scale(1.3)}}
 
-/* a nest, shown when the round ends: papery stripes, hanging from a twig */
-.bc-cell[data-state=nest],.bc-cell[data-state=boom]{background:var(--earth)}
+/* a nest: papery stripes, hanging from a twig. Stung: awake and angry, ringed in red. */
+.bc-cell[data-state=nest],.bc-cell[data-state=boom],.bc-cell[data-state=stung]{background:var(--earth)}
 .bc-cell[data-state=boom]{background:#ffd3bf;box-shadow:0 0 0 2px var(--gamchha)}
-.bc-cell[data-state=nest]::after,.bc-cell[data-state=boom]::after{content:"";position:absolute;left:24%;right:24%;top:20%;bottom:12%;border-radius:50% 50% 46% 46%;background:repeating-linear-gradient(0deg,var(--nest) 0 13%,var(--nest-line) 13% 17%);box-shadow:inset 0 -3px 0 #0002}
-.bc-cell[data-state=nest]::before,.bc-cell[data-state=boom]::before{content:"";position:absolute;left:48%;top:6%;width:4%;height:16%;background:#7a4b26}
+.bc-cell[data-state=stung]{background:#ffe1d3;box-shadow:inset 0 0 0 2px var(--gamchha);animation:bc-angry .5s var(--ease-out)}
+@keyframes bc-angry{30%{transform:scale(1.15) rotate(-6deg)}60%{transform:scale(.95) rotate(4deg)}}
+.bc-cell[data-state=nest]::after,.bc-cell[data-state=boom]::after,.bc-cell[data-state=stung]::after{content:"";position:absolute;left:24%;right:24%;top:20%;bottom:12%;border-radius:50% 50% 46% 46%;background:repeating-linear-gradient(0deg,var(--nest) 0 13%,var(--nest-line) 13% 17%);box-shadow:inset 0 -3px 0 #0002}
+.bc-cell[data-state=nest]::before,.bc-cell[data-state=boom]::before,.bc-cell[data-state=stung]::before{content:"";position:absolute;left:48%;top:6%;width:4%;height:16%;background:var(--bark)}
 
-.bc-cell[data-teach]{z-index:1;outline:3px solid var(--mango);outline-offset:-1px;animation:bc-teach 1.3s ease-in-out infinite}
-.bc-cell[data-state=open][data-teach]{animation:bc-teach 1.3s ease-in-out infinite}
-@keyframes bc-teach{50%{box-shadow:0 0 0 5px #f2b63280}}
+.bc-cell[data-teach]{z-index:1;outline:3px solid var(--mango);outline-offset:-1px;animation:bc-teach 1.3s var(--ease-in-out) infinite}
+@keyframes bc-teach{50%{transform:scale(1.07)}}
 .bc-cell[data-hint]{z-index:1;outline:3px solid var(--mango);outline-offset:-1px}
-.bc-cell:focus-visible{z-index:2;outline:3px solid #fff;outline-offset:-2px;box-shadow:0 0 0 3px var(--ink)}
-.bc-cell:disabled{cursor:default}
+.bc-cell[data-clue]{z-index:1;outline:2.5px dashed #e07b28;outline-offset:-2px}
+.bc-cell:focus-visible{z-index:2;outline:3px solid #fff;outline-offset:-2px;box-shadow:0 0 0 3px #24301c}
 
-/* the swarm: six cartoon hornets fly off from the nest, everyone runs, nobody gets stung */
+/* the hornets: a few fly up from a stung nest; when the swarm comes, seven fly off and everyone runs */
 .bc-swarm{position:absolute;inset:6px;pointer-events:none;overflow:hidden;border-radius:12px}
-.bc-swarm i{position:absolute;left:var(--hx);top:var(--hy);width:26px;height:17px;margin:-9px 0 0 -13px;border-radius:50%;background:repeating-linear-gradient(90deg,#f5b700 0 6px,#2b2416 6px 9px);box-shadow:inset -5px 0 0 #2b2416;animation:bc-fly 1.4s ease-out calc(var(--k) * 50ms) both}
-.bc-swarm i::before,.bc-swarm i::after{content:"";position:absolute;top:-9px;width:13px;height:10px;border-radius:50%;background:#ffffffe0;box-shadow:0 0 0 1px #2b241633}
-.bc-swarm i::before{left:3px;transform:rotate(-20deg)}.bc-swarm i::after{left:10px;transform:rotate(20deg)}
-@keyframes bc-fly{0%{transform:rotate(calc(var(--k) * 60deg)) translateX(0) scale(.4)}60%{opacity:1}100%{transform:rotate(calc(var(--k) * 60deg + 40deg)) translateX(140px) scale(1.1);opacity:0}}
-.bc-swarm b{position:absolute;left:50%;top:clamp(30px,var(--hy),calc(100% - 30px));transform:translate(-50%,-50%);padding:8px 14px;border-radius:16px;background:#fff;color:var(--ink);font-family:var(--font-display);font-size:20px;white-space:nowrap;box-shadow:0 4px 0 #0003;animation:bc-bubble .35s cubic-bezier(.3,1.6,.5,1) both}
-@keyframes bc-bubble{from{transform:translate(-50%,-50%) scale(.3);opacity:0}}
+.bc-swarm i{position:absolute;left:var(--hx);top:var(--hy);width:22px;height:15px;margin:-8px 0 0 -11px;border-radius:50%;background:repeating-linear-gradient(90deg,#f5b700 0 5px,#2b2416 5px 8px);box-shadow:inset -4px 0 0 #2b2416;animation:bc-fly 1.2s var(--ease-out) calc(var(--k) * 60ms) both}
+.bc-swarm[data-big] i{width:26px;height:17px;animation-duration:1.5s}
+.bc-swarm i::before,.bc-swarm i::after{content:"";position:absolute;top:-8px;width:11px;height:9px;border-radius:50%;background:#ffffffe0;box-shadow:0 0 0 1px #2b241633}
+.bc-swarm i::before{left:3px;transform:rotate(-20deg)}.bc-swarm i::after{left:9px;transform:rotate(20deg)}
+@keyframes bc-fly{0%{transform:rotate(calc(var(--k) * 52deg)) translateX(0) scale(.4)}60%{opacity:1}100%{transform:rotate(calc(var(--k) * 52deg + 40deg)) translateX(120px) scale(1.05);opacity:0}}
 
-.bc-overlay{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;padding:16px;border-radius:16px;background:#1f2a17e6;color:#fff;text-align:center}
-.bc-overlay p{margin:0;font-weight:600}
-.bc-overlay .kit-primary{min-width:180px;min-height:56px;font-size:19px}
-
-.bc-status{min-height:44px;margin:0;font-size:15px;font-weight:600;line-height:1.45;text-align:center}
-
-/* the big mode toggle: clear or tie a গামছা */
-.bc-modes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.bc-modes button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:56px;padding:0 10px;border:2px solid var(--ink);border-radius:14px;background:#fff;color:var(--ink);font-family:var(--font-display);font-size:19px;font-weight:800;touch-action:manipulation}
-.bc-modes button[aria-pressed=true]{background:var(--ink);color:#fff;box-shadow:inset 0 -4px 0 #0005}
-.bc-modes button[aria-pressed=true]:last-child{background:var(--gamchha);border-color:var(--gamchha)}
-.bc-modes button[data-teach]{animation:bc-teach 1.3s ease-in-out infinite}
+/* ---- under the orchard: one line, then the big mode switch and the hint ---- */
+.bc-status{min-height:40px;margin:0;font-size:14.5px;font-weight:600;line-height:1.4;text-align:center;display:grid;place-items:center}
+.bc-status[data-hint]{color:color-mix(in srgb,var(--ink) 80%,#e07b28)}
+.bc-status[data-sting]{color:var(--danger)}
+.bc[data-world="3"] .bc-status[data-sting]{color:#ff8a70}
+.bc-modes{display:grid;grid-template-columns:1fr 1fr auto;gap:8px}
+.bc-modes button{display:flex;align-items:center;justify-content:center;gap:7px;white-space:nowrap;min-height:56px;padding:0 10px;border:2px solid var(--ink);border-radius:14px;background:var(--card);color:var(--ink);font-family:var(--font-display);font-size:18px;font-weight:800}
+.bc-modes button[aria-pressed=true]{background:var(--ink);color:var(--ground);box-shadow:inset 0 -4px 0 #0005}
+.bc-modes button[aria-pressed=true]:nth-child(2){background:var(--gamchha);border-color:var(--gamchha);color:#fff}
+.bc-modes button[data-teach]{animation:bc-teach 1.3s var(--ease-in-out) infinite}
+.bc-modes .bc-hint{padding:0 14px;border-width:1.5px;font-size:16px}
+.bc-modes .bc-hint:disabled{opacity:.4}
 .bc-ico{flex:none;width:22px;height:22px}
 .bc-ico-clear{border-radius:50%;background:radial-gradient(circle at 30% 65%,var(--leaf-mid) 0 32%,transparent 33%),radial-gradient(circle at 70% 65%,var(--leaf) 0 32%,transparent 33%),radial-gradient(circle at 50% 38%,var(--leaf-light) 0 38%,transparent 39%)}
 .bc-ico-gamchha{height:14px;border-radius:3px;background:repeating-linear-gradient(90deg,#ffffffa0 0 2px,transparent 2px 6px),repeating-linear-gradient(0deg,#ffffffa0 0 2px,transparent 2px 6px),var(--gamchha);transform:rotate(-9deg);box-shadow:0 0 0 1.5px #fff}
 
-.bc-prefs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--ink)}
-.bc-pill{min-height:44px;padding:6px 14px;border:1.5px solid currentColor;border-radius:999px;background:transparent;color:inherit;font-size:14px;font-weight:700}
-.bc-pill[aria-pressed=true]{background:var(--ink);color:#fff}
-.bc-pill:disabled{opacity:.4}
+/* ---- the end screen ---- */
+.bc-finish{display:grid;gap:8px;justify-items:center;padding:12px 14px 14px;border-radius:16px;background:var(--card);text-align:center;animation:bc-in .24s var(--ease-out)}
+.bc-finish-head{display:grid;justify-items:center;gap:2px}
+.bc-finish h2{margin:0;font-family:var(--font-display);font-size:23px;line-height:1.3}
+.bc-finish:not([data-won]) h2{color:var(--danger)}
+.bc[data-world="3"] .bc-finish:not([data-won]) h2{color:#ff8a70}
+.bc-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:6px;width:100%;margin:0}
+.bc-stats div{padding:6px 4px;border-radius:10px;background:var(--ground)}
+.bc-stats dt{font-size:12px;color:var(--muted)}
+.bc-stats dd{margin:0;font-family:var(--font-display);font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+.bc-finish p{margin:0}
+.bc-finish-line{font-family:var(--font-display);font-size:16.5px;font-weight:700;line-height:1.4}
+.bc-finish-note{font-size:13.5px;line-height:1.45;color:var(--muted)}
+.bc-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;margin:2px 0 0;padding:0;list-style:none}
+.bc-choices li:first-child,.bc-choices li:nth-child(2):last-child{grid-column:1/-1}
+.bc-choices button{position:relative;width:100%;min-height:52px;font-size:17px}
+.bc-choices li:first-child button{min-height:58px;font-size:19px}
+.bc-choices kbd{position:absolute;left:10px;top:50%;transform:translateY(-50%);margin:0;opacity:.6}
+.bc-choices em{position:absolute;right:8px;top:-9px;padding:1px 8px;border-radius:4px;background:var(--mango);color:#3a2a0e;font-size:11px;font-weight:700;line-height:1.6;font-family:inherit;font-style:normal}
+.bc-see{font-weight:700;color:var(--ink)}
 
-/* cleared, or caught by the hornets */
-.bc-clear,.bc-lost{display:grid;justify-items:center;gap:6px;padding:12px 14px;border-radius:16px;background:var(--sky);text-align:center}
-.bc-clear p,.bc-lost p{margin:0}
-.bc-clear-line{font-family:var(--font-display);font-size:19px;font-weight:800;line-height:1.4}
-.bc-clear-note,.bc-lost-note{font-size:14px;line-height:1.45;color:var(--muted)}
-.bc-actions{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;width:100%;margin-top:4px}
-.bc-actions:has(> :only-child){grid-template-columns:1fr}
-.tool-bhimruler-chak .bc-actions button,.tool-bhimruler-chak .bc-again{min-height:56px;font-size:18px}
-.bc-lost-title{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--gamchha)}
-.bc-lost-line{font-weight:700;line-height:1.45}
-.bc-again{width:100%}
+/* ---- সব লেভেল: a choice screen over the stage, holding play ---- */
+.bc-sheet{position:absolute;inset:0;z-index:4;display:grid;align-items:start;background:#1f1d1a66;border-radius:12px;animation:bc-fade .16s var(--ease-out)}
+.bc-sheet-card{display:grid;gap:12px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:14px 14px 18px;border-radius:16px;background:var(--ground);box-shadow:0 20px 40px -20px #000a;animation:bc-in .2s var(--ease-out)}
+.gp-stage .bc-sheet-card{max-height:var(--stage-h,100%)}
+.bc-sheet header{position:relative;padding-right:52px}
+.gp-stage[data-immersive] .bc-sheet header{padding-left:40px}
+.bc-sheet h2{margin:0;font-family:var(--font-display);font-size:24px}
+.bc-sheet header p{margin:2px 0 0;font-size:14px;color:var(--muted)}
+.bc-sheet-close{position:absolute;top:0;right:0}
+.bc-world h3{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;margin:0 0 8px;font-family:var(--font-display);font-size:16px}
+.bc-world h3 i{width:12px;height:12px;border-radius:4px;background:#6aa84f}
+.bc-world[data-world="2"] h3 i{background:#e0a92a}.bc-world[data-world="3"] h3 i{background:#7a5a9a}
+.bc-world h3 span{font-family:inherit;font-size:12.5px;font-weight:500;color:var(--muted)}
+.bc-world ol{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:0;padding:0;list-style:none}
+.bc-world button{position:relative;display:grid;justify-items:center;gap:2px;width:100%;min-height:74px;padding:6px 3px;border:1.5px solid var(--edge);border-radius:12px;background:var(--card);color:var(--ink)}
+.bc-world button b{font-family:var(--font-display);font-size:18px;line-height:1.1}
+.bc-world button b svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+.bc-world button:disabled{opacity:.45}
+.bc-sheet-name{font-size:11px;line-height:1.3;text-align:center;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bc-mini{font-size:10px;letter-spacing:-1px;color:color-mix(in srgb,var(--muted) 40%,transparent)}
+.bc-mini i{font-style:normal}.bc-mini i[data-on]{color:var(--star)}
+.bc-world button[data-finale]:not(:disabled){border-color:var(--danger);border-width:2.5px}
+.bc-world button[data-finale] .bc-sheet-name{font-weight:700;color:var(--danger)}
+.bc-world button[aria-current]{background:var(--ink);color:var(--ground)}
+.bc-world button[aria-current] .bc-sheet-name{color:inherit;opacity:.8}
+.bc-world button[data-next]{box-shadow:0 0 0 3px var(--mango)}
+.bc-world button em{position:absolute;top:-8px;left:50%;transform:translateX(-50%);padding:0 6px;border-radius:4px;background:var(--mango);color:#3a2a0e;font-size:10px;font-weight:700;line-height:1.6;font-family:inherit;font-style:normal;white-space:nowrap}
 
-.bc-drawer{border:1.5px solid var(--earth-edge);border-radius:14px;background:#fff}
-.bc-drawer summary{min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;font-weight:700;cursor:pointer}
-.bc-drawer summary span{font-weight:500;color:var(--muted);font-size:14px}
-.bc-drawer[open]{padding-bottom:12px}
-.bc-drawer .gx-levels{padding:0 10px}
-.bc-worlds{margin:0 14px 10px;font-size:13px;line-height:1.5;color:var(--muted)}
-
-.bc-result{scroll-margin-top:12px;margin-top:16px;padding-top:18px;border-top:2px solid var(--earth-edge)}
-.bc-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,32px);line-height:1.4}
+/* ---- the card, below the end screen inside the stage ---- */
+.bc-result{scroll-margin-top:12px;margin-top:10px;padding:16px 6px 6px;border-top:2px solid var(--edge)}
+.bc-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(21px,5cqw,28px);line-height:1.4}
 .bc-result h2 em{font-style:normal;color:var(--gamchha)}
-.bc-result>p{margin:0 0 16px;color:var(--muted)}
-.bc-result-body{display:grid;gap:22px}
-.bc-share{display:grid;gap:18px;align-content:start}
+.bc[data-world="3"] .bc-result h2 em{color:#ffc27a}
+.bc-result>p{margin:0 0 14px;color:var(--muted)}
+.bc-result-body{display:grid;gap:20px}
+.bc-share{display:grid;gap:16px;align-content:start}
 .bc-name{display:grid;gap:6px;font-weight:600}
 .bc-name small{font-weight:400;color:var(--muted);font-size:13px}
-.bc-name input{border:1.5px solid var(--earth-edge);border-radius:12px;font-size:17px}
-
-.bc-guide h2{font-family:var(--font-display);margin-bottom:12px}
-.bc-guide>p{color:var(--muted);max-width:640px}
-.bc-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.bc-guide li{display:flex;gap:14px;align-items:flex-start}
-.bc-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--mango);color:var(--ink);font-weight:700}
-.bc-guide li p{margin:4px 0 0}
+.bc-name input{border:1.5px solid var(--edge);border-radius:12px;font-size:17px}
 
 @media (max-width:360px){
-  .bc-modes button{font-size:17px}
-  .bc-status{font-size:14px}
-  .bc-clock{min-width:64px;padding-inline:6px}
+  .bc-play,.bc-start{min-width:0}
+  .bc-badge span{display:none}
+  .bc-wake{gap:2px}.bc-wake i{width:12px}
+  .bc-left{padding-inline:5px;font-size:17px}
+  .bc-modes button{font-size:15px;gap:4px;padding:0 6px}
+  .bc-ico{width:18px;height:18px}
+  .bc-modes .bc-hint{padding:0 8px}
+  .bc-clock{min-width:60px;padding-inline:5px}
+  .bc-hud{gap:5px}
 }
-@media (min-width:720px){.bc-lead{display:block}.bc-page:has(.bc-friend) .bc-lead{display:none}}
-.bc[data-slow=true] .bc-cell,.bc[data-slow=true] .bc-cell::after,.bc[data-slow=true] .bc-swarm i,.bc[data-slow=true] .bc-swarm b,.bc[data-slow=true] .bc-modes button{animation:none}
-.bc[data-slow=true] .bc-swarm i{display:none}
+
+/* press feedback on the small pressables: a 160ms squeeze, released as fast */
+.bc-step,.bc-sheet-close,.bc-badge,.bc-modes button,.bc-choices button,.bc-world button:not(:disabled),.bc-see{transition:transform 160ms var(--ease-out)}
+.bc-step:active:not(:disabled),.bc-sheet-close:active,.bc-badge:active:not(:disabled),.bc-modes button:active:not(:disabled),.bc-choices button:active,.bc-world button:active:not(:disabled),.bc-see:active{transform:scale(.97)}
+/* ধীরে খেলো and reduced motion: no ripple, pop, shake, flight, pulse or count-up; the danger edge stays, still */
+.bc[data-calm] .bc-cell,.bc[data-calm] .bc-cell::after,.bc[data-calm] .bc-modes button,.bc[data-calm] .bc-start,.bc[data-calm] .bc-finish,.bc[data-calm] .bc-wake i{animation:none}
+.bc[data-calm] .bc-cell[data-held]::after{animation:none}
+.bc[data-calm]::after{animation:none!important;transition:none}
+.bc[data-calm] .bc-swarm{display:none}
 @media (prefers-reduced-motion:reduce){
-  .bc-cell,.bc-cell::after,.bc-swarm b,.bc-modes button{animation:none!important}
-  .bc-swarm i{display:none}
-  .bc-cell[data-state=covered]:active{transform:none}
+  .bc-cell,.bc-cell::after,.bc-modes button,.bc-start,.bc-finish,.bc-wake i,.bc::after{animation:none!important}
+  .bc-swarm{display:none}
+  .bc-cell[data-state=covered]:active,.bc-go:active{transform:none}
 }
+.bc[data-calm] :is(.bc-step,.bc-sheet-close,.bc-badge,.bc-modes button,.bc-choices button,.bc-world button,.bc-see,.bc-cell,.bc-go){transition:none}
+.bc[data-calm] :is(.bc-step,.bc-sheet-close,.bc-badge,.bc-modes button,.bc-choices button,.bc-world button,.bc-see,.bc-cell,.bc-go):active{transform:none}
+@media (prefers-reduced-motion:reduce){.bc :is(.bc-step,.bc-sheet-close,.bc-badge,.bc-modes button,.bc-choices button,.bc-world button,.bc-see,.bc-cell,.bc-go){transition:none}.bc :is(.bc-step,.bc-sheet-close,.bc-badge,.bc-modes button,.bc-choices button,.bc-world button,.bc-see):active{transform:none}}

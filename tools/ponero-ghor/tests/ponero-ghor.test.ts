@@ -5,11 +5,14 @@ import { site } from "../content";
 import { share } from "../share";
 import { isSolved, lineTo, place, rowsDone, shuffled, solve, solvedBoard, step, type Board, type Dir } from "../lib/board";
 import {
-  decodeMoves, encodeMoves, hint, levelBoard, parOf, play, replay, shortBy, sizeOf, startGame, startLevel, starsOf, tap, threeStar, twoStar,
-  LEVEL_COUNT, MAX_LINK_MOVES, type Game,
+  decodeMoves, encodeMoves, hint, hintCap, homeCount, levelBoard, onTrack, parOf, play, replay, shortBy, sizeOf, startGame, startLevel, starsOf, tap,
+  targetOf, threeStar, twoStar, undo, LEVEL_COUNT, MAX_LINK_MOVES, type Game,
 } from "../lib/game";
 import { LEVELS } from "../lib/levels";
-import { caption, clearLine, compareLine, feat, fromGame, humanLine, parseShared, previewTitle, sharedHash } from "../lib/link";
+import { METHOD } from "../lib/plates";
+import {
+  caption, clearLine, clock, compareLine, feat, finaleLine, fromGame, humanLine, nearMissLine, parseShared, previewTitle, sharedHash, solvedLine,
+} from "../lib/link";
 
 const ALL_3 = [1, 2, 3, 4, 5, 6, 7, 8];
 /** The textbook solvability test, independent of how the plates are made: inversions, plus the gap's row on even sizes. */
@@ -86,7 +89,7 @@ test("slides: a tap moves the whole line toward the gap; off-line taps and the g
   assert.equal(step(board, 1), null, "the gap can't leave the plate");
   assert.equal(step(board, 3), null);
 
-  let game: Game = { level: 11, board: solvedBoard(4), moves: [], helped: 0, won: false };
+  let game: Game = { level: 11, board: solvedBoard(4), moves: [], helped: 0, won: false, undone: 0 };
   game = tap(game, 12)!;
   assert.deepEqual(game.board.cells.slice(12), [0, 13, 14, 15]);
   assert.equal(game.moves.length, 3, "a line of three counts three moves");
@@ -94,6 +97,7 @@ test("slides: a tap moves the whole line toward the gap; off-line taps and the g
   // Sliding back the way it came takes the moves away again.
   game = tap(game, 15)!;
   assert.equal(game.moves.length, 0);
+  assert.equal(game.undone, 3, "the three pushed back count as taken back");
   assert.equal(game.won, true);
   assert.equal(tap(game, 14), null, "nothing moves once it's solved");
 });
@@ -105,23 +109,60 @@ test("rows turn complete from the top, and the last only with the whole plate", 
   assert.equal(rowsDone(levelBoard(30)) < 5, true);
 });
 
-test("stars: three within par plus a fifth, two with more room, one for any finish or with help", () => {
+test("stars: three within the target plus a fifth, two with more room, one for any finish; hints cap them first", () => {
   for (const level of [1, 7, 12, 30]) {
     const three = threeStar(level), two = twoStar(level);
-    assert.equal(three, parOf(level) + Math.floor(parOf(level) / 5));
+    assert.equal(three, targetOf(level) + Math.floor(targetOf(level) / 5));
     assert.ok(two >= three + 4);
     assert.equal(starsOf(parOf(level), level), 3);
     assert.equal(starsOf(three, level), 3);
     assert.equal(starsOf(three + 1, level), 2);
     assert.equal(starsOf(two, level), 2);
     assert.equal(starsOf(two + 1, level), 1);
-    assert.equal(starsOf(parOf(level), level, 1), 1);
+    assert.equal(starsOf(parOf(level), level, 1), 2, "one hint: at most two stars");
+    assert.equal(starsOf(parOf(level), level, 2), 1, "a second hint: one");
+    assert.equal(starsOf(two + 1, level, 1), 1);
     assert.equal(shortBy(three, level), 0);
     assert.equal(shortBy(three + 2, level), 2, "two fewer moves for the third star");
     assert.equal(shortBy(two + 5, level), 5);
-    assert.equal(shortBy(parOf(level), level, 2), 0);
+    assert.equal(shortBy(parOf(level), level, 1), 0, "the hint, not the moves, holds the third star back");
+    assert.equal(shortBy(two + 3, level, 1), 3, "with a hint, fewer moves still earn the second star");
   }
+  assert.deepEqual([0, 1, 2, 9].map(hintCap), [3, 2, 1, 1]);
   assert.equal(threeStar(1), 2, "level 1: two taps for three stars");
+});
+
+test("targets: ৩×৩ builds on the true shortest; bigger plates on the layered method, never below par", () => {
+  for (let level = 1; level <= 10; level++) assert.equal(targetOf(level), parOf(level), `level ${level}`);
+  for (let level = 11; level <= LEVEL_COUNT; level++) {
+    assert.equal(METHOD[level - 1], solve(levelBoard(level)).length, `level ${level}: METHOD is pinned to the solver`);
+    assert.ok(targetOf(level) >= parOf(level));
+  }
+  // The bug the bots found: on level 14 par is the 20-step shuffle undone, which the old targets (par + a fifth = 24) made
+  // the hardest plate of its world to three-star. The method's 58 moves now earn three stars.
+  assert.equal(parOf(14), 20);
+  assert.equal(starsOf(58, 14), 3);
+});
+
+test("on track: the stars a plate is heading for, and how many moves keep them", () => {
+  assert.deepEqual(onTrack(0, 10), { stars: 3, left: threeStar(10) });
+  assert.deepEqual(onTrack(threeStar(10), 10), { stars: 3, left: 0 });
+  assert.deepEqual(onTrack(threeStar(10) + 1, 10), { stars: 2, left: twoStar(10) - threeStar(10) - 1 });
+  assert.deepEqual(onTrack(0, 10, 1), { stars: 2, left: twoStar(10) });
+  assert.equal(onTrack(999, 10).left, Infinity);
+});
+
+test("undo slides the last ঘুঁটি back and takes the move away; home counts ঘুঁটি in place", () => {
+  let game = startGame(5);
+  assert.equal(undo(game), null, "nothing to undo on a fresh plate");
+  const first = hint(game)!;
+  game = play(game, [first])!;
+  const back = undo(game)!;
+  assert.deepEqual(back.board, startGame(5).board);
+  assert.equal(back.moves.length, 0);
+  assert.equal(back.undone, 1);
+  assert.equal(homeCount(solvedBoard(4)), 15);
+  assert.equal(homeCount(levelBoard(1)), 6);
 });
 
 test("hints: on 3×3 following them is the shortest way; on 5×5 they always finish the plate", () => {
@@ -129,7 +170,7 @@ test("hints: on 3×3 following them is the shortest way; on 5×5 they always fin
   while (!game.won) game = play(game, [hint(game)!], true)!;
   assert.equal(game.moves.length, parOf(9));
   assert.equal(game.helped, parOf(9));
-  assert.equal(starsOf(game.moves.length, 9, game.helped), 1);
+  assert.equal(starsOf(game.moves.length, 9, game.helped), 1, "many hints: one star");
   game = startGame(26);
   for (let i = 0; !game.won; i++) { assert.ok(i < 2000); game = play(game, [hint(game)!], true)!; }
   assert.equal(hint(game), null);
@@ -243,6 +284,28 @@ test("result lines: kind, exact, by stars", () => {
   assert.equal(compareLine(90, 52, "রাফি"), "রাফি এখনো ৩৮ চাল এগিয়ে। আরেকবার?");
   assert.equal(feat({ level: 3, count: 6, helped: 0, name: "" }), "এক বন্ধু ৩ নম্বর লেভেল (৩×৩) ৬ চালে মিলিয়েছে");
   assert.equal(caption({ level: 26, count: 140, helped: 1 }), "১৫ ঘরের ধাঁধার ২৬ নম্বর লেভেল (৫×৫) ১৪০ চালে মেলালাম, একটু সাহায্য নিয়ে। তুমি কত চালে পারবে?");
+  assert.equal(clock(65), "১:০৫");
+  assert.equal(clock(0), "০:০০");
+});
+
+test("quality-bar gap 3: the end lines never contradict the stars", () => {
+  // Before: level 1 at par with two hints showed one star beside "এর চেয়ে কম চালে হয় না।" and "৩ তারা পর্যন্ত পাবে".
+  assert.doesNotMatch(solvedLine(1, 2, 2), /এর চেয়ে কম চালে হয় না/, "a helped plate never claims the shortest");
+  assert.match(solvedLine(1, 2, 0), /এর চেয়ে কম চালে হয় না/);
+  assert.match(solvedLine(1, 5, 0), /সবচেয়ে কম লাগে ২ চাল/);
+  assert.equal(nearMissLine(2, 1, 1), "সাহায্য ছাড়া মেলালে ৩ তারা পর্যন্ত পাবে।");
+  assert.equal(nearMissLine(2, 1, 0), "", "three stars: nothing to add");
+  assert.equal(nearMissLine(threeStar(10) + 3, 10, 0), "আর ৩ চাল কম হলে ৩ তারা।");
+  assert.equal(nearMissLine(twoStar(10) + 2, 10, 1), "আর ২ চাল কম হলে ২ তারা।", "with a hint, the next star is two");
+  for (let level = 1; level <= LEVEL_COUNT; level++) for (const helped of [0, 1, 2]) for (const extra of [0, 1, 7, 40]) {
+    const count = parOf(level) + extra, line = nearMissLine(count, level, helped), earned = starsOf(count, level, helped);
+    if (earned === 3) assert.equal(line, "");
+    else if (line.startsWith("আর")) assert.match(line, new RegExp(`${["", "১", "২", "৩"][earned + 1]} তারা।$`));
+    else assert.equal(earned, hintCap(helped), `level ${level}: only a hint-capped plate is told to skip hints`);
+  }
+  assert.match(solvedLine(14, 60, 0), /রিকশা জোড়া লেগেছে/);
+  assert.equal(finaleLine(10), "নদীর ঘাটের ১০টা প্লেটই শেষ। সামনে শহরের রাস্তা, ৪×৪।");
+  assert.match(finaleLine(30), /মেলার সব প্লেট মিলিয়ে ফেলেছ।$/);
 });
 
 test("content meets the SEO limits and speaks তুমি", () => {
@@ -252,6 +315,7 @@ test("content meets the SEO limits and speaks তুমি", () => {
   assert.ok(site.headline && site.headline !== site.title && site.headline !== site.name);
   assert.ok(site.faq.length >= 6);
   assert.ok(site.faq.some(item => item.question === "কয়টা লেভেল আছে?"));
+  assert.match(JSON.stringify(site.faq), /বড়জোর ২ তারা/, "the FAQ says what a hint costs");
   assert.ok(site.faq.some(item => /জ্যাম ছাড়াও|সুডোকু/.test(item.answer)), "names a related game");
   const all = JSON.stringify(site);
   assert.doesNotMatch(all, /আপনি|করুন|দেখুন|আপনার|অসাধারণ/);

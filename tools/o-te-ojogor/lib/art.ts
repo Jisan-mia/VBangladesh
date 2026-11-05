@@ -1,7 +1,7 @@
 // The game's drawings: the tree, the fruit, the বেতের ঝুড়ি, and one small friendly picture for every word. All drawn fresh in code.
 import { DISPLAY_FONT } from "../../../shared/card-canvas";
 import type { World } from "./levels";
-import { BASKET_Y, GROUND_Y, H, R, W } from "./game";
+import { BASKET_Y, GROUND_Y, H, R, W } from "./tree";
 
 type C = CanvasRenderingContext2D;
 const TAU = Math.PI * 2;
@@ -407,13 +407,17 @@ export const SKIN: Record<World, { fill: string; shade: string }> = {
   number: { fill: "#d9c8ff", shade: "#b49bf2" },
 };
 
-/** A fruit with its letter. `font` is prepared once per text (see the game component), so drawing allocates nothing. */
+/**
+ * A fruit with its letter. `font` is prepared once per text (see draw.hot.ts), so drawing allocates nothing.
+ * `scale` grows it on the branch; `sway` turns it on its stem.
+ */
 export function drawFruit(c: C, x: number, y: number, text: string, font: string, world: World, scale = 1, sway = 0) {
   const skin = SKIN[world], r = R * scale;
   c.save();
   c.translate(x, y);
   if (sway) c.rotate(sway);
-  stroke(c, [0, -r + 2, 2 * scale, -r - 8 * scale], "#6b4a2b", 3 * scale);
+  c.beginPath(); c.moveTo(0, -r + 2); c.lineTo(2 * scale, -r - 8 * scale);
+  c.strokeStyle = "#6b4a2b"; c.lineWidth = 3 * scale; c.lineCap = "round"; c.stroke();
   leaf(c, 9 * scale, -r - 6 * scale, 8 * scale, -0.5);
   circle(c, 0, 0, r, skin.shade);
   circle(c, -2 * scale, -2.5 * scale, r - 3 * scale, skin.fill);
@@ -446,20 +450,87 @@ export function drawBasket(c: C, x: number, tilt = 0, y = BASKET_Y) {
   c.restore();
 }
 
-/** The still scene, drawn once to an offscreen canvas: sky, the big tree, the grass, and the অজগর resting under it. */
-export function drawScene(c: C) {
+/** The basket's bitmap box in board units: it is drawn once and then only moved and turned. */
+export const BASKET_BOX = { x: -54, y: -28, w: 108, h: 58 } as const;
+export function paintBasket(k: number) {
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.ceil(BASKET_BOX.w * k); canvas.height = Math.ceil(BASKET_BOX.h * k);
+  const c = canvas.getContext("2d");
+  if (c) { c.scale(k, k); drawBasket(c, -BASKET_BOX.x, 0, -BASKET_BOX.y); }
+  return canvas;
+}
+
+/** One tree per world, at its own time of day. */
+export const WORLD_SKY: Record<World, { top: string; bottom: string; leaf: string; light: string }> = {
+  vowel: { top: "#ffdcb8", bottom: "#fff4e2", leaf: "#4a9d40", light: "#6dbb59" },
+  consonant: { top: "#bfe6f7", bottom: "#eef8fc", leaf: "#4a9d40", light: "#68b957" },
+  word: { top: "#ffcf73", bottom: "#fff0c9", leaf: "#4f9a3a", light: "#79bb4f" },
+  number: { top: "#9d8fd6", bottom: "#f2d4df", leaf: "#3d8a49", light: "#5aa560" },
+};
+
+/** The still scene, drawn once to an offscreen canvas: the sky for the world, the big tree, the grass, and the অজগর resting under it. */
+export function drawScene(c: C, world: World = "consonant") {
+  const look = WORLD_SKY[world];
   const sky = c.createLinearGradient(0, 0, 0, H);
-  sky.addColorStop(0, "#bfe6f7"); sky.addColorStop(1, "#eef8fc");
+  sky.addColorStop(0, look.top); sky.addColorStop(1, look.bottom);
   c.fillStyle = sky; c.fillRect(0, 0, W, H);
+  if (world === "vowel") { circle(c, 52, 250, 34, "#ffe9a8"); circle(c, 52, 250, 26, "#ffcf5c"); }
+  if (world === "word") { circle(c, 300, 230, 30, "#fff2b0"); circle(c, 300, 230, 22, "#ffd84d"); }
+  if (world === "number") {
+    circle(c, 296, 210, 20, "#fff6d8"); circle(c, 305, 204, 17, look.top);
+    for (const [x, y] of [[40, 190], [80, 250], [250, 270], [330, 300]] as const) circle(c, x, y, 2.2, "#fff6d8");
+  }
   box(c, W / 2 - 16, 90, 32, GROUND_Y - 70, "#9a6a3e", 6);
   stroke(c, [W / 2, 150, W / 2 - 50, 110], "#9a6a3e", 10); stroke(c, [W / 2, 170, W / 2 + 56, 120], "#9a6a3e", 10);
-  for (const [x, y, r, color] of [
-    [20, 30, 52, "#3f8f3a"], [90, 14, 56, "#4a9d40"], [180, 6, 62, "#3f8f3a"], [270, 14, 56, "#4a9d40"], [340, 30, 52, "#3f8f3a"],
-    [50, 64, 40, "#56aa48"], [130, 56, 44, "#4a9d40"], [230, 56, 44, "#56aa48"], [310, 64, 40, "#4a9d40"], [180, 70, 36, "#3f8f3a"],
-  ] as const) circle(c, x, y, r, color);
-  for (const [x, y, r] of [[70, 36, 18], [150, 26, 20], [236, 30, 18], [312, 52, 14], [110, 74, 12], [262, 80, 12]] as const) circle(c, x, y, r, "#68b957");
+  for (const [x, y, r, dark] of [
+    [20, 30, 52, 1], [90, 14, 56, 0], [180, 6, 62, 1], [270, 14, 56, 0], [340, 30, 52, 1],
+    [50, 64, 40, 0], [130, 56, 44, 0], [230, 56, 44, 0], [310, 64, 40, 0], [180, 70, 36, 1],
+  ] as const) circle(c, x, y, r, dark ? "#3f8f3a" : look.leaf);
+  for (const [x, y, r] of [[70, 36, 18], [150, 26, 20], [236, 30, 18], [312, 52, 14], [110, 74, 12], [262, 80, 12]] as const) circle(c, x, y, r, look.light);
   box(c, 0, GROUND_Y - 6, W, H - GROUND_Y + 6, "#7cc36b");
   box(c, 0, GROUND_Y - 6, W, 5, "#5fae4c");
   for (let x = 8; x < W; x += 22) stroke(c, [x, GROUND_Y - 4, x + 3, GROUND_Y - 13, x + 6, GROUND_Y - 4], "#5fae4c", 2);
   drawPicture(c, "snake", W - 34, GROUND_Y + 2, 44);
+}
+
+/** The hint: a warm halo and a dashed ring that turns (still in ধীরে খেলো), so the right fruit stands out by shape, not only colour. */
+export function drawGlow(c: C, x: number, y: number, r: number, turn: number) {
+  c.save();
+  c.translate(x, y);
+  circle(c, 0, 0, r + 12, "rgba(255, 214, 71, 0.45)");
+  c.rotate(turn);
+  c.setLineDash(DASH);
+  ring(c, 0, 0, r + 9, "#b07800", 3);
+  c.setLineDash(NO_DASH);
+  c.restore();
+}
+const DASH = [7, 6], NO_DASH: number[] = [];
+
+/** The ghost finger that shows the very first tap of the game: a pale hand pointing up at the fruit, bobbing gently. */
+export function drawFinger(c: C, x: number, y: number, bob: number) {
+  c.save();
+  c.translate(x + 6, y + bob);
+  c.globalAlpha = 0.85;
+  box(c, -7, 0, 14, 34, "#fff7ec", 7);
+  box(c, -16, 24, 34, 30, "#fff7ec", 12);
+  c.strokeStyle = "#8a6a44"; c.lineWidth = 2;
+  c.beginPath(); c.roundRect(-7, 0, 14, 34, 7); c.stroke();
+  c.beginPath(); c.roundRect(-16, 24, 34, 30, 12); c.stroke();
+  c.restore();
+}
+
+/** The title's start button art: the basket brimming with অ আ ই, the অজগর peeking over the rim. Drawn into a w × h box. */
+export function drawTitleArt(c: C, w: number, h: number, world: World) {
+  const k = Math.min(w / 240, h / 200);
+  c.clearRect(0, 0, w, h);
+  c.save();
+  c.translate(w / 2, h / 2 + 8 * k);
+  c.scale(k, k);
+  oval(c, 0, 72, 112, 16, "rgba(43, 36, 22, 0.12)");
+  drawPicture(c, "snake", 84, -6, 92);
+  c.save(); c.scale(1.9, 1.9); drawBasket(c, 0, 0, 18); c.restore();
+  const items = world === "number" ? ["১", "২", "৩"] : world === "word" ? ["আ", "ম", "বই"] : world === "consonant" ? ["ক", "খ", "গ"] : ["অ", "আ", "ই"];
+  const spots = [[-60, -14, -0.14], [0, -36, 0], [60, -14, 0.14]] as const;
+  items.forEach((text, i) => drawFruit(c, spots[i][0], spots[i][1], text, fruitFont(c, text), world, 1.12, spots[i][2]));
+  c.restore();
 }

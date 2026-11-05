@@ -14,6 +14,14 @@ export const C = {
   gamchha: "#c8323a", shorts: "#3b4a63", brass: "#d6a632", brassDark: "#9c7420", bamboo: "#c9a25e", ink: "#2a2118",
 } as const;
 
+/** One palette per world: the banks, the water and a light laid over everything (the title, the scene and the card read the same). */
+export const LOOKS = {
+  khal: { grass: "#86b45f", grassDark: "#6d9a4b", water: "#4f9886", sand: "#e3cf9c", mud: "#a87b4f", tint: "rgba(255,226,150,0.07)", sky: "#ffe9a8", rain: false },
+  nodi: { grass: "#a3ad64", grassDark: "#8b9650", water: "#5d97a0", sand: "#ead7a2", mud: "#a07a52", tint: "rgba(255,196,120,0.10)", sky: "#ffd9a0", rain: false },
+  borsha: { grass: "#5f9158", grassDark: "#4d7c49", water: "#4b7a86", sand: "#cdbf96", mud: "#8d6c4a", tint: "rgba(28,48,66,0.20)", sky: "#a9bfd0", rain: true },
+} as const;
+export type LookName = keyof typeof LOOKS;
+
 function lens(c: Ctx, x0: number, x1: number, y0: number, y1: number, tip: number) {
   const mid = (y0 + y1) / 2;
   c.beginPath();
@@ -136,6 +144,21 @@ export function drawTree(c: Ctx, size = 1) {
   }
 }
 
+/** A low bush, feet at (0, 0). */
+export function drawBush(c: Ctx) {
+  c.fillStyle = "rgba(0,0,0,0.14)"; c.beginPath(); c.ellipse(0, 0, 0.3, 0.09, 0, 0, Math.PI * 2); c.fill();
+  for (const [x, y, r, color] of [[-0.14, -0.16, 0.17, "#4b8a43"], [0.14, -0.15, 0.16, "#4b8a43"], [0, -0.24, 0.19, "#5da04f"]] as const) { c.fillStyle = color; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill(); }
+}
+
+/** A village hut with a tin roof, feet at (0, 0), about 1.4 cells wide. */
+export function drawHut(c: Ctx) {
+  c.fillStyle = "rgba(0,0,0,0.16)"; c.beginPath(); c.ellipse(0, 0, 0.8, 0.14, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = "#d9c08e"; c.fillRect(-0.55, -0.55, 1.1, 0.55);
+  c.fillStyle = "#6b5a44"; c.fillRect(-0.12, -0.38, 0.24, 0.38);
+  c.fillStyle = "#8b9aa3"; c.beginPath(); c.moveTo(-0.72, -0.5); c.lineTo(0, -1.05); c.lineTo(0.72, -0.5); c.closePath(); c.fill();
+  c.strokeStyle = "#6d7b84"; c.lineWidth = 0.03; c.beginPath(); for (const x of [-0.4, -0.2, 0, 0.2, 0.4]) { c.moveTo(x * 0.9, -0.55); c.lineTo(x * 0.5, -0.95); } c.stroke();
+}
+
 /** A tuft of কাশফুল on a চর, feet at (0, 0). */
 export function drawKash(c: Ctx) {
   c.strokeStyle = "#8a9a5a"; c.lineWidth = 0.025;
@@ -171,4 +194,34 @@ export function drawSteps(c: Ctx, width: number, depth: number, down = true) {
     for (let x = inset + 0.25 + (i % 2) * 0.12; x < width - inset; x += 0.42) { c.moveTo(x, y); c.lineTo(x, y + depth / 3); }
     c.stroke();
   }
+}
+
+/** A chevron pointing right, in a rounded badge, centred on (0, 0), about one cell wide. The edge pointers use it (mirror it to point left). */
+export function drawChevron(c: Ctx, fill: string) {
+  c.fillStyle = fill; c.beginPath(); c.roundRect(-0.32, -0.34, 0.64, 0.68, 0.2); c.fill();
+  c.strokeStyle = "#ffffff"; c.lineWidth = 0.1; c.lineCap = "round"; c.lineJoin = "round";
+  c.beginPath(); c.moveTo(-0.08, -0.17); c.lineTo(0.1, 0); c.lineTo(-0.08, 0.17); c.stroke();
+  c.lineCap = "butt";
+}
+
+/** The title's picture, in a box `width` × `height` (CSS px): the boy on the ghat steps, a dotted arc to a ভেলা, a নৌকা and a mango beyond, the world's light behind. */
+export function drawStartArt(c: Ctx, width: number, height: number, look: LookName) {
+  const p = LOOKS[look], unit = Math.min(width / 7.4, height / 3.9), cx = width / 2, base = height - unit * 0.1;
+  const glowY = base - unit * 2.5, glow = c.createRadialGradient(cx, glowY, 4, cx, glowY, Math.max(8, Math.min(width / 2, glowY, unit * 3.6) - 1));
+  glow.addColorStop(0, p.sky + "cc"); glow.addColorStop(1, p.sky + "00");
+  c.fillStyle = glow; c.fillRect(0, 0, width, height);
+  // the water, the near bank with its steps
+  c.fillStyle = p.water; c.beginPath(); c.roundRect(cx - unit * 3.55, base - unit * 2.5, unit * 7.1, unit * 1.9, unit * 0.35); c.fill();
+  c.fillStyle = "rgba(255,255,255,0.1)"; c.fillRect(cx - unit * 3.55, base - unit * 1.6, unit * 7.1, unit * 0.06);
+  c.fillStyle = p.grass; c.beginPath(); c.roundRect(cx - unit * 3.55, base - unit * 0.7, unit * 7.1, unit * 0.7, unit * 0.3); c.fill();
+  c.save(); c.translate(cx - unit * 1.4, base - unit * 0.74); c.scale(unit, unit); drawSteps(c, 2.8, 0.34, true); c.restore();
+  // a ভেলা and a নৌকা on the water
+  c.save(); c.translate(cx - unit * 0.2, base - unit * 1.6); c.scale(unit, unit); drawVela(c, 2); c.restore();
+  c.save(); c.translate(cx + unit * 1.55, base - unit * 2.25); c.scale(unit, unit); drawNouka(c, 3); c.restore();
+  c.save(); c.translate(cx + unit * 2.85, base - unit * 2.0); c.scale(unit, unit); drawMango(c); c.restore();
+  // the dotted hop
+  c.strokeStyle = "rgba(255,255,255,0.9)"; c.lineWidth = Math.max(2, unit * 0.06); c.setLineDash([unit * 0.05, unit * 0.2]); c.lineCap = "round";
+  c.beginPath(); c.moveTo(cx - unit * 0.9, base - unit * 0.95); c.quadraticCurveTo(cx - unit * 0.5, base - unit * 2.3, cx + unit * 0.35, base - unit * 1.35); c.stroke();
+  c.setLineDash([]); c.lineCap = "butt";
+  c.save(); c.translate(cx - unit * 1.05, base - unit * 0.62); c.scale(unit * 1.5, unit * 1.5); drawKid(c); c.restore();
 }

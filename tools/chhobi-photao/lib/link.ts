@@ -1,7 +1,8 @@
 // Challenge links and every line of result text. Server-safe: share.ts loads this, so it reaches only game-core and the game rules.
 import { possessive } from "../../../shared/bangla";
 import { challengeHash, cleanName, readChallenge } from "../../../shared/game-core";
-import { isLevel, levelSeed, puzzleOf, shortBy, starsFor, worldOf, LEVEL_COUNT, WORLDS } from "./game";
+import { isLevel, levelSeed, puzzleOf, shortBy, starsFor, LEVEL_COUNT } from "./game";
+import { worldInfo } from "./levels";
 
 const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
 export const bn = (value: number) => digits.format(value);
@@ -33,12 +34,24 @@ export function timeText(seconds: number) {
   return rest ? `${bn(minutes)} মিনিট ${bn(rest)} সেকেন্ড` : `${bn(minutes)} মিনিট`;
 }
 
-export const levelLabel = (level: number) => `লেভেল ${bn(level)} · ${WORLDS[worldOf(level)]}`;
+/** The ticking clock: "১:০৫" */
+export const clockText = (seconds: number) => `${bn(Math.floor(seconds / 60))}:${bn(seconds % 60).padStart(2, "০")}`;
+
+export const levelLabel = (level: number) => `লেভেল ${bn(level)} · ${worldInfo(level).name}`;
 export const pictureName = (level: number) => puzzleOf(level).picture.name;
 
 /** The level-clear line: one picture, one small scene. The last level gets its own. */
 export function clearLine(level: number) {
   return level === LEVEL_COUNT ? `${puzzleOf(level).picture.line} ৩০টা ছবিই এখন তোমার অ্যালবামে।` : puzzleOf(level).picture.line;
+}
+
+/** The HUD's small line under the star track: what the next mistake costs. */
+export function starNote(mistakeCount: number, hinted: boolean) {
+  const earned = starsFor(mistakeCount, hinted);
+  if (hinted && earned === 2) return "হিন্ট নিয়েছ: ২ তারার বেশি হবে না";
+  if (earned === 3) return `ভুল ০ · ১টা ভুলে ${bn(2)} তারা`;
+  if (earned === 2) return `ভুল ${bn(mistakeCount)} · আর ${bn(3 - mistakeCount)}টায় ${bn(1)} তারা`;
+  return `ভুল ${bn(mistakeCount)}`;
 }
 
 /** The near-miss line, with exact numbers. Empty at three stars. */

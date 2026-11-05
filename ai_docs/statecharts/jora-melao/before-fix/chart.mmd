@@ -1,0 +1,81 @@
+---
+title: "জﬂ°°2507¶ßডﬂ°°2492¶ßﬂ°°2494¶ß মﬂ°°2503¶ßলﬂ°°2494¶ßও: the board, the hidden tab and the levels"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks LevelsOpenInOrder
+    lg4: Path to the LevelsOpenInOrder bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Board" as r0 {
+      s0: Fresh board, demo pair up
+      s1: One card up
+      s2: Last pair found
+      s3: Missed pair showing
+      s4: Paused
+      s5: Your move
+      s6: সব জ#2507;ড#2492;#2494; ম#2495;ল#2503;ছ#2503; panel
+      [*] --> s0
+      s0 --> s1: you flip a card [when Tab is Tab showing]
+      s1 --> s0: you pick a level under সব ল#2503;ভ#2503;ল
+      s1 --> s3: you flip a card that doesn't match
+      s1 --> s2: you match the last pair
+      s1 --> s4: you hide the tab
+      s1 --> s2: you match the last pair of the friend's level 2 [when Levels is Opened from a friend's level 2 link]
+      s3 --> s0: you pick a level under সব ল#2503;ভ#2503;ল
+      s3 --> s1: you flip a card
+      s3 --> s5: the missed pair turns back
+      s3 --> s4: you hide the tab
+      s2 --> s0: you pick a level under সব ল#2503;ভ#2503;ল [when Tab is Tab showing and Levels is not Level 2 has stars, level 1 never played]
+      s2 --> s6: the panel appears [when Levels is not Level 2 has stars, level 1 never played]
+      s5 --> s0: you pick a level under সব ল#2503;ভ#2503;ল
+      s5 --> s1: you flip a card
+      s5 --> s4: you hide the tab
+      s4 --> s0: you pick a level under সব ল#2503;ভ#2503;ল [when Tab is Tab showing]
+      s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Tab is Tab showing]
+      s6 --> s0: you pick a level under সব ল#2503;ভ#2503;ল or you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; [when Tab is Tab showing]
+      s4 --> s5: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Tab is Tab showing]
+    }
+    --
+    state "Tab" as r1 {
+      s7: Tab showing
+      s8: Tab hidden
+      [*] --> s7
+      s7 --> s8: you hide the tab [when Levels is not Level 2 has stars, level 1 never played]
+      s8 --> s7: the tab shows again
+    }
+    --
+    state "Levels" as r2 {
+      s9: Opened on level 1
+      s10: Opened from a friend's level 2 link
+      s11: Level 2 has stars, level 1 never played
+      [*] --> s9
+      [*] --> s10
+      s10 --> s11: you match the last pair of the friend's level 2 [when Board is One card up and Tab is Tab showing]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 teal
+  class s0 bugPath
+  class s1 teal
+  class s1 bugPath
+  class s2 blue
+  class s2 bugPath
+  class s3 teal
+  class s4 yellow
+  class s5 teal
+  class s6 blue
+  class s7 bugPath
+  class s10 bugPath
+  class s11 blue
+  class s11 breaks
+  class s11 bugPath

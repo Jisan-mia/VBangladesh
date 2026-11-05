@@ -41,3 +41,26 @@ export type Today = { levels: number; samples: number; last: { n: number; plan: 
 export const cardTitle = (today: Today) => `আজ মঙ্গলে রোভার চালিয়ে ${bn(today.samples)}টা পাথর তুললাম`;
 export const cardSub = (today: Today) => today.last ? `${bn(today.levels)}টা লেভেল পার, শেষ প্ল্যান ${bn(today.last.plan.length)} ব্লকের` : "";
 export const CARD_FOOTER = "আগে প্ল্যান, তারপর চালাও: কোডিংয়ের প্রথম পাঠ";
+
+/** "এখন তুমি X পারো": what this level's finish means, per level (informational, never praise for a trivial tap). */
+export const NEWS: readonly string[] = [
+  "এখন তুমি তীর বসিয়ে রোভারকে চালাতে পারো।", "এখন তুমি দুটো আদেশ পরপর সাজাতে পারো।", "এখন তুমি গর্ত এড়িয়ে প্ল্যান বানাতে পারো।",
+  "এখন তুমি লম্বা প্ল্যান আগে থেকে ভেবে নিতে পারো।", "এখন তুমি সোজা পথ বন্ধ হলে ঘুরপথ খুঁজতে পারো।", "এখন তুমি গর্তের সারির ফাঁক খুঁজে নিতে পারো।",
+  "এখন তুমি একসাথে দুটো পাথরের পথ ভাবতে পারো।", "এখন তুমি দুই কোণের পাথরের পথ সাজাতে পারো।", "এখন তুমি তিন পাথরের পথ এক প্ল্যানে ধরতে পারো।",
+  "এখন তুমি একই কাজ বার বার না লিখে লুপ দিতে পারো।", "এখন তুমি গর্তের পাশে লুপ বসাতে পারো।", "এখন তুমি কম ব্লকে প্ল্যান ছোট করতে পারো।",
+];
+
+/** A task off the screen, one per world, for the parent to read out. */
+export const TASKS: readonly string[] = [
+  "এবার ঘরের দরজা থেকে খাটে যাওয়ার প্ল্যান বলো: তিন ধাপ সামনে, এক ধাপ ডানে।",
+  "রান্নাঘর থেকে বসার ঘরে যাওয়ার একটা প্ল্যান বলো, যাতে টেবিলে ধাক্কা না লাগে।",
+  "আম্মুকে বলো, তিনটা জিনিস তুলে আনার প্ল্যান কোন ক্রমে হবে।",
+  "দরজা থেকে জানালা পর্যন্ত ‘৩ বার সামনে’ বলে একটা প্ল্যান বানাও।",
+];
+
+/** The first-run story: a line under each picture. A parent can read it out; the pictures carry it alone. */
+export const STORY: readonly string[] = [
+  "মঙ্গলে নেমেছে আমাদের ছোট্ট রোভার।",
+  "ঝিকমিকে পাথরগুলো তুলতে হবে।",
+  "পৃথিবী থেকে সংকেত যেতে অনেক দেরি হয়। তাই আগে প্ল্যান, তারপর চালাও।",
+];

@@ -1,0 +1,64 @@
+---
+title: "Switchboard (after the rewrite): the board, what holds it, the hum"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "At the same time" as all {
+    state "Board" as r0 {
+      s0: Start card
+      s1: Fresh board, live
+      s2: Flipping switches
+      s3: All bulbs lit, stars show
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; [when Window is You're on the page]
+      s1 --> s2: you press a switch [when Window is You're on the page]
+      s1 --> s3: you light the last bulb [when Window is You're on the page and Hum is Hum quiet]
+      s2 --> s1: you take a press back [when Window is You're on the page and Hum is not Hum quiet]
+      s1 --> s0: you start a new board [when Window is Pause menu]
+      s3 --> s0: you start a new board
+      s2 --> s0: you start a new board [when Window is Pause menu and Hum is not Hum playing]
+    }
+    --
+    state "Window" as r1 {
+      s4: You're on the page
+      s5: Pause menu
+      s6: You're away, menu up
+      s7: Just came back (the next tap only wakes)
+      [*] --> s4
+      s4 --> s5: you press #9208; or P [when Board is not All bulbs lit, stars show]
+      s4 --> s6: you click away or hide the tab [when Board is not All bulbs lit, stars show]
+      s5 --> s6: you click away or hide the tab
+      s5 --> s7: you start a new board or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+      s6 --> s5: you come back
+      s7 --> s4: a moment passes
+      s7 --> s5: you press #9208; or P
+      s7 --> s6: you click away or hide the tab
+    }
+    --
+    state "Hum" as r2 {
+      s8: Hum quiet
+      s9: Sound off
+      s10: Hum playing
+      [*] --> s8
+      s8 --> s9: you turn sound off [when Board is not All bulbs lit, stars show]
+      s9 --> s8: you turn sound on [when Board is one of Fresh board, live, Start card or Window is one of Pause menu, You're away, menu up]
+      s8 --> s10: you press a switch [when Board is Fresh board, live and Window is You're on the page]
+      s10 --> s8: you take a press back [when Window is You're on the page]
+      s10 --> s9: you turn sound off
+      s10 --> s8: you press #9208; or P or you click away or hide the tab
+      s9 --> s10: you turn sound on [when Board is Flipping switches and Window is one of Just came back (the next tap only wakes), You're on the page]
+      s8 --> s10: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Board is Flipping switches and Window is Pause menu]
+    }
+  }
+  class s3 blue
+  class s5 yellow
+  class s6 yellow
+  class s10 teal

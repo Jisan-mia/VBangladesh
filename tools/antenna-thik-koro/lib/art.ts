@@ -1,16 +1,9 @@
 // The scene, the set, the antenna and six original cartoon "programmes" (para cricket, a natok, a song, a river, a cartoon fish, cooking),
-// plus the soft snow. Static layers are pre-rendered once; drawFrame is the only per-frame code.
-import { PICTURES, type PictureId } from "./antenna";
+// plus the soft snow, one palette per world. Static layers are pre-rendered once here; the per-frame drawing is draw.hot.ts.
+import { ANTENNA_Y, drawAntenna, POLE_X, SCENE_H, SCENE_W, SCREEN, TV_S, TV_SCREEN, TV_X, TV_Y } from "./draw.hot";
+import { PICTURES, type PictureId } from "./levels";
 
-export const SCENE_W = 360;
-export const SCENE_H = 290;
-/** The TV in scene units: drawn at TV_X/TV_Y, 1.08× its own 240×150 units. */
-const TV_X = 50, TV_Y = 98, TV_S = 1.08;
-/** The screen inside the TV's own units, and in scene units. */
-export const TV_SCREEN = { x: 20, y: 28, w: 152, h: 98, r: 14 } as const;
-export const SCREEN = { x: TV_X + TV_SCREEN.x * TV_S, y: TV_Y + TV_SCREEN.y * TV_S, w: TV_SCREEN.w * TV_S, h: TV_SCREEN.h * TV_S, r: TV_SCREEN.r * TV_S } as const;
-export const POLE_X = 268;
-export const ANTENNA_Y = 28;
+export { ANTENNA_Y, POLE_X, SCENE_H, SCENE_W, SCREEN, TV_SCREEN } from "./draw.hot";
 export const PIC_W = 160, PIC_H = 104;
 
 type Ctx = CanvasRenderingContext2D;
@@ -188,6 +181,19 @@ export function drawPicture(ctx: Ctx, id: PictureId, x: number, y: number, w: nu
   ctx.restore();
 }
 
+/* ---------- one palette per world ---------- */
+
+export type Palette = {
+  sky: readonly [string, string]; cloud: string; skyline: readonly [string, string]; aerial: string; lit: string | null;
+  parapet: readonly [string, string]; slab: readonly [string, string]; wall: string; floor: string; band: string;
+};
+/** বিকেলের ছাদ, সন্ধ্যার হাওয়া, কালবৈশাখীর রাত. */
+export const PALETTES: readonly Palette[] = [
+  { sky: ["#a9d8ee", "#e4f3f1"], cloud: "rgba(255,255,255,.85)", skyline: ["#b8ccd5", "#a9bfc9"], aerial: "#93a8b2", lit: null, parapet: ["#cfc6b5", "#e1d9c9"], slab: ["#a99f8f", "#8f8676"], wall: "#d5e8d4", floor: "#c3dcc3", band: "#173d22" },
+  { sky: ["#ee9a76", "#fbd9a8"], cloud: "rgba(255,236,214,.8)", skyline: ["#c99086", "#b98078"], aerial: "#a3746c", lit: "#ffd98a", parapet: ["#ccb39c", "#dcc6ae"], slab: ["#a48d78", "#8d7764"], wall: "#f2dfc4", floor: "#e5cba7", band: "#5a2a14" },
+  { sky: ["#18223f", "#36466a"], cloud: "rgba(96,110,148,.85)", skyline: ["#2a3656", "#222c48"], aerial: "#55648a", lit: "#f2c14e", parapet: ["#6c7590", "#828ba3"], slab: ["#535b73", "#454c62"], wall: "#c2cfdb", floor: "#a9b8c8", band: "#101a33" },
+];
+
 /* ---------- the set, the roof and the antenna ---------- */
 
 /** A 14-inch set in a wooden cabinet, with a crochet cover and a little flower vase on top. Own units: 240×150. */
@@ -219,26 +225,27 @@ export function drawTv(ctx: Ctx, x: number, y: number, s: number) {
   ctx.restore();
 }
 
-/** Neighbours' flat roofs on the skyline, some with their own antennas. */
-function drawSkyline(ctx: Ctx, width: number, base: number, s: number) {
+/** Neighbours' flat roofs on the skyline, some with their own antennas, and lit windows after dark. */
+function drawSkyline(ctx: Ctx, width: number, base: number, s: number, palette: Palette) {
   const blocks = [[0, 30, 46], [44, 18, 38], [80, 40, 52], [130, 24, 34], [200, 34, 60], [258, 20, 40], [300, 30, 70]];
   for (const [bx, bh, bw] of blocks) {
     const x = bx * width / 360, h = bh * s, w = bw * width / 360;
-    rect(ctx, "#b8ccd5", x, base - h, w, h);
-    rect(ctx, "#a9bfc9", x + w * 0.15, base - h + 6 * s, w * 0.12, 4 * s);
+    rect(ctx, palette.skyline[0], x, base - h, w, h);
+    rect(ctx, palette.skyline[1], x + w * 0.15, base - h + 6 * s, w * 0.12, 4 * s);
+    if (palette.lit) for (let wx = x + w * 0.5; wx < x + w - 4 * s; wx += 9 * s) rect(ctx, palette.lit, wx, base - h + 8 * s, 3 * s, 3 * s);
   }
   for (const bx of [60, 150, 330]) {
     const x = bx * width / 360, top = base - 44 * s;
-    line(ctx, "#93a8b2", 1 * s, x, base - 20 * s, x, top);
-    line(ctx, "#93a8b2", 1 * s, x - 10 * s, top + 2 * s, x + 10 * s, top + 2 * s);
-    line(ctx, "#93a8b2", 1 * s, x - 7 * s, top + 6 * s, x + 7 * s, top + 6 * s);
+    line(ctx, palette.aerial, 1 * s, x, base - 20 * s, x, top);
+    line(ctx, palette.aerial, 1 * s, x - 10 * s, top + 2 * s, x + 10 * s, top + 2 * s);
+    line(ctx, palette.aerial, 1 * s, x - 7 * s, top + 6 * s, x + 7 * s, top + 6 * s);
   }
 }
 
-function drawCloud(ctx: Ctx, x: number, y: number, s: number) {
-  ellipse(ctx, "rgba(255,255,255,.85)", x, y, 22 * s, 7 * s);
-  ellipse(ctx, "rgba(255,255,255,.85)", x - 8 * s, y - 4 * s, 10 * s, 7 * s);
-  ellipse(ctx, "rgba(255,255,255,.85)", x + 7 * s, y - 6 * s, 12 * s, 8 * s);
+function drawCloud(ctx: Ctx, x: number, y: number, s: number, color = "rgba(255,255,255,.85)") {
+  ellipse(ctx, color, x, y, 22 * s, 7 * s);
+  ellipse(ctx, color, x - 8 * s, y - 4 * s, 10 * s, 7 * s);
+  ellipse(ctx, color, x + 7 * s, y - 6 * s, 12 * s, 8 * s);
 }
 
 /** The cousin on the roof holding the bamboo pole, feet at (x, y). Own height ~42 units. */
@@ -268,49 +275,35 @@ function drawGamchha(ctx: Ctx) {
   rect(ctx, "#f2e8d0", 40, 59, 14, 18);
 }
 
-/**
- * The Yagi antenna on its pole, seen from the side with a little tilt so you can tell where it points.
- * `angle` 0 points away from you; it turns clockwise. Runs every frame: paths only, nothing allocated.
- */
-export function drawAntenna(ctx: Ctx, cx: number, cy: number, s: number, angle: number) {
-  const rad = angle * Math.PI / 180, sin = Math.sin(rad), cos = Math.cos(rad);
-  const bx = sin * 56 * s, by = -cos * 56 * s * 0.32, ex = cos * s, ey = sin * s * 0.32;
-  ctx.lineCap = "round";
-  ctx.strokeStyle = "#5f6a70"; ctx.lineWidth = 2.2 * s;
-  ctx.beginPath(); ctx.moveTo(cx - bx, cy - by); ctx.lineTo(cx + bx, cy + by); ctx.stroke();
-  ctx.strokeStyle = "#8d989e"; ctx.lineWidth = 1.6 * s;
-  ctx.beginPath();
-  for (let i = 0; i < 6; i++) {
-    const t = -0.9 + i * 0.33, half = 25 - i * 2.6;
-    const px = cx + bx * t, py = cy + by * t;
-    ctx.moveTo(px - ex * half, py - ey * half); ctx.lineTo(px + ex * half, py + ey * half);
-  }
-  ctx.stroke();
-  ctx.fillStyle = "#2b2b2b";
-  ctx.fillRect(cx - bx * 0.57 - 2.5 * s, cy - by * 0.57 - 2 * s, 5 * s, 4 * s);
-  ctx.fillStyle = "#5f6a70";
-  ctx.beginPath(); ctx.arc(cx, cy, 2.6 * s, 0, Math.PI * 2); ctx.fill();
-}
-
 /** Everything that never moves: sky, roofs, the cousin, the pole, the room and the set. Scene units 360×290. */
-export function drawSceneBackground(ctx: Ctx) {
-  ctx.fillStyle = vertical(ctx, 0, 86, "#a9d8ee", "#e4f3f1"); ctx.fillRect(0, 0, SCENE_W, 86);
-  drawCloud(ctx, 196, 18, 1); drawCloud(ctx, 330, 30, 0.8);
-  drawSkyline(ctx, SCENE_W, 80, 1);
+export function drawSceneBackground(ctx: Ctx, world = 0) {
+  const palette = PALETTES[world];
+  ctx.fillStyle = vertical(ctx, 0, 86, palette.sky[0], palette.sky[1]); ctx.fillRect(0, 0, SCENE_W, 86);
+  if (world === 1) circle(ctx, "rgba(255,214,140,.9)", 58, 66, 16);
+  drawCloud(ctx, 196, 18, 1, palette.cloud); drawCloud(ctx, 330, 30, 0.8, palette.cloud);
+  if (world === 2) drawCloud(ctx, 90, 22, 1.3, palette.cloud);
+  drawSkyline(ctx, SCENE_W, 80, 1, palette);
   drawGamchha(ctx);
   drawRoofPerson(ctx, 296, 86, 1);
   drawPole(ctx, POLE_X, ANTENNA_Y, 86, 1);
   line(ctx, "#2b2b2b", 1.3, POLE_X + 3, ANTENNA_Y + 6, POLE_X + 3, 76);
-  rect(ctx, "#cfc6b5", 0, 73, SCENE_W, 13); rect(ctx, "#e1d9c9", 0, 73, SCENE_W, 2.5);
+  rect(ctx, palette.parapet[0], 0, 73, SCENE_W, 13); rect(ctx, palette.parapet[1], 0, 73, SCENE_W, 2.5);
   for (let x = 30; x < SCENE_W; x += 60) rect(ctx, "rgba(120,110,95,.18)", x, 76, 1.2, 10);
-  rect(ctx, "#a99f8f", 0, 86, SCENE_W, 9); rect(ctx, "#8f8676", 0, 94, SCENE_W, 1.5);
-  rect(ctx, "#d5e8d4", 0, 95.5, SCENE_W, SCENE_H - 95.5);
-  rect(ctx, "#c3dcc3", 0, 236, SCENE_W, 54);
+  rect(ctx, palette.slab[0], 0, 86, SCENE_W, 9); rect(ctx, palette.slab[1], 0, 94, SCENE_W, 1.5);
+  rect(ctx, palette.wall, 0, 95.5, SCENE_W, SCENE_H - 95.5);
+  rect(ctx, palette.floor, 0, 236, SCENE_W, 54);
   circle(ctx, "#f6f2e7", 24, 124, 10); ctx.strokeStyle = "#7a4a2a"; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.arc(24, 124, 10, 0, Math.PI * 2); ctx.stroke();
-  line(ctx, "#2b2b2b", 1.2, 24, 124, 24, 117); line(ctx, "#2b2b2b", 1.2, 24, 124, 29, 126);
+  line(ctx, "#2b2b2b", 1.2, 24, 124, 24, world === 2 ? 115 : 117); line(ctx, "#2b2b2b", 1.2, 24, 124, world === 0 ? 29 : 20, world === 0 ? 126 : 127);
   rounded(ctx, "#f6f2e7", 326, 140, 18, 24, 2); rect(ctx, "#2b2b2b", 330, 146, 4, 6); rect(ctx, "#2b2b2b", 337, 146, 4, 6);
   ctx.strokeStyle = "#2b2b2b"; ctx.lineWidth = 1.4;
   ctx.beginPath(); ctx.moveTo(350, 95); ctx.bezierCurveTo(352, 150, 326, 176, 306, 186); ctx.stroke();
+  // after dark a হারিকেন on the shelf lights the room
+  if (world === 2) {
+    const glow = ctx.createRadialGradient(330, 210, 2, 330, 210, 60);
+    glow.addColorStop(0, "rgba(255,206,120,.55)"); glow.addColorStop(1, "rgba(255,206,120,0)");
+    ctx.fillStyle = glow; ctx.fillRect(270, 150, 120, 120);
+    rect(ctx, "#5e3519", 316, 226, 30, 4); rounded(ctx, "#3a3f44", 324, 200, 14, 26, 4); ellipse(ctx, "#ffd27a", 331, 212, 4, 7);
+  }
   drawTv(ctx, TV_X, TV_Y, TV_S);
   rect(ctx, "#7a4a26", 22, 259, 316, 8); rect(ctx, "#5e3519", 28, 267, 304, 9);
   rect(ctx, "#5e3519", 38, 276, 8, 14); rect(ctx, "#5e3519", 314, 276, 8, 14);
@@ -324,8 +317,7 @@ export function drawSceneBackground(ctx: Ctx) {
 
 /** One soft, low-contrast snow frame (greys 118–176, a faint row banding). Seeded, so every phone gets the same snow. */
 function noiseFrame(seed: number, w: number, h: number) {
-  const canvas = document.createElement("canvas");
-  canvas.width = w; canvas.height = h;
+  const canvas = offscreen(w, h);
   const ctx = canvas.getContext("2d")!;
   const image = ctx.createImageData(w, h);
   let state = seed;
@@ -344,6 +336,7 @@ function noiseFrame(seed: number, w: number, h: number) {
 export type Layers = {
   /** Device pixels per scene unit. */
   scale: number;
+  world: number;
   bg: HTMLCanvasElement;
   glass: HTMLCanvasElement;
   pictures: Record<PictureId, HTMLCanvasElement>;
@@ -352,7 +345,7 @@ export type Layers = {
   mixCtx: CanvasRenderingContext2D;
 };
 
-const NOISE_W = 96, NOISE_H = 62;
+export const NOISE_W = 96, NOISE_H = 62;
 
 function offscreen(w: number, h: number) {
   const canvas = document.createElement("canvas");
@@ -360,13 +353,13 @@ function offscreen(w: number, h: number) {
   return canvas;
 }
 
-/** Pre-renders every static layer once per size, so a frame is a handful of drawImage calls. */
-export function buildLayers(cssWidth: number, ratio: number): Layers {
+/** Pre-renders every static layer once per size and world, so a frame is a handful of drawImage calls. */
+export function buildLayers(cssWidth: number, ratio: number, world = 0): Layers {
   const scale = cssWidth / SCENE_W * ratio;
   const bg = offscreen(SCENE_W * scale, SCENE_H * scale);
   const bgCtx = bg.getContext("2d")!;
   bgCtx.scale(scale, scale);
-  drawSceneBackground(bgCtx);
+  drawSceneBackground(bgCtx, world);
   const sw = SCREEN.w * scale, sh = SCREEN.h * scale;
   const pictures = {} as Record<PictureId, HTMLCanvasElement>;
   for (const id of PICTURES) {
@@ -384,47 +377,53 @@ export function buildLayers(cssWidth: number, ratio: number): Layers {
   glassCtx.fillStyle = "rgba(0,0,0,.07)";
   for (let y = 0; y < sh; y += 3 * ratio) glassCtx.fillRect(0, y, sw, ratio);
   const mix = offscreen(NOISE_W, NOISE_H);
-  return { scale, bg, glass, pictures, noise: [11, 23, 37, 51].map(seed => noiseFrame(seed, NOISE_W, NOISE_H)), mix, mixCtx: mix.getContext("2d")! };
+  return { scale, world, bg, glass, pictures, noise: [11, 23, 37, 51].map(seed => noiseFrame(seed, NOISE_W, NOISE_H)), mix, mixCtx: mix.getContext("2d")! };
 }
 
-/** Seconds per snow crossfade. Each pixel drifts one way per period, far under 3 changes a second. */
-export const NOISE_PERIOD = 0.9;
+/* ---------- the title set and the story panels (drawn once) ---------- */
 
-/** `label` is the on-screen channel text, made once per game so a frame builds no strings. */
-export type FrameState = { angle: number; quality: number; picture: PictureId; time: number; frozen: boolean; label: string };
-
-/** One frame: background, the screen (picture under soft snow, a faint ghost image when the signal is weak), glass, antenna. */
-export function drawFrame(ctx: Ctx, layers: Layers, frame: FrameState) {
-  const { scale } = layers;
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-  ctx.drawImage(layers.bg, 0, 0);
-  ctx.setTransform(scale, 0, 0, scale, 0, 0);
-  const q = frame.quality, picture = layers.pictures[frame.picture];
+/** The title screen's set: snow over a faint picture, and the word on the glass. Fills the canvas (aspect 240:180, vase included). */
+export const TITLE_ASPECT = 180 / 240;
+export function drawTitleSet(canvas: HTMLCanvasElement, cssWidth: number, ratio: number, picture: PictureId, word: string) {
+  const s = cssWidth / 240, w = Math.round(cssWidth * ratio), h = Math.round(cssWidth * TITLE_ASPECT * ratio);
+  if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+  const ctx = canvas.getContext("2d")!;
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.clearRect(0, 0, cssWidth, cssWidth * TITLE_ASPECT);
+  drawTv(ctx, 0, 30 * s, s);
+  const x = TV_SCREEN.x * s, y = 30 * s + TV_SCREEN.y * s, sw = TV_SCREEN.w * s, sh = TV_SCREEN.h * s;
   ctx.save();
-  ctx.beginPath(); ctx.roundRect(SCREEN.x, SCREEN.y, SCREEN.w, SCREEN.h, SCREEN.r); ctx.clip();
-  ctx.drawImage(picture, SCREEN.x, SCREEN.y, SCREEN.w, SCREEN.h);
-  if (q < 0.98) {
-    ctx.globalAlpha = 0.3 * (1 - q);
-    ctx.drawImage(picture, SCREEN.x + (1 - q) * 12, SCREEN.y, SCREEN.w, SCREEN.h);
-    const mix = layers.mixCtx;
-    if (frame.frozen) { mix.globalAlpha = 1; mix.drawImage(layers.noise[0], 0, 0); }
-    else {
-      const phase = frame.time / NOISE_PERIOD, step = Math.floor(phase), blend = phase - step;
-      mix.globalAlpha = 1; mix.drawImage(layers.noise[step % 4], 0, 0);
-      mix.globalAlpha = blend; mix.drawImage(layers.noise[(step + 1) % 4], 0, 0);
-    }
-    ctx.globalAlpha = Math.pow(1 - q, 0.75);
-    ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(layers.mix, SCREEN.x, SCREEN.y, SCREEN.w, SCREEN.h);
-    ctx.globalAlpha = 1;
-  }
-  ctx.drawImage(layers.glass, SCREEN.x, SCREEN.y, SCREEN.w, SCREEN.h);
-  ctx.font = "700 10px Bangla, sans-serif";
-  ctx.textAlign = "left";
-  ctx.fillStyle = "rgba(0,0,0,.55)"; ctx.fillText(frame.label, SCREEN.x + 9.6, SCREEN.y + 16.6);
-  ctx.fillStyle = "#8dfca6"; ctx.fillText(frame.label, SCREEN.x + 9, SCREEN.y + 16);
+  ctx.beginPath(); ctx.roundRect(x, y, sw, sh, TV_SCREEN.r * s); ctx.clip();
+  drawPicture(ctx, picture, x, y, sw, sh);
+  ctx.globalAlpha = 0.72; ctx.imageSmoothingEnabled = true;
+  ctx.drawImage(noiseFrame(37, NOISE_W, NOISE_H), x, y, sw, sh);
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = "rgba(20,30,24,.55)"; ctx.beginPath(); ctx.roundRect(x + sw * 0.2, y + sh * 0.3, sw * 0.6, sh * 0.4, 12 * s); ctx.fill();
+  ctx.font = `800 ${Math.round(30 * s)}px Bangla, sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillStyle = "#8dfca6"; ctx.fillText(word, x + sw / 2, y + sh / 2 + 2 * s);
   ctx.restore();
-  drawAntenna(ctx, POLE_X, ANTENNA_Y, 1.2, frame.angle);
+}
+
+/** One story panel, 300×200 units: 0 the snowy set, 1 the roof, 2 the picture in. */
+export function drawStoryPanel(canvas: HTMLCanvasElement, cssWidth: number, ratio: number, panel: number) {
+  const s = cssWidth / 300, w = Math.round(cssWidth * ratio), h = Math.round(cssWidth * 2 / 3 * ratio);
+  if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+  const ctx = canvas.getContext("2d")!;
+  ctx.setTransform(ratio * s, 0, 0, ratio * s, 0, 0);
+  if (panel === 1) {
+    drawRoofScene(ctx, 300, 170, 1.6, 190, 54, 52);
+    rect(ctx, "#d5e8d4", 0, 186, 300, 14);
+    return;
+  }
+  rect(ctx, "#d5e8d4", 0, 0, 300, 200); rect(ctx, "#c3dcc3", 0, 160, 300, 40);
+  drawTv(ctx, 30, 30, 1);
+  const x = 30 + TV_SCREEN.x, y = 30 + TV_SCREEN.y;
+  ctx.save();
+  ctx.beginPath(); ctx.roundRect(x, y, TV_SCREEN.w, TV_SCREEN.h, TV_SCREEN.r); ctx.clip();
+  drawPicture(ctx, "cricket", x, y, TV_SCREEN.w, TV_SCREEN.h);
+  if (panel === 0) ctx.drawImage(noiseFrame(23, NOISE_W, NOISE_H), x, y, TV_SCREEN.w, TV_SCREEN.h);
+  ctx.restore();
+  rect(ctx, "#7a4a26", 10, 180, 280, 8);
 }
 
 /* ---------- pieces the share card reuses ---------- */
@@ -432,7 +431,7 @@ export function drawFrame(ctx: Ctx, layers: Layers, frame: FrameState) {
 export function drawRoofScene(ctx: Ctx, width: number, roof: number, s: number, poleX: number, antennaY: number, angle: number) {
   ctx.fillStyle = vertical(ctx, 0, roof, "#a9d8ee", "#e8f5f2"); ctx.fillRect(0, 0, width, roof);
   drawCloud(ctx, width * 0.62, roof * 0.12, s * 0.9); drawCloud(ctx, width * 0.2, roof * 0.07, s * 0.7);
-  drawSkyline(ctx, width, roof - 6 * s, s);
+  drawSkyline(ctx, width, roof - 6 * s, s, PALETTES[0]);
   drawRoofPerson(ctx, poleX + 28 * s, roof, s);
   drawPole(ctx, poleX, antennaY, roof, s);
   line(ctx, "#2b2b2b", 1.3 * s, poleX + 3 * s, antennaY + 6 * s, poleX + 3 * s, roof - 12 * s);

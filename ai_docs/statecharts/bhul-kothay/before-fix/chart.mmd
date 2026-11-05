@@ -1,0 +1,83 @@
+---
+title: "ভﬂ°°2497¶ßল কﬂ°°2507¶ßথﬂ°°2494¶ßযﬂ°°2492¶ß?: pictures, clock, window and level list"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: wait
+    lg4: Breaks LevelPickerFreezesPlay or PausedWhenBlurred in some cases
+    lg5: Path to the LevelPickerFreezesPlay or PausedWhenBlurred bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Veil: শ#2497;র#2497; কর#2507;
+      s1: Hunting, none found (clock running)
+      s2: Veil: থ#2503;ম#2503; আছ#2503;
+      s3: Hunting, one found (clock running)
+      s4: Stars and card
+      s5: Stars and card, confetti on its way
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s1 --> s2: you hide the tab
+      s1 --> s3: you circle a difference [when Window is You're on the page]
+      s0 --> s1: you start a level (পর#2503;র ল#2503;ভ#2503;ল, আব#2494;র খ#2503;ল#2507;, শ#2497;র#2497; থ#2503;ক#2503; or one from the list) [when Window is You're on the page and Levels is Level list open]
+      s3 --> s1: you start a level (পর#2503;র ল#2503;ভ#2503;ল, আব#2494;র খ#2503;ল#2507;, শ#2497;র#2497; থ#2503;ক#2503; or one from the list) [when Window is You're on the page]
+      s3 --> s4: you circle the last difference [when Window is You're on the page]
+      s3 --> s5: you circle the last difference [when Window is You're on the page]
+      s3 --> s2: you hide the tab
+      s4 --> s1: you start a level (পর#2503;র ল#2503;ভ#2503;ল, আব#2494;র খ#2503;ল#2507;, শ#2497;র#2497; থ#2503;ক#2503; or one from the list) [when Window is You're on the page]
+      s5 --> s1: you start a level (পর#2503;র ল#2503;ভ#2503;ল, আব#2494;র খ#2503;ল#2507;, শ#2497;র#2497; থ#2503;ক#2503; or one from the list) [when Window is You're on the page]
+      s5 --> s4: the confetti falls
+      s2 --> s1: you press শ#2497;র#2497; কর#2507; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s2 --> s3: you press শ#2497;র#2497; কর#2507; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s2 --> s1: you start a level (পর#2503;র ল#2503;ভ#2503;ল, আব#2494;র খ#2503;ল#2507;, শ#2497;র#2497; থ#2503;ক#2503; or one from the list) [when Window is You're on the page and Levels is Level list open]
+    }
+    --
+    state "Window" as r1 {
+      s6: You're on the page
+      s7: Tab hidden
+      s8: Another window has focus
+      [*] --> s6
+      s6 --> s7: you hide the tab
+      s6 --> s8: you click into another window
+      s7 --> s6: the tab shows again
+      s8 --> s6: you come back to the window
+      s8 --> s7: you hide the tab
+    }
+    --
+    state "Levels" as r2 {
+      s9: Level list shut
+      s10: Level list open
+      [*] --> s9
+      s9 --> s10: you open সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s10 --> s9: you close সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 tan
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 yellow
+  class s3 teal
+  class s3 mayBreak
+  class s4 blue
+  class s5 blue
+  class s6 mayBreak
+  class s6 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath

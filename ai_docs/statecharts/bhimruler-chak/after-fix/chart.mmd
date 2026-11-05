@@ -1,0 +1,79 @@
+---
+title: "Bhimruler Chak (after the rewrite): the orchard, what holds it, your finger, the hornets"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "At the same time" as all {
+    state "Orchard" as r0 {
+      s0: Start card
+      s1: Playing, clock running
+      s2: Playing, the hornets are awake
+      s3: Orchard cleared, stars show
+      s4: The swarm: round over
+      [*] --> s0
+      s0 --> s1: you press ব#2494;গ#2494;ন#2503; ঢ#2507;ক#2507; [when Window is You're on the page]
+      s1 --> s2: you tap a nest [when Window is You're on the page]
+      s1 --> s3: you clear the last safe bush [when Window is You're on the page and Hum is Quiet]
+      s2 --> s3: you clear the last safe bush [when Window is You're on the page and Hum is Hornets humming]
+      s2 --> s4: you tap a nest [when Window is You're on the page and Hum is Hornets humming]
+      s1 --> s0: you start a new orchard [when Window is Pause menu and Finger is Hands off]
+      s3 --> s0: you start a new orchard
+      s2 --> s0: you start a new orchard [when Window is Pause menu and Finger is Hands off and Hum is not Hornets humming]
+      s4 --> s0: you start a new orchard
+    }
+    --
+    state "Window" as r1 {
+      s5: You're on the page
+      s6: Pause menu
+      s7: You're away, menu up
+      s8: Just came back (the next tap only wakes)
+      [*] --> s5
+      s5 --> s6: you press #9208; or P [when Orchard is none of Orchard cleared, stars show, The swarm: round over]
+      s5 --> s7: you click away or hide the tab [when Orchard is none of Orchard cleared, stars show, The swarm: round over]
+      s6 --> s7: you click away or hide the tab
+      s6 --> s8: you start a new orchard or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+      s7 --> s6: you come back
+      s8 --> s5: a moment passes
+      s8 --> s6: you press #9208; or P
+      s8 --> s7: you click away or hide the tab
+    }
+    --
+    state "Finger" as r2 {
+      s9: Hands off
+      s10: Finger held on a bush
+      [*] --> s9
+      s9 --> s10: you press and hold a bush [when Orchard is one of Playing, clock running, Playing, the hornets are awake and Window is You're on the page]
+      s10 --> s9: the long press runs out or you lift your finger or you press #9208; or P or you click away or hide the tab
+      s10 --> s9: you clear the last safe bush [when Hum is not Sound off]
+      s10 --> s9: you tap a nest [when Orchard is Playing, the hornets are awake and Hum is Hornets humming]
+    }
+    --
+    state "Hum" as r3 {
+      s11: Quiet
+      s12: Sound off
+      s13: Hornets humming
+      [*] --> s11
+      s11 --> s12: you turn sound off [when Orchard is none of Orchard cleared, stars show, The swarm: round over]
+      s12 --> s11: you turn sound on [when Orchard is one of Playing, clock running, Start card or Window is one of Pause menu, You're away, menu up]
+      s11 --> s13: you tap a nest [when Orchard is Playing, clock running and Window is You're on the page]
+      s13 --> s12: you turn sound off
+      s13 --> s11: you clear the last safe bush or you tap a nest [when Window is You're on the page]
+      s13 --> s11: you press #9208; or P or you click away or hide the tab
+      s12 --> s13: you turn sound on [when Orchard is Playing, the hornets are awake and Window is one of Just came back (the next tap only wakes), You're on the page]
+      s11 --> s13: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Orchard is Playing, the hornets are awake and Window is Pause menu and Finger is Hands off]
+    }
+  }
+  class s3 blue
+  class s4 blue
+  class s6 yellow
+  class s7 yellow
+  class s10 teal
+  class s13 teal

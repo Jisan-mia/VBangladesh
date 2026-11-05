@@ -4,10 +4,12 @@ import { makeRng, pick, readLevels, recordLevel, unlockedLevel } from "../../../
 import { site } from "../content";
 import { share } from "../share";
 import {
-  applyHint, boardLayout, doneLines, hint, isSolved, levelSeed, lineStates, markFor, mistakes, newGame, paint, puzzleOf, shortBy, sizeOf, startLevel, starsFor, strokeCells, undo, worldOf,
+  applyHint, doneLines, hint, isSolved, levelSeed, lineStates, markFor, mistakes, newGame, paint, puzzleOf, shortBy, sizeOf, starsFor, undo,
   LEVEL_COUNT, type Game,
 } from "../lib/game";
 import { caption, cardLine, clearLine, compareLine, feat, nearMiss, parseShared, previewTitle, sharedHash, timeText, MAX_SECONDS } from "../lib/link";
+import { worldIndex } from "../lib/levels";
+import { strokeOrder } from "../lib/play";
 import { cluesOf, settleLine, solveByLines } from "../lib/nonogram";
 import { PICTURES } from "../lib/pictures";
 
@@ -93,16 +95,12 @@ test("the same level always gives the same puzzle, with its own seed", () => {
   for (const level of levels) assert.deepEqual(puzzleOf(level).rows, puzzleOf(level).rows);
   assert.equal(new Set(levels.map(levelSeed)).size, LEVEL_COUNT);
   assert.deepEqual(newGame(7), newGame(7));
-  assert.deepEqual(worldOf(1), 0); assert.equal(worldOf(10), 0); assert.equal(worldOf(11), 1); assert.equal(worldOf(30), 2);
+  assert.deepEqual(worldIndex(1), 0); assert.equal(worldIndex(10), 0); assert.equal(worldIndex(11), 1); assert.equal(worldIndex(30), 2);
 });
 
 test("marks, strokes and undo", () => {
   assert.equal(markFor(0, "fill"), 1); assert.equal(markFor(1, "fill"), 0); assert.equal(markFor(2, "fill"), 1);
   assert.equal(markFor(0, "cross"), 2); assert.equal(markFor(2, "cross"), 0); assert.equal(markFor(1, "cross"), 2);
-  assert.deepEqual(strokeCells(5, 1, 3, "row"), [1, 2, 3]);
-  assert.deepEqual(strokeCells(5, 3, 1, "row"), [1, 2, 3]);
-  assert.deepEqual(strokeCells(5, 2, 17, "col"), [2, 7, 12, 17]);
-  assert.deepEqual(strokeCells(5, 2, 9, "row"), [2, 3, 4], "a stroke stays on its row");
   const game = newGame(1);
   assert.equal(paint(game, [], 1), null);
   assert.equal(paint(game, [-1, 25, 1.5], 1), null);
@@ -159,7 +157,7 @@ test("a headless run: random strokes with slips, then fixes, always ends solved 
     let game: Game = newGame(level);
     for (let count = 0; count < 12; count++) {
       const start = pick(rng, size * size), end = (Math.floor(start / size)) * size + pick(rng, size);
-      game = paint(game, strokeCells(size, start, end, "row"), pick(rng, 3) as 0 | 1 | 2) ?? game;
+      game = paint(game, strokeOrder(size, start, end, "row"), pick(rng, 3) as 0 | 1 | 2) ?? game;
     }
     // Then play perfectly: wipe every wrong fill, fill every picture cell.
     game = paint(game, solution.flatMap((filled, index) => !filled && game.cells[index] === 1 ? [index] : []), 0) ?? game;
@@ -191,28 +189,13 @@ test("star thresholds and near-miss numbers", () => {
 test("progress goes through the shared readLevels and recordLevel, and opens at the right level", () => {
   let stars = readLevels(null, LEVEL_COUNT);
   assert.equal(unlockedLevel(stars, LEVEL_COUNT), 1);
-  assert.equal(startLevel(stars, 1), 1);
   stars = recordLevel(stars, 1, starsFor(0, false));
   stars = recordLevel(stars, 1, starsFor(4, false));
   assert.equal(stars[1], 3);
   const saved = readLevels(JSON.stringify({ ...stars, 2: 2, 31: 3, x: 1, 3: 9 }), LEVEL_COUNT);
   assert.deepEqual(saved, { 1: 3, 2: 2 });
   assert.equal(unlockedLevel(saved, LEVEL_COUNT), 3);
-  assert.equal(startLevel(saved, 3), 3);
-  assert.equal(startLevel({ 1: 3, 2: 3, 3: 3 }, 3), 3);
-  assert.equal(startLevel({ 1: 3, 2: 1 }, 2), 2);
   assert.deepEqual(readLevels("{broken", LEVEL_COUNT), {});
-});
-
-test("the board fits a 320px phone and caps cells on big screens", () => {
-  for (const level of levels) {
-    const { size, rows, cols } = puzzleOf(level);
-    const rowClues = Math.max(...rows.map(clue => clue.length)), colClues = Math.max(...cols.map(clue => clue.length));
-    const small = boardLayout(288 - 24, size, rowClues, colClues);
-    assert.ok(small.clueW + size * small.cell + size - 1 <= 264, `level ${level} overflows`);
-    assert.ok(small.cell >= 20, `level ${level} cells ${small.cell}px`);
-    assert.ok(boardLayout(480, size, rowClues, colClues).cell <= 56);
-  }
 });
 
 test("lines are kind, concrete and fit the result", () => {

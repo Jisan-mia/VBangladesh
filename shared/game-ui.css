@@ -11,8 +11,9 @@
 .gx-levels button.next{border-width:2.5px;box-shadow:0 0 0 3px color-mix(in srgb,#f2a900 45%,transparent);animation:gx-glow 1.6s ease-in-out infinite}
 .gx-levels button[aria-current="true"]{background:#1d2b53;color:#fff}
 @keyframes gx-glow{50%{box-shadow:0 0 0 6px color-mix(in srgb,#f2a900 20%,transparent)}}
-@keyframes gx-pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.25);opacity:1}100%{transform:scale(1)}}
-.gx-pop{animation:gx-pop .45s cubic-bezier(.3,1.6,.5,1) both}
+/* A pop that grows from close to full size on a strong ease-out: no start from near zero, no overshoot. */
+@keyframes gx-pop{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
+.gx-pop{animation:gx-pop .26s cubic-bezier(.23,1,.32,1) both}
 @media (prefers-reduced-motion:reduce){.gx-levels button.next,.gx-pop{animation:none}}
 .gx-sound.gx-compact{min-width:44px;min-height:44px;justify-content:center;padding:6px}
 .gx-reveal{font-size:34px;gap:4px}

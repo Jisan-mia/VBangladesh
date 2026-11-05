@@ -1,0 +1,150 @@
+---
+title: "Nam Shikhi: the name book, pause and focus, and the daily limit"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "Game Title or level list" as s0 {
+    state "Pause Playing" as s1 {
+      s2: Today No rest screen
+      s3: Today Rest screen (আজ এট#2497;ক#2497;ই)
+    }
+    state "Pause Away, next tap only wakes" as s4 {
+      s5: Today No rest screen
+      s6: Today Rest screen (আজ এট#2497;ক#2497;ই)
+    }
+    state "Pause Pause menu" as s7 {
+      s8: Today No rest screen
+      s9: Today Rest screen (আজ এট#2497;ক#2497;ই)
+    }
+  }
+  state "Game A card, stickers on offer" as s10 {
+    state "Pause Playing" as s11 {
+      s12: Today No rest screen
+    }
+    state "Pause Pause menu" as s13 {
+      s14: Today No rest screen
+    }
+  }
+  state "Game Sticker placed, #8594; shows" as s15 {
+    state "Pause Playing" as s16 {
+      s17: Today No rest screen
+    }
+    state "Pause Pause menu" as s18 {
+      s19: Today No rest screen
+    }
+  }
+  state "Game Page full and recorded, #8594; shows" as s20 {
+    state "Pause Playing" as s21 {
+      s22: Today No rest screen
+      s23: Today Rest screen (আজ এট#2497;ক#2497;ই)
+    }
+    state "Pause Pause menu" as s24 {
+      s25: Today No rest screen
+      s26: Today Rest screen (আজ এট#2497;ক#2497;ই)
+    }
+  }
+  state "Game End screen" as s27 {
+    state "Pause Playing" as s28 {
+      s29: Today No rest screen
+      s30: Today Rest screen (আজ এট#2497;ক#2497;ই)
+    }
+    state "Pause Pause menu" as s31 {
+      s32: Today No rest screen
+      s33: Today Rest screen (আজ এট#2497;ক#2497;ই)
+    }
+  }
+  [*] --> s2
+  s2 --> s5: the window or tab goes away
+  s2 --> s12: খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507;
+  s2 --> s3: today's play time runs out
+  s2 --> s8: #9208; or P or the window or tab goes away
+  s5 --> s2: the page opens again or the window is back
+  s5 --> s6: today's play time runs out
+  s12 --> s2: a #35;p= link opens
+  s12 --> s17: the child taps the right sticker
+  s12 --> s14: #9208; or P or the window or tab goes away
+  s3 --> s2: a parent gives ১০ ম#2495;ন#2495;ট more
+  s3 --> s6: the window or tab goes away
+  s8 --> s2: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s8 --> s9: today's play time runs out
+  s6 --> s5: a parent gives ১০ ম#2495;ন#2495;ট more
+  s6 --> s3: the page opens again or the window is back
+  s12 --> s3: a #35;p= link opens
+  s17 --> s2: a #35;p= link opens
+  s17 --> s12: the child presses #8594;
+  s17 --> s19: #9208; or P or the window or tab goes away
+  s14 --> s12: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s14 --> s8: a #35;p= link opens
+  s14 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;
+  s9 --> s3: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497; or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s9 --> s8: a parent gives ১০ ম#2495;ন#2495;ট more
+  s3 --> s9: the window or tab goes away
+  s12 --> s22: the child taps the right sticker
+  s17 --> s3: a #35;p= link opens
+  s14 --> s9: a #35;p= link opens
+  s14 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;
+  s19 --> s17: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s19 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;
+  s19 --> s8: a #35;p= link opens
+  s22 --> s2: the page opens again or a #35;p= link opens
+  s22 --> s29: the child presses #8594;
+  s22 --> s25: #9208; or P or the window or tab goes away
+  s12 --> s23: the child taps the right sticker
+  s19 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;
+  s19 --> s9: a #35;p= link opens
+  s29 --> s2: the page opens again or a #35;p= link opens or সব ল#2503;ভ#2503;ল or শ#2503;ষ
+  s29 --> s30: today's play time runs out
+  s29 --> s32: the window or tab goes away or #9208; or P
+  s23 --> s22: a parent gives ১০ ম#2495;ন#2495;ট more
+  s23 --> s26: #9208; or P or the window or tab goes away
+  s25 --> s2: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s25 --> s22: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s25 --> s8: a #35;p= link opens
+  s30 --> s3: the page opens again or a #35;p= link opens
+  s30 --> s29: a parent gives ১০ ম#2495;ন#2495;ট more
+  s30 --> s33: the window or tab goes away
+  s29 --> s12: খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507;
+  s32 --> s2: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s32 --> s8: a #35;p= link opens
+  s32 --> s33: today's play time runs out
+  s32 --> s29: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s26 --> s23: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s26 --> s25: a parent gives ১০ ম#2495;ন#2495;ট more
+  s33 --> s3: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;
+  s33 --> s32: a parent gives ১০ ম#2495;ন#2495;ট more
+  s33 --> s9: a #35;p= link opens
+  s33 --> s30: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s10 --> s2: the page opens again
+  s10 --> s3: the page opens again
+  s15 --> s2: the page opens again
+  s15 --> s3: the page opens again
+  s20 --> s3: the page opens again
+  s21 --> s30: the child presses #8594;
+  s21 --> s3: a #35;p= link opens
+  s24 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;
+  s24 --> s9: a #35;p= link opens
+  class s2 blue
+  class s3 yellow
+  class s5 blue
+  class s6 yellow
+  class s8 blue
+  class s9 yellow
+  class s12 teal
+  class s14 teal
+  class s17 teal
+  class s19 teal
+  class s22 teal
+  class s23 yellow
+  class s25 teal
+  class s26 yellow
+  class s29 blue
+  class s30 yellow
+  class s32 blue
+  class s33 yellow

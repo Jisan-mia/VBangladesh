@@ -1,0 +1,79 @@
+---
+title: "Chhip Felo after the rewrite: the screens, the cast, the window, your hand, the hum and the end screen"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: On the title
+      s1: Aiming the rod
+      s2: A choice screen is open
+      s3: Paused (menu)
+      s4: Float in the air
+      s5: Watching the float
+      s6: Catch or miss card
+      s7: The float is under
+      s8: End screen, chimes still to come
+      s9: Fish on the line
+      s10: End screen
+      [*] --> s0
+      s0 --> s1: you tap the title float [when You're on the pond]
+      s0 --> s2: you open the level list or the album [when You're on the pond]
+      s1 --> s3: you click into another window
+      s2 --> s0: you close it
+      s2 --> s1: you pick a level [when You're on the pond]
+      s1 --> s4: you let go and the float flies
+      s3 --> s1: you press Resume [when You're on the pond]
+      s4 --> s3: you click into another window
+      s4 --> s5: the float lands
+      s3 --> s4: you press Resume [when You're on the pond]
+      s5 --> s6: you strike too soon
+      s5 --> s7: the float goes under
+      s5 --> s3: you click into another window
+      s6 --> s1: the card ends: the next cast
+      s6 --> s8: the card ends: the level is over
+      s6 --> s3: you click into another window
+      s7 --> s6: you're too late
+      s7 --> s9: you strike on the dip
+      s7 --> s3: you click into another window
+      s3 --> s5: you press Resume [when You're on the pond]
+      s8 --> s1: you press Next level [when You're on the pond]
+      s8 --> s10: the stars chime
+      s8 --> s2: you open the level list or the album [when You're on the pond]
+      s3 --> s6: you press Resume [when You're on the pond]
+      s9 --> s6: the fish is landed or gets away
+      s9 --> s3: you press P or you click into another window
+      s3 --> s7: you press Resume [when You're on the pond]
+      s10 --> s1: you press Next level [when You're on the pond]
+      s10 --> s2: you open the level list or the album [when You're on the pond]
+      s2 --> s8: you close it
+      s3 --> s9: you press Resume [when You're on the pond]
+      s2 --> s10: you close it
+    }
+    --
+    state "Window" as r1 {
+      s11: You're on the pond
+      s12: Away: a hidden tab
+      s13: Away: another window
+      [*] --> s11
+      s11 --> s13: you click into another window [unless A choice screen is open or End screen or End screen, chimes still to come or On the title or Paused (menu)]
+      s13 --> s11: you come back [when Paused (menu)]
+    }
+  }
+  class s1 teal
+  class s3 yellow
+  class s4 teal
+  class s5 teal
+  class s6 teal
+  class s7 teal
+  class s8 blue
+  class s9 teal
+  class s10 blue

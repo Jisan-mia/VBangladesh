@@ -1,57 +1,70 @@
-// Challenge links and every line of result text. Server-safe: share.ts loads this, so it reaches only game-core and the level data.
-import { possessive } from "../../../shared/bangla";
-import { challengeHash, cleanName, readChallenge } from "../../../shared/game-core";
-import { isLevel, levelOf, starLimits, LEVEL_COUNT, type World } from "./levels";
-import { starsOf } from "./game";
+// Old links and every line of text. Server-safe: share.ts loads this, so it reaches only game-core and the level data.
+// A kids' page: no link made here carries anything about the child. Old links still open their level and seed; a name on
+// one is ignored, and cleanHash() drops it from the address bar.
+import { readChallenge } from "../../../shared/game-core";
+import { finaleName, isLevel, levelOf, LEVEL_COUNT, type World } from "./levels";
+import type { Mode } from "./tree";
 
 const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
 export const bn = (value: number) => digits.format(value);
 
-/** A finished level as the player reports it. Catching is real-time, so the mistake count is their phone's word. */
-export type Shared = { level: number; seed: number; errors: number; name: string };
+/** What an old link opens: one level and the seed that grows the same tree. */
+export type Shared = { level: number; seed: number };
 
 export const MAX_ERRORS = 99;
 
-/** `#s=<seed>&t=<mistakes>&l=<level>&n=<name>` */
+/** `#s=<seed>&t=<mistakes>&l=<level>(&n=<name>)`, the format the old share bar made. Only the level and seed are used. */
 export function parseShared(hash: string): Shared | null {
   const read = readChallenge(hash, { maxTarget: MAX_ERRORS, extraKeys: ["l"] });
   if (!read) return null;
   const l = read.extra.l ?? "";
   if (!/^[1-9]\d?$/.test(l) || !isLevel(Number(l))) return null;
-  return { level: Number(l), seed: read.seed, errors: read.target, name: read.name };
+  return { level: Number(l), seed: read.seed };
 }
 
-export const sharedHash = ({ level, seed, errors, name }: Shared) => challengeHash({ seed, target: errors, name, extra: { l: level } });
+/** The same hash without the name (and anything else a child might have put there): `s`, `t` and `l` only. */
+export function cleanHash(hash: string) {
+  const params = new URLSearchParams(hash.replace(/^#/, "")), keep = new URLSearchParams();
+  for (const key of ["s", "t", "l"]) { const value = params.get(key); if (value !== null) keep.set(key, value); }
+  return keep.toString();
+}
 
 export const levelLabel = (level: number) => `লেভেল ${bn(level)}`;
 /** "অ থেকে ঔ", "আম, বই", "২০ থেকে ১": the part of the title after the colon. */
 export const shortTitle = (level: number) => levelOf(level).title.split(": ")[1].replace(", একটানা", "");
+/** The badge: the finale's name on a world's last level, else the short title. */
+export const badgeTitle = (level: number) => finaleName(level) || shortTitle(level);
 const NOUN: Record<World, string> = { vowel: "বর্ণ", consonant: "বর্ণ", word: "অক্ষর", number: "সংখ্যা" };
 export const nounOf = (level: number) => NOUN[levelOf(level).world];
-const who = (name: string) => cleanName(name) || "বন্ধু";
 
-/** What's new on this level, on the start screen. Each one is true to the level data. */
+/** The two ways to play, as chips on the title: the name and what it changes. */
+export const MODES: Record<Mode, { name: string; line: string }> = {
+  calm: { name: "গাছতলা", line: "বর্ণ ঝুলে থাকে। যত সময় লাগে নাও, ঠিকটায় ছোঁয়াও।" },
+  wind: { name: "ঝড়ো হাওয়া", line: "বাতাসে বর্ণ নিজেই পড়ে, ঝুড়ি সরিয়ে ধরো। ৭ বছর থেকে।" },
+};
+
+/** What's new on this level, on the title. Each one is true to the level data. */
 const NEWS = [
-  "বর্ণ পাকলে টুপ করে পড়ে। ঝুড়ি সরিয়ে অ ধরো, তারপর আ।",
-  "ঋ থেকে ঔ। ভুল বর্ণ ধরলে ঝুড়ি দুলে উঠবে।",
-  "এগারোটা স্বরবর্ণ একটানা। এবার একসাথে তিনটা পড়বে।",
+  "ঠিক বর্ণটা ঝুড়িতে তোলো: অ, তারপর আ।",
+  "ঋ থেকে ঔ। ভুলটা ধরলে ঝুড়ি দুলে উঠবে।",
+  "এগারোটা স্বরবর্ণ একটানা। এবার একসাথে তিনটা ফল।",
   "এবার ব্যঞ্জনবর্ণ: ক, খ, গ, ঘ, ঙ।",
-  "চ থেকে ঞ। একসাথে তিনটা পড়বে।",
-  "ট থেকে ণ। একটু জোরে পড়বে।",
-  "ত থেকে ন। আরেকটু জোরে।",
+  "চ থেকে ঞ। এবার একসাথে তিনটা ফল।",
+  "ট থেকে ণ। ঢোল আর হরিণ আসছে।",
+  "ত থেকে ন। তরমুজ, থালা, দোয়েল।",
   "প থেকে ম। ফুল, বই, ময়ূর আসছে।",
-  "য থেকে হ। এবার একসাথে চারটা পড়বে।",
+  "য থেকে হ। এবার একসাথে চারটা ফল।",
   "বর্ণমালার শেষ সাতটা: ড় থেকে ঁ।",
-  "ক থেকে ন, ২০টা বর্ণ একটানা। বেশ জোরে পড়বে।",
-  "প থেকে ঁ, ১৯টা বর্ণ। আরও জোরে।",
+  "ক থেকে ন, ২০টা বর্ণ একটানা।",
+  "প থেকে ঁ, ১৯টা বর্ণ। বর্ণমালার শেষ পাতা।",
   "এবার শব্দ। আ আর ম ধরলে হবে আম।",
   "ফুল, মাছ, দই। ফু মানে ফ আর উ-কার, একসাথে।",
   "পানি, হাঁস, নৌকা। হাঁ-এর মাথায় চন্দ্রবিন্দু।",
   "কলা, গরু, ঘুড়ি, বাঘ। চারটা শব্দ।",
-  "টিয়া, লাটিম, শাপলা। এবার একসাথে চারটা পড়বে।",
-  "রিকশা, টমেটো, তরমুজ। শব্দের শেষ লেভেল, বেশ জোরে।",
+  "টিয়া, লাটিম, শাপলা। এবার একসাথে চারটা ফল।",
+  "রিকশা, টমেটো, তরমুজ। বাজারের ঝুড়ি ভরো।",
   "এবার সংখ্যা: ১ থেকে ১০।",
-  "১১ থেকে ২০। এবার একসাথে চারটা পড়বে।",
+  "১১ থেকে ২০। এবার একসাথে চারটা ফল।",
   "শুধু জোড় সংখ্যা: ২, ৪, ৬ করে ২০ পর্যন্ত।",
   "শেষ লেভেল। ২০ থেকে উল্টো গোনো, ১ পর্যন্ত।",
 ] as const;
@@ -84,47 +97,21 @@ const CLEAR_LINES = [
 ] as const;
 export const clearLine = (level: number) => CLEAR_LINES[Math.min(LEVEL_COUNT, Math.max(1, level)) - 1];
 
-/** Under the stars short of three: exactly how many fewer mistakes the next star needs. Empty at three. */
-export function nearMissLine(level: number, errors: number) {
-  const [three, two] = starLimits(level), stars = starsOf(level, errors);
-  if (stars === 3) return "";
-  const need = errors - (stars === 2 ? three : two);
-  return `আর ${bn(need)}টা ভুল কম হলে ${bn(stars + 1)} তারা।`;
+/** The end screen's counts and the card's tally: what went into the basket, and how many on the first try. */
+export const caughtLine = (level: number) => `${bn(levelOf(level).items.length)}টা ${nounOf(level)} ঝুড়িতে`;
+export const firstLine = (count: number) => `${bn(count)}টা প্রথমবারেই`;
+export const tallyLine = ({ level, slips }: { level: number; slips: number }) =>
+  `${bn(levelOf(level).items.length)}টা ${nounOf(level)} · ${firstLine(levelOf(level).items.length - slips)}`;
+
+/** The card's own line for a grown-up: a plain fact, never a comparison. */
+export function humanLine({ level, slips }: { level: number; slips: number }) {
+  if (slips === 0) return `সবগুলো ${nounOf(level)} প্রথমবারেই ঠিক।`;
+  if (slips <= 2) return "এক-আধটায় ঝুড়ি দুলেছে, বাকি সব প্রথমবারেই।";
+  return "ঝুড়ি কয়েকবার দুলেছে। তবু পুরো পাতা ঝুড়িতে।";
 }
 
-/** The card's own line, seen by friends. */
-export function humanLine({ level, errors }: Pick<Shared, "level" | "errors">) {
-  if (errors === 0) return `একটাও ভুল ${nounOf(level)} ঝুড়িতে ওঠেনি, একটাও মাটিতে পড়েনি।`;
-  const stars = starsOf(level, errors);
-  if (stars === 3) return "এক-আধটা ভুল, বাকি সব ঠিক ঠিক ঝুড়িতে।";
-  if (stars === 2) return "ঝুড়ি কয়েকবার দুলেছে, তবু পাতা শেষ।";
-  return "ঝুড়ি অনেকবার দুলেছে। তবু শেষ পর্যন্ত ধরা হয়েছে।";
-}
-
-export const tallyLine = ({ level, errors }: Pick<Shared, "level" | "errors">) =>
-  `${bn(levelOf(level).items.length)}টা ${nounOf(level)} · ভুল ${bn(errors)}টা`;
-
-/** "রাফি ঝুড়িতে ধরেছে অ থেকে ঔ, ভুল ২টা" */
-export const feat = ({ level, errors, name }: Pick<Shared, "level" | "errors" | "name">) =>
-  `${cleanName(name) || "এক বন্ধু"} ঝুড়িতে ধরেছে ${shortTitle(level)}, ${errors ? `ভুল ${bn(errors)}টা` : "একটাও ভুল ছাড়া"}`;
-export const previewTitle = (shared: Shared) => `${feat(shared)}। তুমি পারবে?`;
-
-export const bannerNote = (name: string) => `এটা ${possessive(who(name))} নিজের ফোনের হিসাব। একই গাছ, একই ক্রমে পড়বে। এবার তোমার পালা।`;
-
-/** After a friend's level: fewer mistakes is better. Kind either way. */
-export function compareLine(mine: number, theirs: number, name: string) {
-  const friend = who(name), diff = theirs - mine;
-  if (diff > 0) return `${possessive(friend)} চেয়ে ${bn(diff)}টা ভুল কম!`;
-  if (diff === 0) return mine === 0 ? "একদম সমান! দুজনেরই একটাও ভুল নেই।" : `একদম সমান! ${friend}ও ${bn(theirs)}টা ভুল করেছিল।`;
-  if (-diff <= 2) return `আর একটু হলেই! ${friend} মাত্র ${bn(-diff)}টা ভুল কম করেছিল।`;
-  return `${possessive(friend)} ভুল ছিল ${bn(theirs)}টা, তোমার ${bn(mine)}টা। আরেকবার?`;
-}
-
-export function caption({ level, errors }: Pick<Shared, "level" | "errors">) {
-  return `অ-তে অজগর, ${levelLabel(level)}: ${shortTitle(level)} ঝুড়িতে ধরলাম, ${errors ? `ভুল ${bn(errors)}টা` : "একটাও ভুল ছাড়া"}। তুমি পারবে?`;
-}
-
-/** The line under the picture after a wrong catch or a dropped fruit. */
+/** The line beside the picture after a wrong pick, after two (the right fruit glows), or a dropped fruit (ঝড়ো হাওয়া). */
 export const wrongLine = (caught: string, want: string) => `ওটা ${caught}। এবার ${want} খোঁজো।`;
+export const hintLine = (want: string) => `ঝলমলে ফলটায় ${want}।`;
 export const missLine = (want: string, near: boolean) => near ? `একটুর জন্য! ${want} আবার আসছে।` : `${want} মাটিতে পড়ল। আবার আসছে।`;
 export const lookLine = (want: string) => `${want} খোঁজো`;

@@ -1,7 +1,8 @@
 // Drawings: glass bangles (each colour with its own pattern, so colour is never the only clue), the velvet tray and the stall rods on the card.
-import { RAINBOW, SIZE, SPARKLE, colourOf, isSparkle } from "./board";
+import { RAINBOW, SIZE, SPARKLE, colourOf, isLocked, isSparkle } from "./board";
+import { COLOUR_NAMES } from "./art-names";
 
-export const COLOUR_NAMES = ["লাল", "সবুজ", "নীল", "হলুদ", "বেগুনি", "সাদা"] as const;
+export { COLOUR_NAMES };
 /** base, light edge, deep edge for each glass colour */
 export const GLASS = [
   ["#d92a3c", "#ff9a9a", "#760c1a"],
@@ -63,6 +64,60 @@ export function drawBangle(c: CanvasRenderingContext2D, piece: number, x: number
   ring(); c.stroke();
 
   if (isSparkle(piece) || piece === RAINBOW) glint(c, cx + outer * 0.62, cy - outer * 0.62, size * (piece === RAINBOW ? 0.2 : 0.16));
+  if (isLocked(piece)) padlock(c, cx, cy, size * 0.17);
+}
+
+/** A tied bangle's padlock, sitting in the hole of the ring: round shackle, brass body, keyhole. Its shape says "tied" without the colour. */
+export function padlock(c: CanvasRenderingContext2D, cx: number, cy: number, r: number) {
+  c.lineCap = "round";
+  c.strokeStyle = "#3a3a42"; c.lineWidth = r * 0.42;
+  c.beginPath(); c.arc(cx, cy - r * 0.15, r * 0.62, Math.PI, 0); c.stroke();
+  c.strokeStyle = "#c9ccd6"; c.lineWidth = r * 0.2;
+  c.beginPath(); c.arc(cx, cy - r * 0.15, r * 0.62, Math.PI, 0); c.stroke();
+  c.fillStyle = "#e0b43e"; c.strokeStyle = "#4a3410"; c.lineWidth = Math.max(1, r * 0.14);
+  c.beginPath(); c.roundRect(cx - r * 0.95, cy - r * 0.1, r * 1.9, r * 1.35, r * 0.28); c.fill(); c.stroke();
+  c.fillStyle = "#4a3410";
+  c.beginPath(); c.arc(cx, cy + r * 0.42, r * 0.2, 0, TAU); c.fill();
+  c.fillRect(cx - r * 0.07, cy + r * 0.45, r * 0.14, r * 0.38);
+  c.lineCap = "butt";
+}
+
+/** Dust on the velvet: a pale haze with specks. One layer is thin, two are thick and ringed. Drawn under the bangles. */
+export function drawDust(c: CanvasRenderingContext2D, x: number, y: number, size: number, layers: number) {
+  const cx = x + size / 2, cy = y + size / 2, r = size * 0.5, pad = size * 0.03;
+  const alpha = layers > 1 ? 0.9 : 0.62;
+  // a pale cloth of dust over the whole square, so it shows at the corners around the bangle and through its hole
+  c.fillStyle = `rgba(222,205,170,${alpha})`;
+  c.beginPath(); c.roundRect(x + pad, y + pad, size - pad * 2, size - pad * 2, size * 0.28); c.fill();
+  c.strokeStyle = `rgba(150,126,88,${alpha})`; c.lineWidth = Math.max(1, size * 0.02);
+  c.beginPath(); c.roundRect(x + pad, y + pad, size - pad * 2, size - pad * 2, size * 0.28); c.stroke();
+  c.fillStyle = layers > 1 ? "rgba(110,88,58,0.75)" : "rgba(140,118,84,0.65)";
+  const specks = layers > 1 ? 16 : 9;
+  for (let i = 0; i < specks; i++) { const a = i * 2.4 + 0.5, d = r * (0.3 + ((i * 37) % 10) / 16); c.beginPath(); c.arc(cx + Math.cos(a) * d, cy + Math.sin(a) * d, size * (0.02 + ((i * 7) % 3) * 0.01), 0, TAU); c.fill(); }
+  if (layers > 1) { c.strokeStyle = "rgba(110,88,58,0.85)"; c.lineWidth = Math.max(1.5, size * 0.035); c.setLineDash([size * 0.08, size * 0.05]); c.beginPath(); c.roundRect(x + size * 0.12, y + size * 0.12, size * 0.76, size * 0.76, size * 0.2); c.stroke(); c.setLineDash([]); }
+}
+
+/** The start button: a gold-rimmed velvet medallion with a big bangle in it and a ribbon across the bottom saying `label`. */
+export function drawTitleBangle(c: CanvasRenderingContext2D, side: number, piece: number, label: string, world: number) {
+  const [light, dark] = VELVET[Math.max(0, Math.min(3, world))], cx = side / 2, cy = side * 0.46, r = side * 0.46;
+  c.save();
+  c.shadowColor = "rgba(0,0,0,0.35)"; c.shadowBlur = side * 0.04; c.shadowOffsetY = side * 0.02;
+  const velvet = c.createRadialGradient(cx - r * 0.2, cy - r * 0.3, r * 0.1, cx, cy, r);
+  velvet.addColorStop(0, light); velvet.addColorStop(1, dark);
+  c.fillStyle = velvet; c.beginPath(); c.arc(cx, cy, r, 0, TAU); c.fill();
+  c.restore();
+  c.strokeStyle = GOLD; c.lineWidth = side * 0.025; c.beginPath(); c.arc(cx, cy, r - side * 0.012, 0, TAU); c.stroke();
+  c.strokeStyle = "rgba(243,205,106,0.4)"; c.lineWidth = 1.5; c.beginPath(); c.arc(cx, cy, r - side * 0.05, 0, TAU); c.stroke();
+  const big = side * 0.8;
+  drawBangle(c, piece, cx - big / 2, cy - big / 2 - side * 0.03, big);
+  const w = side * 0.86, h = side * 0.2, x = cx - w / 2, y = side * 0.78;
+  c.fillStyle = "#8c1f2d";
+  c.beginPath(); c.moveTo(x - side * 0.04, y + h * 0.1); c.lineTo(x + side * 0.06, y + h * 0.1); c.lineTo(x + side * 0.06, y + h * 0.95); c.lineTo(x - side * 0.04, y + h * 0.95); c.lineTo(x + side * 0.01, y + h * 0.52); c.closePath(); c.fill();
+  c.beginPath(); c.moveTo(x + w + side * 0.04, y + h * 0.1); c.lineTo(x + w - side * 0.06, y + h * 0.1); c.lineTo(x + w - side * 0.06, y + h * 0.95); c.lineTo(x + w + side * 0.04, y + h * 0.95); c.lineTo(x + w - side * 0.01, y + h * 0.52); c.closePath(); c.fill();
+  c.fillStyle = "#b8283a"; c.fillRect(x, y, w, h);
+  c.strokeStyle = GOLD; c.lineWidth = side * 0.012; c.strokeRect(x + side * 0.015, y + side * 0.015, w - side * 0.03, h - side * 0.03);
+  c.fillStyle = "#fff6e6"; c.font = `800 ${Math.round(h * 0.62)}px Display, Bangla, sans-serif`; c.textAlign = "center"; c.textBaseline = "middle";
+  c.fillText(label, cx, y + h * 0.53);
 }
 
 /** Each colour's own pattern, so two colours never look alike in grey. */

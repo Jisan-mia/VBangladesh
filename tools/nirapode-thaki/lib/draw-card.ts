@@ -1,5 +1,5 @@
 // The "আব্বু-আম্মুকে দেখাও" card: the rules learned today, one per row, with no name. 1080×1350.
-import { cardSizes, drawFooterBand, fitText, roundedRect } from "../../../shared/card-canvas";
+import { cardSizes, drawFooterBand, fitText, renderCard, roundedRect } from "../../../shared/card-canvas";
 import { svgDocument } from "./art";
 
 export type CardData = { label: string; title: string; stars: number; rows: { icon: string; text: string }[] };
@@ -38,18 +38,25 @@ export function drawCard(canvas: HTMLCanvasElement, data: CardData, pictures: Ma
   fitText(c, [{ text: data.title, color: colors.ink, weight: 800, display: true }], width / 2, 186, 58, 960, "center");
   for (let i = 0; i < 3; i++) star(c, width / 2 + (i - 1) * 76, 256, 30, i < data.stars ? colors.star : colors.starOff);
 
-  const left = 70, rowHeight = 176, top = 316, tile = 144;
-  data.rows.slice(0, 5).forEach((row, index) => {
+  // Five rows of 176 px, or six of 146 px for a finale: both end above the footer band.
+  const many = data.rows.length > 5, left = 70, rowHeight = many ? 146 : 176, top = 316, tile = many ? 120 : 144;
+  data.rows.slice(0, 6).forEach((row, index) => {
     const y = top + index * rowHeight;
     roundedRect(c, left, y, width - left * 2, rowHeight - 20, 34); c.fillStyle = colors.tile; c.fill();
     c.lineWidth = 4; c.strokeStyle = colors.edge; c.stroke();
     const picture = pictures.get(row.icon);
-    if (picture) c.drawImage(picture, left + 12, y + 6, tile, tile);
-    fitText(c, [{ text: row.text, color: colors.ink, weight: 700 }], left + tile + 36, y + rowHeight / 2 + 4, 46, width - left * 2 - tile - 160);
+    if (picture) c.drawImage(picture, left + 12, y + (rowHeight - 20 - tile) / 2, tile, tile);
+    fitText(c, [{ text: row.text, color: colors.ink, weight: 700 }], left + tile + 36, y + rowHeight / 2 + 4, many ? 42 : 46, width - left * 2 - tile - 160);
     // A green tick at the row's end: done, not graded.
     c.strokeStyle = colors.tick; c.lineWidth = 9; c.lineCap = "round"; c.lineJoin = "round";
-    c.beginPath(); c.moveTo(width - left - 74, y + 80); c.lineTo(width - left - 56, y + 98); c.lineTo(width - left - 26, y + 62); c.stroke();
+    c.beginPath(); const mid = y + (rowHeight - 20) / 2; c.moveTo(width - left - 74, mid - 8); c.lineTo(width - left - 56, mid + 10); c.lineTo(width - left - 26, mid - 26); c.stroke();
   });
 
   drawFooterBand(c, "feed", "রাস্তা, পুকুর, চুলা, ঝড়: নিরাপদে থাকার খেলা", site, { band: "#1d3f73", ask: "#ffd166", site: "#ffffff" });
+}
+
+/** The card as a PNG for the parent's "ফোনে ছবি রাখো" (behind the gate). */
+export async function cardBlob(data: CardData, site: string) {
+  const pictures = await loadPictures(data.rows.map(row => row.icon));
+  return renderCard(canvas => drawCard(canvas, data, pictures, site));
 }

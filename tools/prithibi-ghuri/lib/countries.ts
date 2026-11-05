@@ -1,5 +1,5 @@
 // The 18 countries and six trips. Facts checked October 2026 against Britannica, the CIA World Factbook and national tourism
-// sites; greetings are the everyday word in the language most people there speak (or one of the official ones), written as it sounds.
+// sites; greetings are the everyday word in the language most people there use (or one of the official ones), written as it sounds.
 
 export type Kind = "food" | "place" | "animal" | "flag";
 export type Item = { name: string; note: string };

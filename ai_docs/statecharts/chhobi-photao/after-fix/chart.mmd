@@ -1,0 +1,78 @@
+---
+title: "Chhobi photao (nonogram): round, clock, stroke, sheet and stars"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: start
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 tan
+  s0: Title
+  s1: Blank cloth, clock waiting
+  s2: Title, levels sheet open
+  s3: Picture bloomed, end screen
+  s4: Paused, clock stopped
+  s5: Paused by the levels sheet, clock stopped
+  s6: Stitching, clock counting
+  s7: Stitching, clock counting, dragging
+  s8: Stitching, clock counting, 1 mistake
+  s9: Stitching, clock counting, dragging, 1 mistake
+  [*] --> s0
+  s0 --> s1: you press ফ#2507;ট#2494;ও
+  s0 --> s2: you open সব ল#2503;ভ#2503;ল
+  s1 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s1 --> s3: you stitch the last cell
+  s1 --> s4: you hide the tab or you click into another window
+  s1 --> s5: you open সব ল#2503;ভ#2503;ল
+  s1 --> s6: you stitch a cell by tap, key or hint
+  s1 --> s7: you press a cell and drag
+  s1 --> s8: you stitch a wrong cell: the thread snaps
+  s2 --> s0: you close the sheet
+  s3 --> s1: you press আব#2494;র খ#2503;ল#2507;
+  s3 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s5 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s5 --> s1: you close the sheet
+  s6 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s6 --> s3: you stitch the last cell
+  s6 --> s7: you press a cell and drag
+  s6 --> s8: you stitch a wrong cell: the thread snaps
+  s6 --> s4: you hide the tab or you click into another window
+  s6 --> s5: you open সব ল#2503;ভ#2503;ল
+  s7 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s7 --> s3: you stitch the last cell
+  s7 --> s6: you let go
+  s7 --> s8: you stitch a wrong cell: the thread snaps
+  s7 --> s4: you hide the tab or you click into another window
+  s7 --> s5: you open সব ল#2503;ভ#2503;ল
+  s8 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s8 --> s3: you stitch the last cell
+  s8 --> s4: you hide the tab or you click into another window
+  s8 --> s5: you open সব ল#2503;ভ#2503;ল
+  s8 --> s9: you press a cell and drag
+  s4 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s4 --> s5: you open সব ল#2503;ভ#2503;ল
+  s5 --> s6: you close the sheet
+  s5 --> s8: you close the sheet
+  s9 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497;
+  s9 --> s8: you let go or you stitch a wrong cell: the thread snaps
+  s9 --> s3: you stitch the last cell
+  s9 --> s4: you hide the tab or you click into another window
+  s9 --> s5: you open সব ল#2503;ভ#2503;ল
+  s4 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s4 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  class s0 tan
+  class s1 teal
+  class s2 tan
+  class s3 blue
+  class s4 yellow
+  class s5 yellow
+  class s6 teal
+  class s7 teal
+  class s8 teal
+  class s9 teal

@@ -1,197 +1,182 @@
+// Rules, links and words for ভো-কাট্টা, against the pure lib/ code.
 import assert from "node:assert/strict";
 import test from "node:test";
 import { site } from "../content";
 import { share } from "../share";
 import {
-  rivalsFor, ROUND_RIVALS, createGame, curve, edge, linesCross, segmentsCross, step, steerBy, steerTo, windAt, zone,
-  HI, HOME, LO, REACH, ROUND_TIME, SEGMENTS, SKY, type Game, type GameEvent,
-} from "../lib/game";
+  createGame, curve, distanceToLine, E, edge, FLY, GONE, HI, HOME, linesCross, LO, REACH, segmentsCross, SEGMENTS, SKY, steerBy, steerTo, windAt, zone,
+  type Game,
+} from "../lib/kite";
+import { LEVEL_COUNT, levelDef, MODE_INFO, starsOf } from "../lib/levels";
 import {
-  banner, bands, caption, compareLine, cutLine, humanLine, lookFromGhuri, migrateBest, nearLine, parseShared, previewTitle, readLook, sharedHash, starsOf, LEVEL_COUNT, LEVELS, LOOKS, MAX_CUTS,
+  caption, compareLine, cutLine, friendClaim, friendLine, humanLine, lookFromGhuri, LOOKS, MAX_CUTS, migrateBest, parseShared, previewTitle, readLook, seconds, sharedHash,
+  type Shared,
 } from "../lib/link";
+import { stepGame } from "../lib/step.hot";
+import { CASUAL, play } from "./bot";
 
 const DT = 1 / 60;
-type Mode = "feather" | "hold" | "idle" | "lazy";
+const events = (game: Game) => { const out: number[] = []; for (let i = 0; i < game.evCount; i++) out.push(game.ev[i]); game.evCount = 0; return out; };
+const snapshot = (game: Game) => [game.cuts, game.lost, game.you.x, game.you.y, game.rivals[0].x, game.rivals[0].y, game.total, game.tug];
 
-/** A scripted player: flies across the rival's string to hook it, then keeps the needle in the green (or just holds টান). */
-function play(seed: number, { mode = "feather" as Mode, slow = false, limit = 60 * 240, level = 1 } = {}) {
-  const game = createGame(seed, level);
-  const events: Partial<Record<GameEvent, number>> = {};
-  let frames = 0;
-  for (; frames < limit && game.phase !== "over"; frames++) {
-    const you = game.you, rival = game.rival;
-    if (mode !== "idle") {
-      if (game.hooked) {
-        if (mode === "hold") game.pulling = true;
-        else if (you.tension < LO + 0.06) game.pulling = true;
-        else if (you.tension > HI - 0.06) game.pulling = false;
-        // Rub the strings: swing the kite to and fro around the hook.
-        if (mode === "feather") steerTo(game, game.hook.x + (frames % 36 < 18 ? 70 : -70), game.hook.y - 50);
-      } else {
-        game.pulling = false;
-        if (rival.state === "fly" && mode !== "lazy") {
-          // Aim past the middle of the rival's string, on the far side from where your kite is now.
-          const px = rival.hx + (rival.x - rival.hx) * 0.55, py = rival.hy + (rival.y - rival.hy) * 0.55;
-          const lx = rival.x - rival.hx, ly = rival.y - rival.hy, length = Math.hypot(lx, ly);
-          const side = Math.sign(lx * (you.y - rival.hy) - ly * (you.x - rival.hx)) || 1;
-          steerTo(game, px - (side * -ly / length) * 60, py - (side * lx / length) * 60);
-        }
-      }
-    }
-    step(game, DT, slow, event => { events[event] = (events[event] ?? 0) + 1; });
-    assert.ok(game.tug > -1.001 && game.tug < 1.001, "tug stays in range");
-    assert.ok(you.tension >= 0 && you.tension <= 1);
-    if (you.state === "fly") assert.ok(you.x >= SKY.left && you.x <= SKY.right && you.y >= SKY.top && you.y <= SKY.bottom, "your kite stays in the sky");
-    if (rival.state === "fly") assert.ok(rival.x >= SKY.left && rival.x <= SKY.right && rival.y >= SKY.top && rival.y <= SKY.bottom, "the rival stays in the sky");
-    if (game.hooked) assert.ok(Math.hypot(you.x - game.hook.x, you.y - game.hook.y) <= game.reach + 1, "hooked kites stay near the hook");
-  }
-  return { game, events, frames };
-}
-
-const snapshot = (game: Game) => [game.cuts, game.lost, game.round, game.you.x, game.you.y, game.rival.x, game.rival.y, game.total];
-
-test("the same seed gives the same sky, and the same play gives the same game", () => {
-  const one = createGame(48213), two = createGame(48213), other = createGame(48214);
+test("the same seed gives the same sky, and the same play gives the same evening", () => {
+  const one = createGame(48213, 5), two = createGame(48213, 5), other = createGame(48214, 5);
   assert.deepEqual(one.plans, two.plans);
   assert.equal(one.windBase, two.windBase);
   assert.notDeepEqual(one.plans, other.plans);
   for (const t of [0, 7.5, 40]) assert.equal(windAt(one, t, false), windAt(two, t, false));
-  const a = play(777), b = play(777);
+  const a = play(777, 6, "n", CASUAL)!, b = play(777, 6, "n", CASUAL)!;
   assert.deepEqual(snapshot(a.game), snapshot(b.game));
-  assert.deepEqual(a.events, b.events);
+  assert.equal(a.time, b.time);
 });
 
-test("rival homes are in the sky on their own side, and nobody starts hooked", () => {
-  for (const seed of [1, 2, 3, 48213, 999_999_999]) {
-    const game = createGame(seed);
-    for (const round of game.plans) for (const p of round) {
-      assert.ok(p.hx >= SKY.left && p.hx <= SKY.right && p.hy >= SKY.top && p.hy <= SKY.bottom);
-      assert.ok(p.look >= 0 && p.look < LOOKS.length);
-    }
-    assert.ok(!linesCross(game.youLine, game.rivalLine, game.at), `seed ${seed} starts unhooked`);
+test("every evening starts unhooked, in the sky, with the first rival (or the first pair) hovering", () => {
+  for (let level = 1; level <= LEVEL_COUNT; level++) for (const seed of [1, 2, 48213, 999_999_999]) {
+    const game = createGame(seed, level), def = levelDef(level);
+    assert.equal(game.phase, "ready");
     assert.deepEqual([game.you.x, game.you.y], [HOME.x, HOME.y]);
+    assert.equal(game.rivals[0].state, FLY);
+    assert.equal(game.rivals[1].state, def.pair ? FLY : GONE);
+    for (const r of game.rivals) if (r.state === FLY) assert.ok(r.x >= SKY.left && r.x <= SKY.right && r.y >= SKY.top && r.y <= SKY.bottom);
+    assert.ok(!linesCross(game.you.line, game.rivals[0].line, game.at), `level ${level} seed ${seed} starts unhooked`);
+    assert.equal(game.kites, MODE_INFO.n.kites);
   }
 });
 
-test("tension: the green band saws hardest, slack a little, too tight barely", () => {
+test("tension: the green band saws hardest, slack a little, too tight barely; টান fills it and letting go empties it", () => {
   assert.equal(edge(0), 0);
   assert.equal(edge(LO), 1);
   assert.equal(edge(HI), 1);
   assert.ok(edge(LO - 0.01) < 0.31);
-  assert.equal(edge(1), 0.3);
+  assert.equal(edge(1), 0.25);
   assert.deepEqual([zone(0.2), zone(0.6), zone(0.95)], ["slack", "good", "tight"]);
   const game = createGame(5);
-  game.pulling = true;
-  for (let i = 0; i < 60; i++) step(game, DT, false);
-  assert.ok(game.you.tension > 0.95, "a second of টান fills the meter");
-  game.pulling = false;
-  for (let i = 0; i < 90; i++) step(game, DT, false);
-  assert.equal(game.you.tension, 0, "letting go empties it");
+  for (let i = 0; i < 60; i++) stepGame(game, true, DT);
+  assert.ok(game.you.t > 0.95, "a second of টান fills the meter");
+  for (let i = 0; i < 90; i++) stepGame(game, false, DT);
+  assert.equal(game.you.t, 0, "letting go empties it");
 });
 
-test("strings: crossing segments are found, parallel and apart ones are not", () => {
+test("the kite: slack it sags and drifts downwind, taut it climbs to the aim and answers fast", () => {
+  const slack = createGame(9, 2), taut = createGame(9, 2);
+  stepGame(slack, true, DT); stepGame(taut, true, DT);
+  for (let i = 0; i < 180; i++) { stepGame(slack, false, DT); stepGame(taut, true, DT); }
+  assert.ok(slack.you.y > taut.you.y + 15, `slack sags below the taut kite (${slack.you.y.toFixed(0)} vs ${taut.you.y.toFixed(0)})`);
+  assert.ok(Math.abs(taut.you.x - taut.aimX) < 12 && Math.abs(taut.you.y - taut.aimY) < 12, "taut, it sits at the aim");
+  const windward = Math.sign(slack.wind);
+  assert.ok((slack.you.x - slack.aimX) * windward > 0, "slack, the wind carries it downwind");
+  // A taut kite crosses the sky faster than a slack one.
+  const fast = createGame(3), lazy = createGame(3);
+  stepGame(fast, true, DT); stepGame(lazy, true, DT);
+  for (let i = 0; i < 40; i++) stepGame(fast, true, DT);
+  steerTo(fast, 300, 60); steerTo(lazy, 300, 60);
+  for (let i = 0; i < 30; i++) { stepGame(fast, true, DT); stepGame(lazy, false, DT); }
+  assert.ok(fast.you.x > lazy.you.x + 20);
+});
+
+test("strings: crossing segments are found, parallel and apart ones are not, and distances are right", () => {
   assert.equal(segmentsCross(0, 0, 10, 10, 0, 10, 10, 0), 0.5);
   assert.equal(segmentsCross(0, 0, 10, 0, 0, 5, 10, 5), -1, "parallel");
   assert.equal(segmentsCross(0, 0, 4, 4, 6, 0, 10, -4), -1, "apart");
   assert.equal(segmentsCross(0, 0, 10, 0, 10, 0, 10, 10), 1, "touching at the end");
   const game = createGame(9), at = new Float32Array(2);
-  // Fly your kite over to the rival's side: the strings cross somewhere between the roofs.
-  game.you.x = 300; game.you.y = 110; game.rival.x = 90; game.rival.y = 140;
-  curve(game.you, 0, game.youLine); curve(game.rival, 0, game.rivalLine);
-  assert.ok(linesCross(game.youLine, game.rivalLine, at));
-  assert.ok(at[1] > SKY.top && at[1] < 440 && at[0] > 0 && at[0] < 360);
-  assert.equal(game.youLine.length, (SEGMENTS + 1) * 2);
-  assert.deepEqual([game.youLine[0], game.youLine[1]], [game.you.hx, game.you.hy], "the string starts at the hand");
+  game.you.x = 300; game.you.y = 110; game.rivals[0].x = 90; game.rivals[0].y = 140;
+  curve(game.you, 0, game.you.line); curve(game.rivals[0], 0, game.rivals[0].line);
+  assert.ok(linesCross(game.you.line, game.rivals[0].line, at));
+  assert.equal(game.you.line.length, (SEGMENTS + 1) * 2);
+  assert.deepEqual([game.you.line[0], game.you.line[1]], [game.you.hx, game.you.hy], "the string starts at the hand");
+  assert.ok(distanceToLine(game.you.line, game.you.x, game.you.y) < 0.01);
 });
 
-test("a প্যাঁচ: hooking, then a green-band tug cuts the rival and a slack one loses your kite", () => {
-  const win = createGame(11), seen: GameEvent[] = [];
-  steerTo(win, 300, 100);
-  for (let i = 0; i < 600 && !win.hooked; i++) step(win, DT, false, event => seen.push(event));
-  assert.ok(win.hooked && seen.includes("hook"), "flying across the rival's string hooks it");
-  for (let i = 0; i < 600 && win.hooked; i++) {
-    win.pulling = win.you.tension < LO + 0.06 ? true : win.you.tension > HI - 0.06 ? false : win.pulling;
-    step(win, DT, false, event => seen.push(event));
-  }
-  assert.ok(seen.includes("cut") && win.cuts === 1 && win.rival.state === "fall");
-
-  const lose = createGame(11), events: GameEvent[] = [];
-  steerTo(lose, 300, 100);
-  for (let i = 0; i < 600 && !lose.hooked; i++) step(lose, DT, false);
-  for (let i = 0; i < 60 * 30 && lose.hooked; i++) step(lose, DT, false, event => events.push(event));
-  assert.ok(events.includes("lost") && lose.lost === 1 && lose.cuts === 0, "a kite nobody pulls gets cut");
-  for (let i = 0; i < 60 * 3; i++) step(lose, DT, false);
-  assert.equal(lose.you.state, "fly", "a new kite rises");
+test("a প্যাঁচ: flying across a string hooks it; a green tug cuts the rival, an idle hand loses the kite", () => {
+  const win = createGame(11), seen: number[] = [];
+  stepGame(win, true, DT);
+  // The first rival flies from the right-hand roof: fly to the far side of its string.
+  for (let i = 0; i < 600 && win.hooked < 0; i++) { steerTo(win, 330, 150); stepGame(win, true, DT); seen.push(...events(win)); }
+  assert.ok(win.hooked === 0 && seen.includes(E.HOOK), "flying across the rival's string hooks it");
+  for (let i = 0; i < 600 && win.hooked >= 0; i++) { stepGame(win, win.you.t < LO + 0.06 || (win.you.t <= HI - 0.06 && win.pulling), DT); seen.push(...events(win)); }
+  assert.ok(seen.includes(E.CUT) && win.cuts === 1, "the green band cuts");
+  const lose = createGame(11), out: number[] = [];
+  stepGame(lose, true, DT);
+  for (let i = 0; i < 600 && lose.hooked < 0; i++) { steerTo(lose, 330, 150); stepGame(lose, true, DT); }
+  for (let i = 0; i < 60 * 30 && lose.lost === 0; i++) { stepGame(lose, false, DT); out.push(...events(lose)); }
+  assert.ok(out.includes(E.LOST) && lose.lost === 1 && lose.kites === 2, "a kite nobody pulls gets cut");
+  for (let i = 0; i < 60 * 3; i++) stepGame(lose, false, DT);
+  assert.equal(lose.you.state, FLY, "a new kite rises");
 });
 
 test("steering stays in the sky and on the leash", () => {
   const game = createGame(3);
   steerBy(game, -999, -999);
-  assert.deepEqual([game.aim.x, game.aim.y], [SKY.left, SKY.top]);
+  assert.deepEqual([game.aimX, game.aimY], [SKY.left, SKY.top]);
   steerTo(game, 999, 999);
-  assert.deepEqual([game.aim.x, game.aim.y], [SKY.right, SKY.bottom]);
-  game.hooked = true; game.hook.x = 180; game.hook.y = 200;
+  assert.deepEqual([game.aimX, game.aimY], [SKY.right, SKY.bottom]);
+  game.hooked = 0; game.hookX = 180; game.hookY = 200;
   steerTo(game, 20, 60);
-  assert.ok(Math.hypot(game.aim.x - 180, game.aim.y - 200) <= REACH + 1e-9);
+  assert.ok(Math.hypot(game.aimX - 180, game.aimY - 200) <= REACH + 1e-9);
 });
 
-test("three rounds, then over; overtime lets a last প্যাঁচ finish", () => {
-  const game = createGame(21), events: GameEvent[] = [];
-  for (let i = 0; i < 60 * 120 && game.phase !== "over"; i++) step(game, DT, false, event => events.push(event));
-  assert.equal(game.phase, "over");
-  assert.equal(events.filter(event => event === "round").length, 2);
-  assert.equal(events.filter(event => event === "over").length, 1);
-  assert.ok(game.total > ROUND_TIME * 3 && game.total < ROUND_TIME * 3 + 3 * 3 + 2 * 1.8 + 0.1);
-  const before = game.total;
-  step(game, DT, false);
-  assert.equal(game.total, before, "a finished game stays finished");
-});
-
-test("headless runs end sanely, skill shows, and slow mode is the same game slower", () => {
-  for (const seed of [1, 48213, 999_999_999, 2024, 31337]) {
-    const good = play(seed);
-    assert.equal(good.game.phase, "over", `seed ${seed} ends`);
-    assert.ok(good.game.cuts >= 6 && good.game.cuts <= MAX_CUTS, `a steady player cuts several (seed ${seed}: ${good.game.cuts}, lost ${good.game.lost})`);
-    const hold = play(seed, { mode: "hold" });
-    assert.ok(hold.game.cuts < good.game.cuts, `holding টান non-stop is worse (seed ${seed}: ${hold.game.cuts} vs ${good.game.cuts})`);
-    const idle = play(seed, { mode: "idle" });
-    assert.ok(idle.game.phase === "over" && idle.game.cuts === 0, `a player who never touches cuts nothing (seed ${seed})`);
-    const calm = play(seed, { slow: true, limit: 60 * 400 });
-    assert.ok(calm.game.phase === "over" && calm.game.cuts >= 4, `slow mode still plays (seed ${seed}: ${calm.game.cuts})`);
+test("an evening ends once: cut the whole list (won) or lose every kite (out), then nothing moves", () => {
+  const won = play(21, 1, "n", CASUAL)!;
+  assert.equal(won.won, true);
+  assert.equal(won.cuts, levelDef(1).roster.length);
+  const idle = play(21, 3, "n", "idle")!;
+  assert.equal(idle.won, false);
+  assert.equal(idle.lost, MODE_INFO.n.kites);
+  for (const outcome of [won, idle]) {
+    const before = outcome.game.total;
+    stepGame(outcome.game, true, DT);
+    assert.equal(outcome.game.total, before, "a finished game stays finished");
   }
 });
 
-test("score bands, cut lines and kind comparisons", () => {
-  assert.equal(humanLine(0), bands[0].line);
-  assert.equal(humanLine(1), bands[1].line);
-  assert.equal(humanLine(3), bands[2].line);
-  assert.equal(humanLine(8), bands[3].line);
-  assert.equal(humanLine(9), bands[4].line);
-  assert.equal(humanLine(MAX_CUTS), bands[4].line);
-  assert.equal(cutLine(5, "রাফি"), "রাফি ৫টা ঘুড়ি কাটল");
-  assert.equal(cutLine(5), "৫টা ঘুড়ি কাটলাম");
-  assert.equal(compareLine(7, 5, "রাফি"), "রাফির চেয়ে ২টা বেশি!");
-  assert.equal(compareLine(5, 5, "রাফি"), "একদম সমান! রাফিও ৫টা কেটেছে।");
-  assert.equal(compareLine(4, 6, "রাফি"), "আর একটু হলেই! মাত্র ২টা কম।");
-  assert.equal(compareLine(1, 9, ""), "বন্ধু এখনো ৮টা এগিয়ে। আরেকবার?");
-  for (let cuts = 0; cuts <= MAX_CUTS; cuts++) assert.doesNotMatch(compareLine(cuts, 6, "রাফি") + humanLine(cuts), /হেরে|খারাপ|ব্যর্থ/);
+test("stars are kites kept; easy tops out at two; a lost evening has none", () => {
+  assert.deepEqual([starsOf(true, 0), starsOf(true, 1), starsOf(true, 2), starsOf(true, 4), starsOf(false, 3)], [3, 2, 1, 1, 0]);
+  assert.equal(starsOf(true, 0, "e"), 2);
+  assert.equal(starsOf(true, 0, "h"), 3);
 });
 
-test("challenge links round-trip, and hostile or impossible ones are refused or trimmed", () => {
-  const shared = { seed: 48213, cuts: 7, name: "রাফি", look: { pattern: "chokhdar", color: "blue" }, level: 1 } as const;
-  const hash = sharedHash(shared);
-  assert.equal(hash, "s=48213&t=7&p=chokhdar&c=blue&n=" + encodeURIComponent("রাফি"));
-  assert.deepEqual(parseShared("#" + hash), shared);
-  assert.equal(share.normalize(hash), hash);
-  assert.equal(share.normalize("s=48213&t=7&n=রাফি&x=<script>"), sharedHash({ ...shared, look: null }), "unknown keys are dropped");
-  assert.equal(share.normalize("s=48213&t=7&p=<img>&c=blue"), "s=48213&t=7", "a forged kite is dropped, the score kept");
-  for (const bad of ["", "result", "#result", "s=0&t=1", "s=1000000000&t=1", "s=-4&t=1", "s=12&t=-1", `s=12&t=${MAX_CUTS + 1}`, "s=12&t=999", "s=1.5&t=1", "s=12&t=2.5", "s=12&t=ten", "s=12&t=1&n=" + "ক".repeat(700)]) {
+test("old links still open: s/t/n/p/c/l without v, the same seed and level number, honest about the old count", () => {
+  const old = parseShared("#s=862479917&t=18&n=" + encodeURIComponent("রাফি"))!;
+  assert.deepEqual({ ...old }, { seed: 862479917, cuts: 18, name: "রাফি", look: null, level: 1, mode: "n", lost: 0, tenths: 0, won: false, old: true });
+  assert.equal(parseShared("s=48213&t=7&p=chokhdar&c=blue&l=5")?.level, 5);
+  assert.equal(sharedHash(parseShared("s=48213&t=7&p=chokhdar&c=blue")!), "s=48213&t=7&p=chokhdar&c=blue", "an old link writes back as it was");
+  assert.equal(sharedHash(parseShared("s=48213&t=7&l=5")!), "s=48213&t=7&l=5");
+  for (const bad of ["", "result", "s=0&t=1", "s=1000000000&t=1", "s=12&t=-1", `s=12&t=${MAX_CUTS + 1}`, "s=1.5&t=1", "s=12&t=1&l=11", "s=12&t=1&l=05", "s=12&t=1&d=h"]) {
     assert.equal(share.normalize(bad), null, bad);
   }
-  const odd = parseShared("s=12&t=3&n=" + encodeURIComponent("  রিমা‮\u0000 আক্তার আক্তার আক্তার  "));
-  assert.equal(odd?.name, "রিমা আক্তার আক্তার আ");
-  assert.equal(parseShared("s=12&t=0")?.cuts, 0);
-  assert.equal(parseShared(`s=12&t=${MAX_CUTS}`)?.cuts, MAX_CUTS);
+  assert.match(friendLine(old), /আগের ভো-কাট্টায় ১৮টা/);
+  assert.match(friendClaim(old), /আগের খেলার স্কোর/);
+  assert.equal(compareLine({ won: true, lost: 0, tenths: 300, cuts: 2 }, old), "", "no compare against a different game");
+});
+
+test("new links: v=2 with the mode, kites lost and time; impossible runs are refused", () => {
+  const shared: Omit<Shared, "won"> = { seed: 48213, cuts: 3, name: "রাফি", look: { pattern: "chokhdar", color: "blue" }, level: 3, mode: "h", lost: 1, tenths: 423, old: false };
+  const hash = sharedHash(shared);
+  assert.equal(hash, "s=48213&t=3&p=chokhdar&c=blue&l=3&v=2&d=h&k=1&m=423&n=" + encodeURIComponent("রাফি"));
+  assert.deepEqual(parseShared(hash), { ...shared, won: true });
+  assert.equal(share.normalize(hash), hash);
+  assert.equal(sharedHash({ ...shared, mode: "n" }).includes("d="), false);
+  const lost = parseShared("s=48213&t=1&l=3&v=2&k=3&m=200")!;
+  assert.equal(lost.won, false, "every kite gone: a lost evening");
+  for (const bad of [
+    "s=48213&t=9&l=3&v=2&k=0&m=200", // more cuts than rivals
+    "s=48213&t=3&l=3&v=2&k=7&m=200", // more kites lost than the নাটাই held
+    "s=48213&t=1&l=3&v=2&k=1&m=200", // neither cleared nor out
+    "s=48213&t=3&l=3&v=2&k=0", "s=48213&t=3&l=3&v=2&m=200", "s=48213&t=3&l=3&v=2&k=0&m=0", "s=48213&t=3&l=3&v=3&k=0&m=200",
+    "s=48213&t=3&l=13&v=2&k=0&m=200", "s=48213&t=3&l=3&v=2&d=x&k=0&m=200", "s=48213&t=3&l=3&v=2&k=0&m=999999",
+  ]) assert.equal(parseShared(bad), null, bad);
+  assert.equal(share.normalize("s=48213&t=3&l=3&v=2&k=0&m=200&x=<script>"), "s=48213&t=3&l=3&v=2&k=0&m=200", "unknown keys are dropped");
+  assert.equal(share.normalize("s=48213&t=3&l=3&v=2&k=0&m=200&p=<img>&c=blue"), "s=48213&t=3&l=3&v=2&k=0&m=200", "a forged kite is dropped");
+  assert.equal(parseShared("s=12&t=3&l=3&v=2&k=0&m=50&n=" + encodeURIComponent("  রিমা‮\u0000 আক্তার আক্তার আক্তার  "))?.name, "রিমা আক্তার আক্তার আ");
+});
+
+test("every bot run makes a link that parses back to itself", () => {
+  for (let level = 1; level <= LEVEL_COUNT; level++) {
+    const outcome = play(level * 101, level, "n", CASUAL)!;
+    const shared = { seed: level * 101, cuts: outcome.cuts, name: "", look: null, level, mode: "n" as const, lost: outcome.lost, tenths: Math.round(outcome.time * 10), old: false };
+    assert.deepEqual(parseShared(sharedHash(shared)), { ...shared, won: outcome.won }, `level ${level}`);
+  }
 });
 
 test("a kite from ঘুড়ি আর ফানুস flies here; lanterns and junk don't", () => {
@@ -203,90 +188,48 @@ test("a kite from ঘুড়ি আর ফানুস flies here; lanterns an
   assert.equal(new Set(LOOKS.map(look => look.color)).size, LOOKS.length, "six kites, six colours");
 });
 
-test("previews, banner and caption are personal and honest", () => {
-  const shared = { seed: 48213, cuts: 7, name: "রাফি", look: null, level: 1 };
-  assert.equal(previewTitle(shared), "রাফি ৭টা ঘুড়ি কেটেছে। তুমি পারবে?");
-  assert.equal(previewTitle({ ...shared, name: "" }), "সাকরাইনের ছাদে ৭টা ঘুড়ি কাটা! তুমি পারবে?");
-  assert.equal(banner(shared), "রাফি ৭টা ঘুড়ি কেটেছে। একই আকাশ, একই বাতাস, এবার তোমার পালা।");
-  assert.match(caption(shared), /৭টা ঘুড়ি/);
-  assert.match(caption({ cuts: 0 }), /একটাও/);
-  assert.equal(share.preview(sharedHash(shared)).title, "রাফি ৭টা ঘুড়ি কেটেছে। তুমি পারবে?");
-  assert.ok(share.preview("junk").title.length > 0);
-  assert.equal(share.tally, undefined);
-});
-
-test("content meets the SEO limits, says what a link carries, and keeps the safety line", () => {
-  assert.ok(site.title.length <= 45, `${site.title.length}`);
-  assert.ok(site.description.length >= 120 && site.description.length <= 160, `${site.description.length}`);
-  assert.ok(site.faq.length >= 5);
-  assert.ok(site.steps.length >= 3);
-  assert.ok(site.headline && site.headline !== site.title);
-  assert.match(site.privacy.join(" "), /স্কোর/);
-  assert.match(site.privacy.join(" "), /নাম/);
-  const everything = JSON.stringify(site) + share.preview("").description;
-  assert.match(everything, /বিদ্যুতের তারের কাছে না/);
-  assert.doesNotMatch(everything, /আপনি|করুন|জুয়া|বাজি|টাকা জিত/);
-  const glass = site.faq.filter(item => /কাচ/.test(item.question + item.answer));
-  assert.equal(glass.length, 1, "glass string comes up once, as a warning");
-  assert.match(glass[0].answer, /এই খেলায় কাচ নেই/);
-  assert.doesNotMatch(everything.replace(JSON.stringify(glass[0]).slice(1, -1), ""), /কাচ|মাঞ্জা/);
-});
-
-test("ten পাড়া: level 1 is the original evening, and each later one adds one thing and never gets easier", () => {
-  assert.deepEqual(rivalsFor(1), ROUND_RIVALS.map(round => ({ ...round })), "level 1 flies the original rivals");
-  for (const seed of [1, 48213, 999_999_999]) {
-    assert.deepEqual(snapshot(play(seed, { limit: 60 * 40 }).game), snapshot(play(seed, { limit: 60 * 40, level: 1 }).game), "level 1 plays the old game");
-    assert.equal(windAt(createGame(seed, 1), 12, false), windAt({ ...createGame(seed), windScale: undefined }, 12, false));
-  }
-  const keys = ["speed", "steady", "strength", "attack0", "attack", "wind"] as const;
-  for (let level = 2; level <= LEVEL_COUNT; level++) {
-    const [before, now] = [LEVELS[level - 2], LEVELS[level - 1]];
-    assert.ok(now.speed >= before.speed && now.steady <= before.steady && now.strength >= before.strength && now.wind >= before.wind && now.attack <= before.attack, `level ${level} never gets easier`);
-    assert.ok(keys.some(key => now[key] !== before[key]), `level ${level} adds something`);
-    assert.ok(now.pass <= now.two && now.two < now.three && now.three <= MAX_CUTS);
-    const rivals = rivalsFor(level);
-    if (now.attack0) assert.ok(rivals[0].attackEvery > 0, "the first roof comes to hook you");
-  }
-});
-
-test("every পাড়া is fair: a steady player gets 3 stars, never touching cuts nothing, and real scores pass the link check", () => {
-  for (let level = 1; level <= LEVEL_COUNT; level++) {
-    for (const seed of [1, 48213, 2024]) {
-      const good = play(seed, { level });
-      assert.equal(good.game.phase, "over");
-      assert.equal(starsOf(good.game.cuts, level), 3, `level ${level} seed ${seed}: ${good.game.cuts} cuts`);
-      const idle = play(seed, { level, mode: "idle" });
-      assert.equal(starsOf(idle.game.cuts, level), 0, "no stars for doing nothing");
-      assert.deepEqual(parseShared(sharedHash({ seed, cuts: good.game.cuts, name: "", look: null, level })), { seed, cuts: good.game.cuts, name: "", look: null, level });
-    }
-  }
-  // Level 1 is nearly impossible to fail: one cut clears it, and even holding টান non-stop gets one.
-  assert.equal(LEVELS[0].pass, 1);
-  for (const seed of [1, 48213, 2024]) assert.ok(starsOf(play(seed, { mode: "hold" }).game.cuts, 1) >= 1);
-});
-
-test("stars and near-miss lines use exact numbers", () => {
-  assert.deepEqual([starsOf(0, 1), starsOf(1, 1), starsOf(4, 1), starsOf(7, 1), starsOf(12, 1)], [0, 1, 2, 3, 3]);
-  assert.equal(nearLine(0, 1, null), "আর ১টা কাটলেই এই পাড়া পার।");
-  assert.equal(nearLine(5, 1, null), "আর ২টা কাটলেই ৩ তারা।");
-  assert.equal(nearLine(9, 1, 11), "আর ৩টা কাটলেই নতুন সেরা।");
-  assert.equal(nearLine(12, 1, 11), "");
-});
-
 test("the old best moves into level 1's stars once, and only when there is nothing newer", () => {
   assert.equal(migrateBest({}, "5"), 2);
   assert.equal(migrateBest({}, "9"), 3);
+  assert.equal(migrateBest({}, "1"), 1);
   assert.equal(migrateBest({}, "0"), 0, "never cut one: nothing to move");
   assert.equal(migrateBest({}, null), 0);
   assert.equal(migrateBest({}, "99"), 0);
   assert.equal(migrateBest({ 1: 1 }, "9"), 0, "already moved");
 });
 
-test("links carry the পাড়া; old links without it open level 1; bad levels are refused", () => {
-  const shared = { seed: 48213, cuts: 7, name: "", look: { pattern: "chokhdar", color: "blue" }, level: 5 } as const;
-  assert.equal(sharedHash(shared), "s=48213&t=7&p=chokhdar&c=blue&l=5");
-  assert.deepEqual(parseShared(sharedHash(shared)), shared);
-  assert.equal(parseShared("s=48213&t=7&p=chokhdar&c=blue")?.level, 1);
-  assert.equal(sharedHash({ ...shared, level: 1 }), "s=48213&t=7&p=chokhdar&c=blue");
-  for (const bad of ["0", "11", "3.5", "-1", "x", "05"]) assert.equal(parseShared(`s=48213&t=7&l=${bad}`), null, `l=${bad}`);
+test("lines: exact numbers, kind comparisons, honest previews", () => {
+  assert.equal(seconds(423), "৪২.৩");
+  assert.equal(cutLine(5, "রাফি"), "রাফি ৫টা ঘুড়ি কাটল");
+  const friend: Shared = { seed: 1, cuts: 3, name: "রাফি", look: null, level: 3, mode: "n", lost: 1, tenths: 400, won: true, old: false };
+  assert.equal(compareLine({ won: true, lost: 0, tenths: 500, cuts: 3 }, friend), "রাফির চেয়ে ১টা ঘুড়ি কম হারিয়েছ।");
+  assert.equal(compareLine({ won: true, lost: 1, tenths: 380, cuts: 3 }, friend), "রাফির চেয়ে ২.০ সেকেন্ড আগে!");
+  assert.equal(compareLine({ won: true, lost: 1, tenths: 420, cuts: 3 }, friend), "আর একটু হলেই! মাত্র ২.০ সেকেন্ড পিছিয়ে।");
+  assert.equal(compareLine({ won: false, lost: 3, tenths: 420, cuts: 1 }, friend), "রাফি পার হয়েছে। আরেকবার?");
+  assert.equal(previewTitle(friend), "রাফি বংশালের ৩টা ঘুড়িই কেটেছে, ৪০.০ সেকেন্ডে। তুমি পারবে?");
+  assert.equal(friendLine({ ...friend, won: false, cuts: 0, lost: 3 }), "রাফি বংশালে একটাও ঘুড়ি কাটতে পারেনি।");
+  assert.equal(previewTitle({ ...friend, old: true }), "রাফি ৩টা ঘুড়ি কেটেছে। তুমি পারবে?");
+  assert.equal(share.preview(sharedHash(friend)).title, previewTitle(friend));
+  assert.ok(share.preview("junk").title.length > 0);
+  assert.match(caption({ cuts: 2, level: 1, won: true }), /২টা ঘুড়ি/);
+  assert.match(caption({ cuts: 0, level: 1, won: false }), /একটাও/);
+  for (const won of [true, false]) for (let lost = 0; lost <= 5; lost++) assert.doesNotMatch(humanLine(won, lost, 2), /হেরে|খারাপ|ব্যর্থ/);
+});
+
+test("content meets the SEO limits, says what a link carries, keeps the safety line, and has at least 6 FAQs", () => {
+  assert.equal(site.title, "ঘুড়ি কাটাকাটির গেম: সাকরাইনের ভো-কাট্টা");
+  assert.equal(site.headline, "সাকরাইনের ছাদে কয়টা ঘুড়ি কাটতে পারবে?");
+  assert.ok(site.title.length <= 45, `${site.title.length}`);
+  assert.ok(site.description.length >= 120 && site.description.length <= 160, `${site.description.length}`);
+  assert.ok(site.faq.length >= 6);
+  assert.ok(site.steps.length >= 3);
+  assert.match(site.privacy.join(" "), /স্কোর/);
+  assert.match(site.privacy.join(" "), /নাম/);
+  const everything = JSON.stringify(site) + share.preview("").description;
+  assert.match(everything, /বিদ্যুতের তারের কাছে না/);
+  assert.doesNotMatch(everything, /আপনি|করুন|জুয়া|বাজি ধর|টাকা জিত|এক চাপে টান/);
+  const glass = site.faq.filter(item => /কাচ/.test(item.question + item.answer));
+  assert.equal(glass.length, 1, "glass string comes up once, as a warning");
+  assert.match(glass[0].answer, /এই খেলায় কাচ নেই/);
+  assert.equal(everything.normalize("NFC"), everything, "Bangla is NFC");
 });

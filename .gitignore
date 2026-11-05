@@ -13,3 +13,10 @@ data/
 # Screenshots from scripts/shot.mjs during development
 .shots/
 __pycache__/
+
+# Repo skills are shared with every session; the rest of .claude stays local (global gitignore ignores .claude).
+!.claude/
+.claude/*
+!.claude/skills/
+# The central ai_docs folder belongs to this repo (the global gitignore hides ai_docs elsewhere).
+!ai_docs/

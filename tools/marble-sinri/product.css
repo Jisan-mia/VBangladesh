@@ -1,97 +1,135 @@
-.tool-marble-sinri{--accent:#2e7d6b;--accent-deep:#1d5548;--ink:#1f2b2a;--muted:#56625e;--paper:#f3ede0;--paper-edge:#ddd5c4;--brick:#b5523b;--warn:#d64545}
-.tool-marble-sinri .ms-page{color:var(--ink)}
+/* মার্বেল-সিঁড়ি: the board fills the stage; the title, the end screen and সব তলা sit over it. One palette per world (lib/paint.ts). */
+.tool-marble-sinri{--accent:#2e7d6b;--accent-deep:#1d5548;--ink:#1f2b2a;--muted:#56625e;--paper:#f3ede0;--paper-edge:#ddd5c4;--cream:#fff8ea;--ease-out:cubic-bezier(.23,1,.32,1)}
 .tool-marble-sinri .ms-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-/* hero: one short line, so the board and its buttons land on the first phone screen */
-.ms-hero{padding:10px 0 4px}
-.ms-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(21px,6vw,40px);line-height:1.3;font-weight:700;letter-spacing:0}
-.ms-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
-@media (min-width:720px){.ms-lead{display:block}.ms-page:has(.ms-friend) .ms-lead{display:none}}
+.ms{--panel:#1f2b2ae6;--gold:#ffd166;position:relative;width:100%;max-width:560px;color:var(--cream)}
+.ms[data-look=stairs]{--panel:#2b2118e8;--gold:#ffcf7a}
+.ms[data-look=scaffold]{--panel:#2a1a12e8;--gold:#ffb46a}
+.ms[data-look=alley]{--panel:#0d1220eb;--gold:#ffe08c}
+.ms button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
-.ms{display:grid;gap:8px;max-width:420px}
+/* the board: exactly the stage in the player, so nothing scrolls while playing; 3:5 outside it */
+.ms-play{position:relative;width:100%;aspect-ratio:3/5;max-height:calc(100svh - 24px);overflow:hidden;border-radius:16px;background:#bfe3f2;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.ms[data-player] .ms-play{aspect-ratio:auto;max-height:none;height:var(--stage-h,auto);border-radius:12px}
+.tool-marble-sinri .gp-stage[data-immersive] .ms-play{border-radius:0}
+.tool-marble-sinri .gp-stage,.tool-marble-sinri .gp[data-immersive] .gp-stage{padding:0}
+.ms-play>canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
 
-.ms-friend{padding:10px 14px;border-radius:14px;background:var(--paper);border-left:5px solid var(--accent)}
-.ms-friend p,.ms-friend h2{margin:0}
-.ms-kicker{font-size:13px;font-weight:600;color:var(--accent)}
-.ms-friend h2{font-family:var(--font-display);font-size:16px;line-height:1.4}
-.ms-friend p:last-child{margin-top:2px;font-size:13px;line-height:1.45;color:var(--muted)}
+/* the HUD's one HTML part: the floor badge, top-left; it opens সব তলা */
+.ms-badge{position:absolute;top:12px;left:10px;z-index:2;display:inline-flex;align-items:center;gap:7px;max-width:46%;min-height:32px;padding:0 11px 0 9px;border:0;border-radius:8px;background:var(--panel);color:var(--cream);font-size:13px;font-weight:700;line-height:1.1;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ms-badge i{flex:none;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px #ffd16633}
+.ms-badge:disabled{opacity:1}
+/* the first floors show where to hold, fading after a few seconds */
+.ms-halves{position:absolute;inset:auto 0 18px;z-index:1;display:grid;grid-template-columns:1fr 1fr;margin:0;pointer-events:none;animation:ms-hint 5s linear forwards}
+.ms-halves span{justify-self:center;padding:7px 13px;border-radius:8px;background:#1f2b2ab0;color:#fff;font-size:14px;font-weight:700}
+@keyframes ms-hint{0%,70%{opacity:1}100%{opacity:0}}
 
-/* where you are, chances left, marbles picked */
-.ms-hud{position:relative;display:flex;align-items:center;gap:12px;min-height:32px}
-.ms-hud p{margin:0}
-.ms-where{flex:1;min-width:0;font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ms-where b{font-family:var(--font-display);font-size:17px;color:var(--ink)}
-.ms-chances{display:flex;gap:4px}
-.ms-chances i{width:14px;height:14px;border-radius:50%;border:2px solid var(--accent);background:radial-gradient(circle at 35% 35%,#fff9 0 2px,transparent 3px),var(--accent)}
-.ms-chances i[data-on=false]{background:transparent;border-style:dashed;opacity:.6}
-.ms-picked{display:flex;align-items:center;gap:4px;font-weight:700;font-variant-numeric:tabular-nums}
-.ms-picked span{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff 0 1.5px,transparent 2.5px),#e8b923;box-shadow:0 0 0 1.5px #a07d10}
-.ms-streak{position:absolute;right:0;top:100%;z-index:2;margin-top:6px!important;pointer-events:none}
-.ms-streak span{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--ink);color:#ffd166;font-size:14px;font-weight:800}
+/* ---- the title ---- */
+.ms-start{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 16px 16px;overflow:auto;overscroll-behavior:contain;background:linear-gradient(#1f2b2a00 0%,#1f2b2aa8 24%,#1f2b2ae0 100%);text-align:center;animation:ms-in .25s var(--ease-out)}
+.ms-start[data-finale]{background:linear-gradient(#3a0f0a00 0%,#3a0f0ab8 24%,#1f2b2ae6 100%)}
+.ms-go{display:grid;justify-items:center;width:min(100%,320px);padding:4px 8px 12px;border:0;border-radius:26px;background:none;color:var(--cream);font-family:var(--font-display);font-size:36px;font-weight:800;line-height:1.1;transition:transform .12s var(--ease-out)}
+.ms-go-art{display:block;width:100%;height:clamp(120px,25vh,210px)}
+.ms-go span{margin-top:-4px;padding:6px 32px 9px;border-radius:12px;background:var(--accent);box-shadow:0 5px 0 var(--accent-deep),0 16px 30px -12px #000c}
+.ms-go:active{transform:translateY(3px) scale(.98)}
+.ms-go:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+.ms-pick{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px;width:min(100%,380px)}
+.ms-pick-name h2{margin:0;font-family:var(--font-display);font-size:21px;font-weight:800;line-height:1.3;color:#fff}
+.ms-finale-badge{margin:0 auto 2px;padding:1px 10px;width:max-content;border-radius:4px;background:#c2361f;color:#fff;font-size:12px;font-weight:700}
+.ms-got{margin:0;color:var(--gold);font-size:15px;letter-spacing:2px}
+.ms-got span{color:#ffffff40}
+.ms-got small{color:#f3e6cfcc;font-size:13px;letter-spacing:0}
+.ms-step{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid #fff8ea55;border-radius:14px;background:#ffffff14;color:var(--cream)}
+.ms-step:disabled{opacity:.25}
+.ms-step svg,.ms-sheet-close svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.ms-lesson{max-width:380px;margin:0;padding:8px 12px;border-left:4px solid var(--gold);border-radius:4px 12px 12px 4px;background:#ffffff14;font-size:15px;line-height:1.5;text-align:left}
+.ms-lesson b{margin-right:6px;color:var(--gold)}
+.ms-lesson small{margin-left:4px;color:#f3e6cfaa;font-size:13px;white-space:nowrap}
+.ms-start[data-finale] .ms-lesson{border-left-color:#ff7a5c}
+.ms-start[data-finale] .ms-lesson b{color:#ffb39e}
+.ms-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;width:min(100%,320px);padding:4px;border-radius:14px;background:#ffffff14}
+.ms-modes button{min-height:40px;border:0;border-radius:10px;background:transparent;color:var(--cream);font-size:15px;font-weight:700}
+.ms-modes button[aria-checked=true]{background:var(--cream);color:var(--ink)}
+.ms-mode-line{margin:0;font-size:13px;line-height:1.45;color:#f3e6cf}
+.ms-colours{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:0;padding:0;list-style:none}
+.ms-colours button{display:grid;place-items:center;width:40px;height:40px;padding:0;border:2px solid transparent;border-radius:50%;background:#ffffff14}
+.ms-colours button[aria-pressed=true]{border-color:var(--gold);background:#ffffff2a}
+.ms-swatch{display:inline-block;width:26px;height:26px;border-radius:50%;box-shadow:inset -3px -4px 0 #0000002e,0 0 0 1.5px #0003;background-image:radial-gradient(circle at 32% 30%,#fffd 0 3px,transparent 4px),linear-gradient(35deg,transparent 42%,currentColor 43% 57%,transparent 58%)}
+.ms-start-foot{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2px 16px;margin:0;font-size:12px;color:#f3e6cfaa}
+.ms-start-foot .kit-link{min-height:40px;color:var(--cream);font-size:15px;font-weight:700}
+.ms-start-foot .kit-link span{margin-left:4px;color:var(--gold);font-weight:600}
+.ms-friend{width:min(100%,380px);margin:0;padding:8px 12px;border-radius:14px;background:#fff8ea1f;font-size:13px;line-height:1.45;color:#f3e6cf;text-align:left}
+.ms-friend b{color:#fff}
 
-/* the board: hold either half; only here does a finger stop the page from scrolling */
-.ms-board{position:relative;width:100%;border-radius:14px;overflow:hidden;box-shadow:0 6px 18px #1f2b2a2e;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
-.ms-board canvas{display:block;width:100%;aspect-ratio:360/480;background:#e3d6bf}
-.ms-halves{position:absolute;inset:auto 0 18% 0;display:grid;grid-template-columns:1fr 1fr;pointer-events:none}
-.ms-halves span{justify-self:center;padding:8px 14px;border-radius:999px;background:#1f2b2ad9;color:#fff;font-size:15px;font-weight:700;animation:ms-nudge 1.6s ease-in-out infinite}
-.ms-halves span:last-child{animation-delay:.8s}
-@keyframes ms-nudge{50%{transform:scale(1.06)}}
-.ms-toast{position:absolute;left:50%;top:30px;display:grid;justify-items:center;gap:2px;width:max-content;max-width:86%;padding:8px 16px;border-radius:16px;background:#1f2b2ae6;color:#fff;text-align:center;pointer-events:none;transform:translateX(-50%);animation:ms-in .2s ease-out both}
-.ms-toast b{font-family:var(--font-display);font-size:18px;line-height:1.35}
-.ms-toast small{font-size:13px;opacity:.9}
-.ms-toast[data-big]{padding:12px 22px}
-.ms-toast[data-big] b{font-size:22px}
-.ms-toast .gx-reveal{font-size:28px}
-.ms-toast .gx-stars span:not(.on){color:#ffffff55}
-@keyframes ms-in{from{opacity:0;transform:translate(-50%,-6px)}}
-.ms-overlay{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;padding:16px;background:#1f2b2ae0;color:#fff;text-align:center}
-.ms-overlay p{margin:0;font-weight:600}
-.ms-overlay .kit-primary{min-width:180px;min-height:56px;font-size:19px}
+/* ---- the first-run story ---- */
+.ms-story{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;padding:16px 16px 18%;background:#1f2b2a66;pointer-events:none}
+.ms-skip{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);margin:0;white-space:nowrap;padding:4px 10px;border-radius:8px;background:#1f2b2aa6;font-size:12px;font-weight:600}
+.ms-panel{max-width:340px;margin:0;padding:14px 18px;border:3px solid var(--cream);border-radius:6px;background:var(--cream);color:var(--ink);font-family:var(--font-display);font-size:21px;font-weight:700;line-height:1.45;box-shadow:6px 6px 0 #1f2b2a;animation:ms-in .24s var(--ease-out)}
+.ms-dots{display:flex;gap:6px;margin:0}
+.ms-dots i{width:8px;height:8px;border-radius:50%;background:#fff8ea55}
+.ms-dots i[data-on]{background:var(--cream)}
 
-.ms-line{min-height:22px;margin:0;font-size:15px;font-weight:600;line-height:1.45;text-align:center}
+/* ---- our own pause cover (outside the player's menu) ---- */
+.ms-cover{position:absolute;inset:0;z-index:3;display:grid;place-content:center;justify-items:center;gap:12px;background:#1f2b2ac4;text-align:center}
+.ms-cover p{margin:0;font-family:var(--font-display);font-size:20px;font-weight:700}
+.ms-cover .kit-primary{min-width:200px;min-height:56px;font-size:19px}
 
-/* two big hold buttons, the same as holding the board's halves */
-.ms-pads{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.ms-pads button{min-height:60px;border:2px solid var(--ink);border-radius:16px;background:#fff;color:var(--ink);font-family:var(--font-display);font-size:20px;font-weight:800;box-shadow:0 4px 0 var(--paper-edge);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .08s ease-out}
-.ms-pads button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--paper-edge);background:var(--accent);border-color:var(--accent-deep);color:#fff}
+/* ---- the end screen ---- */
+.ms-finish{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;overflow:auto;background:#1f2b2ac8;text-align:center;animation:ms-in .26s var(--ease-out) both}
+.ms-finish-kicker{margin:0;font-size:13px;font-weight:700;color:var(--gold)}
+.ms-finish h2{margin:0;font-family:var(--font-display);font-size:clamp(23px,7cqw,30px);font-weight:800;line-height:1.25;color:#fff}
+.ms-finish .gx-reveal{font-size:38px;gap:6px}
+.ms-nostar{margin:0;font-size:30px;letter-spacing:4px;color:#ffffff40}
+.ms-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:min(100%,380px);margin:4px 0 0}
+.ms-stats div{display:grid;gap:1px;padding:7px 4px;border-radius:12px;background:#fff8ea1a}
+.ms-stats dt{font-size:12px;color:#f3e6cf}
+.ms-stats dd{margin:0;font-family:var(--font-display);font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;color:#fff}
+.ms-stats small{font-size:13px;font-weight:600;color:#f3e6cfaa}
+.ms-miss{margin:0;padding:4px 12px;border-radius:12px;background:#ffd16633;font-size:15px;font-weight:700;color:#fff6e2}
+.ms-versus{max-width:320px;margin:0;font-size:15px;font-weight:600;line-height:1.45}
+.ms-fresh{display:flex;align-items:center;gap:8px;margin:0;padding:6px 12px;border-radius:12px;background:#ffffff14;font-size:14px}
+.ms-fresh b{color:var(--gold)}
+.ms-line{max-width:330px;margin:0;font-size:14px;line-height:1.5;color:#f3e6cf}
+.ms-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:min(100%,360px);margin:4px 0 0;padding:0;list-style:none}
+.ms-actions li:first-child,.ms-actions li:nth-child(2):last-child{grid-column:1/-1}
+.tool-marble-sinri .ms-actions button{position:relative;width:100%;min-height:52px;font-size:17px}
+.tool-marble-sinri .ms-actions li:first-child button{min-height:58px;font-size:19px}
+.tool-marble-sinri .ms-actions .kit-secondary{background:transparent;color:var(--cream);border-color:var(--cream)}
+.ms-actions kbd{margin-right:8px;padding:1px 7px;border-radius:6px;background:#ffffff2e;font-family:inherit;font-size:13px;font-weight:700}
+.ms-actions em{margin-left:8px;padding:1px 8px;border-radius:4px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800;vertical-align:middle}
+@media (pointer:coarse){.ms-actions kbd{display:none}}
+.tool-marble-sinri .ms-see{min-height:44px;color:var(--cream);font-size:15px}
 
-.ms-prefs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--ink)}
-.ms-pill{min-height:44px;padding:6px 14px;border:1.5px solid currentColor;border-radius:999px;background:transparent;color:inherit;font-size:14px;font-weight:700}
-.ms-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+/* ---- সব তলা ---- */
+.ms-sheet{position:absolute;inset:0;z-index:4;display:grid;align-items:start;padding:8px;background:#0d0a0899;animation:ms-fade .16s var(--ease-out)}
+.ms-sheet-card{display:grid;gap:12px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:14px 12px 16px;border-radius:16px;background:var(--panel);box-shadow:0 20px 40px -20px #000c;animation:ms-in .2s var(--ease-out)}
+.ms-sheet header{position:relative;padding-right:52px}
+.ms-sheet h2{margin:0;font-family:var(--font-display);font-size:24px;color:#fff}
+.ms-sheet header p{margin:2px 0 0;font-size:13px;color:#f3e6cf}
+.ms-sheet-close{position:absolute;top:0;right:0;display:grid;place-items:center;width:46px;height:46px;padding:0;border:1.5px solid #fff8ea55;border-radius:14px;background:#ffffff14;color:var(--cream)}
+.ms-world{--world:#e8a23a}
+.ms-world[data-look=stairs]{--world:#c9a27a}.ms-world[data-look=scaffold]{--world:#d9b44a}
+.ms-world h3{display:flex;align-items:center;gap:8px;margin:0 0 6px;font-size:16px;color:#fff}
+.ms-world h3 i{width:11px;height:11px;border-radius:50%;background:var(--world)}
+.ms-world ol{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.ms-world button{position:relative;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"key name stars" "key line line";align-items:center;column-gap:10px;row-gap:1px;width:100%;min-height:58px;padding:7px 10px;border:1.5px solid #fff8ea2a;border-radius:12px;background:#ffffff10;color:var(--cream);text-align:left}
+.ms-world button kbd{grid-area:key;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#ffffff1c;font-family:inherit;font-size:13px;font-weight:700}
+.ms-row-name{grid-area:name;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:15px}
+.ms-row-name i{padding:1px 8px;border-radius:4px;background:#c2361f;color:#fff;font-size:11px;font-style:normal;font-weight:700}
+.ms-row-name em{padding:1px 8px;border-radius:4px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800}
+.ms-row-line{grid-area:line;font-size:12.5px;line-height:1.4;color:#f3e6cfc0}
+.ms-row-stars{grid-area:stars;display:flex;font-size:13px;line-height:1}
+.ms-row-stars i{font-style:normal;color:#ffffff30}
+.ms-row-stars i[data-on]{color:var(--gold)}
+.ms-row-stars svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.ms-world button:disabled{opacity:.55}
+.ms-world button[data-finale]:not(:disabled){border-color:var(--world)}
+.ms-world button[aria-current]{background:#fff8ea26;border-color:var(--cream)}
+.ms-world button[data-next]{box-shadow:0 0 0 3px var(--gold)}
+.ms-world button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
-/* the end of a run */
-.ms-end{display:grid;justify-items:center;gap:6px;padding:12px 14px;border-radius:16px;background:var(--paper);text-align:center}
-.ms-end p{margin:0}
-.ms-end-kicker{font-size:14px;font-weight:700;color:var(--accent)}
-.ms-end-score{font-family:var(--font-display);font-size:20px;font-weight:700}
-.ms-end-score b{font-size:44px;line-height:1.1;color:var(--accent)}
-.ms-end-score small{font-size:16px;color:var(--muted)}
-.ms-end-stages{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 12px;font-size:14px;font-weight:600}
-.ms-end-stages .gx-stars{font-size:13px;margin-left:2px}
-.ms-end-best,.ms-end-near,.ms-end-versus{font-size:14px;line-height:1.45;color:var(--muted)}
-.ms-end-near{font-weight:700;color:var(--ink)}
-.ms-end-versus{font-weight:700;color:var(--accent-deep)}
-.tool-marble-sinri .ms-again{width:100%;min-height:56px;margin-top:4px;font-size:19px}
-.ms-end-links{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px}
-.ms-end-links button{min-height:44px}
-
-.ms-drawer{border:1.5px solid var(--paper-edge);border-radius:14px;background:#fff}
-.ms-drawer summary{min-height:44px;display:flex;align-items:center;gap:8px;padding:0 14px;font-weight:700;cursor:pointer}
-.ms-drawer summary span{font-weight:500;color:var(--muted);font-size:14px}
-.ms-drawer[open]{padding-bottom:12px}
-.ms-drawer>p{margin:0 14px 10px;font-size:14px;line-height:1.5;color:var(--muted)}
-.ms-drawer .gx-levels{padding:0 10px}
-.ms-drawer .ms-stage-names{margin:8px 14px 12px;font-size:13px}
-.ms-colours{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin:0;padding:0 10px;list-style:none}
-.ms-colours button{display:grid;justify-items:center;gap:4px;width:100%;min-height:72px;padding:8px 4px;border:1.5px solid var(--paper-edge);border-radius:12px;background:#fff;color:var(--ink);font:inherit;cursor:pointer}
-.ms-colours button[aria-pressed=true]{border:2.5px solid var(--accent);background:var(--paper)}
-.ms-colours button:disabled{border-style:dashed;cursor:not-allowed}
-.ms-colours button:disabled .ms-swatch{opacity:.35;filter:grayscale(.7)}
-.ms-colours small{font-size:12px;line-height:1.3;text-align:center;color:var(--muted)}
-.ms-swatch{width:30px;height:30px;border-radius:50%;box-shadow:inset -3px -4px 0 #0000002e,0 0 0 1.5px #0003;background-image:radial-gradient(circle at 32% 30%,#fffd 0 3px,transparent 4px),linear-gradient(35deg,transparent 42%,currentColor 43% 57%,transparent 58%)}
-
-.ms-result{scroll-margin-top:12px;margin-top:16px;padding-top:18px;border-top:2px solid var(--paper-edge)}
-.ms-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,32px);line-height:1.4}
+/* ---- the card and share, under the board inside the stage ---- */
+.ms-result{scroll-margin-top:12px;margin-top:16px;padding:18px 12px 8px;border-top:2px solid var(--paper-edge);color:var(--ink)}
+.ms-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,30px);line-height:1.4}
 .ms-result h2 em{font-style:normal;color:var(--accent)}
 .ms-result>p{margin:0 0 16px;color:var(--muted)}
 .ms-result-body{display:grid;gap:22px}
@@ -100,20 +138,17 @@
 .ms-name small{font-weight:400;color:var(--muted);font-size:13px}
 .ms-name input{border:1.5px solid var(--paper-edge);border-radius:12px;font-size:17px}
 
-.ms-guide h2{font-family:var(--font-display);margin-bottom:12px}
-.ms-guide>p{color:var(--muted);max-width:640px}
-.ms-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.ms-guide li{display:flex;gap:14px;align-items:flex-start}
-.ms-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
-.ms-guide li p{margin:4px 0 0}
-
-@media (max-width:360px){
-  .ms-where b{font-size:15px}
-  .ms-pads button{font-size:18px}
+@keyframes ms-in{from{opacity:0;transform:translateY(10px)}}
+@keyframes ms-fade{from{opacity:0}}
+@media (max-height:640px){
+  .ms-go-art{height:clamp(90px,18vh,150px)}
+  .ms-go{font-size:30px}
+  .ms-start{gap:6px}
 }
-/* ধীরে খেলো: no bouncing hints or pops */
-.ms[data-slow=true] .ms-halves span,.ms[data-slow=true] .gx-pop,.ms[data-slow=true] .ms-toast{animation:none}
-@media (prefers-reduced-motion:reduce){
-  .ms-halves span,.ms-toast{animation:none}
-  .ms-pads button{transition:none}
-}
+/* press feedback on everything pressable; low specificity so .kit-primary and .ms-go keep their own */
+:where(.ms button:not(.ms-go)){transition:transform 160ms var(--ease-out)}
+:where(.ms button:not(:disabled,.ms-go):active){transform:scale(.97)}
+/* ধীরে খেলো and reduced motion: no slides, no bounce, no press shrink; the floor hint still fades out (opacity only) */
+.ms[data-calm] *:not(.ms-halves){animation:none!important;transition:none!important}
+.ms[data-calm] button:active{transform:none}
+@media (prefers-reduced-motion:reduce){.ms *:not(.ms-halves){animation:none!important;transition:none!important}.ms button:active{transform:none}}

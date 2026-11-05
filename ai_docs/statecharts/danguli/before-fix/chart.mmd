@@ -1,0 +1,73 @@
+---
+title: "Danguli: the hit, the window, the play key and the friend's field"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks HeldKeyActsOnce or PausedWhenBlurred or ReplayIsExact or ResultStaysUntilYouChoose
+    lg4: Path to the HeldKeyActsOnce or PausedWhenBlurred or ReplayIsExact or ResultStaysUntilYouChoose bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 bugPath
+  s0: Ready to flick
+  s1: Tab hidden
+  s2: Away, waiting
+  s3: Friend's challenge up, on a new field
+  s4: Paused
+  s5: ক#2494;ঠ#2495; in the air
+  s6: Space held: the game plays by itself
+  s7: ক#2494;ঠ#2495; in the air while you're away
+  s8: Hit in play
+  s9: Hit in play while you're away
+  s10: Result card
+  s11: Space held: the card was skipped
+  [*] --> s0
+  s0 --> s1: you hide the tab
+  s0 --> s2: you click into another window
+  s0 --> s5: you press Space or the held key repeats
+  s0 --> s3: you pick a level from the grid
+  s1 --> s0: you come back
+  s2 --> s0: you come back
+  s3 --> s0: you start again
+  s5 --> s6: the held key repeats
+  s5 --> s7: you click into another window
+  s5 --> s4: you hide the tab or you press P
+  s5 --> s8: the ক#2494;ঠ#2495; lands untouched or you press Space
+  s6 --> s8: you let go
+  s7 --> s5: you come back
+  s7 --> s9: the ক#2494;ঠ#2495; lands untouched
+  s4 --> s5: you press P or you press Space
+  s8 --> s10: the round ends or you press Space
+  s8 --> s6: the held key repeats
+  s10 --> s11: the held key repeats
+  s6 --> s11: the held key repeats
+  s10 --> s0: you start again
+  s9 --> s10: the round ends
+  s11 --> s0: you let go
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  class s0 teal
+  class s0 bugPath
+  class s1 teal
+  class s2 teal
+  class s3 breaks
+  class s3 bugPath
+  class s4 yellow
+  class s5 teal
+  class s5 bugPath
+  class s6 breaks
+  class s6 bugPath
+  class s7 teal
+  class s7 breaks
+  class s7 bugPath
+  class s8 teal
+  class s8 bugPath
+  class s9 teal
+  class s9 breaks
+  class s10 blue
+  class s11 breaks
+  class s11 bugPath

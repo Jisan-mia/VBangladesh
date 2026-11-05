@@ -1,0 +1,59 @@
+{
+  "tools/adda/components/carrom.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/ami-bolechhilam/components/envelope.tsx": {
+    "uncleared-timer": 2
+  },
+  "tools/argentina-na-brazil/lib/fan.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/bangla-typing/components/typewriter.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/bhorta/components/shilpata.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/biye-kobe/components/ghotok-file.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/current-gelo/lib/gelo.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/ganer-koli/lib/game.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/ghuri/components/kite-builder.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/golokdhadha/lib/levels.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/grade-dao/components/mark-sheet.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/jibh/components/ticket-counter.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/koto-cheno/components/slam-book.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/matir-bank/components/bank-builder.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/moner-boyos/components/weighing-machine.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/namta/components/slate-game.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/namta/lib/namta.ts": {
+    "sim-nondeterminism": 1
+  },
+  "tools/salami-chek/components/cheque-builder.tsx": {
+    "uncleared-timer": 1
+  },
+  "tools/shesh-bol/components/last-ball.tsx": {
+    "uncleared-timer": 2
+  }
+}

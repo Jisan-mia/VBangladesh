@@ -1,0 +1,178 @@
+---
+title: "ঘডﬂ°°2492¶ßﬂ°°2495¶ß দﬂ°°2503¶ßখﬂ°°2495¶ß: round, clock hand, card, rest screen and parent gate"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: break
+    lg2: rest
+    lg3: out
+    lg4: Breaks ChildCannotOpenGate or GateNeedsAFullHold or HandMovesOnlyUnderAFinger or InputReleasedWhenAway or NoDoubleResult or NoReadingNeeded or NoWayOutWithoutGate or RestOnlyAtBreak
+    lg5: Breaks ChildCannotOpenGate or GateNeedsAFullHold or HandMovesOnlyUnderAFinger or InputReleasedWhenAway or NoDoubleResult or NoReadingNeeded or NoWayOutWithoutGate or RestOnlyAtBreak in some cases
+    lg6: Path to the ChildCannotOpenGate or GateNeedsAFullHold or HandMovesOnlyUnderAFinger or InputReleasedWhenAway or NoDoubleResult or NoReadingNeeded or NoWayOutWithoutGate or RestOnlyAtBreak bug
+  }
+  class lg0 teal
+  class lg1 blue
+  class lg2 yellow
+  class lg3 pink
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Round" as r0 {
+      s0: Setting the clock, ghost finger shows
+      s1: Clock set right
+      s2: Left the kids' area
+      s3: Reading the clock
+      s4: Read it right
+      s5: Setting the clock, no ghost finger
+      s6: Last one right
+      s7: Card shows
+      s8: Card shows, round counted twice
+      s9: Level menu
+      [*] --> s0
+      s0 --> s1: you get it right [when Hand is one of Hand follows without a finger, Hands off, Turning a hand and Rest is not Rest screen shows and Gate is Gate shut]
+      s0 --> s2: the child taps a site link or the search [when Hand is one of Hand follows without a finger, Hands off and Rest is not Rest screen shows and Gate is Gate shut]
+      s1 --> s0: you start a round
+      s1 --> s3: you press পর#2503;রট#2494;
+      s2 --> s0: they come back
+      s3 --> s0: you start a round
+      s3 --> s4: you get it right
+      s4 --> s0: you start a round
+      s4 --> s5: you press পর#2503;রট#2494;
+      s5 --> s0: you start a round
+      s5 --> s6: you get it right [when Hand is one of Hand follows without a finger, Hands off, Turning a hand]
+      s6 --> s0: you start a round
+      s6 --> s7: you press শ#2503;ষ দ#2503;খ#2507;
+      s7 --> s0: you start a round [when Rest is not Rest screen shows and Gate is Gate shut]
+      s7 --> s2: the child taps a site link or the search [when Hand is not Turning a hand and Rest is not Rest screen shows]
+      s7 --> s8: you Tab to the hidden শ#2503;ষ দ#2503;খ#2507; and press Enter
+      s7 --> s9: you press শ#2503;ষ [when Rest is not Rest screen shows and Gate is Gate shut]
+      s8 --> s0: you start a round [when Rest is not Rest screen shows and Gate is Gate shut]
+      s8 --> s2: the child taps a site link or the search [when Hand is not Turning a hand and Rest is not Rest screen shows]
+      s8 --> s9: you press শ#2503;ষ [when Rest is not Rest screen shows and Gate is Gate shut]
+      s9 --> s0: you start a round
+      s9 --> s8: you Tab to the hidden শ#2503;ষ দ#2503;খ#2507; and press Enter
+      s7 --> s0: you Tab to আব#2494;র খ#2503;ল#2507; under the rest screen and press Enter [when Rest is Rest screen shows and Gate is Gate shut]
+      s8 --> s0: you Tab to আব#2494;র খ#2503;ল#2507; under the rest screen and press Enter [when Rest is Rest screen shows and Gate is Gate shut]
+    }
+    --
+    state "Hand" as r1 {
+      s10: Hands off
+      s11: Window away
+      s12: Turning a hand
+      s13: Turning a hand, window away
+      s14: Hand stuck, window away
+      s15: Hand follows without a finger
+      [*] --> s10
+      s10 --> s11: you click into another window [when Round is one of Setting the clock, ghost finger shows, Setting the clock, no ghost finger]
+      s10 --> s12: you press on the clock [when Round is one of Setting the clock, ghost finger shows, Setting the clock, no ghost finger and Rest is not Rest screen shows and Gate is Gate shut]
+      s11 --> s10: you come back to the window
+      s12 --> s10: you lift your finger
+      s12 --> s13: you click into another window [when Round is one of Setting the clock, ghost finger shows, Setting the clock, no ghost finger]
+      s13 --> s12: you come back to the window
+      s13 --> s14: you let go in another window
+      s14 --> s15: you come back to the window
+      s15 --> s10: the child taps a site link or the search [when Round is one of Card shows, Card shows, round counted twice, Setting the clock, ghost finger shows and Rest is not Rest screen shows]
+      s15 --> s14: you click into another window [when Round is one of Setting the clock, ghost finger shows, Setting the clock, no ghost finger]
+    }
+    --
+    state "Rest" as r2 {
+      s16: Time left today
+      s17: Today's time is up
+      s18: Rest screen shows
+      [*] --> s16
+      s16 --> s17: today's time runs out [when Round is not Left the kids' area]
+      s17 --> s18: you press শ#2503;ষ দ#2503;খ#2507; [when Round is Last one right and Hand is one of Hand follows without a finger, Hands off, Turning a hand and Gate is Gate shut]
+      s17 --> s18: you Tab to the hidden শ#2503;ষ দ#2503;খ#2507; and press Enter [when Round is one of Card shows, Level menu and Hand is one of Hand follows without a finger, Hands off, Turning a hand]
+      s18 --> s16: a grown-up gives 10 more minutes [when Gate is one of Child opened the gate, Grown-up opened the gate]
+    }
+    --
+    state "Gate" as r3 {
+      s19: Gate shut
+      s20: Gate held
+      s21: Sum question shows
+      s22: Child opened the gate
+      s23: Grown-up opened the gate
+      s24: Let go, timer still running
+      s25: Sum question shows without a full hold
+      [*] --> s19
+      s19 --> s20: someone holds বড#2492;দ#2503;র জন#2509;য [when Round is one of Card shows, Card shows, round counted twice or Rest is Rest screen shows]
+      s20 --> s19: they let go before 2 seconds
+      s20 --> s21: 2 seconds pass
+      s21 --> s19: the gate closes
+      s21 --> s22: a child mashes the number pad
+      s21 --> s23: a grown-up answers the sum
+      s20 --> s24: they let go before 2 seconds
+      s20 --> s19: they come back [when Round is Left the kids' area and Hand is Hands off and Rest is not Rest screen shows]
+      s22 --> s19: the gate closes
+      s23 --> s19: the gate closes
+      s24 --> s25: 2 seconds pass
+      s21 --> s19: they come back [when Round is Left the kids' area and Hand is Hands off and Rest is not Rest screen shows]
+      s25 --> s19: the gate closes
+      s25 --> s22: a child mashes the number pad
+      s25 --> s23: a grown-up answers the sum
+      s22 --> s19: they come back [when Round is Left the kids' area and Hand is Hands off and Rest is not Rest screen shows]
+      s23 --> s19: they come back [when Round is Left the kids' area and Hand is Hands off and Rest is not Rest screen shows]
+      s24 --> s19: they come back [when Round is Left the kids' area and Hand is Hands off and Rest is not Rest screen shows]
+      s22 --> s19: a grown-up gives 10 more minutes [when Round is not Left the kids' area and Rest is Rest screen shows]
+      s23 --> s19: a grown-up gives 10 more minutes [when Round is not Left the kids' area and Rest is Rest screen shows]
+      s25 --> s19: they come back [when Round is Left the kids' area and Hand is Hands off and Rest is not Rest screen shows]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 bugPath
+  class s2 pink
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 teal
+  class s3 mayBreak
+  class s3 bugPath
+  class s4 teal
+  class s4 bugPath
+  class s5 teal
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 teal
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 breaks
+  class s8 bugPath
+  class s9 blue
+  class s9 mayBreak
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 breaks
+  class s13 bugPath
+  class s14 breaks
+  class s14 bugPath
+  class s15 breaks
+  class s16 mayBreak
+  class s16 bugPath
+  class s17 mayBreak
+  class s17 bugPath
+  class s18 yellow
+  class s18 mayBreak
+  class s18 bugPath
+  class s19 mayBreak
+  class s19 bugPath
+  class s20 mayBreak
+  class s20 bugPath
+  class s21 mayBreak
+  class s21 bugPath
+  class s22 breaks
+  class s22 bugPath
+  class s23 mayBreak
+  class s24 mayBreak
+  class s24 bugPath
+  class s25 breaks
+  class s25 bugPath

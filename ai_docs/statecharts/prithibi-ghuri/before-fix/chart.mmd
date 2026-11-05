@@ -1,0 +1,150 @@
+---
+title: "পﬂ°°2499¶ßথﬂ°°2495¶ßবﬂ°°2496¶ß ঘﬂ°°2497¶ßরﬂ°°2495¶ß: a trip, its postcards, the daily limit and the parent gate"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: out
+    lg4: Breaks GateClosesBehindTheParent or GateNeedsAnAdult or NoNewRoundPastLimit or NoOutboundForKids or PostcardsAreNotSkipped
+    lg5: Breaks GateClosesBehindTheParent or GateNeedsAnAdult or NoNewRoundPastLimit or PostcardsAreNotSkipped in some cases
+    lg6: Path to the GateClosesBehindTheParent or GateNeedsAnAdult or NoNewRoundPastLimit or NoOutboundForKids or PostcardsAreNotSkipped bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 orange
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Trip" as r0 {
+      s0: Map: pick a country
+      s1: Left for আম#2494;র ছ#2507;টব#2503;ল#2494; (a grown-up's tool)
+      s2: Plane flying
+      s3: Postcard 1 (হ#2509;য#2494;ল#2507;)
+      s4: Last postcard
+      s5: Stamp question
+      s6: Right picture, stamp in 0.7 s
+      s7: Stamp page (সফর শ#2503;ষ)
+      s8: Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ)
+      s9: আজক#2503;র মত#2507; হল#2507;
+      [*] --> s0
+      s0 --> s1: you tap the আম#2494;র ছ#2507;টব#2503;ল#2494; card under the game [when Today is not Rest screen (আজ এট#2497;ক#2497;ই), and this trip started after it ran out]
+      s0 --> s2: you tap a country [when Today is not Rest screen (আজ এট#2497;ক#2497;ই), and this trip started after it ran out]
+      s1 --> s0: you reload the page or come back to it
+      s2 --> s3: the plane lands
+      s3 --> s4: you tap পর#2503;রট#2494; or you hold Enter on পর#2503;রট#2494;
+      s4 --> s5: you tap পর#2503;রট#2494; or you hold Enter on পর#2503;রট#2494; [when Key is Keys up]
+      s4 --> s5: the held key repeats [when Key is Enter held]
+      s5 --> s6: you tap the right picture
+      s6 --> s7: the stamp comes
+      s7 --> s8: you tap সফর শ#2503;ষ
+      s8 --> s0: you tap a trip number or you tap আব#2494;র খ#2503;ল#2507; [when Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+      s8 --> s9: you tap শ#2503;ষ [when Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+      s8 --> s0: you reload the page or come back to it [when Today is Rest screen (আজ এট#2497;ক#2497;ই)]
+      s9 --> s0: you tap a trip number
+    }
+    --
+    state "Key" as r1 {
+      s10: Keys up
+      s11: Enter held
+      s12: Enter held, a postcard flipped past unseen
+      s13: A postcard was skipped
+      [*] --> s10
+      s10 --> s11: you hold Enter on পর#2503;রট#2494; [when Trip is one of Last postcard, Postcard 1 (হ#2509;য#2494;ল#2507;) and Today is none of Rest screen (আজ এট#2497;ক#2497;ই), Rest screen (আজ এট#2497;ক#2497;ই), and this trip started after it ran out]
+      s11 --> s10: you let go
+      s11 --> s12: the held key repeats [when Trip is Last postcard and Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+      s12 --> s13: you let go
+      s11 --> s10: you tap a trip number [when Trip is one of Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ), আজক#2503;র মত#2507; হল#2507; and Today is one of Time left today, Today's time is up]
+      s11 --> s10: you tap আব#2494;র খ#2503;ল#2507; [when Trip is Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ) and Today is one of Time left today, Today's time is up]
+      s12 --> s10: you tap a trip number [when Trip is one of Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ), আজক#2503;র মত#2507; হল#2507; and Today is one of Time left today, Today's time is up]
+      s12 --> s10: you tap আব#2494;র খ#2503;ল#2507; [when Trip is Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ) and Today is one of Time left today, Today's time is up]
+      s13 --> s10: you tap a trip number [when Trip is one of Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ), আজক#2503;র মত#2507; হল#2507; and Today is one of Time left today, Today's time is up]
+      s13 --> s10: you tap আব#2494;র খ#2503;ল#2507; [when Trip is Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ) and Today is one of Time left today, Today's time is up]
+      s11 --> s10: you reload the page or come back to it [when Trip is Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ) and Today is Rest screen (আজ এট#2497;ক#2497;ই)]
+      s12 --> s10: you reload the page or come back to it [when Trip is Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ) and Today is Rest screen (আজ এট#2497;ক#2497;ই)]
+      s13 --> s10: you reload the page or come back to it [when Trip is Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ) and Today is Rest screen (আজ এট#2497;ক#2497;ই)]
+    }
+    --
+    state "Today" as r2 {
+      s14: Time left today
+      s15: Today's time is up
+      s16: Today's time is up, and this trip started after it ran out
+      s17: Rest screen (আজ এট#2497;ক#2497;ই), and this trip started after it ran out
+      s18: Time left today, and this trip started after it ran out
+      s19: Rest screen (আজ এট#2497;ক#2497;ই)
+      [*] --> s14
+      s14 --> s15: today's time runs out
+      s15 --> s16: you tap a trip number [when Trip is one of Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ), Map: pick a country, আজক#2503;র মত#2507; হল#2507;]
+      s15 --> s17: you reload the page or come back to it [when Trip is one of Left for আম#2494;র ছ#2507;টব#2503;ল#2494; (a grown-up's tool), Map: pick a country and Key is Keys up]
+      s16 --> s17: you reload the page or come back to it [when Trip is Map: pick a country and Key is Keys up]
+      s16 --> s15: you tap the আম#2494;র ছ#2507;টব#2503;ল#2494; card under the game [when Trip is Map: pick a country and Key is Keys up]
+      s17 --> s18: a parent gives ১০ more minutes
+      s18 --> s14: you reload the page or come back to it or you tap a trip number or you tap the আম#2494;র ছ#2507;টব#2503;ল#2494; card under the game [when Trip is Map: pick a country and Key is Keys up]
+      s18 --> s16: today's time runs out
+      s15 --> s19: you tap সফর শ#2503;ষ [when Trip is Stamp page (সফর শ#2503;ষ)]
+      s15 --> s16: you tap আব#2494;র খ#2503;ল#2507; [when Trip is Done screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ)]
+      s19 --> s17: you reload the page or come back to it
+      s19 --> s14: a parent gives ১০ more minutes
+      s16 --> s19: you tap সফর শ#2503;ষ [when Trip is Stamp page (সফর শ#2503;ষ)]
+      s18 --> s14: you tap সফর শ#2503;ষ [when Trip is Stamp page (সফর শ#2503;ষ)]
+    }
+    --
+    state "Gate" as r3 {
+      s20: Gate closed
+      s21: Gate opened by the child
+      s22: Gate left open by a parent
+      [*] --> s20
+      s20 --> s21: the child keeps holding বড#2492;দ#2503;র জন#2509;য and mashing the pad [when Trip is not Left for আম#2494;র ছ#2507;টব#2503;ল#2494; (a grown-up's tool) and Today is none of Rest screen (আজ এট#2497;ক#2497;ই), Rest screen (আজ এট#2497;ক#2497;ই), and this trip started after it ran out]
+      s20 --> s22: a parent opens বড#2492;দ#2503;র জন#2509;য and hands the phone back untouched [when Trip is not Left for আম#2494;র ছ#2507;টব#2503;ল#2494; (a grown-up's tool) and Today is none of Rest screen (আজ এট#2497;ক#2497;ই), Rest screen (আজ এট#2497;ক#2497;ই), and this trip started after it ran out]
+      s21 --> s20: the gate closes (বন#2509;ধ কর#2507;, 60 s, or the tab hides)
+      s21 --> s20: you reload the page or come back to it [when Trip is Map: pick a country or Today is Rest screen (আজ এট#2497;ক#2497;ই)]
+      s21 --> s20: you tap the আম#2494;র ছ#2507;টব#2503;ল#2494; card under the game [when Trip is Map: pick a country and Key is Keys up and Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+      s22 --> s20: the gate closes (বন#2509;ধ কর#2507;, 60 s, or the tab hides)
+      s22 --> s20: you reload the page or come back to it [when Trip is Map: pick a country or Today is Rest screen (আজ এট#2497;ক#2497;ই)]
+      s22 --> s20: you tap the আম#2494;র ছ#2507;টব#2503;ল#2494; card under the game [when Trip is Map: pick a country and Key is Keys up and Today is not Rest screen (আজ এট#2497;ক#2497;ই)]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 bugPath
+  class s1 orange
+  class s1 breaks
+  class s1 bugPath
+  class s2 teal
+  class s2 bugPath
+  class s3 teal
+  class s3 bugPath
+  class s4 teal
+  class s4 bugPath
+  class s5 teal
+  class s5 bugPath
+  class s6 teal
+  class s7 teal
+  class s8 mayBreak
+  class s9 blue
+  class s9 mayBreak
+  class s10 bugPath
+  class s11 bugPath
+  class s12 breaks
+  class s12 bugPath
+  class s13 breaks
+  class s14 bugPath
+  class s15 bugPath
+  class s16 teal
+  class s16 breaks
+  class s16 bugPath
+  class s17 yellow
+  class s17 breaks
+  class s18 teal
+  class s18 breaks
+  class s19 yellow
+  class s19 mayBreak
+  class s20 bugPath
+  class s21 breaks
+  class s21 bugPath
+  class s22 breaks
+  class s22 bugPath

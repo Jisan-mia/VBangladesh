@@ -1,0 +1,155 @@
+---
+title: "দﬂ°°2497¶ßধ উথলﬂ°°2494¶ßনﬂ°°2507¶ßর আগﬂ°°2503¶ß: pot, window, hand, hum, celebration and link"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: wait
+    lg1: play
+    lg2: held
+    lg3: done
+    lg4: Breaks CelebrationOnItsOwnCard or HumComesBack or InputReleasedWhenAway or PausedWhenBlurred in some cases
+    lg5: Path to the CelebrationOnItsOwnCard or HumComesBack or InputReleasedWhenAway or PausedWhenBlurred bug
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Pot waiting on the stove
+      s1: Milk rising
+      s2: Pot's score shows
+      s3: Paused
+      s4: Card shows
+      [*] --> s0
+      s0 --> s1: you press and hold চ#2503;প#2503; ধর#2507; [when Window is You're on the page]
+      s1 --> s0: you pick another kitchen from সব র#2494;ন#2509;ন#2494;ঘর [when Window is You're on the page]
+      s1 --> s0: a friend's link opens [when Link is No friend's link]
+      s1 --> s2: the milk boils over
+      s1 --> s2: you let go after holding [when Window is You're on the page and Hand is Holding Space or a finger]
+      s1 --> s3: you hide the tab
+      s2 --> s0: the next pot comes [when Window is not Tab hidden]
+      s2 --> s0: you pick another kitchen from সব র#2494;ন#2509;ন#2494;ঘর [when Window is You're on the page]
+      s2 --> s0: a friend's link opens [when Window is not Tab hidden and Link is No friend's link]
+      s2 --> s4: the round ends and the card shows [when Window is not Tab hidden]
+      s1 --> s2: you press ন#2494;ম#2494;ও [when Window is You're on the page and Hand is Hands off]
+      s1 --> s0: you pick the friend's kitchen from সব র#2494;ন#2509;ন#2494;ঘর [when Window is You're on the page and Link is not No friend's link]
+      s4 --> s0: you pick another kitchen from সব র#2494;ন#2509;ন#2494;ঘর or you press আর#2503;কব#2494;র or পর#2503;র র#2494;ন#2509;ন#2494;ঘর [when Window is You're on the page]
+      s4 --> s0: a friend's link opens [when Window is not Tab hidden and Link is No friend's link]
+      s2 --> s0: you pick the friend's kitchen from সব র#2494;ন#2509;ন#2494;ঘর [when Window is You're on the page and Link is not No friend's link]
+      s3 --> s0: you pick another kitchen from সব র#2494;ন#2509;ন#2494;ঘর [when Window is You're on the page]
+      s3 --> s0: a friend's link opens [when Window is not Tab hidden and Link is No friend's link]
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s4 --> s0: you pick the friend's kitchen from সব র#2494;ন#2509;ন#2494;ঘর or you press নত#2497;ন প#2494;ত#2495;ল#2503; খ#2503;ল#2507; [when Window is You're on the page and Link is not No friend's link]
+      s3 --> s0: you pick the friend's kitchen from সব র#2494;ন#2509;ন#2494;ঘর [when Window is You're on the page and Link is not No friend's link]
+    }
+    --
+    state "Window" as r1 {
+      s5: You're on the page
+      s6: Tab hidden
+      s7: Another window has focus
+      [*] --> s5
+      s5 --> s6: you hide the tab
+      s5 --> s7: you click into another window
+      s6 --> s5: the tab shows again
+      s7 --> s5: you come back to the window
+      s7 --> s6: you hide the tab
+    }
+    --
+    state "Hand" as r2 {
+      s8: Hands off
+      s9: Holding Space or a finger
+      [*] --> s8
+      s8 --> s9: you press and hold চ#2503;প#2503; ধর#2507; [when Game is Pot waiting on the stove and Window is You're on the page and Hum is No hum]
+      s9 --> s8: you pick another kitchen from সব র#2494;ন#2509;ন#2494;ঘর or you let go after holding or you let go quickly [when Window is You're on the page]
+      s9 --> s8: a friend's link opens [when Link is No friend's link]
+      s9 --> s8: the milk boils over or you hide the tab
+      s9 --> s8: you pick the friend's kitchen from সব র#2494;ন#2509;ন#2494;ঘর [when Window is You're on the page and Link is not No friend's link]
+    }
+    --
+    state "Hum" as r3 {
+      s10: No hum
+      s11: Stove hums
+      [*] --> s10
+      s10 --> s11: you press and hold চ#2503;প#2503; ধর#2507; [when Game is Pot waiting on the stove and Window is You're on the page and Hand is Hands off and Sound is Sound on]
+      s11 --> s10: you pick another kitchen from সব র#2494;ন#2509;ন#2494;ঘর or you turn sound off [when Window is You're on the page]
+      s11 --> s10: a friend's link opens [when Link is No friend's link]
+      s11 --> s10: the milk boils over or you hide the tab
+      s11 --> s10: you let go after holding [when Window is You're on the page and Hand is Holding Space or a finger]
+      s11 --> s10: you press ন#2494;ম#2494;ও [when Window is You're on the page and Hand is Hands off]
+      s11 --> s10: you pick the friend's kitchen from সব র#2494;ন#2509;ন#2494;ঘর [when Window is You're on the page and Link is not No friend's link]
+      s10 --> s11: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Game is Paused and Window is You're on the page and Hand is Hands off and Sound is Sound on]
+    }
+    --
+    state "Sound" as r4 {
+      s12: Sound on
+      s13: Sound off
+      [*] --> s12
+      s12 --> s13: you turn sound off [when Window is You're on the page]
+      s13 --> s12: you turn sound on [when Window is You're on the page]
+    }
+    --
+    state "Celebration" as r5 {
+      s14: Nothing queued
+      s15: Stars or confetti queued
+      [*] --> s14
+      s14 --> s15: the round ends and the card shows [when Game is Pot's score shows and Window is not Tab hidden and Hand is Hands off and Hum is No hum]
+      s15 --> s14: the stars or confetti play
+    }
+    --
+    state "Link" as r6 {
+      s16: No friend's link
+      s17: Friend's pots on the stove
+      s18: Another kitchen open
+      [*] --> s16
+      s16 --> s17: a friend's link opens [when Window is not Tab hidden]
+      s17 --> s18: you pick another kitchen from সব র#2494;ন#2509;ন#2494;ঘর [when Window is You're on the page]
+      s18 --> s17: you pick the friend's kitchen from সব র#2494;ন#2509;ন#2494;ঘর [when Window is You're on the page]
+      s17 --> s16: you press নত#2497;ন প#2494;ত#2495;ল#2503; খ#2503;ল#2507; [when Game is Card shows and Window is You're on the page and Hand is Hands off and Hum is No hum]
+      s18 --> s16: you press নত#2497;ন প#2494;ত#2495;ল#2503; খ#2503;ল#2507; [when Game is Card shows and Window is You're on the page and Hand is Hands off and Hum is No hum]
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 blue
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 blue
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 yellow
+  class s3 mayBreak
+  class s4 blue
+  class s4 bugPath
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 mayBreak
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 teal
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 teal
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 mayBreak
+  class s16 bugPath
+  class s17 mayBreak
+  class s18 mayBreak

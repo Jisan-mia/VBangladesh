@@ -57,6 +57,14 @@ export const START_TIGERS = [point(2, 1), point(2, 3)];
 /** A goat step, a tiger step, or a tiger leap (`over` is the goat it takes, else -1). */
 export type Move = { from: number; to: number; over: number };
 
+/**
+ * Where a game starts and what ends it. The full board (four piles, two tigers, goats first, 8 to take, 120 moves) is one start;
+ * the পাঠশালা lessons in levels.ts are others: a few goats, one or two tigers, a small goal and a short clock.
+ * `hold`: reaching `cap` is a win for the goats (the full game), else the tigers got away (a lesson where you must trap).
+ * `par`: a lesson's three-star move count (your own moves); the full game keeps its own star rule (winStars).
+ */
+export type Start = { goats: readonly number[]; tigers: readonly number[]; turn: Side; goal: number; cap: number; hold: boolean; bot: number; par?: number };
+
 export type Game = {
   seed: number;
   mode: Mode;
@@ -64,8 +72,10 @@ export type Game = {
   level: number;
   /** Goats standing on each point: 0, 1, or more for a pile that hasn't been unstacked yet. */
   goats: number[];
-  /** Where each tiger stands. Slot order never changes, so the board can animate the one that moved. */
+  /** Where each tiger stands (one or two). Slot order never changes, so the board can animate the one that moved. */
   tigers: number[];
+  /** The position this game began from, and its goal and clock. Undo and the replay check rebuild from here. */
+  start: Start;
   /** The link: each move is its place in legalMoves() of the position it was played from. */
   moves: number[];
   log: Move[];
@@ -76,7 +86,9 @@ export type Game = {
   ending: Ending | null;
   over: boolean;
 };
-export type Ending = "trap" | "hunt" | "hold";
+/** trap: every tiger pinned · hunt: the tigers took their goal · hold: the goats lasted to the cap · free: a lesson's tiger lasted
+ * to the cap · stuck: no goat can move (never on the full board, see the note at the top). */
+export type Ending = "trap" | "hunt" | "hold" | "free" | "stuck";
 
 /**
  * Bot levels, one ladder for each side you play. A level sets both bots: the goats you hunt as the tiger (`safe`, `noise`, `careful`)
@@ -98,18 +110,25 @@ export const BOT_LEVELS: readonly BotLevel[] = [
 export const LEGACY_LEVEL = 7;
 export const isLevel = (level: number) => Number.isInteger(level) && level >= 1 && level <= BOT_LEVELS.length;
 
-export function createGame(seed: number, mode: Mode, level = LEGACY_LEVEL): Game {
-  const goats = Array<number>(POINTS).fill(0);
-  for (const at of START_PILES) goats[at] = GOATS / START_PILES.length;
-  return { seed, mode, level: isLevel(level) ? level : LEGACY_LEVEL, goats, tigers: START_TIGERS.slice(), moves: [], log: [], turn: GOAT, taken: 0, winner: null, ending: null, over: false };
+const PILES = Array<number>(POINTS).fill(0);
+for (const at of START_PILES) PILES[at] = GOATS / START_PILES.length;
+/** The full board against the bot at `level` (or nobody). */
+export const fullStart = (level = LEGACY_LEVEL): Start => ({ goats: PILES, tigers: START_TIGERS, turn: GOAT, goal: TIGER_GOAL, cap: MAX_MOVES, hold: true, bot: isLevel(level) ? level : LEGACY_LEVEL });
+export const isFull = (start: Start) => start.cap === MAX_MOVES && start.goal === TIGER_GOAL && start.goats === PILES;
+
+/** A game from any start. `level` is the bot's level (start.bot). */
+export function begin(seed: number, mode: Mode, start: Start): Game {
+  return { seed, mode, level: start.bot, goats: start.goats.slice(), tigers: start.tigers.slice(), start, moves: [], log: [], turn: start.turn, taken: 0, winner: null, ending: null, over: false };
 }
+
+export const createGame = (seed: number, mode: Mode, level = LEGACY_LEVEL): Game => begin(seed, mode, fullStart(level));
 
 /** Every legal move for one side, in a fixed order (by point, then direction) so a move's index means the same on every phone. */
 export function movesFor(goats: readonly number[], tigers: readonly number[], side: Side): Move[] {
   const list: Move[] = [];
-  const empty = (at: number) => at >= 0 && goats[at] === 0 && tigers[0] !== at && tigers[1] !== at;
+  const empty = (at: number) => at >= 0 && goats[at] === 0 && !tigers.includes(at);
   for (let at = 0; at < POINTS; at++) {
-    if (side === GOAT ? goats[at] === 0 : tigers[0] !== at && tigers[1] !== at) continue;
+    if (side === GOAT ? goats[at] === 0 : !tigers.includes(at)) continue;
     for (let direction = 0; direction < 8; direction++) {
       const next = STEP[at][direction];
       if (next < 0) continue;
@@ -132,10 +151,12 @@ function apply(game: Game, move: Move, index: number): Game {
   }
   const turn: Side = game.turn === GOAT ? TIGER : GOAT;
   const moves = [...game.moves, index];
-  const ending: Ending | null = taken >= TIGER_GOAL ? "hunt"
+  const { goal, cap, hold } = game.start;
+  const ending: Ending | null = taken >= goal ? "hunt"
     : turn === TIGER && !movesFor(goats, tigers, TIGER).length ? "trap"
-    : moves.length >= MAX_MOVES ? "hold" : null;
-  const winner = ending === null ? null : ending === "hunt" ? TIGER : GOAT;
+    : turn === GOAT && !movesFor(goats, tigers, GOAT).length ? "stuck"
+    : moves.length >= cap ? hold ? "hold" : "free" : null;
+  const winner = ending === null ? null : ending === "trap" || ending === "hold" ? GOAT : TIGER;
   return { ...game, goats, tigers, taken, turn, moves, log: [...game.log, move], winner, ending, over: ending !== null };
 }
 
@@ -153,6 +174,14 @@ export const findMove = (game: Game, from: number, to: number) => legalMoves(gam
 export function threatened(goats: readonly number[], tigers: readonly number[]) {
   return [...new Set(movesFor(goats, tigers, TIGER).flatMap(move => move.over >= 0 ? [move.over] : []))];
 }
+
+/** Tigers with no move at all right now (each needs a rope on the board); all of them pinned on their turn is "trap". */
+export function pinned(goats: readonly number[], tigers: readonly number[]) {
+  const free = new Set(movesFor(goats, tigers, TIGER).map(move => move.from));
+  return tigers.filter(at => !free.has(at));
+}
+/** Every move the tigers have, counted (their room to roam). */
+export const tigerRoom = (game: Game) => movesFor(game.goats, game.tigers, TIGER).length;
 
 const moved = (tigers: readonly number[], move: Move) => tigers.map(at => at === move.from ? move.to : at);
 
@@ -191,9 +220,12 @@ export function botMove(game: Game) {
 const botTurn = (game: Game) => game.mode !== 0 && game.turn !== humanSide(game.mode);
 export const isBotTurn = (game: Game) => !game.over && botTurn(game);
 
-/** Rebuilds a game from its move list, checking every move is legal and every bot move is the bot's own reply. Null if anything is off. */
-export function replay(seed: number, mode: Mode, moves: readonly number[], level = LEGACY_LEVEL): Game | null {
-  let game: Game | null = createGame(seed, mode, level);
+/** Rebuilds a full-board game from its move list, checking every move is legal and every bot move is the bot's own reply. Null if anything is off. */
+export const replay = (seed: number, mode: Mode, moves: readonly number[], level = LEGACY_LEVEL) => replayFrom(fullStart(level), seed, mode, moves);
+
+/** The same from any start. */
+export function replayFrom(start: Start, seed: number, mode: Mode, moves: readonly number[]): Game | null {
+  let game: Game | null = begin(seed, mode, start);
   for (const index of moves) {
     if (!game || game.over) return null;
     if (botTurn(game) && index !== botMove(game)) return null;
@@ -202,25 +234,34 @@ export function replay(seed: number, mode: Mode, moves: readonly number[], level
   return game;
 }
 
-/** Against the bot there's something to take back once the person has moved: the goats move first, so a tiger has moved after two. */
-export const canUndo = (game: Game) => !game.over && game.moves.length > (game.mode === 1 ? 1 : 0);
+/** Who played move i: the sides take turns from the start's first mover. */
+export const moverOf = (game: Game, index: number): Side => ((game.start.turn + index) % 2) as Side;
+/** Moves the person has played (both sides between two people). */
+export function ownMoves(game: Game) {
+  const me = humanSide(game.mode);
+  let count = 0;
+  for (let index = 0; index < game.moves.length; index++) if (me === null || moverOf(game, index) === me) count++;
+  return count;
+}
+
+/** Against the bot there's something to take back once the person has moved. `over`: a finished lesson may take back its last move too. */
+export const canUndo = (game: Game, over = false) => (over || !game.over) && ownMoves(game) > 0;
 
 /** Takes back the last move; against the bot, the person's last move and the bot's reply to it. */
 export function undo(game: Game): Game {
   let count = game.moves.length;
-  if (game.mode !== 0) {
-    const mine = humanSide(game.mode) === GOAT ? 0 : 1;
-    // Move i was played by the goats when i is even.
-    while (count && (count - 1) % 2 !== mine) count--;
-  }
+  const me = humanSide(game.mode);
+  if (me !== null) while (count && moverOf(game, count - 1) !== me) count--;
   if (count) count--;
-  return replay(game.seed, game.mode, game.moves.slice(0, count), game.level) ?? game;
+  return replayFrom(game.start, game.seed, game.mode, game.moves.slice(0, count)) ?? game;
 }
 
 /** Your stars for a game against the bot (0 unless you won): the tiger by how few moves it took, the goats for a trap or for goats kept. */
 export const TIGER_STARS = [40, 70] as const, GOAT_STARS_KEPT = 3;
 export function winStars(game: Game) {
   if (!game.over || game.mode === 0 || game.winner !== humanSide(game.mode)) return 0;
+  const par = game.start.par;
+  if (par !== undefined) return starsFor(ownMoves(game), par, par + 2, true);
   if (game.winner === TIGER) return starsFor(game.moves.length, TIGER_STARS[0], TIGER_STARS[1], true);
   return game.ending === "trap" ? 3 : game.taken <= GOAT_STARS_KEPT ? 2 : 1;
 }

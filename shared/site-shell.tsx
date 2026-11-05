@@ -3,29 +3,50 @@ import type { CSSProperties, ReactNode } from 'react';
 import { brand } from '../lib/brand';
 import { catalog, flagship } from '../lib/catalog';
 import { BrandMark } from '../components/brand-mark';
+import { HeaderSearch } from '../components/header-search';
 import { ToolCard } from '../components/tool-card';
 import { previewSlugs } from '../lib/previews';
 import { hubOf } from '../lib/hubs';
 import type { SiteContent } from './site-types';
 import { serializeSchema, websiteSchema } from './seo';
 
+const sections = [
+  { href: '/games', name: 'গেম' },
+  { href: '/chhotoder', name: 'ছোটদের' },
+  { href: '/quiz', name: 'কুইজ' },
+  { href: '/tools', name: 'টুলস' },
+];
+
+/** Which header link a page belongs to: a hub path ('/games'), or a tool slug that maps to its hub. */
+function sectionOf(current: string | undefined) {
+  if (!current) return undefined;
+  if (current.startsWith('/')) return sections.find(section => section.href === current)?.href;
+  const tool = catalog.find(item => item.slug === current);
+  if (tool?.category === 'গেম') return '/games';
+  if (tool?.category === 'ছোটদের জন্য') return '/chhotoder';
+  return hubOf(current)?.slug === 'quiz' ? '/quiz' : '/tools';
+}
+
+/** The site-wide header: logo, one search for every game and tool, and the four sections. */
 export function HubHeader({ current }: { current?: string }) {
-  return <header className="hub-header"><div className="container hub-header-inner">
-    <Link className="hub-brand" href="/" aria-label="একটুখানি, প্রথম পাতা"><BrandMark />{brand.name}</Link>
-    <nav aria-label="মূল মেনু">{current !== flagship && <Link className="hub-flagship" href={`/${flagship}`}>আমার ছোটবেলা</Link>}<Link href="/tools">সব টুল</Link></nav>
+  const here = sectionOf(current);
+  return <header className="ph"><div className="ph-inner">
+    <Link className="ph-brand" href="/" aria-label="একটুখানি, প্রথম পাতা"><BrandMark /><span>{brand.name}</span></Link>
+    <HeaderSearch />
+    <nav className="ph-nav" aria-label="মূল মেনু">{sections.map(section => <Link key={section.href} href={section.href} prefetch={false} aria-current={here === section.href ? 'page' : undefined}>{section.name}</Link>)}</nav>
   </div></header>;
 }
 
 function HubFooterInner({ links }: { links: ReactNode }) {
-  return <footer className="hub-footer"><div className="container hub-footer-inner"><div><Link className="hub-brand" href="/"><BrandMark />{brand.name}</Link><p>একটুখানি (Ektukhani): সব টুল ফ্রি। অ্যাকাউন্ট লাগে না, বিজ্ঞাপনও নেই।</p></div><nav aria-label="আরও জানো">{links}</nav></div></footer>;
+  return <footer className="hub-footer"><div className="container hub-footer-inner"><div><Link className="hub-brand" href="/"><BrandMark />{brand.name}</Link><p>একটুখানি (Ektukhani): বাংলা গেম আর ছোট ছোট টুল, সবই ফ্রি। অ্যাকাউন্ট লাগে না, বিজ্ঞাপনও নেই।</p></div><nav aria-label="আরও জানো">{links}</nav></div></footer>;
 }
 
 export function HubFooter() {
-  return <HubFooterInner links={<><Link href="/tools">সব টুল</Link><Link href="/games">বাংলা গেম</Link><Link href="/chhotoder">ছোটদের খেলাঘর</Link><Link href="/quiz">কুইজ</Link><Link href="/hishab">হিসাব</Link><Link href="/utsob">উৎসব</Link><Link href="/about">আমাদের কথা</Link><Link href="/privacy">গোপনীয়তা</Link></>} />;
+  return <HubFooterInner links={<><Link href="/games">বাংলা গেম</Link><Link href="/tools">সব টুল</Link><Link href="/chhotoder">ছোটদের খেলাঘর</Link><Link href="/quiz">কুইজ</Link><Link href="/amar-chhotobela">আমার ছোটবেলা</Link><Link href="/hishab">হিসাব</Link><Link href="/utsob">উৎসব</Link><Link href="/about">আমাদের কথা</Link><Link href="/privacy">গোপনীয়তা</Link></>} />;
 }
 
-export function HubFrame({ children }: { children: ReactNode }) {
-  return <><a className="skip-link" href="#main">মূল অংশে যাও</a><HubHeader /><main id="main">{children}</main><HubFooter /></>;
+export function HubFrame({ children, current }: { children: ReactNode; current?: string }) {
+  return <><a className="skip-link" href="#main">মূল অংশে যাও</a><HubHeader current={current} /><main id="main">{children}</main><HubFooter /></>;
 }
 
 export function PageFrame({ site, children }: { site: SiteContent; children: ReactNode }) {

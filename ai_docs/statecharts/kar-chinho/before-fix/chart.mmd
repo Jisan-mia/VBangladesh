@@ -1,0 +1,188 @@
+---
+title: "কﬂ°°2494¶ßর-চﬂ°°2495¶ßহﬂ°°2509¶ßন বসﬂ°°2494¶ßও: round, sound, daily limit and parent gates"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks EveryFinishCounts or GateClosesWhenTheParentHandsBack or GateNeedsAnAdult or NoNewRoundPastLimit or NoShareForKids or OnlyParentsGiveMoreTime or SilentWhenMuted
+    lg4: Breaks EveryFinishCounts or GateClosesWhenTheParentHandsBack or GateNeedsAnAdult or NoNewRoundPastLimit or NoShareForKids or OnlyParentsGiveMoreTime or SilentWhenMuted in some cases
+    lg5: Path to the EveryFinishCounts or GateClosesWhenTheParentHandsBack or GateNeedsAnAdult or NoNewRoundPastLimit or NoShareForKids or OnlyParentsGiveMoreTime or SilentWhenMuted bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Round" as r0 {
+      s0: First word
+      s1: Level picker
+      s2: Right sign, next word in 1.1 s
+      s3: Last word
+      s4: First word, started after today's time ran out
+      s5: Last sign right, end screen in 1.1 s
+      s6: Right sign, next word in 1.1 s, started after today's time ran out
+      s7: End screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ)
+      s8: Level picker, the finished round was never counted
+      s9: Last word, started after today's time ran out
+      s10: Last sign right, end screen in 1.1 s, started after today's time ran out
+      [*] --> s0
+      s0 --> s1: the child taps the level button
+      s0 --> s2: the child taps the right sign
+      s1 --> s0: the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a level [when Today is Time left today]
+      s0 --> s4: the page opens again (reload, or from the kids' hub) [when Today is Today's time is up]
+      s2 --> s0: the page opens again (reload, or from the kids' hub) [when Today is Time left today]
+      s2 --> s1: the child taps the level button
+      s2 --> s3: the next word comes (1.1 s)
+      s1 --> s4: the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a level [when Today is Today's time is up]
+      s3 --> s0: the page opens again (reload, or from the kids' hub) [when Today is Time left today]
+      s3 --> s1: the child taps the level button
+      s3 --> s5: the child taps the right sign
+      s4 --> s1: the child taps the level button
+      s4 --> s6: the child taps the right sign
+      s2 --> s4: the page opens again (reload, or from the kids' hub) [when Today is Today's time is up]
+      s3 --> s4: the page opens again (reload, or from the kids' hub) [when Today is Today's time is up]
+      s5 --> s0: the page opens again (reload, or from the kids' hub) [when Today is Time left today]
+      s5 --> s7: the end screen comes (1.1 s)
+      s5 --> s8: the child taps the level button
+      s6 --> s4: the page opens again (reload, or from the kids' hub)
+      s6 --> s1: the child taps the level button
+      s6 --> s9: the next word comes (1.1 s)
+      s7 --> s0: the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a level [when Today is Time left today]
+      s7 --> s1: the child presses শ#2503;ষ or the child taps the level button [when Today is one of Time left today, Today's time is up]
+      s8 --> s0: the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a level [when Today is Time left today]
+      s9 --> s4: the page opens again (reload, or from the kids' hub)
+      s9 --> s1: the child taps the level button
+      s9 --> s10: the child taps the right sign
+      s5 --> s4: the page opens again (reload, or from the kids' hub) [when Today is Today's time is up]
+      s7 --> s4: the page opens again (reload, or from the kids' hub) [when Today is not Time left today]
+      s7 --> s4: the child presses আব#2494;র খ#2503;ল#2507; or picks a level [when Today is Today's time is up]
+      s8 --> s4: the page opens again (reload, or from the kids' hub) or the child presses আব#2494;র খ#2503;ল#2507; or picks a level [when Today is Today's time is up]
+      s10 --> s4: the page opens again (reload, or from the kids' hub)
+      s10 --> s7: the end screen comes (1.1 s)
+      s10 --> s8: the child taps the level button
+    }
+    --
+    state "Today" as r1 {
+      s11: Time left today
+      s12: Today's time is up
+      s13: Rest screen (আজ এট#2497;ক#2497;ই), its gate closed
+      s14: Rest screen (আজ এট#2497;ক#2497;ই), its gate opened by the child
+      s15: Rest screen (আজ এট#2497;ক#2497;ই), its gate opened by a parent
+      [*] --> s11
+      s11 --> s12: today's play time runs out
+      s12 --> s13: the end screen comes (1.1 s) [when Round is one of Last sign right, end screen in 1.1 s, Last sign right, end screen in 1.1 s, started after today's time ran out and Sound is one of Sound off, the phone says the word, Sound on, the phone says the word]
+      s13 --> s12: the page opens again (reload, or from the kids' hub)
+      s13 --> s14: the child holds the rest screen's gate and mashes the pad [when Phone is The child has the phone]
+      s14 --> s12: the page opens again (reload, or from the kids' hub)
+      s14 --> s11: someone taps আজ আরও ১০ ম#2495;ন#2495;ট
+      s13 --> s15: the parent opens the rest screen's gate [when Phone is A parent has the phone]
+      s15 --> s12: the page opens again (reload, or from the kids' hub)
+      s15 --> s11: someone taps আজ আরও ১০ ম#2495;ন#2495;ট
+    }
+    --
+    state "Phone" as r2 {
+      s16: The child has the phone
+      s17: A parent has the phone
+      [*] --> s16
+      s16 --> s17: a parent takes the phone
+      s17 --> s16: the child takes the phone back
+    }
+    --
+    state "ShareGate" as r3 {
+      s18: Share gate closed
+      s19: Share gate opened by the child
+      s20: Share gate opened by a parent
+      [*] --> s18
+      s18 --> s19: the child holds বড#2492;দ#2503;র জন#2509;য and mashes the pad [when Today is one of Time left today, Today's time is up and Phone is The child has the phone]
+      s19 --> s18: someone presses বন#2509;ধ কর#2507; [when Today is one of Time left today, Today's time is up]
+      s19 --> s18: the page opens again (reload, or from the kids' hub)
+      s18 --> s20: the parent opens বড#2492;দ#2503;র জন#2509;য [when Today is one of Time left today, Today's time is up and Phone is A parent has the phone]
+      s20 --> s18: someone presses বন#2509;ধ কর#2507; [when Today is one of Time left today, Today's time is up]
+      s20 --> s18: the page opens again (reload, or from the kids' hub)
+    }
+    --
+    state "Sound" as r4 {
+      s21: Sound on
+      s22: Sound off
+      s23: Sound on, the phone says the word
+      s24: Sound off, the phone says the word
+      [*] --> s21
+      s21 --> s22: the child turns sound off [when Today is one of Time left today, Today's time is up]
+      s21 --> s23: the child taps the right sign [when Round is none of End screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ), Level picker, Level picker, the finished round was never counted and Today is one of Time left today, Today's time is up]
+      s22 --> s21: the child turns sound on [when Today is one of Time left today, Today's time is up]
+      s22 --> s24: the child taps the right sign [when Round is none of End screen (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ), Level picker, Level picker, the finished round was never counted and Today is one of Time left today, Today's time is up]
+      s23 --> s21: the page opens again (reload, or from the kids' hub) or the child taps the level button
+      s23 --> s21: the next word comes (1.1 s) [when Round is one of Right sign, next word in 1.1 s, Right sign, next word in 1.1 s, started after today's time ran out]
+      s23 --> s24: the child turns sound off
+      s24 --> s22: the page opens again (reload, or from the kids' hub) or the child taps the level button
+      s24 --> s23: the child turns sound on
+      s24 --> s22: the next word comes (1.1 s) [when Round is one of Right sign, next word in 1.1 s, Right sign, next word in 1.1 s, started after today's time ran out]
+      s23 --> s21: the end screen comes (1.1 s) [when Round is one of Last sign right, end screen in 1.1 s, Last sign right, end screen in 1.1 s, started after today's time ran out]
+      s24 --> s22: the end screen comes (1.1 s) [when Round is one of Last sign right, end screen in 1.1 s, Last sign right, end screen in 1.1 s, started after today's time ran out]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 blue
+  class s1 mayBreak
+  class s2 teal
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 teal
+  class s3 mayBreak
+  class s3 bugPath
+  class s4 teal
+  class s4 breaks
+  class s4 bugPath
+  class s5 teal
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 teal
+  class s6 breaks
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 blue
+  class s8 breaks
+  class s8 bugPath
+  class s9 teal
+  class s9 breaks
+  class s10 teal
+  class s10 breaks
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 yellow
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 yellow
+  class s14 breaks
+  class s14 bugPath
+  class s15 yellow
+  class s15 mayBreak
+  class s16 mayBreak
+  class s16 bugPath
+  class s17 bugPath
+  class s18 bugPath
+  class s19 breaks
+  class s19 bugPath
+  class s20 mayBreak
+  class s20 bugPath
+  class s21 mayBreak
+  class s21 bugPath
+  class s22 mayBreak
+  class s22 bugPath
+  class s23 teal
+  class s23 mayBreak
+  class s23 bugPath
+  class s24 teal
+  class s24 breaks
+  class s24 bugPath

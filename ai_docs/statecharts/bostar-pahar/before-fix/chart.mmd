@@ -1,0 +1,150 @@
+---
+title: "বসﬂ°°2509¶ßতﬂ°°2494¶ßর পﬂ°°2494¶ßহﬂ°°2494¶ßডﬂ°°2492¶ß: the run, the window, the drop key and the result"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks EveryDropIsATap or NoTapPastResult or PausedWhenBlurred
+    lg4: Breaks EveryDropIsATap or NoTapPastResult or PausedWhenBlurred in some cases
+    lg5: Path to the EveryDropIsATap or NoTapPastResult or PausedWhenBlurred bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Sack swinging
+      s1: Sack dropping or landing
+      s2: Paused
+      s3: Pile tipping over
+      s4: Result just appeared
+      s5: Result
+      [*] --> s0
+      s0 --> s1: you tap [when Window is On the page]
+      s0 --> s1: you press Space [when Window is On the page and Key is Key up]
+      s0 --> s2: you press থ#2494;ম#2494;ও / চ#2494;ল#2494;ও (or P) [when Window is On the page]
+      s1 --> s2: you hide the tab
+      s1 --> s2: you press থ#2494;ম#2494;ও / চ#2494;ল#2494;ও (or P) [when Window is On the page]
+      s1 --> s3: the sack slips off
+      s2 --> s0: you tap or you press থ#2494;ম#2494;ও / চ#2494;ল#2494;ও (or P) [when Window is On the page]
+      s2 --> s0: you press Space [when Window is On the page and Key is Key up]
+      s2 --> s1: you tap or you press থ#2494;ম#2494;ও / চ#2494;ল#2494;ও (or P) [when Window is On the page]
+      s2 --> s1: you press Space [when Window is On the page and Key is Key up]
+      s2 --> s1: the held key repeats [when Window is On the page and Key is Holding Space]
+      s3 --> s2: you hide the tab
+      s3 --> s2: you press থ#2494;ম#2494;ও / চ#2494;ল#2494;ও (or P) [when Window is On the page]
+      s3 --> s4: the result shows
+      s0 --> s1: the held key repeats [when Window is On the page and Key is Holding Space]
+      s1 --> s0: the next sack comes [when Truck is Truck full (stars won)]
+      s2 --> s3: you tap or you press থ#2494;ম#2494;ও / চ#2494;ল#2494;ও (or P) [when Window is On the page]
+      s2 --> s3: you press Space [when Window is On the page and Key is Key up]
+      s2 --> s3: the held key repeats [when Window is On the page and Key is Holding Space]
+      s4 --> s0: you press আব#2494;র খ#2503;ল#2507; / পর#2503;র ঘ#2494;ট [when Window is On the page]
+      s4 --> s5: a moment passes
+      s4 --> s0: you press Space [when Window is On the page and Key is Key up]
+      s4 --> s0: the held key repeats [when Window is On the page and Key is Holding Space]
+      s2 --> s0: the held key repeats [when Window is On the page and Key is Holding Space]
+      s0 --> s2: you hide the tab [when Window is not Tab hidden and Truck is Truck full (stars won)]
+      s5 --> s0: you press আব#2494;র খ#2503;ল#2507; / পর#2503;র ঘ#2494;ট [when Window is On the page]
+      s5 --> s0: you press Space [when Window is On the page and Key is Key up]
+      s5 --> s0: the held key repeats [when Window is On the page and Key is Holding Space]
+    }
+    --
+    state "Window" as r1 {
+      s6: On the page
+      s7: Another window has focus
+      s8: Tab hidden
+      [*] --> s6
+      s6 --> s7: you click into another window
+      s6 --> s8: you hide the tab
+      s7 --> s6: you come back to the window
+      s7 --> s8: you hide the tab
+      s8 --> s6: the tab shows again
+    }
+    --
+    state "Key" as r2 {
+      s9: Key up
+      s10: Holding Space
+      [*] --> s9
+      s9 --> s10: you press Space [when Window is On the page]
+      s10 --> s9: you let go of Space or you click into another window or you hide the tab
+    }
+    --
+    state "Chimes" as r3 {
+      s11: No chimes waiting
+      s12: Star chimes waiting
+      [*] --> s11
+      s11 --> s12: the result shows [when Game is Pile tipping over and Window is not Tab hidden and Truck is Truck full (stars won)]
+      s12 --> s11: you press আব#2494;র খ#2503;ল#2507; / পর#2503;র ঘ#2494;ট [when Window is On the page]
+      s12 --> s11: you press Space [when Window is On the page and Key is Key up]
+      s12 --> s11: the star chimes play
+      s12 --> s11: the held key repeats [when Window is On the page and Key is Holding Space]
+    }
+    --
+    state "Truck" as r4 {
+      s13: Truck not full yet
+      s14: Truck full (stars won)
+      [*] --> s13
+      s13 --> s14: the sack sits on the pile [when Game is Sack dropping or landing and Window is not Tab hidden]
+      s14 --> s13: you press আব#2494;র খ#2503;ল#2507; / পর#2503;র ঘ#2494;ট [when Game is one of Result, Result just appeared and Window is On the page]
+      s14 --> s13: you press Space [when Game is one of Result, Result just appeared and Window is On the page and Key is Key up]
+      s14 --> s13: the held key repeats [when Game is one of Result, Result just appeared and Window is On the page and Key is Holding Space]
+    }
+    --
+    state "Drops" as r5 {
+      s15: Every drop was a press
+      s16: A sack dropped on key repeat
+      [*] --> s15
+      s15 --> s16: the held key repeats [when Game is Sack swinging and Window is On the page and Key is Holding Space and Chimes is No chimes waiting]
+    }
+    --
+    state "Result" as r6 {
+      s17: Result seen
+      s18: Result skipped by a stray press
+      [*] --> s17
+      s17 --> s18: you press Space [when Game is Result just appeared and Window is On the page and Key is Key up]
+      s17 --> s18: the held key repeats [when Game is Result just appeared and Window is On the page and Key is Holding Space]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 yellow
+  class s2 bugPath
+  class s3 teal
+  class s3 mayBreak
+  class s3 bugPath
+  class s4 blue
+  class s4 bugPath
+  class s5 blue
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 blue
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 mayBreak
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 breaks
+  class s16 bugPath
+  class s17 mayBreak
+  class s17 bugPath
+  class s18 breaks
+  class s18 bugPath

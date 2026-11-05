@@ -1,0 +1,77 @@
+---
+title: "Marble Sinri after the rewrite: floor, menu, list, window and link"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: wait
+    lg1: play
+    lg2: held
+    lg3: done
+  }
+  class lg0 blue
+  class lg1 teal
+  class lg2 yellow
+  class lg3 blue
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Title (গড#2492;#2494;ও)
+      s1: Marble rolling
+      s2: সব তল#2494; open
+      s3: Card shows
+      s4: Paused
+      s5: সব তল#2494; open, floor paused
+      [*] --> s0
+      s0 --> s1: you press গড#2492;#2494;ও (or an arrow, or Space) [when Window is You're on the page and Menu is No menu]
+      s0 --> s2: you open সব তল#2494; [when Window is You're on the page and Menu is No menu]
+      s1 --> s0: a friend's link opens [when Link is No friend's link]
+      s1 --> s3: the floor ends and the card shows
+      s1 --> s4: you click into another window or you press P or #9208;
+      s1 --> s5: you open সব তল#2494;
+      s2 --> s0: you close সব তল#2494; or you pick a floor [when Window is You're on the page and Menu is No menu]
+      s2 --> s0: a friend's link opens [when Link is No friend's link]
+      s3 --> s0: a friend's link opens [when Link is No friend's link]
+      s3 --> s1: you press আব#2494;র [when Window is You're on the page and Menu is No menu]
+      s3 --> s2: you open সব তল#2494; [when Window is You're on the page and Menu is No menu]
+      s4 --> s0: a friend's link opens [when Link is No friend's link]
+      s5 --> s0: you pick a floor [when Window is You're on the page and Menu is No menu]
+      s5 --> s0: a friend's link opens [when Link is No friend's link]
+      s5 --> s1: you close সব তল#2494; [when Window is You're on the page and Menu is No menu]
+      s4 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Menu is Pause menu open]
+      s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Menu is Pause menu open]
+      s2 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Menu is Pause menu open]
+      s2 --> s3: you close সব তল#2494; [when Window is You're on the page and Menu is No menu]
+      s3 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Menu is Pause menu open]
+      s4 --> s1: you tap the board to go on [when Window is You're on the page and Menu is No menu]
+      s5 --> s0: you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Menu is Pause menu open]
+    }
+    --
+    state "Window" as r1 {
+      s6: You're on the page
+      s7: Another window has focus
+      [*] --> s6
+      s6 --> s7: you click into another window
+      s7 --> s6: you come back to the window
+      s7 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you press নত#2497;ন কর#2503; শ#2497;র#2497; [when Menu is Pause menu open]
+    }
+    --
+    state "Menu" as r2 {
+      s8: No menu
+      s9: Pause menu open
+      [*] --> s8
+      s8 --> s9: you press P or #9208; [when Window is You're on the page]
+      s9 --> s8: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you press নত#2497;ন কর#2503; শ#2497;র#2497;
+    }
+    --
+    state "Link" as r3 {
+      s10: No friend's link
+      s11: Friend's floor on screen
+      [*] --> s10
+      [*] --> s11
+      s10 --> s11: a friend's link opens
+    }
+  }
+  class s1 teal
+  class s3 blue
+  class s4 yellow
+  class s5 yellow

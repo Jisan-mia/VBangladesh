@@ -1,0 +1,134 @@
+---
+title: "পﬂ°°2494¶ßটﬂ°°2495¶ß বﬂ°°2497¶ßনﬂ°°2495¶ß: round, window, hand and the bundle"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks InputReleasedWhenAway or PausedWhenBlurred or PausedWhenScrolledAway in some cases
+    lg4: Path to the InputReleasedWhenAway or PausedWhenBlurred or PausedWhenScrolledAway bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 mayBreak
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Start card
+      s1: Strips falling, stack low
+      s2: Paused
+      s3: Strips falling, stack half full
+      s4: Frame full, slip shows
+      s5: Paused, stack half full
+      s6: Breath after resuming, stack low
+      s7: Breath after resuming, stack half full
+      [*] --> s0
+      s0 --> s1: you press শ#2497;র#2497; কর#2507; [when Window is Board on screen]
+      s1 --> s0: you open a friend's link [when Window is not Another window has focus and Bundle is Own bundle]
+      s1 --> s2: you hide the tab
+      s1 --> s2: you scroll past the board [when Window is Board on screen]
+      s1 --> s2: you press pause [when Window is not Another window has focus]
+      s1 --> s3: a strip lands and the stack grows
+      s2 --> s0: you open a friend's link [when Window is one of Board on screen, Scrolled past the board and Bundle is Own bundle]
+      s2 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is one of Board on screen, Scrolled past the board]
+      s3 --> s0: you open a friend's link [when Window is not Another window has focus and Bundle is Own bundle]
+      s3 --> s4: the last strip tops out
+      s3 --> s5: you hide the tab
+      s3 --> s5: you scroll past the board [when Window is Board on screen]
+      s3 --> s5: you press pause [when Window is not Another window has focus]
+      s4 --> s0: you press আর#2503;কব#2494;র খ#2503;ল#2507; under the card [when Window is one of Board on screen, Scrolled past the board]
+      s4 --> s0: you open a friend's link [when Window is one of Board on screen, Scrolled past the board and Bundle is Own bundle]
+      s4 --> s6: you press আর#2503;কব#2494;র [when Window is one of Board on screen, Scrolled past the board]
+      s5 --> s0: you open a friend's link [when Window is one of Board on screen, Scrolled past the board and Bundle is Own bundle]
+      s5 --> s7: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is one of Board on screen, Scrolled past the board]
+      s6 --> s2: you hide the tab
+      s6 --> s2: you press pause [when Window is not Another window has focus]
+      s6 --> s1: the breath ends
+      s6 --> s0: you open a friend's link [when Window is not Another window has focus and Bundle is Own bundle]
+      s6 --> s2: you scroll past the board [when Window is Board on screen]
+      s7 --> s0: you open a friend's link [when Window is not Another window has focus and Bundle is Own bundle]
+      s7 --> s5: you hide the tab
+      s7 --> s5: you press pause [when Window is not Another window has focus]
+      s7 --> s3: the breath ends
+      s7 --> s5: you scroll past the board [when Window is Board on screen]
+    }
+    --
+    state "Window" as r1 {
+      s8: Board on screen
+      s9: Tab hidden
+      s10: Another window has focus
+      s11: Scrolled past the board
+      [*] --> s8
+      s8 --> s9: you hide the tab
+      s8 --> s10: you click into another window
+      s8 --> s11: you scroll past the board
+      s9 --> s8: the tab shows again
+      s10 --> s8: you come back to the window
+      s10 --> s9: you hide the tab
+      s11 --> s8: you scroll back to the board
+      s11 --> s9: you hide the tab
+      s11 --> s10: you click into another window
+      s9 --> s11: the tab shows again
+      s10 --> s11: you come back to the window [when Hand is Hands off]
+      s11 --> s8: you press আর#2503;কব#2494;র খ#2503;ল#2507; under the card [when Game is Frame full, slip shows]
+    }
+    --
+    state "Hand" as r2 {
+      s12: Hands off
+      s13: Holding ন#2494;ম#2494;ও or #8595;
+      s14: Holding #9664; or #9654;
+      [*] --> s12
+      s12 --> s13: you hold a control [when Game is one of Breath after resuming, stack half full, Breath after resuming, stack low, Strips falling, stack half full, Strips falling, stack low and Window is Board on screen]
+      s12 --> s14: you hold a control [when Game is one of Breath after resuming, stack half full, Breath after resuming, stack low, Strips falling, stack half full, Strips falling, stack low and Window is Board on screen]
+      s13 --> s12: you let go or you scroll past the board or you press pause [when Window is Board on screen]
+      s13 --> s12: you open a friend's link [when Window is Board on screen and Bundle is Own bundle]
+      s13 --> s12: you hide the tab
+      s14 --> s12: you let go or you scroll past the board or you press pause [when Window is Board on screen]
+      s14 --> s12: you open a friend's link [when Window is Board on screen and Bundle is Own bundle]
+      s14 --> s12: you hide the tab
+      s13 --> s12: the last strip tops out [when Game is Strips falling, stack half full]
+      s14 --> s12: the last strip tops out [when Game is Strips falling, stack half full]
+    }
+    --
+    state "Bundle" as r3 {
+      s15: Own bundle
+      s16: Friend's bundle
+      [*] --> s15
+      s15 --> s16: you open a friend's link [when Window is one of Board on screen, Scrolled past the board]
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 yellow
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 yellow
+  class s2 bugPath
+  class s3 teal
+  class s3 mayBreak
+  class s4 blue
+  class s5 yellow
+  class s6 teal
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 teal
+  class s7 mayBreak
+  class s8 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 teal
+  class s13 mayBreak
+  class s14 teal
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 mayBreak

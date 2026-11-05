@@ -1,6 +1,6 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, wrapText, BODY_FONT, type CardFormat } from "../../../shared/card-canvas";
 import { drawDalaBack, drawDalaFront, drawMango, pileSlots } from "./art";
-import { bn, humanLine, ripeOf, stageOf, CLASSIC_STAGE, type Shared } from "./storm";
+import { bn, humanLine, refOf, ripeOf, stormLabel, type Shared } from "./link";
 
 const CREAM = "#fff6e2", AMBER = "#ffd27a", INK = "#3a2414";
 
@@ -60,15 +60,16 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
   }
   for (const [x, at, ripe] of [[110, 190, true], [930, 200, false], [1010, 150, true]] as const) { context.save(); context.translate(x, y(at)); drawMango(context, 64, ripe); context.restore(); }
 
-  const ripe = Math.max(0, ripeOf(shared.score, shared.count)), green = shared.count - ripe;
+  // An old link's score splits exactly into ripe and green; a new storm's (with golden mangoes) only roughly, for the heap.
+  const ripe = shared.level ? Math.max(0, Math.min(shared.count, Math.round((shared.score - 5 * shared.count) / 5))) : Math.max(0, ripeOf(shared.score, shared.count)), green = shared.count - ripe;
   fitText(context, [{ text: "কালবৈশাখী আম", color: AMBER, weight: 800, display: true }, ...(shared.name ? [{ text: ` · ${shared.name}`, color: CREAM, weight: 700, display: true }] : [])], cx, y(300), 50, 900, "center");
   fitText(context, [{ text: `${bn(shared.count)}টা আম`, color: CREAM, weight: 800, display: true }], cx, y(450), 150, 900, "center");
-  fitText(context, [{ text: `${bn(shared.score)} পয়েন্ট`, color: AMBER, weight: 700 }, { text: `  ·  পাকা ${bn(ripe)}, কাঁচা ${bn(green)}`, color: "#f3dcc0", weight: 600 }], cx, y(530), 46, 900, "center");
+  fitText(context, [{ text: `${bn(shared.score)} পয়েন্ট`, color: AMBER, weight: 700 }, ...(shared.level ? [] : [{ text: `  ·  পাকা ${bn(ripe)}, কাঁচা ${bn(green)}`, color: "#f3dcc0", weight: 600 }])], cx, y(530), 46, 900, "center");
 
-  const stage = shared.stage ?? CLASSIC_STAGE, stars = extra.stars ?? 0;
+  const stars = extra.stars ?? 0;
   // Stars sit on the canopy above the title; the storm and the all-time badge sit just above the heap, which can rise to about y(620).
   if (stars) for (let i = 0; i < 3; i++) star(context, cx + (i - 1) * 74, y(212), 30, i < stars);
-  const badge = `ঝড় ${bn(stage)} · ${stageOf(stage).name}${extra.milestone ? ` · মোট ${bn(extra.milestone)}+ আম` : ""}`;
+  const badge = `${stormLabel(refOf(shared))}${extra.milestone ? ` · মোট ${bn(extra.milestone)}+ আম` : ""}`;
   fitText(context, [{ text: badge, color: "#f3dcc0", weight: 600 }], cx, y(582), 32, 900, "center");
 
   // The ডালা and its heap: up to fifteen mangoes, ripe and green in the same mix as the score.

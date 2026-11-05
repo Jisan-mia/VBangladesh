@@ -1,0 +1,213 @@
+---
+title: "উলﬂ°°2509¶ßটﬂ°°2507¶ß খﬂ°°2503¶ßলﬂ°°2494¶ß: pictures, timers, bell, drawer, window, rest screen and parent gate"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: rest
+    lg2: done
+    lg3: gone
+    lg4: Breaks GateClosesBehindParent or NoReadingNeeded or ParentGate
+    lg5: Breaks ChoiceFreezesPlay or GateClosesBehindParent or NoProgressWhileAway or NoReadingNeeded or NoShareForKids or ParentGate in some cases
+    lg6: Path to the ChoiceFreezesPlay or GateClosesBehindParent or NoProgressWhileAway or NoReadingNeeded or NoShareForKids or ParentGate bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 pink
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Waiting on the first picture (demo)
+      s1: Got the first picture (demo)
+      s2: The child left for another page
+      s3: Waiting on the picture after the bell (demo)
+      s4: The share sheet opened
+      s5: Got the picture after the bell (demo)
+      s6: Waiting on the last picture
+      s7: Got the last picture
+      s8: End screen
+      s9: স#2498;র#2509;য ড#2497;বল (closed)
+      [*] --> s0
+      s0 --> s1: you tap the right picture [when Eyes is not Away (another window or tab) and Grownups is one of Time left, gate shut, Today's time is up]
+      s0 --> s2: the child taps a link in the header or the related games [when Eyes is not Away (another window or tab) and Grownups is one of Time left, gate shut, Today's time is up]
+      s1 --> s2: the child taps a link in the header or the related games [when Eyes is not Away (another window or tab)]
+      s1 --> s3: 0.7 s later the next picture comes
+      s0 --> s4: someone shares the link or saves the picture [when Settings is চটপট off and Eyes is On the game and Grownups is one of Rest screen, a parent has the gate open, Rest screen, gate left open, the child has the phone]
+      s1 --> s0: you pick a level in সব ধ#2494;প [when Eyes is সব ধ#2494;প open]
+      s3 --> s2: the child taps a link in the header or the related games [when Eyes is not Away (another window or tab)]
+      s3 --> s5: you tap the right picture [when Eyes is not Away (another window or tab)]
+      s5 --> s2: the child taps a link in the header or the related games [when Eyes is not Away (another window or tab)]
+      s5 --> s6: 0.7 s later the next picture comes
+      s3 --> s0: you pick a level in সব ধ#2494;প [when Eyes is সব ধ#2494;প open]
+      s5 --> s0: you pick a level in সব ধ#2494;প [when Eyes is সব ধ#2494;প open]
+      s6 --> s2: the child taps a link in the header or the related games [when Eyes is not Away (another window or tab)]
+      s6 --> s7: you tap the right picture [when Eyes is not Away (another window or tab)]
+      s7 --> s2: the child taps a link in the header or the related games [when Eyes is not Away (another window or tab)]
+      s7 --> s8: 0.7 s later the round ends
+      s6 --> s0: you pick a level in সব ধ#2494;প [when Eyes is সব ধ#2494;প open]
+      s6 --> s7: 4 s pass and the picture passes as a miss [when Settings is চটপট on]
+      s8 --> s0: you press আব#2494;র খ#2503;ল#2507; or পর#2503;র ধ#2494;প [when Eyes is not Away (another window or tab) and Grownups is one of Time left, gate shut, Today's time is up]
+      s8 --> s2: the child taps a link in the header or the related games [when Eyes is not Away (another window or tab) and Grownups is one of Time left, gate shut, Today's time is up, Today's time is up, gate left open, the child has the phone, gate left open, the child has the phone]
+      s8 --> s9: you press শ#2503;ষ [when Eyes is not Away (another window or tab) and Grownups is one of Time left, gate shut, Today's time is up]
+      s7 --> s0: you pick a level in সব ধ#2494;প [when Eyes is সব ধ#2494;প open]
+      s9 --> s0: you press আব#2494;র খ#2503;ল#2507; or পর#2503;র ধ#2494;প [when Grownups is one of Time left, gate shut, Today's time is up]
+      s9 --> s2: the child taps a link in the header or the related games [when Grownups is none of Today's time is up, a parent has the gate open, a parent has the gate open]
+      s8 --> s0: you pick a level in সব ধ#2494;প [when Eyes is সব ধ#2494;প open and Grownups is one of Time left, gate shut, Today's time is up]
+      s8 --> s4: someone shares the link or saves the picture [when Eyes is not Away (another window or tab) and Grownups is none of Rest screen, Time left, gate shut, Today's time is up, Today's time is up, showing a parent, showing a parent]
+      s9 --> s0: you pick a level in সব ধ#2494;প [when Eyes is সব ধ#2494;প open and Grownups is one of Time left, gate shut, Today's time is up]
+      s9 --> s4: someone shares the link or saves the picture [when Grownups is none of Time left, gate shut, Today's time is up]
+    }
+    --
+    state "Settings" as r1 {
+      s10: চটপট off
+      s11: #8212;
+      s12: চটপট on
+      [*] --> s10
+      s10 --> s11: the child taps a link in the header or the related games [when Eyes is not Away (another window or tab) and Grownups is one of Time left, gate shut, Today's time is up, Today's time is up, gate left open, the child has the phone, gate left open, the child has the phone]
+      s10 --> s12: you press চটপট [when Game is one of End screen, Waiting on the first picture (demo), স#2498;র#2509;য ড#2497;বল (closed) and Eyes is not Away (another window or tab) and Grownups is one of Time left, gate shut, Today's time is up]
+      s10 --> s11: someone shares the link or saves the picture [when Game is one of End screen, Waiting on the first picture (demo), স#2498;র#2509;য ড#2497;বল (closed) and Eyes is not Away (another window or tab) and Grownups is none of Rest screen, Time left, gate shut, Today's time is up, Today's time is up, showing a parent, showing a parent]
+      s12 --> s10: you press চটপট [when Game is one of End screen, Waiting on the first picture (demo), স#2498;র#2509;য ড#2497;বল (closed) and Eyes is not Away (another window or tab) and Grownups is one of Time left, gate shut, Today's time is up]
+      s12 --> s11: the child taps a link in the header or the related games [when Eyes is not Away (another window or tab) and Grownups is one of Time left, gate shut, Today's time is up, Today's time is up, gate left open, the child has the phone, gate left open, the child has the phone]
+      s12 --> s11: someone shares the link or saves the picture [when Game is one of End screen, স#2498;র#2509;য ড#2497;বল (closed) and Eyes is not Away (another window or tab) and Grownups is none of Rest screen, Time left, gate shut, Today's time is up, Today's time is up, showing a parent, showing a parent]
+    }
+    --
+    state "Eyes" as r2 {
+      s13: On the game
+      s14: #8212;
+      s15: Away (another window or tab)
+      s16: সব ধ#2494;প open
+      [*] --> s13
+      s13 --> s14: the child taps a link in the header or the related games [when Grownups is one of Time left, gate shut, Today's time is up, Today's time is up, gate left open, the child has the phone, gate left open, the child has the phone]
+      s13 --> s15: you go to another window or tab [when Game is none of End screen, স#2498;র#2509;য ড#2497;বল (closed) and Grownups is one of Rest screen, Rest screen, a parent has the gate open, Rest screen, gate left open, the child has the phone, Time left, gate shut, Today's time is up]
+      s13 --> s16: you open or close সব ধ#2494;প [when Game is one of Waiting on the first picture (demo), Waiting on the last picture, Waiting on the picture after the bell (demo) and Grownups is one of Time left, gate shut, Today's time is up]
+      s15 --> s13: you come back
+      s16 --> s13: you open or close সব ধ#2494;প [when Game is one of Waiting on the first picture (demo), Waiting on the last picture, Waiting on the picture after the bell (demo) and Grownups is one of Time left, gate shut, Today's time is up]
+      s16 --> s14: the child taps a link in the header or the related games [when Grownups is one of Time left, gate shut, Today's time is up, Today's time is up, gate left open, the child has the phone, gate left open, the child has the phone]
+      s16 --> s15: you go to another window or tab [when Game is none of End screen, স#2498;র#2509;য ড#2497;বল (closed) and Grownups is one of Time left, gate shut, Today's time is up]
+      s13 --> s14: someone shares the link or saves the picture [when Game is one of End screen, Waiting on the first picture (demo), স#2498;র#2509;য ড#2497;বল (closed) and Grownups is none of Rest screen, Time left, gate shut, Today's time is up, Today's time is up, showing a parent, showing a parent]
+      s16 --> s14: someone shares the link or saves the picture [when Game is one of End screen, স#2498;র#2509;য ড#2497;বল (closed) and Grownups is none of Rest screen, Time left, gate shut, Today's time is up, Today's time is up, showing a parent, showing a parent]
+    }
+    --
+    state "Grownups" as r3 {
+      s17: Time left, gate shut
+      s18: Rest screen
+      s19: #8212;
+      s20: Today's time is up
+      s21: Rest screen, a parent has the gate open
+      s22: Rest screen, gate left open, the child has the phone
+      s23: showing a parent
+      s24: a parent has the gate open
+      s25: gate left open, the child has the phone
+      s26: Today's time is up, showing a parent
+      s27: Today's time is up, a parent has the gate open
+      s28: Today's time is up, gate left open, the child has the phone
+      [*] --> s17
+      [*] --> s18
+      s17 --> s19: the child taps a link in the header or the related games [when Eyes is not Away (another window or tab)]
+      s17 --> s20: today's time runs out [when Eyes is not Away (another window or tab)]
+      s18 --> s21: a parent opens বড#2492;দ#2503;র জন#2509;য [when Eyes is not Away (another window or tab)]
+      s20 --> s19: the child taps a link in the header or the related games [when Eyes is not Away (another window or tab)]
+      s21 --> s17: someone gives ১০ ম#2495;ন#2495;ট more
+      s21 --> s18: someone presses বন#2509;ধ কর#2507;
+      s21 --> s18: you go to another window or tab [when Game is Waiting on the first picture (demo) and Settings is চটপট off and Eyes is On the game]
+      s21 --> s22: the parent hands the phone back
+      s21 --> s19: someone shares the link or saves the picture
+      s22 --> s17: someone gives ১০ ম#2495;ন#2495;ট more
+      s22 --> s18: someone presses বন#2509;ধ কর#2507;
+      s22 --> s18: you go to another window or tab [when Game is Waiting on the first picture (demo) and Settings is চটপট off and Eyes is On the game]
+      s22 --> s19: someone shares the link or saves the picture
+      s17 --> s23: you press আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও [when Game is End screen and Eyes is not Away (another window or tab)]
+      s17 --> s24: a parent opens বড#2492;দ#2503;র জন#2509;য [when Game is one of End screen, স#2498;র#2509;য ড#2497;বল (closed) and Eyes is not Away (another window or tab)]
+      s20 --> s18: 0.7 s later the round ends [when Game is Got the last picture]
+      s20 --> s26: you press আব#2509;ব#2497;-আম#2509;ম#2497;ক#2503; দ#2503;খ#2494;ও [when Game is End screen and Eyes is not Away (another window or tab)]
+      s20 --> s27: a parent opens বড#2492;দ#2503;র জন#2509;য [when Game is one of End screen, স#2498;র#2509;য ড#2497;বল (closed) and Eyes is not Away (another window or tab)]
+      s23 --> s17: you press দ#2503;খ#2494;ন#2507; শ#2503;ষ
+      s23 --> s26: today's time runs out
+      s23 --> s24: a parent opens বড#2492;দ#2503;র জন#2509;য
+      s24 --> s19: someone shares the link or saves the picture
+      s24 --> s17: someone presses বন#2509;ধ কর#2507;
+      s24 --> s25: the parent hands the phone back
+      s24 --> s27: today's time runs out
+      s25 --> s19: the child taps a link in the header or the related games or someone shares the link or saves the picture
+      s25 --> s17: someone presses বন#2509;ধ কর#2507;
+      s25 --> s28: today's time runs out
+      s26 --> s20: you press দ#2503;খ#2494;ন#2507; শ#2503;ষ
+      s26 --> s27: a parent opens বড#2492;দ#2503;র জন#2509;য
+      s27 --> s19: someone shares the link or saves the picture
+      s27 --> s20: someone presses বন#2509;ধ কর#2507;
+      s27 --> s28: the parent hands the phone back
+      s24 --> s23: someone presses বন#2509;ধ কর#2507; [when Game is End screen]
+      s28 --> s19: the child taps a link in the header or the related games or someone shares the link or saves the picture
+      s28 --> s20: someone presses বন#2509;ধ কর#2507;
+      s25 --> s23: someone presses বন#2509;ধ কর#2507; [when Game is End screen]
+      s27 --> s26: someone presses বন#2509;ধ কর#2507; [when Game is End screen]
+      s28 --> s26: someone presses বন#2509;ধ কর#2507; [when Game is End screen]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 bugPath
+  class s1 teal
+  class s1 bugPath
+  class s2 pink
+  class s2 breaks
+  class s2 bugPath
+  class s3 teal
+  class s3 bugPath
+  class s4 pink
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 teal
+  class s5 bugPath
+  class s6 teal
+  class s6 bugPath
+  class s7 teal
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 blue
+  class s9 breaks
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 pink
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath
+  class s14 pink
+  class s14 mayBreak
+  class s14 bugPath
+  class s15 mayBreak
+  class s15 bugPath
+  class s16 mayBreak
+  class s16 bugPath
+  class s17 mayBreak
+  class s17 bugPath
+  class s18 yellow
+  class s18 bugPath
+  class s19 pink
+  class s19 mayBreak
+  class s19 bugPath
+  class s20 mayBreak
+  class s21 yellow
+  class s21 bugPath
+  class s22 yellow
+  class s22 breaks
+  class s22 bugPath
+  class s23 blue
+  class s24 blue
+  class s24 mayBreak
+  class s25 blue
+  class s25 breaks
+  class s26 blue
+  class s27 blue
+  class s27 mayBreak
+  class s28 blue
+  class s28 breaks

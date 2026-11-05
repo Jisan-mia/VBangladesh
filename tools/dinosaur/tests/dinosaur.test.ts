@@ -4,12 +4,10 @@ import { join } from "node:path";
 import test from "node:test";
 import { site } from "../content";
 import { share } from "../share";
-import { BOX, boneShapes, dinoShapes, ellipse, mouthShapes, type BoneKind } from "../lib/art";
-import { brush, buryBones, COLS, DIG, FOUND_AT, freshSand, KEY_R, ROWS, TAP_R, uncovered } from "../lib/dig";
+import { BOX, boneShapes, dinoShapes, ellipse, mouthShapes } from "../lib/art";
 import { bn, croreLakh, DINOS, dinoOf, sizeLine, sizeScale, teethHint, whenLine } from "../lib/dinos";
-import {
-  addToBook, boneName, bonesFor, dinosOf, doneLine, FRESH_PACE, LEVEL_COUNT, LEVELS, nearestSlot, nextPace, placeHint, readBook, shouldGlow, starsOf, type Pace,
-} from "../lib/levels";
+import { boneName, nearestSlot, placeHint } from "../lib/skeleton";
+import { addToBook, readBook } from "../lib/book";
 
 const nfc = (text: string) => assert.equal(text, text.normalize("NFC"), text);
 
@@ -68,64 +66,6 @@ test("Bangla numbers, years and sizes read right", () => {
   }
   assert.equal(sizeScale(26).count, 3);
   assert.equal(sizeScale(1.8).kind, "rickshaw");
-});
-
-test("the dig: a tap clears a patch, and a bone is found once most of it shows", () => {
-  let sand = freshSand();
-  assert.equal(sand.length, COLS * ROWS);
-  const bone = { x: 180, y: 120 };
-  assert.equal(uncovered(sand, bone), 0);
-  sand = brush(sand, 180, 120, TAP_R);
-  const once = uncovered(sand, bone);
-  assert.ok(once > 0.4 && once < FOUND_AT, `one tap is not enough: ${once}`);
-  sand = brush(sand, 155, 120, TAP_R);
-  sand = brush(sand, 205, 120, TAP_R);
-  assert.ok(uncovered(sand, bone) >= FOUND_AT, "three taps uncover a bone");
-  assert.equal(uncovered(freshSand(), bone), 0, "brush returns a new grid");
-  assert.ok(uncovered(brush(freshSand(), 180, 120, KEY_R), bone) >= FOUND_AT, "one key press finds a bone");
-  const edge = brush(freshSand(), -50, -50, 20);
-  assert.ok(edge.every(cell => cell === 0), "brushing off the box does nothing");
-  for (const seed of [1, 2, 3, 77, 9999]) {
-    const kinds: BoneKind[] = ["skull", "ribs", "leg", "tail", "neck", "arm"];
-    const bones = buryBones(kinds, seed);
-    assert.deepEqual(bones.map(each => each.kind), kinds);
-    assert.deepEqual(buryBones(kinds, seed), bones, "same seed, same dig");
-    for (const each of bones) assert.ok(each.x >= 40 && each.x <= DIG.width - 40 && each.y >= 30 && each.y <= DIG.height - 30, JSON.stringify(each));
-    for (let i = 0; i < bones.length; i++) for (let j = i + 1; j < bones.length; j++) assert.ok(Math.hypot(bones[i].x - bones[j].x, bones[i].y - bones[j].y) >= 55, "bones never overlap");
-  }
-});
-
-test("levels: six digs of two, each dinosaur once, gently more bones", () => {
-  assert.equal(LEVEL_COUNT, 6);
-  const all = LEVELS.flatMap(level => level.dinos);
-  assert.deepEqual([...all].sort(), DINOS.map(dino => dino.id).sort());
-  assert.deepEqual(LEVELS.map(level => level.bones), [3, 3, 4, 4, 5, 5]);
-  assert.deepEqual(dinosOf(1).map(dino => dino.diet).sort(), ["meat", "plant"], "the first dig has one of each");
-  assert.deepEqual(dinosOf(99), dinosOf(6));
-  assert.equal(doneLine(1), "আজ ২টা ডাইনোসর খুঁজে পেলাম");
-});
-
-test("difficulty steps: three slips ease, five right step up, never announced", () => {
-  let pace: Pace = FRESH_PACE;
-  assert.equal(bonesFor(1, pace), 3);
-  assert.ok(!shouldGlow(pace, 1) && shouldGlow(pace, 2), "the right place glows after two tries");
-  for (let i = 0; i < 3; i++) pace = nextPace(pace, false);
-  assert.equal(pace.help, 1);
-  assert.equal(bonesFor(1, pace), 3, "never fewer than three bones");
-  assert.equal(bonesFor(5, pace), 4);
-  assert.ok(shouldGlow(pace, 0));
-  pace = nextPace(pace, true);
-  assert.equal(pace.help, 0);
-  for (let i = 0; i < 5; i++) pace = nextPace(pace, true);
-  assert.equal(pace.help, -1);
-  assert.equal(bonesFor(1, pace), 4);
-  assert.equal(bonesFor(6, pace), 6, "at most six, every dinosaur has six");
-  pace = nextPace(pace, false);
-  assert.equal(pace.help, 0, "one slip drops back to normal");
-});
-
-test("stars are a record: 3 with no slip, 2 with up to two, else 1", () => {
-  assert.deepEqual([0, 1, 2, 3, 9].map(starsOf), [3, 2, 2, 1, 1]);
 });
 
 test("snapping is generous and hints say what and where", () => {

@@ -5,11 +5,8 @@ import test from "node:test";
 import { site } from "../content";
 import { share } from "../share";
 import { hasWordPicture } from "../lib/art";
-import { cardLine } from "../lib/words";
-import {
-  ALL_WORDS, DECOYS, HASANTA, LEVELS, LEVEL_COUNT, ROUND_SIZE, SETS, conjunct, current, done, equation, graphemes, hint, levelOf, methodLine,
-  newRound, next, place, printItems, shapeNote, splitWord, starsOf, tiles, tilesFor, unplace, whyLine, type Round,
-} from "../lib/words";
+import { cardLine, createRound, tilesFor, type Round, DECOYS } from "../lib/round";
+import { ALL_WORDS, HASANTA, SETS, bn, conjunct, equation, graphemes, printItems, shapeNote, splitWord } from "../lib/words";
 
 const root = join(import.meta.dirname, "..");
 const files = (dir: string): string[] => readdirSync(dir).flatMap(name => {
@@ -18,12 +15,10 @@ const files = (dir: string): string[] => readdirSync(dir).flatMap(name => {
 });
 const CONSONANTS = new Set([..."কখগঘঙচছজঝঞটঠডঢণতথদধনপফবভমযরলশষসহ"]);
 
-/** Plays the current word right, letter by letter. */
-const solve = (round: Round) => current(round).parts.reduce((state, part) => place(state, part).round, round);
-
 test("every word: NFC, a picture, exactly one যুক্তবর্ণ built from real consonants with হসন্ত, no duplicates", () => {
   assert.equal(ALL_WORDS.length, 34);
   assert.equal(new Set(ALL_WORDS.map(item => item.word)).size, ALL_WORDS.length, "no duplicate words");
+  assert.equal(new Set(ALL_WORDS.map(item => item.pic)).size, ALL_WORDS.length, "each picture means one word");
   for (const item of ALL_WORDS) {
     const joint = conjunct(item.parts);
     assert.equal(item.word, item.word.normalize("NFC"), item.word);
@@ -56,7 +51,7 @@ test("known spellings and parts (Bangla Academy)", () => {
   assert.ok(!ALL_WORDS.some(item => item.word.includes("য়") && item.parts.includes("য")), "য-ফলা uses য, never য়");
 });
 
-test("graphemes keep a যুক্তবর্ণ whole, with its কার", () => {
+test("graphemes keep a যুক্তবর্ণ whole, with its কার: letters render as whole clusters", () => {
   assert.deepEqual(graphemes("পক্ষী"), ["প", "ক্ষী"]);
   assert.deepEqual(graphemes("চন্দ্র"), ["চ", "ন্দ্র"]);
   assert.deepEqual(graphemes("মার্বেল"), ["মা", "র্বে", "ল"]);
@@ -66,27 +61,8 @@ test("graphemes keep a যুক্তবর্ণ whole, with its কার", (
     assert.equal(before + cluster + after, item.word);
     assert.ok(cluster.includes(conjunct(item.parts)), `${item.word}: ${cluster}`);
     assert.ok(!cluster.endsWith(HASANTA));
+    for (const piece of graphemes(item.word)) assert.ok(!piece.endsWith(HASANTA) || piece === graphemes(item.word).at(-1), `${item.word}: ${piece}`);
   }
-});
-
-test("levels: four sets, ভাঙি before জুড়ি, easy doubles first, each set has enough words for a round", () => {
-  assert.equal(LEVEL_COUNT, 8);
-  assert.deepEqual(LEVELS.map(level => level.mode), ["bhangi", "juri", "bhangi", "juri", "bhangi", "juri", "bhangi", "juri"]);
-  assert.deepEqual(LEVELS.map(level => level.set), ["double", "double", "common", "common", "tricky", "tricky", "phala", "phala"]);
-  assert.equal(new Set(LEVELS.map(level => level.title)).size, LEVEL_COUNT);
-  for (const item of SETS.double.words) assert.equal(item.parts[0], item.parts[1], `${item.word} is a double`);
-  for (const set of Object.values(SETS)) assert.ok(set.words.length >= ROUND_SIZE);
-  assert.ok(SETS.phala.words.every(item => item.parts.includes("র") || item.parts.includes("য")));
-  assert.equal(levelOf(0), LEVELS[0]);
-  assert.equal(levelOf(99), LEVELS[LEVEL_COUNT - 1]);
-});
-
-test("a round: six different words from its set, same seed same order", () => {
-  const round = newRound(5, 42);
-  assert.equal(round.items.length, ROUND_SIZE);
-  assert.equal(new Set(round.items.map(item => item.word)).size, ROUND_SIZE);
-  assert.ok(round.items.every(item => SETS.tricky.words.includes(item)));
-  assert.deepEqual(newRound(5, 42).items, round.items);
 });
 
 test("tiles hold the parts once (ক + ক is one tile, used twice) plus the decoys for the pace", () => {
@@ -99,77 +75,6 @@ test("tiles hold the parts once (ক + ক is one tile, used twice) plus the dec
   assert.deepEqual(tilesFor(double, "normal", 3), tilesFor(double, "normal", 3), "stable for a word");
 });
 
-test("placing: fill, then right; a double takes the same tile twice", () => {
-  let round = newRound(1, 7);
-  const item = current(round);
-  let step = place(round, item.parts[0]);
-  assert.equal(step.outcome, "fill");
-  step = place(step.round, item.parts[1]);
-  assert.equal(step.outcome, "right");
-  round = step.round;
-  assert.ok(round.solved);
-  assert.equal(place(round, "ক").outcome, "ignore", "no taps after a word is done");
-  round = next(round);
-  assert.equal(round.index, 1);
-  assert.deepEqual(round.filled, []);
-});
-
-test("wrong order and wrong letters: the slots empty, a one-line reason, then the right tiles glow", () => {
-  const round = newRound(3, 11);
-  const item = current(round);
-  const flipped = place(place(round, item.parts[1]).round, item.parts[0]);
-  assert.equal(flipped.outcome, "order");
-  assert.deepEqual(flipped.round.filled, []);
-  assert.match(whyLine(flipped.round), /আগে-পরে উল্টো/);
-  assert.equal(hint(flipped.round), 1);
-  const stray = place(place(flipped.round, item.parts[0]).round, item.decoys[0]);
-  assert.equal(stray.outcome, "wrong");
-  assert.equal(whyLine(stray.round), `${item.parts[0]} ঠিক জায়গায়। ${item.decoys[0]} এই যুক্তবর্ণে নেই।`);
-  assert.equal(hint(stray.round), 2);
-  assert.equal(stray.round.misses, 2);
-  assert.doesNotMatch(whyLine(stray.round), /ভুল/);
-});
-
-test("undo takes the last letter back", () => {
-  const round = newRound(2, 5), item = current(round);
-  const one = place(round, item.parts[0]).round;
-  assert.deepEqual(unplace(one).filled, []);
-  assert.deepEqual(unplace(round), round);
-});
-
-test("difficulty: three misses in a row quietly ease the next tiles; five right in a row step them up", () => {
-  let round = newRound(3, 1);
-  for (let i = 0; i < 3; i++) round = place(place(round, "অ").round, "অ").round;
-  assert.equal(round.pace, "easy");
-  assert.equal(tiles(round).length, new Set(current(round).parts).size + DECOYS.easy);
-  round = solve(round);
-  assert.equal(round.pace, "easy", "one right is not enough");
-  round = solve(next(round));
-  assert.equal(round.pace, "normal", "two right in a row lift it back");
-  round = newRound(4, 2);
-  for (let i = 0; i < 5; i++) { round = solve(round); if (i < 4) round = next(round); }
-  assert.equal(round.pace, "hard");
-  round = place(place(next(round), "অ").round, "অ").round;
-  assert.equal(round.pace, "normal", "a miss steps it back down");
-});
-
-test("a whole round ends after six words", () => {
-  let round = newRound(8, 99);
-  for (let i = 0; i < ROUND_SIZE; i++) round = next(solve(round));
-  assert.ok(done(round));
-  assert.equal(round.misses, 0);
-});
-
-test("stars record clean work, and praise names the method only when earned", () => {
-  assert.equal(starsOf(0), 3);
-  assert.equal(starsOf(1), 3);
-  assert.equal(starsOf(2), 2);
-  assert.equal(starsOf(4), 2);
-  assert.equal(starsOf(5), 1);
-  assert.match(methodLine({ ...newRound(1, 1), misses: 0 }), /ধীরে বলে বলে/);
-  assert.match(methodLine({ ...newRound(1, 1), misses: 3 }), /^৩বার/);
-});
-
 test("রেফ and ফলা notes for parents and children", () => {
   assert.match(shapeNote(["র", "য"]), /রেফ/);
   assert.match(shapeNote(["ট", "র"]), /র-ফলা/);
@@ -178,10 +83,12 @@ test("রেফ and ফলা notes for parents and children", () => {
   assert.equal(shapeNote(["ক", "ষ"]), "");
 });
 
-test("card line carries no name", () => {
-  assert.equal(cardLine(6, ["bhangi"]), "আজ ৬টা যুক্তবর্ণ ভাঙলাম");
-  assert.equal(cardLine(12, ["bhangi", "juri"]), "আজ ১২টা যুক্তবর্ণ ভাঙলাম আর জুড়লাম");
-  assert.equal(cardLine(6, ["juri"]), "আজ ৬টা যুক্তবর্ণ জুড়লাম");
+test("card line carries no name, and says ভাঙলাম, জুড়লাম or both", () => {
+  const steps = (modes: ("bhangi" | "juri")[]) => modes.map(mode => ({ word: ALL_WORDS[0], mode }));
+  assert.equal(cardLine(steps(["bhangi", "bhangi", "bhangi", "bhangi", "bhangi", "bhangi"])), "আজ ৬টা যুক্তবর্ণ ভাঙলাম");
+  assert.equal(cardLine(steps(["bhangi", "juri", "bhangi", "juri", "bhangi", "juri", "bhangi", "juri"])), "আজ ৮টা যুক্তবর্ণ ভাঙলাম আর জুড়লাম");
+  assert.equal(cardLine(steps(["juri", "juri", "juri", "juri", "juri", "juri"])), "আজ ৬টা যুক্তবর্ণ জুড়লাম");
+  assert.equal(bn(12), "১২");
 });
 
 test("the print sheet has ten real words, easy to hard, with a রেফ and a ফলা", () => {
@@ -200,17 +107,34 @@ test("share never makes a link and has no tally", () => {
   assert.ok(share.preview("x").title.length > 0);
 });
 
-test("no network: the tool's source never calls fetch or imports share-client; no per-letter spans", () => {
+test("no network and no voice: the tool's source never calls fetch, share-client, speak or speechSynthesis; no per-letter spans", () => {
   const sources = [...files(root), join(root, "../../app/juktoborno/page.tsx")];
-  assert.ok(sources.length >= 10);
+  assert.ok(sources.length >= 14);
   for (const file of sources) {
     const text = readFileSync(file, "utf8");
     assert.doesNotMatch(text, /\bfetch\s*\(/, file);
     assert.doesNotMatch(text, /share-client|ShareBar|sendBeacon|XMLHttpRequest|\/api\//, file);
+    assert.doesNotMatch(text, /\bspeak\s*\(|SpeakButton|speechSynthesis|useBanglaVoice/, `${file}: no voice anywhere`);
     assert.doesNotMatch(text, /letter-spacing:\s*[^0]/, file);
     assert.doesNotMatch(text, /\.split\(""\)/, `${file}: split words with Intl.Segmenter`);
     assert.equal(text, text.normalize("NFC"), `${file} is NFC`);
   }
+});
+
+test("only progress is stored: levels, the খাতা; nothing a child typed, no name, no free text input", () => {
+  const sources = files(root).map(file => readFileSync(file, "utf8")).join("\n");
+  const keys = [...sources.matchAll(/ektukhani-[a-z-]+/g)].map(match => match[0]);
+  // The stars live under ektukhani-levels-juktoborno, written by useLevels; the খাতা under its own key.
+  assert.deepEqual([...new Set(keys)].sort(), ["ektukhani-juktoborno-book", "ektukhani-levels-juktoborno"]);
+  assert.doesNotMatch(sources, /<input|<textarea|contentEditable/);
+  assert.doesNotMatch(sources, /navigator\.(geolocation|mediaDevices)/);
+});
+
+test("the page uses the kids' player frame, the parent note, and no outbound link", () => {
+  const page = readFileSync(join(root, "page.tsx"), "utf8");
+  assert.match(page, /<GamePage site=\{site\} kids /);
+  assert.match(page, /note=\{<ParentNote/);
+  assert.doesNotMatch(page, /PageFrame|href="http/);
 });
 
 test("content meets the SEO limits and the kids' rules", () => {
@@ -223,8 +147,16 @@ test("content meets the SEO limits and the kids' rules", () => {
   for (const must of ["কোন বয়সের", "ইন্টারনেট", "তথ্য", "কতক্ষণ"]) assert.ok(questions.includes(must), must);
   assert.equal(site.privacy.length, 1);
   assert.ok(site.headline && site.headline !== site.title);
+  assert.equal(site.headline, "যুক্তবর্ণ ভাঙি, আবার জুড়ি");
   for (const text of [site.title, site.description, site.lead, site.guideIntro, ...site.steps, ...site.privacy, ...site.faq.flatMap(item => [item.question, item.answer])]) {
     assert.equal(text, text.normalize("NFC"));
     assert.doesNotMatch(text, /আপনি|আপনার|করুন/, "তুমি voice");
   }
+  assert.doesNotMatch(site.faq.map(item => item.answer).join(" "), /কণ্ঠ থাকলে তবেই|পড়ে শোনায়/, "no spoken word any more");
+});
+
+test("a round is made of whole words from its set", () => {
+  const round: Round = createRound(5, 42);
+  assert.equal(round.steps.length, 6);
+  assert.ok(round.steps.every(step => SETS.tricky.words.includes(step.word)));
 });

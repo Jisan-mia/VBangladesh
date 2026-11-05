@@ -1,89 +1,162 @@
-.tool-pati-buni{--accent:#4f7a28;--accent-deep:#36561a;--ink:#2e2119;--muted:#6e5a46;--cane:#f3e6c4;--cane-edge:#d3b97c;--khoyeri:#8a3517}
-.tool-pati-buni .pb-page{color:var(--ink)}
+/* পাটি বুনি: the frame fills the stage over the four big buttons; the title, the end screen and সব পাটি sit over it. One palette per world (lib/art.ts). */
+.tool-pati-buni{--accent:#4f7a28;--accent-deep:#36561a;--ink:#2e2119;--muted:#6e5a46;--cane:#f3e6c4;--cane-edge:#d3b97c;--khoyeri:#8a3517;--cream:#fff4dc;--ease-out:cubic-bezier(.23,1,.32,1)}
 .tool-pati-buni .pb-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.pb-credit{max-width:680px;margin:0;padding:12px 14px;border-left:4px solid var(--accent);background:var(--cane);border-radius:0 10px 10px 0;font-size:15px;line-height:1.6}
 
-/* hero: two short lines, so the frame and its four buttons land on the first phone screen */
-.pb-hero{padding:10px 0 6px}
-.pb-hero-kicker{margin:0;font-size:13px;font-weight:600;line-height:1.5;color:var(--khoyeri)}
-.pb-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(25px,7vw,50px);line-height:1.25;font-weight:700;letter-spacing:0}
-.pb-hero h1 span{color:var(--accent)}
-.pb-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
+.pb{--panel:#2e2119e8;--gold:#f2b632;--floor:#ece0c4;position:relative;width:100%;max-width:560px;margin:0 auto;color:var(--cream)}
+.pb[data-look=dusk]{--panel:#2a1816ea;--gold:#ffc06a;--floor:#d8b9a0}
+.pb[data-look=night]{--panel:#0f1428ee;--gold:#ffd36a;--floor:#1f2742}
+.pb button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 
-.pb{display:grid;gap:8px;max-width:440px}
+/* the play area: exactly the stage in the player (frame over the buttons), so nothing scrolls while playing */
+.pb-play{display:flex;flex-direction:column;gap:8px;height:min(860px,calc(100svh - 24px));min-height:520px}
+.pb[data-player] .pb-play{height:var(--stage-h,auto);min-height:0}
+.tool-pati-buni .gp-stage,.tool-pati-buni .gp[data-immersive] .gp-stage{padding:0}
+.pb-frame{position:relative;flex:1;min-height:0;overflow:hidden;border-radius:14px;background:var(--floor);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.tool-pati-buni .gp-stage[data-immersive] .pb-frame{border-radius:0}
+.pb-frame>canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
 
-/* opened from a friend's link: their mat card, tilted, and the honest label */
-.pb-friend{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;padding:8px 12px;border-radius:14px;background:var(--cane)}
-.pb-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 14px #2e211933;transform:rotate(-4deg)}
-.pb-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.35}
-.pb-friend p{margin:0;font-size:13px;line-height:1.4;color:var(--muted)}
+/* the HUD's one HTML part: the পাটি badge, top-left; it opens সব পাটি */
+.pb-badge{position:absolute;top:8px;left:8px;z-index:2;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:7px;align-items:center;max-width:46%;min-height:38px;padding:4px 12px 5px 9px;border:0;border-radius:14px;background:#2e2119b8;color:var(--cream);text-align:left;line-height:1.15}
+.pb-badge i{grid-row:1/3;width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px #f2b63233}
+.pb-badge span{overflow:hidden;font-size:13px;font-weight:700;white-space:nowrap;text-overflow:ellipsis}
+.pb-badge small{font-size:12px;font-weight:600;color:#f3dcc0}
+.pb-badge[data-finale]{background:#7c1d10d9}
+.pb-badge[data-finale] i{background:#ff7a5c;box-shadow:0 0 0 3px #ff7a5c44}
 
-.pb-hud{display:flex;align-items:center;gap:12px;min-height:44px}
-.pb-hud p{display:flex;align-items:baseline;gap:5px;margin:0;line-height:1}
-.pb-hud p span{font-size:13px;font-weight:600;color:var(--muted)}
-.pb-score b{font-family:var(--font-display);font-size:28px;font-weight:800;font-variant-numeric:tabular-nums}
-.pb-best b{font-family:var(--font-display);font-size:19px;font-weight:700;color:var(--muted)}
-.pb-slow{display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-left:auto;padding:0 12px;border:1.5px solid var(--cane-edge);border-radius:999px;background:#fff;color:var(--ink);font-size:14px;font-weight:600;white-space:nowrap}
-.pb-slow[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
-.pb-hud svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-.pb-hud .pb-fill{fill:currentColor;stroke:none}
-.pb-pause{display:grid;place-items:center;width:44px;height:44px;flex:none;padding:0;border:0;border-radius:12px;background:var(--cane);color:var(--ink)}
-
-/* the frame: only here and on the buttons does the page stop scrolling under a finger */
-.pb-board{position:relative;width:100%;border-radius:12px;overflow:hidden;background:#ece0c4;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
-.pb-board canvas{display:block;max-width:100%}
-.pb-overlay{position:absolute;inset:0;display:grid;place-items:center;padding:12px}
-.pb-overlay[data-at=top]{place-items:start center;padding-top:26%}
-.pb-note{display:grid;justify-items:center;gap:10px;max-width:290px;padding:14px 16px;border-radius:16px;background:#fffaf0f2;box-shadow:0 8px 24px #2e211940;text-align:center}
-.pb-howto{margin:0;font-size:16px;font-weight:600;line-height:1.5}
-.pb-howto b{color:var(--accent-deep)}
-.pb-note .kit-primary{min-width:170px;min-height:56px;font-size:19px}
-/* game over: a cane-edged slip */
-.pb-slip{gap:2px;border:3px solid var(--khoyeri);border-radius:8px;transform:rotate(-2deg);animation:pb-drop .3s ease-out}
-.pb-slip h2{margin:0;font-family:var(--font-display);font-size:28px;line-height:1.3;color:var(--khoyeri)}
-.pb-final{margin:0;font-size:16px}
-.pb-final b{font-family:var(--font-display);font-size:42px;line-height:1.15}
-.pb-rows{margin:0;font-weight:700;color:var(--accent-deep)}
-.pb-record{margin:0;font-size:15px;color:var(--muted)}
-.pb-versus{margin:4px 0 0;font-weight:700;font-size:16px}
-.pb-see{min-height:44px;margin-top:4px;font-size:15px}
-@keyframes pb-drop{from{transform:translateY(-14px) rotate(-6deg);opacity:0}}
-
-.pb-controls{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;touch-action:none}
-.pb-key{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;padding:0;border:0;border-radius:16px;background:var(--cane);color:var(--ink);font-size:15px;font-weight:700;box-shadow:0 4px 0 var(--cane-edge);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+/* ---- the four big buttons ---- */
+.pb-controls{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex:none;padding:0 6px 6px;touch-action:none}
+.pb[data-player] .pb-controls{padding:0 8px 8px}
+.pb-controls[data-off]{opacity:.45}
+.pb-key{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:66px;padding:0;border:0;border-radius:16px;background:var(--cane);color:var(--ink);font-size:15px;font-weight:700;box-shadow:0 4px 0 var(--cane-edge);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .06s var(--ease-out)}
+.pb-key{position:relative}
 .pb-key:active{transform:translateY(3px);box-shadow:0 1px 0 var(--cane-edge)}
 .pb-key svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .pb-key[aria-label] svg{width:34px;height:34px;stroke-width:3}
-.tool-pati-buni .pb-again{grid-column:1/-1;min-height:64px;font-size:21px}
+.pb-key[data-glow]{background:#ffe08a;box-shadow:0 4px 0 #c99a2e}
+.pb-key[data-glow]::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:0 0 0 5px #f2b632aa;animation:pb-glow 1s ease-in-out infinite alternate} /* unslop-ignore: the lit ring says which button to press */
+@keyframes pb-glow{from{opacity:.35}to{opacity:1}}
+@media (max-height:700px){.pb-key{min-height:56px}}
 
-.pb-result{scroll-margin-top:12px;margin-top:22px;padding-top:20px;border-top:2px solid var(--ink)}
-.pb-result-head h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(23px,5vw,34px);line-height:1.4}
-.pb-result-head h2 em{font-style:normal;color:var(--accent)}
-.pb-result-head p{margin:0 0 16px;color:var(--muted)}
+/* ---- the title ---- */
+.pb-start{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 16px 16px;overflow:auto;overscroll-behavior:contain;background:linear-gradient(#2e211900 0%,#2e2119b8 20%,#2e2119ea 100%);text-align:center;animation:pb-in .24s var(--ease-out)}
+.pb[data-look=night] .pb-start{background:linear-gradient(#0f142800 0%,#0f1428c0 20%,#0f1428ee 100%)}
+.pb-start[data-finale]{background:linear-gradient(#3a0f0a00 0%,#3a0f0ab8 20%,#2e2119ee 100%)}
+.pb-go{display:grid;justify-items:center;gap:0;width:min(100%,330px);padding:4px 8px 12px;border:0;border-radius:26px;background:none;color:var(--cream);font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1.1;transition:transform .12s var(--ease-out)}
+.pb-go-art{display:block;width:100%;height:clamp(120px,23vh,190px)}
+.pb-go span{margin-top:-4px;padding:6px 28px 8px;border-radius:12px;background:var(--accent);box-shadow:0 5px 0 var(--accent-deep),0 16px 30px -12px #000c}
+.pb[data-look=dusk] .pb-go span{background:#a4492b;box-shadow:0 5px 0 #5f240e,0 16px 30px -12px #000c}
+.pb[data-look=night] .pb-go span{background:#c98a1e;box-shadow:0 5px 0 #7a520e,0 16px 30px -12px #000c}
+.pb-go:active{transform:translateY(3px) scale(.98)}
+.pb-go:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
+.pb-pick{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px;width:min(100%,380px)}
+.pb-pick-name h2{margin:0;font-family:var(--font-display);font-size:21px;font-weight:800;line-height:1.3;color:#fff}
+.pb-finale-badge{margin:0 auto 2px;padding:1px 10px;width:max-content;border-radius:4px;background:#c2361f;color:#fff;font-size:12px;font-weight:700}
+.pb-got{margin:0;color:var(--gold);font-size:15px;letter-spacing:2px}
+.pb-got span{color:#ffffff40}
+.pb-step{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid #fff4dc55;border-radius:14px;background:#ffffff14;color:var(--cream)}
+.pb-step:disabled{opacity:.25}
+.pb-step svg,.pb-sheet-close svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.pb-lesson{max-width:380px;margin:0;padding:8px 12px;border-left:4px solid var(--gold);border-radius:4px 12px 12px 4px;background:#ffffff14;font-size:15px;line-height:1.5;text-align:left}
+.pb-lesson b{margin-right:6px;color:var(--gold)}
+.pb-start[data-finale] .pb-lesson{border-left-color:#ff7a5c}
+.pb-start[data-finale] .pb-lesson b{color:#ffb39e}
+.pb-modes{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;width:min(100%,320px);padding:4px;border-radius:14px;background:#ffffff14}
+.pb-modes button{min-height:40px;border:0;border-radius:10px;background:transparent;color:var(--cream);font-size:15px;font-weight:700}
+.pb-modes button[aria-checked=true]{background:var(--cream);color:var(--ink)}
+.pb-mode-line,.pb-targets{margin:0;font-size:13px;line-height:1.45;color:#f3dcc0}
+.pb-targets{color:var(--gold);font-weight:600}
+.pb-start-foot{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2px 16px;margin:0;font-size:12px;color:#f3dcc0aa}
+.pb-start-foot .kit-link{min-height:40px;color:var(--cream);font-size:15px;font-weight:700}
+.pb-friend{display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:center;width:min(100%,380px);padding:8px 10px;border-radius:14px;background:#fff4dc1f;text-align:left}
+.pb-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 12px #0006;transform:rotate(-4deg)}
+.pb-friend p{margin:0;font-size:13px;line-height:1.45;color:#f3dcc0}
+.pb-friend b{color:#fff}
+
+/* ---- the first-run story ---- */
+.pb-story{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;padding:16px 16px 18%;background:#2e211966;pointer-events:none}
+.pb-skip{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);margin:0;white-space:nowrap;padding:4px 10px;border-radius:6px;background:#2e2119a6;font-size:12px;font-weight:600}
+.pb-panel{max-width:340px;margin:0;padding:14px 18px;border:3px solid var(--cream);border-radius:6px;background:#fff4dc;color:var(--ink);font-family:var(--font-display);font-size:21px;font-weight:700;line-height:1.45;box-shadow:6px 6px 0 #2e2119;animation:pb-in .26s var(--ease-out)}
+.pb-dots{display:flex;gap:6px;margin:0}
+.pb-dots i{width:8px;height:8px;border-radius:50%;background:#fff4dc55}
+.pb-dots i[data-on]{background:var(--cream)}
+
+/* ---- our own pause cover (outside the player's menu) ---- */
+.pb-cover{position:absolute;inset:0;z-index:3;display:grid;place-content:center;justify-items:center;gap:12px;background:#2e2119c4;text-align:center}
+.pb-cover p{margin:0;font-family:var(--font-display);font-size:20px;font-weight:700}
+.pb-cover .kit-primary{min-width:200px;min-height:56px;font-size:19px}
+
+/* ---- the end screen ---- */
+.pb-finish{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;overflow:auto;background:var(--panel);text-align:center;animation:pb-in .26s var(--ease-out) both}
+.pb-finish h2{margin:0;font-family:var(--font-display);font-size:clamp(23px,7cqw,30px);font-weight:800;line-height:1.25;color:#fff}
+.pb-finish .gx-reveal{font-size:38px;gap:6px}
+.pb-nostar{margin:0;font-size:30px;letter-spacing:4px;color:#ffffff40}
+.pb-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;width:min(100%,390px);margin:4px 0 0}
+.pb-stats div{display:grid;gap:1px;padding:7px 4px;border-radius:12px;background:#fff4dc1a}
+.pb-stats dt{font-size:12px;color:#f3dcc0}
+.pb-stats dd{margin:0;font-family:var(--font-display);font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;color:#fff}
+.pb-stats small{font-size:12px;font-weight:600;color:#f3dcc0aa}
+.pb-miss{margin:0;padding:4px 12px;border-radius:12px;background:#f2b63233;font-size:15px;font-weight:700;color:#fff6e2}
+.pb-versus{max-width:320px;margin:0;font-size:15px;font-weight:600;line-height:1.45}
+.pb-line{max-width:330px;margin:0;font-size:14px;line-height:1.5;color:#f3dcc0}
+.pb-actions{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;width:min(100%,360px);margin-top:4px}
+.pb-actions:has(>:only-child){grid-template-columns:1fr}
+.tool-pati-buni .pb-actions button{min-height:56px;font-size:18px}
+.tool-pati-buni .pb-actions .kit-secondary{background:transparent;color:var(--cream);border-color:var(--cream)}
+.pb-actions kbd{margin-left:8px;padding:1px 6px;border-radius:6px;background:#ffffff2e;font-family:inherit;font-size:12px;font-weight:600}
+@media (pointer:coarse){.pb-actions kbd{display:none}}
+.tool-pati-buni .pb-see{min-height:44px;color:var(--cream);font-size:15px}
+
+/* ---- সব পাটি ---- */
+.pb-sheet{position:absolute;inset:0;z-index:4;display:grid;align-items:start;padding:8px;background:#0d0a0899;animation:pb-fade .16s var(--ease-out)}
+.pb-sheet-card{display:grid;gap:12px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:14px 12px 16px;border-radius:16px;background:var(--panel);box-shadow:0 20px 40px -20px #000c;animation:pb-in .2s var(--ease-out)}
+.pb-sheet header{position:relative;padding-right:52px}
+.pb-sheet h2{margin:0;font-family:var(--font-display);font-size:24px;color:#fff}
+.pb-sheet header p{margin:2px 0 0;font-size:13px;color:#f3dcc0}
+.pb-sheet-close{position:absolute;top:0;right:0;display:grid;place-items:center;width:46px;height:46px;padding:0;border:1.5px solid #fff4dc55;border-radius:14px;background:#ffffff14;color:var(--cream)}
+.pb-world{--world:#e8cf92}
+.pb-world[data-look=dusk]{--world:#cf7553}.pb-world[data-look=night]{--world:#8fa2ff}.pb-world[data-look=classic]{--world:#9ebd5c}
+.pb-world h3{display:flex;align-items:center;gap:8px;margin:0 0 6px;font-size:16px;color:#fff}
+.pb-world h3 i{width:11px;height:11px;border-radius:50%;background:var(--world)}
+.pb-world ol{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.pb-world button{position:relative;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"key name stars" "key line line";align-items:center;column-gap:10px;row-gap:1px;width:100%;min-height:58px;padding:7px 10px;border:1.5px solid #fff4dc2a;border-radius:12px;background:#ffffff10;color:var(--cream);text-align:left}
+.pb-world button kbd{grid-area:key;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#ffffff1c;font-family:inherit;font-size:13px;font-weight:700}
+.pb-row-name{grid-area:name;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:15px}
+.pb-row-name em{padding:1px 8px;border-radius:4px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800}
+.pb-row-line{grid-area:line;font-size:12.5px;line-height:1.4;color:#f3dcc0c0}
+.pb-row-stars{grid-area:stars;display:flex;font-size:13px;line-height:1}
+.pb-row-stars i{font-style:normal;color:#ffffff30}
+.pb-row-stars i[data-on]{color:var(--gold)}
+.pb-row-stars svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.pb-row-best{font-size:12px;font-weight:700;color:var(--gold)}
+.pb-world button:disabled{opacity:.55}
+.pb-world button[data-finale]:not(:disabled){border-color:var(--world)}
+.pb-world button[aria-current]{background:#fff4dc26;border-color:var(--cream)}
+.pb-world button[data-next]{box-shadow:0 0 0 3px var(--gold)}
+.pb-world button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* ---- the card and share, under the play area inside the stage ---- */
+.pb-result{scroll-margin-top:12px;margin-top:16px;padding:18px 12px 8px;border-top:2px solid var(--ink);color:var(--ink)}
+.pb-result h2{margin:0 0 6px;font-family:var(--font-display);font-size:clamp(22px,5vw,30px);line-height:1.4}
+.pb-result h2 em{font-style:normal;color:var(--accent)}
+.pb-result>p{margin:0 0 16px;color:var(--muted)}
 .pb-result-body{display:grid;gap:22px}
 .pb-share{display:grid;gap:18px;align-content:start}
 .pb-name{display:grid;gap:6px;font-weight:600}
 .pb-name small{font-weight:400;color:var(--muted);font-size:13px}
 .pb-name input{border:1.5px solid var(--cane-edge);border-radius:12px;font-size:17px}
-.pb-again-link{justify-self:start}
+.tool-pati-buni .kit-chips button[aria-pressed=true]{border-color:var(--accent);background:var(--accent)}
 
-.pb-guide h2{font-family:var(--font-display);margin-bottom:8px}
-.pb-guide-intro{margin:0 0 18px;color:var(--muted)}
-.pb-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.pb-guide li{display:flex;gap:14px;align-items:flex-start}
-.pb-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--cane-edge);color:var(--ink);font-weight:700}
-.pb-guide li p{margin:4px 0 0}
-.pb-credit{margin:20px 0 0;padding:12px 14px;border-left:4px solid var(--accent);background:var(--cane);border-radius:0 10px 10px 0;font-size:15px;line-height:1.6}
-
-@media(min-width:720px){
-  .pb-lead{display:block}
-  .pb-page:has(.pb-friend) .pb-lead{display:none}
-  .pb-friend{grid-template-columns:96px 1fr}
-  .pb-friend h2{font-size:20px}
+/* press feedback on everything pressable (the four keys and the start button already have their own) */
+.pb-step,.pb-modes button,.pb-world button,.pb-badge,.pb-sheet-close,.pb .kit-secondary,.pb .kit-link{transition:transform .14s var(--ease-out)}
+.pb-step:not(:disabled):active,.pb-modes button:active,.pb-world button:not(:disabled):active,.pb-badge:active,.pb-sheet-close:active,.pb .kit-secondary:active{transform:scale(.97)}
+@keyframes pb-in{from{opacity:0;transform:translateY(10px)}}
+@keyframes pb-fade{from{opacity:0}}
+@media (max-height:640px){
+  .pb-go-art{height:clamp(90px,18vh,150px)}
+  .pb-go{font-size:28px}
+  .pb-start{gap:6px}
 }
-@media(prefers-reduced-motion:reduce){.pb-slip{animation:none}.pb-key:active{transform:none}}
-.pb-hero h1 .pb-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;line-height:1.5;color:var(--khoyeri)}
-/* sound switch beside the pause; near-miss line on the slip */
-.tool-pati-buni .pb-sound{flex:none;border-color:var(--cane-edge);background:#fff}
-.pb-near{margin:4px 0 2px;padding:4px 10px;border-radius:10px;background:#f2b63233;font-size:15px;font-weight:700}
-/* a phone-wide HUD: the snail alone says ধীরে খেলো (aria-label keeps the words), and a long score wraps instead of pushing the page sideways */
-@media(max-width:440px){.tool-pati-buni .pb-hud{flex-wrap:wrap;row-gap:4px;gap:8px}.tool-pati-buni .pb-slow{width:44px;padding:0;justify-content:center}.tool-pati-buni .pb-slow-text{display:none}}
+/* ধীরে খেলো and reduced motion: no slides, no bounce, no pulse */
+.pb[data-calm] *,.pb[data-calm] ::after{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.pb *,.pb ::after{animation:none!important;transition:none!important}}

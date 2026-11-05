@@ -1,0 +1,50 @@
+---
+title: "Golper mor (story turns): pause menu and window focus"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: done
+  }
+  class lg0 teal
+  class lg1 blue
+  state "At the same time" as all {
+    state "Child" as r0 {
+      s0: On the shelf
+      s1: Reading a story
+      s2: End page
+      [*] --> s0
+      s0 --> s1: you open a story [when Awake]
+      s1 --> s0: you go to the shelf [unless Player menu open]
+      s1 --> s2: you tap the book (a page, a path or গল#2509;প শ#2503;ষ#59; ignored while away) [when Awake]
+      s2 --> s0: you go to the shelf [unless Player menu open]
+    }
+    --
+    state "Book" as r1 {
+      s3: Awake
+      s4: Away
+      s5: Player menu open
+      s6: Away, the next tap only wakes the book
+      s7: Next tap only wakes the book
+      [*] --> s3
+      s3 --> s4: you click away or hide the tab [unless Reading a story]
+      s3 --> s5: the player's menu opens
+      s3 --> s6: you click away or hide the tab [when Reading a story]
+      s4 --> s3: you come back to the window
+      s4 --> s5: the player's menu opens
+      s5 --> s3: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+      s6 --> s4: you go to the shelf
+      s6 --> s7: you come back to the window
+      s6 --> s5: the player's menu opens
+      s7 --> s3: you go to the shelf or you tap the book (a page, a path or গল#2509;প শ#2503;ষ#59; ignored while away)
+      s7 --> s6: you click away or hide the tab
+      s7 --> s5: the player's menu opens
+    }
+  }
+  class s0 blue
+  class s1 teal
+  class s2 blue
+  class s4 blue
+  class s6 teal
+  class s7 teal

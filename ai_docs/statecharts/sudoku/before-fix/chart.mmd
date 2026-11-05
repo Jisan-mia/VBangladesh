@@ -1,0 +1,97 @@
+---
+title: "সﬂ°°2497¶ßডﬂ°°2507¶ßকﬂ°°2497¶ß: round and clock, window, star chimes and your work"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks ChimesOnlyOnTheResult or ClockStillWhileAway or WorkNeverLostByOneTap or YourLinkOpens
+    lg4: Breaks ChimesOnlyOnTheResult or ClockStillWhileAway or WorkNeverLostByOneTap or YourLinkOpens in some cases
+    lg5: Path to the ChimesOnlyOnTheResult or ClockStillWhileAway or WorkNeverLostByOneTap or YourLinkOpens bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: New grid, clock at zero
+      s1: Solving, clock running
+      s2: Result shows, its link opens nothing
+      s3: Result shows, its link opens your grid
+      s4: Paused (থ#2503;ম#2503; আছ#2503;)
+      [*] --> s0
+      s0 --> s1: you tap a cell or you write a digit or take a hint [when Window is You're on the page]
+      s1 --> s0: you tap a level arrow, a level or আজক#2503;র ধ#2494;#2433;ধ#2494;
+      s1 --> s4: you hide the tab
+      s1 --> s2: you take a 10th or later hint and the grid fills [when Window is You're on the page and Work is not Nothing written yet]
+      s1 --> s3: a hint fills the last cell or you write the last digit [when Window is You're on the page and Work is not Nothing written yet]
+      s2 --> s0: you tap a level arrow, a level or আজক#2503;র ধ#2494;#2433;ধ#2494; or you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; [when Window is not Tab hidden]
+      s3 --> s0: you tap a level arrow, a level or আজক#2503;র ধ#2494;#2433;ধ#2494; or you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; [when Window is not Tab hidden]
+      s4 --> s0: you tap a level arrow, a level or আজক#2503;র ধ#2494;#2433;ধ#2494; [when Window is not Tab hidden]
+      s4 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is not Tab hidden]
+    }
+    --
+    state "Window" as r1 {
+      s5: You're on the page
+      s6: Tab hidden
+      s7: Another window has focus
+      [*] --> s5
+      s5 --> s6: you hide the tab
+      s5 --> s7: you click into another window
+      s6 --> s5: the tab shows again
+      s7 --> s5: you come back to the window
+      s7 --> s6: you hide the tab
+    }
+    --
+    state "Chimes" as r2 {
+      s8: No chimes waiting
+      s9: Star chimes still to ring
+      [*] --> s8
+      s8 --> s9: you take a 10th or later hint and the grid fills or a hint fills the last cell or you write the last digit [when Game is Solving, clock running and Window is You're on the page and Work is not Nothing written yet]
+      s9 --> s8: the star chimes ring
+    }
+    --
+    state "Work" as r3 {
+      s10: Nothing written yet
+      s11: Your digits on the grid
+      s12: A half-done grid was thrown away
+      [*] --> s10
+      s10 --> s11: you write a digit or take a hint [when Game is not Paused (থ#2503;ম#2503; আছ#2503;) and Window is You're on the page]
+      s11 --> s12: you tap a level arrow, a level or আজক#2503;র ধ#2494;#2433;ধ#2494; [when Game is one of Paused (থ#2503;ম#2503; আছ#2503;), Solving, clock running and Window is not Tab hidden]
+      s11 --> s10: you tap a level arrow, a level or আজক#2503;র ধ#2494;#2433;ধ#2494; or you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; [when Game is one of Result shows, its link opens nothing, Result shows, its link opens your grid and Window is not Tab hidden]
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 blue
+  class s2 breaks
+  class s2 bugPath
+  class s3 blue
+  class s4 yellow
+  class s4 mayBreak
+  class s5 mayBreak
+  class s5 bugPath
+  class s6 mayBreak
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 breaks
+  class s12 bugPath

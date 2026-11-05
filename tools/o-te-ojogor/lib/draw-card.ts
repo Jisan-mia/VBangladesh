@@ -1,10 +1,11 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, type CardFormat } from "../../../shared/card-canvas";
-import { possessive } from "../../../shared/bangla";
-import { cleanName } from "../../../shared/game-core";
 import { drawFruit, drawPicture, fruitFont } from "./art";
-import { starsOf } from "./game";
+import { starsOf } from "./tree";
 import { levelOf } from "./levels";
-import { bn, humanLine, levelLabel, shortTitle, tallyLine, type Shared } from "./link";
+import { bn, humanLine, levelLabel, shortTitle, tallyLine } from "./link";
+
+/** What a finished level puts on the card for a grown-up: the level and how many letters needed a second try. No name, ever. */
+export type CardData = { level: number; slips: number };
 
 const colors = { bg: "#fff6dc", rule: "#f0e2b8", margin: "#e8a0a0", ink: "#3b2a17", muted: "#7a6a52", accent: "#2f7d32", star: "#f2a900", starOff: "#e3d6b3", band: "#2f5d2a", ask: "#ffd447" };
 
@@ -39,13 +40,13 @@ function drawPage(c: CanvasRenderingContext2D, level: number, x0: number, y0: nu
   });
 }
 
-export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: CardFormat, site: string) {
+export function drawCard(canvas: HTMLCanvasElement, shared: CardData, format: CardFormat, site: string) {
   const { width, height } = cardSizes[format];
   canvas.width = width; canvas.height = height;
   const c = canvas.getContext("2d");
   if (!c) throw new Error("এই ব্রাউজারে ছবি বানানো যাচ্ছে না।");
-  const story = format === "story", cx = width / 2, top = story ? 250 : 0, name = cleanName(shared.name);
-  const stars = starsOf(shared.level, shared.errors);
+  const story = format === "story", cx = width / 2, top = story ? 250 : 0;
+  const stars = starsOf(shared.level, shared.slips);
 
   // A খাতা page: ruled lines and a red margin.
   c.fillStyle = colors.bg; c.fillRect(0, 0, width, height);
@@ -55,7 +56,7 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
 
   drawPicture(c, "snake", 170, top + 150, 170);
   fitText(c, [{ text: `অ-তে অজগর · ${levelLabel(shared.level)}`, color: colors.muted, weight: 700, display: true }], cx + 60, top + 92, 38, 640, "center");
-  fitText(c, [{ text: `${name ? possessive(name) : "আমার"} ঝুড়িতে`, color: colors.ink, weight: 800, display: true }], cx + 60, top + 180, 58, 640, "center");
+  fitText(c, [{ text: "আজ ঝুড়িতে উঠল", color: colors.ink, weight: 800, display: true }], cx + 60, top + 180, 58, 640, "center");
   fitText(c, [{ text: shortTitle(shared.level), color: colors.accent, weight: 800, display: true }], cx, top + 318, 112, 940, "center");
   for (let i = 0; i < 3; i++) star(c, cx + (i - 1) * 84, top + 392, 32, i < stars ? colors.star : colors.starOff);
 
@@ -64,8 +65,8 @@ export function drawCard(canvas: HTMLCanvasElement, shared: Shared, format: Card
 
   fitText(c, [{ text: humanLine(shared), color: colors.ink, weight: 800, display: true }], cx, pageBottom + (story ? 110 : 80), story ? 50 : 44, 940, "center");
   fitText(c, [{ text: tallyLine(shared), color: colors.muted, weight: 600 }], cx, pageBottom + (story ? 178 : 140), story ? 38 : 32, 940, "center");
-  drawFooterBand(c, format, "তুমি একটাও ভুল ছাড়া পারবে?", site, { band: colors.band, ask: colors.ask, site: "#ffffff" });
+  drawFooterBand(c, format, "গাছ থেকে বর্ণ পাড়ো, ঝুড়িতে ভরো", site, { band: colors.band, ask: colors.ask, site: "#ffffff" });
 }
 
-export const cardBlob = (shared: Shared, format: CardFormat, site: string) => renderCard(canvas => drawCard(canvas, shared, format, site));
-export const cardFontSample = (shared: Shared) => `অ-তে অজগর ${levelLabel(shared.level)} ${shortTitle(shared.level)} ${humanLine(shared)} ${tallyLine(shared)} ঝুড়িতে ${bn(0)} ${levelOf(shared.level).items.map(item => item.word ?? item.text).join(" ")}`;
+export const cardBlob = (shared: CardData, format: CardFormat, site: string) => renderCard(canvas => drawCard(canvas, shared, format, site));
+export const cardFontSample = (shared: CardData) => `অ-তে অজগর ${levelLabel(shared.level)} ${shortTitle(shared.level)} ${humanLine(shared)} ${tallyLine(shared)} আজ ঝুড়িতে উঠল গাছ থেকে বর্ণ পাড়ো, ভরো ${bn(0)} ${levelOf(shared.level).items.map(item => item.word ?? item.text).join(" ")}`;

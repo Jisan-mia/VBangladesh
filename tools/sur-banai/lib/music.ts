@@ -1,4 +1,4 @@
-// The tune grid, the copy-a-tune levels, saved tunes and every line the child or the card sees. Pure: no React, no browser.
+// The tune grid, saved tunes and the lines the child or the card sees. The levels live in levels.ts. Pure: no React, no browser.
 import { starsFor } from "../../../shared/game-core";
 
 const digits = new Intl.NumberFormat("bn-BD", { useGrouping: false });
@@ -40,23 +40,6 @@ export const sameTune = (a: Tune, b: Tune) => a.length === b.length && a.every((
 
 /** "0 2 . 13" → beat 1 plays সা, beat 2 গা, beat 3 rests, beat 4 রে and পা together. */
 export const parseTune = (text: string): Tune => text.split(" ").map(token => (token === "." ? 0 : [...token].reduce((mask, digit) => mask | (1 << Number(digit)), 0)));
-
-/** সুরটা মেলাও: listen and watch, then copy. Always 6 beats, so every phone shows the same tune. Notes grow from 4 to 8. */
-export const LEVEL_TUNES = [
-  "0 1 2 3 . .", // stairs up
-  "4 3 2 1 . .", // stairs down
-  "0 2 4 2 0 .", // a hill
-  "2 2 4 4 2 .", // two by two
-  "0 1 2 0 1 2", // the same three twice
-  "4 2 3 1 2 0", // zigzag down
-  "02 . 13 . 24 0", // pairs climb
-  "4 3 24 1 02 .", // pairs fall
-  "04 1 3 2 2 04", // a frame
-  "0 13 2 4 13 0", // a wave
-];
-export const LEVELS = LEVEL_TUNES.map(parseTune);
-export const LEVEL_COUNT = LEVELS.length;
-export const levelTune = (n: number) => LEVELS[Math.max(1, Math.min(LEVEL_COUNT, n)) - 1];
 
 /** How a copy compares with the tune: notes in both, notes that shouldn't be there, notes still missing. */
 export function compare(target: Tune, guess: Tune) {

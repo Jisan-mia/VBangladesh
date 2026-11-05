@@ -1,26 +1,25 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, type CardFormat, type Segment } from "../../../shared/card-canvas";
 import { cleanName } from "../../../shared/game-core";
-import { drawBackground, drawScene, makeField } from "./art";
-import { beatsText, bn, duoLine, duoTeam, duoTitle, humanLine, levelLabel, type DuoWin, type Shared } from "./link";
-import { starsOf } from "./rope";
-import { teamOf, US } from "./teams";
+import { drawStill, makeField } from "./art";
+import { starsOf, WORLDS, US } from "./levels";
+import { beatsText, bn, duoLine, duoTeam, duoTitle, humanLine, isLastLevel, levelLabel, teamOf, type DuoWin, type Shared } from "./link";
 
 export const CARD = { bg: "#f7f0dc", ink: "#2a1d14", muted: "#6b5a44", accent: "#c2410c", star: "#f2a900", starOff: "#ddd2b6", band: "#3b2414", ask: "#ffd166" };
 
-export type Card = { kicker: string; title: Segment[]; big: string; stars: number | null; line: string; ask: string; winner: 0 | 1; bottom: string; top: string };
+export type Card = { kicker: string; title: Segment[]; big: string; stars: number | null; line: string; ask: string; winner: 0 | 1; bottom: string; top: string; world: number };
 
 export function soloCard(shared: Shared): Card {
-  const name = cleanName(shared.name), team = teamOf(shared.level);
+  const name = cleanName(shared.name), def = teamOf(shared.level, shared.old), stars = starsOf(shared.beats, shared.level, shared.mode, shared.old);
   return {
-    kicker: `রশি টানাটানি · ${levelLabel(shared.level)}`,
+    kicker: shared.old ? `রশি টানাটানি · ${levelLabel(shared.level, true)}` : `রশি টানাটানি · ${WORLDS[def.world].name} · লেভেল ${bn(shared.level)}`,
     title: [
       { text: name ? `${name} ` : "আমরা ", color: CARD.ink, weight: 800, display: true },
-      { text: team.obj, color: CARD.accent, weight: 800, display: true },
+      { text: def.obj, color: CARD.accent, weight: 800, display: true },
       { text: name ? " হারাল" : " হারালাম", color: CARD.ink, weight: 800, display: true },
     ],
-    big: beatsText(shared.beats), stars: starsOf(shared.level, shared.beats),
-    line: `${humanLine(shared)} ${bn(shared.hits)}টা টান ঠিক তালে।`,
-    ask: "তুমি কয় টানে পারবে?", winner: 0, bottom: US.shirt, top: team.shirt,
+    big: beatsText(shared.beats), stars,
+    line: `${humanLine(stars, isLastLevel(shared.level, shared.old))} ${bn(shared.hits)}টা টান ঠিক তালে।`,
+    ask: "তুমি কয় টানে পারবে?", winner: 0, bottom: US.shirt, top: def.shirt, world: def.world,
   };
 }
 
@@ -29,7 +28,7 @@ export function duoCard(win: DuoWin): Card {
     kicker: "রশি টানাটানি · দুজনে এক ফোনে",
     title: [{ text: duoTitle(win), color: CARD.accent, weight: 800, display: true }],
     big: beatsText(win.beats), stars: null, line: duoLine(win.beats),
-    ask: "তোমরা দুজনে খেলবে?", winner: win.winner, bottom: duoTeam(0).shirt, top: duoTeam(1).shirt,
+    ask: "তোমরা দুজনে খেলবে?", winner: win.winner, bottom: duoTeam(0).shirt, top: duoTeam(1).shirt, world: 0,
   };
 }
 
@@ -59,8 +58,7 @@ export function drawCard(canvas: HTMLCanvasElement, card: Card, format: CardForm
   c.save();
   c.beginPath(); c.rect(0, sceneTop, width, sceneH); c.clip();
   c.translate(0, sceneTop + sceneH); c.rotate(-Math.PI / 2);
-  drawBackground(c, field);
-  drawScene(c, field, { x: card.winner === 0 ? 1 : -1, lean0: card.winner === 0 ? 1 : 0, lean1: card.winner === 1 ? 1 : 0 }, card.bottom, card.top);
+  drawStill(c, field, card.world, card.winner === 0 ? 1 : -1, card.bottom, card.top, card.winner === 0 ? 1 : 0, card.winner === 1 ? 1 : 0);
   c.restore();
 
   fitText(c, [{ text: card.line, color: CARD.ink, weight: 800, display: true }], cx, sceneTop + sceneH + (story ? 120 : 76), story ? 50 : 42, 980, "center");

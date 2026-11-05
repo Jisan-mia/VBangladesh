@@ -1,0 +1,39 @@
+---
+title: "ছﬂ°°2494¶ßযﬂ°°2492¶ßﬂ°°2494¶ß মﬂ°°2503¶ßলﬂ°°2494¶ßও: a key held through the end"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: done
+  }
+  class lg0 teal
+  class lg1 blue
+  state "At the same time" as all {
+    state "Screen" as r0 {
+      s0: Title
+      s1: Playing
+      s2: End screen
+      [*] --> s0
+      s0 --> s1: you press Enter on the title [when No key down]
+      s1 --> s2: the end screen comes
+      s2 --> s0: শ#2503;ষ
+      s2 --> s1: you press Enter again (a fresh press) [when No key down]
+    }
+    --
+    state "Key" as r1 {
+      s3: No key down
+      s4: Enter down
+      s5: Enter held, repeating
+      [*] --> s3
+      s3 --> s4: you press Enter on the title [when Title]
+      s4 --> s3: you let go
+      s4 --> s5: the key auto-repeats
+      s3 --> s4: you hold Enter [when Playing]
+      s5 --> s3: you let go
+      s3 --> s4: you press Enter again (a fresh press) [when End screen]
+    }
+  }
+  class s0 blue
+  class s1 teal
+  class s2 blue

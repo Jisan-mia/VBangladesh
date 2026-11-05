@@ -1,0 +1,87 @@
+---
+title: "Ponero ghor (15 puzzle): plate, window, finger and levels"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks InputReleasedWhenAway or UnlockNeverShrinks
+    lg4: Breaks InputReleasedWhenAway or UnlockNeverShrinks in some cases
+    lg5: Path to the InputReleasedWhenAway or UnlockNeverShrinks bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  s0: Fresh plate
+  s1: Plate started
+  s2: Fresh plate, finger down
+  s3: Solved, card shows
+  s4: Plate started, finger down
+  s5: Paused
+  s6: Fresh plate, finger still counts as down while you're away
+  s7: Fresh plate, a level you opened is locked again
+  s8: Plate started, finger still counts as down while you're away
+  s9: Paused, finger still counts as down while you're away
+  s10: Paused, finger down
+  [*] --> s0
+  s0 --> s1: you slide with the keys or a hint
+  s0 --> s2: you press a ঘ#2497;#2433;ট#2495;
+  s0 --> s0: a friend's link opens
+  s0 --> s3: you slide with the keys or a hint
+  s1 --> s3: you slide with the keys or a hint
+  s1 --> s4: you press a ঘ#2497;#2433;ট#2495;
+  s1 --> s5: you leave (another window or tab)
+  s2 --> s1: you lift your finger
+  s2 --> s3: you lift your finger or you slide with the keys or a hint
+  s2 --> s4: you slide with the keys or a hint
+  s2 --> s6: you leave (another window or tab)
+  s0 --> s7: a friend's link opens
+  s3 --> s0: you press আর#2503;কব#2494;র or পর#2503;র ল#2503;ভ#2503;ল
+  s4 --> s1: you lift your finger
+  s4 --> s3: you lift your finger or you slide with the keys or a hint
+  s4 --> s8: you leave (another window or tab)
+  s4 --> s9: you leave (another window or tab)
+  s6 --> s2: you come back
+  s7 --> s0: a friend's link opens
+  s7 --> s3: you slide with the keys or a hint
+  s7 --> s1: you slide with the keys or a hint
+  s7 --> s2: you press a ঘ#2497;#2433;ট#2495;
+  s3 --> s2: you press আর#2503;কব#2494;র or পর#2503;র ল#2503;ভ#2503;ল
+  s8 --> s4: you come back
+  s8 --> s9: you leave (another window or tab)
+  s9 --> s10: you come back
+  s5 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s10 --> s4: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s10 --> s9: you leave (another window or tab)
+  s10 --> s5: you lift your finger
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s2 teal
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 blue
+  class s3 mayBreak
+  class s4 teal
+  class s4 mayBreak
+  class s5 yellow
+  class s5 mayBreak
+  class s6 teal
+  class s6 breaks
+  class s6 bugPath
+  class s7 teal
+  class s7 breaks
+  class s7 bugPath
+  class s8 teal
+  class s8 breaks
+  class s9 yellow
+  class s9 breaks
+  class s10 yellow
+  class s10 mayBreak

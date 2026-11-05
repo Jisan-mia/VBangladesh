@@ -29,7 +29,7 @@ export const UP = 1, DOWN = 2, LEFT = 3, RIGHT = 4;
 export const DIP_PERIOD = 5, DIP_UNDER = 1.2, DIP_WARN = 0.9;
 
 // What happened in a step (a bit set the screen turns into sound and motion).
-export const HOPPED = 1, SPLASHED = 2, MANGO = 4, ARRIVED = 8, FERRY_IN = 16, RESPAWNED = 32, BLOCKED = 64, EDGY = 128, NEAR = 256;
+export const HOPPED = 1, SPLASHED = 2, MANGO = 4, ARRIVED = 8, FERRY_IN = 16, RESPAWNED = 32, BLOCKED = 64, EDGY = 128, NEAR = 256, DANGER = 512;
 
 export type Floater = { kind: number; at: number; len: number; /** phase offset for a dipping কচুরিপানা, or -1 */ dip: number };
 export type Lane = { type: number; dir: 1 | -1; speed: number; floaters: Floater[]; wake: boolean; ring: number };
@@ -177,62 +177,8 @@ export function target(river: River, row: number, x: number, action: number): [n
   return [row, x];
 }
 
-export type Run = {
-  river: River; t: number; row: number; x: number;
-  /** The hop being drawn: from where, and how long is left. */
-  fromRow: number; fromX: number; hop: number; queued: number; falling: boolean;
-  /** Time left in the water before the kid is back on `safeRow`. */
-  down: number; safeRow: number; safeX: number;
-  splashes: number; taken: number; got: number;
-  /** Quick hops in a row (each under 0.75 s after the last), for the rising hop sound. */
-  chain: number; lastHop: number; surface: number;
-  done: boolean; time: number; events: number;
-  splashRow: number; splashX: number; ferryOn: number;
-};
-
-export function createRun(river: River): Run {
-  return { river, t: 0, row: 0, x: START_X, fromRow: 0, fromX: START_X, hop: 0, queued: 0, falling: false, down: 0, safeRow: 0, safeX: START_X,
-    splashes: 0, taken: 0, got: 0, chain: 0, lastHop: -9, surface: 0, done: false, time: 0, events: 0, splashRow: 0, splashX: START_X, ferryOn: ferryMask(river, 0) };
-}
-
-/** A tap or swipe. During a hop it waits for the landing (one is kept). Returns whether anything will happen. */
-export function act(run: Run, action: number) {
-  if (run.done || run.down > 0 || run.falling) return false;
-  if (run.hop > 0) { run.queued = action; return true; }
-  return hop(run, action);
-}
-
-function hop(run: Run, action: number) {
-  const landing = target(run.river, run.row, run.x, action);
-  if (!landing || (landing[0] === run.row && landing[1] === run.x)) { run.events |= BLOCKED; return false; }
-  const [row, x] = landing, lane = run.river.lanes[row];
-  run.fromRow = run.row; run.fromX = run.x; run.row = row; run.x = x; run.hop = HOP_T;
-  run.chain = run.t - run.lastHop < 0.75 ? run.chain + 1 : 1;
-  run.lastHop = run.t;
-  run.events |= HOPPED;
-  if (lane.type !== WATER) { run.surface = 0; run.safeRow = row; run.safeX = x; return true; }
-  const index = floaterAt(lane, x, run.t);
-  if (index < 0) { run.falling = true; return true; }
-  const floater = lane.floaters[index];
-  run.surface = floater.kind;
-  if (floaterAt(lane, x, run.t, -0.05) < 0) {
-    // Landed just past an end: the kid slides onto the floater instead of standing on water.
-    const left = leftOf(lane, floater, run.t);
-    run.x = Math.min(left + floater.len - 0.2, Math.max(left + 0.2, x));
-    run.events |= EDGY;
-  }
-  return true;
-}
-
-function splash(run: Run, near: boolean) {
-  run.splashes += 1; run.splashRow = run.row; run.splashX = run.x;
-  run.falling = false; run.hop = 0; run.queued = 0; run.chain = 0;
-  run.down = RESPAWN_T;
-  run.events |= SPLASHED | (near ? NEAR : 0);
-}
-
 /** Bit i is set while ferry i (in lane order) is on screen; a new bit is the ferry coming into view. */
-function ferryMask(river: River, t: number) {
+export function ferryMask(river: River, t: number) {
   let mask = 0, bit = 1;
   for (const lane of river.lanes) for (const floater of lane.floaters) {
     if (floater.kind !== FERRY) continue;
@@ -242,53 +188,6 @@ function ferryMask(river: River, t: number) {
   }
   return mask;
 }
-
-/** Moves the river and the kid on by dt seconds. */
-export function stepRun(run: Run, dt: number) {
-  if (run.done) return;
-  const river = run.river, top = river.lanes.length - 1;
-  run.t += dt;
-  if (river.ferry) { const mask = ferryMask(river, run.t); if (mask & ~run.ferryOn) run.events |= FERRY_IN; run.ferryOn = mask; }
-  if (run.down > 0) {
-    run.down -= dt;
-    if (run.down <= 0) { run.down = 0; run.row = run.fromRow = run.safeRow; run.x = run.fromX = run.safeX; run.surface = 0; run.events |= RESPAWNED; }
-    return;
-  }
-  if (run.hop > 0) {
-    run.hop -= dt;
-    if (run.hop <= 0) {
-      run.hop = 0;
-      if (run.falling) {
-        // A miss by a hair gets a kinder word.
-        const lane = river.lanes[run.row];
-        splash(run, floaterAt(lane, run.x, run.t, GRIP + 0.35) >= 0);
-        return;
-      }
-      if (run.row === top) { run.done = true; run.time = run.t; run.events |= ARRIVED; return; }
-      collect(run); // on landing, even when the next hop is already waiting
-      if (run.queued) { const next = run.queued; run.queued = 0; hop(run, next); if (run.falling) return; }
-    }
-  }
-  if (run.falling) return;
-  const lane = river.lanes[run.row];
-  if (lane.type === WATER) {
-    run.x += lane.dir * lane.speed * dt;
-    if (run.x < -EDGE || run.x > COLS + EDGE || floaterAt(lane, run.x, run.t) < 0) { splash(run, false); return; }
-  }
-  if (run.hop === 0) collect(run);
-}
-
-function collect(run: Run) {
-  const mangoes = run.river.mangoes;
-  for (let index = 0; index < mangoes.length; index++) {
-    const mango = mangoes[index];
-    if (run.taken & (1 << index) || mango.row !== run.row) continue;
-    if (Math.abs(mangoX(run.river, mango, run.t) - run.x) < REACH) { run.taken |= 1 << index; run.got += 1; run.events |= MANGO; }
-  }
-}
-
-/** Hands over what happened since the last call and clears it. */
-export function drain(run: Run) { const events = run.events; run.events = 0; return events; }
 
 /** 1 star for reaching the far ghat, 1 for beating the river's time, 1 for every mango. */
 export function starsOf(river: Pick<River, "par" | "mangoes">, seconds: number, mangoes: number) {
@@ -301,9 +200,3 @@ export const MAX_TENTHS = 9999;
 /** Nobody can cross faster than one hop per row. */
 export const minTenths = (level: number) => Math.floor((LANES[level - 1] + specOf(level).chars + 1) * HOP_T * 10);
 export const mangoCount = (level: number) => specOf(level).mangoes;
-
-/** Where a returning player starts: the first open river not yet at three stars (river 1 for someone new). */
-export function openingLevel(stars: Record<number, number>, unlocked: number) {
-  for (let level = 1; level <= unlocked; level++) if ((stars[level] ?? 0) < 3) return level;
-  return unlocked;
-}

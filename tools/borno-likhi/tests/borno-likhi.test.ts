@@ -5,10 +5,10 @@ import test from "node:test";
 import { site } from "../content";
 import { share } from "../share";
 import { hasPicture } from "../../o-te-ojogor/lib/art";
-import { LEVELS, LEVEL_COUNT, cardLine, endLine, levelOf, pictureOf } from "../lib/levels";
-import { GLYPHS, arrowOf, even, faceOf, lengthOf, parse, pathOf, smooth, strokesOf } from "../lib/strokes";
+import { LEVELS, LEVEL_COUNT, ORDER, WORLDS, cardLine, endLine, isFinale, levelOf, levelsOfWorld, nextInOrder, nextToPlay, pictureOf, placeOf, printLevel } from "../lib/levels";
+import { GLYPHS, arrowOf, even, faceOf, lengthOf, parse, pathOf, smooth, strokesOf, type Pt } from "../lib/strokes";
 import {
-  DONE_AT, EASE_AFTER, HARDEN_AFTER, LOOKAHEAD, TOLERANCE, advance, againLetter, done, down, fullAt, letterOf, move, nearPath, newRound,
+  DONE_AT, EASE_AFTER, HARDEN_AFTER, LOOKAHEAD, TELEPORT, TOLERANCE, accuracyOf, advance, againLetter, done, down, fullAt, letterOf, move, nearPath, newRound,
   nextLetter, starsOf, strokeOf, up, type Event, type Round,
 } from "../lib/trace";
 
@@ -100,9 +100,10 @@ test("geometry: smooth curves pass through the points, even samples are 2 units 
   assert.deepEqual(strokesOf("র").map(stroke => stroke.dot), [false, false, true, false], "র's dot is a tap");
 });
 
-test("sets: স্বরবর্ণ, then the বর্গ, then ০–৯; every letter once, each with a picture and a name", () => {
-  assert.equal(LEVEL_COUNT, 13);
-  const all = LEVELS.flatMap(level => level.letters);
+test("sets: 13 original sets in school order, then 4 finales; every letter once in the sets, each with a picture and a name", () => {
+  assert.equal(LEVEL_COUNT, 17);
+  assert.deepEqual(LEVELS.map(level => level.id), Array.from({ length: 17 }, (_, i) => i + 1), "ids 1–17, so saved stars and ?print=N keep their meaning");
+  const all = LEVELS.slice(0, 13).flatMap(level => level.letters);
   assert.deepEqual(all, [...VOWELS, ...CONSONANTS, ...DIGITS]);
   assert.equal(new Set(all).size, all.length, "no duplicates");
   assert.deepEqual(LEVELS[2].letters, ["ক", "খ", "গ", "ঘ", "ঙ"]);
@@ -117,6 +118,40 @@ test("sets: স্বরবর্ণ, then the বর্গ, then ০–৯; eve
   assert.equal(pictureOf("৩").pic, "dots3");
   assert.equal(levelOf(0), LEVELS[0]);
   assert.equal(levelOf(99), LEVELS[LEVEL_COUNT - 1]);
+});
+
+test("worlds: four, each ends in a named finale of that world's own letters; the order plays every set once", () => {
+  assert.equal(WORLDS.length, 4);
+  assert.deepEqual([...ORDER].sort((a, b) => a - b), LEVELS.map(level => level.id));
+  for (const world of WORLDS) {
+    const ids = levelsOfWorld(world.id), last = LEVELS[ids[ids.length - 1] - 1];
+    assert.ok(last.finale, `${world.name} ends in a finale`);
+    assert.ok(last.title.length > 3);
+    assert.equal(ids.filter(id => isFinale(id)).length, 1, "one finale per world");
+    const own = new Set(ids.slice(0, -1).flatMap(id => LEVELS[id - 1].letters));
+    for (const char of last.letters) assert.ok(own.has(char), `${last.finale}: ${char} is from ${world.name}`);
+    assert.equal(new Set(last.letters).size, last.letters.length);
+  }
+  assert.equal(placeOf(14), 3, "the স্বরবর্ণ finale is the third in play order");
+  assert.equal(nextToPlay({}), 1);
+  assert.equal(nextToPlay({ 1: 3, 2: 2 }), 14);
+  assert.equal(nextToPlay(Object.fromEntries(ORDER.map(id => [id, 1]))), 1);
+  assert.equal(nextInOrder(2), 14);
+  assert.equal(nextInOrder(17), 0);
+  assert.equal(printLevel("14"), 14);
+  assert.equal(printLevel("99"), 1);
+  assert.equal(printLevel("x"), 1);
+});
+
+test("letters render whole: one grapheme cluster each, written NFC, never split into spans", () => {
+  const segmenter = new Intl.Segmenter("bn", { granularity: "grapheme" });
+  for (const char of Object.keys(GLYPHS)) {
+    assert.equal([...segmenter.segment(faceOf(char).trim())].length, 1, `${char} is one grapheme`);
+    assert.equal(char, char.normalize("NFC"));
+  }
+  for (const level of LEVELS) for (const char of level.letters) assert.ok(char in GLYPHS, char);
+  const game = readFileSync(join(root, "components/likhi-game.tsx"), "utf8");
+  assert.doesNotMatch(game, /\.split\(''\)|\.split\(""\)|\[\.\.\.letter\]/, "no per-character splitting of a letter");
 });
 
 test("tracing every stroke of every letter along its path completes it, stroke by stroke", () => {
@@ -180,13 +215,26 @@ test("again and next: the same letter restarts, the round ends after the last le
   assert.equal(round.index, round.letters.length);
 });
 
-test("stars only record: 3 with at most one replay, 2 up to three, never 0", () => {
+test("stars only record, and only real tracing earns them: 3 needs at most one replay and a finger that stays on the path", () => {
   assert.equal(starsOf(0), 3);
   assert.equal(starsOf(1), 3);
   assert.equal(starsOf(2), 2);
   assert.equal(starsOf(3), 2);
   assert.equal(starsOf(4), 1);
   assert.equal(starsOf(40), 1);
+  assert.equal(starsOf(0, 0.9), 3);
+  assert.equal(starsOf(0, 0.6), 2, "a finger often off the path");
+  assert.equal(starsOf(0, 0.2), 1, "a scribble");
+  assert.equal(accuracyOf(newRound(1)), 1);
+});
+
+test("a jump across the board is not filled in: only the landing counts", () => {
+  const round = newRound(1), stroke = strokeOf(round)!;
+  const a = stroke.samples[0], far: Pt = [a[0] + TELEPORT + 20, a[1]];
+  let [now] = down(round, a);
+  const [after] = move(now, a, far);
+  assert.ok(after.reach <= now.reach + 1, "no progress from a teleport");
+  assert.equal(after.off, now.off + 1, "and it counts as off the path");
 });
 
 test("card and end lines carry no name", () => {
@@ -210,6 +258,7 @@ test("no network: the tool's source never calls fetch or imports share-client", 
     const text = readFileSync(file, "utf8");
     assert.doesNotMatch(text, /\bfetch\s*\(/, file);
     assert.doesNotMatch(text, /share-client|ShareBar|sendBeacon|XMLHttpRequest|\/api\//, file);
+    assert.doesNotMatch(text, /speechSynthesis|SpeakButton|\bspeak\(/, `${file}: no voice anywhere`);
     assert.doesNotMatch(text, /letter-spacing:\s*[^0]/, file);
     assert.equal(text, text.normalize("NFC"), `${file} is NFC`);
   }
@@ -232,4 +281,67 @@ test("content meets the SEO limits and the kids' rules", () => {
     assert.doesNotMatch(text, /আপনি|আপনার|করুন/, "তুমি voice");
     assert.doesNotMatch(text.replaceAll("A4", ""), /[0-9]/, "Bangla digits");
   }
+});
+
+// ---- the painter (components/paint.hot.ts) against stand-in elements ----
+import { type Paint, HOLD_MS, paintFrame, setStroke, setTarget, startDemo, stopDemo } from "../components/paint.hot";
+const stand = () => ({ style: {} as Record<string, string>, attrs: {} as Record<string, string>, setAttribute(key: string, value: string) { this.attrs[key] = value; } });
+const painter = () => {
+  const els = { ink: stand(), trail: stand(), nib: stand(), dot: stand(), ring: stand(), hand: stand() };
+  const p = { ...els, samples: null, last: 0, shown: 0, target: 0, still: false, tap: false, demo: false, demoAt: 0, demoTravel: 0, demoGap: 0, demoShowing: false } as unknown as Paint;
+  return { p, els };
+};
+
+test("the moving dot starts on the start dot, follows the stroke in order, rests at its end and stops (played once)", () => {
+  const { p, els } = painter(), stroke = strokesOf("অ")[0];
+  setStroke(p, stroke.samples, 0);
+  startDemo(p, 0);
+  const seen: number[] = [];
+  let frames = 0;
+  while (paintFrame(p, 16) && frames++ < 600) {
+    const x = Number(els.dot.attrs.cx), y = Number(els.dot.attrs.cy);
+    if (!Number.isNaN(x)) seen.push(stroke.samples.reduce((best, s, i) => Math.hypot(s[0] - x, s[1] - y) < Math.hypot(stroke.samples[best][0] - x, stroke.samples[best][1] - y) ? i : best, 0));
+  }
+  assert.ok(frames < 600 && !p.demo, "plays once and stops");
+  assert.ok(seen[0] <= 2, "starts at the first sample");
+  assert.ok(seen[seen.length - 1] >= stroke.samples.length - 3, "ends at the last sample");
+  assert.ok(seen.every((at, i) => i === 0 || at >= seen[i - 1] - 1), "never goes backwards");
+  assert.equal(els.dot.style.opacity, "0", "hidden afterwards");
+  const travel = 500 + (stroke.samples.length - 1) * 28;
+  assert.ok(frames * 16 >= travel + HOLD_MS - 40, "takes the stroke's travel time and a rest");
+});
+
+test("the demo loops with a gap until stopped, and a still (ধীরে) painter shows the whole stroke without moving", () => {
+  const { p, els } = painter();
+  setStroke(p, strokesOf("ক")[0].samples, 0);
+  startDemo(p, 2600);
+  for (let i = 0; i < 900; i++) assert.equal(paintFrame(p, 16), true, "keeps asking for frames while it loops");
+  assert.ok(p.demo);
+  stopDemo(p);
+  assert.equal(paintFrame(p, 16), false);
+  assert.equal(els.dot.style.opacity, "0");
+  const slow = painter();
+  slow.p.still = true;
+  setStroke(slow.p, strokesOf("ক")[0].samples, 0);
+  startDemo(slow.p, 2600);
+  assert.equal(paintFrame(slow.p, 16), false, "no animation frames at all");
+  assert.equal(slow.els.trail.style.strokeDashoffset, "0", "the whole path is lit");
+  assert.equal(slow.els.dot.attrs.cx, String(Math.round(strokesOf("ক")[0].samples[0][0] * 100) / 100), "the dot rests on the start");
+});
+
+test("the ink follows the finger: eased toward the target, hidden at the start, full when covered; a stroke's reset clears it", () => {
+  const { p, els } = painter(), stroke = strokesOf("ক")[0], last = stroke.samples.length - 1;
+  setStroke(p, stroke.samples, 0);
+  paintFrame(p, 0);
+  assert.equal(els.ink.style.opacity, "0");
+  setTarget(p, last / 2);
+  let frames = 0;
+  while (paintFrame(p, 16) && frames++ < 200);
+  assert.ok(Math.abs(p.shown - last / 2) < 0.05, "settles on the target");
+  assert.ok(frames < 40, `${frames} frames to settle: it answers within a few frames`);
+  assert.equal(els.ink.style.opacity, "1");
+  assert.ok(Math.abs(Number(els.ink.style.strokeDashoffset) - 0.5) < 0.02);
+  setStroke(p, stroke.samples, 0);
+  paintFrame(p, 0);
+  assert.equal(els.ink.style.strokeDashoffset, "1");
 });

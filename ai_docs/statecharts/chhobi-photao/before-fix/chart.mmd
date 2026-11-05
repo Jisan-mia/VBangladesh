@@ -1,0 +1,84 @@
+---
+title: "Chhobi photao (nonogram): picture, clock, drag and drawers"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks ChoiceFreezesPlay or ClockStillWhileAway or InputReleasedWhenAway
+    lg4: Breaks InputReleasedWhenAway in some cases
+    lg5: Path to the ChoiceFreezesPlay or ClockStillWhileAway or InputReleasedWhenAway bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 breaks
+  class lg4 mayBreak
+  class lg5 bugPath
+  s0: Blank picture, clock not started
+  s1: Picture solved, card shows
+  s2: Filling in, clock counting
+  s3: Filling in, clock counting, dragging
+  s4: Filling in, clock counting, you're in another window
+  s5: Filling in, clock counting, drag still held while you're away, you're in another window
+  s6: Filling in, clock counting, levels drawer open
+  s7: Filling in, clock counting, dragging, levels drawer open
+  s8: Paused, clock stopped
+  [*] --> s0
+  s0 --> s0: you open সব ল#2503;ভ#2503;ল or the album
+  s0 --> s1: you fill a cell with keys or a hint or you press a cell and drag
+  s0 --> s2: you fill a cell with keys or a hint
+  s0 --> s3: you press a cell and drag
+  s0 --> s6: you fill a cell with keys or a hint
+  s0 --> s7: you press a cell and drag
+  s1 --> s0: you press শ#2497;র#2497; থ#2503;ক#2503;, পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507;
+  s2 --> s1: you fill a cell with keys or a hint or you press a cell and drag
+  s2 --> s3: you press a cell and drag
+  s2 --> s4: you click into another window
+  s2 --> s6: you open সব ল#2503;ভ#2503;ল or the album
+  s2 --> s8: you hide the tab
+  s3 --> s1: your pointer moves over the grid or you fill a cell with keys or a hint
+  s3 --> s2: you let go
+  s3 --> s5: you click into another window
+  s3 --> s7: you open সব ল#2503;ভ#2503;ল or the album
+  s3 --> s8: you hide the tab
+  s4 --> s2: you come back
+  s4 --> s8: you hide the tab
+  s5 --> s3: you come back
+  s5 --> s1: your pointer moves over the grid
+  s5 --> s8: you hide the tab
+  s6 --> s2: you close the drawer
+  s6 --> s1: you fill a cell with keys or a hint or you press a cell and drag
+  s6 --> s7: you press a cell and drag
+  s6 --> s4: you click into another window
+  s6 --> s8: you hide the tab
+  s7 --> s3: you close the drawer
+  s7 --> s1: your pointer moves over the grid or you fill a cell with keys or a hint
+  s7 --> s6: you let go
+  s7 --> s5: you click into another window
+  s7 --> s8: you hide the tab
+  s4 --> s6: you come back
+  s5 --> s7: you come back
+  s8 --> s2: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s8 --> s6: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 bugPath
+  class s1 blue
+  class s1 mayBreak
+  class s2 teal
+  class s3 teal
+  class s3 bugPath
+  class s4 teal
+  class s4 breaks
+  class s5 teal
+  class s5 breaks
+  class s5 bugPath
+  class s6 teal
+  class s6 breaks
+  class s7 teal
+  class s7 breaks
+  class s7 bugPath
+  class s8 yellow

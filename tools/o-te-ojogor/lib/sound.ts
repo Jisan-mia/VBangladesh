@@ -1,5 +1,5 @@
 // The tree's own sounds, built from the shared kit (silent when sound is off or audio is missing).
-import { buzz, tone } from "../../../shared/game-sound";
+import { buzz, hiss, tone } from "../../../shared/game-sound";
 
 /** The signature: a soft two-note chime when the picture word shows, like a small brass bell. */
 export function chime(delay = 0.1) {
@@ -16,3 +16,6 @@ export function boing() {
 
 /** The right fruit missed: it drops on the grass with a soft টুপ, and will come back. */
 export const thump = () => tone(240, 0.14, 0.08, "sine", 0, 120);
+
+/** A fruit leaves its branch: a soft rustle of leaves. */
+export const rustle = () => { hiss(0.16, 0.07, 3200, "bandpass"); hiss(0.1, 0.05, 2000, "bandpass", 0.06); };

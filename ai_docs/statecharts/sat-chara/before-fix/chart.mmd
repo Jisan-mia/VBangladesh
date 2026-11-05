@@ -1,0 +1,96 @@
+---
+title: "Sat Chara: the throw, the window, your hand, the hum"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks HumComesBack or HumOnlyWhilePulling or InputReleasedWhenAway or OnePressOneThrow in some cases
+    lg4: Path to the HumComesBack or HumOnlyWhilePulling or InputReleasedWhenAway or OnePressOneThrow bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 mayBreak
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Aiming
+      s1: Ball in the air
+      s2: Result shows
+      s3: Paused, ball in the air
+      [*] --> s0
+      s0 --> s1: you let go and the ball flies [when Window is not Tab hidden and Hand is Pulling the ball back]
+      s0 --> s1: you tap or you press Enter or you keep holding Enter [when Window is You're on the page and Hand is Not pulling and Hum is not Hum on]
+      s1 --> s0: you pick a level in সব ল#2503;ভ#2503;ল or some stay standing#59; next ball [when Window is You're on the page]
+      s1 --> s2: the throw ends: all seven down, or the last ball [when Window is You're on the page]
+      s1 --> s3: you hide the tab
+      s2 --> s0: you press পর#2503;র ল#2503;ভ#2503;ল or আব#2494;র খ#2503;ল#2507; or you press Enter or you keep holding Enter [when Window is You're on the page]
+      s3 --> s0: you pick a level in সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s3 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও or you press Enter [when Window is You're on the page]
+    }
+    --
+    state "Window" as r1 {
+      s4: You're on the page
+      s5: Tab hidden
+      s6: Another window has focus
+      [*] --> s4
+      s4 --> s5: you hide the tab
+      s4 --> s6: you click into another window
+      s5 --> s4: the tab shows again
+      s6 --> s4: you come back to the window
+      s6 --> s5: you hide the tab
+    }
+    --
+    state "Hand" as r2 {
+      s7: Not pulling
+      s8: Pulling the ball back
+      [*] --> s7
+      s7 --> s8: you pull the ball back [when Game is Aiming and Window is You're on the page]
+      s8 --> s7: you pick a level in সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s8 --> s7: you bring it back to the start, or the touch is cancelled or you hide the tab or you let go and the ball flies
+    }
+    --
+    state "Hum" as r3 {
+      s9: Sound on, no hum
+      s10: Sound off
+      s11: Hum on
+      [*] --> s9
+      s9 --> s10: you turn sound off [when Window is You're on the page]
+      s9 --> s11: you pull the ball back [when Game is Aiming and Window is You're on the page and Hand is Not pulling]
+      s10 --> s9: you turn sound on [when Window is You're on the page]
+      s11 --> s9: you pick a level in সব ল#2503;ভ#2503;ল [when Window is You're on the page]
+      s11 --> s9: you bring it back to the start, or the touch is cancelled or you hide the tab or you let go and the ball flies
+      s11 --> s10: you turn sound off [when Window is You're on the page]
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 blue
+  class s2 mayBreak
+  class s3 yellow
+  class s3 mayBreak
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 mayBreak
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 mayBreak
+  class s7 bugPath
+  class s8 teal
+  class s8 mayBreak
+  class s8 bugPath
+  class s9 mayBreak
+  class s9 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 teal
+  class s11 mayBreak
+  class s11 bugPath

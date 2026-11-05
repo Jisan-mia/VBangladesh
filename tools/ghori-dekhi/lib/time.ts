@@ -143,3 +143,14 @@ export function readHint(chosen: Time, target: Time) {
   if (chosen.m !== target.m) return BIG_HAND[kindOf(target.m)] ?? `বড় কাঁটা ${at(target.m / 5)}। ৫ করে গোনো: ${Array.from({ length: target.m / 5 }, (_, i) => bn((i + 1) * 5)).join(", ")}।`;
   return hourHint(target);
 }
+
+// ── Pictures for the teaching ──
+
+/** The number(s) on the dial to ring for a hand that is wrong: where the long hand should point, or the hour number(s) the short hand sits at or between. */
+export function ringNumbers({ h, m }: Time, hand: "hour" | "minute"): number[] {
+  if (hand === "minute") return [m === 0 ? 12 : m / 5];
+  const here = hour12(h), next = hour12(h + 1);
+  if (m === 0) return [here];
+  if (m === 30) return [here, next];
+  return [m < 30 ? here : next];
+}

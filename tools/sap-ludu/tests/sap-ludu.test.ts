@@ -55,7 +55,7 @@ test("the same seed gives the same dice and the same game; another seed differs"
 test("a roll walks the piece, ladders lift it, snakes drop it, and six rolls again", () => {
   let game = newGame(1, 2, 1);
   game = roll(game, 2); // 0 → 2, the ladder to 23
-  assert.deepEqual(game.last, { player: 0, piece: 0, die: 2, from: 0, to: 2, end: 23, jump: 0, stuck: false, again: false });
+  assert.deepEqual(game.last, { player: 0, piece: 0, die: 2, from: 0, to: 2, end: 23, jump: 0, stuck: false, again: false, home: false, voided: false });
   assert.equal(game.pos[0], 23);
   assert.equal(game.climbs[0], 1);
   assert.equal(game.turn, 1);
@@ -267,7 +267,7 @@ test("content fits the SEO limits and never names a trademark or a ruling", () =
   const description = [...site.description].length;
   assert.ok(description >= 120 && description <= 160, `description ${description}`);
   assert.ok(site.headline && site.headline !== site.title);
-  assert.ok(site.faq.length >= 5);
+  assert.ok(site.faq.length >= 6);
   assert.ok(site.privacy.some(line => line.includes("লিংক") && line.includes("নাম")));
   assert.doesNotMatch(JSON.stringify(site), /chutes|hasbro|milton|বাজি|জুয়া|হারাম|হালাল|জায়েজ/i);
 });

@@ -1,4 +1,4 @@
-// The game's own drawings, shared by the scene and the share card: a sparrow, a কাকতাড়ুয়া, paddy and a sheaf icon.
+// The game's own drawings, shared by the scene, the title and the share card: the birds, a কাকতাড়ুয়া, paddy and a sheaf icon.
 // Each draws at the context's origin in units of `size`, so the same art scales from a 30-unit sprite to a 1080 px card.
 type Context = CanvasRenderingContext2D;
 
@@ -9,8 +9,25 @@ function ellipse(context: Context, x: number, y: number, rx: number, ry: number,
   context.beginPath(); context.ellipse(x, y, rx, ry, rotation, 0, Math.PI * 2); context.fill();
 }
 
-/** A plump cartoon house sparrow facing right, centred on its body. `size` is about its height. */
-export function drawSparrow(context: Context, size: number, pose: number) {
+/** A bird's colours and shape: the house sparrow, the শালিক, the মুনিয়া, the টিয়া, and the bosses (bigger, with a crest). */
+export type BirdLook = {
+  back: string; belly: string; wing: string; streak: string; bar: string; head: string; crown: string; cheek: string;
+  bib: string | null; beak: string; tail: string; farWing: string; legs: string;
+  /** The bare yellow skin behind a শালিক's eye, a মুনিয়া's scaly breast, a টিয়া's neck ring, a crest, a long tail, a thick beak. */
+  patch?: string; scales?: string; ring?: string; crest?: string; longTail?: boolean; thickBeak?: boolean;
+};
+
+export const LOOKS: Record<"sparrow" | "shalik" | "munia" | "parrot" | "godha" | "jhunti", BirdLook> = {
+  sparrow: { back: "#a06d40", belly: "#ece2d0", wing: "#8f5328", streak: "#3e2615", bar: "#f6efe2", head: "#9c6a3e", crown: "#8e8c86", cheek: "#f3ede0", bib: "#2c2522", beak: "#3a302a", tail: "#5c3a22", farWing: "#6e4526", legs: "#8a5a3c" },
+  shalik: { back: "#6b4128", belly: "#8a5634", wing: "#4e2e1c", streak: "#2a1a10", bar: "#f4efe6", head: "#1e1714", crown: "#141010", cheek: "#1e1714", bib: null, beak: "#f2c230", tail: "#24180f", farWing: "#3a2416", legs: "#e0b030", patch: "#f5c42c" },
+  munia: { back: "#7a4b2c", belly: "#f3ece0", wing: "#6a3e22", streak: "#3e2615", bar: "#7a4b2c", head: "#6a3e22", crown: "#5c341c", cheek: "#7a4b2c", bib: null, beak: "#6c7784", tail: "#5a3a22", farWing: "#583620", legs: "#8a7a70", scales: "#6b4128", thickBeak: true },
+  parrot: { back: "#45a83a", belly: "#8fd46a", wing: "#2f8f2f", streak: "#1f6a24", bar: "#c9ef7a", head: "#4cb840", crown: "#5cc84a", cheek: "#4cb840", bib: null, beak: "#d8322a", tail: "#2f8a4a", farWing: "#277a2a", legs: "#8c8c8c", ring: "#1c1c1c", longTail: true },
+  godha: { back: "#8e5a30", belly: "#e4d6bf", wing: "#7a4320", streak: "#2e1a0c", bar: "#f6efe2", head: "#8a5a30", crown: "#6e6c66", cheek: "#efe6d6", bib: "#181210", beak: "#2a221d", tail: "#4a2c18", farWing: "#5a3820", legs: "#7a4a2c" },
+  jhunti: { back: "#5a3822", belly: "#7a4a2c", wing: "#3e2416", streak: "#1a100a", bar: "#f4efe6", head: "#161010", crown: "#0e0a0a", cheek: "#161010", bib: null, beak: "#f2c230", tail: "#1a120c", farWing: "#2e1c10", legs: "#e0b030", patch: "#f5c42c", crest: "#0e0a0a" },
+};
+
+/** A plump cartoon bird facing right, centred on its body, in `look`'s colours. `size` is about its height. */
+export function drawBird(context: Context, size: number, pose: number, look: BirdLook) {
   const s = size;
   const flying = pose === WINGS_UP || pose === WINGS_DOWN;
   context.save();
@@ -20,67 +37,97 @@ export function drawSparrow(context: Context, size: number, pose: number) {
 
   if (flying) {
     // The far wing, darker, behind the body.
-    context.fillStyle = "#6e4526";
+    context.fillStyle = look.farWing;
     context.beginPath();
     if (pose === WINGS_UP) { context.moveTo(0.08 * s, -0.14 * s); context.quadraticCurveTo(0.2 * s, -0.62 * s, 0.02 * s, -0.78 * s); context.lineTo(-0.12 * s, -0.12 * s); }
     else { context.moveTo(0.08 * s, -0.02 * s); context.quadraticCurveTo(0.18 * s, 0.42 * s, 0.02 * s, 0.56 * s); context.lineTo(-0.12 * s, 0.02 * s); }
     context.fill();
   } else {
-    context.strokeStyle = "#8a5a3c"; context.lineWidth = 0.05 * s;
+    context.strokeStyle = look.legs; context.lineWidth = 0.05 * s;
     context.beginPath();
     context.moveTo(-0.02 * s, 0.3 * s); context.lineTo(-0.05 * s, 0.48 * s); context.moveTo(-0.11 * s, 0.48 * s); context.lineTo(0.03 * s, 0.48 * s);
     context.moveTo(0.1 * s, 0.3 * s); context.lineTo(0.11 * s, 0.48 * s); context.moveTo(0.05 * s, 0.48 * s); context.lineTo(0.18 * s, 0.48 * s);
     context.stroke();
   }
 
-  // Tail: a dark wedge cocked up behind.
-  context.fillStyle = "#5c3a22";
+  // Tail: a dark wedge cocked up behind (a টিয়া's is long and thin).
+  context.fillStyle = look.tail;
   context.beginPath();
-  context.moveTo(-0.28 * s, -0.02 * s); context.lineTo(-0.74 * s, flying ? -0.06 * s : -0.26 * s); context.lineTo(-0.72 * s, flying ? 0.08 * s : -0.08 * s); context.lineTo(-0.26 * s, 0.16 * s);
+  if (look.longTail) {
+    context.moveTo(-0.26 * s, 0.0); context.lineTo(-1.15 * s, flying ? 0.02 * s : 0.3 * s); context.lineTo(-1.1 * s, flying ? 0.1 * s : 0.38 * s); context.lineTo(-0.24 * s, 0.16 * s);
+  } else {
+    context.moveTo(-0.28 * s, -0.02 * s); context.lineTo(-0.74 * s, flying ? -0.06 * s : -0.26 * s); context.lineTo(-0.72 * s, flying ? 0.08 * s : -0.08 * s); context.lineTo(-0.26 * s, 0.16 * s);
+  }
   context.closePath(); context.fill();
 
-  // Body: warm brown back, pale grey-cream belly.
-  ellipse(context, -0.02 * s, 0.04 * s, 0.42 * s, 0.31 * s, -0.12, "#a06d40");
+  // Body: the back, and the belly below it.
+  ellipse(context, -0.02 * s, 0.04 * s, 0.42 * s, 0.31 * s, -0.12, look.back);
   context.save();
   context.beginPath(); context.ellipse(-0.02 * s, 0.04 * s, 0.42 * s, 0.31 * s, -0.12, 0, Math.PI * 2); context.clip();
-  ellipse(context, 0.06 * s, 0.26 * s, 0.4 * s, 0.22 * s, -0.1, "#ece2d0");
+  ellipse(context, 0.06 * s, 0.26 * s, 0.4 * s, 0.22 * s, -0.1, look.belly);
+  if (look.scales) {
+    // A মুনিয়া's scaly breast: little dark chevrons.
+    context.strokeStyle = look.scales; context.lineWidth = 0.025 * s;
+    context.beginPath();
+    for (let row = 0; row < 3; row++) for (let col = 0; col < 4; col++) {
+      const x = (-0.12 + col * 0.11 + (row % 2) * 0.05) * s, y = (0.14 + row * 0.08) * s;
+      context.moveTo(x - 0.03 * s, y); context.lineTo(x, y + 0.03 * s); context.lineTo(x + 0.03 * s, y);
+    }
+    context.stroke();
+  }
   context.restore();
 
-  // Near wing: chestnut with dark streaks and a white bar.
+  // Near wing, with dark streaks and a pale bar.
   context.save();
   if (pose === WINGS_UP) { context.translate(0.02 * s, -0.08 * s); context.rotate(-1.75); context.translate(-0.02 * s, 0.08 * s); }
   else if (pose === WINGS_DOWN) { context.translate(0.02 * s, -0.04 * s); context.rotate(1.05); context.translate(-0.02 * s, 0.04 * s); }
-  context.fillStyle = "#8f5328";
+  context.fillStyle = look.wing;
   context.beginPath();
   context.moveTo(0.16 * s, -0.1 * s);
   context.quadraticCurveTo(-0.12 * s, -0.2 * s, -0.48 * s, 0.02 * s);
   context.quadraticCurveTo(-0.12 * s, 0.2 * s, 0.14 * s, 0.06 * s);
   context.closePath(); context.fill();
-  context.strokeStyle = "#3e2615"; context.lineWidth = 0.035 * s;
+  context.strokeStyle = look.streak; context.lineWidth = 0.035 * s;
   context.beginPath();
   context.moveTo(-0.02 * s, -0.08 * s); context.lineTo(-0.3 * s, 0.0 * s);
   context.moveTo(0.04 * s, 0.02 * s); context.lineTo(-0.26 * s, 0.08 * s);
   context.stroke();
-  context.strokeStyle = "#f6efe2"; context.lineWidth = 0.04 * s;
+  context.strokeStyle = look.bar; context.lineWidth = (look.patch ? 0.07 : 0.04) * s;
   context.beginPath(); context.moveTo(0.1 * s, -0.04 * s); context.quadraticCurveTo(-0.02 * s, -0.06 * s, -0.12 * s, -0.04 * s); context.stroke();
   context.restore();
 
-  // Head: grey crown, chestnut band behind the eye, white cheek, black bib, stubby beak.
+  // Head: crown, cheek, the bib if any, beak and eye.
   const hx = 0.3 * s, hy = -0.2 * s;
-  ellipse(context, hx, hy, 0.24 * s, 0.23 * s, 0, "#9c6a3e");
+  if (look.crest) {
+    context.fillStyle = look.crest;
+    context.beginPath(); context.moveTo(hx - 0.02 * s, hy - 0.18 * s); context.quadraticCurveTo(hx + 0.04 * s, hy - 0.46 * s, hx + 0.2 * s, hy - 0.36 * s); context.quadraticCurveTo(hx + 0.12 * s, hy - 0.26 * s, hx + 0.14 * s, hy - 0.16 * s); context.closePath(); context.fill();
+  }
+  ellipse(context, hx, hy, 0.24 * s, 0.23 * s, 0, look.head);
   context.save();
   context.beginPath(); context.ellipse(hx, hy, 0.24 * s, 0.23 * s, 0, 0, Math.PI * 2); context.clip();
-  ellipse(context, hx + 0.02 * s, hy - 0.16 * s, 0.24 * s, 0.14 * s, 0, "#8e8c86");
-  ellipse(context, hx + 0.04 * s, hy + 0.1 * s, 0.17 * s, 0.11 * s, 0, "#f3ede0");
-  ellipse(context, hx + 0.16 * s, hy + 0.2 * s, 0.1 * s, 0.13 * s, 0, "#2c2522");
+  ellipse(context, hx + 0.02 * s, hy - 0.16 * s, 0.24 * s, 0.14 * s, 0, look.crown);
+  ellipse(context, hx + 0.04 * s, hy + 0.1 * s, 0.17 * s, 0.11 * s, 0, look.cheek);
+  if (look.bib) ellipse(context, hx + 0.16 * s, hy + 0.2 * s, 0.1 * s, 0.13 * s, 0, look.bib);
   context.restore();
-  ellipse(context, 0.36 * s, 0.0, 0.08 * s, 0.1 * s, 0.2, "#2c2522");
-  context.fillStyle = "#3a302a";
-  context.beginPath(); context.moveTo(0.5 * s, -0.25 * s); context.lineTo(0.66 * s, -0.19 * s); context.lineTo(0.5 * s, -0.13 * s); context.closePath(); context.fill();
+  if (look.bib) ellipse(context, 0.36 * s, 0.0, 0.08 * s, 0.1 * s, 0.2, look.bib);
+  if (look.ring) {
+    context.strokeStyle = look.ring; context.lineWidth = 0.035 * s;
+    context.beginPath(); context.arc(hx - 0.02 * s, hy + 0.02 * s, 0.2 * s, 0.25 * Math.PI, 0.85 * Math.PI); context.stroke();
+  }
+  if (look.patch) ellipse(context, 0.36 * s, -0.22 * s, 0.085 * s, 0.07 * s, 0, look.patch);
+  context.fillStyle = look.beak;
+  context.beginPath();
+  if (look.ring) { context.moveTo(0.48 * s, -0.3 * s); context.quadraticCurveTo(0.7 * s, -0.28 * s, 0.6 * s, -0.08 * s); context.lineTo(0.48 * s, -0.14 * s); }
+  else if (look.thickBeak) { context.moveTo(0.48 * s, -0.29 * s); context.lineTo(0.68 * s, -0.19 * s); context.lineTo(0.48 * s, -0.09 * s); }
+  else { context.moveTo(0.5 * s, -0.25 * s); context.lineTo(0.66 * s, -0.19 * s); context.lineTo(0.5 * s, -0.13 * s); }
+  context.closePath(); context.fill();
   ellipse(context, 0.38 * s, -0.23 * s, 0.05 * s, 0.055 * s, 0, "#1c1714");
   ellipse(context, 0.395 * s, -0.245 * s, 0.017 * s, 0.017 * s, 0, "#ffffff");
   context.restore();
 }
+
+/** The house sparrow, as the first game drew it. */
+export const drawSparrow = (context: Context, size: number, pose: number) => drawBird(context, size, pose, LOOKS.sparrow);
 
 /**
  * The কাকতাড়ুয়া: a bamboo cross in an old checked shirt and lungi, a গামছা at the neck, a clay-pot head with a lime-painted face
@@ -194,13 +241,17 @@ export function drawScarecrow(context: Context, size: number, mood: number) {
   context.restore();
 }
 
+/** A world's paddy colours: blades, the two stem shades, the two grain shades. */
+export type PaddyColors = readonly [string, string, string, string, string];
+export const GOLDEN_PADDY: PaddyColors = ["#9c9a36", "#a8963a", "#b9a446", "#f3c650", "#e2a93a"];
+
 /** One clump of ripe paddy: long blades, and thin stems bowing under heavy golden শীষ. Origin at the base, `size` tall. */
-export function drawPaddy(context: Context, size: number, lean: number, seed: number) {
+export function drawPaddy(context: Context, size: number, lean: number, seed: number, colors: PaddyColors = GOLDEN_PADDY) {
   const h = size;
   context.lineCap = "round";
   const rand = (index: number) => ((seed * 31 + index * 17 + 7) % 23) / 23;
   // Blades first, fanning out low.
-  context.strokeStyle = "#9c9a36"; context.lineWidth = 0.04 * h;
+  context.strokeStyle = colors[0]; context.lineWidth = 0.04 * h;
   context.beginPath();
   for (let index = 0; index < 4; index++) {
     const spread = (index - 1.5) * 0.28 + lean * 0.3;
@@ -212,13 +263,13 @@ export function drawPaddy(context: Context, size: number, lean: number, seed: nu
     const r = rand(index);
     const x = (index - 2.5) * 0.035 * h, bow = lean + (index - 2.5) * 0.16 + (r - 0.5) * 0.25;
     const tipX = x + bow * 0.5 * h, tipY = -h * (0.8 + r * 0.2);
-    context.strokeStyle = index % 2 ? "#a8963a" : "#b9a446"; context.lineWidth = 0.028 * h;
+    context.strokeStyle = index % 2 ? colors[1] : colors[2]; context.lineWidth = 0.028 * h;
     context.beginPath(); context.moveTo(x, 0); context.quadraticCurveTo(x + bow * 0.08 * h, tipY * 0.7, tipX, tipY); context.stroke();
     // The শীষ hangs over from the tip: grains along a drooping curve, smaller toward the end.
     const dir = bow >= 0 ? 1 : -1;
     for (let grain = 0; grain < 7; grain++) {
       const u = grain / 6;
-      context.fillStyle = (grain + index) % 2 ? "#f3c650" : "#e2a93a";
+      context.fillStyle = (grain + index) % 2 ? colors[3] : colors[4];
       context.beginPath();
       context.ellipse(tipX + dir * (0.07 + u * 0.12) * h, tipY + (0.02 + u * u * 0.34) * h, (0.034 - u * 0.012) * h, (0.05 - u * 0.016) * h, dir * (0.3 + u * 0.9), 0, Math.PI * 2);
       context.fill();

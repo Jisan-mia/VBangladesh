@@ -13,8 +13,12 @@ export type Shape =
   /** Centred text; `max` is the widest it may draw (the canvas shrinks it to fit). Never inside a flippable item. */
   | ({ k: "t"; x: number; y: number; text: string; size: number; max: number; weight?: number } & Paint);
 
-/** How an item looks on one side: its colour, how many of its little things, mirrored, shrunk, or not there at all. */
-export type Look = { color?: string; count?: number; flip?: boolean; scale?: number; hidden?: boolean };
+/**
+ * How an item looks on one side: its colour, how many of its little things, mirrored, shrunk, or not there at all;
+ * tilted by `turn` degrees about its anchor, moved by (dx, dy), and the words on it (`label`, for signboards and price cards).
+ * `still` stops a moving thing on this side (the picture's motion lives in lib/puzzle.ts, not in the shapes).
+ */
+export type Look = { color?: string; count?: number; flip?: boolean; scale?: number; hidden?: boolean; turn?: number; dx?: number; dy?: number; label?: string; still?: boolean };
 
 /** What may change about an item to make a difference. */
 export type Can = { color?: readonly string[]; count?: number; flip?: boolean; size?: boolean; missing?: boolean };
@@ -31,13 +35,18 @@ export type Item = {
 };
 
 export type Box = { x: number; y: number; w: number; h: number };
-/** [a, d, e, f]: x' = a·x + e, y' = d·y + f (scales and flips only, no rotation). */
-export type Matrix = readonly [number, number, number, number];
+/** [a, b, c, d, e, f], as the canvas reads it: x' = a·x + c·y + e, y' = b·x + d·y + f. */
+export type Matrix = readonly [number, number, number, number, number, number];
 
+/** The item's local space in the scene: mirrored, scaled, then turned about its anchor, then moved. */
 export function matrixOf(item: Item, look: Look): Matrix {
-  const s = (item.s ?? 1) * (look.scale ?? 1);
-  return [look.flip ? -s : s, s, item.x, item.y];
+  const s = (item.s ?? 1) * (look.scale ?? 1), fx = look.flip ? -s : s, e = item.x + (look.dx ?? 0), f = item.y + (look.dy ?? 0);
+  if (!look.turn) return [fx, 0, 0, s, e, f];
+  const angle = (look.turn * Math.PI) / 180, cos = Math.cos(angle), sin = Math.sin(angle);
+  return [fx * cos, fx * sin, -s * sin, s * cos, e, f];
 }
+/** How much a matrix scales lengths (line widths, text). */
+export const matrixScale = ([a, b]: Matrix) => Math.hypot(a, b);
 
 const PATH_TOKEN = /[MLQCZ]|-?(?:\d+\.?\d*|\.\d+)/g;
 
@@ -52,26 +61,28 @@ export function pathPoints(d: string): [number, number][] {
   return out;
 }
 
-/** The outline points that bound a shape, in local space (control points included, so the box is never too small). */
+const corners = (left: number, top: number, right: number, bottom: number): [number, number][] => [[left, top], [right, top], [right, bottom], [left, bottom]];
+
+/** The outline points that bound a shape, in local space (control points included, all four corners of a box, so a turned box is never too small). */
 export function shapePoints(shape: Shape): [number, number][] {
   const grow = (shape.sw ?? 0) / 2;
   switch (shape.k) {
-    case "r": return [[shape.x - grow, shape.y - grow], [shape.x + shape.w + grow, shape.y + shape.h + grow]];
-    case "c": return [[shape.x - shape.r - grow, shape.y - shape.r - grow], [shape.x + shape.r + grow, shape.y + shape.r + grow]];
-    case "e": return [[shape.x - shape.rx - grow, shape.y - shape.ry - grow], [shape.x + shape.rx + grow, shape.y + shape.ry + grow]];
+    case "r": return corners(shape.x - grow, shape.y - grow, shape.x + shape.w + grow, shape.y + shape.h + grow);
+    case "c": return corners(shape.x - shape.r - grow, shape.y - shape.r - grow, shape.x + shape.r + grow, shape.y + shape.r + grow);
+    case "e": return corners(shape.x - shape.rx - grow, shape.y - shape.ry - grow, shape.x + shape.rx + grow, shape.y + shape.ry + grow);
     case "p": {
       const points = pathPoints(shape.d);
       return grow ? points.flatMap(([x, y]) => [[x - grow, y - grow], [x + grow, y + grow]] as [number, number][]) : points;
     }
-    case "t": return [[shape.x - shape.max / 2, shape.y - shape.size * 0.7], [shape.x + shape.max / 2, shape.y + shape.size * 0.5]];
+    case "t": return corners(shape.x - shape.max / 2, shape.y - shape.size * 0.7, shape.x + shape.max / 2, shape.y + shape.size * 0.5);
   }
 }
 
-export function boxOfPoints(points: readonly (readonly [number, number])[], [a, d, e, f]: Matrix = [1, 1, 0, 0]): Box | null {
+export function boxOfPoints(points: readonly (readonly [number, number])[], [a, b, c, d, e, f]: Matrix = [1, 0, 0, 1, 0, 0]): Box | null {
   if (!points.length) return null;
   let left = Infinity, top = Infinity, right = -Infinity, bottom = -Infinity;
   for (const [x, y] of points) {
-    const px = a * x + e, py = d * y + f;
+    const px = a * x + c * y + e, py = b * x + d * y + f;
     if (px < left) left = px; if (px > right) right = px;
     if (py < top) top = py; if (py > bottom) bottom = py;
   }
@@ -110,10 +121,11 @@ export function tapRegion(box: Box, min: number, pad: number): Box {
  * A shape as it lands in the scene, written as one string: kind, paint and its points after the item's move, flip and shrink.
  * Points are sorted, so a mirror image of a symmetric shape gives the same key (it looks the same) and an asymmetric one does not.
  */
-export function shapeKey(shape: Shape, [a, d, e, f]: Matrix) {
-  const points = shapePoints({ ...shape, sw: 0 } as Shape).map(([x, y]) => `${(a * x + e).toFixed(1)},${(d * y + f).toFixed(1)}`).sort();
-  const text = shape.k === "t" ? `${shape.text}|${(shape.size * Math.abs(d)).toFixed(1)}` : "";
-  return `${shape.k}|${shape.fill ?? ""}|${shape.stroke ?? ""}|${((shape.sw ?? 0) * Math.abs(d)).toFixed(2)}|${shape.op ?? 1}|${text}|${points.join(" ")}`;
+export function shapeKey(shape: Shape, matrix: Matrix) {
+  const [a, b, c, d, e, f] = matrix, scale = matrixScale(matrix);
+  const points = shapePoints({ ...shape, sw: 0 } as Shape).map(([x, y]) => `${(a * x + c * y + e).toFixed(1)},${(b * x + d * y + f).toFixed(1)}`).sort();
+  const text = shape.k === "t" ? `${shape.text}|${(shape.size * scale).toFixed(1)}` : "";
+  return `${shape.k}|${shape.fill ?? ""}|${shape.stroke ?? ""}|${((shape.sw ?? 0) * scale).toFixed(2)}|${shape.op ?? 1}|${text}|${points.join(" ")}`;
 }
 
 /** The part of a box you can see in the picture (null when it's all outside). */

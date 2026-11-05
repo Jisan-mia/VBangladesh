@@ -1,0 +1,90 @@
+---
+title: "সﬂ°°2494¶ßপলﬂ°°2497¶ßডﬂ°°2497¶ß: turn, walking piece, window, result and friend's dice"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+    lg3: Breaks NoProgressWhileAway in some cases
+    lg4: Path to the NoProgressWhileAway bug
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  class lg3 mayBreak
+  class lg4 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: Waiting for the first roll
+      s1: Pick a piece (১ or ২)
+      s2: Reached 100 (last walk, sound, confetti)
+      s3: Your roll
+      s4: Piece walks
+      s5: Paused cover
+      s6: Result cover shows
+      [*] --> s0
+      s0 --> s1: you tap the dice [when Window is You're on the page]
+      s0 --> s2: you tap the dice [when Window is You're on the page]
+      s0 --> s3: you tap the dice [when Window is You're on the page]
+      s0 --> s4: you tap the dice [when Window is You're on the page]
+      s1 --> s0: you press নত#2497;ন খ#2503;ল#2494; [when Window is You're on the page]
+      s1 --> s2: you pick a piece [when Window is You're on the page]
+      s1 --> s3: you pick a piece [when Window is You're on the page]
+      s1 --> s4: you pick a piece [when Window is You're on the page]
+      s1 --> s5: you hide the tab
+      s3 --> s0: you press নত#2497;ন খ#2503;ল#2494; [when Window is You're on the page]
+      s3 --> s1: you tap the dice [when Window is You're on the page]
+      s3 --> s2: you tap the dice [when Window is You're on the page]
+      s3 --> s4: you tap the dice [when Window is You're on the page]
+      s3 --> s5: you hide the tab
+      s4 --> s0: you press নত#2497;ন খ#2503;ল#2494; [when Window is You're on the page]
+      s4 --> s3: the piece lands
+      s4 --> s5: you hide the tab
+      s2 --> s6: the result cover appears
+      s5 --> s0: you press নত#2497;ন খ#2503;ল#2494; [when Window is You're on the page]
+      s5 --> s1: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+      s6 --> s0: you press আর#2503;কব#2494;র or you press একই ছক#2509;ক#2494;য#2492; আব#2494;র [when Window is You're on the page]
+      s5 --> s3: you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও [when Window is You're on the page]
+    }
+    --
+    state "Window" as r1 {
+      s7: You're on the page
+      s8: Another window has focus
+      s9: Tab hidden
+      [*] --> s7
+      s7 --> s8: you click into another window
+      s7 --> s9: you hide the tab
+      s8 --> s7: you come back to the window
+      s8 --> s9: you hide the tab
+      s9 --> s7: the tab shows again
+    }
+    --
+    state "Dice" as r2 {
+      s10: Fresh dice
+      s11: Friend's dice, their card shown
+      [*] --> s10
+      s10 --> s11: a friend's link opens [when Game is Waiting for the first roll and Window is You're on the page]
+      s11 --> s10: you press নত#2497;ন খ#2503;ল#2494; [when Game is none of Reached 100 (last walk, sound, confetti), Result cover shows, Waiting for the first roll and Window is You're on the page]
+      s11 --> s10: you press আর#2503;কব#2494;র [when Game is Result cover shows and Window is You're on the page]
+    }
+  }
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 bugPath
+  class s1 teal
+  class s2 blue
+  class s2 mayBreak
+  class s3 teal
+  class s4 teal
+  class s4 mayBreak
+  class s4 bugPath
+  class s5 yellow
+  class s6 blue
+  class s7 bugPath
+  class s8 mayBreak
+  class s8 bugPath
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak

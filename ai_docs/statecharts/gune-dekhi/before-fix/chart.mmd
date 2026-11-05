@@ -1,0 +1,126 @@
+---
+title: "গﬂ°°2497¶ßনﬂ°°2503¶ß দﬂ°°2503¶ßখﬂ°°2495¶ß: round, glimpse, window, sound, daily limit and links"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+    lg1: between
+    lg2: rest
+    lg3: gone
+    lg4: Breaks GlimpseOnlyWhileWatching or NoReadingNeeded or ParentGate
+    lg5: Breaks FinishCounts or GlimpseOnlyWhileWatching or NoReadingNeeded or ParentGate or SilentWhenMuted in some cases
+    lg6: Path to the FinishCounts or GlimpseOnlyWhileWatching or NoReadingNeeded or ParentGate or SilentWhenMuted bug
+  }
+  class lg0 teal
+  class lg1 blue
+  class lg2 yellow
+  class lg3 orange
+  class lg4 breaks
+  class lg5 mayBreak
+  class lg6 bugPath
+  state "At the same time" as all {
+    state "Game" as r0 {
+      s0: গ#2497;ন#2495;: counting the fish
+      s1: Pond right, next one coming
+      s2: এক নজর#2503;: pattern showing
+      s3: Parent shares the link
+      s4: Left for another page
+      s5: এক নজর#2503;: pattern hidden
+      s6: Last pond right, cheering
+      s7: End card
+      s8: Rest screen
+      s9: Closed (ম#2494;ছগ#2497;ল#2507; প#2497;ক#2497;র#2503;ই রইল)
+      [*] --> s0
+      s0 --> s1: you answer right [when Window is On the page]
+      s0 --> s2: you tap a mode button [when Window is On the page]
+      s0 --> s3: a parent opens the gate and shares the link [when Window is On the page]
+      s0 --> s4: you tap a link around the game [when Window is On the page]
+      s1 --> s0: you pick a step in the drawer or you tap a mode button [when Window is On the page]
+      s1 --> s2: you tap a mode button or you pick a step in the drawer [when Window is On the page]
+      s1 --> s0: the next pond comes
+      s1 --> s3: a parent opens the gate and shares the link [when Window is On the page]
+      s1 --> s4: you tap a link around the game [when Window is On the page]
+      s2 --> s0: you tap a mode button [when Window is On the page]
+      s2 --> s5: the pattern hides after 1.5 s
+      s2 --> s1: you answer right [when Window is On the page]
+      s2 --> s3: a parent opens the gate and shares the link [when Window is On the page]
+      s2 --> s4: you tap a link around the game [when Window is On the page]
+      s0 --> s6: you answer right [when Window is On the page]
+      s5 --> s0: you tap a mode button [when Window is On the page]
+      s5 --> s2: you ask to see it again (or miss) or you pick a step in the drawer [when Window is On the page]
+      s5 --> s1: you answer right [when Window is On the page]
+      s5 --> s3: a parent opens the gate and shares the link [when Window is On the page]
+      s5 --> s4: you tap a link around the game [when Window is On the page]
+      s1 --> s2: the next pond comes
+      s6 --> s7: the round ends and the card shows
+      s6 --> s8: the round ends and the card shows
+      s6 --> s0: you pick a step in the drawer or you tap a mode button [when Window is On the page]
+      s6 --> s2: you tap a mode button or you pick a step in the drawer [when Window is On the page]
+      s6 --> s3: a parent opens the gate and shares the link [when Window is On the page]
+      s6 --> s4: you tap a link around the game [when Window is On the page]
+      s2 --> s6: you answer right [when Window is On the page]
+      s7 --> s0: you press আব#2494;র খ#2503;ল#2507; or you tap a mode button or you pick a step in the drawer [when Window is On the page]
+      s7 --> s2: you tap a mode button or you press আব#2494;র খ#2503;ল#2507; or you pick a step in the drawer [when Window is On the page]
+      s7 --> s9: you press শ#2503;ষ [when Window is On the page]
+      s7 --> s3: a parent opens the gate and shares the link [when Window is On the page]
+      s7 --> s4: you tap a link around the game [when Window is On the page]
+      s8 --> s7: a parent gives 10 more minutes
+      s5 --> s6: you answer right [when Window is On the page]
+      s9 --> s0: you press আব#2494;র খ#2503;ল#2507; or you tap a mode button or you pick a step in the drawer [when Window is On the page]
+      s9 --> s2: you tap a mode button or you press আব#2494;র খ#2503;ল#2507; or you pick a step in the drawer [when Window is On the page]
+      s9 --> s3: a parent opens the gate and shares the link [when Window is On the page]
+      s9 --> s4: you tap a link around the game [when Window is On the page]
+    }
+    --
+    state "Window" as r1 {
+      s10: On the page
+      s11: Another window
+      [*] --> s10
+      s10 --> s11: you look away (another window or tab)
+      s11 --> s10: you come back
+    }
+    --
+    state "Sound" as r2 {
+      s12: Sound on
+      s13: Sound off
+      [*] --> s12
+      s12 --> s13: you turn sound off
+      s13 --> s12: you turn sound on
+    }
+  }
+  classDef breaks fill:#ffecee,stroke:#e72e3b,stroke-width:2.5px,color:#cd2834
+  classDef mayBreak fill:#fff3e6,stroke:#e8730c,stroke-width:2.5px,color:#b85a06
+  class s0 teal
+  class s0 mayBreak
+  class s0 bugPath
+  class s1 teal
+  class s1 mayBreak
+  class s1 bugPath
+  class s2 teal
+  class s2 mayBreak
+  class s2 bugPath
+  class s3 orange
+  class s3 mayBreak
+  class s4 orange
+  class s4 breaks
+  class s4 bugPath
+  class s5 teal
+  class s6 teal
+  class s6 mayBreak
+  class s6 bugPath
+  class s7 blue
+  class s7 breaks
+  class s7 bugPath
+  class s8 yellow
+  class s8 breaks
+  class s9 blue
+  class s9 breaks
+  class s10 mayBreak
+  class s10 bugPath
+  class s11 mayBreak
+  class s11 bugPath
+  class s12 mayBreak
+  class s12 bugPath
+  class s13 mayBreak
+  class s13 bugPath

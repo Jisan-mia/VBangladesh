@@ -1,114 +1,282 @@
-.tool-ghontar-sur{--accent:#b4532a;--accent-deep:#6e2e14;--ink:#3a2316;--muted:#74533e;--wall:#f4e5c8;--wall-line:#ead6b2;--clay:#b9653b;--clay-dark:#7e3d1f;--bamboo:#c9a24a;--bamboo-dark:#8f6d22}
-.tool-ghontar-sur .gs-page{color:var(--ink)}
+/* ঘণ্টার সুর: brass bells on a bamboo beam at a village fair. One wall per world (lib/art.ts holds the same values for the card). */
+.tool-ghontar-sur{--accent:#b4532a;--accent-deep:#6e2e14;--ink:#33200f;--muted:#6f5238;--paper:#f6ecd6;--line:#e0cfa8;--trim:#f2b51c;--good:#2f9e5b;--bad:#d4553f;
+  --bell-0:#13917f;--bell-1:#e3940a;--bell-2:#c8326b;--bell-3:#3f56c8;--bell-4:#6f8f1d;--brass:#c99a2e;--brass-dark:#8a6414;--brass-light:#efce6d;--ease-out:cubic-bezier(.23,1,.32,1);--ease-in-out:cubic-bezier(.77,0,.175,1)}
+.tool-ghontar-sur .gs-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.gs-stagebox{--wall:#f3e2bd;--wall2:#ead2a0;--beam:#a8793a;--glow:#fff2c4;--flag-a:#c8326b;--flag-b:#e3940a}
+.gs-stagebox[data-world="1"]{--wall:#2e5b4c;--wall2:#234639;--beam:#7a5a2c;--glow:#ffd98a;--flag-a:#e3940a;--flag-b:#f3e2bd}
+.gs-stagebox[data-world="2"]{--wall:#252a5e;--wall2:#181c45;--beam:#6a4b25;--glow:#ffe6a0;--flag-a:#ffd166;--flag-b:#ef476f}
 
-/* hero: two short lines, so the pots and the start button land on the first phone screen */
-.gs-hero{padding:10px 0 6px}
-.gs-hero-kicker{display:block;font-size:13px;font-weight:600;line-height:1.5;color:var(--accent)}
-.gs-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6.2vw,44px);line-height:1.25;font-weight:700;letter-spacing:0}
-.gs-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:15px;line-height:1.6}
-@media (min-width:720px){.gs-lead{display:block}}
+.gs{position:relative;display:grid;align-content:start;gap:12px;width:100%;max-width:560px;margin-inline:auto;color:var(--ink);container:gs/inline-size}
+.gs button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.gs-play{display:flex;flex-direction:column;gap:8px;height:min(calc(100svh - 40px),820px)}
+.gp-stage .gs-play{height:var(--stage-h,100svh)}
+.gs-play[hidden]{display:none}
 
-.gs{display:grid;gap:8px;max-width:460px}
+/* ---- HUD: corners only; the middle of the rack stays clear ---- */
+.gs-hud{display:grid;grid-template-columns:minmax(0,auto) 1fr minmax(0,auto);align-items:center;gap:8px;flex:none;min-height:46px}
+.gs-badge-btn{display:grid;justify-items:start;min-height:44px;margin:0;padding:3px 12px;border:1.5px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);line-height:1.2;text-align:left}
+.gs-badge-btn b{font-family:var(--font-display);font-size:16px;font-weight:800;white-space:nowrap}
+.gs-badge-btn span{font-size:12px;color:var(--muted);white-space:nowrap}
+.gs[data-finale] .gs-badge-btn b{color:var(--accent)}
+.gs-pips{display:flex;justify-content:center;gap:6px;margin:0;padding:0;list-style:none}
+.gs-pips li{display:grid;place-items:center;width:24px;height:24px;border:2px solid var(--line);border-radius:50%;font-size:12px;font-weight:800;color:#fff;transition:background .2s,border-color .2s}
+.gs-pips li[data-state=now]{border-color:var(--accent)}
+.gs-pips li[data-state=done]{border-color:var(--good);background:var(--good)}
+/* a finale's boss bar: its name and one segment for each part of the tune, knocked out as you play it */
+.gs-boss{display:grid;justify-items:center;gap:3px;min-width:0}
+.gs-boss b{max-width:100%;overflow:hidden;font-family:var(--font-display);font-size:14px;font-weight:800;color:var(--accent-deep);white-space:nowrap;text-overflow:ellipsis}
+.gs-boss span{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:3px;width:min(150px,100%);height:9px;padding:2px;border-radius:6px;background:var(--ink)}
+.gs-boss i{border-radius:3px;background:linear-gradient(#e8a93a,#b8761f);transition:opacity .2s ease}
+.gs-boss i[data-state=hit]{opacity:.2}
+.gs-boss i[data-state=now]{background:linear-gradient(#f2d36b,#e3940a)}
+.gs-count{display:grid;justify-items:center;margin:0;line-height:1.1}
+.gs-count b{font-family:var(--font-display);font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+.gs-count small{font-size:12px;color:var(--muted)}
+.gs-right{display:grid;justify-items:end;gap:1px}
+.gs-score{margin:0;line-height:1.15;text-align:right}
+.gs-score b{font-family:var(--font-display);font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+.gs-score small{font-size:12px;color:var(--muted)}
+.gs-hearts{display:flex;gap:3px;margin:0;line-height:1}
+.gs-hearts svg{display:block;width:18px;height:17px;fill:currentColor}
+.gs-hearts i{font-style:normal;color:#d9c8a8;transition:color .2s,transform .2s}
+.gs-hearts i[data-on]{color:#d4403a}
+.gs[data-danger] .gs-hearts i[data-on]{animation:gs-beat .9s ease-in-out infinite}
 
-.gs-friend{padding:10px 14px;border-radius:14px;background:var(--wall);border-left:5px solid var(--accent)}
-.gs-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.4}
-.gs-friend p{margin:2px 0 0;font-size:13px;line-height:1.45;color:var(--muted)}
-
-.gs-hud{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:baseline}
-.gs-hud p{margin:0}
-.gs-level{font-family:var(--font-display);font-weight:700;font-size:16px}
-.gs-stars-total{font-weight:700;color:var(--muted);font-size:14px}
-.gs-goal{font-size:14px;font-weight:600}
-.gs-goal b{font-family:var(--font-display);font-size:20px;font-variant-numeric:tabular-nums}
-.gs-goal span{color:var(--muted)}
-.gs-misses{display:flex;align-items:center;gap:4px;font-size:13px;font-weight:600;color:var(--muted)}
-.gs-misses i{width:11px;height:11px;border-radius:50%;border:2px solid var(--clay)}
-.gs-misses i.on{background:var(--clay-dark);border-color:var(--clay-dark)}
-
-/* the shelf: mud wall, paper flags, four pots on two bamboo poles. touch-action only here, so the page still scrolls */
-.gs-stage{position:relative}
-.gs-shelf{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;height:clamp(176px,48vw,230px);padding:30px 6px 26px;border-radius:18px;touch-action:none;user-select:none;-webkit-user-select:none;
-  background:
-    linear-gradient(var(--bamboo) 0 0) left 4px bottom 10px/calc(100% - 8px) 9px no-repeat,
-    linear-gradient(var(--bamboo-dark) 0 0) left 4px bottom 4px/calc(100% - 8px) 5px no-repeat,
-    conic-gradient(from -38deg at 50% 100%,#c8326b 0 76deg,#0000 0) 0 4px/88px 18px repeat-x,conic-gradient(from -38deg at 50% 100%,#e3940a 0 76deg,#0000 0) 44px 4px/88px 18px repeat-x,
-    linear-gradient(var(--bamboo-dark) 0 0) 0 3px/100% 2px no-repeat,
-    repeating-linear-gradient(0deg,var(--wall) 0 22px,var(--wall-line) 22px 24px);
-  box-shadow:inset 0 0 0 1.5px #e2cca6}
-.gs-pot{--c:#13917f;position:relative;display:flex;align-items:flex-end;justify-content:center;min-width:0;min-height:56px;padding:0 0 4px;border:0;border-radius:14px;background:transparent;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background-color .15s ease-out}
-.gs-pot:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
-.gs-pot svg{display:block;height:auto;max-height:100%;overflow:visible;transition:transform .12s ease-out}
-.gs-body{fill:var(--clay);stroke:var(--clay-dark);stroke-width:2.5;transition:fill .08s ease-out}
-.gs-bands{fill:none;stroke:var(--c);stroke-width:6;stroke-linecap:round}
-.gs-shine{fill:none;stroke:#ffffff59;stroke-width:4;stroke-linecap:round}
+/* ---- the rack: a coloured wall, paper flags, bamboo beams and the bells ---- */
+.gs-stagebox{position:relative;display:flex;flex:1 1 0;flex-direction:column;min-height:180px;border-radius:6px;overflow:hidden;background:radial-gradient(120% 70% at 50% 8%,var(--glow) 0,transparent 58%),repeating-linear-gradient(0deg,var(--wall) 0 26px,var(--wall2) 26px 28px);box-shadow:0 6px 18px #33200f38;isolation:isolate}
+.gs-stagebox::after{content:"";position:absolute;inset:0;z-index:6;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 4px #ff8a3d,inset 0 0 30px 8px #ff6a2a99;opacity:0;transition:opacity .25s var(--ease-out)} /* unslop-ignore: the danger edge on the last heart is the quality bar's signal, not decoration */
+.gs[data-danger] .gs-stagebox::after{opacity:1;animation:gs-glow .9s ease-in-out infinite alternate}
+.gs[data-danger][data-calm] .gs-stagebox::after{box-shadow:inset 0 0 0 4px #ff8a3d;animation:none}
+.gs-rack{position:relative;flex:1 1 0;min-height:0;container-type:size}
+.gs-flags{position:absolute;inset:0 0 auto;height:22px;background:conic-gradient(from 144deg at 50% 0,var(--flag-a) 0 72deg,#0000 0) 0 0/56px 22px repeat-x,conic-gradient(from 144deg at 50% 0,var(--flag-b) 0 72deg,#0000 0) 28px 0/56px 22px repeat-x}
+.gs-bells{--rows:2;position:absolute;inset:24px 0 0;display:grid;grid-auto-rows:auto;align-content:space-between;padding-bottom:6px}
+.gs-bells[data-count="3"]{grid-template-columns:repeat(4,1fr)}
+.gs-bells[data-count="3"] .gs-bell,.gs-bells[data-count="5"] .gs-bell{grid-column:span 2}
+.gs-bells[data-count="3"] .gs-bell:nth-child(3){grid-column:2/4}
+.gs-bells[data-count="4"]{grid-template-columns:repeat(2,1fr)}
+.gs-bells[data-count="5"]{grid-template-columns:repeat(6,1fr)}
+.gs-bells[data-count="5"] .gs-bell{grid-column:span 2}
+.gs-bells[data-count="5"] .gs-bell:nth-child(4){grid-column:2/4}
+.gs-bells[data-count="5"] .gs-bell:nth-child(5){grid-column:4/6}
+.gs-bell{--c:#13917f;--s:1;position:relative;display:flex;justify-content:center;align-items:flex-start;min-width:0;min-height:0;padding:10px 0 0;border:0;border-radius:0;background:transparent;color:inherit;cursor:pointer;isolation:isolate}
+.gs-bell::before{content:"";position:absolute;inset:0 0 auto;height:10px;background:linear-gradient(var(--beam) 0 6px,#0004 6px 7px,#0000 7px);border-top:3px solid var(--beam)}
+.gs-bell:focus-visible{outline:3px solid var(--trim);outline-offset:-3px}
+.gs-bellsvg{display:block;height:auto;width:min(calc(var(--s) * 84%),calc(var(--s) * 78cqh / var(--rows) * .77));aspect-ratio:100/130;overflow:visible;transform-origin:50% 0;pointer-events:none}
+.gs-rope{fill:none;stroke:#4a2f12;stroke-width:3;stroke-linecap:round}
+.gs-hook{fill:var(--brass-dark)}
+.gs-clapper{fill:none;stroke:var(--brass-dark);stroke-width:3}
+.gs-knob{fill:var(--brass-dark)}
+.gs-body{fill:var(--brass);stroke:var(--brass-dark);stroke-width:2.5;transition:fill .12s var(--ease-out)}
+.gs-lip{fill:none;stroke:var(--c);stroke-width:7;stroke-linecap:round}
+.gs-shine{fill:none;stroke:#ffffff73;stroke-width:4;stroke-linecap:round}
 .gs-badge circle{fill:#fff;stroke:var(--c);stroke-width:3.5}
-.gs-badge text{fill:var(--c);font-family:var(--font-display);font-size:22px;font-weight:800;text-anchor:middle;dominant-baseline:middle}
-.gs-badge{transform-box:fill-box;transform-origin:center;transition:transform .1s ease-out}
+.gs-badge text{fill:var(--c);font-family:var(--font-display);font-size:19px;font-weight:800;text-anchor:middle;dominant-baseline:middle}
+.gs-badge{transform-box:fill-box;transform-origin:center;transition:transform .1s var(--ease-out)}
+.gs-halo{position:absolute;left:50%;top:0;z-index:-1;width:min(190%,380px);aspect-ratio:1;translate:-50% 0;border-radius:50%;background:radial-gradient(circle,var(--c) 0,color-mix(in srgb,var(--c) 40%,transparent) 34%,transparent 66%);opacity:0;pointer-events:none;transition:opacity .35s var(--ease-out)}
 
-/* a playing pot: the whole column takes its colour, the pot fills, the number grows — readable with sound off */
-.gs-pot[data-lit=true]{background:var(--c);transition:none}
-.gs-pot[data-lit=true] .gs-body{fill:color-mix(in srgb,var(--c) 70%,#fff);stroke:#fff}
-.gs-pot[data-lit=true] .gs-bands{stroke:#fff}
-.gs-pot[data-lit=true] .gs-badge{transform:scale(1.45)}
-.gs-pot[data-lit=true] svg{transform:translateY(-4px)}
-.gs-pot[data-answer=true]{box-shadow:inset 0 0 0 4px var(--c);background:color-mix(in srgb,var(--c) 18%,transparent)}
-.gs-pot[data-wrong=true] svg{animation:gs-shake .22s ease-out}
-@keyframes gs-shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* a ringing bell: the whole column takes its colour, the bell fills, the number grows. Readable with sound off. */
+.gs-bell[data-lit] .gs-body{fill:color-mix(in srgb,var(--c) 58%,#ffe9a8);stroke:#fff;transition:none}
+.gs-bell[data-lit] .gs-badge{transform:scale(1.4)}
+.gs-bell[data-lit] .gs-halo{opacity:.8;transition:none}
+.gs[data-phase=answer] .gs-bell:active .gs-bellsvg{scale:.96}
+.gs-bellsvg{transition:scale .14s var(--ease-out)}
+/* the bells arrive swinging when a level starts, one after another, while the big bell fades */
+.gs-rack:not([data-ready]) .gs-bellsvg{animation:gs-hang .5s var(--ease-out) backwards;animation-delay:calc(var(--i,0) * 45ms)}
+.gs-bell:nth-child(even) .gs-bellsvg{--turn:-1}
+.gs[data-calm] .gs-rack:not([data-ready]) .gs-bellsvg{animation-name:gs-fadein;animation-duration:.2s;animation-delay:0s}
+/* the right bell after a slip, and the one you tapped */
+.gs-bell[data-answer]{box-shadow:inset 0 0 0 4px var(--c)}
+.gs-bell[data-answer] .gs-halo{opacity:.65;transition:none}
+.gs-bell[data-answer]::after{content:"এটা";position:absolute;bottom:8px;left:50%;translate:-50% 0;padding:1px 10px;border-radius:4px;background:var(--c);color:#fff;font-size:14px;font-weight:800}
+.gs-bell[data-wrong]{box-shadow:inset 0 0 0 3px var(--bad)}
+.gs-bell[data-wrong]::after{content:"✗";position:absolute;bottom:6px;left:50%;translate:-50% 0;width:26px;height:26px;border-radius:50%;background:var(--bad);color:#fff;font-weight:800;line-height:26px;text-align:center}
+/* the tal of a tap: a small pill under the bell, with a shape and a word */
+.gs-grade{position:absolute;bottom:6px;left:50%;translate:-50% 0;display:none;padding:1px 9px;border-radius:4px;background:#fff;font-size:13px;font-style:normal;font-weight:800;white-space:nowrap;box-shadow:0 2px 0 #0003}
+.gs-bell[data-grade] .gs-grade{display:block;animation:gs-pop .2s var(--ease-out)}
+.gs-bell[data-grade=on] .gs-grade{color:var(--good)}
+.gs-bell[data-grade=on] .gs-grade::after{content:"✓ তালে"}
+.gs-bell[data-grade=early] .gs-grade{color:#b8761f}
+.gs-bell[data-grade=early] .gs-grade::after{content:"← আগে"}
+.gs-bell[data-grade=late] .gs-grade{color:#b8761f}
+.gs-bell[data-grade=late] .gs-grade::after{content:"দেরি →"}
 
-.gs-overlay{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:8px;padding:14px;border-radius:18px;background:#2a160bd9;color:#fff;text-align:center}
-.gs-overlay p{margin:0;font-weight:600}
-.gs-bigstars{font-size:40px;line-height:1;letter-spacing:4px}
-.gs-bigstars span{color:#6b5544}
-.gs-bigstars span.on{color:#f2a900;text-shadow:0 2px 0 #a86f00}
-.gs-clear-title{font-size:13px;opacity:.85}
-.gs-clear-line{font-family:var(--font-display);font-size:17px;line-height:1.4}
-.gs-clear-note{font-size:13px;opacity:.85}
-.gs-overlay .kit-primary{min-height:50px}
+/* the title: one huge bell is the start button */
+.gs-giant{position:absolute;inset:0;z-index:5;display:grid;align-content:center;justify-items:center;gap:14px;padding:22px 12px 14px;border:0;border-radius:0;background:radial-gradient(90% 60% at 50% 30%,var(--glow) 0,transparent 70%),repeating-linear-gradient(0deg,var(--wall) 0 26px,var(--wall2) 26px 28px);color:var(--ink);cursor:pointer}
+.gs-giant::before{content:"";position:absolute;inset:0 0 auto;height:22px;background:conic-gradient(from 144deg at 50% 0,var(--flag-a) 0 72deg,#0000 0) 0 0/56px 22px repeat-x,conic-gradient(from 144deg at 50% 0,var(--flag-b) 0 72deg,#0000 0) 28px 0/56px 22px repeat-x}
+.gs-giant-bell{display:block;height:clamp(72px,calc(100cqh - 150px),330px);aspect-ratio:100/130;transform-origin:50% 0;animation:gs-idle 3.2s ease-in-out infinite}
+.gs-giant-bell .gs-bellsvg{height:100%;width:100%}
+.gs-giant-bell .gs-badge{display:none}
+.gs-giant-bell .gs-body{filter:drop-shadow(0 8px 10px #0004)}
+.gs-giant-sign{display:grid;justify-items:center;gap:3px;padding:12px 30px 10px;border:3px solid var(--ink);border-radius:6px;background:linear-gradient(var(--brass-light),var(--brass));box-shadow:0 6px 0 var(--brass-dark),0 10px 18px #0003;transition:transform .14s var(--ease-out),box-shadow .14s var(--ease-out)}
+.gs-giant-sign b{font-family:var(--font-display);font-size:clamp(30px,10cqw,44px);font-weight:800;line-height:1.15;color:var(--ink)}
+.gs-giant-sign small{font-size:14px;font-weight:700;color:#4a3410}
+.gs-giant:active .gs-giant-sign{transform:translateY(3px);box-shadow:0 3px 0 var(--brass-dark)}
+.gs-giant{transition:opacity .22s var(--ease-out)}
+.gs-giant[data-gone]{opacity:0;pointer-events:none}
+.gs-giant[data-gone] .gs-giant-bell{animation:gs-strike .22s var(--ease-out) both}
+.gs-giant[data-gone] .gs-giant-sign{transform:scale(.96)}
+.gs-giant:focus-visible .gs-giant-sign{outline:3px solid var(--trim);outline-offset:4px}
+.gs[data-calm] .gs-giant-bell{animation:none}
+.gs-giant-sign b{white-space:nowrap}
+@container (max-height:320px){.gs-giant{gap:8px;padding-top:28px}.gs-giant-bell{height:clamp(60px,calc(100cqh - 112px),330px)}.gs-giant-sign{padding:6px 22px 8px}.gs-giant-sign b{font-size:28px}.gs-giant-sign small{display:none}}
+.gs-cover{position:absolute;inset:0;z-index:7;display:grid;align-content:center;justify-items:center;gap:6px;border:0;background:#33200fe0;color:#fff;cursor:pointer}
+.gs-cover b{font-family:var(--font-display);font-size:30px}
+.gs-cover small{font-size:14px;opacity:.85}
 
-.gs-status{min-height:24px;margin:0;font-size:15px;font-weight:600;text-align:center}
-.gs-ready{display:grid;gap:6px}
-.gs-start{min-height:56px;font-size:18px}
-.gs-prefs{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.gs-prefs .gx-sound{margin-left:auto}
-.gs-chip{display:inline-flex;align-items:center;min-height:44px;padding:6px 14px;border:1.5px solid var(--clay);border-radius:999px;background:#fff;color:var(--ink);font:inherit;font-size:14px;font-weight:600;cursor:pointer}
-.gs-chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+/* the strip of dots under the bells */
+.gs-ribbon{display:flex;flex:none;flex-wrap:wrap;justify-content:center;gap:5px;margin:0;padding:8px 10px;list-style:none;background:#0000002e}
+.gs-ribbon li{--c:#fff;display:grid;place-items:center;width:25px;height:25px;border:2px solid #ffffff80;border-radius:50%;color:#fff;font-size:13px;font-weight:800;transition:background-color .12s ease,border-color .12s ease,transform .14s var(--ease-out)}
+.gs-ribbon li[data-state=heard],.gs-ribbon li[data-state=ring],.gs-ribbon li[data-state=ok]{border-color:#fff;background:var(--c)}
+.gs-ribbon li[data-state=ring]{transform:scale(1.2)}
+.gs-ribbon li[data-state=next]{border:2px dashed #fff;animation:gs-blink 1s ease-in-out infinite alternate}
+.gs-ribbon li[data-state=miss]{border-color:#fff;background:var(--bad);box-shadow:0 0 0 2px var(--bad)}
+.gs-ribbon li[data-grade=early],.gs-ribbon li[data-grade=late]{box-shadow:0 0 0 2px #f2b51c}
+.gs-ribbon[data-reverse]::before{content:"←";align-self:center;order:-1;margin-right:4px;color:#fff;font-weight:800}
+.gs-progress{flex:none;height:8px;background:#0000002e}
+.gs-progress i{display:block;height:100%;background:var(--trim);transform-origin:left;transition:transform .12s}
 
-.gs-over{display:grid;justify-items:center;gap:4px;padding:12px;border-radius:16px;background:var(--wall);text-align:center}
-.gs-over p{margin:0}
-.gs-score{font-family:var(--font-display);font-size:20px;font-weight:700}
-.gs-score b{font-size:40px;font-variant-numeric:tabular-nums;color:var(--accent-deep)}
-.gs-score span{font-size:16px;color:var(--muted)}
-.gs-over-line{font-size:14px}
-.gs-over-note{font-size:15px;font-weight:600}
-.gs-again{width:100%;min-height:54px;margin-top:4px;font-size:18px}
-.gs-see{font-size:14px}
+.gs-status{flex:none;min-height:24px;margin:0;font-size:16px;font-weight:700;line-height:1.45;text-align:center}
+.gs[data-phase=answer] .gs-status{font-family:var(--font-display);font-size:19px;color:var(--accent-deep)}
+.gs[data-phase=miss] .gs-status{color:var(--bad)}
+.gs-below{flex:none;height:30px;overflow:hidden}
+.gs[data-phase=ready] .gs-below{height:var(--below,208px);overflow:auto}
+.gs-hint{margin:0;font-size:13.5px;color:var(--muted);text-align:center}
+@container gs (max-width:380px){.gs[data-phase=ready] .gs-below{--below:268px}.gs-lesson{font-size:14px}}
 
-.gs-levels{border:1.5px solid #e2cca6;border-radius:14px;background:#fff}
-.gs-levels summary{display:flex;justify-content:space-between;align-items:center;min-height:48px;padding:0 14px;font-weight:700;cursor:pointer}
-.gs-levels summary span{color:var(--muted);font-weight:600}
-.gs-levels-note{margin:0;padding:0 14px 8px;font-size:13px;color:var(--muted)}
-.gs-levels .gx-levels{padding:4px 12px 14px}
-.gs-levels .gx-levels button{border-color:var(--clay);color:var(--ink)}
-.gs-levels .gx-levels button[aria-current="true"]{background:var(--clay-dark);color:#fff}
+/* the start screen's info */
+.gs-start{display:grid;gap:6px}
+.gs-pick{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:6px}
+.gs-step,.gs-sheet-close{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid var(--line);border-radius:6px;background:#fff;color:var(--ink)}
+.gs-step:disabled{opacity:.35}
+.gs-step svg,.gs-sheet-close svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.gs-pick-name{display:grid;justify-items:center;min-width:0;text-align:center}
+.gs-pick-name h2{margin:0;font-family:var(--font-display);font-size:19px;font-weight:800;line-height:1.3}
+.gs-pick-name p{margin:0;font-size:13px;color:var(--muted)}
+.gs-finale-badge{padding:0 8px;border-radius:4px;background:var(--accent);color:#fff;font-size:12px;font-weight:800}
+.gs-lesson{margin:0;font-size:14.5px;line-height:1.45;text-align:center}
+.gs-lesson b{margin-right:4px;padding:0 7px;border-radius:4px;background:var(--trim);font-size:12.5px}
+.gs-chips{display:flex;flex-wrap:wrap;justify-content:center;gap:4px;margin-top:3px}
+.gs-chips i{padding:0 8px;border:1.5px solid var(--line);border-radius:4px;background:#fff;font-size:12.5px;font-style:normal;font-weight:700}
+.gs-all{justify-self:center;min-height:36px}
+.gs-modes{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+.gs-chip{display:inline-flex;align-items:center;min-height:40px;padding:4px 14px;border:1.5px solid var(--brass-dark);border-radius:6px;background:#fff;color:var(--ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.gs-chip[aria-checked=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.gs-friend{display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:center;padding:6px 10px;border-radius:6px;background:var(--paper)}
+.gs-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 14px #33200f33;transform:rotate(-4deg)}
+.gs-friend p{margin:0;font-size:13px;line-height:1.4;color:var(--muted)}
+.gs-friend b{color:var(--ink)}
 
-.gs-result{display:grid;gap:8px;margin-top:10px;scroll-margin-top:72px}
+/* ---- the first-run story ---- */
+.gs-story{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;background:#fbf4e2}
+.gs-story-panel{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;margin:8px;padding:12px;border:0;border-radius:6px;background:#fffdf6;box-shadow:inset 0 0 0 3px var(--ink);color:var(--ink);cursor:pointer}
+.gs-story-art{position:relative;display:flex;justify-content:center;align-items:flex-start;gap:6%;width:100%;max-width:340px;height:min(46cqh,300px);padding:16px 8px 0;border:3px solid var(--ink);border-radius:6px;overflow:hidden;background:repeating-linear-gradient(0deg,#f3e2bd 0 22px,#ead2a0 22px 24px)}
+.gs-story-art[data-panel="1"]{background:repeating-linear-gradient(0deg,#2e5b4c 0 22px,#234639 22px 24px)}
+.gs-story-art[data-panel="2"]{background:repeating-linear-gradient(0deg,#252a5e 0 22px,#181c45 22px 24px)}
+.gs-story-beam{position:absolute;left:0;right:0;top:10px;height:10px;background:#a8793a;border-top:3px solid #6f4a1e}
+.gs-story-bell{--s:1;position:relative;display:block;width:28%;margin-top:10px;border-radius:4px}
+.gs-story-bell .gs-bellsvg{width:100%;height:auto}
+.gs-story-bell[data-lit]{background:color-mix(in srgb,var(--c) 30%,transparent)}
+.gs-story-bell[data-lit] .gs-body{fill:color-mix(in srgb,var(--c) 58%,#ffe9a8)}
+.gs-story-bell[data-swing] .gs-bellsvg{animation:gs-swing 1.4s ease-in-out infinite}
+.gs-story-finger{position:absolute;left:19%;top:64%;width:34px;height:34px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px #ffffff66;animation:gs-tapfinger 1.4s ease-in-out infinite}
+.gs-story-panel p{margin:0;max-width:420px;font-family:var(--font-display);font-size:clamp(18px,5vw,22px);font-weight:700;line-height:1.45}
+.gs-story-dots{display:flex;gap:6px}
+.gs-story-dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.gs-story-dots i[data-on=true]{background:var(--ink)}
+.gs-story-skip{position:absolute;right:14px;top:14px;z-index:1;display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border:0;border-radius:4px;background:var(--ink);color:#fff;font-size:13px;font-weight:700;touch-action:none}
+.gs-story-skip span{width:14px;height:14px;border-radius:50%;background:conic-gradient(var(--trim) 0deg,#ffffff33 0deg)}
+.gs-story-skip[data-holding] span{animation:gs-fill .6s linear forwards}
+
+/* ---- সব লেভেল ---- */
+.gs-sheet{position:absolute;inset:0;z-index:20;display:grid;align-items:start;background:#33200f59;animation:gs-fade 160ms var(--ease-out)}
+.gs-sheet-card{animation:gs-up .22s var(--ease-out) both;display:grid;gap:10px;max-height:min(100%,100svh);overflow:auto;overscroll-behavior:contain;padding:14px 14px 18px;border-radius:6px;background:#fbf8f2;box-shadow:0 20px 40px -20px #000a}
+.gp-stage .gs-sheet-card{max-height:var(--stage-h,100%)}
+.gs-sheet header{position:relative;padding-right:52px}
+.gs-sheet h2{margin:0;font-family:var(--font-display);font-size:24px}
+.gs-sheet header p{margin:2px 0 0;font-size:14px;color:var(--muted)}
+.gs-sheet-close{position:absolute;top:0;right:0}
+.gs-world{padding:8px 10px 12px;border-radius:6px;background:#f3e2bd80}
+.gs-world[data-world="1"]{background:#2e5b4c1c}
+.gs-world[data-world="2"]{background:#252a5e1c}
+.gs-world h3{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px;margin:0;font-size:16px}
+.gs-world h3 span{font-size:12.5px;font-weight:600;color:var(--accent-deep)}
+.gs-world>p{margin:2px 0 8px;font-size:13px;color:var(--muted)}
+.gs-world ol{display:grid;grid-template-columns:repeat(4,1fr);gap:7px 6px;margin:0;padding:0;list-style:none}
+.gs-world button{position:relative;display:grid;justify-items:center;align-content:center;gap:2px;width:100%;min-height:54px;padding:4px 0;border:1.5px solid #33200f2a;border-radius:6px;background:#fff;color:var(--ink)}
+.gs-world button b{font-family:var(--font-display);font-size:19px;line-height:1}
+.gs-world button b svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.gs-world button:disabled{background:#ffffff70;color:#a9a090}
+.gs-world button[data-finale]:not(:disabled){border-color:var(--accent);border-width:2.5px}
+.gs-world button[aria-current]{background:var(--ink);color:#fff}
+.gs-world button em{position:absolute;bottom:-7px;padding:0 5px;border-radius:6px;background:var(--trim);color:var(--ink);font-size:10.5px;font-style:normal;font-weight:800;white-space:nowrap}
+.gs-mini{display:flex;gap:1px;font-size:11px;line-height:1}
+.gs-mini i{font-style:normal;color:#d5c9b4}
+.gs-mini i[data-on]{color:var(--trim)}
+
+/* ---- the end: ঘণ্টাওয়ালার খাতা ---- */
+.gs-memo{display:grid;align-content:start;gap:9px;padding:14px 14px 12px;border-radius:4px;background:repeating-linear-gradient(#fffdf6 0 27px,#eadfc4 27px 28px);box-shadow:0 1px 0 #33200f1f,0 14px 30px -18px #33200f66;animation:gs-up .25s var(--ease-out) both}
+.gs-memo[data-finale]{box-shadow:inset 0 0 0 4px var(--accent),0 14px 30px -18px #33200f66}
+.gs-memo[data-still]{animation:none}
+.gs-memo header{display:grid;justify-items:center;padding-bottom:6px;border-bottom:2px dashed #33200f55;text-align:center}
+.gs-memo header p{margin:0;font-size:13px;font-weight:700;letter-spacing:.02em;color:var(--muted)}
+.gs-memo h2{margin:0;font-family:var(--font-display);font-size:clamp(22px,7cqw,28px);font-weight:800;line-height:1.3}
+.gs-memo header small{font-size:13px;color:var(--muted)}
+.gs-memo-tune{display:flex;flex-wrap:wrap;justify-content:center;gap:5px 5px;margin:0;padding:4px 0;list-style:none}
+.gs-memo-tune li{--c:#13917f;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--c);color:#fff;animation:gs-up .22s var(--ease-out) both}
+.gs-memo-tune li b{font-size:14px}
+.gs-memo-tune li[data-rest]{margin-right:16px}
+.gs-memo[data-still] .gs-memo-tune li{animation:none}
+.gs-memo-more{background:none!important;color:var(--muted)!important}
+.gs-memo-total{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:6px 0;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+.gs-memo-total .gx-reveal{justify-self:start;font-size:32px}
+.gs-memo-total b{display:flex;align-items:baseline;gap:6px;font-family:var(--font-display);font-size:34px;font-weight:800;font-variant-numeric:tabular-nums}
+.gs-memo-total b small{font-size:14px;font-weight:700;color:var(--muted)}
+.gs-memo-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:0}
+.gs-memo-stats div{display:grid;gap:1px;padding:6px 2px;border-radius:4px;background:#fff;text-align:center;box-shadow:0 0 0 1px #33200f14}
+.gs-memo-stats dt{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.gs-memo-stats dd{margin:0;font-family:var(--font-display);font-size:17px;font-weight:800;font-variant-numeric:tabular-nums}
+.gs-memo-line{margin:0;font-weight:700;line-height:1.45}
+.gs-memo-near,.gs-memo-best{margin:0;font-size:14px;line-height:1.45;color:var(--muted)}
+.gs-memo-choices{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:6px;margin:0;padding:0;list-style:none}
+.gs-memo-choices:has(li:nth-child(2):last-child){grid-template-columns:1.4fr 1fr}
+.gs-memo-choices button{display:grid;justify-items:center;gap:0;width:100%;min-height:58px;padding:4px 6px;font-size:16px;line-height:1.2}
+.gs-memo-choices kbd{justify-self:start;margin:-2px 0 0;padding:1px 6px;border-radius:6px;background:#0000001a;font-family:inherit;font-size:12px;font-weight:600}
+.gs-memo-choices em{font-size:11px;font-style:normal;font-weight:600;opacity:.85}
+.tool-ghontar-sur .gs-memo-choices .kit-primary{background:var(--accent);border-color:var(--accent-deep)}
+@media (pointer:coarse){.gs-memo-choices kbd{display:none}}
+.gs-see{justify-self:center}
+
+/* ---- the card and the share bar ---- */
+.gs-result{display:grid;gap:10px;padding:16px 0 4px;scroll-margin-top:8px}
 .gs-result h2{margin:0;font-family:var(--font-display);font-size:22px;line-height:1.35}
 .gs-result h2 em{font-style:normal;color:var(--accent)}
-.gs-result>p{margin:0;color:var(--muted)}
-.gs-result-body{display:grid;gap:12px}
-.gs-result canvas{display:block;width:100%;height:auto;border-radius:12px}
-.gs-share{display:grid;gap:10px}
-.gs-name{display:grid;gap:4px;font-weight:600}
-.gs-name small{color:var(--muted);font-weight:500}
-.gs-name input{min-height:46px;padding:8px 12px;border:1.5px solid #d9c3a0;border-radius:12px;font:inherit;width:100%;box-sizing:border-box}
+.gs-result>p{margin:0;line-height:1.5;color:var(--muted)}
+.gs-result-body{display:grid;gap:14px}
+.gs-result canvas{display:block;width:100%;height:auto;border-radius:6px}
+.gs-share{display:grid;gap:12px;align-content:start}
+.gs-name{display:grid;gap:6px;font-weight:700}
+.gs-name small{font-weight:500;color:var(--muted)}
+.gs-name input{min-height:46px;padding:0 12px;border:1.5px solid var(--line);border-radius:6px;font:inherit;font-weight:500}
 
-.gs-guide ol{display:grid;gap:10px;margin:12px 0 0;padding:0;list-style:none}
-.gs-guide li{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:start}
-.gs-guide li span{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
-.gs-guide li p{margin:4px 0 0}
-.gs-guide h2{font-family:var(--font-display)}
+.gs :is(.gs-badge-btn,.gs-step,.gs-sheet-close,.gs-chip,.gs-all,.gs-world button){transition:transform 120ms var(--ease-out)}
+.gs :is(.gs-badge-btn,.gs-step,.gs-sheet-close,.gs-chip,.gs-all,.gs-world button):active:not(:disabled){transform:scale(.97)}
+/* ---- calm: no swing, no pulse, no float; the lit bell still changes colour and shape ---- */
+.gs[data-calm] :is(.gs-badge-btn,.gs-step,.gs-sheet-close,.gs-chip,.gs-all,.gs-world button):active:not(:disabled){transform:none}
+.gs[data-calm] .gs-bell,.gs[data-calm] .gs-badge,.gs[data-calm] .gs-body{transition:none}
+.gs[data-calm] .gs-bell[data-lit] .gs-badge{transform:none}
+.gs[data-calm] .gs-hearts i,.gs[data-calm] .gs-grade,.gs[data-calm] .gs-ribbon li,.gs[data-calm] .gs-sheet,.gs[data-calm] .gs-sheet-card,.gs[data-calm] .gs-giant[data-gone] .gs-giant-bell,.gs[data-calm] .gs-story-bell .gs-bellsvg,.gs[data-calm] .gs-story-finger{animation:none!important}
 
-.gs[data-slow=true] .gs-pot,.gs[data-slow=true] .gs-pot svg,.gs[data-slow=true] .gs-badge,.gs[data-slow=true] .gs-body{transition:none}
-.gs[data-slow=true] .gs-pot[data-lit=true] svg{transform:none}
-.gs[data-slow=true] .gx-pop{animation:none}
-@media (prefers-reduced-motion:reduce){.gs-pot,.gs-pot svg,.gs-badge,.gs-body{transition:none}.gs-pot[data-lit=true] svg{transform:none}.gs-pot[data-wrong=true] svg{animation:none}}
+@keyframes gs-glow{from{opacity:.65}to{opacity:1}}
+@keyframes gs-beat{50%{transform:scale(1.25)}}
+@keyframes gs-idle{0%,100%{transform:rotate(0)}22%{transform:rotate(3.5deg)}55%{transform:rotate(-3deg)}80%{transform:rotate(1deg)}}
+@keyframes gs-swing{0%,100%{transform:rotate(0)}25%{transform:rotate(9deg)}60%{transform:rotate(-7deg)}}
+@keyframes gs-pop{from{transform:scale(.8);opacity:0}}
+@keyframes gs-hang{from{opacity:0;transform:rotate(calc(var(--turn,1) * 12deg))}}
+@keyframes gs-fadein{from{opacity:0}}
+@keyframes gs-strike{to{transform:rotate(7deg)}}
+@keyframes gs-blink{from{opacity:.55}to{opacity:1}}
+@keyframes gs-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes gs-fade{from{opacity:0}to{opacity:1}}
+@keyframes gs-fill{to{background:conic-gradient(var(--trim) 360deg,#ffffff33 0deg)}}
+@keyframes gs-tapfinger{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(0,-8px) scale(.85)}}
+@media (prefers-reduced-motion:reduce){.gs :is(.gs-badge-btn,.gs-step,.gs-sheet-close,.gs-chip,.gs-all,.gs-world button):active:not(:disabled){transform:none}.gs-giant-bell,.gs-hearts i,.gs-ribbon li,.gs-story-bell,.gs-story-finger,.gs-story-bell .gs-bellsvg,.gs-sheet-card,.gs-memo,.gs-memo-tune li{animation:none!important}.gs-bellsvg,.gs-giant-sign,.gs-ribbon li{transition:none!important}.gs-rack:not([data-ready]) .gs-bellsvg{animation:gs-fadein .2s both!important}.gs-bell[data-lit] .gs-badge{transform:none}}

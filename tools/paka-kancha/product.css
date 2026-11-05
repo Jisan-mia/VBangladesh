@@ -1,137 +1,247 @@
-.tool-paka-kancha{--accent:#2f7a3e;--accent-deep:#1d5229;--ink:#1f2a1c;--muted:#5b6553;--leaf:#1f4d30;--tile:#fff8e7;--gold:#f6c443;--line:#ddd3b8;--cream:#fff6dc}
-.tool-paka-kancha .pk-page{color:var(--ink)}
-.tool-paka-kancha .pk-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+/* পাকা-কাঁচা: three worlds, one palette each (lib/art.ts WORLD_ART holds the same values for the card). উঠান is a morning on whitewash
+   and leaf green, আমবাগান noon under the trees, আমের হাট the market at dusk. The mangoes keep their colours everywhere. */
+.tool-paka-kancha{--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-in-out:cubic-bezier(0.77,0,0.175,1);--accent:#2f7a3e;--accent-deep:#1d5229;--star:#f2a900;--danger:#c0392b}
 
-/* hero: short, so the board and the number pad land on the first phone screen */
-.tool-paka-kancha .pk-hero{padding:8px 0 6px}
-.tool-paka-kancha .pk-hero-kicker{margin:0;font-size:13px;font-weight:600;color:var(--accent)}
-.tool-paka-kancha .pk-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(23px,6.2vw,44px);line-height:1.3;letter-spacing:0}
-.tool-paka-kancha .pk-lead{max-width:560px;margin:0;color:var(--muted);font-size:15px;line-height:1.5}
-.tool-paka-kancha .pk-page:has(.pk-friend) .pk-lead{display:none}
+.pk{--ground:#f6f0d8;--card:#fffaea;--edge:#e0d4ad;--ink:#1f2a1c;--muted:#5b6553;--board:#1f4d30;--board-edge:#143a22;--tile:#fff8e7;--world:#2f7a3e;--gold:#f6c443;--soft:#cfe6c0;--sheet-bg:#f6f0d8}
+.pk[data-world="1"]{--ground:#e3efd6;--card:#f6fbee;--edge:#bdd3a6;--ink:#1b2c1a;--muted:#4d6347;--board:#2c5e2a;--board-edge:#1a4219;--tile:#fbf7e3;--world:#5b8a1f;--gold:#f2b632;--soft:#d6eac0}
+.pk[data-world="2"]{--ground:#17302f;--card:#21403d;--edge:#34605b;--ink:#fbeed2;--muted:#b8d2c6;--board:#0f2423;--board-edge:#071615;--tile:#fff1cf;--world:#f28f1b;--gold:#ffc94d;--soft:#a9cdbd}
 
-.tool-paka-kancha .pk{display:grid;gap:8px;max-width:480px}
+.pk{position:relative;display:grid;align-content:start;gap:8px;width:100%;max-width:520px;margin-inline:auto;padding:8px;border-radius:12px;background:var(--ground);color:var(--ink);container:pk/inline-size;box-sizing:border-box}
+.pk[data-world="1"]{background:radial-gradient(120% 50% at 80% 0,#f3f7c9 0,transparent 60%),var(--ground)}
+.pk[data-world="2"]{background:radial-gradient(110% 55% at 50% 0,#3b5a4a 0,transparent 62%),var(--ground)}
+.gp-stage .pk{min-height:var(--stage-h,100svh)}
+.pk button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.pk-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@keyframes pk-in{from{opacity:0;transform:translateY(8px)}}
+@keyframes pk-up{from{opacity:0;transform:translateY(24px)}}
+@keyframes pk-fade{from{opacity:0}}
 
-/* a friend's link */
-.tool-paka-kancha .pk-friend{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;padding:8px 12px;border-radius:14px;background:var(--cream);border:1.5px solid #ecd9a4}
-.tool-paka-kancha .pk-friend[data-invite=true]{grid-template-columns:1fr}
-.tool-paka-kancha .pk-friend canvas{width:100%;height:auto;border-radius:6px;box-shadow:0 3px 10px #1f2a1c33;transform:rotate(-3deg)}
-.tool-paka-kancha .pk-friend h2{margin:0;font-family:var(--font-display);font-size:16px;line-height:1.4}
-.tool-paka-kancha .pk-friend p{margin:0;font-size:13px;line-height:1.45;color:var(--muted)}
+/* danger lives at the edge: amber with two tries left, red on the last one */
+.pk::after{content:"";position:absolute;inset:0;border-radius:12px;pointer-events:none;opacity:0;transition:opacity .25s var(--ease-out);z-index:3}
+.pk[data-danger="1"]::after{opacity:1;box-shadow:inset 0 0 0 3px #e9a23b,inset 0 0 26px #e9a23b70} /* unslop-ignore: danger glow is the signal */
+.pk[data-danger="2"]::after{opacity:1;box-shadow:inset 0 0 0 4px var(--danger),inset 0 0 36px #c0392b80;animation:pk-edge 1.3s ease-in-out infinite} /* unslop-ignore: danger glow is the signal */
+@keyframes pk-edge{50%{opacity:.55}}
 
-.tool-paka-kancha .pk-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0 12px;min-height:26px}
-.tool-paka-kancha .pk-top p{margin:0;font-size:14px;line-height:1.4;color:var(--muted)}
-.tool-paka-kancha .pk-top b{color:var(--ink);font-family:var(--font-display);font-size:16px}
-.tool-paka-kancha .pk-top .kit-link{min-height:40px;font-size:14px}
-
-/* the board: a leaf-green panel, an example row on top, then seven tries */
-.tool-paka-kancha .pk-board{display:grid;gap:8px;padding:9px 10px 11px;border-radius:18px;background:var(--leaf) radial-gradient(circle at 100% 0,#3b7a4f,transparent 45%);box-shadow:0 8px 18px #1f4d302e}
-.tool-paka-kancha .pk-example{display:grid;gap:4px;padding-bottom:8px;border-bottom:1.5px dashed #ffffff40}
-.tool-paka-kancha .pk-example-title{margin:0;font-size:12.5px;font-weight:700;line-height:1.3;color:var(--gold)}
-.tool-paka-kancha .pk-example-title span{font-weight:500;color:#cfe3c4}
-.tool-paka-kancha .pk-rows{display:grid;gap:5px;margin:0;padding:0;list-style:none}
-.tool-paka-kancha .pk-row{display:grid;grid-template-columns:14px repeat(4,minmax(0,1fr));gap:6px;align-items:center}
-.tool-paka-kancha .pk-n{font-size:12px;font-weight:700;line-height:1;color:#cfe3c4;text-align:center}
-.tool-paka-kancha .pk-row[data-current=true] .pk-n{color:var(--gold)}
-.tool-paka-kancha .pk-cell{display:flex;align-items:center;justify-content:space-between;gap:2px;height:36px;padding:0 clamp(3px,1.4vw,6px) 0 clamp(6px,2.4vw,11px);border-radius:10px;background:var(--tile);color:var(--ink);min-width:0}
-.tool-paka-kancha .pk-cell b{font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1}
-.tool-paka-kancha .pk-cell .pk-mango{flex:none;width:28px;height:28px}
-.tool-paka-kancha .pk-cell[data-mark=p]{background:#ffe6a0}
-.tool-paka-kancha .pk-cell[data-mark=a]{background:#fff3cf}
-.tool-paka-kancha .pk-cell[data-mark=k]{background:#e4e9db;color:#5c6855}
-.tool-paka-kancha .pk-row[data-empty=true] .pk-cell{background:#ffffff16}
-.tool-paka-kancha .pk-row[data-current=true] .pk-cell{justify-content:center;box-shadow:inset 0 0 0 2px #e6d9b0}
-.tool-paka-kancha .pk-row[data-current=true] .pk-cell b{font-size:24px}
-.tool-paka-kancha .pk-row[data-current=true] .pk-cell[data-next=true]{box-shadow:inset 0 0 0 3px var(--gold)}
-.tool-paka-kancha .pk-legend{display:flex;flex-wrap:wrap;gap:0 12px;margin:0;padding:0;list-style:none;font-size:12.5px;line-height:1.35;color:#e3eedb}
-.tool-paka-kancha .pk-legend li{display:flex;align-items:center;gap:3px}
-.tool-paka-kancha .pk-legend .pk-mango{flex:none;width:20px;height:20px}
-.tool-paka-kancha .pk-legend b{color:#fff}
-
-/* feedback: each new mango pops in, one by one; a solved row hops */
-@keyframes pk-pop{0%{transform:scale(.2);opacity:0}70%{transform:scale(1.18);opacity:1}100%{transform:none;opacity:1}}
+/* ---- the mangoes ---- */
+.pk-mango{display:block;flex:none;width:100%;height:100%}
+@keyframes pk-pop{0%{transform:scale(.85) translateY(-10px);opacity:0}70%{transform:scale(1.1);opacity:1}100%{transform:none;opacity:1}}
 @keyframes pk-hop{0%,100%{transform:none}40%{transform:translateY(-6px)}}
-.tool-paka-kancha .pk-row[data-fresh=true] .pk-mango{animation:pk-pop .34s ease-out both;animation-delay:calc(var(--i) * 120ms)}
-.tool-paka-kancha .pk-row[data-win=true] .pk-mango{animation:pk-pop .34s ease-out both,pk-hop .5s ease-in-out .6s both;animation-delay:calc(var(--i) * 120ms),calc(var(--i) * 90ms + .6s)}
+.pk-row[data-fresh] .pk-mango{animation:pk-pop .26s var(--ease-out) both;animation-delay:calc(var(--i,0) * 60ms)}
+.pk-row[data-fresh] .pk-slot[data-has]{animation:pk-pop .26s var(--ease-out) both;animation-delay:calc(var(--i,0) * 60ms)}
+.pk-row[data-win] .pk-mango,.pk-row[data-win] .pk-slot[data-has]{animation:pk-pop .26s var(--ease-out) both,pk-hop .5s var(--ease-in-out) .5s both;animation-delay:calc(var(--i,0) * 60ms),calc(var(--i,0) * 70ms + .5s)}
 
-.tool-paka-kancha .pk-howto{margin:0;min-height:22px;font-size:14px;line-height:1.5;color:var(--muted);text-align:center}
-.tool-paka-kancha .pk-howto b{color:var(--accent-deep)}
+/* ---- rows: n, four cells, and on basket levels a tray ---- */
+.pk-rows{display:grid;gap:5px;margin:0;padding:0;list-style:none}
+.pk-row{display:grid;grid-template-columns:14px repeat(4,minmax(0,1fr));gap:6px;align-items:center;height:var(--row-h,40px)}
+.pk-row[data-basket]{grid-template-columns:14px repeat(4,minmax(0,1fr)) auto}
+.pk-n{font-size:12px;font-weight:700;line-height:1;color:var(--soft);text-align:center}
+.pk-row[data-current] .pk-n{color:var(--gold)}
+.pk-cell{display:flex;align-items:center;justify-content:space-between;gap:2px;height:100%;padding:0 clamp(3px,1.4vw,6px) 0 clamp(6px,2.4vw,11px);border-radius:10px;background:var(--tile);color:#1f2a1c;min-width:0}
+.pk-cell b{font-family:var(--font-display);font-size:clamp(18px,calc(var(--row-h,40px) * .55),25px);font-weight:700;line-height:1}
+.pk-cell .pk-mango{width:calc(var(--row-h,40px) * .74);height:calc(var(--row-h,40px) * .74)}
+.pk-cell[data-mark=p]{background:#ffe6a0}
+.pk-cell[data-mark=a]{background:#fff3cf}
+.pk-cell[data-mark=k]{background:#e4e9db;color:#5c6855}
+.pk-row[data-basket] .pk-cell{justify-content:center;padding:0}
+.pk-row[data-empty] .pk-cell{background:#ffffff16}
+.pk-row[data-current] .pk-cell{justify-content:center;padding:0;box-shadow:inset 0 0 0 2px #e6d9b0}
+.pk-row[data-current] .pk-cell[data-next]{box-shadow:inset 0 0 0 3px var(--gold)}
+.pk-tray{display:flex;gap:2px;padding:0 4px;height:100%;align-items:center;border-radius:10px;background:#ffffff14}
+.pk-slot{display:block;width:calc(var(--row-h,40px) * .62);height:calc(var(--row-h,40px) * .62);flex:none}
+i.pk-slot{border-radius:50%;background:#ffffff1c;transform:scale(.4)}
+.pk-tray .pk-slot .pk-mango{width:100%;height:100%}
 
-/* the number pad: two rows of six, big keys */
-.tool-paka-kancha .pk-pad{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
-.tool-paka-kancha .pk-key{position:relative;min-height:54px;padding:0;border:1.5px solid var(--line);border-bottom-width:4px;border-radius:12px;background:#fffdf6;color:var(--ink);font-family:var(--font-display);font-size:25px;font-weight:700;line-height:1;touch-action:manipulation;user-select:none;-webkit-user-select:none}
-.tool-paka-kancha .pk-key:active:not(:disabled){transform:translateY(2px);border-bottom-width:2px}
-.tool-paka-kancha .pk-key .pk-mango{position:absolute;top:2px;right:2px;width:17px;height:17px}
-.tool-paka-kancha .pk-key[data-hint=k]{background:#eef0e8;border-color:#dde2d4;color:#7d8778}
-.tool-paka-kancha .pk-key:disabled{opacity:.35}
-.tool-paka-kancha .pk-erase{font-family:var(--font-bengali);font-size:16px;color:var(--muted)}
-.tool-paka-kancha .pk-check{font-family:var(--font-bengali);font-size:17px;background:var(--accent);border-color:var(--accent-deep);color:#fff}
-.tool-paka-kancha .pk-check[aria-disabled=true]{background:#d3dfcc;border-color:#bccbb4;color:#46543f}
+/* ---- the start card: the level's picture is the start button ---- */
+.pk-start{display:flex;flex-direction:column;gap:9px;min-height:100%;animation:pk-in .22s var(--ease-out)}
+.gp-stage .pk-start{min-height:calc(var(--stage-h,100svh) - 16px)}
+.pk-mast{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:6px;border-bottom:2px dashed var(--edge)}
+.pk-mast p{margin:0;font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--muted)}
+.gp-stage[data-immersive] .pk-mast{padding-inline-start:44px}
+.pk-mast-stars{color:var(--ink)!important}
+.pk-modes{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:3px;border:1.5px solid var(--edge);border-radius:10px;background:var(--card)}
+.pk-modes button{min-height:40px;padding:0 10px;border:0;border-radius:7px;background:none;color:var(--ink);font:inherit;font-size:15px;font-weight:700;white-space:nowrap;transition:background-color .15s var(--ease-out),color .15s var(--ease-out)}
+.pk-modes button[aria-pressed=true]{background:var(--accent);color:#fff}
+.pk[data-world="2"] .pk-modes button[aria-pressed=true]{background:var(--world);color:#2b1a05}
+.pk-friend{display:grid;grid-template-columns:60px 1fr;gap:10px;align-items:center;padding:8px 10px;border-radius:14px;background:var(--card);border:1.5px solid var(--edge)}
+.pk-friend[data-invite]{grid-template-columns:1fr}
+.pk-friend canvas{width:100%;height:auto;border-radius:4px;box-shadow:0 5px 14px #1f2a1c33;transform:rotate(-4deg)}
+.pk-friend p{margin:0;font-size:13px;line-height:1.45;color:var(--muted)}
+.pk-friend b{display:block;font-family:var(--font-display);font-size:15px;color:var(--ink)}
+.pk-pick{display:grid;grid-template-columns:46px 1fr 46px;align-items:center;gap:8px}
+.pk-pick-name{display:grid;justify-items:center;text-align:center}
+.pk-pick-name h2{margin:0;font-family:var(--font-display);font-size:clamp(24px,8cqw,34px);font-weight:800;line-height:1.2;color:var(--ink)}
+.pk-pick-name p{margin:2px 0 0;font-size:13.5px;color:var(--muted)}
+.pk-badge-finale{margin:0 0 3px!important;padding:2px 10px;border-radius:4px;background:var(--danger);color:#fff!important;font-size:12.5px!important;font-weight:700}
+.pk-step{display:grid;place-items:center;width:46px;height:46px;padding:0;border:1.5px solid var(--edge);border-radius:14px;background:var(--card);color:var(--ink)}
+.pk-step:disabled{opacity:.3}
+.pk-step svg,.pk-sheet-close svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.pk-rule{margin:0;padding:7px 10px;border-radius:12px;background:color-mix(in srgb,var(--world) 16%,var(--card));font-size:14px;line-height:1.45}
+.pk-rule b{color:var(--world)}
+.pk[data-world="2"] .pk-rule b{color:var(--gold)}
+.pk-lesson{margin:0;padding:9px 12px;border-left:4px solid var(--world);border-radius:4px 12px 12px 4px;background:var(--card);font-size:15.5px;font-weight:600;line-height:1.5}
+.pk-lesson b{margin-right:6px;color:var(--world)}
+.pk[data-world="2"] .pk-lesson b{color:var(--gold)}
+.pk-example{display:grid;gap:4px;padding:8px 10px;border-radius:14px;background:var(--board);--row-h:36px}
+.pk-example>p{margin:0;font-size:12.5px;font-weight:700;color:var(--gold)}
+.pk-example>p span{font-weight:500;color:var(--soft)}
+.pk-legend{display:flex;flex-wrap:wrap;gap:0 12px;margin:0;padding:0;list-style:none;font-size:12.5px;line-height:1.4;color:var(--muted)}
+.pk-example .pk-legend{color:#e3eedb}
+.pk-legend li{display:flex;align-items:center;gap:3px}
+.pk-legend .pk-mango{width:20px;height:20px}
+.pk-legend b{color:var(--ink)}
+.pk-example .pk-legend b{color:#fff}
+.pk-go{position:relative;align-self:center;display:flex;flex-direction:column;align-items:center;width:min(100%,380px);margin:auto 0;padding:0;border:0;background:none;color:var(--ink);cursor:pointer}
+.pk-go-art{display:block;width:min(100%,max(190px,calc((var(--stage-h,760px) - 520px) * 1.5)))}
+.pk-art{display:block;width:100%;height:auto;overflow:visible;transition:transform .08s var(--ease-out)}
+.pk-art-basket{fill:#c1893f;stroke:#6e4519;stroke-width:3}
+.pk-art-weave{fill:none;stroke:#8f5f25;stroke-width:3;stroke-linecap:round}
+.pk-art-rim{fill:#a9702e;stroke:#6e4519;stroke-width:3}
+.pk-art-shackle{fill:none;stroke:#b9bfc1;stroke-width:16;stroke-linecap:round}
+.pk-art-lock{fill:#c99a3e;stroke:#8a6420;stroke-width:4}
+.pk-art-shine{stroke:#f0cf7a;stroke-width:5;stroke-linecap:round;fill:none}
+.pk-art-pin{fill:#5e3314;stroke:#2e1708;stroke-width:2}
+.pk-art-pin[data-open]{fill:#ffd45e}
+.pk-art-hole{fill:#2e1708}
+.pk-go-label{position:relative;display:flex;align-items:center;gap:12px;margin-top:-18px;padding:11px 26px;border:2px solid var(--accent-deep);border-radius:14px;background:linear-gradient(180deg,#4aa05a,var(--accent));color:#fff;font-family:var(--font-display);font-size:28px;font-weight:800;line-height:1.1;box-shadow:0 5px 0 var(--accent-deep),0 14px 24px -12px #000;transition:transform 100ms var(--ease-out)}
+.pk[data-world="2"] .pk-go-label{background:linear-gradient(180deg,#ffb04a,var(--world));border-color:#9a5200;color:#2b1a05;box-shadow:0 5px 0 #9a5200,0 14px 24px -12px #000}
+.pk-go kbd,.pk-finish-actions kbd,.pk-key kbd{padding:1px 6px;border-radius:6px;background:#0000001f;font-family:inherit;font-size:12px;font-weight:600}
+.pk-go:active .pk-art{transform:translateY(4px)}
+.pk-go:active .pk-go-label{transform:translateY(4px);box-shadow:0 1px 0 var(--accent-deep)}
+.pk-go:focus-visible{outline:none}
+.pk-go:focus-visible .pk-go-label{outline:3px solid var(--ink);outline-offset:3px}
+@media (pointer:coarse){.pk-go kbd,.pk-finish-actions kbd,.pk-key kbd{display:none}}
+.pk-start-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2px 12px;margin:0;font-size:13.5px;color:var(--muted)}
+.pk-start-foot .kit-link{min-height:40px;color:var(--ink)}
 
-/* game over sits where the pad was */
-.tool-paka-kancha .pk-over{display:grid;justify-items:center;gap:6px;padding:14px 14px 12px;border-radius:16px;background:var(--cream);border:1.5px solid #ecd9a4;text-align:center}
-.tool-paka-kancha .pk-over h2{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,28px);line-height:1.3}
-.tool-paka-kancha .pk-over h2 b{color:var(--accent-deep);letter-spacing:.06em;white-space:nowrap}
-.tool-paka-kancha .pk-over p{margin:0;font-size:15px;line-height:1.5}
-.tool-paka-kancha .pk-over .pk-best,.tool-paka-kancha .pk-over .pk-again-note{font-size:13.5px;color:var(--muted)}
-.tool-paka-kancha .pk-again{width:100%;min-height:56px;font-size:20px}
+/* ---- play: HUD in the corners, the board under it, the line and the pad at the bottom ---- */
+.pk-play{--reserve:330px;display:flex;flex-direction:column;gap:6px;min-height:calc(var(--stage-h,100svh) - 16px);animation:pk-in .2s var(--ease-out);
+  --row-h:clamp(32px,calc((var(--stage-h,100svh) - var(--reserve) - 20px - (var(--tries,7) - 1) * 5px) / var(--tries,7)),48px)}
+.pk-play:has(.pk-boss){--reserve:358px}
+.pk[data-screen=over] .pk-play{--reserve:640px}
+.pk-hud{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.gp-stage[data-immersive] .pk-hud{padding-inline-start:46px}
+.pk-badge{display:grid;justify-items:start;gap:0;min-height:44px;padding:4px 10px;border:1.5px solid var(--edge);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;text-align:start;line-height:1.25}
+.pk-badge b{font-size:15px}
+.pk-badge span{font-size:12px;color:var(--muted)}
+.pk-badge:disabled{opacity:1}
+.pk-score{display:grid;justify-items:end;margin:0;line-height:1.2;text-align:end}
+.pk-score b{font-family:var(--font-display);font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+.pk-score>span{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+.pk-pips{display:inline-flex;gap:3px}
+.pk-pips i{width:9px;height:9px;border-radius:50%;background:color-mix(in srgb,var(--muted) 30%,transparent);transition:background-color .2s var(--ease-out),transform .2s var(--ease-out)}
+.pk-pips i[data-used]{background:var(--muted);opacity:.6}
+.pk-pips i[data-now]{background:var(--world);transform:scale(1.25)}
+.pk-track{display:inline-flex;font-style:normal;font-size:13px;letter-spacing:1px}
+.pk-track i{font-style:normal;color:color-mix(in srgb,var(--muted) 45%,transparent);transition:color .25s var(--ease-out)}
+.pk-track i[data-on]{color:var(--star)}
+.pk-boss{display:flex;align-items:center;justify-content:center;gap:8px;margin:0;font-size:13px;color:var(--muted)}
+.pk-boss b{font-family:var(--font-display);font-size:15px;color:var(--danger)}
+.pk[data-world="2"] .pk-boss b{color:#ff8a70}
+.pk-boss-bar{width:min(120px,28cqw);height:8px;border-radius:5px;background:color-mix(in srgb,var(--danger) 22%,transparent);overflow:hidden}
+.pk-boss-bar i{display:block;height:100%;background:var(--gold);transform-origin:left;transition:transform .35s var(--ease-out)}
+.pk-board{padding:9px 10px 10px;border-radius:12px;background:var(--board) radial-gradient(circle at 100% 0,#ffffff12,transparent 45%);box-shadow:0 8px 18px -8px #0006}
+.pk-board[data-held] .pk-rows{opacity:.7}
+.pk-status{min-height:44px;margin:auto 0 0;display:grid;place-items:center;font-size:15px;font-weight:600;line-height:1.45;color:var(--muted);text-align:center}
+.pk-status[data-clash]{color:#a85a00}
+.pk[data-world="2"] .pk-status[data-clash]{color:#ffc94d}
+.pk-status[data-ready]{color:var(--ink)}
+.pk-play .pk-legend{justify-content:center}
 
-.tool-paka-kancha .pk-toggles{display:flex;flex-wrap:wrap;gap:8px}
-.tool-paka-kancha .pk-toggles button{min-height:44px;padding:6px 14px;border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font-size:14px;font-weight:600}
-.tool-paka-kancha .pk-toggles button[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
-.tool-paka-kancha .pk-toggles button[aria-expanded=true]{border-color:var(--accent);color:var(--accent-deep)}
+/* ---- the pad: always on screen while a game runs ---- */
+.pk-pad{display:grid;gap:6px;--key-h:clamp(44px,calc((var(--stage-h,100svh) - 470px) / 3),58px)}
+.pk-digits{display:grid;gap:6px}
+.pk-actions{display:grid;grid-template-columns:1fr 2fr;gap:6px}
+.pk-key{position:relative;min-height:var(--key-h);padding:0;border:1.5px solid var(--edge);border-bottom-width:4px;border-radius:12px;background:var(--card);color:var(--ink);font-family:var(--font-display);font-size:25px;font-weight:700;line-height:1;cursor:pointer;transition:transform 100ms var(--ease-out)}
+.pk-key:active:not(:disabled){transform:translateY(2px) scale(.96)}
+.pk-key .pk-mango{position:absolute;top:2px;right:2px;width:17px;height:17px}
+.pk-key[data-hint=k]{opacity:.55}
+.pk-key[data-used]{opacity:.4}
+.pk-key:disabled{opacity:.35}
+.pk-erase{font-family:var(--font-bengali);font-size:16px;color:var(--muted)}
+.pk-check{font-family:var(--font-bengali);font-size:19px;background:#d3dfcc;border-color:#bccbb4;color:#46543f}
+.pk-check[data-ready]{background:var(--accent);border-color:var(--accent-deep);color:#fff}
+.pk[data-world="2"] .pk-check{background:#2f524d;border-color:#1e3a36;color:#b8d2c6}
+.pk[data-world="2"] .pk-check[data-ready]{background:var(--world);border-color:#9a5200;color:#2b1a05}
+.pk[data-world="2"] .pk-key{background:#2a4d49;border-color:#3d6b65;color:#fbeed2}
+.pk-key kbd{margin-left:8px}
+.pk-erase kbd{display:none}
 
-/* make a code for a friend, and the result card */
-.tool-paka-kancha .pk-make,.tool-paka-kancha .pk-result{display:grid;gap:10px;padding:14px;border-radius:16px;border:1.5px solid var(--line);background:#fffdf6}
-.tool-paka-kancha .pk-make h2,.tool-paka-kancha .pk-result h2{margin:0;font-family:var(--font-display);font-size:22px;line-height:1.3}
-.tool-paka-kancha .pk-result h2 em{font-style:normal;color:var(--accent)}
-.tool-paka-kancha .pk-result>p,.tool-paka-kancha .pk-note{margin:0;font-size:14px;line-height:1.5;color:var(--muted)}
-.tool-paka-kancha .pk-make .kit-link{justify-self:start;min-height:44px}
-.tool-paka-kancha .pk-field{display:grid;gap:4px;font-size:15px;font-weight:600;line-height:1.4}
-.tool-paka-kancha .pk-field small{font-weight:400;color:var(--muted)}
-.tool-paka-kancha .pk-field input{width:100%}
-.tool-paka-kancha .pk-make input[inputmode=numeric]{font-family:var(--font-display);font-size:26px;letter-spacing:.3em}
+/* ---- the end screen ---- */
+.pk-finish{display:grid;gap:8px;margin-bottom:auto;padding:12px 14px 10px;border:2px dashed var(--world);border-radius:16px;background:var(--card);animation:pk-up .28s var(--ease-out) both}
+.pk-finish-head{display:flex;align-items:center;gap:10px}
+.pk-finish h2{flex:1;margin:0;font-family:var(--font-display);font-size:clamp(19px,5.6cqw,25px);font-weight:800;line-height:1.25;color:var(--ink)}
+.pk-finish .gx-reveal{font-size:30px}
+.pk-reveal{margin:0;font-size:15px;color:var(--muted)}
+.pk-reveal b{margin-left:4px;font-family:var(--font-display);font-size:26px;letter-spacing:.12em;color:var(--ink);white-space:nowrap}
+.pk-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:6px;margin:0}
+.pk-stats div{display:grid;gap:1px;padding:6px 4px;border-radius:10px;background:var(--ground);text-align:center}
+.pk-stats dt{font-size:12px;color:var(--muted)}
+.pk-stats dd{margin:0;font-family:var(--font-display);font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink)}
+.pk-finish-line{margin:0;font-weight:700;line-height:1.45}
+.pk-finish-note{margin:0;font-size:14px;line-height:1.45;color:var(--muted)}
+.pk-finish-actions{display:grid;grid-template-columns:1.4fr 1fr;gap:8px}
+.pk-finish-actions button:only-child{grid-column:span 2}
+.tool-paka-kancha .pk-finish-actions button{min-height:54px;font-size:17px;white-space:nowrap}
+.pk-finish-actions kbd{margin-left:8px;background:#ffffff2e}
+.pk-see{justify-self:center;min-height:44px;color:var(--ink)}
 
-.tool-paka-kancha .pk-guide h2{font-family:var(--font-display);margin-bottom:8px}
-.tool-paka-kancha .pk-guide>p{margin:0 0 16px;color:var(--muted)}
-.tool-paka-kancha .pk-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.tool-paka-kancha .pk-guide li{display:flex;gap:14px;align-items:flex-start}
-.tool-paka-kancha .pk-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:#ffe6a0;font-weight:700}
-.tool-paka-kancha .pk-guide li p{margin:4px 0 0}
+/* ---- সব লেভেল ---- */
+.pk-sheet{position:absolute;inset:0;z-index:4;display:grid;align-items:start;background:#1f2a1c66;border-radius:12px;animation:pk-fade .16s var(--ease-out)}
+.pk-sheet-card{display:grid;gap:12px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:14px 14px 18px;border-radius:16px;background:var(--ground);box-shadow:0 20px 40px -20px #000a;animation:pk-in .2s var(--ease-out)}
+.gp-stage .pk-sheet-card{max-height:var(--stage-h,100%)}
+.pk-sheet header{position:relative;padding-right:52px}
+.gp-stage[data-immersive] .pk-sheet header{padding-left:40px}
+.pk-sheet h2{margin:0;font-family:var(--font-display);font-size:24px}
+.pk-sheet header p{margin:2px 0 0;font-size:14px;color:var(--muted)}
+.pk-sheet-close{position:absolute;top:0;right:0;display:grid;place-items:center;width:46px;height:46px;padding:0;border:1.5px solid var(--edge);border-radius:14px;background:var(--card);color:var(--ink)}
+.pk-world{--house:#2f7a3e}
+.pk-world[data-world="1"]{--house:#5b8a1f}.pk-world[data-world="2"]{--house:#c26a00}
+.pk-world h3{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin:0 0 8px;font-size:17px}
+.pk-world h3 i{width:12px;height:12px;border-radius:50%;background:var(--house)}
+.pk-world h3 span{font-size:13px;font-weight:500;color:var(--muted)}
+.pk-world ol{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0;padding:0;list-style:none}
+.pk-world button{position:relative;display:grid;justify-items:center;align-content:start;gap:3px;width:100%;min-height:84px;padding:8px 3px 6px;border:1.5px solid var(--edge);border-radius:12px;background:var(--card);color:var(--ink);font:inherit}
+.pk-world button b{font-family:var(--font-display);font-size:20px;line-height:1}
+.pk-world button b svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.pk-sheet-name{font-size:11.5px;line-height:1.3;text-align:center;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pk-world button:disabled{opacity:.55}
+.pk-world button[data-finale]:not(:disabled){border-color:var(--danger);border-width:2.5px}
+.pk-world button[data-finale] .pk-sheet-name{font-weight:700;color:var(--danger)}
+.pk[data-world="2"] .pk-world button[data-finale] .pk-sheet-name{color:#ff8a70}
+.pk-world button[aria-current]{background:var(--house);color:#fff}
+.pk-world button[aria-current] .pk-sheet-name{color:#ffffffd0}
+.pk-world button[data-next]{box-shadow:0 0 0 3px #ffd36e}
+.pk-world button em{position:absolute;top:-9px;left:50%;transform:translateX(-50%);padding:0 6px;border-radius:4px;background:#1f2a1c;color:#ffd36e;font-size:10px;font-style:normal;font-weight:700;white-space:nowrap}
+.pk-mini{display:flex;font-size:11px;line-height:1}
+.pk-mini i{font-style:normal;color:#cdbf9f}
+.pk-mini i[data-on]{color:var(--star)}
 
-.tool-paka-kancha .pk[data-slow=true] *{animation:none!important;transition:none!important}
-@media(prefers-reduced-motion:reduce){.tool-paka-kancha .pk *{animation:none!important;transition:none!important}}
+/* ---- make a code for a friend, and the card, under the play area ---- */
+.pk-make,.pk-result{scroll-margin-top:12px;display:grid;gap:10px;margin-top:14px;padding:14px;border-radius:16px;border:1.5px solid var(--edge);background:var(--card)}
+.pk-result{padding-top:16px;border-top:2px solid var(--ink)}
+.pk-make h2,.pk-result h2{margin:0;font-family:var(--font-display);font-size:clamp(20px,5vw,26px);line-height:1.3}
+.pk-result h2 em{font-style:normal;color:var(--world)}
+.pk-result>p,.pk-note{margin:0;font-size:14px;line-height:1.5;color:var(--muted)}
+.pk-make .kit-link{justify-self:start;min-height:44px}
+.pk-result-body{display:grid;gap:20px}
+.pk-result canvas{display:block;width:100%;height:auto;border-radius:12px}
+.pk-share{display:grid;gap:16px;align-content:start}
+.pk-field{display:grid;gap:4px;font-size:15px;font-weight:600;line-height:1.4}
+.pk-field small{font-weight:400;color:var(--muted)}
+.pk-field input{width:100%;min-height:46px;padding:8px 12px;border:1.5px solid var(--edge);border-radius:12px;font:inherit;font-size:17px;box-sizing:border-box}
+.pk-make input[inputmode=numeric]{font-family:var(--font-display);font-size:26px;letter-spacing:.3em}
 
-@media(max-width:360px){
-  .tool-paka-kancha .pk-cell b{font-size:19px}
-  .tool-paka-kancha .pk-cell .pk-mango{width:24px;height:24px}
-  .tool-paka-kancha .pk-key{font-size:22px}
-  .tool-paka-kancha .pk-erase,.tool-paka-kancha .pk-check{font-size:14px}
+@container pk (max-width:350px){
+  .pk-lesson{padding:7px 10px;font-size:14.5px}
+  .pk-rule{font-size:13px}
+  .pk-go-label{font-size:24px;padding:9px 20px}
+  .pk-stats dd{font-size:16px}
+  .pk-world button{min-height:78px}
+  .pk-key{font-size:22px}
 }
-@media(min-width:720px){
-  .tool-paka-kancha .pk-hero{padding:24px 0 14px}
-  .tool-paka-kancha .pk-friend{grid-template-columns:96px 1fr}
-  .tool-paka-kancha .pk-friend h2{font-size:20px}
-}
-.tool-paka-kancha .pk-hero h1 .pk-hero-kicker{display:block;font-family:var(--font-bengali);line-height:1.5;letter-spacing:0;white-space:normal;background:none;text-shadow:none;text-decoration:none;margin:0;font-size:13px;font-weight:600;color:var(--accent)}
-
-/* levels: the mode switch, the level's rule, keys not on this level's pad, and the level picker */
-.tool-paka-kancha .pk-modes{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:3px;border:1.5px solid var(--line);border-radius:999px;background:#fff}
-.tool-paka-kancha .pk-modes button{min-height:40px;padding:0 10px;border:0;border-radius:999px;background:none;color:var(--ink);font-size:15px;font-weight:700;white-space:nowrap;transition:background-color .15s ease-out,color .15s ease-out}
-.tool-paka-kancha .pk-modes button span{font-size:13px;font-weight:600;color:#b9620a}
-.tool-paka-kancha .pk-modes button[aria-pressed=true]{background:var(--accent);color:#fff}
-.tool-paka-kancha .pk-modes button[aria-pressed=true] span{color:var(--gold)}
-.tool-paka-kancha .pk-top .pk-rule{font-size:13px}
-.tool-paka-kancha .pk-key:active:not(:disabled){transform:translateY(2px) scale(.96)}
-.tool-paka-kancha .pk-over .gx-reveal{font-size:38px}
-.tool-paka-kancha .pk-over-actions{display:flex;gap:8px;width:100%}
-.tool-paka-kancha .pk-over-actions>*{flex:1;min-height:56px}
-.tool-paka-kancha .pk-over-actions .kit-secondary{flex:0 1 40%;font-size:16px}
-.tool-paka-kancha .pk-again-note .kit-link{min-height:32px;font-size:13.5px}
-.tool-paka-kancha .pk-levels{padding:10px 12px;border:1.5px solid var(--line);border-radius:16px;background:#fffdf6}
-.tool-paka-kancha .pk-levels summary{display:flex;justify-content:space-between;align-items:center;min-height:36px;font-family:var(--font-display);font-size:18px;font-weight:700;cursor:pointer}
-.tool-paka-kancha .pk-levels summary span{font-family:var(--font-bengali);font-size:14px;color:#b9620a}
-.tool-paka-kancha .pk-levels p{margin:4px 0 10px;font-size:13.5px;line-height:1.5;color:var(--muted)}
-.tool-paka-kancha .pk-levels .gx-levels button{border-color:var(--accent-deep);color:var(--accent-deep)}
-.tool-paka-kancha .pk-levels .gx-levels button[aria-current=true]{background:var(--accent);color:#fff}
-.tool-paka-kancha .pk-over-actions>*{white-space:nowrap}
-@media(max-width:380px){.tool-paka-kancha .pk-over-actions .kit-secondary{padding:0 10px;font-size:15px}.tool-paka-kancha .pk-over-actions .pk-again{font-size:19px}}
+/* press feedback on the small pressables: a 160ms squeeze, released as fast */
+.pk-modes button,.pk-step,.pk-badge,.pk-sheet-close,.pk-world button:not(:disabled),.pk-finish-actions button,.pk-see{transition:transform 160ms var(--ease-out),background-color .15s var(--ease-out),color .15s var(--ease-out)}
+.pk-modes button:active,.pk-step:active:not(:disabled),.pk-badge:active:not(:disabled),.pk-sheet-close:active,.pk-world button:active:not(:disabled),.pk-finish-actions button:active,.pk-see:active{transform:scale(.97)}
+/* ধীরে খেলো and reduced motion: no pop, hop, pulse, count-up or confetti; the danger edge stays, still */
+.pk[data-calm] *,.pk[data-calm],.pk[data-calm]::after,.pk[data-calm] *::before,.pk[data-calm] *::after{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.pk *,.pk,.pk::after,.pk *::before,.pk *::after{animation:none!important;transition:none!important}}
