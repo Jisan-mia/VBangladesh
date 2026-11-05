@@ -1,6 +1,6 @@
 // The ?print view: an A4 tracing sheet for one set. Each row: one letter with numbered start dots and arrows,
 // three dotted copies to trace with a pencil, and an empty box to write it alone.
-import { LEVELS, bn, levelOf } from "../lib/levels";
+import { ORDER, bn, levelOf, placeOf } from "../lib/levels";
 import { strokesOf } from "../lib/strokes";
 import { Arrow, GuideLetter, StartDot, StrokeLine } from "./marks";
 
@@ -25,12 +25,12 @@ export function PrintSheet({ level }: { level: number }) {
       <a className="kit-secondary" href="/borno-likhi">খেলায় ফিরে যাও</a>
     </div>
     <nav className="bl-print-sets" aria-label="কোন সেটের পাতা">
-      {LEVELS.map((one, index) => <a key={one.title} href={`/borno-likhi?print=${index + 1}`} aria-current={one === spec ? "page" : undefined}>{one.title}</a>)}
+      {ORDER.map(id => <a key={id} href={`/borno-likhi?print=${id}`} aria-current={id === spec.id ? "page" : undefined}>{levelOf(id).title}</a>)}
     </nav>
-    <article className="bl-sheet" aria-label={`হাতের লেখার পাতা: ${spec.title}`}>
+    <article className="bl-pr-sheet" aria-label={`হাতের লেখার পাতা: ${spec.title}`}>
       <h2>বর্ণ লিখি · {spec.title}</h2>
       <p>১ লেখা বিন্দু থেকে শুরু করো, তীর যেদিকে, সেদিকে টানো। মাত্রা সবার শেষে। শেষ ঘরে নিজে লেখো।</p>
-      <ol className="bl-sheet-rows">
+      <ol className="bl-pr-rows">
         {spec.letters.map(char => <li key={char}>
           <Cell char={char} mode="guide" />
           <Cell char={char} mode="dotted" />
@@ -39,7 +39,7 @@ export function PrintSheet({ level }: { level: number }) {
           <Cell char={char} mode="blank" />
         </li>)}
       </ol>
-      <p className="bl-sheet-foot">একটুখানি · বর্ণ লিখি · সেট {bn(LEVELS.indexOf(spec) + 1)}</p>
+      <p className="bl-pr-foot">একটুখানি · বর্ণ লিখি · সেট {bn(placeOf(spec.id))}</p>
     </article>
   </div>;
 }

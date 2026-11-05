@@ -1,40 +1,41 @@
-export const title = "বর্ণ লিখি: the set, the finger, the keyboard, mute, rest and the parent gate";
-const letter = (v: any) => v.page === "adult" ? "Left for an adult tool" : v.resting === "atOpen" ? "Opens on the rest screen" : v.resting === "atBreak" ? "Rest screen" : ({
-  trace: v.last ? "Tracing the set's last letter" : "Tracing a letter",
-  drawn: v.last ? "Last letter done: শেষ" : "Letter done: পরেরটা",
-  end: "End card",
-  closed: "আজকের লেখা শেষ",
-} as any)[v.phase];
+export const title = "বর্ণ লিখি: screens, the finger, pause, the daily limit and keys";
+const screen = (v: any) => {
+  if (v.screen === "cover") return "The notebook cover (খেলো)";
+  if (v.screen === "levels") return "The set list";
+  if (v.screen === "end") return "The filled page (আবার খেলো / শেষ)";
+  const last = v.letterNo === 2;
+  return v.phase === "drawn" ? (last ? "Last letter's picture: শেষ" : "Letter's picture: পরেরটা") : (last ? "Tracing the last letter" : "Tracing a letter");
+};
 export const state = (v: any) => ({
-  Set: letter(v),
-  Finger: v.pointer ? (v.window === "here" ? "Finger on the board" : "Finger counted on the board, you're away") : (v.window === "here" ? "Hands off" : "In another window"),
-  Keys: ({ none: "Nothing focused", board: "Board focused", next: "পরেরটা focused", toggle: "Sound toggle focused", lost: "Focus fell to the page" } as any)[v.focus] + (v.misfire ? ", Enter clicked a button" : ""),
-  Sound: v.sound ? (v.talking ? "Sound on, speaking" : "Sound on") : (v.talking ? "Sound off, but speaking" : "Sound off"),
-  Gate: ({ shut: "Gate shut", holding: "Holding the gate", extra: "Holding, a second timer armed", armed: "Let go, a timer still armed", asks: "Gate asks the sum" } as any)[v.gate],
+  Set: screen(v),
+  Hand: v.pointer ? "Finger on the board" : v.swallow ? "Back from away, the next tap only wakes" : "Hands off",
+  Menu: v.paused ? "Pause menu open" : v.away ? "In another window" : "Playing",
+  Today: v.resting ? (v.screen === "play" ? "Time's up, the rest waits for the page" : "Rest screen") : v.overLimit ? "Today's time is up" : "Time left today",
 });
 export const step = (action: string) => ({
-  YouTouchTheBoard: "you touch the board",
-  YouTraceAStroke: "you trace a stroke",
-  YouLiftYourFinger: "you lift your finger",
-  YouTabToTheBoard: "you Tab to the board",
-  YouTabToNext: "you Tab to পরেরটা",
-  YouPressEnterOnTheBoard: "you press Enter on the board",
-  YouPressEnterOnTheToggle: "you press Enter to write",
-  YouTapNext: "you tap পরেরটা",
-  YouPressEnterOnNext: "you press Enter on পরেরটা",
-  YouTapWriteAgain: "you tap আবার লিখি",
-  YouStartASet: "you start a set",
-  YouPressEnd: "you press শেষ",
-  WindowBlurs: "you click into another window",
-  WindowFocuses: "you come back to the window",
-  YouTapTheSoundToggle: "you tap the speaker",
-  SpeechEnds: "the voice finishes",
-  GrownUpGivesTime: "a grown-up gives 10 more minutes",
-  YouHoldTheGate: "you hold বড়দের জন্য",
-  YouLetGoOfTheGate: "you let go",
-  GateTimerFires: "two seconds pass",
-  GrownUpClosesGate: "the gate closes",
-  YouTapARelatedCard: "you tap a card under the game",
+  YouStartASet: "the child taps খেলো or আবার খেলো",
+  YouOpenTheSetList: "the child opens the set list",
+  YouOpenTheSetListFromTheMenu: "সব লেভেল from the pause menu",
+  YouGoBackFromTheList: "← from the set list",
+  YouPickASet: "the child picks a set",
+  YouTouchTheBoard: "the child touches the board",
+  YouTraceTheLastStroke: "the finger writes the last stroke",
+  
+  YouLiftYourFinger: "the child lifts the finger",
+  YouPressEnterOnTheBoard: "Enter replays the moving dot",
+  YouTapNext: "the child taps →",
+  
+  YouGoBackToTheCover: "শেষ, or নতুন করে শুরু",
+  WindowBlurs: "the window blurs",
+  WindowFocuses: "the window comes back",
+  PlayerMenuOpens: "⏸ / P / Esc opens the player's menu",
+  YouResume: "চালিয়ে যাও",
+  YouHoldEnter: "the child holds Enter",
+  TheKeyRepeats: "Enter auto-repeats on the page",
+  YouLetGoOfTheKey: "the child lets go of the key",
+  TimeIsUp: "today's play time runs out",
+  ThePageOpens: "the page opens again",
+  TenMoreMinutes: "a grown-up gives আজ আরও ১০ মিনিট",
 } as Record<string, string>)[action] ?? action;
-export const group = (v: any) => v.page === "adult" ? "out" : v.resting !== "no" ? "rest" : v.phase === "trace" ? "play" : "card";
-export const colors = { play: "teal", card: "blue", rest: "yellow", out: "pink" };
+export const group = (v: any) => v.resting && v.screen !== "play" ? "held" : v.screen === "play" ? "play" : "done";
+export const colors = { play: "teal", held: "yellow", done: "blue" };
