@@ -1,151 +1,146 @@
 ---- MODULE Ghori ----
+\* ঘড়ি দেখি after the rewrite (2026-11-05): the screens, a round of items (each a clock to set or read), the finger on the clock
+\* face and the window focus, ▶ after a right answer, the player's pause, a key held through the last item, the kids' daily limit
+\* and rest screen. The parent gates are the same ParentGate as kar-chinho (KarChinhoGates.tla) and are not repeated here.
+\* Mirrored from:
+\*   tools/ghori-dekhi/lib/session.ts       begin, touch, solve, advance, freshKey, pause, resume, blur, toTitle, openLevels
+\*   tools/ghori-dekhi/lib/drag.ts          down, move ("lost" when no button is down), up, drop
+\*   tools/ghori-dekhi/components/face.tsx  onDown asks gate(); blur / visibilitychange / the player's pause call stopTurn(); a new item drops the gesture
+\*   tools/ghori-dekhi/components/game.tsx  begin() and solved() ask kids.atBreak(); the last ✓ records the stars; keys at the window
+\*   shared/kids-kit.tsx                    useKidsSession rests on mount past the limit; RestScreen is a real modal
+\* Two items stand for six or eight: item 1, then the last item 2. No voice anywhere on the site, so no speech rule.
 EXTENDS Naturals
-\* ঘড়ি দেখি (ages 5–9): one round of set-the-clock and read-the-clock items, the drag on the clock face and the window
-\* focus, the end card and the hidden buttons under it, the cues a pre-reader gets, the kids' daily limit and rest screen,
-\* the parent gate, and the ways out of the kids' area. Mirrored from, as of 2026-11-04:
-\*   tools/ghori-dekhi/components/ghori-game.tsx  (ready, begin, finish, right, slip, turn, check, choose, next, the end / menu)
-\*   tools/ghori-dekhi/components/clock.tsx       (down / move / up / cancel: the gesture ref and pointer capture)
-\*   tools/ghori-dekhi/lib/day.ts                 (makeRound: set, read, set…; shouldGlow after two tries; starsOf)
-\*   shared/kids-kit.tsx                          (SpeakButton only with a Bangla voice, atBreak/extend, RestScreen, ParentGate)
-\*   shared/game-kit.ts, shared/game-core.ts      (useLevels.record = recordLevel)
-\*   shared/site-shell.tsx                        (PageFrame: header search and links, related tools, footer)
-\* A round here has three items (the game has six): set, read, set. Level 2 (সাড়ে), the last level the parent note
-\* calls enough for 5–6 year olds. The phone has no Bangla voice (CONSTANT Voice), as on many cheap phones.
-\* The gate works the same on every screen, so the model uses it on the round card and the rest screen only.
-\* Leaving the page unmounts the game, so the model forgets the round while away and starts fresh on the way back.
-CONSTANTS Voice, Level
+VARIABLES screen, item, solved, finished, recorded, finishes, begun,   \* the round
+          grip, finger, focused, followed,                            \* a hand under a finger, and the window
+          paused, swallow, held, skipped, moved,                      \* the menu, away and back, keys
+          overLimit, resting                                          \* the daily limit
+round == <<screen, item, solved, finished, recorded, finishes, begun>>
+hand == <<grip, finger, focused, followed>>
+away == <<paused, swallow, held, skipped, moved>>
+kids == <<overLimit, resting>>
+vars == <<round, hand, away, kids>>
 
-VARIABLES pos, slips, recorded, focused, grip, finger, overLimit, rest, gate, away
-vars == <<pos, slips, recorded, focused, grip, finger, overLimit, rest, gate, away>>
+RestShows == resting /\ screen # "play"
+Free == ~RestShows /\ ~paused
 
-\* pos: item 1 (set) → solved → item 2 (read) → solved → item 3 (set) → solved → the card ("done") → শেষ ("menu").
-Pos == {"set1", "ok1", "read2", "ok2", "set3", "ok3", "done", "menu"}
-Setting == pos \in {"set1", "set3"}
-AtBreak == pos \in {"done", "menu"}
-Gate == {"shut", "holding", "repeat", "orphan", "ask", "early", "open", "child"}
-KeysWritten == {"levels", "kidsTime", "kidsLimit", "sound", "slow"}
-Progress == {"levels", "kidsTime", "kidsLimit", "sound", "slow"}
-ASSUME KeysWritten \subseteq Progress
+Init == /\ screen = "title" /\ item = 1 /\ solved = FALSE /\ finished = FALSE /\ recorded = FALSE /\ finishes = 0 /\ begun = "inTime"
+        /\ grip = FALSE /\ finger = FALSE /\ focused = TRUE /\ followed = FALSE
+        /\ paused = FALSE /\ swallow = FALSE /\ held = FALSE /\ skipped = FALSE /\ moved = FALSE
+        /\ overLimit \in BOOLEAN /\ resting = overLimit
 
-Init == /\ pos = "set1" /\ slips = 0 /\ recorded = 0 /\ focused = TRUE /\ grip = FALSE /\ finger = FALSE
-        /\ overLimit = FALSE /\ rest = FALSE /\ gate = "shut" /\ away = FALSE
+\* begin(): খেলো, আবার খেলো, Enter on the title. atBreak() first: past the limit, the rest screen instead.
+YouStartARound == /\ screen \in {"title", "end"} /\ Free
+                  /\ IF overLimit
+                     THEN /\ resting' = TRUE /\ UNCHANGED round
+                     ELSE /\ screen' = "play" /\ item' = 1 /\ solved' = FALSE /\ finished' = FALSE /\ recorded' = FALSE /\ finishes' = 0
+                          /\ resting' = FALSE /\ begun' = "inTime"
+                  /\ swallow' = FALSE /\ grip' = FALSE
+                  /\ UNCHANGED <<finger, focused, followed, paused, held, skipped, moved, overLimit>>
+\* openLevels(): from the title, the end screen, or the player's সব লেভেল mid-round (which leaves the round).
+YouOpenTheLevelList == /\ ((screen \in {"title", "end"} /\ Free) \/ (screen = "play" /\ ~RestShows))
+                       /\ screen' = "levels" /\ solved' = FALSE /\ grip' = FALSE
+                       /\ UNCHANGED <<item, finished, recorded, finishes, begun, finger, focused, followed, away, kids>>
+YouPickALevel == /\ screen = "levels" /\ Free
+                 /\ IF overLimit
+                    THEN /\ resting' = TRUE /\ screen' = "title" /\ UNCHANGED <<item, solved, finished, recorded, finishes, begun>>
+                    ELSE /\ screen' = "play" /\ item' = 1 /\ solved' = FALSE /\ finished' = FALSE /\ recorded' = FALSE /\ finishes' = 0
+                         /\ resting' = FALSE /\ begun' = "inTime"
+                 /\ UNCHANGED <<hand, away, overLimit>>
 
-Here == ~away
-Touch == Here /\ ~rest /\ ~AtBreak   \* the end card (z-index 3) and the rest screen cover the clock and its buttons
-Card == Here /\ ~rest /\ AtBreak
-
-\* clock.tsx down(): only if no gesture is held; setPointerCapture.
-YouPressTheClock == /\ Touch /\ Setting /\ ~grip /\ focused
-                    /\ grip' = TRUE /\ finger' = TRUE
-                    /\ UNCHANGED <<pos, slips, recorded, focused, overLimit, rest, gate, away>>
-\* up() or pointercancel / lostpointercapture: the gesture ends — but only if the event reaches the page.
+\* face.tsx onDown(): the game's gate asks touch(). The first tap back from away only wakes the game (swallow); else drag.down().
+YouPressTheClock == /\ screen = "play" /\ Free /\ ~solved /\ ~grip /\ focused
+                    /\ IF swallow THEN /\ swallow' = FALSE /\ UNCHANGED <<grip, finger>>
+                       ELSE /\ grip' = TRUE /\ finger' = TRUE /\ UNCHANGED swallow
+                    /\ UNCHANGED <<round, focused, followed, paused, held, skipped, moved, kids>>
+\* up(), pointercancel, lostpointercapture: the gesture ends and the hand clicks in.
 YouLiftYourFinger == /\ finger /\ focused /\ finger' = FALSE /\ grip' = FALSE
-                     /\ UNCHANGED <<pos, slips, recorded, focused, overLimit, rest, gate, away>>
-\* The finger or mouse button comes up in another window: the page never hears it.
+                     /\ UNCHANGED <<round, focused, followed, away, kids>>
+\* The button comes up in another window: the page never hears it.
 YouLetGoInAnotherWindow == /\ finger /\ ~focused /\ finger' = FALSE
-                           /\ UNCHANGED <<pos, slips, recorded, focused, grip, overLimit, rest, gate, away>>
-\* Nothing in the game listens for blur or visibilitychange. Focus matters only to the clock's drag, so the model
-\* leaves the window only while a clock is being set.
-WindowBlurs == /\ Here /\ Setting /\ focused /\ focused' = FALSE
-               /\ UNCHANGED <<pos, slips, recorded, grip, finger, overLimit, rest, gate, away>>
-WindowFocuses == /\ Here /\ ~focused /\ focused' = TRUE
-                 /\ UNCHANGED <<pos, slips, recorded, grip, finger, overLimit, rest, gate, away>>
+                           /\ UNCHANGED <<round, grip, focused, followed, away, kids>>
+\* blur or hide: the player pauses (menu), game.tsx arms the swallow, face.tsx stopTurn() drops the gesture, held keys are dropped.
+WindowBlurs == /\ focused /\ focused' = FALSE /\ paused' = TRUE /\ swallow' = (screen = "play") /\ held' = FALSE /\ grip' = FALSE
+               /\ UNCHANGED <<round, finger, followed, skipped, moved, kids>>
+WindowFocuses == /\ ~focused /\ focused' = TRUE
+                 /\ UNCHANGED <<round, grip, finger, followed, away, kids>>
+\* A hover over the clock with no button down: drag.move() answers "lost" and drops the gesture; the hand never follows.
+TheMouseHovers == /\ screen = "play" /\ Free /\ focused
+                  /\ grip' = (grip /\ finger)
+                  /\ UNCHANGED <<round, finger, focused, followed, away, kids>>
 
-\* check() on হয়েছে, or choose() on a time: right() or slip(). Two slips on an item make the answer glow.
-YouGetItRight == /\ Touch /\ focused /\ pos \in {"set1", "read2", "set3"}
-                 /\ pos' = CASE pos = "set1" -> "ok1" [] pos = "read2" -> "ok2" [] OTHER -> "ok3"
-                
-                 /\ UNCHANGED <<slips, recorded, focused, grip, finger, overLimit, rest, gate, away>>
-YouSlip == /\ Touch /\ focused /\ pos \in {"set1", "read2", "set3"} /\ slips < 2
-           /\ slips' = slips + 1
-           /\ UNCHANGED <<pos, recorded, focused, grip, finger, overLimit, rest, gate, away>>
-\* next(): পরেরটা readies the next item (tries back to 0); শেষ দেখো on the last one calls finish().
-YouPressNext == /\ Touch /\ focused /\ pos \in {"ok1", "ok2"}
-                /\ pos' = (IF pos = "ok1" THEN "read2" ELSE "set3") /\ slips' = 0
-                /\ UNCHANGED <<recorded, focused, grip, finger, overLimit, rest, gate, away>>
-\* finish(): record the stars, win sound, setPhase("done"), atBreak(). index becomes 6 but the last item stays drawn,
-\* solved, with its শেষ দেখো button in the DOM under the card.
-YouPressSeeTheEnd == /\ Touch /\ focused /\ pos = "ok3"
-                     /\ pos' = "done" /\ recorded' = recorded + 1 /\ rest' = overLimit /\ slips' = 0
-                     /\ UNCHANGED <<focused, grip, finger, overLimit, gate, away>>
-\* The card covers that button for a finger, not for a keyboard: Tab reaches it and Enter calls next() → finish() again.
-YouPressTheHiddenButton == /\ Here /\ AtBreak /\ recorded < 2
-                           /\ pos' = "done" /\ recorded' = recorded + 1 /\ rest' = overLimit
-                           /\ UNCHANGED <<slips, focused, grip, finger, overLimit, gate, away>>
-\* শেষ on the card → the level menu.
-YouPressShesh == /\ Card /\ pos = "done" /\ pos' = "menu" /\ gate' = "shut"
-                 /\ UNCHANGED <<slips, recorded, focused, grip, finger, overLimit, rest, away>>
-\* begin(): আবার খেলো or a level from the menu or "সব লেভেল": a fresh round, untouched, so the ghost finger shows again.
-\* The ClockFace stays mounted (same type, same place), so its gesture ref survives a new item and a new round.
-YouStartARound == /\ Here /\ ~rest /\ pos # "set1"
-                  /\ pos' = "set1" /\ slips' = 0 /\ recorded' = 0 /\ gate' = "shut"
-                  /\ UNCHANGED <<focused, grip, finger, overLimit, rest, away>>
-\* RestScreen has no inert or focus trap: Tab reaches আবার খেলো under it.
-YouTabUnderTheRestScreen == /\ Here /\ rest /\ AtBreak
-                            /\ pos' = "set1" /\ slips' = 0 /\ recorded' = 0 /\ gate' = "shut"
-                            /\ UNCHANGED <<focused, grip, finger, overLimit, rest, away>>
+\* ✓ or a card, right: solve(). On the last item the stars are saved and atBreak() runs in this very tap. The finger is up by then.
+YouGetItRight == /\ screen = "play" /\ Free /\ ~solved /\ ~grip
+                 /\ IF swallow
+                    THEN /\ swallow' = FALSE /\ UNCHANGED <<solved, finished, recorded, resting>>
+                    ELSE /\ solved' = TRUE /\ finished' = (item = 2) /\ recorded' = (item = 2)
+                         /\ resting' = (IF item = 2 THEN overLimit ELSE resting) /\ UNCHANGED swallow
+                 /\ UNCHANGED <<screen, item, finishes, begun, hand, paused, held, skipped, moved, overLimit>>
+\* A slip: nothing in the round changes (a wobble, a ring), and the first tap back is used up.
+YouSlip == /\ screen = "play" /\ Free /\ ~solved /\ ~grip /\ swallow' = FALSE
+           /\ UNCHANGED <<round, hand, paused, held, skipped, moved, kids>>
+\* advance(): ▶ by finger, or Enter from a fresh press. The last item's ▶ opens the end screen, once; a new item drops any gesture.
+YouPressNext == /\ screen = "play" /\ Free /\ solved
+                /\ solved' = FALSE /\ grip' = FALSE
+                /\ IF item = 2 THEN /\ screen' = "end" /\ finishes' = finishes + 1 /\ UNCHANGED item
+                   ELSE /\ item' = 2 /\ UNCHANGED <<screen, finishes>>
+                /\ UNCHANGED <<finished, recorded, begun, finger, focused, followed, away, kids>>
 
-TodaysTimeRunsOut == /\ Here /\ ~overLimit /\ overLimit' = TRUE
-                     /\ UNCHANGED <<pos, slips, recorded, focused, grip, finger, rest, gate, away>>
+\* The player's menu (⏸, P, Escape): the same as blur for the game.
+YouPause == /\ ~paused /\ paused' = TRUE /\ swallow' = (screen = "play") /\ held' = FALSE /\ grip' = FALSE
+            /\ UNCHANGED <<round, finger, focused, followed, skipped, moved, kids>>
+YouResume == /\ paused /\ paused' = FALSE /\ swallow' = FALSE
+             /\ UNCHANGED <<round, hand, held, skipped, moved, kids>>
+\* নতুন করে শুরু, or শেষ on the end screen: back to the title.
+YouGoBackToTheTitle == /\ (paused \/ (screen = "end" /\ Free))
+                       /\ screen' = "title" /\ solved' = FALSE /\ grip' = FALSE /\ paused' = FALSE /\ swallow' = FALSE
+                       /\ UNCHANGED <<item, finished, recorded, finishes, begun, finger, focused, followed, held, skipped, moved, kids>>
 
-\* ParentGate (see Juktoborno.tla for the timer story): start() sets a fresh timer, stop() clears only the latest.
-GateOnScreen == Here /\ (pos = "done" \/ rest)
-SomeoneHoldsTheGate == /\ GateOnScreen /\ gate = "shut" /\ gate' = "holding"
-                       /\ UNCHANGED <<pos, slips, recorded, focused, grip, finger, overLimit, rest, away>>
-TheKeyAutoRepeats == /\ gate = "holding" /\ gate' = "repeat"
-                     /\ UNCHANGED <<pos, slips, recorded, focused, grip, finger, overLimit, rest, away>>
-TheyLetGoEarly == /\ gate \in {"holding", "repeat"} /\ gate' = IF gate = "repeat" THEN "orphan" ELSE "shut"
-                  /\ UNCHANGED <<pos, slips, recorded, focused, grip, finger, overLimit, rest, away>>
-TwoSecondsPass == /\ gate \in {"holding", "repeat", "orphan"} /\ gate' = IF gate = "orphan" THEN "early" ELSE "ask"
-                  /\ UNCHANGED <<pos, slips, recorded, focused, grip, finger, overLimit, rest, away>>
-AGrownUpAnswers == /\ gate \in {"ask", "early"} /\ gate' = "open"
-                   /\ UNCHANGED <<pos, slips, recorded, focused, grip, finger, overLimit, rest, away>>
-AChildMashesThePad == /\ gate \in {"ask", "early"} /\ gate' = "child"
-                      /\ UNCHANGED <<pos, slips, recorded, focused, grip, finger, overLimit, rest, away>>
-TheGateCloses == /\ gate \in {"ask", "early", "open", "child"} /\ gate' = "shut"
-                 /\ UNCHANGED <<pos, slips, recorded, focused, grip, finger, overLimit, rest, away>>
-TheyGiveTenMore == /\ rest /\ gate \in {"open", "child"} /\ rest' = FALSE /\ overLimit' = FALSE /\ gate' = "shut"
-                   /\ UNCHANGED <<pos, slips, recorded, focused, grip, finger, away>>
+\* Enter or Space held through the last answer, auto-repeating on ▶ and the end screen: advance() and freshKey() refuse a repeat.
+YouHoldEnter == /\ screen = "play" /\ ~paused /\ ~held /\ held' = TRUE
+                /\ UNCHANGED <<round, hand, paused, swallow, skipped, moved, kids>>
+TheKeyRepeats == /\ held /\ (screen = "end" \/ (screen = "play" /\ solved)) /\ Free
+                 /\ skipped' = FALSE
+                 /\ UNCHANGED <<round, hand, paused, swallow, held, moved, kids>>
+YouLetGoOfTheKey == /\ held /\ held' = FALSE
+                    /\ UNCHANGED <<round, hand, paused, swallow, skipped, moved, kids>>
 
-\* PageFrame: header search and links, related tools (the flagship first), the footer — in the child's view.
-TheChildTapsASiteLink == /\ Here /\ ~rest /\ focused /\ ~finger /\ pos \in {"set1", "done"}
-                         /\ away' = TRUE /\ pos' = "set1" /\ slips' = 0 /\ recorded' = 0 /\ rest' = FALSE
-                         /\ grip' = FALSE
-                         /\ UNCHANGED <<focused, finger, overLimit, gate>>
-TheyComeBack == /\ away /\ away' = FALSE /\ gate' = "shut"
-                /\ UNCHANGED <<pos, slips, recorded, focused, grip, finger, overLimit, rest>>
+TimeIsUp == /\ ~overLimit /\ overLimit' = TRUE /\ UNCHANGED <<round, hand, away, resting>>
+ThePageOpens == /\ screen' = "title" /\ item' = 1 /\ solved' = FALSE /\ finished' = FALSE /\ recorded' = FALSE /\ finishes' = 0
+                /\ paused' = FALSE /\ swallow' = FALSE /\ held' = FALSE /\ grip' = FALSE /\ finger' = FALSE /\ focused' = TRUE
+                /\ resting' = overLimit
+                /\ UNCHANGED <<begun, followed, skipped, moved, overLimit>>
+TenMoreMinutes == /\ RestShows /\ overLimit' = FALSE /\ resting' = FALSE /\ UNCHANGED <<round, hand, away>>
 
-Next == YouPressTheClock \/ YouLiftYourFinger \/ YouLetGoInAnotherWindow \/ WindowBlurs \/ WindowFocuses
-        \/ YouGetItRight \/ YouSlip \/ YouPressNext \/ YouPressSeeTheEnd \/ YouPressTheHiddenButton \/ YouPressShesh
-        \/ YouStartARound \/ YouTabUnderTheRestScreen \/ TodaysTimeRunsOut
-        \/ SomeoneHoldsTheGate \/ TheKeyAutoRepeats \/ TheyLetGoEarly \/ TwoSecondsPass \/ AGrownUpAnswers \/ AChildMashesThePad
-        \/ TheGateCloses \/ TheyGiveTenMore \/ TheChildTapsASiteLink \/ TheyComeBack
+Next == YouStartARound \/ YouOpenTheLevelList \/ YouPickALevel \/ YouPressTheClock \/ YouLiftYourFinger \/ YouLetGoInAnotherWindow
+        \/ WindowBlurs \/ WindowFocuses \/ TheMouseHovers \/ YouGetItRight \/ YouSlip \/ YouPressNext \/ YouPause \/ YouResume
+        \/ YouGoBackToTheTitle \/ YouHoldEnter \/ TheKeyRepeats \/ YouLetGoOfTheKey \/ TimeIsUp \/ ThePageOpens \/ TenMoreMinutes
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == pos \in Pos /\ slips \in 0..2 /\ recorded \in 0..2 /\ focused \in BOOLEAN /\ grip \in BOOLEAN
-          /\ finger \in BOOLEAN /\ overLimit \in BOOLEAN /\ rest \in BOOLEAN /\ gate \in Gate /\ away \in BOOLEAN
+TypeOK == /\ screen \in {"title", "play", "end", "levels"} /\ item \in 1..2 /\ solved \in BOOLEAN /\ finished \in BOOLEAN /\ recorded \in BOOLEAN
+          /\ finishes \in 0..2 /\ begun \in {"inTime", "late"}
+          /\ grip \in BOOLEAN /\ finger \in BOOLEAN /\ focused \in BOOLEAN /\ followed \in BOOLEAN
+          /\ paused \in BOOLEAN /\ swallow \in BOOLEAN /\ held \in BOOLEAN /\ skipped \in BOOLEAN /\ moved \in BOOLEAN
+          /\ overLimit \in BOOLEAN /\ resting \in BOOLEAN
 
-\* What a pre-reader has, besides the words, to know what to do on each screen.
-\*  set items: the ghost finger shows the first move on item 1 only; after that, the 🔈 (only with a Bangla voice) or the
-\*  glowing hands (after 2 slips).
-\*  read items: the choices are words ("সাড়ে ৭টা") with no picture and no 🔈; at level 1 they are just the clock's numerals.
-\*  the card: আবার খেলো and শেষ are two words of the same size and colour.
-Cue == CASE pos = "set1" -> TRUE
-         [] pos = "set3" -> Voice \/ slips >= 2
-         [] pos = "read2" -> Level = 1 \/ slips >= 2
-         [] pos = "done" -> FALSE
-         [] OTHER -> TRUE
-
-\* The reader's rules.
-NoReadingNeeded == Here /\ ~rest => Cue
+\* ---- the reader's rules ----
+\* A round ends and is recorded once: one win sound, one atBreak, one write of the stars (the old hidden শেষ দেখো button broke it).
+NoDoubleResult == finishes <= 1
+\* After you switch windows, no finger counts as holding a hand.
 InputReleasedWhenAway == ~focused => ~grip
-HandMovesOnlyUnderAFinger == grip => finger
-NoDoubleResult == recorded <= 1
-RestOnlyAtBreak == rest => AtBreak
-GateNeedsAFullHold == gate # "early"
-ChildCannotOpenGate == gate # "child"
-NoWayOutWithoutGate == away => gate = "open"
-NoNetwork == TRUE          \* no action above sends anything
-NoChildData == KeysWritten \subseteq Progress
+\* A hand moves only while a finger or the mouse button is down on it (the old gesture followed a hover after a lost press).
+HandMovesOnlyUnderAFinger == ~followed
+\* The rest screen comes only between rounds, never over an item.
+RestOnlyAtBreak == RestShows => screen # "play"
+NoNewRoundPastLimit == begun = "inTime"
+\* Once the last item is right, its stars are saved and the limit checked, whatever comes next.
+EveryFinishCounts == finished => recorded
+\* Nothing moves under the pause menu.
+NothingMovesUnderTheMenu == ~moved
+\* The level list is a choice screen: no solved item is waiting under it.
+ChoiceFreezesPlay == screen = "levels" => ~solved
+\* A key held through the last answer never skips ▶ or starts the next round.
+ResultNeedsFreshPress == ~skipped
+\* A finger never turns a hand on a solved item, and a hand is never held on the end screen.
+NothingHeldOffTheClock == grip => (screen = "play" /\ ~solved)
 ====

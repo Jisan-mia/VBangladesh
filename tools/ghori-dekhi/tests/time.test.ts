@@ -4,10 +4,7 @@ import { join } from "node:path";
 import test from "node:test";
 import { site } from "../content";
 import { share } from "../share";
-import {
-  ACTIVITIES, activityOf, choiceCount, doneLine, firstMove, FRESH_PACE, LEVEL_COUNT, LEVELS, levelOf, makeRound, methodLine, nextPace, PRINT_DAY, readChoices,
-  ROUND, say, shouldGlow, SLOTS, starsOf, type Pace,
-} from "../lib/day";
+import { ACTIVITIES, activityOf, PRINT_DAY, SLOTS } from "../lib/day";
 import {
   digital, dragHour, dragMinute, hands, hourHint, kindOf, minuteHint, mod, onFace, partOf, readHint, same, sayLeft, sayTime, setHint, snapMinute, tapHour, tapMinute,
 } from "../lib/time";
@@ -138,80 +135,12 @@ test("the day: every slot in order, with a picture and a name for every activity
   assert.equal(partOf(SLOTS[7].hours[0]), "সন্ধ্যা", "study is in the evening");
 });
 
-test("rounds: six times through one day, rising, set first, using only this level's minutes", () => {
-  for (let level = 1; level <= LEVEL_COUNT; level++) for (const seed of [1, 2, 3, 77, 4242]) {
-    const round = makeRound(level, seed);
-    assert.equal(round.length, ROUND);
-    assert.equal(round[0].activity.id, "wake");
-    assert.equal(round.at(-1)!.activity.id, "sleep");
-    assert.deepEqual(round.map(item => item.mode), ["set", "read", "set", "read", "set", "read"]);
-    const minutes = round.map(item => item.time.h * 60 + item.time.m);
-    for (let i = 1; i < ROUND; i++) assert.ok(minutes[i] > minutes[i - 1], `level ${level} seed ${seed}`);
-    for (const item of round) assert.ok(levelOf(level).minutes.includes(item.time.m));
-    assert.deepEqual(makeRound(level, seed), round, "same seed, same day");
-  }
-  assert.ok(makeRound(1, 5).every(item => item.time.m === 0), "level 1: o'clock only");
-});
-
-test("levels step up gently: o'clock, সাড়ে, সোয়া/পৌনে, 5 minutes, then the part of the day", () => {
-  assert.equal(LEVEL_COUNT, 5);
-  assert.deepEqual(LEVELS.map(level => level.minutes.length), [1, 2, 4, 12, 12]);
-  assert.deepEqual(LEVELS.map(level => level.step), [15, 15, 15, 5, 5]);
-  assert.deepEqual(LEVELS.map(level => level.part), [false, false, false, false, true]);
-  assert.ok(LEVELS[1].ask.includes(30) && LEVELS[2].ask.includes(45));
-  assert.ok(LEVELS[3].ask.every(m => m % 15 !== 0), "level 4 drills the in-between minutes");
-  assert.equal(new Set(LEVELS.map(level => level.title)).size, LEVEL_COUNT);
-  assert.equal(levelOf(99), LEVELS[4]);
-  assert.equal(say(t(19, 0), 5), "সন্ধ্যা ৭টা");
-  assert.equal(say(t(19, 0), 1), "৭টা");
-  for (const level of LEVELS) nfc(level.title);
-  assert.deepEqual(firstMove(t(7, 0)), { hand: "hour", angle: 210 });
-  assert.deepEqual(firstMove(t(8, 30)), { hand: "minute", angle: 180 });
-});
-
-test("‘কয়টা বাজে?’ choices hold the answer once, use only taught words, and include the real mix-up", () => {
-  for (let level = 1; level <= LEVEL_COUNT; level++) for (const count of [2, 3, 4]) for (const seed of [1, 9, 31]) {
-    for (const item of makeRound(level, seed)) {
-      const choices = readChoices(item.time, level, count, seed);
-      assert.equal(choices.length, count, `level ${level}`);
-      const said = choices.map(time => say(time, level));
-      assert.equal(new Set(said).size, count, "no two choices read the same");
-      assert.equal(said.filter(text => text === say(item.time, level)).length, 1);
-      for (const time of choices) assert.ok(levelOf(level).minutes.includes(time.m));
-    }
-  }
-  // পৌনে ৫টা: the first mix-up is the hour one off (পৌনে ৬টা).
-  assert.ok(readChoices(t(16, 45), 3, 2, 1).some(time => say(time, 3) === "পৌনে ৬টা"));
-  // Level 5: the same time at the other end of the day.
-  assert.deepEqual(readChoices(t(19, 0), 5, 2, 1).map(time => say(time, 5)), ["সকাল ৭টা", "সন্ধ্যা ৭টা"]);
-});
-
-test("difficulty steps: three slips ease, five right step up, never announced", () => {
-  let pace: Pace = FRESH_PACE;
-  assert.equal(choiceCount(pace), 3);
-  for (let i = 0; i < 3; i++) pace = nextPace(pace, false);
-  assert.equal(pace.help, 1); assert.equal(choiceCount(pace), 2); assert.ok(shouldGlow(pace, 0));
-  pace = nextPace(pace, true);
-  assert.equal(pace.help, 0); assert.ok(!shouldGlow(pace, 1)); assert.ok(shouldGlow(pace, 2), "the answer shows after two tries");
-  for (let i = 0; i < 5; i++) pace = nextPace(pace, true);
-  assert.equal(pace.help, -1); assert.equal(choiceCount(pace), 4);
-  pace = nextPace(pace, false);
-  assert.equal(pace.help, 0, "one slip drops back to normal");
-});
-
-test("stars are a record: 3 with no slip, 2 with up to two, else 1", () => {
-  assert.deepEqual([0, 1, 2, 3, 9].map(starsOf), [3, 2, 2, 1, 1]);
-  assert.equal(doneLine(), "আজ ঘড়িতে ৬টা সময় মেলালাম");
-  assert.equal(methodLine(2, 1), "২বার আবার দেখেছ, তারপর মিলিয়েছ।");
-  nfc(methodLine(0, 1)); nfc(methodLine(0, 4));
-});
-
 test("the print sheet: six blank clocks through one day, each kind of time once", () => {
   assert.equal(PRINT_DAY.length, 6);
   assert.deepEqual([...new Set(PRINT_DAY.map(entry => entry.time.m % 15 === 0 ? entry.time.m : "five"))].length, 5);
   for (let i = 1; i < PRINT_DAY.length; i++) assert.ok(PRINT_DAY[i].time.h > PRINT_DAY[i - 1].time.h);
   for (const entry of PRINT_DAY) assert.ok(activityOf(entry.activity));
-  assert.deepEqual(PRINT_DAY.map(entry => say(entry.time, 5)), ["সকাল ৭টা", "সকাল সাড়ে ৮টা", "সকাল সোয়া ১১টা", "দুপুর দেড়টা", "বিকেল পৌনে ৫টা", "সন্ধ্যা ৭টা বেজে ২০ মিনিট"]);
+  assert.deepEqual(PRINT_DAY.map(entry => sayTime(entry.time, { part: true })), ["সকাল ৭টা", "সকাল সাড়ে ৮টা", "সকাল সোয়া ১১টা", "দুপুর দেড়টা", "বিকেল পৌনে ৫টা", "সন্ধ্যা ৭টা বেজে ২০ মিনিট"]);
 });
 
 test("no sharing of anything about the child", () => {
