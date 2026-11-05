@@ -69,7 +69,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | ulto-khela | S21 | analysed | done |
 | dinosaur | S22 | analysed | done |
 | ki-hobe | S22 | analysed | done |
-| shoman-bhag | S22 | analysed | rewriting |
+| shoman-bhag | S22 | analysed | done |
 | chhaya-melao | S23 | analysed | rewriting |
 | mongole-rover | S23 | analysed | rewriting |
 | daripalla | S23 | analysed | rewriting |
