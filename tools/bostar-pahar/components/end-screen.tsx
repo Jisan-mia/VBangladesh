@@ -42,8 +42,8 @@ export function EndScreen({ stats, slow, choices, onCard }: { stats: EndStats; s
           {[0, 1, 2].map(star => <span key={star} className={star < stats.stars ? "on gx-pop" : star >= stats.maxStars ? "bp-capped" : ""} style={{ animationDelay: `${starAt(star)}s` }}>★</span>)}
         </p>
       )}
-      <p className="bp-end-load" aria-label={stats.goal ? `${bn(stats.goal)}টার মধ্যে ${bn(stats.sacks)}টা বস্তা` : `${bn(stats.sacks)}টা বস্তা`}>
-        <b aria-hidden="true">{count(stats.sacks)}</b>{stats.goal ? <span aria-hidden="true">/{bn(stats.goal)}</span> : null}টা বস্তা
+      <p className="bp-end-load" aria-label={stats.goal ? `${bn(stats.goal)}টার মধ্যে ${bn(Math.min(stats.sacks, stats.goal))}টা বস্তা` : `${bn(stats.sacks)}টা বস্তা`}>
+        <b aria-hidden="true">{count(stats.goal ? Math.min(stats.sacks, stats.goal) : stats.sacks)}</b>{stats.goal ? <span aria-hidden="true">/{bn(stats.goal)}</span> : null}টা বস্তা
       </p>
       <p className="bp-end-line">{stats.versus || stats.line}</p>
       <ul className="bp-end-stats">

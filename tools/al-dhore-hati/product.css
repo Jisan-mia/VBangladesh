@@ -35,7 +35,9 @@
 .tool-al-dhore-hati .al-best b{color:var(--ink)}
 /* every pressable thing answers a press at once */
 .tool-al-dhore-hati .al-modes button,.tool-al-dhore-hati .al-title-more>button,.tool-al-dhore-hati .al-sheet-world button,.tool-al-dhore-hati .al-sheet-close,.tool-al-dhore-hati .al-story-skip{transition:transform .16s var(--ease)}
-.tool-al-dhore-hati .al-modes button:active,.tool-al-dhore-hati .al-title-more>button:active,.tool-al-dhore-hati .al-sheet-world button:active:not(:disabled),.tool-al-dhore-hati .al-sheet-close:active{transform:scale(.97)}
+.tool-al-dhore-hati .al-modes button:active,.tool-al-dhore-hati .al-title-more>button:active,.tool-al-dhore-hati .al-sheet-world button:active:not(:disabled),.tool-al-dhore-hati .al-sheet-close:active,.tool-al-dhore-hati .al-story-skip:active{transform:scale(.97)}
+.tool-al-dhore-hati .al-end-choices .kit-secondary{transition:transform .16s var(--ease)}
+.tool-al-dhore-hati .al-end-choices .kit-secondary:active{transform:scale(.97)}
 @keyframes al-sway{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.2deg)}}
 
 /* ---- story ---- */
@@ -48,9 +50,10 @@
 .tool-al-dhore-hati .al-story-dots i{width:8px;height:8px;border-radius:50%;background:#24301b33}
 .tool-al-dhore-hati .al-story-dots i[data-on=true]{background:var(--accent)}
 .tool-al-dhore-hati .al-story-skip{position:absolute;top:10px;right:10px;z-index:1;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:4px 12px;border:1.5px solid #24301b33;border-radius:4px;background:#fff;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;touch-action:none}
-.tool-al-dhore-hati .al-story-skip span{width:14px;height:14px;border-radius:50%;background:conic-gradient(var(--accent) 0 0,#24301b1a 0)}
-.tool-al-dhore-hati .al-story-skip[data-holding] span{animation:al-hold .6s linear forwards}
-@keyframes al-hold{from{background:conic-gradient(var(--accent) 0%,#24301b1a 0)}to{background:conic-gradient(var(--accent) 100%,#24301b1a 0)}}
+/* hold to skip: a filled disc is revealed left to right over the track (clip-path, since gradients don't interpolate) */
+.tool-al-dhore-hati .al-story-skip span{position:relative;width:14px;height:14px;border-radius:50%;background:#24301b1a;overflow:hidden}
+.tool-al-dhore-hati .al-story-skip span::after{content:"";position:absolute;inset:0;background:var(--accent);clip-path:inset(0 100% 0 0);transition:clip-path .2s var(--ease)}
+.tool-al-dhore-hati .al-story-skip[data-holding] span::after{clip-path:inset(0);transition:clip-path .6s linear}
 
 /* ---- HUD: corners only, above the field ---- */
 .tool-al-dhore-hati .al-hud{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;min-height:42px}
@@ -95,10 +98,10 @@
 .tool-al-dhore-hati .al-gust{position:absolute;top:42%;display:none;padding:3px 9px;border-radius:4px;background:#ffffffe6;color:#1d5f8a;font-size:13px;font-weight:700;pointer-events:none}
 .tool-al-dhore-hati .al-gust[data-side=left]{left:8px}
 .tool-al-dhore-hati .al-gust[data-side=right]{right:8px}
-.tool-al-dhore-hati .al-stage[data-edge=gust-left] .al-gust[data-side=left],.tool-al-dhore-hati .al-stage[data-edge=gust-right] .al-gust[data-side=right]{display:block;animation:gx-pop .25s ease-out both}
+.tool-al-dhore-hati .al-stage[data-edge=gust-left] .al-gust[data-side=left],.tool-al-dhore-hati .al-stage[data-edge=gust-right] .al-gust[data-side=right]{display:block;animation:al-pop .18s var(--ease) both}
 
 /* ---- the ready card: a level's one new thing, before the field starts ---- */
-.tool-al-dhore-hati .al-intro{position:absolute;inset:0;z-index:2;display:grid;place-content:center;gap:12px;padding:16px;background:#24301bd9;cursor:default;animation:al-fade .18s ease-out both}
+.tool-al-dhore-hati .al-intro{position:absolute;inset:0;z-index:2;display:grid;place-content:center;gap:12px;padding:16px;background:#24301bd9;cursor:default;animation:al-fade .18s var(--ease) both}
 .tool-al-dhore-hati .al-intro-body{display:flex;align-items:center;gap:14px;max-width:420px;padding:14px;border-radius:8px;background:var(--paper);color:var(--ink);box-shadow:5px 6px 0 #000a;animation:al-rise .24s var(--ease) both}
 .tool-al-dhore-hati .al-intro canvas{flex:none;display:block;border-radius:6px}
 .tool-al-dhore-hati .al-intro-text{display:grid;gap:4px;text-align:left}
@@ -106,7 +109,7 @@
 .tool-al-dhore-hati .al-intro-kicker{font-size:12px!important;font-weight:700;color:var(--muted)}
 .tool-al-dhore-hati .al-intro h2{margin:0;font-family:var(--font-display);font-size:22px;line-height:1.3}
 .tool-al-dhore-hati .al-intro h2 i{margin-left:8px;padding:0 8px;border-radius:2px;background:#c8323a;color:#fff;font-size:12px;font-style:normal;font-weight:700;vertical-align:middle}
-.tool-al-dhore-hati .al-go{justify-self:center;min-width:min(260px,80%);min-height:60px;padding:8px 24px;border:2px solid var(--accent-deep);border-radius:8px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:26px;font-weight:800;box-shadow:0 4px 0 var(--accent-deep);cursor:pointer;transition:transform .08s ease-out;animation:al-rise .24s var(--ease) .06s both}
+.tool-al-dhore-hati .al-go{justify-self:center;min-width:min(260px,80%);min-height:60px;padding:8px 24px;border:2px solid var(--accent-deep);border-radius:8px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:26px;font-weight:800;box-shadow:0 4px 0 var(--accent-deep);cursor:pointer;transition:transform .1s var(--ease);animation:al-rise .24s var(--ease) .06s both}
 .tool-al-dhore-hati .al-go:active{transform:translateY(3px);box-shadow:0 1px 0 var(--accent-deep)}
 
 /* ---- the end: a smaller field, the result under it ---- */
@@ -139,6 +142,7 @@
 .tool-al-dhore-hati .al-end-choices em{position:absolute;top:-9px;right:6px;padding:0 7px;border-radius:2px;background:var(--gold);color:var(--ink);font-size:10px;font-style:normal;font-weight:700;line-height:1.6}
 @keyframes al-rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes al-fade{from{opacity:0}to{opacity:1}}
+@keyframes al-pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
 .tool-al-dhore-hati .al-end-stats i{font-style:normal}
 
 /* ---- the level list ---- */
@@ -184,4 +188,6 @@
 }
 .tool-al-dhore-hati .al[data-slow] .al-intro,.tool-al-dhore-hati .al[data-slow] .al-intro-body,.tool-al-dhore-hati .al[data-slow] .al-go,.tool-al-dhore-hati .al[data-slow] .al-sheet,.tool-al-dhore-hati .al[data-slow] .al-title-start,.tool-al-dhore-hati .al[data-slow] .al-stage::after,.tool-al-dhore-hati .al[data-slow] .al-chip,.tool-al-dhore-hati .al[data-slow] .al-gust{animation:none!important}
 .tool-al-dhore-hati .al[data-slow] .al-chip{animation:al-chip-calm 1.8s linear both!important}
-@media(prefers-reduced-motion:reduce){.tool-al-dhore-hati .al-chip{animation:al-chip-calm 1.8s linear both!important}.tool-al-dhore-hati .al-title-start,.tool-al-dhore-hati .al-stage::after,.tool-al-dhore-hati .al-end,.tool-al-dhore-hati .al-intro,.tool-al-dhore-hati .al-intro-body,.tool-al-dhore-hati .al-go,.tool-al-dhore-hati .al-sheet{animation:none!important}.tool-al-dhore-hati .al-meter i,.tool-al-dhore-hati .al-feet li{transition:none}}
+.tool-al-dhore-hati .al[data-slow] .al-feet li,.tool-al-dhore-hati .al[data-slow] .al-meter i,.tool-al-dhore-hati .al[data-slow] .al-modes button,.tool-al-dhore-hati .al[data-slow] .al-go{transition:none!important}
+.tool-al-dhore-hati .al[data-slow] .al-feet li[data-gone]{transform:none}
+@media(prefers-reduced-motion:reduce){.tool-al-dhore-hati .al-chip{animation:al-chip-calm 1.8s linear both!important}.tool-al-dhore-hati .al-title-start,.tool-al-dhore-hati .al-stage::after,.tool-al-dhore-hati .al-end,.tool-al-dhore-hati .al-intro,.tool-al-dhore-hati .al-intro-body,.tool-al-dhore-hati .al-go,.tool-al-dhore-hati .al-sheet{animation:none!important}.tool-al-dhore-hati .al-meter i,.tool-al-dhore-hati .al-feet li{transition:none}.tool-al-dhore-hati .al-gust{animation:none!important}.tool-al-dhore-hati .al-feet li[data-gone]{transform:none}}

@@ -299,3 +299,9 @@ test("content meets the SEO limits, has at least six FAQs and stays clear of gam
   assert.doesNotMatch(copy, /টাকা জিত|বাজি|জুয়া|লটারি|আপনি|করুন/);
   assert.equal(copy, copy.normalize("NFC"));
 });
+
+test("the sack count read out never goes past the goal", async () => {
+  const { dropNews } = await import("../lib/words");
+  assert.ok(dropNews("good", 8, 7).includes("৭/৭"));
+  assert.ok(!dropNews("good", 8, 7).includes("৮/৭"));
+});

@@ -12,7 +12,7 @@ export function shout(verdict: Verdict, combo: number) {
 
 /** The sentence a screen reader hears after each drop. */
 export function dropNews(verdict: Verdict, sacks: number, goal: number) {
-  const load = goal ? `${bn(sacks)}/${bn(goal)}।` : `${sacksLabel(sacks)}।`;
+  const load = goal ? `${bn(Math.min(sacks, goal))}/${bn(goal)}।` : `${sacksLabel(sacks)}।`;
   if (verdict === "perfect") return `ঠিক মাঝে! ${load}`;
   if (verdict === "good") return `বসে গেছে। ${load}`;
   if (verdict === "wide") return `একটু সরে বসেছে। ${load}`;

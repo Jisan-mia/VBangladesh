@@ -1,5 +1,5 @@
 /* পাটি বুনি: the frame fills the stage over the four big buttons; the title, the end screen and সব পাটি sit over it. One palette per world (lib/art.ts). */
-.tool-pati-buni{--accent:#4f7a28;--accent-deep:#36561a;--ink:#2e2119;--muted:#6e5a46;--cane:#f3e6c4;--cane-edge:#d3b97c;--khoyeri:#8a3517;--cream:#fff4dc}
+.tool-pati-buni{--accent:#4f7a28;--accent-deep:#36561a;--ink:#2e2119;--muted:#6e5a46;--cane:#f3e6c4;--cane-edge:#d3b97c;--khoyeri:#8a3517;--cream:#fff4dc;--ease-out:cubic-bezier(.23,1,.32,1)}
 .tool-pati-buni .pb-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .pb-credit{max-width:680px;margin:0;padding:12px 14px;border-left:4px solid var(--accent);background:var(--cane);border-radius:0 10px 10px 0;font-size:15px;line-height:1.6}
 
@@ -28,28 +28,30 @@
 .pb-controls{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex:none;padding:0 6px 6px;touch-action:none}
 .pb[data-player] .pb-controls{padding:0 8px 8px}
 .pb-controls[data-off]{opacity:.45}
-.pb-key{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:66px;padding:0;border:0;border-radius:16px;background:var(--cane);color:var(--ink);font-size:15px;font-weight:700;box-shadow:0 4px 0 var(--cane-edge);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .05s}
+.pb-key{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:66px;padding:0;border:0;border-radius:16px;background:var(--cane);color:var(--ink);font-size:15px;font-weight:700;box-shadow:0 4px 0 var(--cane-edge);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .06s var(--ease-out)}
+.pb-key{position:relative}
 .pb-key:active{transform:translateY(3px);box-shadow:0 1px 0 var(--cane-edge)}
 .pb-key svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .pb-key[aria-label] svg{width:34px;height:34px;stroke-width:3}
-.pb-key[data-glow]{background:#ffe08a;box-shadow:0 4px 0 #c99a2e,0 0 0 4px #f2b63299;animation:pb-glow 1s ease-in-out infinite}
-@keyframes pb-glow{50%{box-shadow:0 4px 0 #c99a2e,0 0 0 8px #f2b63244}}
+.pb-key[data-glow]{background:#ffe08a;box-shadow:0 4px 0 #c99a2e}
+.pb-key[data-glow]::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:0 0 0 5px #f2b632aa;animation:pb-glow 1s ease-in-out infinite alternate} /* unslop-ignore: the lit ring says which button to press */
+@keyframes pb-glow{from{opacity:.35}to{opacity:1}}
 @media (max-height:700px){.pb-key{min-height:56px}}
 
 /* ---- the title ---- */
-.pb-start{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 16px 16px;overflow:auto;overscroll-behavior:contain;background:linear-gradient(#2e211900 0%,#2e2119b8 20%,#2e2119ea 100%);text-align:center;animation:pb-in .25s ease-out}
+.pb-start{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 16px 16px;overflow:auto;overscroll-behavior:contain;background:linear-gradient(#2e211900 0%,#2e2119b8 20%,#2e2119ea 100%);text-align:center;animation:pb-in .24s var(--ease-out)}
 .pb[data-look=night] .pb-start{background:linear-gradient(#0f142800 0%,#0f1428c0 20%,#0f1428ee 100%)}
 .pb-start[data-finale]{background:linear-gradient(#3a0f0a00 0%,#3a0f0ab8 20%,#2e2119ee 100%)}
-.pb-go{display:grid;justify-items:center;gap:0;width:min(100%,330px);padding:4px 8px 12px;border:0;border-radius:26px;background:none;color:var(--cream);font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1.1;transition:transform .1s ease-out}
+.pb-go{display:grid;justify-items:center;gap:0;width:min(100%,330px);padding:4px 8px 12px;border:0;border-radius:26px;background:none;color:var(--cream);font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1.1;transition:transform .12s var(--ease-out)}
 .pb-go-art{display:block;width:100%;height:clamp(120px,23vh,190px)}
-.pb-go span{margin-top:-4px;padding:6px 28px 8px;border-radius:999px;background:var(--accent);box-shadow:0 5px 0 var(--accent-deep),0 16px 30px -12px #000c}
+.pb-go span{margin-top:-4px;padding:6px 28px 8px;border-radius:12px;background:var(--accent);box-shadow:0 5px 0 var(--accent-deep),0 16px 30px -12px #000c}
 .pb[data-look=dusk] .pb-go span{background:#a4492b;box-shadow:0 5px 0 #5f240e,0 16px 30px -12px #000c}
 .pb[data-look=night] .pb-go span{background:#c98a1e;box-shadow:0 5px 0 #7a520e,0 16px 30px -12px #000c}
 .pb-go:active{transform:translateY(3px) scale(.98)}
 .pb-go:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
 .pb-pick{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;gap:6px;width:min(100%,380px)}
 .pb-pick-name h2{margin:0;font-family:var(--font-display);font-size:21px;font-weight:800;line-height:1.3;color:#fff}
-.pb-finale-badge{margin:0 auto 2px;padding:1px 10px;width:max-content;border-radius:999px;background:#c2361f;color:#fff;font-size:12px;font-weight:700}
+.pb-finale-badge{margin:0 auto 2px;padding:1px 10px;width:max-content;border-radius:4px;background:#c2361f;color:#fff;font-size:12px;font-weight:700}
 .pb-got{margin:0;color:var(--gold);font-size:15px;letter-spacing:2px}
 .pb-got span{color:#ffffff40}
 .pb-step{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid #fff4dc55;border-radius:14px;background:#ffffff14;color:var(--cream)}
@@ -73,8 +75,8 @@
 
 /* ---- the first-run story ---- */
 .pb-story{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;padding:16px 16px 18%;background:#2e211966;pointer-events:none}
-.pb-skip{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);margin:0;white-space:nowrap;padding:4px 10px;border-radius:999px;background:#2e2119a6;font-size:12px;font-weight:600}
-.pb-panel{max-width:340px;margin:0;padding:14px 18px;border:3px solid var(--cream);border-radius:6px;background:#fff4dc;color:var(--ink);font-family:var(--font-display);font-size:21px;font-weight:700;line-height:1.45;box-shadow:6px 6px 0 #2e2119;animation:pb-in .3s ease-out}
+.pb-skip{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);margin:0;white-space:nowrap;padding:4px 10px;border-radius:6px;background:#2e2119a6;font-size:12px;font-weight:600}
+.pb-panel{max-width:340px;margin:0;padding:14px 18px;border:3px solid var(--cream);border-radius:6px;background:#fff4dc;color:var(--ink);font-family:var(--font-display);font-size:21px;font-weight:700;line-height:1.45;box-shadow:6px 6px 0 #2e2119;animation:pb-in .26s var(--ease-out)}
 .pb-dots{display:flex;gap:6px;margin:0}
 .pb-dots i{width:8px;height:8px;border-radius:50%;background:#fff4dc55}
 .pb-dots i[data-on]{background:var(--cream)}
@@ -85,7 +87,7 @@
 .pb-cover .kit-primary{min-width:200px;min-height:56px;font-size:19px}
 
 /* ---- the end screen ---- */
-.pb-finish{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;overflow:auto;background:var(--panel);text-align:center;animation:pb-in .3s cubic-bezier(.2,.9,.3,1.1) both}
+.pb-finish{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;overflow:auto;background:var(--panel);text-align:center;animation:pb-in .26s var(--ease-out) both}
 .pb-finish h2{margin:0;font-family:var(--font-display);font-size:clamp(23px,7cqw,30px);font-weight:800;line-height:1.25;color:#fff}
 .pb-finish .gx-reveal{font-size:38px;gap:6px}
 .pb-nostar{margin:0;font-size:30px;letter-spacing:4px;color:#ffffff40}
@@ -106,8 +108,8 @@
 .tool-pati-buni .pb-see{min-height:44px;color:var(--cream);font-size:15px}
 
 /* ---- সব পাটি ---- */
-.pb-sheet{position:absolute;inset:0;z-index:4;display:grid;align-items:start;padding:8px;background:#0d0a0899;animation:pb-fade .16s ease-out}
-.pb-sheet-card{display:grid;gap:12px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:14px 12px 16px;border-radius:16px;background:var(--panel);box-shadow:0 20px 40px -20px #000c;animation:pb-in .2s ease-out}
+.pb-sheet{position:absolute;inset:0;z-index:4;display:grid;align-items:start;padding:8px;background:#0d0a0899;animation:pb-fade .16s var(--ease-out)}
+.pb-sheet-card{display:grid;gap:12px;max-height:100%;overflow:auto;overscroll-behavior:contain;padding:14px 12px 16px;border-radius:16px;background:var(--panel);box-shadow:0 20px 40px -20px #000c;animation:pb-in .2s var(--ease-out)}
 .pb-sheet header{position:relative;padding-right:52px}
 .pb-sheet h2{margin:0;font-family:var(--font-display);font-size:24px;color:#fff}
 .pb-sheet header p{margin:2px 0 0;font-size:13px;color:#f3dcc0}
@@ -120,7 +122,7 @@
 .pb-world button{position:relative;display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"key name stars" "key line line";align-items:center;column-gap:10px;row-gap:1px;width:100%;min-height:58px;padding:7px 10px;border:1.5px solid #fff4dc2a;border-radius:12px;background:#ffffff10;color:var(--cream);text-align:left}
 .pb-world button kbd{grid-area:key;display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#ffffff1c;font-family:inherit;font-size:13px;font-weight:700}
 .pb-row-name{grid-area:name;display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:15px}
-.pb-row-name em{padding:1px 8px;border-radius:999px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800}
+.pb-row-name em{padding:1px 8px;border-radius:4px;background:var(--gold);color:var(--ink);font-size:11px;font-style:normal;font-weight:800}
 .pb-row-line{grid-area:line;font-size:12.5px;line-height:1.4;color:#f3dcc0c0}
 .pb-row-stars{grid-area:stars;display:flex;font-size:13px;line-height:1}
 .pb-row-stars i{font-style:normal;color:#ffffff30}
@@ -145,6 +147,9 @@
 .pb-name input{border:1.5px solid var(--cane-edge);border-radius:12px;font-size:17px}
 .tool-pati-buni .kit-chips button[aria-pressed=true]{border-color:var(--accent);background:var(--accent)}
 
+/* press feedback on everything pressable (the four keys and the start button already have their own) */
+.pb-step,.pb-modes button,.pb-world button,.pb-badge,.pb-sheet-close,.pb .kit-secondary,.pb .kit-link{transition:transform .14s var(--ease-out)}
+.pb-step:not(:disabled):active,.pb-modes button:active,.pb-world button:not(:disabled):active,.pb-badge:active,.pb-sheet-close:active,.pb .kit-secondary:active{transform:scale(.97)}
 @keyframes pb-in{from{opacity:0;transform:translateY(10px)}}
 @keyframes pb-fade{from{opacity:0}}
 @media (max-height:640px){
@@ -153,5 +158,5 @@
   .pb-start{gap:6px}
 }
 /* ধীরে খেলো and reduced motion: no slides, no bounce, no pulse */
-.pb[data-calm] *{animation:none!important;transition:none!important}
-@media (prefers-reduced-motion:reduce){.pb *{animation:none!important;transition:none!important}}
+.pb[data-calm] *,.pb[data-calm] ::after{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){.pb *,.pb ::after{animation:none!important;transition:none!important}}

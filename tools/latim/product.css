@@ -103,10 +103,15 @@
 .tool-latim .lt-story-dots{display:flex;gap:6px}
 .tool-latim .lt-story-dots i{width:8px;height:8px;border-radius:50%;background:#ffffff40;transition:background-color 160ms ease}
 .tool-latim .lt-story-dots i[data-on=true]{background:var(--gold)}
-.tool-latim .lt-story-skip{position:absolute;right:10px;top:10px;z-index:1;display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border:0;border-radius:4px;background:#fff6e9;color:var(--ink);font-size:13px;font-weight:700;touch-action:none}
-.tool-latim .lt-story-skip span{width:14px;height:14px;border-radius:50%;background:conic-gradient(var(--accent) 0deg,#2b1d1233 0deg)}
-.tool-latim .lt-story-skip[data-holding] span{animation:lt-fill .6s linear forwards}
-@keyframes lt-fill{to{background:conic-gradient(var(--accent) 360deg,#2b1d1233 360deg)}}
+.tool-latim .lt-story-skip{position:absolute;right:10px;top:10px;z-index:1;display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border:0;border-radius:4px;background:#fff6e9;color:var(--ink);font-size:13px;font-weight:700;touch-action:none;transition:transform 120ms var(--ease-out)}
+/* hold to skip: a filled disc is revealed left to right over the track (clip-path, since gradients don't interpolate) */
+.tool-latim .lt-story-skip span{position:relative;width:14px;height:14px;border-radius:50%;background:#2b1d1233;overflow:hidden}
+.tool-latim .lt-story-skip span::after{content:"";position:absolute;inset:0;background:var(--accent);clip-path:inset(0 100% 0 0);transition:clip-path 200ms var(--ease-out)}
+.tool-latim .lt-story-skip[data-holding] span::after{clip-path:inset(0);transition:clip-path .6s linear}
+
+/* press feedback on the rest of the pressables */
+.tool-latim .lt-link,.tool-latim .lt-sheet-close,.tool-latim .lt-sheet-world button,.tool-latim .lt-story-panel,.tool-latim .lt-see{transition:transform 120ms var(--ease-out)}
+.tool-latim .lt-link:active,.tool-latim .lt-sheet-close:active,.tool-latim .lt-sheet-world button:not(:disabled):active,.tool-latim .lt-story-skip:active,.tool-latim .lt-see:active{transform:scale(.97)}
 
 /* ---- the level list ---- */
 .tool-latim .lt-sheet{position:absolute;inset:0;z-index:5;overflow:auto;padding:14px;border-radius:10px;background:#fffcf3;box-shadow:0 10px 40px #2b1d1240;overscroll-behavior:contain;animation:lt-sheet 220ms var(--ease-drawer)}

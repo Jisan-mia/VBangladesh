@@ -246,9 +246,9 @@ export function CraneGame() {
     drawFrame(c, sc, g);
     // The HUD's live parts, written straight to the DOM only when they change.
     const fill = g.def.clock > 0 ? Math.round((g.left / g.def.clock) * 100) : -1;
-    if (fill !== view.meter && meter.current) { view.meter = fill; meter.current.style.setProperty("--fill", `${Math.max(0, fill)}%`); }
+    if (fill !== view.meter && meter.current) { view.meter = fill; meter.current.style.setProperty("--fill", String(Math.max(0, fill) / 100)); }
     const load = g.def.goal ? Math.round(Math.min(1, scoreOf(g) / g.def.goal) * 100) : -1;
-    if (load !== view.line && line.current) { view.line = load; line.current.style.width = `${Math.max(0, load)}%`; }
+    if (load !== view.line && line.current) { view.line = load; line.current.style.transform = `scaleX(${Math.max(0, load) / 100})`; }
     const strain = strainOf(g), playing = g.phase !== "end" && g.phase !== "over";
     const tension = g.n > 1 ? g.xs[g.n - 1] - g.xs[0] + g.sway : 0;
     const edge = !playing ? "" : g.gustAt < 1 && g.def.gusts > 0 && g.started ? (g.gustSide > 0 ? "gust-left" : "gust-right") : strain > DANGER ? (tension > 0 ? "right" : "left") : "";

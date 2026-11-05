@@ -15,7 +15,7 @@
 
 /* ---- title: the pit is the start button ---- */
 .dn-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:8px 4px;text-align:center}
-.dn-start{display:grid;width:min(100%,400px);padding:0;overflow:hidden;border:3px solid var(--ink);border-radius:4px;background:var(--w-sky);color:var(--ink);box-shadow:0 8px 0 var(--ink);font:inherit;cursor:pointer;touch-action:manipulation;transition:transform 160ms var(--ease-out),box-shadow 160ms var(--ease-out)}
+.dn-start{display:grid;width:min(100%,400px);padding:0;overflow:hidden;border:3px solid var(--ink);border-radius:4px;background:var(--w-sky);color:var(--ink);box-shadow:0 8px 0 var(--ink);font:inherit;cursor:pointer;touch-action:manipulation;transition:transform 160ms var(--ease-out)}
 @media (hover:hover) and (pointer:fine){.dn-start:hover{transform:translateY(-3px);box-shadow:0 11px 0 var(--ink)}}
 .dn-start:active{transform:translateY(6px);box-shadow:0 2px 0 var(--ink)}
 .dn-start:focus-visible{outline:4px solid var(--w-accent);outline-offset:6px}
@@ -64,7 +64,7 @@
 .dn-under,.dn-rocks,.dn-dust,.dn-halo{pointer-events:none}
 .dn-lift{transform-box:fill-box;transform-origin:center}
 .dn-found .dn-lift{animation:dn-lift 420ms var(--ease-out) both}
-.dn-found-ring{fill:none;stroke:#fff;stroke-width:3;transform-box:fill-box;transform-origin:center;animation:dn-ring 520ms ease-out both}
+.dn-found-ring{fill:none;stroke:#fff;stroke-width:3;transform-box:fill-box;transform-origin:center;animation:dn-ring 520ms var(--ease-out) both}
 .dn-decoy{transform-box:fill-box;transform-origin:center}
 .dn-decoy-shown{animation:dn-bump 360ms var(--ease-out)}
 .dn-rock{transform-box:fill-box;transform-origin:50% 90%}
@@ -81,9 +81,9 @@
 .dn-placed .dn-hit{display:none}
 .dn-placed .dn-snap{transform-box:fill-box;transform-origin:center;animation:dn-snap 280ms var(--ease-out)}
 .dn-glow{fill:none;stroke:#e0a200;stroke-width:3;stroke-dasharray:7 5;animation:dn-pulse 1.4s ease-in-out infinite}
-.dn-bones-out{animation:dn-bones-out 260ms 380ms ease-out both}
+.dn-bones-out{animation:dn-bones-out 260ms 380ms var(--ease-out) both}
 .dn-flesh-in{transform-box:fill-box;transform-origin:50% 100%;animation:dn-flesh 520ms 340ms var(--ease-out) both}
-.dn-dust-ring{fill:none;stroke:#fff;stroke-width:2.5;transform-box:fill-box;transform-origin:center;opacity:0;animation:dn-dust-ring 560ms 380ms ease-out both}
+.dn-dust-ring{fill:none;stroke:#fff;stroke-width:2.5;transform-box:fill-box;transform-origin:center;opacity:0;animation:dn-dust-ring 560ms 380ms var(--ease-out) both}
 .dn-mouth{position:absolute;left:3%;top:4%;width:30%;aspect-ratio:1;animation:dn-appear 280ms 700ms var(--ease-out) both}
 .dn-banner{position:absolute;left:0;right:0;top:10px;width:max-content;max-width:92%;margin:0 auto;padding:2px 14px;background:var(--ink);color:#fff;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;text-align:center;pointer-events:none;animation:dn-banner 2600ms 400ms both}
 
@@ -108,14 +108,14 @@
 .dn-tally li{width:52px;height:44px;border:2px dashed var(--muted);border-radius:2px}
 .dn-tally li[data-on]{border:2px solid var(--ink);background:#fff;animation:dn-pop 260ms var(--ease-out)}
 .dn-tray{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;min-height:96px}
-.dn-bone{position:relative;width:96px;height:84px;padding:6px;border:2px solid var(--ink);border-radius:4px;background:var(--w-soft);box-shadow:0 4px 0 var(--ink);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 140ms var(--ease-out),box-shadow 140ms var(--ease-out)}
+.dn-bone{position:relative;width:96px;height:84px;padding:6px;border:2px solid var(--ink);border-radius:4px;background:var(--w-soft);box-shadow:0 4px 0 var(--ink);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 140ms var(--ease-out)}
 .dn-bone:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
 .dn-bone.picked{transform:translateY(-6px);outline:4px solid var(--w-accent);outline-offset:2px}
 .dn-bone:focus-visible,.dn-diet-button:focus-visible,.dn-go:focus-visible{outline:4px solid var(--w-accent);outline-offset:3px}
 .dn-key{display:none;position:absolute;left:6px;top:2px;font-size:16px;font-weight:800;line-height:1.3;color:var(--muted)}
 @media (hover:hover) and (pointer:fine){.dn-key{display:block}}
 .dn-diet{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.dn-diet-button{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px 6px;border:3px solid var(--ink);border-radius:4px;background:var(--w-soft);color:var(--ink);box-shadow:0 5px 0 var(--ink);font:inherit;line-height:1.5;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 140ms var(--ease-out),box-shadow 140ms var(--ease-out)}
+.dn-diet-button{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px 6px;border:3px solid var(--ink);border-radius:4px;background:var(--w-soft);color:var(--ink);box-shadow:0 5px 0 var(--ink);font:inherit;line-height:1.5;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 140ms var(--ease-out)}
 .dn-diet-button:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
 .dn-diet-button:disabled{opacity:.45;box-shadow:none;transform:translateY(4px);cursor:default}
 .dn-diet-button{position:relative}
@@ -140,7 +140,7 @@
 .dn-facts dt{font-weight:700;color:var(--muted)}
 .dn-facts dd{margin:0}
 .dn-wow{margin:0;padding:4px 10px;border-left:4px solid var(--w-accent);font-size:17px;font-weight:600;line-height:1.6}
-.dn-go{display:grid;flex:none;place-items:center;width:96px;height:96px;padding:0;border:0;border-radius:4px;background:var(--w-accent);box-shadow:0 6px 0 var(--w-deep);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out)}
+.dn-go{display:grid;flex:none;place-items:center;width:96px;height:96px;padding:0;border:0;border-radius:4px;background:var(--w-accent);box-shadow:0 6px 0 var(--w-deep);cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform 120ms var(--ease-out)}
 .dn-go:active{transform:translateY(5px);box-shadow:0 1px 0 var(--w-deep)}
 .dn-go svg{width:52px;height:52px;fill:#fff}
 
@@ -163,7 +163,7 @@
 .dn-end-news{font-size:18px;font-weight:700;line-height:1.6;color:var(--w-deep)}
 .dn-end-off{max-width:340px;font-size:17px;line-height:1.6;color:var(--muted)}
 .dn-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(340px,100%)}
-.dn-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:3px solid var(--ink);border-radius:4px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--ink);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out)}
+.dn-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:3px solid var(--ink);border-radius:4px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--ink);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform 120ms var(--ease-out)}
 .dn-big:active{transform:translateY(5px);box-shadow:0 1px 0 var(--ink)}
 .dn-big svg{width:48px;height:48px;fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
 .dn-big-done{background:#fff;color:var(--ink)}
@@ -194,8 +194,8 @@
 .dn-lcard-next{position:absolute;right:0;top:0;width:30px;height:30px;padding:5px;background:#e0a200;fill:var(--ink)}
 
 /* every pressable thing gives a little under the finger */
-.dn-lcard,.dn-chip,.dn-bookbtn,.dn-close,.dn-pages button{transition:transform 120ms var(--ease-out)}
-.dn-lcard:active,.dn-chip:active,.dn-bookbtn:active,.dn-close:active,.dn-pages button:not(:disabled):active{transform:scale(.97)}
+.dn-lcard,.dn-chip,.dn-bookbtn,.dn-close,.dn-pages button,.dn .kit-secondary,.dn-book .kit-secondary{transition:transform 120ms var(--ease-out)}
+.dn-lcard:active,.dn-chip:active,.dn-bookbtn:active,.dn-close:active,.dn-pages button:not(:disabled):active,.dn .kit-secondary:active,.dn-book .kit-secondary:active{transform:scale(.97)}
 
 /* the finder's book */
 .dn-book{position:fixed;inset:0;z-index:40;overflow:auto;background:#fff;color:var(--ink);padding:16px}
@@ -233,7 +233,7 @@
 @keyframes dn-grow{from{transform:scaleX(0)}to{transform:none}}
 @keyframes dn-bus{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
 @keyframes dn-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@keyframes dn-star{0%{transform:scale(.6) rotate(-20deg);opacity:0}100%{transform:none;opacity:1}}
+@keyframes dn-star{0%{transform:scale(.85) rotate(-12deg);opacity:0}100%{transform:none;opacity:1}}
 @keyframes dn-brush{0%,100%{transform:translate(-34px,8px)}50%{transform:translate(12px,0)}}
 .dn-wobble.dn-w0{animation:dn-wobble0 .32s var(--ease-out)}
 .dn-wobble.dn-w1{animation:dn-wobble1 .32s var(--ease-out)}
