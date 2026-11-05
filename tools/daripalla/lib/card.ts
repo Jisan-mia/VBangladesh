@@ -1,5 +1,5 @@
 import { cardSizes, drawFooterBand, fitText, renderCard } from "../../../shared/card-canvas";
-import { cardLines, type Today } from "./game";
+import { cardLines, type Today } from "./text";
 
 const colors = { bg: "#fbf1de", ink: "#3a2a1a", muted: "#7a6450", accent: "#9a4b12", wood: "#9a6a2c", woodDark: "#7a5222", iron: "#555b66", ironTop: "#6b7280", string: "#8a5d22", pan: "#c9a46a", slate: "#2f3b34", chalk: "#fff8e6", band: "#3a2316", ask: "#ffd166" };
 export const CARD_ASK = "বাজারে দোকানির পাল্লাটা একসাথে দেখো।";

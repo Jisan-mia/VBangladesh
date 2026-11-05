@@ -1,0 +1,101 @@
+---
+title: "দﬂ°°2494¶ßﬂ°°2433¶ßডﬂ°°2492¶ßﬂ°°2495¶ßপﬂ°°2494¶ßলﬂ°°2509¶ßলﬂ°°2494¶ß: the pans, the round, the level list, the rest screen and you"
+---
+stateDiagram-v2
+  direction LR
+  state "Legend" as legend {
+    lg0: play
+  }
+  class lg0 teal
+  state "At the same time" as all {
+    state "Shop" as r0 {
+      s0: Title: the shop is the start button
+      s1: Level list: leave this round? (থ#2494;ক#2495;, চল#2507;)
+      s2: First pan: tipped, add weights
+      s3: First pan level, holding
+      s4: First pan: level, holding before the question
+      s5: First pan level, পর#2503;র প#2494;ল#2509;ল#2494; shows
+      s6: Last pan: tipped, add weights
+      s7: First pan: level, what does the fruit weigh?
+      s8: Last pan level, round won and saved, resting a moment
+      s9: End page: stars, counts, আব#2494;র খ#2503;ল#2507;, শ#2503;ষ
+      s10: Last pan: level, holding before the question
+      s11: Last pan: level, what does the fruit weigh?
+      [*] --> s0
+      s0 --> s1: you open the level list [when Rest is Time left today]
+      s0 --> s2: you press খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507; [when Rest is Time left today]
+      s1 --> s0: the page reloads
+      s1 --> s0: you go back from the list [when Rest is Time left today]
+      s1 --> s2: you pick a level card or you press চল#2507; [when Rest is Time left today]
+      s2 --> s0: the page reloads [when You is not Looking away]
+      s2 --> s1: you open the level list [when You is Here]
+      s2 --> s3: you tap a weight, it flies onto the pan [when You is Here]
+      s1 --> s2: you go back from the list [when Rest is not Rest flag up]
+      s2 --> s4: you tap a weight, it flies onto the pan [when Rest is Time left today and You is Here]
+      s3 --> s0: the page reloads [when You is not Looking away]
+      s3 --> s1: you open the level list [when You is Here]
+      s3 --> s5: the level pan holds, then পর#2503;র প#2494;ল#2509;ল#2494; shows [when You is Here]
+      s4 --> s0: the page reloads [when You is not Looking away]
+      s4 --> s7: after a short hold the numbers show [when You is Here]
+      s1 --> s3: you go back from the list [when Rest is not Rest flag up]
+      s5 --> s0: the page reloads [when You is not Looking away]
+      s5 --> s6: you press পর#2503;র প#2494;ল#2509;ল#2494; [when You is Here]
+      s5 --> s1: you open the level list [when You is Here]
+      s6 --> s0: the page reloads [when You is not Looking away]
+      s6 --> s8: you tap a weight, it flies onto the pan [when You is Here]
+      s6 --> s1: you open the level list [when You is Here]
+      s7 --> s0: the page reloads [when You is not Looking away]
+      s7 --> s3: you tap a number [when You is Here]
+      s1 --> s5: you go back from the list [when Rest is not Rest flag up]
+      s8 --> s0: the page reloads [when You is not Looking away]
+      s8 --> s1: you open the level list [when You is Here]
+      s8 --> s9: a moment later the end page comes [when You is Here]
+      s1 --> s6: you go back from the list [when Rest is not Rest flag up]
+      s1 --> s8: you go back from the list [when Rest is not Rest flag up]
+      s9 --> s0: the page reloads
+      s9 --> s2: you press আব#2494;র খ#2503;ল#2507; [when Rest is Time left today]
+      s9 --> s0: you press শ#2503;ষ [when Rest is not Rest flag up]
+      s6 --> s10: you tap a weight, it flies onto the pan [when Rest is Time left today and You is Here]
+      s10 --> s0: the page reloads [when You is not Looking away]
+      s10 --> s11: after a short hold the numbers show [when You is Here]
+      s11 --> s0: the page reloads [when You is not Looking away]
+      s11 --> s8: you tap a number [when You is Here]
+    }
+    --
+    state "Rest" as r1 {
+      s12: Time left today
+      s13: Today's minutes are up
+      s14: Rest flag up
+      [*] --> s12
+      s12 --> s13: today's minutes run out [when Shop is none of First pan: level, holding before the question, First pan: level, what does the fruit weigh?, Last pan: level, holding before the question, Last pan: level, what does the fruit weigh? and You is Here]
+      s13 --> s14: the page reloads
+      s13 --> s14: you press খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507; [when Shop is Title: the shop is the start button]
+      s13 --> s14: you pick a level card [when Shop is Level list: leave this round? (থ#2494;ক#2495;, চল#2507;)]
+      s13 --> s14: you tap a weight, it flies onto the pan [when Shop is Last pan: tipped, add weights]
+      s13 --> s14: you press আব#2494;র খ#2503;ল#2507; [when Shop is End page: stars, counts, আব#2494;র খ#2503;ল#2507;, শ#2503;ষ]
+    }
+    --
+    state "You" as r2 {
+      s15: Here
+      s16: Menu open
+      s17: Looking away
+      [*] --> s15
+      s15 --> s16: the pause menu opens [when Shop is none of End page: stars, counts, আব#2494;র খ#2503;ল#2507;, শ#2503;ষ, Level list: leave this round? (থ#2494;ক#2495;, চল#2507;), Title: the shop is the start button and Rest is Time left today]
+      s15 --> s17: you look away [when Shop is none of End page: stars, counts, আব#2494;র খ#2503;ল#2507;, শ#2503;ষ, Level list: leave this round? (থ#2494;ক#2495;, চল#2507;), Title: the shop is the start button and Rest is Time left today]
+      s16 --> s15: the page reloads or you press চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+      s16 --> s17: you look away
+      s17 --> s16: you come back
+      s17 --> s15: you come back
+    }
+  }
+  class s2 teal
+  class s3 teal
+  class s4 teal
+  class s5 teal
+  class s6 teal
+  class s7 teal
+  class s8 teal
+  class s10 teal
+  class s11 teal
+  class s16 teal
+  class s17 teal
