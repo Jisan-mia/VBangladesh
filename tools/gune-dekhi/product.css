@@ -1,119 +1,201 @@
-.tool-gune-dekhi{--accent:#0f7c78;--accent-deep:#0a5552;--ink:#1f3a3d;--muted:#566e70;--paper:#eef7f4;--water:#bfe6e8;--water-deep:#4fa9b2;--glow:#ffd166}
-.tool-gune-dekhi .gd-page{color:var(--ink)}
+.tool-gune-dekhi{--accent:#0f7c78;--accent-deep:#0a5552;--ink:#1f3a3d;--muted:#566e70;--paper:#eef7f4;--glow:#ffd166}
 
-.tool-gune-dekhi .gd-hero{padding:8px 0 2px}
-.tool-gune-dekhi .gd-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,40px);line-height:1.4;font-weight:800}
-.tool-gune-dekhi .gd-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
+/* ---- the game fills the player's stage, from the top: HUD, one question, the field, the answers ---- */
+.tool-gune-dekhi .gp-game{min-height:100%}
+.gd{--ease-out:cubic-bezier(.23,1,.32,1);--ease-in-out:cubic-bezier(.77,0,.175,1);
+  --w-accent:#0f7c78;--w-deep:#0a5552;--w-soft:#e4f4f2;--w-edge:#b6dedb;--water:#bfe6e8;--water-top:#dff4f4;--water-deep:#4fa9b2;
+  position:relative;display:flex;flex-direction:column;justify-content:flex-start;gap:10px;width:100%;max-width:520px;min-height:calc(var(--stage-h,640px) - 8px);margin:0 auto;color:var(--ink)}
+.gd[data-world="1"]{--w-accent:#b5541b;--w-deep:#7d3510;--w-soft:#fff1d6;--w-edge:#f0d3a2;--water:#ffe3a6;--water-top:#fff3d2;--water-deep:#d99a2b}
+.gd[data-world="2"]{--w-accent:#3b4fa0;--w-deep:#25326e;--w-soft:#e8ecfb;--w-edge:#bcc6ee;--water:#c9d4f4;--water-top:#e6ebfb;--water-deep:#6b7fcf}
+.gd-defs{position:absolute;width:0;height:0;overflow:hidden}
+:where(.gd button){font:inherit;color:inherit;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
 
-.tool-gune-dekhi .gd{display:grid;gap:12px;max-width:520px;margin-top:8px}
+/* ---- title: the world's own picture is the start button ---- */
+.gd-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:flex-start;gap:14px;padding:8px 4px;text-align:center}
+.gd-start{display:grid;justify-items:center;gap:0;width:min(100%,400px);padding:12px 12px 16px;border:0;border-radius:14px;background:var(--w-soft);box-shadow:inset 0 0 0 3px var(--w-edge),0 8px 0 var(--w-edge);cursor:pointer;transition:transform 140ms var(--ease-out),box-shadow 140ms var(--ease-out)}
+.gd-start:active{transform:translateY(4px) scale(.98);box-shadow:inset 0 0 0 3px var(--w-edge),0 3px 0 var(--w-edge)}
+.gd-start:focus-visible,.gd-chip:focus-visible,.gd-big:focus-visible,.gd-tile:focus-visible,.gd-fish:focus-visible,.gd-pond:focus-visible,.gd-cover:focus-visible,.gd-card:focus-visible{outline:4px solid var(--w-accent);outline-offset:4px}
+.gd-title-art{position:relative;display:block;width:100%;height:clamp(190px,calc(var(--stage-h,640px) - 380px),300px);border-radius:10px;background:radial-gradient(120% 90% at 30% 20%,var(--water-top),var(--water) 60%);box-shadow:inset 0 0 0 4px var(--water-deep);overflow:hidden}
+.gd-title-fish{position:absolute;display:block;width:30%;animation:gd-bob 3.2s ease-in-out infinite}
+.gd-title-fish svg{display:block;width:100%;height:auto}
+.gd-title-fish b{position:absolute;top:-12px;left:50%;display:grid;place-items:center;min-width:36px;height:36px;padding:0 4px;border-radius:18px;background:var(--w-accent);color:#fff;font-family:var(--font-display);font-size:24px;line-height:1;transform:translateX(-50%)}
+.gd-title-fair{display:grid;place-items:center}
+.gd-title-die{display:block;width:46%}
+.gd-title-die .gd-pattern{width:100%}
+.gd-title-cover{position:absolute;right:8%;bottom:6%;font-family:var(--font-display);font-size:64px;font-weight:800;line-height:1;color:#fffc}
+.gd-title-two{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:18px}
+.gd-title-pond{display:grid;grid-template-columns:repeat(2,1fr);align-content:center;gap:4px;padding:8px;border-radius:10px;background:#ffffff66;box-shadow:inset 0 0 0 3px var(--water-deep)}
+.gd-title-pond svg{width:100%;height:auto}
+.gd-start-go{display:inline-flex;align-items:center;gap:10px;margin-top:-26px;padding:8px 34px 8px 24px;border-radius:8px;background:var(--w-accent);color:#fff;font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.5;box-shadow:0 5px 0 var(--w-deep);position:relative}
+.gd-start-go svg{width:32px;height:32px;fill:#fff}
+.gd-chip{display:flex;align-items:center;gap:12px;min-height:64px;max-width:100%;padding:6px 14px 6px 12px;border:2px solid var(--w-edge);border-radius:10px;background:#fff;text-align:left;cursor:pointer;transition:transform 120ms var(--ease-out)}
+.gd-chip:active{transform:scale(.97)}
+.gd-chip b{display:block;font-family:var(--font-display);font-size:18px;line-height:1.5}
+.gd-chip small{display:block;font-size:16px;line-height:1.4;color:var(--muted)}
+.gd-chip-more svg{display:block;width:22px;height:22px;fill:none;stroke:var(--muted);stroke-width:2.2;stroke-linecap:round}
+.gd-title-line{display:flex;align-items:center;justify-content:center;gap:10px;margin:0;font-size:18px;line-height:1.6;color:var(--muted)}
+.gd-title-line .gd-dotrow i{background:var(--w-accent);width:10px}
+.gd-grown{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px}
+.gd-grown .kk-gate-open>div{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
 
-/* the three games: big picture tabs */
-.tool-gune-dekhi .gd-modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.tool-gune-dekhi .gd-modes button{display:grid;justify-items:center;align-content:center;gap:2px;min-height:96px;padding:6px 4px;border:3px solid #d5e8e4;border-radius:16px;background:#fff;color:var(--ink);font:inherit;font-size:16px;font-weight:700;line-height:1.5;cursor:pointer;touch-action:manipulation;transition:transform .08s}
-.tool-gune-dekhi .gd-modes button[aria-pressed=true]{border-color:var(--accent);background:var(--paper)}
-.tool-gune-dekhi .gd-modes button:active{transform:scale(.95)}
-.tool-gune-dekhi .gd-mode-icon{position:relative;display:flex;align-items:center;justify-content:center;gap:4px;width:64px;height:44px}
-.tool-gune-dekhi .gd-mode-icon>svg{width:56px;height:auto}
-.tool-gune-dekhi .gd-mode-icon>b{position:absolute;top:-6px;right:-2px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:15px;line-height:1}
-.tool-gune-dekhi .gd-mode-icon .gd-pattern{width:42px;height:42px;border-width:2px;border-radius:9px}
-.tool-gune-dekhi .gd-two i{display:grid;gap:2px;width:28px;padding:3px;border-radius:8px;background:var(--water)}
-.tool-gune-dekhi .gd-two svg{width:100%;height:auto}
+/* ---- world pictures ---- */
+.gd-wicon{position:relative;display:flex;flex:none;align-items:center;justify-content:center;gap:3px;width:52px;height:38px}
+.gd-wicon>svg{width:46px;height:auto}
+.gd-wicon .gd-pattern{width:38px;height:38px;border-width:2px;border-radius:9px}
+.gd-two i{display:grid;gap:2px;width:24px;padding:3px;border-radius:8px;background:var(--water)}
+.gd-two svg{width:100%;height:auto}
 
-.tool-gune-dekhi .gd-play{position:relative;display:grid;gap:10px;padding:10px 10px 12px;border-radius:18px;background:var(--paper)}
-.tool-gune-dekhi .gd-top{display:flex;align-items:center;gap:8px;min-width:0}
-.tool-gune-dekhi .gd-level{flex:1;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;line-height:1.6}
-.tool-gune-dekhi .gd-level b{font-family:var(--font-display)}
-.tool-gune-dekhi .gd-level span{color:var(--muted)}
-.tool-gune-dekhi .gd-dots{display:flex;gap:6px;margin:0;padding:0;list-style:none}
-.tool-gune-dekhi .gd-dots li{width:10px;height:10px;border-radius:50%;background:#cfe0dc}
-.tool-gune-dekhi .gd-dots .done{background:var(--accent)}
-.tool-gune-dekhi .gd-dots .now{background:var(--accent);box-shadow:0 0 0 3px #0f7c7840}
-.tool-gune-dekhi .gd-pill{flex:none;min-height:44px;padding:6px 12px;border:1.5px solid var(--ink);border-radius:999px;background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:700;cursor:pointer}
-.tool-gune-dekhi .gd-pill[aria-pressed=true]{background:var(--ink);color:#fff}
-.tool-gune-dekhi .gd-q{display:flex;align-items:center;gap:10px;margin:0;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.6;color:var(--accent-deep)}
-.tool-gune-dekhi .gd-q .kk-speak{flex:none}
+/* ---- HUD: the level badge top-left, the five ponds top-right ---- */
+.gd-hud{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px}
+.gd-badge{display:flex;align-items:center;gap:8px;margin:0;padding:2px 12px 2px 8px;border-radius:8px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--w-edge)}
+.gd-badge b{display:block;font-family:var(--font-display);font-size:16px;line-height:1.4}
+.gd-badge small{display:block;font-size:14px;line-height:1.3;color:var(--muted)}
+.gd-dots{display:flex;gap:7px;margin:0;padding:0;list-style:none}
+.gd-dots li{width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 2px var(--w-edge);transition:background-color 200ms ease,box-shadow 200ms ease}
+.gd-dots .done{background:var(--w-accent);box-shadow:inset 0 0 0 2px var(--w-accent)}
+.gd-dots .now{box-shadow:inset 0 0 0 3px var(--w-accent)}
+.gd-q{margin:0;min-height:1.6em;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.6;color:var(--w-deep)}
+.gd-msg{min-height:1.6em;margin:0;font-size:18px;line-height:1.6;color:var(--muted)}
 
-/* the pond: each fish a big button in its own grid cell */
-.tool-gune-dekhi .gd-pond{position:relative;display:block;width:100%;padding:0;overflow:hidden;border:4px solid var(--water-deep);border-radius:28px;background:radial-gradient(120% 90% at 30% 20%,#dff4f4,var(--water) 60%,#a6d9dc);font:inherit;color:var(--ink);touch-action:manipulation}
-.tool-gune-dekhi .gd-count{height:min(calc(var(--rows) * 92px),380px)}
-.tool-gune-dekhi .gd-fish{position:absolute;display:grid;place-items:center;width:calc(100% / var(--cols));height:calc(100% / var(--rows));padding:0;border:0;background:none;cursor:pointer;transform:translate(-50%,-50%);-webkit-tap-highlight-color:transparent}
-.tool-gune-dekhi .gd-fish .gd-fish-art{width:min(78%,88px);height:auto;transition:transform .12s}
-.tool-gune-dekhi .gd-fish:active .gd-fish-art{transform:scale(.9)}
-.tool-gune-dekhi .gd-fish.is-on .gd-fish-art{filter:drop-shadow(0 0 0 #fff) drop-shadow(0 0 5px #fff)}
-.tool-gune-dekhi .gd-badge{position:absolute;top:2px;left:50%;display:grid;place-items:center;min-width:34px;height:34px;padding:0 4px;border-radius:17px;background:var(--accent);color:#fff;font-family:var(--font-display);font-size:22px;line-height:1;transform:translateX(-50%);animation:gd-pop .3s ease-out}
-.tool-gune-dekhi .gd-badge.is-last{background:var(--glow);color:var(--ink);animation:gd-pulse 1.4s ease-in-out infinite}
-.tool-gune-dekhi .gd-swim .gd-fish-art{animation:gd-in .5s ease-out both;animation-delay:inherit}
+/* ---- the field: one entrance per pond, its fish are simply there ---- */
+.gd-field{animation:gd-enter 220ms var(--ease-out) both}
+.gd-pond{position:relative;display:block;width:100%;padding:0;overflow:hidden;border:4px solid var(--water-deep);border-radius:18px;background:radial-gradient(120% 90% at 30% 20%,var(--water-top),var(--water) 60%)}
+.gd-count{height:clamp(220px,min(calc(var(--rows) * 92px),calc(var(--stage-h,640px) - 300px)),400px)}
+.gd-fish{position:absolute;display:grid;place-items:center;width:calc(100% / var(--cols));height:calc(100% / var(--rows));padding:0;border:0;background:none;cursor:pointer;transform:translate(-50%,-50%)}
+.gd-swim{display:block;animation:gd-bob 3s ease-in-out infinite}
+.gd-fish .gd-fish-art{display:block;width:min(78%,88px);height:auto;margin:0 auto;transition:transform 120ms var(--ease-out)}
+.gd-fish:active .gd-fish-art{transform:scale(.94)}
+.gd-fish.is-on .gd-swim{animation:gd-hop 220ms var(--ease-out) 1 both}
+.gd-fish.is-on .gd-fish-art{filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff)}
+.gd-ring{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border:3px solid #fff;border-radius:50%;opacity:0;pointer-events:none;animation:gd-ring 450ms var(--ease-out) both}
+.gd-badge-n{position:absolute;top:50%;left:50%;display:grid;place-items:center;min-width:36px;height:36px;padding:0 5px;border-radius:18px;background:var(--w-accent);color:#fff;font-family:var(--font-display);font-size:24px;line-height:1;transform:translate(-50%,-50%);animation:gd-pop 200ms var(--ease-out) both}
+.gd-badge-n.is-last{background:var(--glow);color:var(--ink);animation:gd-pop 200ms var(--ease-out) both,gd-pulse 1.4s ease-in-out 300ms infinite}
+.gd-count.is-cheer .gd-badge-n{animation:gd-cheer 260ms var(--ease-out) calc(min(var(--i),6) * 40ms) both}
 
-/* which has more: two ponds side by side, the whole pond is the button */
-.tool-gune-dekhi .gd-ponds{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.tool-gune-dekhi .gd-small{height:250px;cursor:pointer;transition:transform .08s}
-.tool-gune-dekhi .gd-small:active{transform:scale(.97)}
-.tool-gune-dekhi .gd-small>span{position:absolute;width:var(--fish);transform:translate(-50%,-50%);transition:left .4s ease,top .4s ease}
-.tool-gune-dekhi .gd-small svg{display:block;width:100%;height:auto}
-.tool-gune-dekhi .gd-small .is-extra{filter:drop-shadow(0 0 4px var(--glow)) drop-shadow(0 0 4px var(--glow))}
-.tool-gune-dekhi .gd-pond.is-right{border-color:var(--accent-deep);box-shadow:0 0 0 4px #0f7c7855}
-.tool-gune-dekhi .gd-pond.is-glow{animation:gd-glow 1.4s ease-in-out infinite}
+/* which has more, and the merge finale: ponds side by side, the whole pond is the button */
+.gd-ponds{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.gd-small{height:clamp(190px,calc(var(--stage-h,640px) - 380px),260px);transition:transform 240ms var(--ease-in-out),border-radius 240ms var(--ease-in-out),box-shadow 160ms ease}
+button.gd-small{cursor:pointer}
+button.gd-small:active{transform:scale(.97)}
+.gd-spot{position:absolute;width:var(--fish);transform:translate(-50%,-50%);transition:left 300ms var(--ease-in-out),top 300ms var(--ease-in-out)}
+.gd-spot svg{display:block;width:100%;height:auto}
+.gd-small .is-extra{filter:drop-shadow(0 0 2px var(--glow)) drop-shadow(0 0 2px var(--glow))}
+.gd-pond.is-right{border-color:var(--w-deep);box-shadow:0 0 0 4px #ffffffaa,0 0 0 8px var(--w-accent)}
+.gd-pond.is-glow,.gd-tile.is-glow{outline:4px solid var(--glow);outline-offset:3px}
+.gd-pond.is-glow::after,.gd-tile.is-glow::after{content:"";position:absolute;inset:0;border:4px solid var(--glow);border-radius:inherit;pointer-events:none;animation:gd-hint 1.4s ease-in-out infinite}
+.gd-sum{position:absolute;left:50%;top:50%;display:grid;place-items:center;min-width:56px;height:56px;padding:0 8px;border-radius:28px;background:#fff;color:var(--w-deep);font-family:var(--font-display);font-size:36px;font-weight:800;line-height:1;box-shadow:0 0 0 4px var(--w-accent);transform:translate(-50%,-50%)}
+.gd-ponds.is-joined .gd-small:first-child{transform:translateX(8px);border-radius:18px 0 0 18px;border-right-width:0}
+.gd-ponds.is-joined .gd-small:nth-child(2){transform:translateX(-8px);border-radius:0 18px 18px 0;border-left-width:0}
+.gd-ponds.is-joined .gd-sum{animation:gd-pop-center 220ms var(--ease-out) both}
 
-/* at a glance: the flashed group, then a cover */
-.tool-gune-dekhi .gd-look{display:flex;align-items:center;justify-content:center;gap:16px;height:210px;border:4px solid var(--water-deep);border-radius:28px;background:var(--water)}
-.tool-gune-dekhi .gd-pattern{position:relative;flex:none;width:min(170px,40vw);aspect-ratio:1}
-.tool-gune-dekhi .gd-look .gd-pattern+.gd-pattern{width:min(130px,36vw)}
-.tool-gune-dekhi .gd-pattern span{position:absolute;display:block;width:30%;transform:translate(-50%,-50%)}
-.tool-gune-dekhi .gd-pattern svg{display:block;width:100%;height:auto}
-.tool-gune-dekhi .gd-pattern.gd-look-dots span{width:20%;aspect-ratio:1;border-radius:50%;background:#e2574c}
-.tool-gune-dekhi .gd-pattern.gd-look-dice{border:3px solid var(--ink);border-radius:18%;background:#fff}
-.tool-gune-dekhi .gd-pattern.gd-look-dice span{width:18%;aspect-ratio:1;border-radius:50%;background:var(--ink)}
-.tool-gune-dekhi .gd-cover{font-family:var(--font-display);font-size:96px;font-weight:800;line-height:1;color:#ffffffcc}
-.tool-gune-dekhi .gd-again{min-height:64px;font-size:20px}
+/* at a glance: the flashed group, then a cover you tap to look again */
+.gd-glimpse{display:grid}
+.gd-look{display:flex;align-items:center;justify-content:center;gap:12px;height:clamp(190px,calc(var(--stage-h,640px) - 380px),240px);border:4px solid var(--water-deep);border-radius:18px;background:var(--water);animation:gd-fade 160ms ease-out both}
+.gd-group{display:flex;align-items:center;gap:12px}
+.gd-plus{font-family:var(--font-display);font-size:40px;font-style:normal;font-weight:800;line-height:1;color:var(--w-deep)}
+.gd-pattern{position:relative;display:block;flex:none;width:min(170px,40vw);aspect-ratio:1}
+.gd-look .gd-group+.gd-group .gd-pattern,.gd-look .gd-group:first-child:not(:only-child) .gd-pattern{width:min(120px,30vw)}
+.gd-pattern span{position:absolute;display:block;width:30%;transform:translate(-50%,-50%)}
+.gd-pattern svg{display:block;width:100%;height:auto}
+.gd-pattern.gd-look-dots span{width:20%;aspect-ratio:1;border-radius:50%;background:#e2574c}
+.gd-pattern.gd-look-dice{border:3px solid var(--ink);border-radius:18%;background:#fff}
+.gd-pattern.gd-look-dice span{width:18%;aspect-ratio:1;border-radius:50%;background:var(--ink)}
+.gd-cover{position:relative;cursor:pointer;color:#fff;transition:transform 120ms var(--ease-out)}
+.gd-cover:active{transform:scale(.98)}
+.gd-cover-q{font-family:var(--font-display);font-size:96px;font-weight:800;line-height:1;color:var(--w-accent);opacity:.55}
+.gd-eye{position:absolute;right:16px;bottom:14px;width:48px;height:48px;fill:none;stroke:var(--w-deep);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 
 /* answers: three big tiles in counting order */
-.tool-gune-dekhi .gd-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.tool-gune-dekhi .gd-tile{position:relative;display:grid;place-items:center;min-height:96px;padding:6px;border:3px solid #cfe3e0;border-radius:18px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation;transition:transform .08s}
-.tool-gune-dekhi .gd-tile b{font-family:var(--font-display);font-size:60px;line-height:1.2}
-.tool-gune-dekhi .gd-tile:active{transform:scale(.94)}
-.tool-gune-dekhi .gd-tile.is-glow{border-color:var(--glow);animation:gd-glow 1.4s ease-in-out infinite}
-.tool-gune-dekhi .gd-tile.is-right{border-color:var(--accent);background:var(--accent);color:#fff}
-.tool-gune-dekhi .gd-tile.is-right .gd-dotrow i{background:#fff}
-.tool-gune-dekhi .gd-tile:has(.gd-dotrow){padding:2px}
-.tool-gune-dekhi .gd-dotrow{display:flex;justify-content:center;gap:3px}
-.tool-gune-dekhi .gd-dotrow i{width:clamp(10px,3.2vw,16px);aspect-ratio:1;border-radius:50%;background:var(--accent)}
-.tool-gune-dekhi .gd-msg{min-height:1.6em;margin:0;font-size:18px;line-height:1.6;color:var(--muted)}
+.gd-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.gd-no-tiles{min-height:0}
+.gd-tile{position:relative;display:grid;place-items:center;min-height:96px;padding:6px;border:3px solid var(--w-edge);border-radius:10px;background:#fff;box-shadow:0 5px 0 var(--w-edge);cursor:pointer;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out),background-color 200ms ease,color 200ms ease}
+.gd-tile b{font-family:var(--font-display);font-size:60px;line-height:1.2}
+.gd-tile:active{transform:translateY(3px) scale(.97);box-shadow:0 2px 0 var(--w-edge)}
+.gd-tile.is-empty{border-style:dashed;background:transparent;box-shadow:none;opacity:.55}
+.gd-tiles.is-wait .gd-tile{pointer-events:none}
+.gd-key{position:absolute;left:10px;top:6px;font-size:16px;font-weight:700;line-height:1;color:var(--muted);opacity:.7}
+.gd-tile.is-right{border-color:var(--w-accent);background:var(--w-accent);color:#fff}
+.gd-tile.is-right .gd-key{color:#fff}
+.gd-tile.is-right .gd-dotrow i{background:#fff}
+.gd-dotrow{display:flex;flex-wrap:wrap;justify-content:center;gap:3px}
+.gd-dotrow i{width:clamp(10px,3.2vw,16px);aspect-ratio:1;border-radius:50%;background:var(--w-accent)}
 
-.tool-gune-dekhi .gd-ghost{position:absolute;z-index:3;left:52%;top:40%;width:44px;height:55px;pointer-events:none;filter:drop-shadow(0 2px 2px #0004);animation:gd-tap 1.4s ease-in-out infinite}
+.gd-ghost{position:absolute;z-index:3;left:52%;top:40%;width:44px;height:58px;pointer-events:none;filter:drop-shadow(0 2px 2px #0004);animation:gd-tap 1.4s ease-in-out infinite}
+.gd-ripple{fill:var(--w-accent);opacity:0;animation:gd-rip 1.4s ease-out infinite}
 
-.tool-gune-dekhi .gd-over{position:absolute;inset:0;z-index:5;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px 24px;border-radius:18px;background:var(--paper);text-align:center}
-.tool-gune-dekhi .gd-over .gx-stars{font-size:40px}
-.tool-gune-dekhi .gd-end-line{margin:0;font-family:var(--font-display);font-size:22px;font-weight:800;line-height:1.6}
-.tool-gune-dekhi .gd-end-note{margin:0;font-size:18px;line-height:1.6}
-.tool-gune-dekhi .gd-end-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:min(340px,calc(100vw - 80px))}
-.tool-gune-dekhi .gd-end-actions button{width:100%;min-height:72px;padding-inline:6px;font-size:clamp(17px,5.4vw,20px)}
+/* ---- end of a round: stars, counts ticking up, a task off the screen, two picture buttons ---- */
+.gd-end{display:grid;justify-items:center;gap:12px;padding:8px 0;text-align:center;animation:gd-enter 220ms var(--ease-out) both}
+.gd-end-stars .gx-stars{font-size:52px}
+.gd-end-stars .gx-stars .on{display:inline-block;animation:gd-star 240ms var(--ease-out) both}
+.gd-end-stars .gx-stars .on:nth-child(1){animation-delay:300ms}
+.gd-end-stars .gx-stars .on:nth-child(2){animation-delay:600ms}
+.gd-end-stars .gx-stars .on:nth-child(3){animation-delay:900ms}
+.gd-end-count{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 24px;margin:0}
+.gd-end-what{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1.4}
+.gd-end-what>svg{width:56px;height:36px;fill:none;stroke:var(--w-accent);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.gd-end-what .gd-fish-art{width:56px}
+.gd-end-what .gd-pattern{width:40px}
+.gd-end-what b{color:var(--w-deep)}
+.gd-end-what small{font-size:20px;color:var(--muted)}
+.gd-end-line{margin:0;font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1.6}
+.gd-end-note{margin:0;font-size:18px;line-height:1.6;color:var(--w-deep);font-weight:700}
+.gd-end-off{margin:0;max-width:340px;font-size:17px;line-height:1.6;color:var(--muted)}
+.gd-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(340px,100%)}
+.gd-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:0;border-radius:12px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out)}
+.gd-big:active{transform:translateY(4px) scale(.97);box-shadow:0 2px 0 var(--w-deep)}
+.gd-big svg{width:48px;height:48px;fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.gd-big-done{background:#fff;color:var(--w-deep);box-shadow:inset 0 0 0 3px var(--w-accent),0 6px 0 var(--w-deep)}
+.gd-end .kk-show-button{min-height:56px}
 
-.tool-gune-dekhi .gd-drawer{border:1.5px solid #d5e8e4;border-radius:14px;background:#fff}
-.tool-gune-dekhi .gd-drawer summary{display:flex;align-items:center;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
-.tool-gune-dekhi .gd-drawer[open]{padding-bottom:12px}
-.tool-gune-dekhi .gd-drawer .gx-levels{padding:0 10px}
-.tool-gune-dekhi .gd-drawer p{margin:8px 14px 0;font-size:16px;line-height:1.6;color:var(--muted)}
-.tool-gune-dekhi .gd-parent{display:grid;gap:8px;justify-items:start}
-.tool-gune-dekhi .gd-parent p{margin:0;font-size:16px;line-height:1.6;color:var(--muted)}
+/* ---- the level list: a choice screen ---- */
+.gd-levels{position:relative;display:grid;gap:14px;align-content:start;max-height:var(--stage-h,none);overflow:auto;overscroll-behavior:contain;padding:0 2px 12px}
+.gd-levels-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 0 6px;background:#fff}
+.gd-levels-head p{margin:0;font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.5}
+.gd-close{display:grid;place-items:center;width:56px;height:56px;border:2px solid var(--w-edge);border-radius:10px;background:#fff;cursor:pointer}
+.gd-close svg{width:28px;height:28px;fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.gd-band{display:grid;gap:8px;padding:10px;border-radius:12px;background:var(--w-soft);box-shadow:inset 0 0 0 1.5px var(--w-edge)}
+.gd-band[data-world="0"]{--w-accent:#0f7c78;--w-deep:#0a5552;--w-soft:#e4f4f2;--w-edge:#b6dedb;--water:#bfe6e8}
+.gd-band[data-world="1"]{--w-accent:#b5541b;--w-deep:#7d3510;--w-soft:#fff1d6;--w-edge:#f0d3a2;--water:#ffe3a6}
+.gd-band[data-world="2"]{--w-accent:#3b4fa0;--w-deep:#25326e;--w-soft:#e8ecfb;--w-edge:#bcc6ee;--water:#c9d4f4}
+.gd-band h3{margin:0 4px;font-family:var(--font-display);font-size:18px;line-height:1.5;color:var(--w-deep)}
+.gd-band h3 small{font-size:15px;font-weight:400;color:var(--muted)}
+.gd-band ol{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin:0;padding:0;list-style:none}
+.gd-band li:has(.finale){grid-column:span 2}
+.gd-card{position:relative;display:grid;justify-items:center;gap:0;width:100%;min-height:112px;padding:8px 4px 6px;border:2px solid var(--w-edge);border-radius:10px;background:#fff;cursor:pointer;transition:transform 120ms var(--ease-out)}
+.gd-card:active{transform:scale(.97)}
+.gd-card.finale{border-color:var(--w-accent);background:linear-gradient(#fff,var(--w-soft))}
+.gd-card[data-next]{border-color:var(--w-accent);box-shadow:0 0 0 4px #f2a90055}
+.gd-card[aria-current=true]{outline:3px solid var(--w-deep);outline-offset:2px}
+.gd-card-n{position:absolute;left:8px;top:4px;font-size:16px;font-weight:800;color:var(--muted)}
+.gd-card-name{font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.4}
+.gd-card .gx-stars{font-size:16px}
+.gd-card-next{position:absolute;right:-4px;top:-10px;padding:1px 8px;border-radius:6px;background:#f2a900;color:#3b2a17;font-size:13px;font-weight:800;line-height:1.6}
 
-.tool-gune-dekhi .gd-guide h2{margin-bottom:12px;font-family:var(--font-display)}
-.tool-gune-dekhi .gd-guide>p{max-width:640px;color:var(--muted);line-height:1.7}
-.tool-gune-dekhi .gd-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.tool-gune-dekhi .gd-guide li{display:flex;gap:14px;align-items:flex-start}
-.tool-gune-dekhi .gd-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
-.tool-gune-dekhi .gd-guide li p{margin:4px 0 0;line-height:1.7}
+/* ---- motion: every keyframe is one short, one-shot or decorative; presses are transitions ---- */
+@keyframes gd-enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes gd-fade{from{opacity:0}to{opacity:1}}
+@keyframes gd-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes gd-hop{0%{transform:translateY(0) scale(1)}45%{transform:translateY(-12px) scale(1.08)}100%{transform:none}}
+@keyframes gd-ring{from{opacity:.7;transform:scale(.6)}to{opacity:0;transform:scale(1.4)}}
+@keyframes gd-pop{from{opacity:0;transform:translate(-50%,-50%) scale(.7)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes gd-pop-center{from{opacity:0;transform:translate(-50%,-50%) scale(.8)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes gd-pulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.14)}}
+@keyframes gd-cheer{0%{transform:translate(-50%,-50%)}40%{transform:translate(-50%,-50%) translateY(-8px) scale(1.12)}100%{transform:translate(-50%,-50%)}}
+/* unslop-ignore: the hint after two misses; a crisp outline that points at the right answer (opacity only), not decoration */
+@keyframes gd-hint{0%,100%{opacity:.2}50%{opacity:1}}
+@keyframes gd-star{from{opacity:0;transform:scale(.7) rotate(-20deg)}to{opacity:1;transform:none}}
+@keyframes gd-tap{0%,100%{transform:translate(8px,10px)}45%,60%{transform:translate(0,0) scale(.92)}}
+@keyframes gd-rip{0%,40%{opacity:0;r:4}55%{opacity:.5}100%{opacity:0;r:16}}
 
-@keyframes gd-in{0%{opacity:0;transform:translateX(-40px)}100%{opacity:1;transform:none}}
-@keyframes gd-pop{0%{transform:translateX(-50%) scale(.4)}70%{transform:translateX(-50%) scale(1.15)}100%{transform:translateX(-50%) scale(1)}}
-@keyframes gd-pulse{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.18)}}
-@keyframes gd-glow{0%,100%{box-shadow:0 0 0 3px var(--glow)}50%{box-shadow:0 0 0 6px var(--glow),0 0 16px 4px var(--glow)}}
-@keyframes gd-tap{0%,100%{transform:translate(8px,10px)}50%{transform:translate(0,0) scale(.9)}}
-
-/* ধীরে খেলো and reduced motion: nothing moves on its own */
-.tool-gune-dekhi .gd[data-slow] :is(.gd-play,.gd-modes) *{animation:none!important;transition:none!important}
-.tool-gune-dekhi .gd[data-slow] .is-glow{box-shadow:0 0 0 5px var(--glow)}
+/* ধীরে খেলো and reduced motion: nothing bobs, hops or pulses; state still shows as colour and outline */
+.gd[data-slow] *,.gd[data-slow] *::before,.gd[data-slow] *::after{animation:none!important;transition:none!important}
+.gd[data-slow] .is-glow::after{opacity:1}
+.gd[data-slow] .gd-ripple{opacity:.4}
 @media (prefers-reduced-motion:reduce){
-  .tool-gune-dekhi .gd :is(.gd-play,.gd-modes) *{animation:none!important;transition:none!important}
-  .tool-gune-dekhi .gd .is-glow{box-shadow:0 0 0 5px var(--glow)}
+  .gd *,.gd *::after{animation:none!important;transition:none!important}
+  .gd .is-glow::after{opacity:1}
+  .gd .gd-ripple{opacity:.4}
 }
-@media (min-width:640px){.tool-gune-dekhi .gd-lead{display:block}}
+
+/* short stages: smaller type that still keeps 96 px answers */
+@media (max-height:700px){.gd-q{font-size:18px}.gd-tile b{font-size:50px}.gd-title-art{height:170px}}
