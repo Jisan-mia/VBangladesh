@@ -1,4 +1,4 @@
-.tool-golokdhadha{--accent:#b8442b;--accent-deep:#7f2c1b;--ink:#2b2118;--muted:#6e604f;--paper:#f7eedd;--line:#e0d2b8;--jilapi:#ef8a17;--amber:#f2a531}
+.tool-golokdhadha{--ease-out:cubic-bezier(.23,1,.32,1);--accent:#b8442b;--accent-deep:#7f2c1b;--ink:#2b2118;--muted:#6e604f;--paper:#f7eedd;--line:#e0d2b8;--jilapi:#ef8a17;--amber:#f2a531}
 .tool-golokdhadha .gd-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* the column fills the player's stage: HUD, the board (as big as fits), the note and the arrows */
@@ -11,14 +11,13 @@
 .tool-golokdhadha .gd[data-world="4"]{--accent:#8a3a99;--accent-deep:#3e1548;--paper:#f4e6f0}
 
 /* ---- title ---- */
-.tool-golokdhadha .gd-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:0;padding:12px;border-radius:18px;background:radial-gradient(120% 70% at 50% 34%,#fffdf6 0,var(--paper) 72%);text-align:center}
+.tool-golokdhadha .gd-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:0;padding:12px;border-radius:10px;background:radial-gradient(120% 70% at 50% 34%,#fffdf6 0,var(--paper) 72%);text-align:center}
 .tool-golokdhadha .gd-title-friend{margin:0;padding:10px 14px;border-radius:14px;background:#fff;font-size:15px;line-height:1.45;box-shadow:0 2px 0 #2b211814}
 .tool-golokdhadha .gd-title-friend b{font-family:var(--font-display)}
 .tool-golokdhadha .gd-title-friend span{display:block;font-size:13px;color:var(--muted)}
 .tool-golokdhadha .gd-title-art{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 min(440px,calc(var(--stage-w,360px) - 24px));place-items:center;width:100%;min-height:180px}
-.tool-golokdhadha .gd-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:22px;filter:drop-shadow(0 14px 18px #2b211833);transition:transform .18s ease-out}
-.tool-golokdhadha .gd-title-start:hover{transform:translateY(-3px) scale(1.01)}
-.tool-golokdhadha .gd-title-start:active{transform:translateY(2px) scale(.99)}
+.tool-golokdhadha .gd-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:12px;filter:drop-shadow(0 14px 18px #2b211833);transition:transform .14s var(--ease-out)}
+.tool-golokdhadha .gd-title-start:active{transform:translateY(2px) scale(.98)}
 .tool-golokdhadha .gd-title-start:focus-visible{outline:3px solid var(--accent);outline-offset:6px}
 .tool-golokdhadha .gd-title-start canvas{display:block}
 .tool-golokdhadha .gd[data-slow] .gd-title-start{transition:none}
@@ -26,7 +25,7 @@
 .tool-golokdhadha .gd-title-level span{font-family:var(--font-display);font-size:18px;font-weight:700;line-height:1.35}
 .tool-golokdhadha .gd-title-level small{font-size:14px;color:var(--muted);line-height:1.5}
 .tool-golokdhadha .gd-modes{display:flex;gap:6px;justify-content:center}
-.tool-golokdhadha .gd-modes button{min-height:40px;padding:4px 16px;border:1.5px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font-size:15px;font-weight:600}
+.tool-golokdhadha .gd-modes button{min-height:40px;padding:4px 16px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-size:15px;font-weight:600}
 .tool-golokdhadha .gd-modes button[aria-checked=true]{border-color:var(--accent-deep);background:var(--accent-deep);color:#fff}
 .tool-golokdhadha .gd-mode-line{margin:0;max-width:400px;font-size:14px;line-height:1.5;color:var(--muted)}
 .tool-golokdhadha .gd-title-links{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px}
@@ -38,54 +37,56 @@
 .tool-golokdhadha .gd-hud-left{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}
 .tool-golokdhadha .gd-badge{display:flex;gap:6px;align-items:baseline;margin:0;line-height:1}
 .tool-golokdhadha .gd-badge b{font-family:var(--font-display);font-size:16px}
-.tool-golokdhadha .gd-badge span{padding:1px 7px;border-radius:99px;background:var(--ink);color:#fff;font-size:11px;font-weight:700}
+.tool-golokdhadha .gd-badge span{padding:1px 7px;border-radius:4px;background:var(--ink);color:#fff;font-size:11px;font-weight:700}
 .tool-golokdhadha .gd-keys{display:flex;gap:4px}
 .tool-golokdhadha .gd-keys i{width:20px;height:20px;border:2px dashed #b9ab92;border-radius:50%;opacity:.8}
 .tool-golokdhadha .gd-keys i[data-colour="2"]{border-radius:4px}
-.tool-golokdhadha .gd-keys i[data-held=true]{border-style:solid;opacity:1;animation:gd-pop .3s ease-out}
+.tool-golokdhadha .gd-keys i[data-held=true]{border-style:solid;opacity:1;animation:gd-pop .3s var(--ease-out)}
 .tool-golokdhadha .gd-keys i[data-colour="1"][data-held=true]{border-color:#8f2a17;background:#d0452b}
 .tool-golokdhadha .gd-keys i[data-colour="2"][data-held=true]{border-color:#1c4a7c;background:#2b6cb0}
-.tool-golokdhadha .gd-boss{margin:0;padding:3px 10px;border-radius:99px;background:var(--accent-deep);color:#fff;font-family:var(--font-display);font-size:13px;font-weight:700;white-space:nowrap}
+.tool-golokdhadha .gd-boss{margin:0;padding:3px 10px;border-radius:4px;background:var(--accent-deep);color:#fff;font-family:var(--font-display);font-size:13px;font-weight:700;white-space:nowrap}
 .tool-golokdhadha .gd-boss:not([data-on]){visibility:hidden}
 .tool-golokdhadha .gd-clock{display:grid;justify-items:end;justify-self:end;margin:0;padding:4px 10px;border-radius:10px;background:var(--ink);color:#fff;font-family:var(--font-display);font-size:17px;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums}
 .tool-golokdhadha .gd-clock b{color:#ffd166;font-weight:800}
 .tool-golokdhadha .gd-clock small{font-family:var(--font-body,inherit);font-size:11px;font-weight:600;opacity:.8}
 
 /* ---- the board: only here does a finger stop the page from scrolling; danger lights its edge ---- */
-.tool-golokdhadha .gd-board{position:relative;align-self:center;width:min(100%,max(240px,calc(var(--stage-h,760px) - 218px)));aspect-ratio:1;flex:none;border-radius:14px;overflow:hidden;box-shadow:0 8px 22px #2b211833;background:var(--paper)}
+.tool-golokdhadha .gd-board{position:relative;align-self:center;width:min(100%,max(240px,calc(var(--stage-h,760px) - 218px)));aspect-ratio:1;flex:none;border-radius:10px;overflow:hidden;box-shadow:0 8px 22px #2b211833;background:var(--paper)}
 .tool-golokdhadha .gd[data-screen=over] .gd-board{width:min(100%,max(200px,calc(var(--stage-h,760px) - 420px)))}
 .tool-golokdhadha .gd-board canvas{display:block;width:100%;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
-.tool-golokdhadha .gd-progress{position:absolute;left:0;top:0;z-index:1;width:var(--done,0%);height:4px;background:var(--jilapi);transition:width .25s ease-out;pointer-events:none}
-.tool-golokdhadha .gd-board::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 0 transparent;transition:box-shadow .2s}
-.tool-golokdhadha .gd-board[data-danger=pulse]::after{box-shadow:inset 0 0 0 3px var(--amber),inset 0 0 26px 6px #f2a53199;animation:gd-glow .6s ease-in-out infinite alternate}
-.tool-golokdhadha .gd-board[data-danger=steady]::after{box-shadow:inset 0 0 0 3px var(--amber)}
-@keyframes gd-glow{to{box-shadow:inset 0 0 0 3px var(--amber),inset 0 0 36px 10px #f2a531cc}}
+.tool-golokdhadha .gd-progress{position:absolute;left:0;top:0;z-index:1;width:100%;height:4px;background:var(--jilapi);transform:scaleX(var(--done,0));transform-origin:left;transition:transform .25s var(--ease-out);pointer-events:none}
+.tool-golokdhadha .gd-board::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .2s var(--ease-out)}
+/* The amber edge glow warns that the next step is a stumble (danger), never decoration; ধীরে খেলো gets a steady line. */
+.tool-golokdhadha .gd-board[data-danger=pulse]::after{box-shadow:inset 0 0 0 3px var(--amber),inset 0 0 26px 6px #f2a53199;opacity:1;animation:gd-glow .6s ease-in-out infinite alternate} /* unslop-ignore: danger edge */
+.tool-golokdhadha .gd-board[data-danger=steady]::after{box-shadow:inset 0 0 0 3px var(--amber);opacity:1}
+@keyframes gd-glow{from{opacity:.6}}
 @keyframes gd-pop{from{transform:scale(.6);opacity:.4}}
 
 .tool-golokdhadha .gd-note{min-height:40px;margin:0;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;line-height:1.4;color:var(--muted);text-align:center}
 
 /* ---- the four arrows: each acts on touch-down and walks to the next turn ---- */
 .tool-golokdhadha .gd-pad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding-bottom:4px}
-.tool-golokdhadha .gd-arrow{display:grid;place-items:center;min-height:60px;padding:0;border:0;border-radius:16px;background:var(--ink);color:#fff;box-shadow:0 4px 0 #120d09;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.tool-golokdhadha .gd-arrow{display:grid;place-items:center;min-height:60px;padding:0;border:0;border-radius:16px;background:var(--ink);color:#fff;box-shadow:0 4px 0 #120d09;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .12s var(--ease-out)}
 .tool-golokdhadha .gd-arrow:active{transform:translateY(3px);box-shadow:0 1px 0 #120d09}
 .tool-golokdhadha .gd-arrow svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 
 /* ---- the story ---- */
 .tool-golokdhadha .gd-story{position:relative;display:flex;flex:1;flex-direction:column;min-height:0}
-.tool-golokdhadha .gd-story-panel{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:12px;border:0;border-radius:18px;background:#fffdf6;box-shadow:inset 0 0 0 3px var(--ink);color:var(--ink);cursor:pointer}
+.tool-golokdhadha .gd-story-panel{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:12px;border:0;border-radius:10px;background:#fffdf6;box-shadow:inset 0 0 0 3px var(--ink);color:var(--ink);cursor:pointer}
 .tool-golokdhadha .gd-story-art{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * .66);place-items:center;width:100%;min-height:120px}
 .tool-golokdhadha .gd-story-art canvas{display:block;border-radius:6px}
 .tool-golokdhadha .gd-story-panel p{margin:0;max-width:420px;font-family:var(--font-display);font-size:clamp(18px,5vw,22px);font-weight:700;line-height:1.45}
 .tool-golokdhadha .gd-story-dots{display:flex;gap:6px}
 .tool-golokdhadha .gd-story-dots i{width:8px;height:8px;border-radius:50%;background:#d8c9ad}
 .tool-golokdhadha .gd-story-dots i[data-on=true]{background:var(--ink)}
-.tool-golokdhadha .gd-story-skip{position:absolute;right:10px;top:10px;z-index:1;display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border:0;border-radius:99px;background:var(--ink);color:#fff;font-size:13px;font-weight:700;touch-action:none}
-.tool-golokdhadha .gd-story-skip span{width:14px;height:14px;border-radius:50%;background:conic-gradient(#ffd166 0deg,#ffffff33 0deg)}
-.tool-golokdhadha .gd-story-skip[data-holding] span{animation:gd-fill .6s linear forwards}
-@keyframes gd-fill{to{background:conic-gradient(#ffd166 360deg,#ffffff33 360deg)}}
+.tool-golokdhadha .gd-story-skip{position:absolute;right:10px;top:10px;z-index:1;display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;isolation:isolate;overflow:hidden;border:0;border-radius:6px;background:var(--ink);color:#fff;font-size:13px;font-weight:700;touch-action:none}
+.tool-golokdhadha .gd-story-skip span{width:14px;height:14px;border:2px solid #ffd166;border-radius:50%}
+/* hold to skip: a fill sweeps across the button, slow while the finger decides, quick to let go */
+.tool-golokdhadha .gd-story-skip::before{content:"";position:absolute;inset:0;z-index:-1;background:#ffd16655;transform:scaleX(0);transform-origin:left;transition:transform .2s var(--ease-out)}
+.tool-golokdhadha .gd-story-skip[data-holding]::before{transform:scaleX(1);transition:transform .6s linear}
 
 /* ---- the level list ---- */
-.tool-golokdhadha .gd-sheet{position:absolute;inset:0;z-index:5;overflow:auto;padding:14px;border-radius:18px;background:#fbf8f1;box-shadow:0 10px 40px #2b211840;overscroll-behavior:contain;text-align:left}
+.tool-golokdhadha .gd-sheet{position:absolute;inset:0;z-index:5;overflow:auto;padding:14px;border-radius:10px;background:#fbf8f1;box-shadow:0 10px 40px #2b211840;overscroll-behavior:contain;text-align:left}
 .tool-golokdhadha .gd-sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .tool-golokdhadha .gd-sheet h2{margin:0;font-family:var(--font-display);font-size:22px}
 .tool-golokdhadha .gd-sheet-close{width:44px;height:44px;border:0;border-radius:12px;background:#efe8da;font-size:18px}
@@ -109,7 +110,7 @@
 .tool-golokdhadha .gd-sheet-world button:disabled .gd-sheet-num{background:#8b847a}
 .tool-golokdhadha .gd-sheet-num svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.2}
 .tool-golokdhadha .gd-sheet-name{grid-area:name;font-family:var(--font-display);font-weight:700;font-size:16px}
-.tool-golokdhadha .gd-sheet-name i,.tool-golokdhadha .gd-sheet-name em{margin-left:6px;padding:1px 7px;border-radius:99px;font-size:11px;font-style:normal;vertical-align:2px}
+.tool-golokdhadha .gd-sheet-name i,.tool-golokdhadha .gd-sheet-name em{margin-left:6px;padding:1px 7px;border-radius:4px;font-size:11px;font-style:normal;vertical-align:2px}
 .tool-golokdhadha .gd-sheet-name i{background:#fff0d6;color:#8a4b00}
 .tool-golokdhadha .gd-sheet-name em{background:var(--accent);color:#fff}
 .tool-golokdhadha .gd-sheet-teach{grid-area:teach;font-size:13px;line-height:1.45;color:var(--muted)}
@@ -118,7 +119,7 @@
 .tool-golokdhadha .gd-sheet-note{margin:12px 0 0;font-size:13px;color:var(--muted)}
 
 /* ---- the end of a walk ---- */
-.tool-golokdhadha .gd-end{display:grid;justify-items:center;gap:2px;padding:8px 12px 6px;border-radius:18px;background:var(--paper);text-align:center}
+.tool-golokdhadha .gd-end{display:grid;justify-items:center;gap:2px;padding:8px 12px 6px;border-radius:10px;background:var(--paper);text-align:center}
 .tool-golokdhadha .gd-end p{margin:0}
 .tool-golokdhadha .gd-end-kicker{font-weight:700;color:var(--accent-deep)}
 .tool-golokdhadha .gd-end-head{display:flex;align-items:center;gap:14px}
@@ -136,7 +137,7 @@
 .tool-golokdhadha .gd-end-choices button{position:relative;width:100%;min-height:54px;padding:6px 8px;font-size:15px;line-height:1.2}
 .tool-golokdhadha .gd-end-choices kbd{display:inline-grid;place-items:center;width:20px;height:20px;margin-right:5px;border-radius:6px;background:#ffffff40;font:inherit;font-size:12px}
 .tool-golokdhadha .gd-end-choices .kit-secondary kbd{background:#2b211814}
-.tool-golokdhadha .gd-end-choices em{position:absolute;top:-9px;right:6px;padding:0 7px;border-radius:99px;background:#ffd166;color:var(--ink);font-size:10px;font-style:normal;font-weight:700;line-height:1.6}
+.tool-golokdhadha .gd-end-choices em{position:absolute;top:-9px;right:6px;padding:0 7px;border-radius:4px;background:#ffd166;color:var(--ink);font-size:10px;font-style:normal;font-weight:700;line-height:1.6}
 
 /* ---- result card ---- */
 .tool-golokdhadha .gd-result{scroll-margin-top:12px;margin-top:22px;padding-top:20px;border-top:2px solid var(--ink)}
@@ -149,5 +150,10 @@
 .tool-golokdhadha .gd-name input{border:1.5px solid var(--line);border-radius:12px;font-size:17px}
 
 @media(max-width:350px){.tool-golokdhadha .gd-arrow{min-height:54px}.tool-golokdhadha .gd-end-choices button{font-size:13px}.tool-golokdhadha .gd-badge b{font-size:14px}.tool-golokdhadha .gd-boss{font-size:11px;padding:2px 7px}}
-.tool-golokdhadha .gd[data-slow] .gd-keys i,.tool-golokdhadha .gd[data-slow] .gd-board::after,.tool-golokdhadha .gd[data-slow] .gd-progress{animation:none!important;transition:none}
-@media(prefers-reduced-motion:reduce){.tool-golokdhadha .gd-keys i,.tool-golokdhadha .gd-board::after{animation:none!important}.tool-golokdhadha .gd-arrow:active,.tool-golokdhadha .gd-title-start:hover{transform:none}}
+/* press feedback on everything pressable */
+.tool-golokdhadha :is(.gd-modes button,.gd-title-links button,.gd-sheet-close,.gd-sheet-daily,.gd-sheet-world button,.gd-story-skip,.gd-end-choices button){transition:transform .12s var(--ease-out),background-color .15s ease}
+.tool-golokdhadha :is(.gd-modes button,.gd-title-links button,.gd-sheet-close,.gd-sheet-daily,.gd-sheet-world button:not(:disabled),.gd-story-skip,.gd-end-choices button):active{transform:scale(.97)}
+.tool-golokdhadha .gd[data-slow] :is(.gd-keys i,.gd-board::after){animation:none!important}
+.tool-golokdhadha .gd[data-slow] :is(.gd-board::after,.gd-progress,.gd-arrow,.gd-title-start,.gd-modes button,.gd-title-links button,.gd-sheet-close,.gd-sheet-daily,.gd-sheet-world button,.gd-story-skip,.gd-story-skip::before,.gd-end-choices button){transition:none}
+.tool-golokdhadha .gd[data-slow] :is(.gd-arrow,.gd-title-start,.gd-modes button,.gd-title-links button,.gd-sheet-close,.gd-sheet-daily,.gd-sheet-world button,.gd-story-skip,.gd-end-choices button):active{transform:none}
+@media(prefers-reduced-motion:reduce){.tool-golokdhadha .gd-keys i,.tool-golokdhadha .gd-board::after{animation:none!important}.tool-golokdhadha :is(.gd-arrow,.gd-title-start,.gd-modes button,.gd-title-links button,.gd-sheet-close,.gd-sheet-daily,.gd-sheet-world button,.gd-story-skip,.gd-end-choices button):active{transform:none}.tool-golokdhadha :is(.gd-board::after,.gd-progress,.gd-arrow,.gd-title-start,.gd-story-skip::before){transition:none}}

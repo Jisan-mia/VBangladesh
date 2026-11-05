@@ -194,7 +194,7 @@ export function GolokdhadhaGame() {
       updateHint();
       const togo = g.graph.togo[g.at * 4 + g.mask], view = seen.current;
       const progress = Number.isFinite(togo) ? Math.max(0, Math.min(1, 1 - togo / view.startTogo)) : view.progress;
-      if (progress !== view.progress && bar.current) { view.progress = progress; bar.current.style.setProperty("--done", `${Math.round(progress * 100)}%`); }
+      if (progress !== view.progress && bar.current) { view.progress = progress; bar.current.style.setProperty("--done", progress.toFixed(3)); }
     }
     if (events & EV.finish) finish();
   }

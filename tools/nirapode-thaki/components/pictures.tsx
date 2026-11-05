@@ -45,7 +45,7 @@ export function SceneView({ item, ring, answer, index }: { item: Item; ring: 'no
 /** The finger that shows the first tap. */
 export function Finger() {
   return <svg className="nt-finger" viewBox="0 0 48 64" aria-hidden="true">
-    <circle className="nt-ripple" cx="20" cy="10" r="10" />
+    <circle className="nt-ripple" cx="20" cy="10" r="16" />
     <path d="M14 10a6 6 0 0 1 12 0v20l4-2a6 6 0 0 1 6 2l6 6a8 8 0 0 1 2 6v8c0 6-5 12-12 12H22c-5 0-9-3-11-7L4 40a5 5 0 0 1 8-6l2 3z" fill="#fff" stroke="#2f2a3a" strokeWidth="2.5" strokeLinejoin="round" />
   </svg>;
 }

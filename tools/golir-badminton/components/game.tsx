@@ -322,7 +322,7 @@ export function BadmintonGame() {
     if (bossRef.current && (meter !== h.meter)) {
       if (full && h.meter < 20 && h.meter >= 0) warn();
       h.meter = meter;
-      bossRef.current.style.setProperty("--fill", `${meter * 5}%`);
+      bossRef.current.style.setProperty("--fill", Math.min(1, meter * 0.05).toFixed(3));
       bossRef.current.dataset.full = full ? "1" : "";
     }
     const playing = session.current.screen === "play";

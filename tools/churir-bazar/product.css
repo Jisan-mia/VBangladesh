@@ -17,11 +17,11 @@
 .tool-churir-bazar .cb-title-friend p{margin:0;font-size:13px;line-height:1.4;color:var(--muted)}
 .tool-churir-bazar .cb-title-friend b{display:block;font-family:var(--font-display);font-size:15px;color:var(--ink)}
 .tool-churir-bazar .cb-title-plate{display:flex;flex:1 1 auto;align-items:center;justify-content:center;width:100%;min-height:150px}
-.tool-churir-bazar .cb-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;animation:cb-bob 3.2s ease-in-out 2.5s infinite;filter:drop-shadow(0 12px 16px #2c241833)}
+.tool-churir-bazar .cb-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;filter:drop-shadow(0 12px 16px #2c241833);transition:transform 140ms var(--cb-out)}
 @media(hover:hover) and (pointer:fine){.tool-churir-bazar .cb-title-start:hover{filter:drop-shadow(0 16px 20px #2c241844) brightness(1.03)}}
-.tool-churir-bazar .cb-title-start:active{animation-play-state:paused;transform:scale(.97)}
+.tool-churir-bazar .cb-title-start:active{transform:scale(.97)}
 .tool-churir-bazar .cb-title-start:focus-visible{outline:3px solid var(--accent);outline-offset:6px;border-radius:50%}
-.tool-churir-bazar .cb-title-start canvas{display:block}
+.tool-churir-bazar .cb-title-start canvas{display:block;animation:cb-bob 3.2s ease-in-out 2.5s infinite}
 @keyframes cb-bob{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-8px) rotate(1.5deg)}}
 .tool-churir-bazar .cb-title-card{display:grid;justify-items:center;gap:7px;align-self:stretch;margin:0 -12px;padding:10px 12px 14px;background:var(--paper);border-top:3px solid var(--accent)}
 .tool-churir-bazar .cb-pick{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;align-items:center;gap:6px;width:100%;max-width:460px}
@@ -52,10 +52,11 @@
 .tool-churir-bazar .cb-story-dots{display:flex;gap:6px}
 .tool-churir-bazar .cb-story-dots i{width:8px;height:8px;border-radius:50%;background:#2c241833}
 .tool-churir-bazar .cb-story-dots i[data-on=true]{background:var(--accent)}
-.tool-churir-bazar .cb-story-skip{position:absolute;top:10px;right:10px;z-index:1;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:4px 12px;border:1.5px solid #2c241833;border-radius:4px;background:#fff;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;touch-action:none}
-.tool-churir-bazar .cb-story-skip span{width:14px;height:14px;border-radius:50%;background:conic-gradient(var(--accent) 0 0,#2c24181a 0)}
-.tool-churir-bazar .cb-story-skip[data-holding] span{animation:cb-hold .6s linear forwards}
-@keyframes cb-hold{from{background:conic-gradient(var(--accent) 0%,#2c24181a 0)}to{background:conic-gradient(var(--accent) 100%,#2c24181a 0)}}
+.tool-churir-bazar .cb-story-skip{position:absolute;top:10px;right:10px;z-index:1;isolation:isolate;overflow:hidden;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:4px 12px;border:1.5px solid #2c241833;border-radius:4px;background:#fff;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;touch-action:none}
+.tool-churir-bazar .cb-story-skip span{width:14px;height:14px;border:2px solid var(--accent);border-radius:50%}
+/* hold to skip: a fill sweeps across the button, slow while the finger decides, quick to let go */
+.tool-churir-bazar .cb-story-skip::before{content:"";position:absolute;inset:0;z-index:-1;background:#a8326a26;transform:scaleX(0);transform-origin:left;transition:transform .2s var(--cb-out)}
+.tool-churir-bazar .cb-story-skip[data-holding]::before{transform:scaleX(1);transition:transform .6s linear}
 
 /* ---- play: HUD, the stage road, the bed, one line, the tools ---- */
 .tool-churir-bazar .cb-play{position:relative;display:flex;flex:1;flex-direction:column;gap:6px;min-height:0;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
@@ -68,7 +69,7 @@
 .tool-churir-bazar .cb-boss{display:grid;justify-items:center;gap:3px}
 .tool-churir-bazar .cb-boss b{font-family:var(--font-display);font-size:14px;color:#a12a1f;white-space:nowrap}
 .tool-churir-bazar .cb-meter{position:relative;display:block;width:clamp(86px,26vw,150px);height:8px;border-radius:4px;background:#2c24181f;overflow:hidden}
-.tool-churir-bazar .cb-meter i{position:absolute;inset:0 auto 0 0;border-radius:inherit;background:linear-gradient(90deg,#c8323a,#f2a531);transition:width .25s ease-out}
+.tool-churir-bazar .cb-meter i{position:absolute;inset:0;border-radius:inherit;background:linear-gradient(90deg,#c8323a,#f2a531);transform-origin:left;transition:transform .25s var(--cb-out)}
 .tool-churir-bazar .cb-count b{display:inline-block;font-family:var(--font-display);font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
 .tool-churir-bazar .cb-count small{font-size:12px;color:var(--muted)}
 .tool-churir-bazar .cb-count[data-low] b{color:var(--danger)}
@@ -76,7 +77,8 @@
 .tool-churir-bazar .cb-bed{position:relative;display:grid;place-items:center;flex:0 1 auto;width:100%;aspect-ratio:1;max-height:calc(var(--stage-h,100svh) - 236px);min-height:200px;margin:auto 0 0;border-radius:8px}
 .tool-churir-bazar .cb-canvas{display:block;border-radius:8px;box-shadow:0 8px 20px #2c241838}
 .tool-churir-bazar .cb-frame{position:relative;border-radius:8px}
-.tool-churir-bazar .cb-frame::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 0 transparent;transition:box-shadow .2s}
+.tool-churir-bazar .cb-frame::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .2s var(--cb-out)}
+.tool-churir-bazar .cb-frame:not([data-edge=""])::after{opacity:1}
 /* unslop-ignore: the edge glow is the moves-low warning (amber at 4 or fewer, red at 2), the game's only glow */
 .tool-churir-bazar .cb-frame[data-edge=danger]::after{box-shadow:inset 0 0 0 4px #ffb020,inset 0 0 30px 6px #ffb02099;animation:cb-glow .9s ease-in-out infinite alternate} /* unslop-ignore: the edge glow is the moves-low warning, the only glow in the game */
 /* unslop-ignore: red edge, two moves left */
@@ -89,7 +91,7 @@
 
 /* ---- the end: a smaller bed, the result under it ---- */
 .tool-churir-bazar .cb[data-screen=over] .cb-bed{min-height:110px;max-height:240px;margin:0}
-.tool-churir-bazar .cb-end{flex:none;display:grid;gap:5px;padding:10px 12px 8px;border-radius:8px;background:var(--paper);border:1.5px solid var(--line);text-align:center;animation:cb-rise .35s ease-out both}
+.tool-churir-bazar .cb-end{flex:none;display:grid;gap:5px;padding:10px 12px 8px;border-radius:8px;background:var(--paper);border:1.5px solid var(--line);text-align:center}
 .tool-churir-bazar .cb-end[data-slow]{animation:none}
 .tool-churir-bazar .cb-end p{margin:0}
 .tool-churir-bazar .cb-end-top{display:flex;align-items:center;justify-content:center;gap:12px;text-align:left}
@@ -114,10 +116,9 @@
 .tool-churir-bazar .cb-end-choices .kit-secondary kbd{background:#2c241814}
 .tool-churir-bazar .cb-end-choices em{position:absolute;top:-9px;right:6px;padding:0 7px;border-radius:4px;background:var(--trim);color:var(--ink);font-size:10px;font-style:normal;font-weight:700;line-height:1.6}
 .tool-churir-bazar .cb-see{justify-self:center}
-@keyframes cb-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
 /* ---- সব লেভেল ---- */
-.tool-churir-bazar .cb-sheet{position:absolute;inset:0;z-index:8;overflow:auto;padding:14px;border-radius:8px;background:#fbfaf3;box-shadow:0 10px 40px #2c241840;overscroll-behavior:contain;animation:cb-fade .16s ease-out}
+.tool-churir-bazar .cb-sheet{position:absolute;inset:0;z-index:8;overflow:auto;padding:14px;border-radius:8px;background:#fbfaf3;box-shadow:0 10px 40px #2c241840;overscroll-behavior:contain}
 .tool-churir-bazar .cb-sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .tool-churir-bazar .cb-sheet-head h2{margin:0;font-family:var(--font-display);font-size:22px}
 .tool-churir-bazar .cb-sheet-head h2 span{font-size:14px;font-weight:600;color:var(--muted)}
@@ -174,7 +175,7 @@
 .tool-churir-bazar .cb-count small{font-size:12px;color:var(--muted)}
 .tool-churir-bazar .cb-count .cb-score{font-variant-numeric:tabular-nums}
 .tool-churir-bazar .cb-count[data-low] b{color:var(--danger)}
-.tool-churir-bazar .cb-bump{animation:cb-bump .22s ease-out}
+.tool-churir-bazar .cb-bump{animation:cb-bump .22s var(--cb-out)}
 @keyframes cb-bump{40%{transform:scale(1.18)}}
 .tool-churir-bazar .cb-boss{display:flex;align-items:center;justify-content:center;gap:10px;flex:none}
 .tool-churir-bazar .cb-status[data-chain]{color:var(--accent-deep);font-family:var(--font-display);font-weight:800}
@@ -186,7 +187,7 @@
 .tool-churir-bazar .cb-frame{box-shadow:0 0 0 4px #3a0c1a,0 10px 24px #2a162055}
 
 /* ---- the finale's gift ---- */
-.tool-churir-bazar .cb-gift{position:absolute;inset:0;z-index:9;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:12px;border-radius:8px;background:#2a1620ea;color:#fff;text-align:center;animation:cb-fade .18s ease-out}
+.tool-churir-bazar .cb-gift{position:absolute;inset:0;z-index:9;display:flex;flex-direction:column;justify-content:center;gap:8px;padding:12px;border-radius:8px;background:#2a1620ea;color:#fff;text-align:center}
 .tool-churir-bazar .cb-gift-kicker{margin:0;font-size:13px;font-weight:700;color:var(--trim)}
 .tool-churir-bazar .cb-gift h2{margin:0;font-family:var(--font-display);font-size:20px;line-height:1.3}
 .tool-churir-bazar .cb-gift ol{display:grid;gap:8px;margin:4px 0 0;padding:0;list-style:none}
@@ -204,18 +205,19 @@
 
 /* ---- motion: strong ease-out, press feedback on every pressable, one entrance per container ---- */
 .tool-churir-bazar{--cb-out:cubic-bezier(.23,1,.32,1)}
-.tool-churir-bazar .cb-tool,.tool-churir-bazar .cb-modes button,.tool-churir-bazar .cb-step,.tool-churir-bazar .cb-badge,.tool-churir-bazar .cb-title-more button,.tool-churir-bazar .cb-end-choices button,.tool-churir-bazar .cb-sheet-world button,.tool-churir-bazar .cb-gift ol button,.tool-churir-bazar .cb-gift-skip{transition:transform 140ms var(--cb-out),background-color 140ms ease,border-color 140ms ease}
-.tool-churir-bazar .cb-tool:active:not(:disabled),.tool-churir-bazar .cb-modes button:active,.tool-churir-bazar .cb-step:active:not(:disabled),.tool-churir-bazar .cb-badge:active,.tool-churir-bazar .cb-title-more button:active,.tool-churir-bazar .cb-end-choices button:active,.tool-churir-bazar .cb-sheet-world button:active:not(:disabled),.tool-churir-bazar .cb-gift ol button:active{transform:scale(.97)}
+.tool-churir-bazar .cb-tool,.tool-churir-bazar .cb-modes button,.tool-churir-bazar .cb-step,.tool-churir-bazar .cb-sheet-close,.tool-churir-bazar .cb-story-skip,.tool-churir-bazar .cb-badge,.tool-churir-bazar .cb-title-more button,.tool-churir-bazar .cb-end-choices button,.tool-churir-bazar .cb-sheet-world button,.tool-churir-bazar .cb-gift ol button,.tool-churir-bazar .cb-gift-skip{transition:transform 140ms var(--cb-out),background-color 140ms ease,border-color 140ms ease}
+.tool-churir-bazar .cb-tool:active:not(:disabled),.tool-churir-bazar .cb-modes button:active,.tool-churir-bazar .cb-step:active:not(:disabled),.tool-churir-bazar .cb-sheet-close:active,.tool-churir-bazar .cb-story-skip:active,.tool-churir-bazar .cb-badge:active,.tool-churir-bazar .cb-title-more button:active,.tool-churir-bazar .cb-end-choices button:active,.tool-churir-bazar .cb-sheet-world button:active:not(:disabled),.tool-churir-bazar .cb-gift ol button:active{transform:scale(.97)}
 .tool-churir-bazar .cb-gift,.tool-churir-bazar .cb-sheet{animation:cb-modal .2s var(--cb-out) both}
 @keyframes cb-modal{from{opacity:0;transform:scale(.97)}}
 .tool-churir-bazar .cb-end{animation:cb-rise .26s var(--cb-out) both}
 @keyframes cb-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .tool-churir-bazar .cb-meter i{transition:width .25s var(--cb-out)}
-.tool-churir-bazar .cb[data-slow] .cb-gift,.tool-churir-bazar .cb[data-slow] .cb-sheet,.tool-churir-bazar .cb[data-slow] .cb-end,.tool-churir-bazar .cb[data-slow] .cb-meter i{animation:none!important;transition:none!important}
+.tool-churir-bazar .cb[data-slow] .cb-gift,.tool-churir-bazar .cb[data-slow] .cb-sheet,.tool-churir-bazar .cb[data-slow] .cb-end,.tool-churir-bazar .cb[data-slow] .cb-meter i,.tool-churir-bazar .cb[data-slow] .cb-title-start canvas,.tool-churir-bazar .cb[data-slow] .cb-bump,.tool-churir-bazar .cb[data-slow] .cb-frame::after,.tool-churir-bazar .cb[data-slow] .cb-story-skip::before{animation:none!important;transition:none!important}
 .tool-churir-bazar .cb[data-slow] button{transition:none!important}
+.tool-churir-bazar .cb[data-slow] button:active{transform:none!important}
 @media(prefers-reduced-motion:reduce){
-  .tool-churir-bazar .cb-gift,.tool-churir-bazar .cb-sheet,.tool-churir-bazar .cb-end,.tool-churir-bazar .cb-bump,.tool-churir-bazar .cb-title-start,.tool-churir-bazar .cb-frame::after{animation:none!important}
-  .tool-churir-bazar .cb button,.tool-churir-bazar .cb-meter i{transition:none!important}
+  .tool-churir-bazar .cb-gift,.tool-churir-bazar .cb-sheet,.tool-churir-bazar .cb-end,.tool-churir-bazar .cb-bump,.tool-churir-bazar .cb-title-start canvas,.tool-churir-bazar .cb-frame::after{animation:none!important}
+  .tool-churir-bazar .cb button,.tool-churir-bazar .cb-meter i,.tool-churir-bazar .cb-story-skip::before{transition:none!important}
   .tool-churir-bazar .cb button:active{transform:none!important}
 }
 .tool-churir-bazar .cb-goals b svg,.tool-churir-bazar .cb-sheet-close svg{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}

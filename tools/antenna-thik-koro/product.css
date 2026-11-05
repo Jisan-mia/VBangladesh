@@ -1,4 +1,4 @@
-.tool-antenna-thik-koro{--accent:#2f7a3e;--accent-deep:#1d5229;--ink:#1d2b2a;--muted:#56665f;--wall:#d5e8d4;--wood:#7a4322;--cream:#f6f2e7;--cream-edge:#d9ccae;--band:#173d22;--amber:#f2a531}
+.tool-antenna-thik-koro{--ease-out:cubic-bezier(.23,1,.32,1);--accent:#2f7a3e;--accent-deep:#1d5229;--ink:#1d2b2a;--muted:#56665f;--wall:#d5e8d4;--wood:#7a4322;--cream:#f6f2e7;--cream-edge:#d9ccae;--band:#173d22;--amber:#f2a531}
 .tool-antenna-thik-koro .at-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* the play column fills the player's stage: HUD, the scene (as big as fits), the controls */
@@ -9,14 +9,13 @@
 .tool-antenna-thik-koro .at[data-world="2"]{--wall:#c2cfdb;--band:#101a33}
 
 /* ---- title ---- */
-.tool-antenna-thik-koro .at-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:0;padding:12px;border-radius:18px;background:radial-gradient(120% 70% at 50% 34%,#ffffff 0,var(--wall) 70%);text-align:center}
-.tool-antenna-thik-koro .at-title-friend{margin:0;padding:10px 14px;border-radius:14px;background:#e6f1e3;font-size:15px;line-height:1.45}
+.tool-antenna-thik-koro .at-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:0;padding:12px;border-radius:10px;background:radial-gradient(120% 70% at 50% 34%,#ffffff 0,var(--wall) 70%);text-align:center}
+.tool-antenna-thik-koro .at-title-friend{margin:0;padding:10px 14px;border-radius:6px;background:#e6f1e3;font-size:15px;line-height:1.45}
 .tool-antenna-thik-koro .at-title-friend b{font-family:var(--font-display)}
 .tool-antenna-thik-koro .at-title-friend span{display:block;font-size:13px;color:var(--muted)}
 .tool-antenna-thik-koro .at-title-set{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * .75);place-items:center;width:100%;min-height:160px}
-.tool-antenna-thik-koro .at-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:24px;filter:drop-shadow(0 14px 18px #1d2b2a33);transition:transform .18s ease-out}
-.tool-antenna-thik-koro .at-title-start:hover{transform:translateY(-3px) scale(1.01)}
-.tool-antenna-thik-koro .at-title-start:active{transform:translateY(2px) scale(.99)}
+.tool-antenna-thik-koro .at-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:12px;filter:drop-shadow(0 14px 18px #1d2b2a33);transition:transform .14s var(--ease-out)}
+.tool-antenna-thik-koro .at-title-start:active{transform:translateY(2px) scale(.98)}
 .tool-antenna-thik-koro .at-title-start:focus-visible{outline:3px solid var(--accent);outline-offset:6px}
 .tool-antenna-thik-koro .at-title-start canvas{display:block}
 .tool-antenna-thik-koro .at[data-slow] .at-title-start{transition:none}
@@ -24,7 +23,7 @@
 .tool-antenna-thik-koro .at-title-level span{font-family:var(--font-display);font-size:18px;font-weight:700}
 .tool-antenna-thik-koro .at-title-level small{font-size:14px;color:var(--muted);line-height:1.5}
 .tool-antenna-thik-koro .at-modes{display:flex;gap:6px;justify-content:center}
-.tool-antenna-thik-koro .at-modes button{min-height:40px;padding:4px 16px;border:1.5px solid #c9d6c6;border-radius:999px;background:#fff;color:var(--ink);font-size:15px;font-weight:600}
+.tool-antenna-thik-koro .at-modes button{min-height:40px;padding:4px 16px;border:1.5px solid #c9d6c6;border-radius:8px;background:#fff;color:var(--ink);font-size:15px;font-weight:600}
 .tool-antenna-thik-koro .at-modes button[aria-checked=true]{border-color:var(--accent-deep);background:var(--accent-deep);color:#fff}
 .tool-antenna-thik-koro .at-mode-line{margin:0;max-width:400px;font-size:14px;line-height:1.5;color:var(--muted)}
 .tool-antenna-thik-koro .at-title-levels{min-height:44px;padding:6px 18px;border:0;border-radius:12px;background:none;color:var(--accent-deep);font-size:15px;font-weight:700;text-decoration:underline;text-underline-offset:4px}
@@ -35,47 +34,49 @@
 .tool-antenna-thik-koro .at-hud-left{display:grid;gap:3px;justify-items:start}
 .tool-antenna-thik-koro .at-badge{display:flex;gap:6px;align-items:baseline;margin:0;line-height:1}
 .tool-antenna-thik-koro .at-badge b{font-family:var(--font-display);font-size:15px}
-.tool-antenna-thik-koro .at-badge span{padding:1px 7px;border-radius:99px;background:var(--ink);color:#fff;font-size:11px;font-weight:700}
+.tool-antenna-thik-koro .at-badge span{padding:1px 7px;border-radius:4px;background:var(--ink);color:#fff;font-size:11px;font-weight:700}
 .tool-antenna-thik-koro .at-dots{display:flex;gap:5px;margin:0;padding:0;list-style:none}
-.tool-antenna-thik-koro .at-dots li{width:17px;height:12px;border:2px solid var(--wood);border-radius:4px;background:var(--cream);transition:background .2s,transform .2s}
+.tool-antenna-thik-koro .at-dots li{width:17px;height:12px;border:2px solid var(--wood);border-radius:4px;background:var(--cream);transition:background-color .2s ease}
 .tool-antenna-thik-koro .at-dots li[data-finale]{width:24px;border-color:#b36b00}
-.tool-antenna-thik-koro .at-dots li[data-done=true]{background:var(--accent);border-color:var(--accent-deep);animation:at-pop .3s ease-out}
+.tool-antenna-thik-koro .at-dots li[data-done=true]{background:var(--accent);border-color:var(--accent-deep);animation:at-pop .3s var(--ease-out)}
 .tool-antenna-thik-koro .at-dots li[data-now=true]{box-shadow:0 0 0 3px #2f7a3e40}
 .tool-antenna-thik-koro .at-clock{justify-self:end;margin:0;padding:4px 10px;border-radius:10px;background:var(--ink);color:#fff;font-family:var(--font-display);font-size:17px;font-weight:700;line-height:1.2;font-variant-numeric:tabular-nums}
 .tool-antenna-thik-koro .at-boss{display:grid;gap:3px;justify-items:center;margin:0;min-width:130px}
 .tool-antenna-thik-koro .at-boss:not([data-on]){visibility:hidden}
 .tool-antenna-thik-koro .at-boss b{font-family:var(--font-display);font-size:13px;line-height:1;color:#8a4b00}
-.tool-antenna-thik-koro .at-meter{position:relative;display:block;width:130px;height:9px;border:2px solid #8a4b00;border-radius:99px;background:#fff3dc;overflow:hidden}
-.tool-antenna-thik-koro .at-meter i{position:absolute;inset:0 auto 0 0;width:var(--fill,0%);background:linear-gradient(90deg,#f2a531,#e4574a);transition:width .08s linear}
+.tool-antenna-thik-koro .at-meter{position:relative;display:block;width:130px;height:9px;border:2px solid #8a4b00;border-radius:5px;background:#fff3dc;overflow:hidden}
+.tool-antenna-thik-koro .at-meter i{position:absolute;inset:0;background:linear-gradient(90deg,#f2a531,#e4574a);transform:scaleX(var(--fill,0));transform-origin:left;transition:transform .08s linear}
 
 /* ---- the scene: the canvas fits its box; danger lights the edge ---- */
 /* as tall as the full-width scene, shrinking when the stage is short */
 .tool-antenna-thik-koro .at-scene-box{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * .8056);place-items:center;min-height:150px}
-.tool-antenna-thik-koro .at-scene{position:relative;overflow:hidden;border-radius:16px;background:var(--wall);box-shadow:0 2px 0 #1d2b2a14,0 10px 24px #1d2b2a1f}
+.tool-antenna-thik-koro .at-scene{position:relative;overflow:hidden;border-radius:10px;background:var(--wall);box-shadow:0 2px 0 #1d2b2a14,0 10px 24px #1d2b2a1f}
 .tool-antenna-thik-koro .at-canvas{display:block;width:100%;height:100%}
-.tool-antenna-thik-koro .at-scene::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 0 transparent;transition:box-shadow .2s}
-.tool-antenna-thik-koro .at-scene[data-edge=slip]::after{box-shadow:inset 0 0 0 3px var(--amber),inset 0 0 26px 6px #f2a53199;animation:at-glow .7s ease-in-out infinite alternate}
+.tool-antenna-thik-koro .at-scene::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .2s var(--ease-out)}
+.tool-antenna-thik-koro .at-scene:not([data-edge=""])::after{opacity:1}
+/* The edge glows are the warnings (the dial slipping off the picture, a gust shoving the mast), never decoration. */
+.tool-antenna-thik-koro .at-scene[data-edge=slip]::after{box-shadow:inset 0 0 0 3px var(--amber),inset 0 0 26px 6px #f2a53199;animation:at-glow .7s ease-in-out infinite alternate} /* unslop-ignore: slipping edge, a danger signal */
 .tool-antenna-thik-koro .at-scene[data-edge=left]::after{box-shadow:inset 5px 0 0 0 #5aa7d6,inset 30px 0 30px -12px #5aa7d6aa}
 .tool-antenna-thik-koro .at-scene[data-edge=right]::after{box-shadow:inset -5px 0 0 0 #5aa7d6,inset -30px 0 30px -12px #5aa7d6aa}
-.tool-antenna-thik-koro .at-gust{position:absolute;top:44%;display:none;padding:3px 8px;border-radius:99px;background:#1b4f72;color:#fff;font-size:12px;font-weight:700;pointer-events:none}
+.tool-antenna-thik-koro .at-gust{position:absolute;top:44%;display:none;padding:3px 8px;border-radius:4px;background:#1b4f72;color:#fff;font-size:12px;font-weight:700;pointer-events:none}
 .tool-antenna-thik-koro .at-gust[data-side=left]{left:8px}
 .tool-antenna-thik-koro .at-gust[data-side=right]{right:8px}
 .tool-antenna-thik-koro .at-gust[data-side=left]::before{content:"→ "}
 .tool-antenna-thik-koro .at-gust[data-side=right]::after{content:" ←"}
-.tool-antenna-thik-koro .at-scene[data-edge=left] .at-gust[data-side=left],.tool-antenna-thik-koro .at-scene[data-edge=right] .at-gust[data-side=right]{display:block;animation:at-pop .2s ease-out}
+.tool-antenna-thik-koro .at-scene[data-edge=left] .at-gust[data-side=left],.tool-antenna-thik-koro .at-scene[data-edge=right] .at-gust[data-side=right]{display:block;animation:at-pop .2s var(--ease-out)}
 .tool-antenna-thik-koro .at-shout{position:absolute;left:8px;top:8px;max-width:60%;margin:0;pointer-events:none}
-.tool-antenna-thik-koro .at-shout span{position:relative;display:inline-block;padding:6px 11px;border-radius:14px;background:#fff;color:var(--ink);font-family:var(--font-display);font-size:15px;font-weight:700;line-height:1.35;box-shadow:0 3px 0 #1d2b2a1f;animation:at-pop .22s ease-out}
+.tool-antenna-thik-koro .at-shout span{position:relative;display:inline-block;padding:6px 11px;border-radius:8px;background:#fff;color:var(--ink);font-family:var(--font-display);font-size:15px;font-weight:700;line-height:1.35;box-shadow:0 3px 0 #1d2b2a1f;animation:at-pop .22s var(--ease-out)}
 .tool-antenna-thik-koro .at-shout span::after{content:"";position:absolute;left:16px;bottom:-7px;border:7px solid transparent;border-bottom:0;border-top-color:#fff}
 .tool-antenna-thik-koro .at-shout [data-hint=hold],.tool-antenna-thik-koro .at-shout [data-hint=got],.tool-antenna-thik-koro .at-shout [data-hint=done]{background:#ffd166}
 .tool-antenna-thik-koro .at-shout [data-hint=hold]::after,.tool-antenna-thik-koro .at-shout [data-hint=got]::after,.tool-antenna-thik-koro .at-shout [data-hint=done]::after{border-top-color:#ffd166}
-.tool-antenna-thik-koro .at-shout [data-hint^=slip]{animation:at-shake .2s ease-out}
+.tool-antenna-thik-koro .at-shout [data-hint^=slip]{animation:at-shake .2s var(--ease-out)}
 @keyframes at-pop{from{transform:scale(.85);opacity:.4}}
 @keyframes at-shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-@keyframes at-glow{to{box-shadow:inset 0 0 0 3px var(--amber),inset 0 0 36px 10px #f2a531cc}}
+@keyframes at-glow{from{opacity:.65}}
 
 /* ---- the controls: ◀ dial ▶ and a slider for screen readers and keyboards ---- */
 .tool-antenna-thik-koro .at-controls{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding-bottom:4px}
-.tool-antenna-thik-koro .at-turn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;max-width:92px;min-height:88px;padding:0;border:0;border-radius:18px;background:var(--cream);color:var(--ink);font-family:var(--font-display);font-size:16px;font-weight:700;box-shadow:0 4px 0 var(--cream-edge);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.tool-antenna-thik-koro .at-turn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;max-width:92px;min-height:88px;padding:0;border:0;border-radius:12px;background:var(--cream);color:var(--ink);font-family:var(--font-display);font-size:16px;font-weight:700;box-shadow:0 4px 0 var(--cream-edge);touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;transition:transform .12s var(--ease-out)}
 .tool-antenna-thik-koro .at-turn:first-child{justify-self:end}
 .tool-antenna-thik-koro .at-turn:nth-child(3){justify-self:start}
 .tool-antenna-thik-koro .at-turn svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
@@ -90,28 +91,28 @@
 .tool-antenna-thik-koro .at-dial-element{stroke:#8d989e;stroke-width:4.5;stroke-linecap:round}
 .tool-antenna-thik-koro .at-dial-tip{fill:var(--accent)}
 .tool-antenna-thik-koro .at-dial-hub{fill:#b98a4a;stroke:#8f6531;stroke-width:2}
-.tool-antenna-thik-koro .at-dial-hint{position:absolute;left:50%;bottom:-6px;padding:1px 10px;border-radius:99px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;line-height:1.6;transform:translateX(-50%);pointer-events:none;animation:at-nudge 1.6s ease-in-out infinite}
+.tool-antenna-thik-koro .at-dial-hint{position:absolute;left:50%;bottom:-6px;padding:1px 10px;border-radius:4px;background:var(--accent);color:#fff;font-size:13px;font-weight:700;line-height:1.6;transform:translateX(-50%);pointer-events:none;animation:at-nudge 1.6s ease-in-out infinite}
 @keyframes at-nudge{50%{transform:translateX(-50%) rotate(-5deg)}}
 .tool-antenna-thik-koro .at-slider{grid-column:1/-1;display:block}
 .tool-antenna-thik-koro .at-slider input{width:100%;min-height:32px;padding:0;border:0;background:none;accent-color:var(--accent)}
 
 /* ---- the story ---- */
 .tool-antenna-thik-koro .at-story{position:relative;display:flex;flex:1;flex-direction:column;min-height:0}
-.tool-antenna-thik-koro .at-story-panel{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:12px;border:0;border-radius:18px;background:#fffdf6;box-shadow:inset 0 0 0 3px var(--ink);color:var(--ink);cursor:pointer}
+.tool-antenna-thik-koro .at-story-panel{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:12px;border:0;border-radius:10px;background:#fffdf6;box-shadow:inset 0 0 0 3px var(--ink);color:var(--ink);cursor:pointer}
 .tool-antenna-thik-koro .at-story-art{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * .66);place-items:center;width:100%;min-height:120px}
 .tool-antenna-thik-koro .at-story-art canvas{display:block;border:3px solid var(--ink);border-radius:6px}
 .tool-antenna-thik-koro .at-story-panel p{margin:0;max-width:420px;font-family:var(--font-display);font-size:clamp(18px,5vw,22px);font-weight:700;line-height:1.45}
 .tool-antenna-thik-koro .at-story-dots{display:flex;gap:6px}
 .tool-antenna-thik-koro .at-story-dots i{width:8px;height:8px;border-radius:50%;background:#c9d6c6}
 .tool-antenna-thik-koro .at-story-dots i[data-on=true]{background:var(--ink)}
-.tool-antenna-thik-koro .at-story-skip{position:absolute;right:10px;top:10px;z-index:1;display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border:0;border-radius:99px;background:var(--ink);color:#fff;font-size:13px;font-weight:700;touch-action:none}
-.tool-antenna-thik-koro .at-story-skip span{width:14px;height:14px;border-radius:50%;background:conic-gradient(#ffd166 0deg,#ffffff33 0deg)}
-.tool-antenna-thik-koro .at-story-skip[data-holding] span{animation:at-fill .6s linear forwards}
-@property --at-fill{syntax:"<angle>";inherits:false;initial-value:0deg}
-@keyframes at-fill{to{background:conic-gradient(#ffd166 360deg,#ffffff33 360deg)}}
+.tool-antenna-thik-koro .at-story-skip{position:absolute;right:10px;top:10px;z-index:1;display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;isolation:isolate;overflow:hidden;border:0;border-radius:6px;background:var(--ink);color:#fff;font-size:13px;font-weight:700;touch-action:none}
+.tool-antenna-thik-koro .at-story-skip span{width:14px;height:14px;border:2px solid #ffd166;border-radius:50%}
+/* hold to skip: a fill sweeps across the button, slow while the finger decides, quick to let go */
+.tool-antenna-thik-koro .at-story-skip::before{content:"";position:absolute;inset:0;z-index:-1;background:#ffd16655;transform:scaleX(0);transform-origin:left;transition:transform .2s var(--ease-out)}
+.tool-antenna-thik-koro .at-story-skip[data-holding]::before{transform:scaleX(1);transition:transform .6s linear}
 
 /* ---- the level list ---- */
-.tool-antenna-thik-koro .at-sheet{position:absolute;inset:0;z-index:5;overflow:auto;padding:14px;border-radius:18px;background:#fbfaf5;box-shadow:0 10px 40px #1d2b2a40;overscroll-behavior:contain}
+.tool-antenna-thik-koro .at-sheet{position:absolute;inset:0;z-index:5;overflow:auto;padding:14px;border-radius:10px;background:#fbfaf5;box-shadow:0 10px 40px #1d2b2a40;overscroll-behavior:contain}
 .tool-antenna-thik-koro .at-sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .tool-antenna-thik-koro .at-sheet h2{margin:0;font-family:var(--font-display);font-size:22px}
 .tool-antenna-thik-koro .at-sheet-close{width:44px;height:44px;border:0;border-radius:12px;background:#eef1ea;font-size:18px}
@@ -126,7 +127,7 @@
 .tool-antenna-thik-koro .at-sheet-world button:disabled .at-sheet-num{background:#8b948d}
 .tool-antenna-thik-koro .at-sheet-num svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.2}
 .tool-antenna-thik-koro .at-sheet-name{grid-area:name;font-family:var(--font-display);font-weight:700;font-size:16px}
-.tool-antenna-thik-koro .at-sheet-name i,.tool-antenna-thik-koro .at-sheet-name em{margin-left:6px;padding:1px 7px;border-radius:99px;font-size:11px;font-style:normal;vertical-align:2px}
+.tool-antenna-thik-koro .at-sheet-name i,.tool-antenna-thik-koro .at-sheet-name em{margin-left:6px;padding:1px 7px;border-radius:4px;font-size:11px;font-style:normal;vertical-align:2px}
 .tool-antenna-thik-koro .at-sheet-name i{background:#fff0d6;color:#8a4b00}
 .tool-antenna-thik-koro .at-sheet-name em{background:var(--accent);color:#fff}
 .tool-antenna-thik-koro .at-sheet-teach{grid-area:teach;font-size:13px;line-height:1.45;color:var(--muted)}
@@ -135,7 +136,7 @@
 .tool-antenna-thik-koro .at-sheet-note{margin:12px 0 0;font-size:13px;color:var(--muted)}
 
 /* ---- the end of an evening ---- */
-.tool-antenna-thik-koro .at-end{display:grid;justify-items:center;gap:2px;padding:10px 14px 6px;border-radius:18px;background:var(--cream);text-align:center}
+.tool-antenna-thik-koro .at-end{display:grid;justify-items:center;gap:2px;padding:10px 14px 6px;border-radius:10px;background:var(--cream);text-align:center}
 .tool-antenna-thik-koro .at-end p{margin:0}
 .tool-antenna-thik-koro .at-end-kicker{font-weight:700;color:var(--accent-deep)}
 .tool-antenna-thik-koro .at-end-stars{margin:0;font-size:38px;line-height:1.1}
@@ -152,7 +153,7 @@
 .tool-antenna-thik-koro .at-end-choices button{position:relative;width:100%;min-height:54px;padding:6px 8px;font-size:15px;line-height:1.2}
 .tool-antenna-thik-koro .at-end-choices kbd{display:inline-grid;place-items:center;width:20px;height:20px;margin-right:5px;border-radius:6px;background:#ffffff40;font:inherit;font-size:12px}
 .tool-antenna-thik-koro .at-end-choices .kit-secondary kbd{background:#1d2b2a14}
-.tool-antenna-thik-koro .at-end-choices em{position:absolute;top:-9px;right:6px;padding:0 7px;border-radius:99px;background:#ffd166;color:var(--ink);font-size:10px;font-style:normal;font-weight:700;line-height:1.6}
+.tool-antenna-thik-koro .at-end-choices em{position:absolute;top:-9px;right:6px;padding:0 7px;border-radius:4px;background:#ffd166;color:var(--ink);font-size:10px;font-style:normal;font-weight:700;line-height:1.6}
 
 /* ---- result card ---- */
 .tool-antenna-thik-koro .at-result{scroll-margin-top:12px;margin-top:22px;padding-top:20px;border-top:2px solid var(--ink)}
@@ -166,6 +167,11 @@
 .tool-antenna-thik-koro .kit-chips button[aria-pressed=true]{border-color:var(--accent-deep);background:var(--accent-deep)}
 
 @media(max-width:350px){.tool-antenna-thik-koro .at-controls{gap:6px}.tool-antenna-thik-koro .at-turn{min-height:80px;font-size:15px}.tool-antenna-thik-koro .at-shout span{font-size:14px}.tool-antenna-thik-koro .at-end-choices button{font-size:13px}}
-.tool-antenna-thik-koro .at[data-slow] .at-shout span,.tool-antenna-thik-koro .at[data-slow] .at-dial-hint,.tool-antenna-thik-koro .at[data-slow] .at-dots li,.tool-antenna-thik-koro .at[data-slow] .at-scene::after,.tool-antenna-thik-koro .at[data-slow] .at-gust{animation:none!important}
-@media(prefers-reduced-motion:reduce){.tool-antenna-thik-koro .at-shout span,.tool-antenna-thik-koro .at-dial-hint,.tool-antenna-thik-koro .at-scene::after,.tool-antenna-thik-koro .at-dots li{animation:none!important}.tool-antenna-thik-koro .at-turn:active,.tool-antenna-thik-koro .at-title-start:hover{transform:none}}
+/* press feedback on everything pressable */
+.tool-antenna-thik-koro :is(.at-modes button,.at-title-levels,.at-sheet-close,.at-sheet-world button,.at-story-skip,.at-end-choices button){transition:transform .12s var(--ease-out),background-color .15s ease}
+.tool-antenna-thik-koro :is(.at-modes button,.at-title-levels,.at-sheet-close,.at-sheet-world button:not(:disabled),.at-story-skip,.at-end-choices button):active{transform:scale(.97)}
+.tool-antenna-thik-koro .at[data-slow] .at-shout span,.tool-antenna-thik-koro .at[data-slow] .at-shout [data-hint^=slip],.tool-antenna-thik-koro .at[data-slow] .at-dial-hint,.tool-antenna-thik-koro .at[data-slow] .at-dots li,.tool-antenna-thik-koro .at[data-slow] .at-scene::after,.tool-antenna-thik-koro .at[data-slow] .at-gust{animation:none!important}
+.tool-antenna-thik-koro .at[data-slow] :is(.at-scene::after,.at-meter i,.at-dots li,.at-turn,.at-title-start,.at-story-skip::before,.at-modes button,.at-title-levels,.at-sheet-close,.at-sheet-world button,.at-story-skip,.at-end-choices button){transition:none}
+.tool-antenna-thik-koro .at[data-slow] :is(.at-turn,.at-title-start,.at-modes button,.at-title-levels,.at-sheet-close,.at-sheet-world button,.at-story-skip,.at-end-choices button):active{transform:none}
+@media(prefers-reduced-motion:reduce){.tool-antenna-thik-koro .at-shout span,.tool-antenna-thik-koro .at-shout [data-hint^=slip],.tool-antenna-thik-koro .at-dial-hint,.tool-antenna-thik-koro .at-scene::after,.tool-antenna-thik-koro .at-dots li{animation:none!important}.tool-antenna-thik-koro :is(.at-scene::after,.at-meter i,.at-dots li,.at-turn,.at-title-start,.at-story-skip::before){transition:none}.tool-antenna-thik-koro :is(.at-turn,.at-title-start,.at-modes button,.at-title-levels,.at-sheet-close,.at-sheet-world button,.at-story-skip,.at-end-choices button):active{transform:none}}
 .tool-antenna-thik-koro .at[data-screen=over] .at-shout{display:none}

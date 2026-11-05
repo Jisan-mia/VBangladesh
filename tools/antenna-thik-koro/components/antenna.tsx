@@ -234,7 +234,7 @@ export function AntennaGame() {
     const edge = g.phase !== "search" ? "" : g.gustWarn > 0 || g.gustLeft > 0 ? (g.gustSide > 0 ? "left" : "right") : g.edge ? "slip" : "";
     if (edge !== view.edge) { view.edge = edge; scene.current?.setAttribute("data-edge", edge); }
     const fill = isFinaleChannel(g.def, g.index) ? Math.round(Math.min(1, g.dwell / g.need) * 100) : -1;
-    if (fill !== view.meter && meter.current) { view.meter = fill; meter.current.style.setProperty("--fill", `${Math.max(0, fill)}%`); }
+    if (fill !== view.meter && meter.current) { view.meter = fill; meter.current.style.setProperty("--fill", (Math.min(100, Math.max(0, fill)) / 100).toFixed(3)); }
   }
 
   useGameLoop(step, draw, screen === "play" && !player.paused);

@@ -86,10 +86,11 @@
 .cs-ghost{position:absolute;left:var(--fx,50%);top:var(--fy,80%);z-index:7;width:44px;margin:-4px 0 0 -10px;pointer-events:none;animation:cs-demo 5.2s 1.2s var(--ease-in-out) infinite}
 
 /* ---- the level list: a choice screen, nothing runs under it ---- */
-.cs-levels{display:flex;flex:1;flex-direction:column;gap:12px;min-height:0;padding:2px;overflow:auto;overscroll-behavior:contain;animation:cs-fade 150ms ease-out}
+.cs-levels{display:flex;flex:1;flex-direction:column;gap:12px;min-height:0;padding:2px;overflow:auto;overscroll-behavior:contain;animation:cs-fade 150ms var(--ease-out)}
 .cs-levels-head{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:52px}
 .cs-levels-head p{margin:0;font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.5}
-.cs-close{display:grid;place-items:center;width:52px;height:52px;border:2px solid var(--edge);background:#fff;cursor:pointer}
+.cs-close{display:grid;place-items:center;width:52px;height:52px;border:2px solid var(--edge);background:#fff;cursor:pointer;touch-action:manipulation;transition:transform 160ms var(--ease-out)}
+.cs-close:active{transform:scale(.95)}
 .cs-close svg{width:26px;height:26px;fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .cs-band{padding:10px;background:var(--wall)}
 .cs-band h3{margin:0 0 8px;font-family:var(--font-display);font-size:19px;line-height:1.5;color:var(--shade)}
@@ -114,7 +115,7 @@
 .cs-end-count span{display:flex;align-items:center;gap:8px}
 .cs-end-count svg{width:30px;height:30px;fill:none;stroke:var(--shade);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .cs-end-actions{display:grid;grid-template-columns:repeat(2,minmax(112px,148px));gap:16px;justify-content:center;width:100%;margin-top:4px}
-.cs-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:10px 8px;border:0;background:var(--accent);box-shadow:0 5px 0 var(--accent-deep);color:#fff;cursor:pointer;touch-action:manipulation;transition:transform 160ms var(--ease-out),box-shadow 160ms var(--ease-out)}
+.cs-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:10px 8px;border:0;background:var(--accent);box-shadow:0 5px 0 var(--accent-deep);color:#fff;cursor:pointer;touch-action:manipulation;transition:transform 160ms var(--ease-out)}
 .cs-big:active{transform:translateY(4px);box-shadow:0 1px 0 var(--accent-deep)}
 .cs-big-done{background:#fffdf6;box-shadow:0 5px 0 var(--edge),inset 0 0 0 2.5px var(--accent);color:var(--accent-deep)}
 .cs-big-done:active{box-shadow:0 1px 0 var(--edge),inset 0 0 0 2.5px var(--accent)}
@@ -126,7 +127,7 @@
 /* ---- motion ---- */
 @keyframes cs-rise{from{opacity:0;transform:translateY(10px) scale(.96)}}
 @keyframes cs-fade{from{opacity:0}}
-@keyframes cs-pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+@keyframes cs-pop{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
 @keyframes cs-flick{0%{opacity:.35}35%{opacity:.8}60%{opacity:.5}100%{opacity:1}}
 @keyframes cs-glow{0%,100%{opacity:1}50%{opacity:.86}}
 @keyframes cs-sway{0%,100%{rotate:-2.4deg}50%{rotate:2.4deg}}
@@ -140,10 +141,12 @@
 
 /* ধীরে খেলো (and a phone that asks for reduced motion): no sway, flicker, shaking, spreading rings or pops; the finger only fades */
 .cs[data-slow] *,.cs[data-slow] *::before{animation:none!important}
+.cs[data-slow] :is(.cs-stall,.cs-chip,.cs-card,.cs-big,.cs-close),.cs[data-slow] .cs-stall::after,.cs[data-slow] .cs-slot::before{transition:none}
 .cs[data-slow] .cs-ring{display:none}
 .cs[data-slow] .cs-ghost,.cs[data-slow] .cs-stall-finger{animation:cs-nod 2.4s ease-in-out infinite!important}
 @media (prefers-reduced-motion:reduce){
   .cs *,.cs *::before{animation:none!important}
+  .cs :is(.cs-stall,.cs-chip,.cs-card,.cs-big,.cs-close),.cs-stall::after,.cs-slot::before{transition:none}
   .cs-ring{display:none}
   .cs-ghost,.cs-stall-finger{animation:cs-nod 2.4s ease-in-out infinite!important}
 }

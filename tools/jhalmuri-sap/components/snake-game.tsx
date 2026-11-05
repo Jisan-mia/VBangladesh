@@ -478,7 +478,7 @@ export function SnakeGame() {
   const boardStyle = board.width ? { width: board.width, height: board.height } : undefined;
 
   return (
-    <div className="js" ref={root} data-phase={phase} data-night={colors.night || undefined}>
+    <div className="js" ref={root} data-phase={phase} data-night={colors.night || undefined} data-slow={slow || undefined}>
       <div className="js-field" ref={field} onPointerDown={onPointerDown} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerCancel={cancelGesture}>
         <div className="js-frame" style={board.width ? { width: board.width } : undefined}>
         <div className="js-hud" aria-hidden={phase === "title" || undefined}>

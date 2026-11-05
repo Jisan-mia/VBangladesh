@@ -616,7 +616,7 @@ export function ChurirGame() {
             {finale && screen === "play" && (
               <div className="cb-boss" aria-label={`${finale}: আর ${bn(goalsLeft)} বাকি`}>
                 <b>{finale}</b>
-                <span className="cb-meter"><i style={{ width: `${Math.round((goalsLeft / Math.max(1, goalsTotal)) * 100)}%` }} /></span>
+                <span className="cb-meter"><i style={{ transform: `scaleX(${(goalsLeft / Math.max(1, goalsTotal)).toFixed(3)})` }} /></span>
               </div>
             )}
             <div className="cb-bed" ref={bedBox}>

@@ -1,5 +1,5 @@
 /* জোড়া মেলাও: three tables, one for each world (lib/draw-card.ts holds the same palettes for the share card). */
-.tool-jora-melao{--accent:#17707a;--accent-deep:#0e4c53;--ink:#2b2118;--muted:#6f5c47;--paper:#fbf4e6;--line:#e3d2b2;--gold:#f2a516;--good:#2f9e44;--bad:#d4553f;--mat:#e3c99a;--mat-dark:#cfb07a;--back:#1f98a6;--back-dark:#0e5560;--flag-a:#e03131;--flag-b:#f2a516;--who:#17707a}
+.tool-jora-melao{--ease-out:cubic-bezier(.23,1,.32,1);--accent:#17707a;--accent-deep:#0e4c53;--ink:#2b2118;--muted:#6f5c47;--paper:#fbf4e6;--line:#e3d2b2;--gold:#f2a516;--good:#2f9e44;--bad:#d4553f;--mat:#e3c99a;--mat-dark:#cfb07a;--back:#1f98a6;--back-dark:#0e5560;--flag-a:#e03131;--flag-b:#f2a516;--who:#17707a}
 .tool-jora-melao .jm-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .tool-jora-melao .jm-defs{position:absolute;width:0;height:0;overflow:hidden}
 .jm[data-world="1"]{--accent:#c27a00;--accent-deep:#7a4a00;--mat:#d8c27a;--mat-dark:#b89d4a;--back:#f0b21f;--back-dark:#9a6200;--flag-a:#7cb342;--flag-b:#e8590c}
@@ -19,13 +19,13 @@
 .jm-badge span{font-size:12px;color:var(--muted);white-space:nowrap}
 .jm[data-finale] .jm-badge b{color:#c92a2a}
 .jm-pips{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin:0;padding:0;list-style:none}
-.jm-pips li{width:11px;height:11px;border:2px solid var(--line);border-radius:50%;transition:background .2s,border-color .2s,transform .25s cubic-bezier(.2,.9,.3,1.5)}
+.jm-pips li{width:11px;height:11px;border:2px solid var(--line);border-radius:50%;transition:background .2s ease,border-color .2s ease,transform .2s var(--ease-out)}
 .jm-pips li[data-on]{border-color:var(--gold);background:var(--gold);transform:scale(1.2)}
 .jm[data-calm] .jm-pips li{transition:none}
 .jm-boss{display:grid;justify-items:center;gap:2px;min-width:0}
 .jm-boss b{max-width:100%;overflow:hidden;font-family:var(--font-display);font-size:14px;font-weight:800;color:#c92a2a;white-space:nowrap;text-overflow:ellipsis}
 .jm-boss span{display:block;width:min(160px,100%);height:9px;padding:2px;border-radius:6px;background:#2b2118;overflow:hidden}
-.jm-boss i{display:block;height:100%;border-radius:3px;background:linear-gradient(#e85a44,#b8321f);transform-origin:left;transition:transform .35s ease-out}
+.jm-boss i{display:block;height:100%;border-radius:3px;background:linear-gradient(#e85a44,#b8321f);transform-origin:left;transition:transform .25s var(--ease-out)}
 .jm-boss small{font-size:12px;color:var(--muted)}
 .jm-score{display:grid;justify-items:end;margin:0;line-height:1.15;text-align:right}
 .jm-score b{font-family:var(--font-display);font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -34,16 +34,21 @@
 .jm-track i{font-style:normal;color:#d5c9b4}
 .jm-track i[data-on]{color:var(--gold)}
 .jm-track i[data-stake]{animation:jm-stake .8s ease-in-out infinite alternate}
-.jm-track i[data-lost]{color:#a9a090;animation:jm-knock .4s ease-out}
+.jm[data-calm] .jm-track i[data-stake],.jm[data-calm] .jm-track i[data-lost]{animation:none}
+.jm-track i[data-lost]{color:#a9a090;animation:jm-knock .3s var(--ease-out)}
 .jm-score.duo{display:flex;gap:6px;align-items:center}
-.jm-score.duo span{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:12px;background:#fff;font-family:var(--font-display);font-size:18px;font-weight:800;box-shadow:0 0 0 1.5px var(--line);transition:transform .2s,box-shadow .2s}
+.jm-score.duo span{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:12px;background:#fff;font-family:var(--font-display);font-size:18px;font-weight:800;box-shadow:0 0 0 1.5px var(--line);transition:transform .2s var(--ease-out)}
+.jm[data-calm] .jm-score.duo span{transition:none}
+.jm[data-calm] .jm-score.duo span[data-on]{transform:none}
 .jm-score.duo i{width:10px;height:10px;border-radius:50%;background:var(--who)}
 .jm-score.duo span[data-on]{transform:translateY(-3px);box-shadow:0 0 0 2.5px var(--who)}
-.jm-turn{display:grid;justify-items:center;margin:0;font-family:var(--font-display);font-size:18px;font-weight:800;line-height:1.15;color:var(--who);animation:jm-bump .35s cubic-bezier(.2,.9,.3,1.4)}
+.jm-turn{display:grid;justify-items:center;margin:0;font-family:var(--font-display);font-size:18px;font-weight:800;line-height:1.15;color:var(--who);animation:jm-bump .25s var(--ease-out)}
+.jm[data-calm] .jm-turn{animation:none}
 .jm-turn small{font-family:inherit;font-size:12px;font-weight:600;color:var(--muted)}
 /* the thin bar along the very top: moves against the three-star par (or the peek draining) */
 .jm-bar{flex:none;height:5px;margin-top:-4px;border-radius:3px;background:#2b211814;overflow:hidden}
-.jm-bar i{display:block;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .25s ease-out}
+.jm-bar i{display:block;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .25s var(--ease-out)}
+.jm[data-calm] .jm-bar i,.jm[data-calm] .jm-boss i{transition:none}
 .jm-bar[data-kind=peek] i{background:var(--gold);transition:none}
 .jm-bar[data-tier=two] i{background:var(--gold)}
 .jm-bar[data-tier=one] i{background:var(--bad)}
@@ -52,26 +57,26 @@
 /* ---- the table: a mat, the cards on it, a sign across it at the start ---- */
 .jm-table{flex:1 1 0;min-height:120px;min-width:0;display:grid;place-items:center;overflow:hidden;container:jmt/size}
 .jm-table>.jm-mat{max-width:100%}
-.jm-mat{position:relative;padding:10px 9px 11px;border:3px solid var(--mat-dark);border-radius:18px;background:var(--mat);box-shadow:0 6px 18px #2b211830,inset 0 0 0 2px #ffffff40;isolation:isolate}
+.jm-mat{position:relative;padding:10px 9px 11px;border:3px solid var(--mat-dark);border-radius:10px;background:var(--mat);box-shadow:0 6px 18px #2b211830,inset 0 0 0 2px #ffffff40;isolation:isolate}
 .jm-mat::before{content:"";position:absolute;left:10px;right:10px;top:-13px;height:15px;pointer-events:none;
   background:conic-gradient(from 135deg at 50% 0,var(--flag-a) 0 90deg,#0000 0) 0 0/56px 15px repeat-x,conic-gradient(from 135deg at 50% 0,var(--flag-b) 0 90deg,#0000 0) 28px 0/56px 15px repeat-x}
 .jm-mat{--tw:64px;--th:75px}
 .jm-grid{position:relative;display:grid;grid-template-columns:repeat(var(--cols),var(--tw));gap:var(--gap);justify-content:center}
 /* a card is as wide as the width or the height of the table allows (cards are 1 : 1.18), never past 160 px */
 @supports (width:1cqw){.jm-mat{--tw:min(160px,calc((100cqw - 34px - var(--gap) * (var(--cols) - 1)) / var(--cols)),calc((100cqh - 50px - var(--gap) * (var(--rows) - 1)) / var(--rows) / 1.18));--th:calc(var(--tw) * 1.18)}}
-.jm-mat::after{content:"";position:absolute;inset:0;z-index:4;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 0 transparent;transition:box-shadow .25s}
-.jm[data-danger] .jm-mat::after{box-shadow:inset 0 0 0 4px #ffb020,inset 0 0 26px 6px #ffb02099;animation:jm-glow .9s ease-in-out infinite alternate}
-.jm[data-danger][data-calm] .jm-mat::after{box-shadow:inset 0 0 0 4px #ffb020;animation:none}
-.jm-flash{position:absolute;inset:0;z-index:5;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 6px #e8590c,inset 0 0 36px 10px #e8590ccc;animation:jm-flash .7s ease-out forwards}
+.jm-mat::after{content:"";position:absolute;inset:0;z-index:4;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 4px #ffb020,inset 0 0 26px 6px #ffb02099;opacity:0;transition:opacity .25s var(--ease-out)} /* unslop-ignore: the amber glow warns that the next flip can cost a star */
+.jm[data-danger] .jm-mat::after{opacity:1;animation:jm-glow .9s ease-in-out infinite alternate}
+.jm[data-danger][data-calm] .jm-mat::after{box-shadow:inset 0 0 0 4px #ffb020;animation:none;transition:none}
+.jm-flash{position:absolute;inset:0;z-index:5;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 6px #e8590c,inset 0 0 36px 10px #e8590ccc;animation:jm-flash .7s var(--ease-out) forwards} /* unslop-ignore: the red flash is the wrong-answer signal */
 .jm[data-calm] .jm-flash{animation:jm-flash-still 1s linear forwards}
 
 .jm-tile{position:relative;width:var(--tw);height:var(--th);padding:0;border:0;background:none;perspective:720px;cursor:pointer;border-radius:12%/10%}
 .jm-tile:focus-visible{outline:3px solid var(--ink);outline-offset:2px;z-index:2}
 .jm-tile:disabled{cursor:default;opacity:1}
-.jm-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .2s cubic-bezier(.3,.7,.3,1)}
+.jm-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .2s var(--ease-out)}
 .jm-tile[data-up] .jm-inner{transform:rotateY(180deg)}
 .jm-tile:active:not([data-up]) .jm-inner{transform:scale(.94)}
-.jm-grid[data-peek] .jm-inner,.jm-tile[data-peek] .jm-inner{transition-delay:calc(var(--i) * 22ms)}
+.jm-grid[data-peek] .jm-inner,.jm-tile[data-peek] .jm-inner{transition-delay:calc(min(var(--i),11) * 22ms)}
 .jm-back,.jm-face{position:absolute;inset:0;border-radius:12%/10%;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .jm-back{background:
   radial-gradient(circle at 50% 50%,#ffffff66 0 8%,#0000 9%) 0 0/50% 50%,
@@ -82,7 +87,7 @@
 .jm-face small{position:absolute;bottom:3%;left:0;right:0;font-size:clamp(9px,calc(var(--tw) * .17),13px);font-weight:700;color:#4a3a28;text-align:center;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px}
 .jm-tile[data-owner] .jm-face{box-shadow:inset 0 0 0 3px #fffaf0,inset 0 0 0 6px var(--gold),0 3px 0 #2b21182e}
 .jm-tile[data-owner="0"] .jm-face,.jm-tile[data-owner="1"] .jm-face{box-shadow:inset 0 0 0 3px #fffaf0,inset 0 0 0 6px var(--who),0 3px 0 #2b21182e}
-.jm-tile[data-owner] .jm-inner{animation:jm-hop .38s cubic-bezier(.2,.9,.3,1.3)}
+.jm-tile[data-owner] .jm-inner{animation:jm-hop .36s var(--ease-out)}
 .jm-tile[data-demo] .jm-face{box-shadow:inset 0 0 0 3px #fffaf0,0 0 0 3px var(--gold)}
 /* ধীরে খেলো: a quick fade instead of a turn, no hop */
 .jm[data-calm] .jm-inner{transform:none!important;transition:none;animation:none!important}
@@ -90,12 +95,12 @@
 .jm[data-calm] .jm-tile[data-up] .jm-face{opacity:1}
 .jm[data-calm] .jm-back{backface-visibility:visible}
 .jm[data-calm] .jm-tile[data-up] .jm-back{opacity:0}
-.jm-pop{position:absolute;z-index:3;padding:1px 10px;border-radius:14px;background:#2f9e44ee;color:#fff;font-family:var(--font-display);font-size:19px;font-style:normal;font-weight:800;white-space:nowrap;pointer-events:none;transform:translate(-50%,-30%);animation:jm-rise .9s ease-out forwards}
+.jm-pop{position:absolute;z-index:3;padding:1px 10px;border-radius:6px;background:#2f9e44ee;color:#fff;font-family:var(--font-display);font-size:19px;font-style:normal;font-weight:800;white-space:nowrap;pointer-events:none;transform:translate(-50%,-30%);animation:jm-rise .9s var(--ease-out) forwards}
 .jm-count{position:absolute;top:-6px;right:-6px;z-index:6;display:grid;place-items:center;min-width:44px;height:44px;padding:0 6px;border:2px solid var(--ink);border-radius:50%;background:#fffaf0;font-family:var(--font-display);font-size:24px;font-weight:800;box-shadow:0 3px 0 #2b211833}
 
 /* the fair sign: the start action, hung across the board */
 .jm-sign{position:absolute;inset:0;z-index:7;display:grid;place-items:center;width:100%;padding:0;border:0;border-radius:inherit;background:transparent;color:var(--ink);cursor:pointer}
-.jm-sign-board{position:relative;display:grid;justify-items:center;gap:3px;max-width:none;padding:12px 22px 11px;border:3px solid #5c3d1e;border-radius:14px;background:linear-gradient(#fff6dc,#f4dfac);box-shadow:0 8px 0 #5c3d1e55,0 14px 26px #2b211840;transform:rotate(-2deg);transition:transform .12s;animation:jm-sway 3.2s ease-in-out infinite}
+.jm-sign-board{position:relative;display:grid;justify-items:center;gap:3px;max-width:none;padding:12px 22px 11px;border:3px solid #5c3d1e;border-radius:14px;background:linear-gradient(#fff6dc,#f4dfac);box-shadow:0 8px 0 #5c3d1e55,0 14px 26px #2b211840;transform:rotate(-2deg);transition:transform .12s var(--ease-out);animation:jm-sway 3.2s ease-in-out infinite}
 .jm-sign-board::before,.jm-sign-board::after{content:"";position:absolute;top:-34px;width:3px;height:34px;background:#5c3d1e}
 .jm-sign-board::before{left:22%}.jm-sign-board::after{right:22%}
 .jm-sign-board b{font-family:var(--font-display);font-size:clamp(24px,calc(var(--tw) * .62),52px);font-weight:800;line-height:1.1;color:var(--accent-deep);white-space:nowrap}
@@ -139,7 +144,7 @@
 .jm-link{padding:0;border:0;background:none;color:#5d6886;text-decoration:underline;text-underline-offset:4px;font-size:15px}
 .jm-all{justify-self:center;min-height:34px}
 .jm-modes{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
-.jm-modes button{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border:1.5px solid var(--line);border-radius:20px;background:#fff;color:var(--ink);font-size:14.5px;font-weight:700}
+.jm-modes button{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border:1.5px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font-size:14.5px;font-weight:700}
 .jm-modes button[aria-pressed=true]{border-color:var(--accent);background:var(--accent);color:#fff}
 .jm-modes kbd{font-family:inherit;font-size:11px;font-weight:600;opacity:.7}
 @media (pointer:coarse){.jm-modes kbd{display:none}}
@@ -153,7 +158,7 @@
 .jm-friend b{color:var(--ink)}
 
 /* ---- সব লেভেল ---- */
-.jm-sheet{position:absolute;inset:0;z-index:20;display:grid;align-items:start;background:#2b211859;animation:jm-fade .16s ease-out}
+.jm-sheet{position:absolute;inset:0;z-index:20;display:grid;align-items:start;background:#2b211859;animation:jm-fade .16s var(--ease-out)}
 .jm-sheet-card{display:grid;gap:10px;max-height:min(100%,100svh);overflow:auto;overscroll-behavior:contain;padding:14px 14px 18px;border-radius:16px;background:#fbf8f2;box-shadow:0 20px 40px -20px #000a}
 .gp-stage .jm-sheet-card{max-height:var(--stage-h,100%)}
 .jm-sheet header{position:relative;padding-right:52px}
@@ -181,7 +186,7 @@
 .jm-mini i[data-on]{color:var(--gold)}
 
 /* ---- the end ---- */
-.jm-over{display:grid;align-content:start;gap:10px;padding:14px 14px 12px;border-radius:14px;background:#fffdf6;box-shadow:0 0 0 1.5px var(--line),0 14px 30px -18px #2b211866;animation:jm-up .3s ease-out}
+.jm-over{display:grid;align-content:start;gap:10px;padding:14px 14px 12px;border-radius:14px;background:#fffdf6;box-shadow:0 0 0 1.5px var(--line),0 14px 30px -18px #2b211866;animation:jm-up .3s var(--ease-out)}
 .jm-over[data-finale]{box-shadow:inset 0 0 0 4px #c92a2a,0 14px 30px -18px #2b211866}
 .jm-over[data-still]{animation:none}
 .jm-over header{display:grid;justify-items:center;text-align:center}
@@ -234,4 +239,10 @@
 @keyframes jm-bump{0%{transform:scale(.9)}60%{transform:scale(1.06)}100%{transform:scale(1)}}
 @keyframes jm-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes jm-fade{from{opacity:0}to{opacity:1}}
-@media (prefers-reduced-motion:reduce){.jm *{animation:none!important;transition:none!important}}
+/* press feedback on everything pressable (touch and mouse) */
+.jm :is(.jm-step,.jm-sheet-close,.jm-modes button,.jm-world button,.jm-resume,.jm-badge,.jm-link){transition:transform .12s var(--ease-out),background-color .15s ease,color .15s ease}
+.jm :is(.jm-step,.jm-sheet-close,.jm-modes button,.jm-world button,.jm-resume,.jm-badge,.jm-link):not(:disabled):active{transform:scale(.97)}
+.jm[data-calm] .jm-sheet{animation:none}
+.jm[data-calm] :is(.jm-step,.jm-sheet-close,.jm-modes button,.jm-world button,.jm-resume,.jm-badge,.jm-link){transition:none}
+.jm[data-calm] :is(.jm-step,.jm-sheet-close,.jm-modes button,.jm-world button,.jm-resume,.jm-badge,.jm-link):active{transform:none}
+@media (prefers-reduced-motion:reduce){.jm *{animation:none!important;transition:none!important}.jm :is(.jm-step,.jm-sheet-close,.jm-modes button,.jm-world button,.jm-resume,.jm-badge,.jm-link):active{transform:none}}

@@ -1,4 +1,4 @@
-.tool-vo-katta{--accent:#c4501b;--accent-deep:#7f300c;--ink:#241a2e;--muted:#66586c;--paper:#fff3e3;--paper-edge:#ecd2b4;--dusk:#2a1f3d;--good:#2b8a52;--tight:#c23d31;--gold:#f2a900}
+.tool-vo-katta{--ease-out:cubic-bezier(.23,1,.32,1);--accent:#c4501b;--accent-deep:#7f300c;--ink:#241a2e;--muted:#66586c;--paper:#fff3e3;--paper-edge:#ecd2b4;--dusk:#2a1f3d;--good:#2b8a52;--tight:#c23d31;--gold:#f2a900}
 .tool-vo-katta .vk-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
 /* the play column fills the player's stage: the HUD row, then the sky as big as fits */
@@ -10,23 +10,22 @@
 .tool-vo-katta .vk[data-world="2"]{--sky:#141c48;--sky-deep:#070c26}
 
 /* ---- title ---- */
-.tool-vo-katta .vk-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:0;padding:12px;border-radius:18px;background:radial-gradient(120% 70% at 50% 30%,#fffaf0 0,var(--paper) 72%);text-align:center}
+.tool-vo-katta .vk-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:0;padding:12px;border-radius:10px;background:radial-gradient(120% 70% at 50% 30%,#fffaf0 0,var(--paper) 72%);text-align:center}
 .tool-vo-katta .vk-title-friend{margin:0;padding:10px 14px;border-radius:14px;background:#fde9d6;font-size:15px;line-height:1.45}
 .tool-vo-katta .vk-title-friend b{font-family:var(--font-display)}
 .tool-vo-katta .vk-title-friend span{display:block;font-size:13px;color:var(--muted)}
 .tool-vo-katta .vk-title-art{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * 1.0);place-items:center;width:100%;min-height:170px}
-.tool-vo-katta .vk-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:22px;filter:drop-shadow(0 14px 18px #241a2e40);transition:transform .18s ease-out;animation:vk-sway 4.5s ease-in-out infinite}
-.tool-vo-katta .vk-title-start:hover{transform:translateY(-3px) scale(1.01)}
-.tool-vo-katta .vk-title-start:active{transform:translateY(2px) scale(.99)}
+.tool-vo-katta .vk-title-start{display:block;padding:0;border:0;background:none;cursor:pointer;border-radius:12px;filter:drop-shadow(0 14px 18px #241a2e40);transition:transform .14s var(--ease-out)}
+.tool-vo-katta .vk-title-start:active{transform:translateY(2px) scale(.98)}
 .tool-vo-katta .vk-title-start:focus-visible{outline:3px solid var(--accent);outline-offset:6px}
-.tool-vo-katta .vk-title-start canvas{display:block;border-radius:22px}
-.tool-vo-katta .vk-title-start[data-slow]{animation:none;transition:none}
+.tool-vo-katta .vk-title-start canvas{display:block;border-radius:12px;animation:vk-sway 4.5s ease-in-out infinite}
+.tool-vo-katta .vk-title-start[data-slow],.tool-vo-katta .vk-title-start[data-slow] canvas{animation:none;transition:none}
 @keyframes vk-sway{50%{transform:translateY(-4px) rotate(-.8deg)}}
 .tool-vo-katta .vk-title-level{display:grid;gap:2px;margin:0;max-width:440px}
 .tool-vo-katta .vk-title-level span{font-family:var(--font-display);font-size:18px;font-weight:700}
 .tool-vo-katta .vk-title-level small{font-size:14px;color:var(--muted);line-height:1.5}
 .tool-vo-katta .vk-modes{display:flex;gap:6px;justify-content:center}
-.tool-vo-katta .vk-modes button{min-height:40px;padding:4px 16px;border:1.5px solid var(--paper-edge);border-radius:999px;background:#fff;color:var(--ink);font-size:15px;font-weight:600}
+.tool-vo-katta .vk-modes button{min-height:40px;padding:4px 16px;border:1.5px solid var(--paper-edge);border-radius:8px;background:#fff;color:var(--ink);font-size:15px;font-weight:600}
 .tool-vo-katta .vk-modes button[aria-checked=true]{border-color:var(--accent-deep);background:var(--accent-deep);color:#fff}
 .tool-vo-katta .vk-mode-line{margin:0;max-width:400px;font-size:14px;line-height:1.5;color:var(--muted)}
 .tool-vo-katta .vk-title-links{display:flex;gap:4px;justify-content:center;margin:0}
@@ -40,7 +39,7 @@
 .tool-vo-katta .vk-hud-left{display:grid;gap:4px;justify-items:start}
 .tool-vo-katta .vk-badge{display:flex;gap:6px;align-items:baseline;line-height:1}
 .tool-vo-katta .vk-badge b{font-family:var(--font-display);font-size:15px}
-.tool-vo-katta .vk-badge span{padding:1px 7px;border-radius:99px;background:var(--ink);color:#fff;font-size:11px;font-weight:700}
+.tool-vo-katta .vk-badge span{padding:1px 7px;border-radius:4px;background:var(--ink);color:#fff;font-size:11px;font-weight:700}
 .tool-vo-katta .vk-kites{display:flex;gap:7px;height:14px;align-items:center;padding-left:3px}
 /* a spare kite: a little diamond; a lost one is only its outline (shape, not only colour) */
 .tool-vo-katta .vk-kites i{width:10px;height:10px;border:2px solid var(--accent);transform:rotate(45deg);border-radius:2px;background:transparent;transition:background .2s,opacity .2s}
@@ -48,7 +47,7 @@
 .tool-vo-katta .vk-kites i[data-on=false]{opacity:.4}
 .tool-vo-katta .vk-roster{display:flex;gap:5px;margin:0;padding:0;list-style:none}
 .tool-vo-katta .vk-roster li{width:13px;height:13px;border:2px solid var(--muted);border-radius:50%;background:transparent;transition:background .2s,transform .2s}
-.tool-vo-katta .vk-roster li[data-done=true]{background:var(--accent);border-color:var(--accent-deep);animation:vk-pop .3s ease-out}
+.tool-vo-katta .vk-roster li[data-done=true]{background:var(--accent);border-color:var(--accent-deep);animation:vk-pop .3s var(--ease-out)}
 .tool-vo-katta .vk-boss{display:grid;gap:3px;justify-items:center;min-width:130px}
 .tool-vo-katta .vk-boss b{font-family:var(--font-display);font-size:14px;line-height:1;color:#8a4b00}
 .tool-vo-katta .vk-boss span{display:flex;gap:3px}
@@ -60,29 +59,31 @@
 .tool-vo-katta .vk-clock{padding:2px 9px;border-radius:9px;background:var(--ink);color:#fff;font-family:var(--font-display);font-size:14px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
 
 /* ---- the sky: drag anywhere here; danger lights the edge, never the middle ---- */
-.tool-vo-katta .vk-sky{position:relative;flex:1;min-height:300px;overflow:hidden;border-radius:16px;background:var(--sky-deep,var(--dusk));box-shadow:0 8px 22px #241a2e33;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:crosshair}
+.tool-vo-katta .vk-sky{position:relative;flex:1;min-height:300px;overflow:hidden;border-radius:10px;background:var(--sky-deep,var(--dusk));box-shadow:0 8px 22px #241a2e33;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:crosshair}
 .tool-vo-katta .vk-canvas{position:absolute;inset:0;display:block}
-.tool-vo-katta .vk-sky::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 0 0 0 transparent;transition:box-shadow .2s}
-.tool-vo-katta .vk-sky[data-edge=danger]::after{box-shadow:inset 0 0 0 3px #e4574a,inset 0 0 34px 8px #e4574aa0;animation:vk-glow .5s ease-in-out infinite alternate}
-.tool-vo-katta .vk-sky[data-edge=lost]::after{box-shadow:inset 0 0 0 4px #e4574a,inset 0 0 60px 14px #e4574acc}
+.tool-vo-katta .vk-sky::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .2s var(--ease-out)}
+.tool-vo-katta .vk-sky:not([data-edge=""])::after{opacity:1}
+/* The edge glows are the danger signals (a kite about to be cut, a charge, a gust), never decoration. */
+.tool-vo-katta .vk-sky[data-edge=danger]::after{box-shadow:inset 0 0 0 3px #e4574a,inset 0 0 34px 8px #e4574aa0;animation:vk-glow .5s ease-in-out infinite alternate} /* unslop-ignore: danger edge */
+.tool-vo-katta .vk-sky[data-edge=lost]::after{box-shadow:inset 0 0 0 4px #e4574a,inset 0 0 60px 14px #e4574acc} /* unslop-ignore: kite lost edge */
 .tool-vo-katta .vk-sky[data-edge=last]::after{box-shadow:inset 0 0 0 2px #e4574a99}
 .tool-vo-katta .vk-sky[data-edge=charge-left]::after{box-shadow:inset 5px 0 0 0 #ff5a4a,inset 34px 0 30px -12px #ff5a4aaa}
 .tool-vo-katta .vk-sky[data-edge=charge-right]::after{box-shadow:inset -5px 0 0 0 #ff5a4a,inset -34px 0 30px -12px #ff5a4aaa}
 .tool-vo-katta .vk-sky[data-edge=gust-left]::after{box-shadow:inset 5px 0 0 0 #5aa7d6,inset 34px 0 30px -12px #5aa7d6aa}
 .tool-vo-katta .vk-sky[data-edge=gust-right]::after{box-shadow:inset -5px 0 0 0 #5aa7d6,inset -34px 0 30px -12px #5aa7d6aa}
-@keyframes vk-glow{to{box-shadow:inset 0 0 0 3px #e4574a,inset 0 0 46px 12px #e4574acc}}
+@keyframes vk-glow{from{opacity:.6}}
 /* the edge pointers: a charge (red, from the rival's side) and a gust (blue, from where it blows) */
-.tool-vo-katta .vk-arrow{position:absolute;top:40%;z-index:1;display:none;padding:3px 9px;border-radius:99px;color:#fff;font-size:12px;font-weight:800;pointer-events:none}
+.tool-vo-katta .vk-arrow{position:absolute;top:40%;z-index:1;display:none;padding:3px 9px;border-radius:4px;color:#fff;font-size:12px;font-weight:800;pointer-events:none}
 .tool-vo-katta .vk-arrow[data-side=left]{left:8px}
 .tool-vo-katta .vk-arrow[data-side=right]{right:8px}
-.tool-vo-katta .vk-sky[data-edge=charge-left] .vk-arrow[data-side=left],.tool-vo-katta .vk-sky[data-edge=charge-right] .vk-arrow[data-side=right]{display:block;background:#c23d31;animation:vk-pop .2s ease-out}
-.tool-vo-katta .vk-sky[data-edge=gust-left] .vk-arrow[data-side=left],.tool-vo-katta .vk-sky[data-edge=gust-right] .vk-arrow[data-side=right]{display:block;background:#1b4f72;animation:vk-pop .2s ease-out}
+.tool-vo-katta .vk-sky[data-edge=charge-left] .vk-arrow[data-side=left],.tool-vo-katta .vk-sky[data-edge=charge-right] .vk-arrow[data-side=right]{display:block;background:#c23d31;animation:vk-pop .2s var(--ease-out)}
+.tool-vo-katta .vk-sky[data-edge=gust-left] .vk-arrow[data-side=left],.tool-vo-katta .vk-sky[data-edge=gust-right] .vk-arrow[data-side=right]{display:block;background:#1b4f72;animation:vk-pop .2s var(--ease-out)}
 .tool-vo-katta .vk-sky[data-edge=charge-left] .vk-arrow[data-side=left]::after{content:"আসছে →"}
 .tool-vo-katta .vk-sky[data-edge=charge-right] .vk-arrow[data-side=right]::after{content:"← আসছে"}
 .tool-vo-katta .vk-sky[data-edge=gust-left] .vk-arrow[data-side=left]::after{content:"দমকা →"}
 .tool-vo-katta .vk-sky[data-edge=gust-right] .vk-arrow[data-side=right]::after{content:"← দমকা"}
 /* before the first touch: the level's one new thing at the top, the hand at the bottom */
-.tool-vo-katta .vk-intro{position:absolute;left:50%;top:10px;z-index:1;display:grid;gap:1px;width:max-content;max-width:calc(100% - 24px);margin:0;padding:7px 14px;border-radius:14px;background:#fff8eef0;box-shadow:0 4px 14px #120a1c40;text-align:center;transform:translateX(-50%);pointer-events:none;animation:vk-in .3s ease-out}
+.tool-vo-katta .vk-intro{position:absolute;left:50%;top:10px;z-index:1;display:grid;gap:1px;width:max-content;max-width:calc(100% - 24px);margin:0;padding:7px 14px;border-radius:14px;background:#fff8eef0;box-shadow:0 4px 14px #120a1c40;text-align:center;transform:translateX(-50%);pointer-events:none;animation:vk-in .3s var(--ease-out)}
 .tool-vo-katta .vk-intro b{font-family:var(--font-display);font-size:16px}
 .tool-vo-katta .vk-intro span{font-size:13px;line-height:1.45;color:var(--muted)}
 .tool-vo-katta .vk-hint{position:absolute;left:50%;bottom:calc(14% + 12px);z-index:1;display:grid;justify-items:center;gap:2px;width:max-content;max-width:calc(100% - 24px);margin:0;padding:8px 14px 7px;border-radius:14px;background:#1a1026d9;color:#fff;font-size:14px;font-weight:700;line-height:1.4;text-align:center;transform:translateX(-50%);pointer-events:none}
@@ -93,7 +94,7 @@
 @keyframes vk-in{from{opacity:0;transform:translateX(-50%) translateY(-6px)}}
 
 /* ---- the end of an evening: slides up over the roofs ---- */
-.tool-vo-katta .vk-end{position:absolute;left:8px;right:8px;bottom:8px;z-index:2;display:grid;justify-items:center;gap:2px;max-height:calc(100% - 16px);overflow:auto;padding:12px 14px 8px;border-radius:18px;background:#fff6eaf7;box-shadow:0 10px 30px #120a1c66;text-align:center;animation:vk-up .32s cubic-bezier(.2,.9,.3,1.05)}
+.tool-vo-katta .vk-end{position:absolute;left:8px;right:8px;bottom:8px;z-index:2;display:grid;justify-items:center;gap:2px;max-height:calc(100% - 16px);overflow:auto;padding:12px 14px 8px;border-radius:10px;background:#fff6eaf7;box-shadow:0 10px 30px #120a1c66;text-align:center;animation:vk-up .3s var(--ease-out)}
 @keyframes vk-up{from{transform:translateY(40px);opacity:0}}
 .tool-vo-katta .vk-end[data-slow]{animation:none}
 .tool-vo-katta .vk-end p{margin:0}
@@ -114,25 +115,26 @@
 .tool-vo-katta .vk-end-choices button{position:relative;width:100%;min-height:54px;padding:6px 8px;font-size:15px;line-height:1.2}
 .tool-vo-katta .vk-end-choices kbd{display:inline-grid;place-items:center;width:20px;height:20px;margin-right:5px;border-radius:6px;background:#ffffff40;font:inherit;font-size:12px}
 .tool-vo-katta .vk-end-choices .kit-secondary kbd{background:#241a2e14}
-.tool-vo-katta .vk-end-choices em{position:absolute;top:-9px;right:6px;padding:0 7px;border-radius:99px;background:#ffd166;color:var(--ink);font-size:10px;font-style:normal;font-weight:700;line-height:1.6}
+.tool-vo-katta .vk-end-choices em{position:absolute;top:-9px;right:6px;padding:0 7px;border-radius:4px;background:#ffd166;color:var(--ink);font-size:10px;font-style:normal;font-weight:700;line-height:1.6}
 .tool-vo-katta .vk-end-card{min-height:40px}
 
 /* ---- the story ---- */
 .tool-vo-katta .vk-story{position:relative;display:flex;flex:1;flex-direction:column;min-height:0}
-.tool-vo-katta .vk-story-panel{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:12px;border:0;border-radius:18px;background:#fffdf6;box-shadow:inset 0 0 0 3px var(--ink);color:var(--ink);cursor:pointer}
+.tool-vo-katta .vk-story-panel{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:12px;border:0;border-radius:10px;background:#fffdf6;box-shadow:inset 0 0 0 3px var(--ink);color:var(--ink);cursor:pointer}
 .tool-vo-katta .vk-story-art{display:grid;grid-template-columns:minmax(0,1fr);overflow:hidden;flex:0 1 calc(var(--stage-w,360px) * .66);place-items:center;width:100%;min-height:120px}
 .tool-vo-katta .vk-story-art canvas{display:block;border:3px solid var(--ink);border-radius:6px}
 .tool-vo-katta .vk-story-panel p{margin:0;max-width:420px;font-family:var(--font-display);font-size:clamp(18px,5vw,22px);font-weight:700;line-height:1.45}
 .tool-vo-katta .vk-story-dots{display:flex;gap:6px}
 .tool-vo-katta .vk-story-dots i{width:8px;height:8px;border-radius:50%;background:var(--paper-edge)}
 .tool-vo-katta .vk-story-dots i[data-on=true]{background:var(--ink)}
-.tool-vo-katta .vk-story-skip{position:absolute;right:10px;top:10px;z-index:1;display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;border:0;border-radius:99px;background:var(--ink);color:#fff;font-size:13px;font-weight:700;touch-action:none}
-.tool-vo-katta .vk-story-skip span{width:14px;height:14px;border-radius:50%;background:conic-gradient(#ffd166 0deg,#ffffff33 0deg)}
-.tool-vo-katta .vk-story-skip[data-holding] span{animation:vk-fill .6s linear forwards}
-@keyframes vk-fill{to{background:conic-gradient(#ffd166 360deg,#ffffff33 360deg)}}
+.tool-vo-katta .vk-story-skip{position:absolute;right:10px;top:10px;z-index:1;display:flex;align-items:center;gap:6px;min-height:36px;padding:4px 12px;isolation:isolate;overflow:hidden;border:0;border-radius:6px;background:var(--ink);color:#fff;font-size:13px;font-weight:700;touch-action:none}
+.tool-vo-katta .vk-story-skip span{position:relative;width:14px;height:14px;border:2px solid #ffd166;border-radius:50%}
+/* hold to skip: a fill sweeps across the button, slow while the finger decides, quick to let go */
+.tool-vo-katta .vk-story-skip::before{content:"";position:absolute;inset:0;z-index:-1;background:#ffd16655;transform:scaleX(0);transform-origin:left;transition:transform .2s var(--ease-out)}
+.tool-vo-katta .vk-story-skip[data-holding]::before{transform:scaleX(1);transition:transform .6s linear}
 
 /* ---- the level list ---- */
-.tool-vo-katta .vk-sheet{position:absolute;inset:0;z-index:5;overflow:auto;padding:14px;border-radius:18px;background:#fffaf3;box-shadow:0 10px 40px #241a2e40;overscroll-behavior:contain}
+.tool-vo-katta .vk-sheet{position:absolute;inset:0;z-index:5;overflow:auto;padding:14px;border-radius:10px;background:#fffaf3;box-shadow:0 10px 40px #241a2e40;overscroll-behavior:contain}
 .tool-vo-katta .vk-sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 .tool-vo-katta .vk-sheet h2{margin:0;font-family:var(--font-display);font-size:22px}
 .tool-vo-katta .vk-sheet-close{width:44px;height:44px;border:0;border-radius:12px;background:#f3e8da;font-size:18px}
@@ -149,7 +151,7 @@
 .tool-vo-katta .vk-sheet-world button:disabled .vk-sheet-num{background:#8b858f}
 .tool-vo-katta .vk-sheet-num svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.2}
 .tool-vo-katta .vk-sheet-name{grid-area:name;font-family:var(--font-display);font-weight:700;font-size:16px}
-.tool-vo-katta .vk-sheet-name i,.tool-vo-katta .vk-sheet-name em{margin-left:6px;padding:1px 7px;border-radius:99px;font-size:11px;font-style:normal;vertical-align:2px}
+.tool-vo-katta .vk-sheet-name i,.tool-vo-katta .vk-sheet-name em{margin-left:6px;padding:1px 7px;border-radius:4px;font-size:11px;font-style:normal;vertical-align:2px}
 .tool-vo-katta .vk-sheet-name i{background:#fff0d6;color:#8a4b00}
 .tool-vo-katta .vk-sheet-name em{background:var(--accent);color:#fff}
 .tool-vo-katta .vk-sheet-teach{grid-area:teach;font-size:13px;line-height:1.45;color:var(--muted)}
@@ -169,6 +171,11 @@
 .tool-vo-katta .kit-chips button[aria-pressed=true]{border-color:var(--accent-deep);background:var(--accent-deep)}
 
 @media(max-width:350px){.tool-vo-katta .vk-hud{gap:4px}.tool-vo-katta .vk-boss{min-width:0}.tool-vo-katta .vk-boss i{width:18px}.tool-vo-katta .vk-end-choices button{font-size:13px}.tool-vo-katta .vk-hint{font-size:13px}}
-.tool-vo-katta .vk[data-slow] .vk-sky::after,.tool-vo-katta .vk[data-slow] .vk-arrow,.tool-vo-katta .vk[data-slow] .vk-finger,.tool-vo-katta .vk[data-slow] .vk-roster li,.tool-vo-katta .vk[data-slow] .vk-intro{animation:none!important}
-@media(prefers-reduced-motion:reduce){.tool-vo-katta .vk-sky::after,.tool-vo-katta .vk-finger,.tool-vo-katta .vk-title-start,.tool-vo-katta .vk-end,.tool-vo-katta .vk-roster li{animation:none!important}.tool-vo-katta .vk-title-start:hover{transform:none}}
+/* press feedback on everything pressable */
+.tool-vo-katta :is(.vk-modes button,.vk-title-levels,.vk-title-look,.vk-sheet-close,.vk-sheet-world button,.vk-story-skip,.vk-end-choices button){transition:transform .12s var(--ease-out),background-color .15s ease}
+.tool-vo-katta :is(.vk-modes button,.vk-title-levels,.vk-title-look,.vk-sheet-close,.vk-sheet-world button:not(:disabled),.vk-story-skip,.vk-end-choices button):active{transform:scale(.97)}
+.tool-vo-katta .vk[data-slow] :is(.vk-sky::after,.vk-arrow,.vk-finger,.vk-roster li,.vk-intro,.vk-end){animation:none!important}
+.tool-vo-katta .vk[data-slow] .vk-sky::after,.tool-vo-katta .vk[data-slow] :is(.vk-kites i,.vk-roster li,.vk-modes button,.vk-title-levels,.vk-title-look,.vk-sheet-close,.vk-sheet-world button,.vk-story-skip,.vk-end-choices button,.vk-story-skip::before){transition:none}
+.tool-vo-katta .vk[data-slow] :is(.vk-modes button,.vk-title-levels,.vk-title-look,.vk-sheet-close,.vk-sheet-world button,.vk-story-skip,.vk-end-choices button):active{transform:none}
+@media(prefers-reduced-motion:reduce){.tool-vo-katta .vk-sky::after,.tool-vo-katta .vk-finger,.tool-vo-katta .vk-title-start canvas,.tool-vo-katta .vk-end,.tool-vo-katta .vk-roster li,.tool-vo-katta .vk-arrow,.tool-vo-katta .vk-intro{animation:none!important}.tool-vo-katta :is(.vk-modes button,.vk-title-levels,.vk-title-look,.vk-sheet-close,.vk-sheet-world button,.vk-story-skip,.vk-end-choices button,.vk-title-start):active{transform:none}.tool-vo-katta :is(.vk-story-skip::before,.vk-kites i,.vk-roster li,.vk-sky::after,.vk-title-start){transition:none}}
 @media(max-width:430px){.tool-vo-katta .vk-end-choices{grid-template-columns:1.25fr 1fr 1fr;gap:5px}.tool-vo-katta .vk-end-choices button{padding:6px 4px;font-size:14px;white-space:nowrap}.tool-vo-katta .vk-end-choices kbd{display:none}}

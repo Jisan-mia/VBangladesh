@@ -1,6 +1,6 @@
 .tool-nam-shikhi{--accent:#1f6f5c;--accent-deep:#14524a;--ink:#2b2416;--muted:#6b604c;--good:#2e9e44}
 
-.ns{--ns-paper:#fff6e0;--ns-edge:#ecd9a6;--ns-deep:#3f6b2a;--ns-glow:#f2a900;position:relative;display:flex;flex-direction:column;gap:8px;max-width:520px;margin-inline:auto;color:var(--ink)}
+.ns{--ease-out:cubic-bezier(.23,1,.32,1);--ns-paper:#fff6e0;--ns-edge:#ecd9a6;--ns-deep:#3f6b2a;--ns-glow:#f2a900;position:relative;display:flex;flex-direction:column;gap:8px;max-width:520px;margin-inline:auto;color:var(--ink)}
 .ns *{-webkit-tap-highlight-color:transparent}
 .ns-pic{display:block;width:100%;height:auto;aspect-ratio:1}
 
@@ -13,15 +13,15 @@
 .ns-strip{display:flex;flex:none;gap:4px;margin:0;padding:0;list-style:none}
 .ns-strip li{display:grid;place-items:center;width:30px;height:30px;overflow:hidden;border:1.5px dashed var(--ns-edge);border-radius:9px;background:#ffffff8c}
 .ns-strip li.now{border:2.5px solid var(--ns-deep);background:#fff}
-.ns-strip li.on{border:1.5px solid var(--ns-edge);background:#fff;animation:ns-pop .35s cubic-bezier(.2,.9,.3,1.4)}
+.ns-strip li.on{border:1.5px solid var(--ns-edge);background:#fff;animation:ns-pop .25s var(--ease-out)}
 .ns-strip .ns-pic,.ns-strip .ns-figure{width:26px;height:26px}
 
 /* the page of the book: every screen lives in here */
 .ns-stage{position:relative;display:flex;flex:1 1 auto;flex-direction:column;min-height:0;padding:12px;border-radius:22px;background:var(--ns-paper);box-shadow:inset 0 0 0 2px var(--ns-edge);user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 
 /* the title: the open book is the start button */
-.ns-title{display:flex;flex:1;flex-direction:column;gap:12px;animation:ns-in .25s ease-out}
-.ns-start{display:flex;flex:1 1 auto;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:190px;padding:10px 10px 8px;border:0;border-radius:24px;background:#fff;box-shadow:0 0 0 3px var(--ns-deep),0 6px 0 var(--ns-deep);color:var(--ink);font:inherit;cursor:pointer;transition:transform .08s ease-out,box-shadow .08s ease-out}
+.ns-title{display:flex;flex:1;flex-direction:column;gap:12px;animation:ns-in .25s var(--ease-out)}
+.ns-start{display:flex;flex:1 1 auto;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:190px;padding:10px 10px 8px;border:0;border-radius:24px;background:#fff;box-shadow:0 0 0 3px var(--ns-deep),0 6px 0 var(--ns-deep);color:var(--ink);font:inherit;cursor:pointer;transition:transform .1s var(--ease-out)}
 .ns-start:active{transform:translateY(4px);box-shadow:0 0 0 3px var(--ns-deep),0 2px 0 var(--ns-deep)}
 .ns-start:focus-visible{outline:3px solid var(--ns-glow);outline-offset:4px}
 .ns-book{display:block;flex:1 1 0;width:100%;min-height:0}
@@ -31,19 +31,20 @@
 .ns-book-sticker{animation:ns-bob 2.6s ease-in-out infinite;transform-origin:88px 100px}
 .ns-start-label{font-family:var(--font-display);font-size:clamp(30px,9vw,42px);font-weight:800;line-height:1.3;color:var(--ns-deep)}
 .ns-worlds{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0;padding:0;list-style:none}
-.ns-worlds button{display:grid;justify-items:center;align-content:center;gap:0;width:100%;min-height:96px;padding:6px 4px;border:2px solid var(--ns-edge);border-radius:18px;background:#fff;color:var(--ink);font:inherit;font-size:16px;font-weight:700;line-height:1.4;cursor:pointer}
+.ns-worlds button{display:grid;justify-items:center;align-content:center;gap:0;width:100%;min-height:96px;padding:6px 4px;border:2px solid var(--ns-edge);border-radius:18px;background:#fff;color:var(--ink);font:inherit;font-size:16px;font-weight:700;line-height:1.4;cursor:pointer;transition:transform .12s var(--ease-out)}
+.ns-worlds button:active,.ns-level-chip:active,.ns-list li button:active{transform:scale(.97)}
 .ns-worlds button[aria-pressed=true]{border-color:var(--ns-deep);box-shadow:0 0 0 2px var(--ns-deep)}
 .ns-world-pic{width:54px;height:54px}
-.ns-level-chip{display:flex;align-items:baseline;justify-content:center;gap:6px;min-height:48px;padding:8px 14px;border:1.5px solid var(--ns-edge);border-radius:14px;background:#fff;color:var(--ink);font:inherit;font-size:16px;cursor:pointer}
+.ns-level-chip{display:flex;align-items:baseline;justify-content:center;gap:6px;min-height:48px;padding:8px 14px;border:1.5px solid var(--ns-edge);border-radius:14px;background:#fff;color:var(--ink);font:inherit;font-size:16px;cursor:pointer;transition:transform .12s var(--ease-out)}
 .ns-level-chip span{margin-left:4px;font-size:14px;font-weight:700;color:var(--ns-deep);text-decoration:underline}
 .ns-line{margin:0;text-align:center;font-size:16px;line-height:1.6;color:var(--muted)}
 
 /* the level list: a choice screen, nothing runs under it */
-.ns-list{display:flex;flex:1;flex-direction:column;gap:10px;min-height:0;overflow:auto;animation:ns-in .2s ease-out}
+.ns-list{display:flex;flex:1;flex-direction:column;gap:10px;min-height:0;overflow:auto;animation:ns-in .2s var(--ease-out)}
 .ns-list-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .ns-list h2{margin:0;font-family:var(--font-display);font-size:20px;line-height:1.4}
 .ns-list ol{display:grid;gap:10px;margin:0;padding:0;list-style:none}
-.ns-list li button{position:relative;display:grid;grid-template-columns:30px 52px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-height:72px;padding:8px 12px 8px 10px;border:1.5px solid var(--ns-edge);border-radius:16px;background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer}
+.ns-list li button{position:relative;display:grid;grid-template-columns:30px 52px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-height:72px;padding:8px 12px 8px 10px;border:1.5px solid var(--ns-edge);border-radius:16px;background:#fff;color:var(--ink);font:inherit;text-align:left;cursor:pointer;transition:transform .12s var(--ease-out)}
 .ns-list li button[aria-current=true]{box-shadow:0 0 0 3px var(--ns-deep)}
 .ns-list li button.next{border:2px solid var(--ns-glow);background:#fffbe8}
 .ns-list-n{font-family:var(--font-display);font-size:22px;text-align:center}
@@ -63,7 +64,7 @@
 
 /* play: the big card, then the stickers (or the figure), then what happens next */
 .ns-play{display:flex;flex:1;flex-direction:column;gap:12px;min-height:0}
-.ns-card{position:relative;display:flex;flex:1 1 0;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:190px;padding:10px;border-radius:22px;background:#fff;box-shadow:0 0 0 2px var(--ns-edge),0 4px 0 var(--ns-edge);container-type:size;animation:ns-deal .34s cubic-bezier(.2,.8,.3,1.15)}
+.ns-card{position:relative;display:flex;flex:1 1 0;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:190px;padding:10px;border-radius:22px;background:#fff;box-shadow:0 0 0 2px var(--ns-edge),0 4px 0 var(--ns-edge);container-type:size;animation:ns-deal .28s var(--ease-out)}
 .ns-card.solved{cursor:pointer}
 .ns-slot{position:relative;flex:none;width:min(86cqw,calc(100cqh - 52px),300px);aspect-ratio:1}
 .ns-slot-bn,.ns-slot-en,.ns-slot-role{width:min(50cqw,calc(100cqh - 150px),170px);border:3px dashed var(--ns-edge);border-radius:20px}
@@ -77,13 +78,13 @@
 .ns-card.solved .ns-slot-home::after{opacity:0}
 .ns-slot-splat{width:min(70cqw,calc(100cqh - 52px),220px)}
 .ns-peek .ns-peek-art{animation:ns-peek 2.4s ease-in-out infinite}
-.ns-bush{transition:transform .55s cubic-bezier(.5,0,.8,.4),opacity .55s}
+.ns-bush{transition:transform .35s var(--ease-out),opacity .35s var(--ease-out)}
 .ns-bush.away{transform:translateY(64px);opacity:0}
 .ns-card.solved .ns-peek-art{animation:none}
 
 /* the sticker that lands on the card: it flies from where the finger was, then wiggles */
-.ns-landed{position:absolute;inset:0;animation:ns-land .46s cubic-bezier(.2,.9,.3,1.25) both}
-.ns-landed .ns-pic{width:100%;height:100%;animation:ns-wiggle .7s .46s ease-in-out}
+.ns-landed{position:absolute;inset:0;animation:ns-land .4s var(--ease-out) both}
+.ns-landed .ns-pic{width:100%;height:100%;animation:ns-wiggle .7s .4s ease-in-out}
 .ns-slot-home .ns-landed{inset:auto 22% 4% 22%;aspect-ratio:1}
 .ns-slot-splat .ns-landed{inset:18%}
 .ns-slot-bn .ns-landed,.ns-slot-en .ns-landed,.ns-slot-role .ns-landed{inset:8px}
@@ -97,7 +98,7 @@
 .ns-play[data-figure][data-kind=bn] .ns-card,.ns-play[data-figure][data-kind=en] .ns-card{flex-direction:row;gap:16px}
 .ns-play[data-figure][data-kind=bn] .ns-card.solved,.ns-play[data-figure][data-kind=en] .ns-card.solved{flex-direction:column}
 .ns-slot-lens{width:min(60cqw,calc(100cqh - 46px),170px)}
-.ns-lens{position:absolute;inset:0;overflow:hidden;border-radius:50%;background:#fff;box-shadow:0 3px 0 var(--ns-edge);animation:ns-pop .35s cubic-bezier(.2,.9,.3,1.3)}
+.ns-lens{position:absolute;inset:0;overflow:hidden;border-radius:50%;background:#fff;box-shadow:0 3px 0 var(--ns-edge);animation:ns-pop .3s var(--ease-out)}
 .ns-lens::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:inset 0 0 0 6px var(--ns-deep),inset 0 0 0 9px #ffffffb0;pointer-events:none}
 .ns-lens .ns-pic{width:100%;height:100%}
 
@@ -107,7 +108,7 @@
 .ns-tray{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0;padding:0;list-style:none}
 .ns-tray.n2{grid-template-columns:repeat(2,minmax(0,150px));justify-content:center}
 .ns-tray.n4{grid-template-columns:repeat(2,minmax(0,1fr))}
-.ns-sticker{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;min-height:104px;padding:8px 6px;border:0;border-radius:20px;background:#fff;color:var(--ink);font:inherit;box-shadow:0 0 0 2px var(--ns-edge),0 5px 0 var(--ns-edge);cursor:pointer;touch-action:manipulation;transition:transform .08s ease-out,box-shadow .08s ease-out,opacity .2s;animation:ns-pop .3s cubic-bezier(.2,.9,.3,1.3) both}
+.ns-sticker{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;width:100%;min-height:104px;padding:8px 6px;border:0;border-radius:20px;background:#fff;color:var(--ink);font:inherit;box-shadow:0 0 0 2px var(--ns-edge),0 5px 0 var(--ns-edge);cursor:pointer;touch-action:manipulation;transition:transform .1s var(--ease-out),opacity .2s ease;animation:ns-pop .22s var(--ease-out) backwards}
 .ns-tray li:nth-child(2) .ns-sticker{animation-delay:.05s}
 .ns-tray li:nth-child(3) .ns-sticker{animation-delay:.1s}
 .ns-tray li:nth-child(4) .ns-sticker{animation-delay:.15s}
@@ -120,7 +121,9 @@
 .ns-name{font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.4;text-align:center;overflow-wrap:anywhere}
 .ns-sticker.tried{opacity:.62;box-shadow:0 0 0 2px #b8ad95;border:0;background:#fbf7ee}
 .ns-sticker.tried .ns-name{font-size:16px;color:var(--muted)}
-.ns-sticker.glow{box-shadow:0 0 0 4px var(--ns-glow),0 5px 0 var(--ns-edge);outline:3px dashed var(--ns-glow);outline-offset:5px;animation:ns-glow 1.2s ease-in-out infinite}
+.ns-sticker.glow{box-shadow:0 0 0 4px var(--ns-glow),0 5px 0 var(--ns-edge);outline:3px dashed var(--ns-glow);outline-offset:5px}
+/* the hint ring breathes through opacity, not box-shadow */
+.ns-sticker.glow::after{content:"";position:absolute;inset:-4px;border-radius:inherit;box-shadow:0 0 0 8px color-mix(in srgb,var(--ns-glow) 40%,transparent);pointer-events:none;animation:ns-pulse 1.2s ease-in-out infinite}
 .ns-key{position:absolute;top:6px;left:9px;font-size:12px;font-style:normal;font-weight:700;color:#b8ad95;line-height:1}
 @media (hover:none){.ns-key{display:none}}
 .ns-try{min-height:28px;margin:0;text-align:center;font-size:17px;font-weight:600;line-height:1.6;color:var(--muted)}
@@ -131,7 +134,7 @@
 .ns-tag b{font-family:var(--font-display);font-size:clamp(28px,8.6vw,42px);font-weight:800}
 .ns-tag span{font-size:21px;font-weight:600;color:var(--muted)}
 .ns-fact{max-width:340px;margin:0;font-size:16px;line-height:1.6;color:var(--muted)}
-.ns-next{position:relative;display:grid;place-items:center;width:96px;height:96px;margin-top:4px;border:0;border-radius:50%;background:var(--ns-deep);color:#fff;box-shadow:0 5px 0 #0003;cursor:pointer;animation:ns-pop .35s .25s cubic-bezier(.2,.9,.3,1.3) both}
+.ns-next{position:relative;display:grid;place-items:center;width:96px;height:96px;margin-top:4px;border:0;border-radius:50%;background:var(--ns-deep);color:#fff;box-shadow:0 5px 0 #0003;cursor:pointer;transition:transform .1s var(--ease-out);animation:ns-pop .25s .2s var(--ease-out) backwards}
 .ns-next svg{width:46px;height:46px}
 .ns-next:active{transform:translateY(3px);box-shadow:0 2px 0 #0003}
 
@@ -158,12 +161,12 @@
 .ns-ghost{position:absolute;left:-21px;top:-2px;width:44px;max-width:none;height:auto;filter:drop-shadow(0 2px 2px #0003);animation:ns-ghost 1.8s ease-in-out .6s 3 both}
 
 /* the end: the full page, stars, counts, two big pictures of equal size */
-.ns-end{display:flex;flex:1;flex-direction:column;align-items:center;gap:10px;min-height:0;overflow:auto;text-align:center;animation:ns-in .25s ease-out}
+.ns-end{display:flex;flex:1;flex-direction:column;align-items:center;gap:10px;min-height:0;overflow:auto;text-align:center;animation:ns-in .25s var(--ease-out)}
 .ns-end .gx-stars{font-size:40px}
 .ns-end h2{display:grid;margin:0;font-family:var(--font-display);font-size:clamp(20px,5.6vw,26px);line-height:1.45}
 .ns-end h2 small{font-size:15px;font-weight:700;color:var(--ns-deep)}
 .ns-page{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;margin:0;padding:0;list-style:none}
-.ns-page li{display:grid;justify-items:center;gap:0;padding:6px 4px;border-radius:14px;background:#fff;box-shadow:0 0 0 1.5px var(--ns-edge);line-height:1.35;animation:ns-pop .35s cubic-bezier(.2,.9,.3,1.3) both}
+.ns-page li{display:grid;justify-items:center;gap:0;padding:6px 4px;border-radius:14px;background:#fff;box-shadow:0 0 0 1.5px var(--ns-edge);line-height:1.35;animation:ns-pop .25s var(--ease-out) backwards}
 .ns-page .ns-pic,.ns-page .ns-figure{width:min(100%,72px);height:auto;aspect-ratio:1}
 .ns-page b{font-size:17px}
 .ns-page small{font-size:15px;color:var(--muted)}
@@ -171,7 +174,7 @@
 .ns-counts b{color:var(--ink)}
 .ns-away{max-width:340px;margin:0;font-size:17px;line-height:1.6}
 .ns-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(272px,100%)}
-.ns-big{display:grid;place-items:center;gap:2px;min-height:112px;padding:10px 6px;border:0;border-radius:22px;background:var(--ns-deep);color:#fff;font:inherit;font-family:var(--font-display);font-size:18px;font-weight:800;box-shadow:0 5px 0 #0003;cursor:pointer;animation:ns-arm .7s step-end}
+.ns-big{display:grid;place-items:center;gap:2px;min-height:112px;padding:10px 6px;border:0;border-radius:22px;background:var(--ns-deep);color:#fff;font:inherit;font-family:var(--font-display);font-size:18px;font-weight:800;box-shadow:0 5px 0 #0003;cursor:pointer;transition:transform .1s var(--ease-out);animation:ns-arm .7s step-end}
 .ns-big-done{background:#fff;color:var(--ns-deep);box-shadow:0 0 0 2.5px var(--ns-deep),0 5px 0 #0003}
 .ns-big svg{width:46px;height:46px}
 .ns-big:active{transform:translateY(3px)}
@@ -180,12 +183,11 @@
 
 @keyframes ns-in{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}
 @keyframes ns-deal{from{opacity:0;transform:translateX(28px) rotate(1.5deg)}to{opacity:1;transform:none}}
-@keyframes ns-pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
-@keyframes ns-land{from{transform:translate(var(--dx,0),var(--dy,0)) scale(.5) rotate(-8deg)}70%{transform:translate(0,0) scale(1.06) rotate(2deg)}to{transform:none}}
+@keyframes ns-pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+@keyframes ns-land{from{transform:translate(var(--dx,0),var(--dy,0)) scale(.7) rotate(-8deg)}70%{transform:translate(0,0) scale(1.04) rotate(2deg)}to{transform:none}}
 @keyframes ns-wiggle{25%{transform:rotate(-6deg)}50%{transform:rotate(5deg)}75%{transform:rotate(-3deg)}}
 @keyframes ns-bob{50%{transform:translateY(-4px) rotate(-2deg)}}
 @keyframes ns-peek{0%,100%{transform:translateY(4px)}50%{transform:translateY(-2px)}}
-@keyframes ns-glow{50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--ns-glow) 40%,transparent),0 5px 0 var(--ns-edge)}}
 @keyframes ns-pulse{50%{opacity:.35}}
 @keyframes ns-arm{from{opacity:.5}to{opacity:1}}
 @keyframes ns-ghost{0%{transform:translate(34px,46px);opacity:0}30%{transform:translate(0,0);opacity:1}45%{transform:scale(.86)}60%{transform:scale(1)}85%{opacity:1}100%{opacity:0}}
