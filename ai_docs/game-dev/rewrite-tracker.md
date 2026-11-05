@@ -5,7 +5,7 @@ There are two phases per game. **Statechart**: model it, find the bugs, replay t
 | game | group | statechart | rewrite |
 |---|---|---|---|
 | kalbaishakhi-aam | S01 | analysed | done |
-| dudh-uthlano | S01 | analysed | rewriting |
+| dudh-uthlano | S01 | analysed | done |
 | jhalmuri-sap | S01 | analysed | done |
 | danguli | S02 | analysed | done |
 | sir-ghurlei-thamo | S02 | analysed | done |
