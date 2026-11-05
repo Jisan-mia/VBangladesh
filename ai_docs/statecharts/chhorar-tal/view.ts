@@ -1,37 +1,37 @@
-export const title = "ছড়ার তালে: the round, the window, keys, the voice and the daily limit";
+export const title = "chhorar-tal: the screens, the beat, the window, keys and the daily limit";
 const round = (v: any) => ({
-  ready: "Drum waiting (ঢোলে চাপ দাও)",
-  beat: v.progress === 0 ? "ছড়া playing, first lines" : "ছড়া playing, last line",
-  rhyme: v.voice ? "Rhyme pick (the ছড়া was spoken)" : "Rhyme pick, nothing spoken: only words to read",
-  solved: "Right picture, card in 1.8 s",
-  done: "Done screen (আবার খেলো / শেষ)",
-  idle: "আজকের মতো হলো",
-} as any)[v.phase];
+  title: "Title (the big drum)",
+  levels: "ছড়া list (nothing runs)",
+  play: v.counting ? "Counting in (২, ১)" : v.beat === 0 ? "ছড়া playing, early lines" : "ছড়া playing, last line",
+  end: v.guard ? "End screen (আবার খেলো / শেষ, live)" : "End screen (buttons waking, stars counting)",
+} as any)[v.screen];
 export const state = (v: any) => ({
-  Round: round(v) + (v.lost ? ", the won round was never counted" : ""),
+  Round: round(v) + (v.screen === "end" && v.recorded ? ", stars saved" : ""),
+  Beat: v.menu ? "Player's menu open: beat stopped" : v.win === "away" ? "Away: beat stopped" : v.loop ? "Beat running" : v.owed ? "Beat owed a count-in" : "No beat",
   Window: v.win === "here" ? "On the page" : "Away (another window or tab)",
-  Keys: v.keyWent === "restart" ? "Space started the ছড়া over" : v.keyWent === "scroll" ? "Space scrolled the page" : v.focus === "level" ? "Focus on a ছড়া button" : v.focus === "drum" ? "Focus on the drum" : "Nothing focused",
-  Voice: !v.voice ? "No Bangla voice on this phone" : v.speaking ? "Voice reading the ছড়া" : "Voice quiet",
-  Sound: v.sound ? "Sound on" : "Sound off",
+  Keys: v.keyWent === "tap" ? "Space tapped the drum" : v.keyWent === "start" ? "Space started the ছড়া" : v.swallow ? "First tap back only wakes the game" : "Space goes to the game",
   Today: v.resting ? "Rest screen (আজ এটুকুই)" : v.overLimit ? "Today's time is up" : "Time left today",
 });
 export const step = (action: string) => ({
+  YouTapTheStart: "you tap the big drum",
+  YouPressSpaceOnTheTitle: "you press Space on the title",
+  YouPickAChhora: "you pick a ছড়া in the list",
+  YouOpenTheList: "you open the ছড়া list",
+  YouCloseTheList: "you close the list",
   YouTapTheDrum: "you tap the drum",
   YouPressSpace: "you press Space",
-  YouPickAChhora: "you tap a ছড়া number",
+  CountInEnds: "the two beats are counted in",
   TheBeatMovesOn: "the beat moves on",
-  TheChhoraEnds: "the ছড়া ends and the pictures come",
-  YouTapTheRightPicture: "you tap the right picture",
-  TheRoundEnds: "the done screen comes",
-  TheVoiceFinishes: "the voice finishes",
+  TheChhoraEnds: "the last beat ends: stars saved, limit checked",
+  TheGuardPasses: "the end screen's buttons wake up",
   YouPlayAgain: "you tap আবার খেলো",
   YouPressShesh: "you tap শেষ",
   YouLeave: "you click into another window or hide the tab",
   YouComeBack: "you come back",
-  SoundOff: "you turn sound off",
-  SoundOn: "you turn sound on",
+  YouPause: "you open the player's menu",
+  YouResume: "you tap চালিয়ে যাও",
   TimeIsUp: "today's time runs out",
   AParentGivesTenMinutes: "a parent gives ১০ more minutes",
 } as Record<string, string>)[action] ?? action;
-export const group = (v: any) => v.resting ? "held" : ["done", "idle"].includes(v.phase) ? "done" : "play";
+export const group = (v: any) => v.resting ? "held" : v.menu || v.win === "away" ? "held" : v.screen === "play" ? "play" : "done";
 export const colors = { play: "teal", held: "yellow", done: "blue" };

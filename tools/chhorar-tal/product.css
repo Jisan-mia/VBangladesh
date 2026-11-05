@@ -1,91 +1,179 @@
-.tool-chhorar-tal{--accent:#b4441c;--accent-deep:#8a3212;--ink:#3a2a1c;--muted:#6f5b48;--paper:#fbf3e2;--edge:#ecd9b4;--good:#2e9e44;--glow:#f5b400}
-.tool-chhorar-tal .ct-page{color:var(--ink)}
+/* Look: a village-fair (মেলা) poster, printed in flat inks: one ink outline (#3a2a1c), a hard offset shadow under each button like a stack of cards, and the painted ঢোল as the one big object. One palette per world: the courtyard's clay, the night sky's indigo, the fair's bottle green; a marigold gold (#f2b632) only for the ball, a lit dot and a ring. Corners are small and by role; only the ball, the dots, the beads and the count badges are round, because they are round things. */
+.tool-chhorar-tal{--accent:#b4441c;--ink:#3a2a1c;--muted:#6f5b46;--ease-out:cubic-bezier(.23,1,.32,1);--ease-land:cubic-bezier(.2,1.25,.4,1);--gold:#f2b632}
 
-.ct-hero{padding:8px 0 0}
-.ct-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,40px);line-height:1.4;font-weight:700;letter-spacing:0}
-.ct-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
-.ct-hero .kk-note{margin:8px 0}
+/* ---- one stage; the world's colours come in on --w-* ---- */
+.tool-chhorar-tal .gp-game{min-height:100%}
+.ct{overflow-x:clip;--w-accent:#b4441c;--w-deep:#7a2a0e;--w-soft:#fff1de;--w-edge:#f0d3a2;position:relative;display:flex;flex-direction:column;gap:8px;width:100%;max-width:520px;min-height:calc(var(--stage-h,640px) - 8px);margin:0 auto;padding:6px 8px 10px;background:var(--w-soft);color:var(--ink)}
+.ct[data-world="2"]{--w-accent:#3b3f9e;--w-deep:#23266b;--w-soft:#eaecfb;--w-edge:#bcc2ee}
+.ct[data-world="3"]{--w-accent:#14705a;--w-deep:#0b4a3a;--w-soft:#e3f3ec;--w-edge:#aed6c6}
+.ct[data-screen=title],.ct[data-screen=levels]{background:#fff}
+.ct *{-webkit-tap-highlight-color:transparent}
+.ct :where(button){font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+.ct button:focus-visible{outline:4px solid var(--w-deep);outline-offset:4px}
+.gp-stage[data-immersive] .ct-hud{padding-inline-start:46px}
 
-.ct{display:grid;gap:12px;max-width:520px;margin-inline:auto;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+/* ---- title: the ঢোল is the start button ---- */
+.ct-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:18px;min-height:0;padding:8px 4px;text-align:center}
+.ct-start{position:relative;display:block;width:min(100%,380px);aspect-ratio:300/250;padding:0;border:0;background:none;touch-action:manipulation;transition:transform 140ms var(--ease-out)}
+.ct-start:active{transform:translateY(4px) scale(.985)}
+.ct-start-drum{position:absolute;left:0;right:0;bottom:0;width:100%;height:auto;filter:drop-shadow(0 8px 0 #3a2a1c33);animation:ct-nudge 7s var(--ease-out) 2.5s infinite}
+.ct-start-stick{position:absolute;top:0;width:11%;transform-origin:50% 100%}
+.ct-start-stick.l{left:22%;transform:rotate(38deg)}
+.ct-start-stick.r{right:22%;transform:rotate(-38deg)}
+.ct-start-stick svg,.ct-stick svg{display:block;width:100%;height:auto}
+.ct-start-go{position:absolute;left:50%;top:62%;display:grid;place-items:center;width:25%;aspect-ratio:1;border:5px solid var(--ink);border-radius:50%;background:var(--gold);color:var(--ink);transform:translate(-50%,-50%);box-shadow:0 5px 0 #3a2a1c55}
+.ct-start-go svg{width:52%;height:52%;margin-left:6%}
+@keyframes ct-nudge{0%,6%,100%{transform:none}3%{transform:scale(1.025)}}
+.ct-chip{display:flex;align-items:center;gap:12px;min-height:72px;max-width:100%;padding:6px 14px 6px 6px;border:2px solid var(--w-edge);border-radius:8px;background:#fff;text-align:left;box-shadow:0 4px 0 var(--w-edge);transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out)}
+.ct-chip:active{transform:translateY(3px) scale(.985);box-shadow:0 1px 0 var(--w-edge)}
+.ct-chip-art{flex:none;width:88px;border-radius:4px;overflow:hidden;box-shadow:inset 0 0 0 2px var(--w-edge)}
+.ct-chip-svg{display:block;width:100%;height:auto}
+.ct-chip-text{display:grid;min-width:0}
+.ct-chip-text b{font-family:var(--font-display);font-size:19px;line-height:1.5}
+.ct-chip-text small{font-size:16px;line-height:1.4;color:var(--muted)}
+.ct-chip-more{flex:none;width:26px;height:26px;color:var(--muted)}
+.ct-chip-more svg{display:block;width:100%;height:100%}
+.ct-grown{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px}
+.ct-grown .kk-gate-open>div{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.ct-finger{position:absolute;right:10%;bottom:-18px;width:46px;pointer-events:none;transform:translate(8px,12px)}
+.ct-finger svg{display:block;width:100%;height:auto}
+.ct-title .ct-finger{animation:ct-tap 1.4s ease-in-out infinite}
+@keyframes ct-tap{0%,100%{transform:translate(8px,12px)}45%,60%{transform:translate(0,0)}}
 
-/* The page of the rhyme: lines arrive one at a time in big type; the word under the beat lights. */
-.ct-stage{position:relative;display:grid;align-content:center;gap:4px;min-height:clamp(190px,30vh,260px);padding:52px 16px 16px;border-radius:20px;background:var(--paper);box-shadow:inset 0 -10px 0 #0000000d}
-.ct-tools{position:absolute;right:10px;top:10px;display:flex;gap:8px;align-items:center}
-.ct-pill{min-height:44px;padding:4px 12px;border:1.5px solid var(--ink);border-radius:999px;background:#fffaf0;color:var(--ink);font:inherit;font-size:15px;font-weight:700}
-.ct-pill[aria-pressed=true]{background:var(--ink);color:#fff}
-.ct-tools .gx-sound{min-height:44px;min-width:44px;border-radius:999px;background:#fffaf0;color:var(--ink)}
-.ct-passes{position:absolute;left:16px;top:26px;display:flex;gap:6px;margin:0;padding:0;list-style:none}
-.ct-passes li{width:12px;height:12px;border-radius:50%;background:#0000001f}
-.ct-passes li.now{background:var(--glow);box-shadow:0 0 0 2px #fff}
-.ct-passes li.done{background:var(--accent)}
+/* ---- HUD: the ছড়া's badge top-left, whose turn it is and which round top-right. The middle stays clear. ---- */
+.ct-hud{display:flex;align-items:center;gap:8px;min-height:44px}
+.ct-badge{display:flex;align-items:center;gap:8px;margin:0 auto 0 0;padding:3px 12px 3px 4px;border-radius:6px;background:#fff;box-shadow:inset 0 0 0 2px var(--w-edge);font-family:var(--font-display);font-size:16px;font-weight:700;line-height:1.4}
+.ct-badge b{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--w-accent);color:#fff;font-size:17px}
+.ct-who,.ct-passes{display:flex;gap:4px;margin:0;padding:0;list-style:none}
+.ct-who li{display:grid;place-items:center;width:38px;height:38px;border-radius:6px;opacity:.32;transition:opacity 160ms var(--ease-out),box-shadow 160ms var(--ease-out)}
+.ct-who li[data-on]{opacity:1;background:#fff;box-shadow:inset 0 0 0 2.5px var(--w-accent)}
+.ct-who svg{width:30px;height:30px}
+.ct-passes{align-items:center;padding:0 2px}
+.ct-passes li{width:12px;height:12px;border-radius:50%;box-shadow:inset 0 0 0 2.5px var(--w-accent)}
+.ct-passes li[data-done]{background:var(--w-accent)}
+.ct-passes li[data-on]{background:var(--gold);box-shadow:inset 0 0 0 2.5px var(--ink)}
 
-.ct-name{margin:0;text-align:center;font-family:var(--font-display);font-size:clamp(30px,9vw,44px);font-weight:700;line-height:1.6;color:var(--muted)}
-.ct-cue{margin:0;text-align:center;font-size:20px;font-weight:600;line-height:1.6}
-.ct-lines{display:grid;gap:2px;text-align:center}
-.ct-lines p{margin:0}
-.ct-past{font-size:18px;line-height:1.6;color:var(--muted)}
-.ct-now{font-family:var(--font-display);font-size:clamp(28px,8.6vw,42px);font-weight:700;line-height:1.7}
-.ct-all{font-family:var(--font-display);font-size:clamp(20px,6vw,28px);font-weight:700;line-height:1.7}
-.ct-word{padding:0 .12em;border-radius:10px;color:#3a2a1c66;transition:background-color .12s,color .12s}
-.ct-word.said{color:var(--ink)}
-.ct-word.now{background:var(--accent);color:#fff}
-.ct-blank{display:inline-block;min-width:2.6em;padding:0 .08em;border-bottom:4px dashed var(--accent);color:var(--accent);line-height:1.5}
-.ct-blank.filled{border-bottom-style:solid;background:#f8e3cf;border-radius:10px 10px 0 0}
+/* ---- the picture grows line by line ---- */
+.ct-scene{position:relative;width:min(100%,calc((var(--stage-h,700px) - 480px) * 1.6));min-width:min(100%,260px);margin:0 auto;border:3px solid var(--w-accent);background:#fff;box-shadow:0 5px 0 var(--w-deep);overflow:hidden}
+.ct-scene-art{display:block;width:100%;height:auto}
+.ct .p{opacity:0;transform:translateY(8px);transform-box:fill-box;transform-origin:50% 100%;transition:opacity 200ms var(--ease-out),transform 240ms var(--ease-out)}
+.ct .p[data-on]{opacity:1;transform:none}
+.ct-count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:22px;margin:0;background:#fff9}
+.ct-count span{display:grid;place-items:center;width:76px;height:76px;border:4px solid var(--w-accent);border-radius:50%;background:#fff;color:var(--w-accent);font-family:var(--font-display);font-size:44px;font-weight:800;line-height:1;transition:background-color 120ms var(--ease-out),color 120ms var(--ease-out),transform 180ms var(--ease-land)}
+.ct-count span[data-on]{background:var(--w-accent);color:#fff;transform:scale(1.06)}
 
-/* The ঢোল: at least 140px wide. On every beat it swells and darkens; that is the beat on mute. */
-.ct-drum-row{display:grid;place-items:center}
-.ct-drum{position:relative;display:grid;place-items:center;width:clamp(150px,46vw,210px);aspect-ratio:14/10;padding:8px;border:0;border-radius:32px;background:transparent;touch-action:manipulation;transition:transform .1s ease-out}
-.ct-drum::before{content:"";position:absolute;inset:6px;border-radius:50%;background:#f5b40026;transition:background-color .1s}
-.ct-drum.beat{transform:scale(1.07)}
-.ct-drum.beat::before{background:#f5b40073}
-.ct-drum-art{position:relative;width:100%;height:auto;filter:drop-shadow(0 6px 0 #5b351033)}
-.ct-drum:active .ct-drum-art{filter:drop-shadow(0 2px 0 #5b351033)}
-.ct-ring{position:absolute;inset:-4px;border-radius:50%;border:5px solid #b4441c55;opacity:0;animation:ct-ring .4s ease-out}
-.ct-ring.near{border-color:var(--glow);box-shadow:0 0 22px #f5b400aa}
-@keyframes ct-ring{0%{opacity:1;transform:scale(.9)}100%{opacity:0;transform:scale(1.12)}}
+/* ---- the beads: one a line, tied in pairs when two lines end alike ---- */
+.ct-beads{display:block;width:min(100%,340px);height:34px;margin:0 auto;overflow:visible}
+.ct-bead{--g:#8a7a66;fill:#fff;stroke:var(--g);stroke-width:2.5;transition:fill 160ms var(--ease-out)}
+.ct-bead[data-g="0"],.ct-thread[data-g="0"]{--g:#b4441c}
+.ct-bead[data-g="1"],.ct-thread[data-g="1"]{--g:#2f6fd0}
+.ct-bead[data-g="2"],.ct-thread[data-g="2"]{--g:#14705a}
+.ct-bead[data-done]{fill:var(--g)}
+.ct-bead[data-now]{stroke-width:4.5}
+.ct-thread{fill:none;stroke:var(--g);stroke-width:2.8;stroke-linecap:round;stroke-dasharray:1 1;stroke-dashoffset:1;transition:stroke-dashoffset 320ms var(--ease-out)}
+.ct-thread[data-on]{stroke-dashoffset:0}
 
-.ct-ghost-at{position:absolute;left:52%;top:46%;width:0;height:0;pointer-events:none;z-index:3}
-.ct-ghost{position:absolute;left:-10px;top:-2px;width:50px;max-width:none;height:auto;filter:drop-shadow(0 2px 2px #0003);animation:ct-ghost var(--beat,900ms) ease-in-out infinite}
-@keyframes ct-ghost{0%{transform:translate(0,0) scale(.88)}20%{transform:translate(0,0) scale(1)}60%{transform:translate(10px,26px)}100%{transform:translate(0,0) scale(.88)}}
+/* ---- the words, each over its drum dot; the ball hops dot to dot ---- */
+.ct-words{position:relative;display:grid;align-items:center;min-height:132px;padding:26px 4px 2px}
+.ct-line{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 18px;margin:0}
+.ct-w{display:flex;flex-direction:column;align-items:center;min-width:46px}
+.ct-w b{font-family:var(--font-display);font-size:clamp(28px,8.4vw,42px);font-weight:800;line-height:1.5;color:#3a2a1c88;transition:color 120ms var(--ease-out),transform 140ms var(--ease-out)}
+.ct-w[data-state=said] b{color:var(--ink)}
+.ct-w[data-state=now] b{color:var(--w-accent);transform:translateY(-2px) scale(1.06)}
+.ct[data-guide=none] .ct-w b{color:var(--ink)}
+.ct-w[data-end] b{border-bottom:5px solid var(--g)}
+.ct-w[data-end="0"]{--g:#b4441c}
+.ct-w[data-end="1"]{--g:#2f6fd0}
+.ct-w[data-end="2"]{--g:#14705a}
+.ct-dot{display:grid;place-items:center;width:30px;height:30px}
+.ct-dot::before{content:"";width:18px;height:18px;border:3px solid var(--w-accent);border-radius:50%;background:#fff;transition:background-color 120ms var(--ease-out),transform 180ms var(--ease-land)}
+.ct-w[data-big] .ct-dot::before{width:28px;height:28px;border-color:var(--ink);background:#f6e7a1}
+.ct-w[data-hit] .ct-dot::before{background:#f2a900;border-color:var(--ink);transform:scale(1.2)}
+.ct-restdot{display:block;width:40px;height:40px;color:var(--w-accent)}
+.ct-restdot svg{display:block;width:100%;height:100%}
+.ct-restw[data-state=now] .ct-restdot{transform:scale(1.1);transition:transform 140ms var(--ease-out)}
+.ct[data-guide=dim] .ct-dot,.ct[data-guide=dim] .ct-restdot{opacity:.38}
+.ct[data-guide=none] .ct-dot,.ct[data-guide=none] .ct-restdot{visibility:hidden}
+.ct[data-guide=none] .ct-w[data-hit] .ct-dot{visibility:visible}
+.ct-ball{position:absolute;left:0;top:0;width:22px;height:22px;border:3px solid var(--ink);border-radius:50%;background:var(--gold);box-shadow:0 4px 0 #3a2a1c33;pointer-events:none;will-change:transform;visibility:hidden}
+.ct[data-guide=dim] .ct-ball,.ct[data-guide=none] .ct-ball{display:none}
 
-/* ছন্দ মেলাও: big picture buttons, 16px apart, with the word under each for the grown-up to read aloud. */
-.ct-ask{margin:0;text-align:center;font-size:20px;line-height:1.6}
-.ct-ask b{color:var(--accent)}
-.ct-choices{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin:0;padding:0;list-style:none}
-.ct-choice{position:relative;display:grid;justify-items:center;gap:2px;width:clamp(100px,27vw,132px);padding:8px 8px 4px;border:3px solid var(--edge);border-radius:22px;background:#fffaf0;color:var(--ink);box-shadow:0 5px 0 var(--edge);transition:transform .08s}
-.ct-choices.n2 .ct-choice{width:clamp(120px,38vw,160px)}
-.ct-choice:active{transform:translateY(4px);box-shadow:0 1px 0 var(--edge)}
-.ct-pic{width:100%;height:auto;aspect-ratio:1}
-.ct-label{font-family:var(--font-display);font-size:20px;font-weight:700;line-height:1.6}
-.ct-choice.right{border-color:var(--good);background:#eef8e8;box-shadow:0 5px 0 #a6d79a}
-.ct-choice.wrong{border-style:dashed;opacity:.55}
-.ct-choice:disabled{opacity:.4}
-.ct-choice.right:disabled{opacity:1}
-.ct-choice.hint{border-color:var(--glow);animation:ct-hint 1.2s ease-in-out infinite}
-@keyframes ct-hint{50%{box-shadow:0 0 0 7px #f5b40073}}
+/* ---- the ঢোল you tap: at least 150 px tall, the whole width ---- */
+.ct-drumrow{position:relative;display:grid;place-items:center;height:clamp(160px,27svh,230px);margin-top:auto}
+.ct-drum{position:relative;display:grid;place-items:center;width:min(94%,340px);height:100%;padding:0;border:0;background:none;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.ct-drum:focus-visible{outline:none}
+.ct-drum-box{width:100%;transform-origin:50% 60%}
+.ct-drum-box svg{display:block;width:100%;height:auto;filter:drop-shadow(0 7px 0 #3a2a1c33)}
+.ct-stick{position:absolute;top:-34px;width:24px;pointer-events:none;transform-origin:50% 100%}
+.ct-stick.l{left:calc(50% - min(47%, 170px) + 22px);transform:rotate(-40deg)}
+.ct-stick.r{right:calc(50% - min(47%, 170px) + 22px);transform:rotate(40deg)}
+.ct-ring{position:absolute;inset:3% 2%;border:7px solid var(--gold);border-radius:56px;opacity:0;pointer-events:none}
+.ct-ring[data-near="0"]{border-width:4px;border-color:#9a8a74}
+.ct[data-echo][data-owner=you] .ct-drumrow::before{content:"";position:absolute;inset:6% 4%;border:4px dashed var(--gold);border-radius:60px;pointer-events:none}
+.ct[data-echo][data-owner=dhuli] .ct-drum-box{opacity:.82}
 
-.ct-done{display:grid;justify-items:center;gap:12px;text-align:center}
-.ct-done h2{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,28px);line-height:1.45}
-.ct-method{margin:0;font-size:18px;line-height:1.6}
-.ct-pair{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(100%,340px)}
-.tool-chhorar-tal .ct-pair button{min-height:64px;min-width:0;font-size:20px;font-weight:700}
+/* ---- end of a ছড়া: the picture it built, stars, counts, two picture buttons ---- */
+.ct-end{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:6px 0 8px;text-align:center}
+.ct-end-pic{width:min(100%,calc((var(--stage-h,700px) - 470px) * 1.6),380px);min-width:min(100%,240px);border:3px solid var(--w-accent);background:#fff;box-shadow:0 5px 0 var(--w-deep);overflow:hidden;animation:ct-in 260ms var(--ease-out) both}
+.ct-end-svg{display:block;width:100%;height:auto}
+.ct-end-name{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;margin:0;font-family:var(--font-display);font-size:23px;font-weight:800;line-height:1.5;color:var(--w-deep);animation:ct-in 240ms var(--ease-out) 60ms both}
+.ct-stamp{padding:0 9px;border:2px solid var(--w-accent);border-radius:4px;background:var(--gold);color:var(--ink);font-size:15px;line-height:1.7;transform:rotate(-4deg)}
+.ct-end-stars .gx-stars{font-size:46px}
+.ct-end-stars .gx-stars .on{display:inline-block}
+.ct-end-count{display:flex;flex-wrap:wrap;justify-content:center;gap:2px 14px;margin:0;font-family:var(--font-display);font-size:19px;font-weight:700;line-height:1.5;animation:ct-in 240ms var(--ease-out) 120ms both}
+.ct-end-count b{color:var(--w-deep)}
+.ct-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(340px,100%);animation:ct-live 700ms linear both}
+.ct-end-actions.one{grid-template-columns:1fr;width:min(170px,100%)}
+@keyframes ct-live{from{opacity:.45}to{opacity:1}}
+@keyframes ct-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ct-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:0;border-radius:8px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out)}
+.ct-big:active{transform:translateY(4px) scale(.97);box-shadow:0 2px 0 var(--w-deep)}
+.ct-big svg{width:48px;height:48px}
+.ct-big-done{background:#fff;color:var(--w-deep);box-shadow:inset 0 0 0 3px var(--w-accent),0 6px 0 var(--w-deep)}
+.ct-big-done:active{box-shadow:inset 0 0 0 3px var(--w-accent),0 2px 0 var(--w-deep)}
+.ct-end .kk-show-button{min-height:56px}
+.ct-parent-line{margin:8px 0 0;font-size:16px;line-height:1.7}
 
-.ct-levels .gx-levels{grid-template-columns:repeat(4,minmax(0,1fr))}
-.ct-parent-line{max-width:520px;margin:12px auto 0;font-size:16px;line-height:1.6;text-align:left}
-.ct-gate{display:flex;justify-content:flex-start}
+/* ---- the ছড়া list: a choice screen ---- */
+.ct-levels{position:relative;display:grid;gap:14px;align-content:start;max-height:calc(var(--stage-h,9999px) - 24px);overflow:auto;overscroll-behavior:contain;padding:0 2px 12px}
+.ct-levels-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 0 6px;background:#fff}
+.gp-stage[data-immersive] .ct-levels-head{padding-inline-start:44px}
+.ct-levels-head p{margin:0;font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.5}
+.ct-close{display:grid;place-items:center;width:56px;height:56px;border:2px solid var(--w-edge);border-radius:8px;background:#fff;transition:transform 120ms var(--ease-out)}
+.ct-close:active{transform:scale(.95)}
+.ct-close svg{width:28px;height:28px;fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.ct-band{--w-accent:#b4441c;--w-deep:#7a2a0e;--w-soft:#fff1de;--w-edge:#f0d3a2;display:grid;gap:8px;padding:10px;border-radius:8px;background:var(--w-soft);box-shadow:inset 0 0 0 1.5px var(--w-edge)}
+.ct-band[data-world="2"]{--w-accent:#3b3f9e;--w-deep:#23266b;--w-soft:#eaecfb;--w-edge:#bcc2ee}
+.ct-band[data-world="3"]{--w-accent:#14705a;--w-deep:#0b4a3a;--w-soft:#e3f3ec;--w-edge:#aed6c6}
+.ct-band h3{margin:0 4px;font-family:var(--font-display);font-size:19px;line-height:1.5;color:var(--w-deep)}
+.ct-band h3 small{display:block;font-family:inherit;font-size:15px;font-weight:600;line-height:1.4;color:var(--muted)}
+.ct-band ol{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:12px;margin:0;padding:0;list-style:none}
+.ct-band li:has(.finale){grid-column:1/-1}
+.ct-lcard{position:relative;display:grid;justify-items:center;gap:2px;width:100%;min-height:140px;padding:6px 6px 6px;border:2px solid var(--w-edge);border-radius:8px;background:#fff;color:var(--ink);transition:transform 120ms var(--ease-out)}
+.ct-lcard:active{transform:scale(.97)}
+.ct-lcard.finale{border-color:var(--w-accent);background:#fff}
+.ct-lcard[data-next]{border-color:var(--w-accent);box-shadow:0 0 0 4px #f2b63299}
+.ct-lcard[aria-current=true]{outline:3px solid var(--w-deep);outline-offset:2px}
+.ct-lcard-art{display:block;width:100%;border-radius:4px;overflow:hidden;box-shadow:inset 0 0 0 2px var(--w-edge)}
+.ct-lcard-svg{display:block;width:100%;height:auto}
+.ct-lcard-n{position:absolute;left:10px;top:10px;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 2px var(--w-accent);font-size:15px;font-weight:800;line-height:1}
+.ct-lcard-name{font-size:16px;font-weight:700;line-height:1.4}
+.ct-lcard .gx-stars{font-size:18px}
+.ct-lcard-next{position:absolute;right:-4px;top:-10px;padding:1px 8px;border-radius:4px;background:var(--gold);color:var(--ink);font-size:13px;font-weight:800;line-height:1.6}
 
-.ct-guide h2{font-family:var(--font-display);margin-bottom:12px}
-.ct-guide>p{color:var(--muted);max-width:640px}
-.ct-guide ol{display:grid;gap:14px;margin:0 0 18px;padding:0;list-style:none}
-.ct-guide li{display:flex;gap:14px;align-items:flex-start}
-.ct-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
-.ct-guide li p{margin:4px 0 0}
-.ct-privacy{font-size:15px}
+/* ---- the picture's pop and ধীরে খেলো: nothing hops, swings, pops or pulses; the beat is still shown by the dots and words ---- */
+.ct[data-slow] .ct-start-drum,.ct[data-slow] .ct-finger,.ct[data-slow] .ct-end-pic,.ct[data-slow] .ct-end-name,.ct[data-slow] .ct-end-count{animation:none}
+.ct[data-slow] .p{transform:none;transition:opacity 150ms linear}
+.ct[data-slow] .ct-w[data-state=now] b,.ct[data-slow] .ct-w[data-hit] .ct-dot::before,.ct[data-slow] .ct-restw[data-state=now] .ct-restdot,.ct[data-slow] .ct-count span[data-on]{transform:none}
+.ct[data-slow] .ct-w[data-state=now] b{text-decoration:underline;text-decoration-thickness:4px;text-underline-offset:6px}
+.ct[data-slow] .ct-start,.ct[data-slow] .ct-chip,.ct[data-slow] .ct-big{transition:none}
+.ct[data-slow] .ct-thread{transition:none}
+@media (prefers-reduced-motion:reduce){
+  .ct-start-drum,.ct-finger,.ct-end-pic,.ct-end-name,.ct-end-count{animation:none}
+  .ct .p{transform:none;transition:opacity 150ms linear}
+  .ct-w[data-state=now] b,.ct-w[data-hit] .ct-dot::before,.ct-restw[data-state=now] .ct-restdot,.ct-count span[data-on]{transform:none}
+  .ct-start,.ct-chip,.ct-big,.ct-thread{transition:none}
+}
 
-@media (max-width:360px){.ct-choice{width:min(104px,40vw)}.ct-choices.n2 .ct-choice{width:min(130px,40vw)}}
-@media (min-width:720px){.ct-lead{display:block}}
-/* Slow mode and reduced motion: no swelling or rings; the beat still shows as the drum's halo darkening and the word lighting. */
-.ct-slow *,.ct-slow *::before,.ct-slow *::after{animation:none!important;transition:none!important}
-.ct-slow .ct-drum.beat{transform:none}
-.ct-slow .ct-ring{opacity:1}
-@media (prefers-reduced-motion:reduce){.tool-chhorar-tal *{animation:none!important;transition:none!important}.tool-chhorar-tal .ct-drum.beat{transform:none}.tool-chhorar-tal .ct-ring{opacity:1}}
+/* short stages: a smaller picture and drum that still keep their taps big */
+@media (max-height:700px){.ct-words{min-height:112px}.ct-drumrow{height:150px}.ct-stick{top:-40px}}
