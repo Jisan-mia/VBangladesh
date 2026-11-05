@@ -1,6 +1,10 @@
 import { cardSizes, drawFooterBand, fitText, renderCard, roundedRect } from "../../../shared/card-canvas";
 import { drawBoat } from "./art";
-import { bn, cardLine, cardSub, type Today } from "./race";
+import { bn } from "./levels";
+
+export type Today = { games: number; counted: number; n: number; back: boolean };
+export const cardLine = (today: Today) => `আজ ১ থেকে ${bn(today.n)} গুনে গুনে নৌকা চালালাম`;
+export const cardSub = (today: Today) => `${bn(today.games)}টা খেলা, ${bn(today.counted)}টা ঘাট গোনা${today.back ? ", উল্টো গোনাও হলো" : ""}`;
 
 const colors = { sky: "#eaf6f2", bank: "#9ccf73", water: "#4aa3b5", wave: "#7cc3d0", step: "#d98b5f", tile: "#fff8e8", ink: "#1f3a40", muted: "#4f6b70", accent: "#1f6f8b", goal: "#f2a900", band: "#134b5f", ask: "#ffd166" };
 
@@ -18,7 +22,7 @@ export function drawCard(canvas: HTMLCanvasElement, today: Today, site: string) 
   fitText(c, [{ text: `গুনে ${tail}`, color: colors.ink, weight: 800, display: true }], cx, 390, 64, 960, "center");
 
   // The board: one straight row of numbered ghats on the bank, the river below.
-  const left = 60, span = width - 120, cell = span / today.n, tile = cell - (today.n > 10 ? 6 : 12), bankTop = 540, tileTop = bankTop + 40;
+  const left = 60, span = width - 120, cell = span / today.n, tile = Math.min(110, cell - (today.n > 10 ? 6 : 12)), bankTop = 540, tileTop = bankTop + 40;
   c.fillStyle = colors.bank; c.fillRect(0, bankTop, width, 130);
   c.fillStyle = colors.water; c.fillRect(0, bankTop + 130, width, 260);
   c.strokeStyle = colors.wave; c.lineWidth = 5;

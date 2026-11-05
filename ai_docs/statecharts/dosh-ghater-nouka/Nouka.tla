@@ -1,117 +1,160 @@
 ---- MODULE Nouka ----
-\* দশ ঘাটের নৌকা: the race against আব্বু (turns, the চরকি spin timer, counting ghats, the end timer), leaving and coming
-\* back, the sound switch and the spoken numbers, the kids' daily limit and rest screen, and the page's parent gate.
-\* Mirrored from tools/dosh-ghater-nouka/components/nouka-game.tsx (turnSpinner, onGhat, restart, the auto-step,
-\* bot-spin, pop/speak and end-of-race effects, the mode buttons and the সব ধাপ drawer), tools/dosh-ghater-nouka/lib/race.ts
-\* (spin, step, tap, endTurn) and shared/kids-kit.tsx (useKidsSession, RestScreen, ParentGate, speak).
-\* A turn is abstracted to "spin, then count to where it stops"; the child's count either hands the turn to আব্বু or
-\* reaches the last ghat. The ParentGate's hold timer, ShowParent and the header search are the same shared code as
-\* সৌরজগতের সফর and are modelled in full in ai_docs/statecharts/sourojogot/Sourojogot.tla; here the gate is one step.
-\* The kit is mirrored as of f4f75be + 23fd7c1 (2026-11-04 16:47); the run against the kit at b51e328 is in before-kit-fix/.
-VARIABLES phase, turn, spin, timer, over, away, sound, voice, due, resting, skipped, stage
-vars == <<phase, turn, spin, timer, over, away, sound, voice, due, resting, skipped, stage>>
+\* দশ ঘাটের নৌকা after the rewrite: the screens, one race (the চরকি, counting ghats, the arrival, the finish), the player's
+\* pause, going away and coming back, the mode chips on the title, the share gate, a key held through the end, and the
+\* kids' daily limit and rest screen. Mirrored from:
+\*   tools/dosh-ghater-nouka/lib/session.ts      begin, chooseMode, touch, arrived, cardShows, pause, resume, blur, toTitle,
+\*                                               openLevels, freshKey
+\*   tools/dosh-ghater-nouka/lib/sim.ts          spinNow, tap, hop; lib/clock.hot.ts advance (the only clock)
+\*   tools/dosh-ghater-nouka/components/game.tsx begin() asks kids.atBreak(); drain() records the stars at EV.ARRIVED;
+\*                                               the loop's step skips advance() while the menu is open
+\*   shared/kids-kit.tsx                         useKidsSession rests on mount past the limit; ParentGate; RestScreen
+\* A turn is abstracted to "spin, then count"; আব্বু's boat and the child's own predict-mode boat move in the same advance()
+\* call as the চরকি, so one guard (the loop runs, the menu is shut) covers them all. There are no timers and no voice.
+EXTENDS Naturals
+VARIABLES screen, spin, over, recorded, fresh,           \* the race
+          paused, away, swallow, moved, held, skipped,   \* away and back, keys
+          mode, modeAtStart, stage,                      \* the title's mode chips and the share gate
+          overLimit, resting, begun                      \* the daily limit
+race == <<screen, spin, over, recorded, fresh>>
+hand == <<paused, away, swallow, moved, held, skipped>>
+title == <<mode, modeAtStart, stage>>
+kids == <<overLimit, resting, begun>>
+vars == <<race, hand, title, kids>>
 
-\* A race that starts after today's time is up (NoRoundAfterTimeIsUp) is the same shared useKidsSession path as in
-\* Sourojogot.tla, so it is left out here to keep the chart under 500 states.
-Playing == phase = "play"
+\* RestScreen renders on every screen but play (game.tsx: kids.resting && screen !== "play") and covers the rest.
+RestShows == resting /\ screen # "play"
+Free == ~RestShows /\ ~paused
 
-Init == /\ phase = "play" /\ turn = 0 /\ spin = "none" /\ timer = "none" /\ over = FALSE
-        /\ away = FALSE /\ sound = TRUE /\ voice = "quiet" /\ due = FALSE /\ resting = FALSE /\ skipped = FALSE
-        /\ stage = "closed"
+Init == /\ screen = "title" /\ spin = "none" /\ over = FALSE /\ recorded = FALSE /\ fresh = FALSE
+        /\ paused = FALSE /\ away = FALSE /\ swallow = FALSE /\ moved = FALSE /\ held = FALSE /\ skipped = FALSE
+        /\ mode \in {"phone", "duo"} /\ modeAtStart = mode /\ stage = "closed"
+        /\ overLimit \in BOOLEAN /\ resting = overLimit /\ begun = "inTime"
 
-\* restart(): a new race. It does not clear the pending spin timeout (an untracked setTimeout), and the end-of-race
-\* effect's cleanup cancels the 900 ms levels.record() + atBreak() if it has not fired yet. The page's ParentGate sits
-\* outside the game and stays as it was.
-Restart == /\ phase' = "play"
-           /\ turn' = 0 /\ spin' = "none" /\ over' = FALSE
-           /\ timer' = IF timer = "mine" THEN "old" ELSE timer
-           /\ skipped' = (skipped \/ (over /\ Playing))
-           /\ voice' = "quiet"
-           /\ UNCHANGED <<away, sound, due, resting, stage>>
+\* begin(): খেলো, আবার খেলো, Enter on the title, or a level from the list. atBreak() first: past the limit the rest screen
+\* shows and nothing starts. A new race is a new Race object: no spin, no counted ghat, nothing carried over.
+StartedRace == /\ screen' = "play" /\ spin' = "none" /\ over' = FALSE /\ recorded' = FALSE /\ fresh' = TRUE
+               /\ modeAtStart' = mode /\ stage' = "closed" /\ resting' = FALSE /\ begun' = (IF overLimit THEN "late" ELSE "inTime")
+YouStartARace == /\ screen \in {"title", "end"} /\ Free
+                 /\ IF overLimit
+                    THEN /\ resting' = TRUE /\ UNCHANGED <<screen, spin, over, recorded, fresh, modeAtStart, stage, begun>>
+                    ELSE StartedRace
+                 /\ swallow' = FALSE
+                 /\ UNCHANGED <<paused, away, moved, held, skipped, mode, overLimit>>
+\* The level list opens from the title or the end page only; the title unmounts, and its gate with it.
+YouOpenTheLevelList == /\ screen \in {"title", "end"} /\ Free /\ screen' = "levels" /\ stage' = "closed"
+                       /\ UNCHANGED <<spin, over, recorded, fresh, hand, mode, modeAtStart, kids>>
+YouPickALevel == /\ screen = "levels" /\ Free
+                 /\ IF overLimit
+                    THEN /\ resting' = TRUE /\ screen' = "title" /\ UNCHANGED <<spin, over, recorded, fresh, modeAtStart, stage, begun>>
+                    ELSE StartedRace
+                 /\ swallow' = FALSE
+                 /\ UNCHANGED <<paused, away, moved, held, skipped, mode, overLimit>>
 
 \* ---- the race ----
-\* turnSpinner(0): only on your turn with no spin set and no spin running (`spinning === null`).
-YouSpin == /\ Playing /\ turn = 0 /\ spin = "none" /\ timer = "none" /\ ~over /\ ~away /\ ~resting
-           /\ timer' = "mine"
-           /\ UNCHANGED <<phase, turn, spin, over, away, sound, voice, due, resting, skipped, stage>>
-\* The bot effect: 1 s after আব্বু's turn starts, turnSpinner(1). Nothing checks visibility or focus.
-AbbuSpins == /\ Playing /\ turn = 1 /\ spin = "none" /\ timer = "none" /\ ~over
-             /\ timer' = "mine"
-             /\ UNCHANGED <<phase, turn, spin, over, away, sound, voice, due, resting, skipped, stage>>
-\* SPIN_MS later: setRace(current => spin(current, value)) on whatever race is current by then.
-\* spin() ignores a race that is over or already has a spin. "old" = the spin came from the race before a restart.
-TheSpinnerStops == /\ timer # "none"
-                   /\ spin' = IF over \/ spin # "none" THEN spin ELSE IF timer = "old" THEN "old" ELSE "made"
-                   /\ timer' = "none"
-                   /\ UNCHANGED <<phase, turn, over, away, sound, voice, due, resting, skipped, stage>>
-\* onGhat → tap(): each right ghat steps the boat; the pop effect plays a note and speak()s the number.
-\* speak() speaks only with a Bangla voice and, since b51e328 (2026-11-04), only while soundOn(); before that commit it
-\* ignored the switch and this line read IF sound THEN voice ELSE "spoke".
-\* voice "spoke" = a number was spoken with sound off during this race.
-Spoken == voice
-YouCountToWhereItStops == /\ Playing /\ turn = 0 /\ spin # "none" /\ ~away /\ ~resting
-                          /\ spin' = "none"
-                          /\ \/ /\ turn' = 1 /\ over' = FALSE
-                             \/ /\ turn' = 0 /\ over' = TRUE
-                          /\ voice' = Spoken
-                          /\ UNCHANGED <<phase, timer, away, sound, due, resting, skipped, stage>>
-\* The auto-step effect: আব্বু counts one ghat every 850 ms, then endTurn() hands the turn back. No visibility check.
-AbbuCounts == /\ Playing /\ turn = 1 /\ spin # "none" /\ ~over
-              /\ spin' = "none" /\ turn' = 0 /\ voice' = Spoken
-              /\ UNCHANGED <<phase, timer, over, away, sound, due, resting, skipped, stage>>
-\* 900 ms after race.over: levels.record(), win sound, atBreak(), setPhase("end").
-TheRaceEnds == /\ Playing /\ over
-               /\ phase' = "end" /\ resting' = due /\ skipped' = FALSE
-               /\ UNCHANGED <<turn, spin, timer, over, away, sound, voice, due, stage>>
+\* touch(): only on the play screen, nothing covering it; the first tap after coming back only wakes the game.
+YouPressTheSpinner == /\ screen = "play" /\ Free /\ ~away /\ ~over /\ spin = "none"
+                      /\ IF swallow
+                         THEN /\ swallow' = FALSE /\ UNCHANGED <<spin, fresh>>
+                         ELSE /\ spin' = "turning" /\ fresh' = FALSE /\ UNCHANGED swallow
+                      /\ UNCHANGED <<screen, over, recorded, paused, away, moved, held, skipped, title, kids>>
+\* advance() lands the চরকি: it runs only while the page's loop runs (no blur, no hide) and the menu is shut.
+\* `moved` would record a boat or চরকি that moved while the page was away or under the menu.
+TheSpinnerLands == /\ spin = "turning" /\ ~away /\ ~paused
+                   /\ spin' = "landed" /\ moved' = (moved \/ away \/ paused)
+                   /\ UNCHANGED <<screen, over, recorded, fresh, paused, away, swallow, held, skipped, title, kids>>
+YouTapAWrongGhat == /\ screen = "play" /\ Free /\ ~away /\ ~over /\ spin = "landed"
+                    /\ swallow' = FALSE
+                    /\ UNCHANGED <<screen, spin, over, recorded, fresh, paused, away, moved, held, skipped, title, kids>>
+\* The right ghat: the turn ends, or the boat reaches the last ghat. Then arrived() runs in the same tap:
+\* the stars are saved and atBreak() checked now, whatever the hand does next.
+YouTapTheRightGhat == /\ screen = "play" /\ Free /\ ~away /\ ~over /\ spin = "landed"
+                      /\ IF swallow
+                         THEN /\ swallow' = FALSE /\ UNCHANGED <<spin, over, recorded, resting>>
+                         ELSE /\ spin' = "none" /\ UNCHANGED swallow
+                              /\ \/ UNCHANGED <<over, recorded, resting>>
+                                 \/ /\ over' = TRUE /\ recorded' = TRUE /\ resting' = overLimit
+                      /\ UNCHANGED <<screen, fresh, paused, away, moved, held, skipped, title, begun, overLimit>>
+\* 1.3 s of finishing, counted by the same clock; then the end page.
+TheEndPageComes == /\ screen = "play" /\ over /\ ~away /\ ~paused
+                   /\ screen' = "end" /\ moved' = (moved \/ away \/ paused)
+                   /\ UNCHANGED <<spin, over, recorded, fresh, paused, away, swallow, held, skipped, title, kids>>
 
-\* ---- restarts ----
-\* ফোন চালাবে / বড়রা চালাবে (live only while playing: the end card covers them; tapping the one already on also
-\* restarts) and the সব ধাপ drawer (any time).
-YouTapAModeOrAStage == /\ ~resting /\ Restart
-YouPlayAgain == /\ phase \in {"end", "closed"} /\ ~resting /\ Restart
-YouPressShesh == /\ phase = "end" /\ ~resting /\ phase' = "closed"
-                 /\ UNCHANGED <<turn, spin, timer, over, away, sound, voice, due, resting, skipped, stage>>
-\* The rest screen is a real modal (f4f75be): no key, tap or focus reaches the drawer or the mode buttons behind it.
+\* ---- away and back ----
+\* The player's menu (⏸, P, Escape) or a window blur (which opens the menu): the loop stops, held keys are dropped, and
+\* the first tap back is swallowed unless the menu takes it.
+YouOpenTheMenu == /\ ~paused /\ paused' = TRUE /\ swallow' = (screen = "play") /\ held' = FALSE
+                  /\ UNCHANGED <<race, away, moved, skipped, title, kids>>
+YouLeave == /\ ~away /\ away' = TRUE /\ paused' = TRUE /\ swallow' = (screen = "play") /\ held' = FALSE
+            /\ UNCHANGED <<race, moved, skipped, title, kids>>
+\* A window focus restarts the loop, but a menu still open keeps advance() from being called.
+YouComeBack == /\ away /\ away' = FALSE /\ UNCHANGED <<race, paused, swallow, moved, held, skipped, title, kids>>
+YouResume == /\ paused /\ ~away /\ paused' = FALSE /\ swallow' = FALSE
+             /\ UNCHANGED <<race, away, moved, held, skipped, title, kids>>
+\* নতুন করে শুরু, সব লেভেল from the menu, or শেষ on the end page: back to the title with a clean race.
+YouGoBackToTheTitle == /\ ~away /\ (paused \/ (screen = "end" /\ Free))
+                       /\ screen' = "title" /\ spin' = "none" /\ stage' = "closed" /\ paused' = FALSE /\ swallow' = FALSE
+                       /\ UNCHANGED <<over, recorded, fresh, away, moved, held, skipped, mode, modeAtStart, kids>>
 
-\* ---- away and back, sound ----
-\* The rest screen (fixed, z 50) covers the sound button and the gate, and nobody presses them while away.
-YouLeave == /\ ~away /\ away' = TRUE /\ UNCHANGED <<phase, turn, spin, timer, over, sound, voice, due, resting, skipped, stage>>
-YouComeBack == /\ away /\ away' = FALSE /\ UNCHANGED <<phase, turn, spin, timer, over, sound, voice, due, resting, skipped, stage>>
-SoundOff == /\ sound /\ ~away /\ ~resting /\ sound' = FALSE
-            /\ UNCHANGED <<phase, turn, spin, timer, over, away, voice, due, resting, skipped, stage>>
-SoundOn == /\ ~sound /\ ~away /\ ~resting /\ sound' = TRUE /\ voice' = "quiet"
-           /\ UNCHANGED <<phase, turn, spin, timer, over, away, due, resting, skipped, stage>>
+\* ---- the title ----
+\* The mode chips live on the title only. A tap on the mode already on changes nothing, and no chip exists in a race.
+YouTapTheOtherMode == /\ screen = "title" /\ Free /\ mode' = (IF mode = "phone" THEN "duo" ELSE "phone")
+                      /\ UNCHANGED <<race, hand, modeAtStart, stage, kids>>
+\* Hold বড়দের জন্য 2 s and answer the sum: ShareToolLink shows on the title. It closes after one use, 20 s, a hidden tab, a
+\* tap anywhere else in the game, the level list, and the start of a race (the title unmounts).
+AGrownUpOpensTheGate == /\ screen = "title" /\ Free /\ stage = "closed" /\ stage' = "open"
+                        /\ UNCHANGED <<race, hand, mode, modeAtStart, kids>>
+TheGateCloses == /\ stage = "open" /\ stage' = "closed" /\ UNCHANGED <<race, hand, mode, modeAtStart, kids>>
 
-\* ---- the daily limit and the parent gate ----
-\* The session clock ticks only while the tab is visible and focused (f4f75be).
-TodaysTimeRunsOut == /\ ~due /\ ~away /\ due' = TRUE
-                     /\ UNCHANGED <<phase, turn, spin, timer, over, away, sound, voice, resting, skipped, stage>>
-AGrownUpGivesTenMore == /\ resting /\ due' = FALSE /\ resting' = FALSE
-                        /\ UNCHANGED <<phase, turn, spin, timer, over, away, sound, voice, skipped, stage>>
-\* Hold বড়দের জন্য 2 s and answer the sum: ShareToolLink shows. It closes on বন্ধ করো, after one use (23fd7c1), after
-\* 60 s, or when the tab hides (f4f75be); a blur alone leaves it open.
-AGrownUpOpensTheGate == /\ stage = "closed" /\ ~away /\ ~resting /\ stage' = "open"
-                        /\ UNCHANGED <<phase, turn, spin, timer, over, away, sound, voice, due, resting, skipped>>
-TheGateCloses == /\ stage = "open" /\ stage' = "closed"
-                   /\ UNCHANGED <<phase, turn, spin, timer, over, away, sound, voice, due, resting, skipped>>
+\* ---- keys ----
+\* Enter or Space held through the finish and auto-repeating on the end page: freshKey() refuses a repeat.
+YouHoldEnter == /\ screen = "play" /\ ~paused /\ ~held /\ held' = TRUE
+                /\ UNCHANGED <<race, paused, away, swallow, moved, skipped, title, kids>>
+TheKeyRepeats == /\ held /\ screen = "end" /\ Free /\ skipped' = FALSE
+                 /\ UNCHANGED <<race, paused, away, swallow, moved, held, title, kids>>
+YouLetGoOfTheKey == /\ held /\ held' = FALSE /\ UNCHANGED <<race, paused, away, swallow, moved, skipped, title, kids>>
 
-Next == YouSpin \/ AbbuSpins \/ TheSpinnerStops \/ YouCountToWhereItStops \/ AbbuCounts \/ TheRaceEnds
-        \/ YouTapAModeOrAStage \/ YouPlayAgain \/ YouPressShesh
-        \/ YouLeave \/ YouComeBack \/ SoundOff \/ SoundOn
-        \/ TodaysTimeRunsOut \/ AGrownUpGivesTenMore \/ AGrownUpOpensTheGate \/ TheGateCloses
+\* ---- the daily limit ----
+TimeIsUp == /\ ~overLimit /\ overLimit' = TRUE /\ UNCHANGED <<race, hand, title, resting, begun>>
+\* A reload, or opening the game from the kids' hub: the title, resting if past the limit, a clean race, the gate shut.
+ThePageOpens == /\ screen' = "title" /\ spin' = "none" /\ over' = FALSE /\ recorded' = FALSE /\ fresh' = FALSE
+                /\ paused' = FALSE /\ away' = FALSE /\ swallow' = FALSE /\ held' = FALSE /\ stage' = "closed"
+                /\ resting' = overLimit
+                /\ UNCHANGED <<moved, skipped, mode, modeAtStart, overLimit, begun>>
+\* A grown-up's আজ আরও ১০ মিনিট on the rest screen (who can reach it is the kit's ParentGate).
+TenMoreMinutes == /\ RestShows /\ overLimit' = FALSE /\ resting' = FALSE /\ UNCHANGED <<race, hand, title, begun>>
+
+Next == YouStartARace \/ YouOpenTheLevelList \/ YouPickALevel \/ YouPressTheSpinner \/ TheSpinnerLands
+        \/ YouTapAWrongGhat \/ YouTapTheRightGhat \/ TheEndPageComes
+        \/ YouOpenTheMenu \/ YouLeave \/ YouComeBack \/ YouResume \/ YouGoBackToTheTitle
+        \/ YouTapTheOtherMode \/ AGrownUpOpensTheGate \/ TheGateCloses
+        \/ YouHoldEnter \/ TheKeyRepeats \/ YouLetGoOfTheKey
+        \/ TimeIsUp \/ ThePageOpens \/ TenMoreMinutes
 
 Spec == Init /\ [][Next]_vars
 
-TypeOK == /\ phase \in {"play", "end", "closed"} /\ turn \in {0, 1} /\ spin \in {"none", "made", "old"}
-          /\ timer \in {"none", "mine", "old"} /\ over \in BOOLEAN /\ away \in BOOLEAN /\ sound \in BOOLEAN
-          /\ voice \in {"quiet", "spoke"} /\ due \in BOOLEAN /\ resting \in BOOLEAN /\ skipped \in BOOLEAN
-          /\ stage \in {"closed", "open"}
+TypeOK == /\ screen \in {"title", "play", "end", "levels"} /\ spin \in {"none", "turning", "landed"}
+          /\ over \in BOOLEAN /\ recorded \in BOOLEAN /\ fresh \in BOOLEAN
+          /\ paused \in BOOLEAN /\ away \in BOOLEAN /\ swallow \in BOOLEAN /\ moved \in BOOLEAN /\ held \in BOOLEAN /\ skipped \in BOOLEAN
+          /\ mode \in {"phone", "duo"} /\ modeAtStart \in {"phone", "duo"} /\ stage \in {"closed", "open"}
+          /\ overLimit \in BOOLEAN /\ resting \in BOOLEAN /\ begun \in {"inTime", "late"}
 
 \* ---- the reader's rules ----
-NothingRunsWhileAway == away => ~(Playing /\ turn = 1 /\ ~over)
-FreshRaceStartsClean == spin # "old"
-EveryFinishedRaceCounts == ~skipped
-MuteMeansSilent == voice = "quiet"
-RestOnlyAtBreak == resting => phase \in {"end", "closed"}
-NoShareLinkDuringARace == stage = "open" => ~Playing
+\* A new race starts with no spin and nothing counted; only your own press turns the চরকি.
+FreshRaceStartsClean == fresh => (spin = "none" /\ ~over)
+\* A race your boat finished is recorded, and the daily break is checked, in the moment it arrives.
+EveryFinishedRaceCounts == over => recorded
+\* Nothing moves while you are away or under the menu: not the চরকি, not either boat.
+NothingMovesWhileAway == ~moved
+\* The mode chips exist on the title only, so the mode never changes in a race (and a tap on the current mode does nothing).
+ModeNeverChangesInARace == screen = "play" => mode = modeAtStart
+\* The share link is on the title and nowhere else: never in front of a race or the end page.
+ShareLinkOnlyOnTheTitle == stage = "open" => screen = "title"
+\* The rest screen comes only between races: if the limit passes mid-race it waits for the end page.
+RestOnlyAtBreak == (resting /\ screen = "play") => over
+\* Once today's time is up, no new race starts without the rest screen first.
+NoNewRaceAfterTimeIsUp == begun = "inTime"
+\* The level list is a choice screen: nothing is turning under it.
+ChoiceFreezesPlay == screen = "levels" => spin = "none"
+\* A key held through the finish never starts the next race.
+ResultNeedsFreshPress == ~skipped
 ====

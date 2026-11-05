@@ -1,109 +1,182 @@
-.tool-dosh-ghater-nouka{--accent:#1f6f8b;--accent-deep:#134b5f;--ink:#1f3a40;--muted:#4f6b70;--sky:#eaf6f2;--bank:#9ccf73;--water:#4aa3b5;--step:#d98b5f;--tile:#fff8e8;--glow:#ffd166;--goal:#f2a900}
-.tool-dosh-ghater-nouka .dg-page{color:var(--ink)}
+.tool-dosh-ghater-nouka{--accent:#1f6f8b;--accent-deep:#134b5f;--ink:#1f3a40;--muted:#4f6b70;--paper-edge:#efdcbc}
 
-.dg-hero{padding:8px 0 2px}
-.dg-hero h1{margin:0;font-family:var(--font-display);font-size:clamp(22px,6vw,40px);line-height:1.4;font-weight:800}
-.dg-lead{display:none;max-width:560px;margin:4px 0 0;color:var(--muted);font-size:16px;line-height:1.6}
+/* ---- the game fills the player's stage: HUD, the river, the চরকি ---- */
+.tool-dosh-ghater-nouka .gp-game{min-height:100%}
+.dg{--w-accent:#c4631f;--w-deep:#7d3510;--w-soft:#fff1d6;--w-edge:#f0d3a2;--w-sky-top:#ffc58f;--w-sky-low:#fff4df;--w-sun:#ff9b4a;--w-hill:#9cc57a;--w-hill-far:#c2dca2;--w-bank:#a9d27a;--w-water:#5fb3b9;--w-water-low:#3f8f9c;--w-wave:#8fd0d2;--w-tile:#fff8e8;--w-ink:#3a2a1a;--w-step:#d98b5f;
+  --ease-out:cubic-bezier(.23,1,.32,1);--ease-in-out:cubic-bezier(.77,0,.175,1);--ease-drawer:cubic-bezier(.32,.72,0,1);--hop:cubic-bezier(.3,1.2,.5,1);
+  position:relative;display:flex;flex-direction:column;gap:8px;width:100%;max-width:520px;min-height:calc(var(--stage-h,640px) - 8px);margin:0 auto;color:var(--w-ink)}
+.dg[data-world="1"]{--w-accent:#1f6f8b;--w-deep:#134a5e;--w-soft:#e7f3f8;--w-edge:#b7dbe9;--w-sky-top:#7cc8ee;--w-sky-low:#eaf8ff;--w-sun:#ffe066;--w-hill:#82c46c;--w-hill-far:#b4dc9e;--w-bank:#93d066;--w-water:#3aa0cf;--w-water-low:#1f78a8;--w-wave:#7cc6e6;--w-tile:#fff;--w-ink:#16384a;--w-step:#e0a15f}
+.dg[data-world="2"]{--w-accent:#a8326a;--w-deep:#6a1f47;--w-soft:#fdeaf2;--w-edge:#f1c3d7;--w-sky-top:#43347a;--w-sky-low:#ffb26b;--w-sun:#f5efe0;--w-hill:#403b66;--w-hill-far:#6a4a7c;--w-bank:#5f8460;--w-water:#2e4688;--w-water-low:#1c2a5e;--w-wave:#6b82c4;--w-tile:#fdf0d5;--w-ink:#2a2244;--w-step:#c97c54}
+.dg[data-screen=play],.dg[data-screen=end]{justify-content:flex-start}
+.dg[data-screen=play]{min-height:calc(var(--stage-h,640px) - 8px);max-height:var(--stage-h,none)}
 
-.dg{display:grid;gap:12px;max-width:520px;margin-top:8px}
-.dg-play{position:relative;display:grid;gap:8px;padding:8px 6px;border-radius:18px;background:var(--sky)}
+/* ---- title: the river itself is the start button ---- */
+.dg-title{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0;padding:8px 4px;text-align:center}
+.dg-startbtn{position:relative;display:block;width:min(100%,400px);padding:0;border:0;border-radius:26px;overflow:hidden;background:none;box-shadow:0 12px 22px #1f3a4033,0 0 0 3px var(--w-deep);font:inherit;cursor:pointer;touch-action:manipulation;transition:transform 160ms var(--ease-out)}
+@media (hover:hover) and (pointer:fine){.dg-startbtn:hover{transform:translateY(-3px)}}
+.dg-startbtn:active{transform:scale(.98)}
+.dg-startbtn:focus-visible{outline:4px solid var(--w-accent);outline-offset:6px}
+.dg-scene{display:block;width:100%;height:auto}
+.dg-startbtn-go{position:absolute;right:14px;bottom:14px;display:inline-flex;align-items:center;gap:8px;padding:6px 26px 6px 18px;border-radius:999px;background:#fff8ea;color:var(--w-deep);font-family:var(--font-display);font-size:32px;font-weight:800;line-height:1.5;box-shadow:0 5px 0 var(--w-deep)}
+.dg-startbtn-go svg{width:30px;height:30px;fill:var(--w-accent)}
+.dg-chip{display:flex;align-items:center;gap:12px;min-height:64px;max-width:100%;padding:6px 16px 6px 12px;border:2px solid var(--w-edge);border-radius:18px;background:#fff;color:var(--w-ink);font:inherit;text-align:left;cursor:pointer;touch-action:manipulation}
+.dg-chip-n{display:grid;place-items:center;min-width:44px;height:44px;border-radius:14px;background:var(--w-soft);font-family:var(--font-display);font-size:26px;font-weight:800;line-height:1.4;color:var(--w-accent)}
+.dg-chip b{display:block;font-family:var(--font-display);font-size:18px;line-height:1.5}
+.dg-chip small{display:block;font-size:16px;line-height:1.4;color:var(--muted)}
+.dg-chip-more{flex:none;width:22px;height:22px;fill:none;stroke:var(--muted);stroke-width:2.2;stroke-linecap:round}
+.dg-modes{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 10px;max-width:100%}
+.dg-modes button{display:inline-flex;align-items:center;gap:8px;min-height:56px;padding:6px 16px 6px 12px;border:2px solid var(--w-edge);border-radius:16px;background:#fff;color:var(--w-ink);font:inherit;font-size:17px;font-weight:700;cursor:pointer;touch-action:manipulation}
+.dg-modes button[aria-pressed=true]{border-color:var(--w-accent);background:var(--w-soft);color:var(--w-deep);box-shadow:inset 0 0 0 1.5px var(--w-accent)}
+.dg-modes svg{width:40px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.dg-modes p{flex-basis:100%;margin:0;font-size:16px;line-height:1.6;color:var(--muted)}
+.dg-grown{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px}
 
-.dg-top{display:flex;align-items:center;gap:8px;min-width:0}
-.dg-level{flex:1;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px;line-height:1.6}
-.dg-level b{font-family:var(--font-display)}
-.dg-level span{color:var(--muted)}
-.dg-pill{flex:none;min-height:44px;padding:6px 12px;border:1.5px solid var(--ink);border-radius:999px;background:transparent;color:var(--ink);font:inherit;font-size:16px;font-weight:700;cursor:pointer}
-.dg-pill[aria-pressed=true]{background:var(--ink);color:#fff}
+/* ---- HUD: the level badge top-left, the river strip top-right ---- */
+.dg-hud{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px}
+.dg-badge{display:flex;align-items:center;gap:8px;margin:0;padding:2px 12px 2px 6px;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--w-edge)}
+.dg-badge-n{display:grid;place-items:center;min-width:34px;height:34px;border-radius:10px;background:var(--w-soft);font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.4;color:var(--w-accent)}
+.dg-badge b{display:block;font-family:var(--font-display);font-size:16px;line-height:1.4}
+.dg-badge small{display:block;font-size:13px;line-height:1.3;color:var(--muted)}
+.dg-strip{position:relative;flex:none;width:112px;height:34px}
+.dg-strip-bar{position:absolute;left:0;right:0;top:11px;height:14px;border-radius:7px;background:var(--w-water);box-shadow:inset 0 0 0 2px #fff8}
+.dg-strip-flag{position:absolute;right:-2px;top:0;width:4px;height:34px;border-radius:2px;background:#f2a900}
+.dg-strip em{position:absolute;left:0;top:5px;width:22px;height:24px;margin-left:-11px;border-radius:50% 50% 8px 8px;transform:translateX(calc(var(--p,0) * 112px));transition:transform 320ms var(--ease-out)}
+.dg-strip-0{background:#b5562b;box-shadow:0 0 0 3px #fff}
+.dg-strip-1{top:10px!important;width:16px!important;height:16px!important;margin-left:-8px!important;background:#2f5d8a}
 
-/* the whole straight line, start to last ghat, with both boats on it */
-.dg-line{position:relative;height:50px;margin:0 16px}
-.dg-line-bar{position:absolute;left:0;right:0;top:27px;height:6px;border-radius:3px;background:var(--water)}
-.dg-line i{position:absolute;top:24px;width:2px;height:12px;background:var(--ink);translate:-1px 0}
-.dg-line b{position:absolute;top:0;translate:-50% 0;font-size:16px;line-height:1.4;font-weight:700}
-.dg-line em{position:absolute;width:20px;height:11px;border-radius:0 0 10px 10px;translate:-50% 0;transition:left .4s ease}
-.dg-line .dg-mark-0{top:16px;background:#b5562b}
-.dg-line .dg-mark-1{top:36px;background:#2f5d8a}
+/* ---- the river: sky, far hills, two water lanes, the bank of ghats ---- */
+.dg-river{position:relative;display:flex;flex:1 1 auto;flex-direction:column;justify-content:flex-end;min-height:300px;overflow:hidden;border-radius:22px;box-shadow:inset 0 0 0 1.5px var(--w-edge)}
+.dg-sky{position:absolute;inset:0;width:100%;height:100%}
+.dg-far{position:absolute;left:0;bottom:268px;height:120px;background-repeat:repeat-x;background-size:480px 120px;transition:transform 480ms var(--ease-drawer)}
+.dg-view{position:relative;max-width:100%;overflow:hidden;touch-action:manipulation}
+.dg-track{position:relative;transition:transform 480ms var(--ease-drawer);will-change:transform}
+.dg-water{position:relative;height:156px;background:repeating-linear-gradient(180deg,transparent 0 26px,#ffffff26 26px 28px),linear-gradient(var(--w-water),var(--w-water-low))}
+.dg-water::after{content:"";position:absolute;left:0;right:0;top:62px;height:2px;background:#ffffff40}
+.dg-boat{position:absolute;left:0;display:block}
+.dg-boat svg{display:block;width:100%;height:auto;transform:scaleX(var(--flip,1));animation:dg-bob 3s ease-in-out infinite}
+.dg-boat-near{bottom:12px;transition:transform 320ms var(--hop)}
+.dg-boat-far{bottom:96px;opacity:.95;transition:transform 400ms var(--ease-out)}
+@keyframes dg-bob{50%{transform:scaleX(var(--flip,1)) translateY(-3px) rotate(-1.5deg)}}
+.dg-jetty{position:absolute;bottom:-4px;width:64px;height:14px;margin-left:-32px;border-radius:4px;background:#8b5e3c;box-shadow:0 3px 0 #5b3d24}
+.dg-goal{position:absolute;bottom:0;width:0}
+.dg-goal i{position:absolute;left:-2px;bottom:0;width:5px;height:104px;border-radius:3px;background:#6b4a2d}
+.dg-goal b{position:absolute;left:3px;bottom:70px;width:34px;height:26px;background:#e63946;clip-path:polygon(0 0,100% 50%,0 100%);animation:dg-flag 1.4s ease-in-out infinite}
+.dg-goal.finale b{background:#f2a900;width:42px;height:32px;bottom:66px}
+.dg-goal.finale i{height:118px;width:6px}
+.dg-goal.finale::before{content:"";position:absolute;left:-60px;bottom:104px;width:120px;height:26px;background:repeating-conic-gradient(from 0deg at 50% 0,#e63946 0 20deg,#f2a900 20deg 40deg,#2a9d8f 40deg 60deg);clip-path:polygon(0 0,100% 0,50% 100%);opacity:.95}
+@keyframes dg-flag{50%{transform:skewY(6deg) scaleX(.92)}}
+.dg[data-over] .dg-goal b{animation:dg-cheer 520ms var(--ease-out) both}
+.dg[data-over] .dg-boat-near svg{animation:dg-hop 520ms var(--ease-out) both}
+@keyframes dg-cheer{0%{transform:scale(1)}35%{transform:scale(1.35) skewY(-6deg)}100%{transform:scale(1.1)}}
+@keyframes dg-hop{0%{transform:scaleX(var(--flip,1))}35%{transform:scaleX(var(--flip,1)) translateY(-12px) rotate(-2deg)}100%{transform:scaleX(var(--flip,1))}}
+.dg-pop{position:absolute;bottom:80px;display:grid;justify-items:center;transform:translateX(-50%);font-family:var(--font-display);font-size:48px;font-weight:800;line-height:1.1;color:#fff;-webkit-text-stroke:2px var(--w-deep);paint-order:stroke fill;text-shadow:0 3px 0 var(--w-deep);pointer-events:none;animation:dg-rise 800ms var(--ease-out) both}
+.dg-pop small{font-size:16px;font-weight:700;-webkit-text-stroke:0;text-shadow:0 1px 3px #0008}
+.dg-pop-1{bottom:116px;font-size:32px;color:#e8f2ff;-webkit-text-stroke:1.5px #123564;text-shadow:0 2px 0 #123564}
+@keyframes dg-rise{0%{opacity:0;transform:translate(-50%,14px) scale(.85)}20%{opacity:1;transform:translate(-50%,0) scale(1.12)}34%{transform:translate(-50%,-2px) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-30px) scale(1)}}
+.dg-edge{position:absolute;top:10px;display:flex;align-items:center;gap:2px;padding:4px 8px;border-radius:14px;background:#fffd;box-shadow:0 2px 6px #0003;animation:dg-nudge 1.2s ease-in-out infinite}
+.dg-edge svg{width:40px;height:24px}
+.dg-edge i{width:0;height:0;border:8px solid transparent}
+.dg-edge-left{left:6px}.dg-edge-left i{border-right:12px solid #2f5d8a;border-left:0}
+.dg-edge-right{right:6px;flex-direction:row-reverse}.dg-edge-right i{border-left:12px solid #2f5d8a;border-right:0}
+@keyframes dg-nudge{50%{transform:translateX(3px)}}
+.dg-edge-left{animation-name:dg-nudge-l}
+@keyframes dg-nudge-l{50%{transform:translateX(-3px)}}
 
-.dg-row{display:flex;align-items:center;gap:14px;min-height:72px}
-.dg-who{display:flex;align-items:center;gap:12px;margin:0;font-size:20px;line-height:1.6}
-.dg-row[data-turn=true] .dg-who>b{color:var(--accent-deep);text-decoration:underline 3px var(--glow);text-underline-offset:6px}
-.dg-dots{display:inline-flex;align-items:center;gap:6px;min-height:44px}
-.dg-dots i{width:18px;height:18px;border-radius:50%;background:var(--ink)}
-.dg-dots b{margin-left:6px;font-family:var(--font-display);font-size:36px;line-height:1.2}
+.dg-bank{display:grid;align-items:center;height:112px;background:var(--w-bank);box-shadow:inset 0 6px 0 #0000001a}
+.dg-shore{display:block;height:100%}
+.dg-ghat{position:relative;display:block;width:100%;height:108px;padding:0;border:0;background:none;color:var(--w-ink);font:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+.dg-tile{position:absolute;left:4px;right:4px;top:6px;bottom:4px;display:grid;place-content:center;justify-items:center;border-radius:16px;background:var(--w-tile);border-bottom:8px solid var(--w-step);box-shadow:0 2px 0 #0002;transition:transform 120ms var(--ease-out),background-color 200ms ease}
+.dg-tile b{font-family:var(--font-display);font-size:42px;font-weight:800;line-height:1.15}
+.dg-tile small{font-size:16px;line-height:1.3;color:var(--muted)}
+.dg-ghat:active .dg-tile{transform:translateY(3px) scale(.97)}
+.dg-tile::after{content:"";position:absolute;inset:-4px;border-radius:20px;border:4px solid #f2a900;opacity:0;pointer-events:none}
+.dg-ghat.is-past .dg-tile{background:var(--w-soft)}
+.dg-ghat.is-here .dg-tile{box-shadow:0 0 0 3px var(--w-accent)}
+.dg-ghat.is-goal .dg-tile{box-shadow:0 0 0 4px #f2a900}
+.dg-ghat.is-hint .dg-tile{outline:4px dashed var(--w-deep);outline-offset:-7px}
+.dg-ghat.is-next .dg-tile{background:#fff3c9}
+.dg-ghat.is-next .dg-tile::after{animation:dg-ring 1.3s var(--ease-out) infinite}
+@keyframes dg-ring{0%{opacity:.9;transform:scale(.96)}100%{opacity:0;transform:scale(1.12)}}
+.dg-ghat:focus-visible{outline:4px solid var(--w-accent);outline-offset:-4px;border-radius:18px}
+.dg-ghat.gx-shake .dg-tile{animation:dg-wobble .3s ease-out}
+@keyframes dg-wobble{25%{transform:rotate(-4deg)}60%{transform:rotate(3deg)}}
 
-.dg-spin{position:relative;flex:none;display:block;width:96px;height:96px;padding:0;border:0;border-radius:50%;background:#fff;cursor:pointer;touch-action:manipulation}
+/* ---- the controls: the big চরকি and its dots ---- */
+.dg-controls{display:flex;align-items:center;justify-content:center;gap:16px;padding:4px 4px 2px}
+.dg-controls:has(.dg-his){justify-content:space-between}
+.dg-yours,.dg-his{display:flex;align-items:center;gap:14px;min-height:0}
+.dg-his{flex-direction:row-reverse}
+.dg-spin{position:relative;flex:none;display:block;width:124px;height:124px;padding:0;border:0;border-radius:50%;background:#fff;box-shadow:0 0 0 5px #b5562b,0 8px 14px #0003;cursor:pointer;touch-action:manipulation}
+.dg-spin[data-turn="1"]{box-shadow:0 0 0 5px #2f5d8a,0 8px 14px #0003}
 .dg-spin svg{display:block;width:100%;height:100%}
-.dg-spin-small{width:64px;height:64px;margin-left:16px}
-.dg-spin[data-active=true]{animation:dg-glow 1.4s ease-in-out infinite}
+.dg-spin{transition:transform 140ms var(--ease-out)}
+.dg-spin:active{transform:scale(.97)}
+.dg-spin[data-active]::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:5px solid #f2a900;pointer-events:none;animation:dg-ring 1.4s var(--ease-out) infinite}
+.dg-spin-small{width:64px;height:64px;cursor:default;box-shadow:0 0 0 4px #2f5d8a;pointer-events:none}
+.dg-pips{display:inline-flex;align-items:center;gap:8px;min-width:24px;min-height:44px}
+.dg-pips i{width:26px;height:26px;border-radius:50%;background:var(--w-ink);animation:dg-pip 220ms var(--ease-out) both;animation-delay:calc(var(--i,0) * 70ms)}
+.dg-pips-1 i{width:18px;height:18px;background:#2f5d8a}
+@keyframes dg-pip{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+.dg-ghost{position:absolute;right:-6px;bottom:-22px;z-index:3;width:44px;height:56px;pointer-events:none;animation:dg-tap 1.4s ease-in-out infinite}
+.dg-ripple{fill:var(--w-accent);opacity:0;transform-box:fill-box;transform-origin:center;animation:dg-ripple 1.4s ease-out infinite}
+@keyframes dg-tap{0%,100%{transform:translate(8px,10px)}45%,60%{transform:translate(0,0)}}
+@keyframes dg-ripple{0%,40%{opacity:0;transform:scale(.4)}55%{opacity:.5}100%{opacity:0;transform:scale(1.7)}}
 
-/* the river: a window onto one long straight row of ghats on each bank */
-.dg-river{overflow:hidden;border-radius:14px;background:var(--water);touch-action:manipulation}
-.dg-track{--g:108px;position:relative;transition:transform .5s ease}
-.dg-bank{display:grid;align-items:center;padding:8px 0;background:var(--bank)}
-.dg-jetty{justify-self:end;width:56px;height:16px;border-radius:4px;background:#8b5e3c}
-.dg-bank-0 .dg-jetty{align-self:end;margin-bottom:-8px}
-.dg-bank-1 .dg-jetty{align-self:start;margin-top:-8px}
-.dg-ghat{position:relative;justify-self:center;display:grid;place-content:center;justify-items:center;width:calc(var(--g) - 12px);height:96px;padding:0;border:0;border-radius:14px;background:var(--tile);color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation;transition:transform .08s}
-.dg-bank-0 .dg-ghat{border-bottom:9px solid var(--step)}
-.dg-bank-1 .dg-ghat{border-top:9px solid var(--step)}
-.dg-ghat b{font-family:var(--font-display);font-size:40px;font-weight:800;line-height:1.2}
-.dg-ghat small{font-size:16px;line-height:1.4;color:var(--muted)}
-.dg-ghat:disabled{cursor:default;opacity:1;color:var(--ink)}
-.dg-ghat:active:not(:disabled){transform:scale(.95)}
-.dg-ghat.is-past{background:#fde3c2}
-.dg-ghat.is-goal{box-shadow:inset 0 0 0 4px var(--goal)}
-.dg-ghat.is-hint{outline:4px dashed var(--accent-deep);outline-offset:-6px}
-.dg-ghat.is-next{animation:dg-glow 1.2s ease-in-out infinite}
+/* ---- end of a race: the river in a row, stars, counts, two equal picture buttons ---- */
+.dg-end{display:grid;justify-items:center;gap:10px;padding:4px 0 8px;text-align:center}
+.dg-row{display:block;width:100%;max-width:360px;height:auto;border-radius:16px;box-shadow:inset 0 0 0 1.5px var(--w-edge)}
+.dg-end-stars .gx-stars{font-size:46px}
+.dg-end-stars .gx-stars .on{display:inline-block;animation:dg-star .45s cubic-bezier(.3,1.6,.5,1) both}
+.dg-end-stars .gx-stars .on:nth-child(1){animation-delay:.35s}
+.dg-end-stars .gx-stars .on:nth-child(2){animation-delay:.65s}
+.dg-end-stars .gx-stars .on:nth-child(3){animation-delay:.95s}
+@keyframes dg-star{0%{transform:scale(.5) rotate(-30deg);opacity:0}100%{transform:none;opacity:1}}
+.dg-end-count{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;margin:0;font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.5}
+.dg-end-count b{color:var(--w-deep)}
+.dg-end-news{margin:0;font-size:20px;font-weight:700;line-height:1.6;color:var(--w-deep)}
+.dg-end-off{margin:0;max-width:340px;font-size:17px;line-height:1.6;color:var(--muted)}
+.dg-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:min(340px,100%)}
+.dg-big{display:grid;justify-items:center;align-content:center;gap:2px;min-height:112px;padding:8px;border:0;border-radius:24px;background:var(--w-accent);color:#fff;box-shadow:0 6px 0 var(--w-deep);font:inherit;font-family:var(--font-display);font-size:20px;font-weight:800;line-height:1.5;cursor:pointer;touch-action:manipulation}
+.dg-big{transition:transform 120ms var(--ease-out),box-shadow 120ms var(--ease-out)}
+.dg-big:active{transform:translateY(4px);box-shadow:0 2px 0 var(--w-deep)}
+.dg-in{animation:dg-in 260ms var(--ease-out) both;animation-delay:var(--d,0ms)}
+@keyframes dg-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.dg-big svg{width:48px;height:48px;fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.dg-end .kk-show-button{min-height:56px}
 
-.dg-water{position:relative;height:84px;background:linear-gradient(#ffffff2e 2px,transparent 2px) 0 20px/100% 28px,var(--water)}
-.dg-boat{position:absolute;width:84px;height:50px;translate:-50% 0;transition:left .45s ease;animation:dg-bob 3s ease-in-out infinite}
-.dg-boat-0{top:-2px}
-.dg-boat-1{bottom:-4px;animation-delay:-1.5s}
-.dg-pop{position:absolute;z-index:2;top:8px;translate:-50% 0;display:grid;justify-items:center;color:#fff;font-family:var(--font-display);font-size:44px;font-weight:800;line-height:1.1;text-shadow:0 2px 0 var(--accent-deep),0 0 8px var(--accent-deep);pointer-events:none;animation:dg-rise 1.1s ease-out forwards}
-.dg-pop small{font-size:18px;line-height:1.4}
+/* ---- the level list: a choice screen ---- */
+.dg-levels{position:relative;display:grid;gap:14px;align-content:start;max-height:var(--stage-h,none);overflow:auto;overscroll-behavior:contain;padding:0 2px 12px}
+.dg-levels-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 0 6px;background:#fff}
+.dg-levels-head p{margin:0;font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.5}
+.dg-close{display:grid;place-items:center;width:56px;height:56px;border:2px solid var(--paper-edge);border-radius:16px;background:#fff;cursor:pointer}
+.dg-close svg{width:28px;height:28px;fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.dg-band{display:grid;gap:8px;padding:10px;border-radius:20px;background:var(--w-soft);box-shadow:inset 0 0 0 1.5px var(--w-edge)}
+.dg-band[data-world="0"]{--w-accent:#c4631f;--w-deep:#7d3510;--w-soft:#fff1d6;--w-edge:#f0d3a2}
+.dg-band[data-world="1"]{--w-accent:#1f6f8b;--w-deep:#134a5e;--w-soft:#e7f3f8;--w-edge:#b7dbe9}
+.dg-band[data-world="2"]{--w-accent:#a8326a;--w-deep:#6a1f47;--w-soft:#fdeaf2;--w-edge:#f1c3d7}
+.dg-band h3{margin:0 4px;font-family:var(--font-display);font-size:18px;line-height:1.5;color:var(--w-deep)}
+.dg-band ol{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin:0;padding:0;list-style:none}
+.dg-card{position:relative;display:grid;justify-items:center;gap:0;width:100%;min-height:112px;padding:8px 4px 6px;border:2px solid var(--w-edge);border-radius:18px;background:#fff;color:var(--ink);font:inherit;cursor:pointer;touch-action:manipulation}
+.dg-band li:has(.finale){grid-column:span 2}
+.dg-card.finale{border-color:var(--w-accent);background:linear-gradient(#fff,var(--w-soft))}
+.dg-card[data-next]{border-color:var(--w-accent)}
+.dg-card[data-next]::after{content:"";position:absolute;inset:-5px;border-radius:22px;border:4px solid #f2a900;opacity:0;pointer-events:none;animation:dg-ring 1.6s var(--ease-out) infinite}
+.dg-card[aria-current=true]{outline:3px solid var(--w-deep);outline-offset:2px}
+/* small pressables: the same press as the big ones */
+.dg-chip,.dg-modes button,.dg-card,.dg-close{transition:transform 120ms var(--ease-out)}
+.dg-chip:active,.dg-modes button:active,.dg-card:active,.dg-close:active{transform:scale(.97)}
+.dg-card-n{position:absolute;left:8px;top:4px;font-size:16px;font-weight:800;color:var(--muted)}
+.dg-card-ghats{font-family:var(--font-display);font-size:30px;font-weight:800;line-height:1.5;color:var(--w-accent);white-space:nowrap;margin-top:12px}
+.dg-card-name{font-size:16px;font-weight:700;line-height:1.4}
+.dg-card .gx-stars{font-size:16px}
+.dg-card-next{position:absolute;right:-4px;top:-10px;padding:1px 8px;border-radius:99px;background:#f2a900;color:#3b2a17;font-size:13px;font-weight:800;line-height:1.6}
 
-.dg-ghost{position:absolute;z-index:3;right:-4px;bottom:-22px;width:44px;height:55px;pointer-events:none;filter:drop-shadow(0 2px 2px #0004);animation:dg-tap 1.4s ease-in-out infinite}
+/* ---- ধীরে খেলো and reduced motion: nothing hops, bobs or pulses ---- */
+.dg[data-slow] .dg-boat svg,.dg[data-slow][data-over] .dg-goal b,.dg[data-slow] .dg-tile::after,.dg[data-slow] .dg-spin::after,.dg[data-slow] .dg-in,.dg[data-slow] .dg-goal b,.dg[data-slow] .dg-pop,.dg[data-slow] .dg-edge,.dg[data-slow] .dg-spin[data-active],.dg[data-slow] .dg-ghat.is-next .dg-tile,.dg[data-slow] .dg-ghost,.dg[data-slow] .dg-ripple,.dg[data-slow] .dg-card[data-next]::after,.dg[data-slow] .dg-end-stars .gx-stars .on,.dg[data-slow] .dg-pips i{animation:none}
+.dg[data-slow] .dg-pop{opacity:1}
+.dg[data-slow] .dg-ripple{opacity:.4}
+.dg[data-slow] .dg-track,.dg[data-slow] .dg-far,.dg[data-slow] .dg-boat,.dg[data-slow] .dg-startbtn,.dg[data-slow] .dg-strip em{transition:none}
+@media (prefers-reduced-motion:reduce){.dg-boat svg,.dg[data-over] .dg-goal b,.dg-tile::after,.dg-spin::after,.dg-in,.dg-pop,.dg-goal b,.dg-edge,.dg-spin[data-active],.dg-ghat.is-next .dg-tile,.dg-ghost,.dg-ripple,.dg-card[data-next]::after,.dg-end-stars .gx-stars .on,.dg-pips i{animation:none}.dg-ripple{opacity:.4}.dg-track,.dg-far,.dg-boat,.dg-startbtn,.dg-strip em{transition:none}.dg-pop{opacity:1}}
 
-.dg-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;margin:0}
-
-.dg-mode{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:16px}
-.dg-mode button{min-height:44px;padding:6px 14px;border:1.5px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink);font:inherit;font-size:16px;cursor:pointer}
-.dg-mode button[aria-pressed=true]{background:var(--ink);color:#fff}
-
-.dg-over{position:absolute;inset:0;z-index:5;display:grid;place-content:center;justify-items:center;gap:12px;padding:20px 24px;border-radius:18px;background:#eaf6f2f2;text-align:center}
-.dg-over .gx-stars{font-size:40px}
-.dg-end-line{margin:0;font-family:var(--font-display);font-size:24px;font-weight:800;line-height:1.5}
-.dg-end-note{margin:0;font-size:18px;line-height:1.6}
-.dg-end-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;max-width:340px}
-.dg-end-actions button{width:100%;min-height:72px;font-size:20px}
-
-.dg-drawer{border:1.5px solid #cfe3e0;border-radius:14px;background:#fff}
-.dg-drawer summary{display:flex;align-items:center;min-height:44px;padding:0 14px;font-weight:700;cursor:pointer}
-.dg-drawer[open]{padding-bottom:12px}
-.dg-drawer .gx-levels{padding:0 10px}
-.dg-parent{display:grid;gap:8px;justify-items:start}
-.dg-parent p{margin:0;font-size:16px;line-height:1.6;color:var(--muted)}
-
-.dg-guide h2{margin-bottom:12px;font-family:var(--font-display)}
-.dg-guide>p{max-width:640px;color:var(--muted);line-height:1.7}
-.dg-guide ol{display:grid;gap:14px;margin:0;padding:0;list-style:none}
-.dg-guide li{display:flex;gap:14px;align-items:flex-start}
-.dg-guide li span{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
-.dg-guide li p{margin:4px 0 0;line-height:1.7}
-
-@keyframes dg-glow{0%,100%{box-shadow:0 0 0 4px var(--glow)}50%{box-shadow:0 0 0 7px var(--glow),0 0 18px 6px var(--glow)}}
-@keyframes dg-bob{50%{transform:translateY(3px)}}
-@keyframes dg-rise{0%{opacity:0;transform:scale(.6)}20%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:translateY(-12px)}}
-@keyframes dg-fade{0%,60%{opacity:1}100%{opacity:0}}
-@keyframes dg-tap{0%,100%{transform:translate(8px,10px)}50%{transform:translate(0,0) scale(.9)}}
-
-/* ধীরে খেলো and reduced motion: nothing moves on its own; numbers just fade */
-.dg[data-slow] .dg-boat,.dg[data-slow] .dg-ghost,.dg[data-slow] .dg-spin,.dg[data-slow] .dg-ghat{animation:none;transition:none}
-.dg[data-slow] .dg-pop{animation:dg-fade 1.2s linear forwards}
-.dg[data-slow] .dg-ghat.is-next,.dg[data-slow] .dg-spin[data-active=true]{box-shadow:0 0 0 6px var(--glow)}
-@media (prefers-reduced-motion:reduce){
-  .dg-boat,.dg-ghost,.dg-spin,.dg-ghat,.dg-track,.dg-line em{animation:none;transition:none}
-  .dg-pop{animation:dg-fade 1.2s linear forwards}
-  .dg-ghat.is-next,.dg-spin[data-active=true]{box-shadow:0 0 0 6px var(--glow)}
-}
-@media (min-width:640px){.dg-lead{display:block}}
+/* short stages: a lower river and a smaller চরকি */
+@media (max-height:700px){.dg-spin{width:104px;height:104px}.dg-water{height:136px}.dg-boat-far{bottom:80px}.dg-far{bottom:248px}.dg-tile b{font-size:38px}}

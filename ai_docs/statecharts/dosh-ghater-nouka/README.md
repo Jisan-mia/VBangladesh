@@ -1,31 +1,219 @@
-# দশ ঘাটের নৌকা statechart (before the rewrite)
+# দশ ঘাটের নৌকা statechart
 
-Spec: `Nouka.tla` / `Nouka.cfg` / `view.ts`, mirrored from `tools/dosh-ghater-nouka/components/nouka-game.tsx` (turnSpinner, onGhat, restart, and the auto-step, bot-spin, pop/speak and end-of-race effects), `tools/dosh-ghater-nouka/lib/race.ts` and `shared/kids-kit.tsx`.
+The game was rewritten on 2026-11-05 (design: `ai_docs/game-dev/rewrites/dosh-ghater-nouka.md`). Spec: `Nouka.tla` / `Nouka.cfg` / `view.ts`, mirrored from `tools/dosh-ghater-nouka/lib/session.ts`, `lib/sim.ts`, `lib/clock.hot.ts`, `components/game.tsx` (`begin`, `drain`, the loop's step, `useGamePlayer`) and `shared/kids-kit.tsx`.
 
-- **`before-fix/`** is the current code, with the kit as of f4f75be + 23fd7c1. TLC found 328 states and 1460 steps; the chart has 22 states and 35 arrows.
-- **`before-kit-fix/`** is the same game against the kit at b51e328. There, MuteMeansSilent and RestOnlyAtBreak also broke; both are fixed in the kit now.
+- **`before-fix/`** is the run on the old code, with the old spec (`before-fix/Nouka.tla`, `.cfg`, `view.ts`): 328 states, 22 chart states, four rules broken. **`before-kit-fix/`** is the old game against the kit at b51e328.
+- **`after-fix/`** is the run on the rewritten code: **432 states, 2098 steps, every rule holds** (TLC `NoDeadlock` too). The chart draws 20 states and 60 arrows.
+- **Mutation checks (run in a scratch copy):** putting back the old behaviours breaks the rules at once. Letting the চরকি land under the open menu breaks **NothingMovesWhileAway**. Recording the stars only when the end page comes breaks **EveryFinishedRaceCounts**. Letting a mode chip act inside a race breaks **ModeNeverChangesInARace**.
 
-The gate's hold timer, ShowParent and the header search are the same shared code as সৌরজগতের সফর and are modelled in full in `../sourojogot/Sourojogot.tla`; here the gate is one step. A race that begins after today's time is up (NoRoundAfterTimeIsUp) is the same shared path as sourojogot's bug 1. I left it out here to keep the chart under 500 states. It still applies: আবার খেলো and নতুন খেলা never check the limit.
+## What the rewrite changed in the model
+- **No timers.** The old game ran the চরকি, আব্বু's spin, his counting and the end of the race on loose `setTimeout`s. Now one fixed-step loop calls `advance()`; the চরকি, আব্বু's boat (which now races at the same time as you), the predict-mode boat and the finish are all in that call. A blur, a hidden tab or the pause menu stops the loop, and the loop's step also checks `clockMayRun()`, because a window focus restarts the loop even while the menu is still open.
+- **The race is recorded at the arrival** (`EV.ARRIVED` → `session.arrived()` → `levels.record()` and `atBreak()`), not 900 ms later. Only the end page waits.
+- **The mode chips and the share gate moved to the title.** There is nothing to tap in a race but the ghats and the চরকি.
+- **No voice.** `speak()` is gone, so the old MuteMeansSilent rule has nothing to check.
 
-## Systems modelled
-- **The race:** your turn → the চরকি spins (an 800 ms `setTimeout`) → you tap the ghats → আব্বু's turn (1 s, then his spin, then he counts one ghat every 850 ms) → … → your boat at ghat 10 → 900 ms later `levels.record()`, the win sound, `atBreak()` and the end card. A turn is cut down to "spin, then count to where it stops".
-- **Restarts:** ফোন চালাবে / বড়রা চালাবে (live only while playing; tapping the one already on also restarts), the সব ধাপ drawer, আবার খেলো and নতুন খেলা. `restart()` clears neither the pending spin timeout nor anything else outside `race`.
-- **Away and back:** you leave (blur or hide) and come back. Nothing in the game reads visibility or focus.
-- **Sound:** the site switch, and the spoken numbers (`speak()`, which needs a Bangla voice). Since b51e328, `speak()` reads `soundOn()`.
-- **Daily limit and rest screen:** today's time left or up, counted only while the tab is visible and focused. `atBreak()` runs only inside the 900 ms end timer. The rest screen is a real modal.
-- **Parent gate:** the share link below the game. It closes on বন্ধ করো, after one use, after 60 s, or on a hide.
+## Rules in plain words, all holding after the fix
+| Rule | Plain words |
+|---|---|
+| **FreshRaceStartsClean** | A new race starts with no spin and nothing counted; only your own press turns the চরকি. |
+| **EveryFinishedRaceCounts** | A race your boat finished is recorded, and the daily break is checked, at the moment it arrives. |
+| **NothingMovesWhileAway** | While you are away or the menu is open, no চরকি and no boat (yours or আব্বু's) moves. |
+| **ModeNeverChangesInARace** | The mode chips are on the title only, so a tap on a mode never wipes a race (and a tap on the mode already on does nothing). |
+| **ShareLinkOnlyOnTheTitle** | The share link is never in front of a race or the end page. |
+| **RestOnlyAtBreak** | The rest screen comes only between races; if the limit passes mid-race it waits for the end page. |
+| **NoNewRaceAfterTimeIsUp** | Once today's time is up, খেলো, আবার খেলো and a level from the list show the rest screen, not a race. |
+| **ChoiceFreezesPlay** | The level list opens only from the title or the end page; nothing is turning under it. |
+| **ResultNeedsFreshPress** | Enter or Space held through the finish never starts the next race. |
+| TypeOK, NoDeadlock | hold |
 
-## Rules in plain words
-| Rule | Plain words | Result |
-|---|---|---|
-| NothingRunsWhileAway | While you're away, আব্বু's turn doesn't run on by itself. | **breaks** |
-| FreshRaceStartsClean | A new race starts with no spin set; only your own spin sets one. | **breaks** |
-| EveryFinishedRaceCounts | A race your boat finished is recorded, and the daily break is checked. | **breaks** |
-| NoShareLinkDuringARace | The share link isn't open in front of the child during a race. | **breaks** (for up to 60 s) |
-| MuteMeansSilent | With sound off, no number is spoken. | holds (broke at b51e328) |
-| RestOnlyAtBreak | The rest screen appears only after a race. | holds (broke at b51e328, by Tab) |
-| TypeOK, NoDeadlock | | hold |
+## The bugs, and how each was fixed
+| # | Bug (the reader's sentence) | Fix | Node test | Live check after the fix (Orca, own tab) |
+|---|---|---|---|---|
+| 1 | **FreshRaceStartsClean:** "I pressed বড়রা চালাবে while the চরকি spun, and the new race already had a number." | A race is one object with its spin inside it; a new race is a new object. Nothing outlives it (no timeout ids). | `dosh-ghater-nouka.test.ts` › bug 1 | Pressed the চরকি, restarted 150 ms later: back on the title, the next race started with `spin 0`. |
+| 2 | **EveryFinishedRaceCounts:** "my boat reached the last ghat, I tapped a button, and the race was never counted." | `drain()` records the stars and calls `atBreak()` at `EV.ARRIVED`; only the end page waits 1.3 s. The mode buttons are gone from the race. | `session.test.ts` › bug 2 (two tests) | Finished level ১, restarted 100 ms after the boat arrived: `ektukhani-levels-dosh-ghater-nouka` = `{"6":3}` at 100 ms and 2.5 s later; the screen was the title. |
+| 3 | **NothingRunsWhileAway:** "I left during আব্বু's turn, and his boat counted two ghats without me." | One clock, stopped by blur, hide and the menu. | `dosh-ghater-nouka.test.ts` › bug 3; `session.test.ts` › bug 3 | Blur after a spin: race clock **1183 ms → 1183 ms over 3 s**, boats unmoved. With the menu opened by a real blur, a focus event alone left the clock at **100 → 100 ms over 2.5 s**; চালিয়ে যাও then ran it (517 ms 1.5 s later). |
+| 4 | **NoShareLinkDuringARace:** "the share link sat under the race after a grown-up opened it." | The gate is on the title only and unmounts when a race starts or the list opens. | `session.test.ts` › bug 4 | Source and model; the title is the only screen that renders it. |
+| 5 | **A tap on the mode already on wipes the race.** | The chips are on the title, and `chooseMode` ignores the mode already on. | `session.test.ts` › bug 5 | Tapped the pressed chip: `duo` stayed false, the screen stayed the title, the serial did not move. |
+| — | **Pause on blur** (shared pattern) | See bug 3. | | The player's menu opened on a blur in phone size. |
+| — | **The first tap back is not a move** | `session.blur` arms a swallow; the next ghat or চরকি tap only wakes the game, unless the menu took it. | › the tap that brings focus back is not a move | — |
+| — | **Result keys need a fresh press**, **Enter goes to the game** | Keys at `window` with `preventDefault`; the end page takes Enter only from a keydown after it appeared, never a repeat. | › result keys need a fresh press | — |
+| — | **Rest at the start of a race** (kids' rule) | `begin()` asks `kids.atBreak()` first. | › RestOnlyAtBreak and NoNewRaceAfterTimeIsUp | Rest screen up with time set past the limit, race counter at 0. |
 
+## The chart (after the fix)
+```mermaid
+---
+title: "Dosh ghater nouka (boat race): screens, the race, pause, the mode chips, the share gate and the daily limit"
+---
+stateDiagram-v2
+  state "Legend" as legend {
+    lg0: play
+    lg1: held
+    lg2: done
+  }
+  class lg0 teal
+  class lg1 yellow
+  class lg2 blue
+  state "Race The river (খ#2503;ল#2507;)" as s0 {
+    state "Menu Playing" as s1 {
+      s2: Today Time left today
+      s3: Today Rest screen
+    }
+    state "Menu Menu open or away, the boats wait" as s4 {
+      s5: Today Time left today
+      s6: Today Rest screen
+    }
+  }
+  state "Race The level list" as s7 {
+    state "Menu Playing" as s8 {
+      s9: Today Time left today
+    }
+    state "Menu Menu open or away, the boats wait" as s10 {
+      s11: Today Time left today
+    }
+  }
+  state "Race Press the চরক#2495;" as s12 {
+    state "Menu Playing" as s13 {
+      s14: Today Time left today
+    }
+    state "Menu Menu open or away, the boats wait" as s15 {
+      s16: Today Time left today
+    }
+  }
+  state "Race The চরক#2495; turning" as s17 {
+    state "Menu Playing" as s18 {
+      s19: Today Time left today
+    }
+    state "Menu Menu open or away, the boats wait" as s20 {
+      s21: Today Time left today
+    }
+  }
+  state "Race Tap the ghats" as s22 {
+    state "Menu Playing" as s23 {
+      s24: Today Time left today
+    }
+    state "Menu Menu open or away, the boats wait" as s25 {
+      s26: Today Time left today
+    }
+  }
+  state "Race Your boat at the last ghat, stars saved, the page in 1.3 s" as s27 {
+    state "Menu Playing" as s28 {
+      s29: Today Time left today
+      s30: Today Time's up, the rest waits for the end page
+    }
+    state "Menu Menu open or away, the boats wait" as s31 {
+      s32: Today Time left today
+      s33: Today Time's up, the rest waits for the end page
+    }
+  }
+  state "Race The end page (আব#2494;র খ#2503;ল#2507; / শ#2503;ষ)" as s34 {
+    state "Menu Playing" as s35 {
+      s36: Today Time left today
+      s37: Today Rest screen
+    }
+    state "Menu Menu open or away, the boats wait" as s38 {
+      s39: Today Time left today
+      s40: Today Rest screen
+    }
+  }
+  [*] --> s2
+  [*] --> s3
+  s2 --> s9: the child opens the level list
+  s2 --> s5: #9208; / P / Esc or the window blurs or hides
+  s2 --> s14: the child taps খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507;
+  s3 --> s2: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s3 --> s6: #9208; / P / Esc or the window blurs or hides
+  s9 --> s14: the child picks a level
+  s9 --> s11: #9208; / P / Esc or the window blurs or hides
+  s2 --> s3: the page opens again or the child taps খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507;
+  s5 --> s2: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s6 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ or চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s6 --> s5: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s14 --> s19: the child presses the চরক#2495;
+  s14 --> s16: #9208; / P / Esc or the window blurs or hides
+  s19 --> s24: the চরক#2495; stops
+  s19 --> s21: #9208; / P / Esc or the window blurs or hides
+  s9 --> s3: the child picks a level
+  s11 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s11 --> s9: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s16 --> s14: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s16 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s24 --> s14: the child taps the right ghat
+  s24 --> s29: the child taps the right ghat
+  s24 --> s26: #9208; / P / Esc or the window blurs or hides
+  s21 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s21 --> s19: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s29 --> s2: the page opens again
+  s29 --> s36: the end page comes
+  s29 --> s32: #9208; / P / Esc or the window blurs or hides
+  s24 --> s30: the child taps the right ghat
+  s26 --> s2: নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s26 --> s24: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s36 --> s2: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s36 --> s14: the child taps খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507;
+  s36 --> s9: the child opens the level list
+  s36 --> s39: #9208; / P / Esc or the window blurs or hides
+  s30 --> s37: the end page comes
+  s30 --> s33: #9208; / P / Esc or the window blurs or hides
+  s32 --> s2: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s32 --> s29: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s36 --> s37: the child taps খ#2503;ল#2507; or আব#2494;র খ#2503;ল#2507;
+  s37 --> s36: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s37 --> s40: #9208; / P / Esc or the window blurs or hides
+  s39 --> s2: the page opens again or নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s39 --> s36: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s33 --> s30: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s33 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s40 --> s37: চ#2494;ল#2495;য#2492;#2503; য#2494;ও
+  s40 --> s39: a grown-up gives আজ আরও ১০ ম#2495;ন#2495;ট
+  s40 --> s3: নত#2497;ন কর#2503; শ#2497;র#2497;, সব ল#2503;ভ#2503;ল, or শ#2503;ষ
+  s7 --> s2: the page opens again
+  s7 --> s3: the page opens again
+  s12 --> s2: the page opens again
+  s12 --> s3: the page opens again
+  s17 --> s2: the page opens again
+  s17 --> s3: the page opens again
+  s22 --> s2: the page opens again
+  s22 --> s3: the page opens again
+  s27 --> s3: the page opens again
+  s34 --> s3: the page opens again
+  s4 --> s3: the page opens again
+  class s2 blue
+  class s3 yellow
+  class s5 blue
+  class s6 yellow
+  class s9 blue
+  class s11 blue
+  class s14 teal
+  class s16 teal
+  class s19 teal
+  class s21 teal
+  class s24 teal
+  class s26 teal
+  class s29 teal
+  class s30 teal
+  class s32 teal
+  class s33 teal
+  class s36 blue
+  class s37 yellow
+  class s39 blue
+  class s40 yellow
+```
+
+## Checked live and holding
+- **No network, no child data:** the game's sources have no fetch, XHR, beacon, `/api`, share-client or speech (a test greps them). Storage holds `ektukhani-levels-dosh-ghater-nouka`, the new `ektukhani-mode-dosh-ghater-nouka` (the last mode), and the shared kids-time and sound keys.
+- **Sound:** a whole race played 64 oscillator starts with sound on and 0 with the site switch off; the dev server's context stays suspended.
+- **320 px:** no sideways scroll on the title or in a race (`scrollWidth` 320).
+
+## Regenerate
+```sh
+scripts/statechart.sh ai_docs/statecharts/dosh-ghater-nouka/Nouka.tla --view ai_docs/statecharts/dosh-ghater-nouka/view.ts --out ai_docs/statecharts/dosh-ghater-nouka/after-fix
+rm ai_docs/statecharts/dosh-ghater-nouka/after-fix/tlc.out
+```
+Use a fresh `--out` folder each run.
+
+---
+
+## The bugs found before the rewrite (as replayed then)
 ## Bugs (current code)
 I replayed these in Orca, in my own tab. The page ran in a src-less iframe with an in-memory `localStorage` shim and a controllable `document.hidden`. I counted sounds by wrapping `OscillatorNode.prototype.start`, and read positions from the `.dg-line` aria-label ("তোমার নৌকা N নম্বর ঘাটে, আব্বু M নম্বর ঘাটে"). The game code hasn't changed since these replays, so they stand for the current code.
 
@@ -56,26 +244,3 @@ I replayed these in Orca, in my own tab. The page ran in a src-less iframe with 
 - **Live:** mid-race at "তোমার নৌকা ৬ নম্বর ঘাটে, আব্বু ৩ নম্বর ঘাটে", I tapped ফোন চালাবে, which was already pressed (`aria-pressed=true`). Result: "তোমার নৌকা শুরুর জেটিতে, আব্বু শুরুর জেটিতে". The buttons sit right under the river, in a child's reach (`.shots/dosh-ghater-nouka-race.png`).
 - **Fix:** ignore a tap on the current mode, and move the mode choice before the race or behind a small confirmation. That also closes the tap path in bug 1 and bug 2.
 
-## Kit bugs found and already fixed
-- **MuteMeansSilent:** at b51e328, `speak()` ignored the sound switch, and every ghat would be spoken with sound off on a phone with a Bangla voice. **Now (live, with a stubbed bn-BD voice):** sound off gave 0 utterances and 0 tones over your turn and আব্বু's turn. Sound on gave "এক", "দুই", "এক".
-- **RestOnlyAtBreak:** at b51e328, Tab from the rest screen reached সব ধাপ behind it (live: focus went from the rest screen's gate to the "সব ধাপ" summary). **Now:** the rest screen is a real modal, and Enter on the drawer did nothing under it.
-
-## Checked live and holding
-- **No network, no child data:** the game code has no fetch, XHR, beacon, `/api` or share-client (grep), and the shimmed frame logged no fetch, XHR or beacon calls during the replays. Storage holds `ektukhani-levels-dosh-ghater-nouka` only, plus the shared kids-time and sound keys. The ShowParent card shows only today's counts.
-- **RestOnlyAtBreak:** a race finished past the limit shows the rest screen over the end card (`.shots/dosh-ghater-nouka-rest-after-race.png`).
-
-## Quality-bar gaps (level 1 autoplayed to the end in Orca at 412 px, plus the code)
-1. **First screen:** the চরকি and the glowing first ghat are clear, and a ghost finger shows on the very first turn and again after 6 s idle. But the top bar crowds three things into one line (ধাপ title, ধীরে খেলো, sound), and the mode switch sits inside the play area (see "Also found").
-2. **Level 1 takes about 25–30 s of pure waiting:** with instant taps, আব্বু's 1 s + 0.8 s + 0.85 s per ghat dominates, so a 10-ghat race is 8–10 turns. For 3–6 year olds that is a lot of watching. A faster আব্বু once the child has heard a number a few times would help.
-3. **Away and back:** the bot doesn't stop (bug 3).
-4. **The camera** shows three ghats around your boat. The overview line on top is the only place the whole river shows, and it's a thin 1-px bar with small labels.
-5. **Ending:** the card line "তোমার নৌকা আগে ১০ নম্বর ঘাটে পৌঁছাল!" makes the race about winning, though stars measure counting (correct by the brief). আবার খেলো and শেষ have different styles (primary vs secondary), not "equal size" as the brief asks.
-6. **Sound:** a note one step higher per ghat and a tick run for the spinner, all synthesized and muted correctly. Spoken numbers depend on a Bangla voice, which Orca and most desktops don't have.
-7. **Pacing:** five ধাপ (10 ghats, then 20), and predict mode on ধাপ 3 and 5 is the only new idea. There's no "যোগ করো" step between counting and predicting.
-
-## Regenerate
-```sh
-scripts/statechart.sh ai_docs/statecharts/dosh-ghater-nouka/Nouka.tla --view ai_docs/statecharts/dosh-ghater-nouka/view.ts --out ai_docs/statecharts/dosh-ghater-nouka/after-fix
-rm ai_docs/statecharts/dosh-ghater-nouka/after-fix/tlc.out
-```
-The chart hides no steps.
